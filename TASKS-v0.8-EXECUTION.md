@@ -63,6 +63,14 @@ DB-isolation decision is recorded.
 ## Step 2 · T2 — Close the live harvest: interruption-resume on the wire 🤖
 *(needs network egress — available on this MacBook; not doable in the sandbox)*
 
+**Gate result (2026-07-20): BLOCKED.** Run 1 fetched 1,300 real records and
+stopped at cap 1, but the persisted row was `cursor=NULL,
+high_water='2026-07-20'`. The capped break is followed by unconditional
+`complete()`, which clears the checkpoint; the existing fake test checks the
+intermediate checkpoint call but not final resume state. Run 2 was not executed
+because it would test incremental high-water, not interruption-resume. See
+`STATE.md §8` and `PROGRESS-v0.8.md`.
+
 **Objective.** Prove the one T2 behavior fixtures cannot: that a harvest
 interrupted mid-set **resumes from the SQLite cursor** rather than restarting.
 Paging, parsing, and multi-page `resumptionToken` were proven live on 2026-07-20;
@@ -379,7 +387,7 @@ trigger dictates.
 ## Progress checklist
 
 - [x] **B0** — entering state verified, baseline numbers recorded
-- [ ] **T2** — interruption-resume proven on the wire
+- [ ] **T2 — BLOCKED** — capped run clears the resume token; interruption-resume not proven
 - [ ] **H1** — harness evidence hardened (real robots line, honest checklist)
 - [ ] **T6** — clippy/fmt a blocking gate; STATE reconciled
 - [ ] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock

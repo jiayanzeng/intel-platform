@@ -69,3 +69,29 @@ correct them with a new dated entry.
   `data/core.db` remained 1,764 documents and byte-size/mtime unchanged. Port
   8788 is held by foreign PID 59269; operator command `kill 59269` is required
   before T2.
+
+### 2026-07-20 · T2 — BLOCKED: capped live run clears its resume token
+
+- owner: 🤖 Codex
+- measured: after a clear-port/fresh-DB preflight,
+  `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv` fetched
+  and parsed 1,300 real page-1 records (`ok=true`, `error=null`), logged that
+  more pages follow, and stopped at cap 1. The persisted row was
+  `arxiv-cs | cursor=NULL | high_water='2026-07-20'`. Code inspection confirmed
+  the capped break is followed by unconditional `complete()`, which clears the
+  checkpoint and advances high-water. The existing fake test observes the
+  intermediate checkpoint call but never checks final resume state.
+- acceptance: run 1 non-NULL cursor ❌ (`NULL`) · run 2 resumes from token ❌
+  (not run; no token exists, so a second run would test the prohibited
+  high-water path) · real XML parse errors on run 1: 0 ✅, but the required
+  two-run criterion remains incomplete · `data/core.db` untouched ✅ · 503 /
+  Retry-After explicitly not observed ✅
+- golden E2E: unchanged — acme 13 → 12; dropped `techwire::tw-004` for
+  `osdaily::osd-004` at hamming 12; DeepSeek RISING z=10.0; re-ingest +0;
+  quant 1; `/v1/ask` 4 citations with `techwire::tw-004` suppressed.
+- commit: this T2 gate-result commit (see git history)
+- notes / gate: **T2 is not complete.** The decision gate tripped at the first
+  cursor assertion. No workaround and no misleading second run were attempted.
+  Repair requires distinguishing capped exit from exhausted completion and a
+  test that asserts final persisted resume state; that repair is outside this
+  verification step and was not implemented here.

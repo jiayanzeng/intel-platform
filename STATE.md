@@ -12,7 +12,7 @@
 
 **On the "0 warnings" claim — B0 correction, measured 2026-07-20.** It means *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. The prior sentence claiming the test module had been moved last was **false**: `cargo clippy --workspace --locked --all-targets -- -D warnings` exits 101 with one `clippy::items_after_test_module` diagnostic at `crates/store/src/sqlite.rs:537`, naming the five items at lines 749–880 that still follow the test module. Re-running clippy with only that known lint allowed is otherwise clean. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. `cargo fmt --all -- --check` also exits non-zero, with diffs in 13 Rust files. CI therefore correctly remains a **report-only** lint job (`continue-on-error`) until T6 fixes the tree and promotes the gate.
 
-**T2 remains UNVERIFIED, and this run did not change that** — no documents were fetched, `data/core.db` held 0 rows, and none of the paging/XML/cursor evidence was produced. The harness bugs that blocked it are fixed, so the next `./run harvest-arxiv` on a box with a free port should finally reach the wire.
+**T2 interruption-resume is BLOCKED by a measured code defect (2026-07-20).** A fresh `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv` fetched and parsed **1,300 real records** from page 1, reported "more pages follow," and stopped at the cap. The required cursor row immediately afterward was `cursor = NULL, high_water = '2026-07-20'`, not a non-empty next-page token. The cause is direct: `ArxivOaiSource::fetch` checkpoints `next`, breaks at the cap, then unconditionally calls `complete()`, which clears the token and advances high-water. The existing cap test inspects the intermediate fake's `checkpoints` vector but never asserts its final resume state, so it stayed green while persistence failed. Run 2 was deliberately **not** executed: it would exercise incremental high-water, the exact false-positive path the runbook forbids. T2 is not complete.
 
 **Prior point releases (unchanged, kept for the record):** v0.7.1 per-source robots opt-in (§2.12); v0.7.2 `max_pages` cap + timeouts + progress logging; v0.7.3 removed Python 3.12-only f-strings from `run` (crashed on the on-site 3.11).
 
@@ -236,7 +236,9 @@ LLM_BASE_URL=http://vllm-box:8000/v1 LLM_API_KEY=… \
 
 **Scheduler config (`config/schedule.json`) — v0.6 shape:** a job's `sources` map is now **source id → cadence** (true per-feed clocks: `techwire` every 900s and `osdaily` every 1800s, though both live in `technology`), and the new `sectors` map is **sector id → cadence** for whole-sector jobs. A job with neither runs a single full pipeline.
 
-## 8. v0.8 entering baseline — B0 (verified 2026-07-20)
+## 8. v0.8 measured execution
+
+### B0 — entering baseline (verified 2026-07-20)
 
 Every result below was run on the pinned Rust/Cargo 1.91.1 toolchain after
 `cargo clean` removed 758.4 MiB of build output; none is inferred from the prior
@@ -276,8 +278,36 @@ handoff.
   and mtime `2026-07-20 09:22:16 +0800`. All future live smoke runs use
   `CORE_DB=data/live-smoke.db` and must not write the golden fixture DB or the
   1,764-document archive.
-- Environment note: port 8788 is held by a `cored` process B0 did not start,
-  PID **59269**, executable from this checkout. This sandbox cannot signal it;
-  the operator command is `kill 59269`. B0 used ports 8790/8899/8786 instead.
-  T2 must not begin until `./run down` followed by
-  `lsof -iTCP:8788 -sTCP:LISTEN -n -P` is clear.
+- Environment note: at B0, port 8788 was held by a `cored` process B0 did not
+  start, PID **59269**, executable from this checkout. The operator stopped it;
+  T2's preflight then confirmed `./run down` followed by
+  `lsof -iTCP:8788 -sTCP:LISTEN -n -P` was clear.
+
+### T2 — live interruption-resume gate tripped (2026-07-20)
+
+- Preflight: port 8788 clear; `data/live-smoke.db` absent; `data/core.db` at
+  **1,764 documents**, 6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`,
+  SHA-256 `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+- Run 1 command: `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run
+  harvest-arxiv`, with the generated window `2026-07-17` through `2026-07-20`.
+  The live response was `fetched=1300, new=1300, ok=true, error=null`; the log
+  reported page 1 with 1,300 documents, more pages following, then cap 1.
+  Real OAI-PMH XML therefore parsed without an observed error on that page.
+- Gate measurement immediately after run 1:
+  `source_id='arxiv-cs', cursor=NULL, high_water='2026-07-20'`. This fails the
+  first acceptance criterion. A capped run was treated as completion.
+- Root cause: the page loop calls `checkpoint(next)`, breaks on `max_pages`,
+  then the common post-loop path calls `complete(max_datestamp)`. The test
+  `max_pages_bounds_one_run_and_checkpoints_the_rest` proves only that the fake
+  observed the intermediate checkpoint call; it does not assert the final
+  `resume_token`, so the subsequent clear cannot make the test fail.
+- Run 2: **not run by design**. With the token already cleared and high-water
+  advanced, it would be an incremental request, not resume-from-interruption.
+  Treating it as resume evidence would violate the task's explicit gate.
+- `503 Retry-After`: not observed; no 503/retry line appeared in run 1.
+- Isolation and regression: `data/live-smoke.db` contains the 1,300 live rows;
+  `data/core.db` retained the exact pre-run count, size, mtime, and SHA-256.
+  The full fixture golden E2E was re-run and unchanged: acme **13 → 12**,
+  `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**, DeepSeek
+  **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**, and `/v1/ask`
+  **4 citations** with `techwire::tw-004` suppressed.
