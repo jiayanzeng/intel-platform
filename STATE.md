@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-19 · **Version:** v0.7.4 (core-shell) · **Status:** **80 Rust tests green with 0 _rustc_ warnings** (`cargo check --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **69 shell tests green** against a FAKE core. "0 warnings" means **rustc** warnings; clippy is tracked separately (see below). Golden end-to-end unchanged.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **80 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **17 net-path ingest tests green**, and **69 shell tests green** against a FAKE core (with 1 Starlette deprecation warning). "0 warnings" means **rustc** warnings; clippy and fmt are tracked separately (see below). Golden end-to-end re-verified unchanged in B0.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -10,7 +10,7 @@
 - **Harness bug 3 — `down` can't reach the orphan.** A pidfile only tracks servers we started. **Fixed:** `cmd_down` now reports a still-held port after cleanup, with the PID and kill command. (Also: `_start_mock_llm` still used `setsid`; switched to `nohup` — another latent macOS break.)
 - **Test-isolation bug — parallel temp-DB collision.** `tmp_db()` named the per-test SQLite file from `SystemTime` nanos only; two parallel test threads in the same tick got the same path and clobbered each other (seen as a "fresh" DB already holding another test's rows — `new=4, fetched=7`). **Fixed:** a process-global atomic counter + pid in the name guarantees a distinct path per call. `cargo test` is now deterministic under default parallelism (verified across repeated runs).
 
-**On the "0 warnings" claim — Codex is right to scope it, and it is now scoped.** It has always meant *rustc* warnings (`-D warnings` on `cargo check`), which remains true. It does **not** mean clippy-clean. Clippy (run by Codex on a 1.91 toolchain the dev sandbox lacks) reports 9 lints. Of these, 5 are now **fixed** structurally (`is_some_and`, `split` for `splitn`, `.values()` for a kv-loop, test module moved last). The other 4 are `clippy::unnecessary_map_or`, **deliberately `#![allow]`'d** in `intel-compliance` and `arxiv_oai`: clippy's fix is `Option::is_none_or`, stabilized in **Rust 1.82**, and adopting it would raise the offline MSRV floor above the declared **1.78** — a trade we decline. CI now runs clippy + fmt as a **report-only** job (`continue-on-error`), because those lints cannot be verified in the dev sandbox and a gate the author can't run shouldn't block a merge.
+**On the "0 warnings" claim — B0 correction, measured 2026-07-20.** It means *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. The prior sentence claiming the test module had been moved last was **false**: `cargo clippy --workspace --locked --all-targets -- -D warnings` exits 101 with one `clippy::items_after_test_module` diagnostic at `crates/store/src/sqlite.rs:537`, naming the five items at lines 749–880 that still follow the test module. Re-running clippy with only that known lint allowed is otherwise clean. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. `cargo fmt --all -- --check` also exits non-zero, with diffs in 13 Rust files. CI therefore correctly remains a **report-only** lint job (`continue-on-error`) until T6 fixes the tree and promotes the gate.
 
 **T2 remains UNVERIFIED, and this run did not change that** — no documents were fetched, `data/core.db` held 0 rows, and none of the paging/XML/cursor evidence was produced. The harness bugs that blocked it are fixed, so the next `./run harvest-arxiv` on a box with a free port should finally reach the wire.
 
@@ -235,3 +235,49 @@ LLM_BASE_URL=http://vllm-box:8000/v1 LLM_API_KEY=… \
 **Note (T9.6):** the default subscriptions path is now anchored to the repo root rather than the process CWD — `uvicorn intel_shell.app:app` launched from anywhere but the repo root used to silently find zero clients and 401 every request.
 
 **Scheduler config (`config/schedule.json`) — v0.6 shape:** a job's `sources` map is now **source id → cadence** (true per-feed clocks: `techwire` every 900s and `osdaily` every 1800s, though both live in `technology`), and the new `sectors` map is **sector id → cadence** for whole-sector jobs. A job with neither runs a single full pipeline.
+
+## 8. v0.8 entering baseline — B0 (verified 2026-07-20)
+
+Every result below was run on the pinned Rust/Cargo 1.91.1 toolchain after
+`cargo clean` removed 758.4 MiB of build output; none is inferred from the prior
+handoff.
+
+- `RUSTFLAGS="-D warnings" cargo check --workspace --locked --all-targets`:
+  exit 0, 0 rustc warnings.
+- `RUSTFLAGS="-D warnings" cargo test --workspace --locked`: exit 0, **80
+  passed** (cored 7, compliance 28, core 7, enrich 2, extract 3, ingest 17,
+  registry 4, retrieve 3, store 9; analyze/view and doc-tests 0).
+- `RUSTFLAGS="-D warnings" cargo check -p cored --features net --locked
+  --all-targets`: exit 0, 0 rustc warnings.
+- `RUSTFLAGS="-D warnings" cargo test -p intel-ingest --features net --locked`:
+  exit 0, **17 passed**.
+- `PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q`: exit 0, **69
+  passed**, with 1 `StarletteDeprecationWarning` from FastAPI's `TestClient`.
+- Clippy/fmt inventory: clippy exits 101 on the one
+  `items_after_test_module` diagnostic described above; allowing only that lint
+  makes the remaining workspace clippy run clean. The two intentional
+  `unnecessary_map_or` allows remain. `cargo fmt --all -- --check` exits 1 with
+  diffs in 13 Rust files. CI is report-only, not commented out; the stale
+  "commented out" descriptions elsewhere in this file and `TASKS-v0.8.md` are
+  recorded as false here and remain for the ordered T6 documentation fix. T6
+  owns the lint/fmt corrections and gate promotion.
+- Golden E2E, run through the real Rust↔HTTP↔Python seam with the deterministic
+  mock model and a fresh temporary fixture DB: initial ingest **13 new**; acme
+  **13 → 12 analyzed**; `techwire::tw-004` dropped for `osdaily::osd-004` at
+  hamming **12**; DeepSeek **RISING z = 10.0**, corroborated by arxiv-cs,
+  osdaily, and techwire; immediate re-ingest **+0**; quant-desk **1 document**;
+  `/v1/ask?q=What is DeepSeek-V4?` returned **4 citations** and suppressed
+  `techwire::tw-004`. No golden delta.
+- DB isolation is explicit. `./run demo` creates `$DEMO_DIR/demo.db` under
+  `mktemp -d`; B0 additionally used
+  `/private/tmp/intel-platform-b0-golden-20260720.db` (14 fixture documents
+  after both clients). The live archive remains `data/core.db`: read-only checks
+  before and after the golden run showed **1,764 documents**, 6,729,728 bytes,
+  and mtime `2026-07-20 09:22:16 +0800`. All future live smoke runs use
+  `CORE_DB=data/live-smoke.db` and must not write the golden fixture DB or the
+  1,764-document archive.
+- Environment note: port 8788 is held by a `cored` process B0 did not start,
+  PID **59269**, executable from this checkout. This sandbox cannot signal it;
+  the operator command is `kill 59269`. B0 used ports 8790/8899/8786 instead.
+  T2 must not begin until `./run down` followed by
+  `lsof -iTCP:8788 -sTCP:LISTEN -n -P` is clear.

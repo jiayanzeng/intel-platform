@@ -43,3 +43,29 @@ correct them with a new dated entry.
 ---
 
 <!-- Codex appends below, one block per completed step, newest at the bottom. -->
+
+### 2026-07-20 · B0 — entering state verified and corrected
+
+- owner: 🤖 Codex
+- measured: clean Rust 1.91.1 baseline: workspace check 0 rustc warnings;
+  workspace tests 80 passed; net cored check 0 rustc warnings; net ingest tests
+  17 passed; shell tests 69 passed with 1 Starlette deprecation warning. Clippy
+  exits 101 on one `items_after_test_module` diagnostic in `sqlite.rs`; with
+  only that lint allowed, the remainder is clean. Fmt check exits 1 with diffs
+  in 13 Rust files.
+- acceptance: Rust/shell counts captured ✅ · 0 rustc warnings on offline and
+  net configs ✅ · golden result captured and unchanged ✅ · clippy inventory
+  captured, including the two accepted `unnecessary_map_or` allows ✅ · golden
+  vs live DB paths answered and isolated ✅
+- golden E2E: unchanged — fixture ingest 13; acme 13 → 12; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; re-ingest +0; quant 1; `/v1/ask` 4 citations with
+  `techwire::tw-004` suppressed.
+- commit: this B0 baseline-verification commit (see git history)
+- notes / gate: corrected `STATE.md`'s false claim that the test module had
+  already been moved last; recorded the newly measured fmt failure and that CI
+  is report-only rather than commented out (the ordered T6 step owns the stale
+  wording in `TASKS-v0.8.md`). Golden ran on a temporary fixture DB;
+  `data/core.db` remained 1,764 documents and byte-size/mtime unchanged. Port
+  8788 is held by foreign PID 59269; operator command `kill 59269` is required
+  before T2.

@@ -378,7 +378,7 @@ trigger dictates.
 
 ## Progress checklist
 
-- [ ] **B0** — entering state verified, baseline numbers recorded
+- [x] **B0** — entering state verified, baseline numbers recorded
 - [ ] **T2** — interruption-resume proven on the wire
 - [ ] **H1** — harness evidence hardened (real robots line, honest checklist)
 - [ ] **T6** — clippy/fmt a blocking gate; STATE reconciled
