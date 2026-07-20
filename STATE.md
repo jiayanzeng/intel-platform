@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **84 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **17 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; the leaking-model E2E was refused. The normal golden end-to-end remained byte-identical in T1.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **84 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request. The golden end-to-end remained byte-identical in T5.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -18,7 +18,7 @@
 
 1. **arXiv migrated its OAI-PMH endpoint.** `export.arxiv.org/oai2` now **301-redirects** to `oaipmh.arxiv.org/oai` (observed live). `config/core.json` now points at the canonical host directly, which also sidesteps the redirect-origin gap (below) for arXiv specifically.
 2. **The harvest was blocked by a robots FALSE POSITIVE, not by the gate working correctly.** `oaipmh.arxiv.org` serves no `robots.txt` (a 404 HTML page). The v0.7 default is fail-closed on 404 (`MissingPolicy::Deny`), which is correct for an *unknown* host but wrong for a cooperative, operator-configured endpoint that publishes no robots.txt *on purpose*. The block was the system refusing exactly the access arXiv built the endpoint to serve. **Fixed in v0.7.1** — see §2.12.
-3. **The redirect-origin gap (documented below, still open as T5) is now confirmed live**, not hypothetical: `export.arxiv.org/oai2` 301s to a different origin whose robots.txt the gate would not have read.
+3. **The redirect-origin gap was confirmed live and is now resolved in v0.8/T5.** `export.arxiv.org/oai2` 301s to a different origin whose robots.txt the old automatic redirect path would not have read. Both clients now disable automatic redirects, and document redirects are followed manually only after the next origin passes the full robots gate.
 
 **And a process note that matters more than the code:** the on-site tester, working with a different AI assistant, produced a status report concluding *"T2 is verified... blocked by the system's own high-security policy... performing as designed in a live adversarial environment."* Every clause of that is wrong — T2 fetched nothing, the block was a false positive, and arXiv is the least adversarial source imaginable. It is the exact failure this project was built to resist (**a claimed property that nothing executed**), and it is worth recording that the failure mode is attractive enough that a capable assistant reached for it unprompted. The fix for the class is unchanged: report what the wire actually did, and treat "blocked" as a non-result until documents land.
 
@@ -148,7 +148,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
   quotation remains allowed. `tools/mock_openai.py --leak` deliberately emits
   a source sentence. Both the shell test and a real Rust↔HTTP↔Python E2E proved
   that sentence cannot pass, while the ordinary golden answer is unchanged.
-- **The robots gate is checked on the configured origin, but redirects are followed to a different one — NOW CONFIRMED LIVE (still open as T5).** Neither `reqwest::Client` in `crates/ingest/src/net.rs` sets a redirect policy, so reqwest's default applies: **up to 10 redirects, followed silently.** The first on-site harvest hit exactly this: `export.arxiv.org/oai2` **301-redirects** to `oaipmh.arxiv.org/oai`, so a request gated against `export.arxiv.org`'s robots.txt would fetch documents from `oaipmh.arxiv.org`, whose policy was never read. Per RFC 9309 the policy is **per-origin**, so the check must re-run on the final origin (or redirects must be disabled and followed manually). **Worked around for arXiv in v0.7.1** by pointing `config/core.json` at the canonical `oaipmh.arxiv.org/oai` directly (no redirect), but the gap is real for any other source that redirects cross-origin. See `TASKS-v0.8.md` T5.
+- ~~**The robots gate was checked only on the configured origin while reqwest followed redirects automatically.**~~ **RESOLVED in v0.8/T5.** Both HTTP clients now set `Policy::none()`. Document redirects are resolved manually with the full gate before each next request; robots-file redirects fail closed. A failure-capable cross-origin 302 test makes the second body available, configures that origin to disallow it, proves both robots policies were fetched, and proves the second document request never happened. A same-origin redirect makes two document requests with exactly one robots fetch.
 - **The robots cache does not de-duplicate concurrent misses.** Two simultaneous first-requests to the same origin can both fetch `/robots.txt`. Bounded, harmless (the limiter still spaces them), and not worth a single-flight lock until there is a second writer — same trigger as Postgres.
 
 ## 6. Decision log
@@ -454,6 +454,49 @@ handoff.
   acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
   **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
   and `/v1/ask` retained its ordinary mock answer, **4 citations**, and
+  `techwire::tw-004` suppression. `data/core.db` remained 1,764 documents,
+  6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+  All local ports were clear after teardown.
+
+### T5 — redirects re-gated before each origin (verified 2026-07-20)
+
+- Design 1 was selected deliberately: both reqwest clients set
+  `redirect(Policy::none())`. The document path resolves `Location` manually,
+  permits only HTTP(S), bounds the chain at 10 redirects, and runs the existing
+  publisher-policy + operator-deny + politeness gate before every request. A
+  robots-file redirect is not followed and therefore fails closed.
+- Failure-capable cross-origin test: the fake page server returned
+  `https://first.test/start` → 302
+  `https://second.test/blocked` and had a successful second body ready. The
+  robots fake returned allow for the first origin and `Disallow: /blocked` for
+  the second. Measured calls were both origins' `/robots.txt`, but only the
+  first document URL; result was `RobotsDisallowed` for the second URL. The
+  forbidden request therefore never occurred.
+- Same-origin test: `https://same.test/start` → `/final` returned `finished`;
+  page calls were start + final, while the robots fake recorded exactly one
+  `/robots.txt` fetch. The process-scoped cache prevented redundant policy I/O.
+- Fixture gate stayed exact: the existing failure-capable
+  `a_fixture_fetch_never_asks_the_publisher_for_permission` test passed with
+  both the fake's call count and `RobotsCache::fetches()` at **0**. RSS and OAI
+  fixture branches remain separate from `net::get_text`.
+- The first full workspace test run exposed a separate pre-existing isolation
+  defect and was **not counted as a pass**: store test
+  `duplicate_ingest_maps_to_one_canonical_id` found 3 rows instead of 2.
+  `tmp_store()` still used timestamp-only filenames; the correctly qualified
+  test passed alone (1/1), confirming a parallel collision. The test helper now
+  includes pid + process-global atomic sequence + timestamp, matching cored's
+  proven isolation shape. A full parallel store run then passed 9/9, followed
+  by the complete workspace passing 84/84. No production store code changed.
+- Final acceptance matrix: warning-denied workspace and net checks passed;
+  **84 workspace tests**, **19 net ingest tests**, and **70 shell tests** passed
+  (the existing one third-party Starlette deprecation remains); clippy and fmt
+  passed. No dependency or MSRV change.
+- Golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t5-golden.qNIV2J/golden.db` and was byte-identical:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
+  **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
+  and `/v1/ask` retained the ordinary mock answer, **4 citations**, and
   `techwire::tw-004` suppression. `data/core.db` remained 1,764 documents,
   6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
   `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.

@@ -88,7 +88,9 @@ where it does; here is what you must never do.
   refuse *more*. Fail-closed on unreachable (5xx / DNS / TLS / timeout ⇒ take
   nothing). The 404 disposition is **per-source** (`robots_on_missing`), defaults
   to deny, and opting in reinterprets *absence only* — it must never become
-  "ignore robots.txt". Never replace this with a global flip.
+  "ignore robots.txt". Never replace this with a global flip. Automatic HTTP
+  redirects stay disabled; every document redirect is followed manually and the
+  full gate is re-run before requesting the next origin.
 - **Dedup identity is a function of the corpus, not arrival order.** `canonical_id`
   is re-materialized from the global rule (earliest by `(published_day, id)`) on
   every ingest that adds rows — never assigned first-seen-wins at insert.

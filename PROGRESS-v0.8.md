@@ -166,3 +166,28 @@ correct them with a new dated entry.
   because its four-document clean FPR measured 1.0513%. One punctuation-less
   record lacked an eligible complete sentence in the visible 800 characters
   and is explicitly identified in STATE. No dependency or MSRV change.
+
+### 2026-07-20 · T5 — every redirect is re-gated before the next request
+
+- owner: 🤖 Codex
+- measured: cross-origin fake returned first/start → 302 second/blocked; robots
+  calls were first/robots.txt and second/robots.txt, while page calls contained
+  only first/start because second's `Disallow` stopped the request. Same-origin
+  start → final made 2 page calls and exactly 1 robots fetch. Fixture negative
+  control remained 0 robots fetches. Both reqwest clients set `Policy::none()`.
+- acceptance: cross-origin policy fetched and honored before body request ✅ ·
+  same-origin redirect reused cached policy ✅ · fixture issued zero fetches ✅ ·
+  both clients disable automatic redirects ✅ · workspace 84, net 19, shell 70
+  tests green; warning-denied checks, clippy, and fmt clean ✅
+- golden E2E: unchanged — fresh fixture DB; acme 13 → 12; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; re-ingest +0; quant 1; ordinary `/v1/ask` answer, 4 citations, and
+  `techwire::tw-004` suppression unchanged. `data/core.db` retained exact count,
+  hash, size, and mtime.
+- commit: this T5 redirect-regating commit (see git history)
+- notes / gate: Design 1 selected; no request is made to a redirected origin
+  before its gate. The first full workspace run failed on a pre-existing
+  timestamp-only `intel-store` temp-DB collision (3 rows vs 2); the exact test
+  passed alone, and a test-only pid + atomic-sequence filename fix made the full
+  matrix pass. The failure and fix are recorded in STATE; no production store
+  behavior changed.

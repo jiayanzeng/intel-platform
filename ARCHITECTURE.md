@@ -108,11 +108,13 @@ Pinned dispositions:
 - **Politeness is process-scoped (HC8):** `HostLimiters` and `RobotsCache` in
   `AppState`.
 
-**Open gap (T5).** The gate checks the *configured* origin, but both
-`reqwest::Client`s in `crates/ingest/src/net.rs` set no redirect policy, so
-reqwest follows up to 10 redirects to origins whose policy was never read. Worked
-around for arXiv by pointing config at the canonical no-redirect host; must be
-fixed before a second cross-origin-redirecting source goes live.
+**Redirects are re-gated before the next request (v0.8/T5).** Both
+`reqwest::Client`s in `crates/ingest/src/net.rs` use `Policy::none()`. Document
+redirects are resolved manually (maximum 10 hops), and the full publisher +
+operator gate runs before each hop. A cross-origin `Location` therefore causes
+the new origin's robots policy to be fetched and honored before document bytes
+are requested; a same-origin hop reuses the process-scoped cache. Robots-file
+redirects fail closed rather than silently moving to another origin.
 
 ## 5. Endpoints (core, loopback 127.0.0.1:8788)
 

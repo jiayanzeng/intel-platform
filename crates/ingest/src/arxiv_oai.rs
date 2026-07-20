@@ -135,6 +135,7 @@ impl ArxivOaiSource {
     /// OAI-PMH resume request.
     async fn fetch_page_text(
         &self,
+        _ctx: &SourceContext,
         resume: Option<&str>,
         _from: Option<&str>,
     ) -> Result<String, IngestError> {
@@ -151,7 +152,7 @@ impl ArxivOaiSource {
         #[cfg(feature = "net")]
         {
             let url = oai_request_url(&self.endpoint_url, resume, _from);
-            crate::net::get_text(&url).await
+            crate::net::get_text(_ctx, &url, self.robots_on_missing).await
         }
         #[cfg(not(feature = "net"))]
         {
@@ -234,10 +235,12 @@ impl Source for ArxivOaiSource {
             } else {
                 Reach::Network
             };
-            gate(ctx, &self.endpoint_url, reach, self.robots_on_missing).await?;
+            if reach == Reach::Fixture {
+                gate(ctx, &self.endpoint_url, reach, self.robots_on_missing).await?;
+            }
 
             let xml = self
-                .fetch_page_text(resume.as_deref(), from.as_deref())
+                .fetch_page_text(ctx, resume.as_deref(), from.as_deref())
                 .await?;
             let tree =
                 roxmltree::Document::parse(&xml).map_err(|e| IngestError::Parse(e.to_string()))?;

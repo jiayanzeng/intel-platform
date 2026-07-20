@@ -681,11 +681,15 @@ mod tests {
     use super::*;
 
     fn tmp_store() -> SqliteStore {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static SEQ: AtomicU64 = AtomicU64::new(0);
+        let seq = SEQ.fetch_add(1, Ordering::Relaxed);
         let n = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let path = std::env::temp_dir().join(format!("intel-store-cursor-{n}.db"));
+        let pid = std::process::id();
+        let path = std::env::temp_dir().join(format!("intel-store-{pid}-{seq}-{n}.db"));
         SqliteStore::open(&path).unwrap()
     }
 

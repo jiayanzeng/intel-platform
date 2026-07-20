@@ -6,8 +6,9 @@
 //! bounded backoff (HC8). Production additions: conditional GET (ETag /
 //! If-Modified-Since) and a per-host client pool.
 
-use crate::IngestError;
-use intel_compliance::{RobotsFetch, RobotsFetcher};
+use crate::{gate, IngestError, Reach, SourceContext};
+use intel_compliance::{MissingPolicy, RobotsFetch, RobotsFetcher};
+use reqwest::redirect::Policy;
 use std::time::Duration;
 
 /// The User-Agent we identify ourselves with — and, necessarily, the same token
@@ -40,6 +41,10 @@ impl HttpRobotsFetcher {
             client: reqwest::Client::builder()
                 .user_agent(USER_AGENT)
                 .timeout(Duration::from_secs(15))
+                // A robots request must never follow silently to a different
+                // origin. A redirect is treated as unreachable (fail closed),
+                // while document redirects are followed manually below.
+                .redirect(Policy::none())
                 .build()
                 .map_err(|e| IngestError::Http(e.to_string()))?,
         })
@@ -79,49 +84,338 @@ const MAX_RETRIES: u32 = 5;
 /// Fallback wait when a 503 omits a parseable `Retry-After` (arXiv's suggested
 /// spacing).
 const DEFAULT_RETRY_SECS: u64 = 3;
+/// Match reqwest's former default bound while making every hop explicit.
+const MAX_REDIRECTS: u32 = 10;
 
-pub async fn get_text(url: &str) -> Result<String, IngestError> {
-    let client = reqwest::Client::builder()
-        .user_agent(USER_AGENT)
-        // A per-request timeout is not optional on a live harvester. Without it,
-        // a server that accepts the connection and then stalls holds the whole
-        // ingest open indefinitely — which is exactly what "hung for 26 minutes
-        // with no output" looks like from the outside. 60s is generous for a
-        // 1000-record OAI page yet bounds the worst case. The 503/Retry-After
-        // sleep below is separate and deliberate; this only catches a dead
-        // connection, not a server politely asking us to wait.
-        .timeout(Duration::from_secs(60))
-        .connect_timeout(Duration::from_secs(15))
-        .build()
-        .map_err(|e| IngestError::Http(e.to_string()))?;
+#[derive(Clone, Debug)]
+struct PageResponse {
+    status: u16,
+    location: Option<String>,
+    retry_after_secs: Option<u64>,
+    body: Option<String>,
+}
 
-    for attempt in 0..=MAX_RETRIES {
-        let resp = client
+#[async_trait::async_trait]
+trait PageFetcher: Send + Sync {
+    async fn fetch(&self, url: &str) -> Result<PageResponse, IngestError>;
+}
+
+struct ReqwestPageFetcher {
+    client: reqwest::Client,
+}
+
+impl ReqwestPageFetcher {
+    fn new() -> Result<Self, IngestError> {
+        Ok(Self {
+            client: reqwest::Client::builder()
+                .user_agent(USER_AGENT)
+                // Every Location is resolved below, and the robots gate runs
+                // before the next request. Automatic redirects would ask the
+                // new origin for content before asking it for permission.
+                .redirect(Policy::none())
+                // A per-request timeout is not optional on a live harvester.
+                // 60s is generous for a 1000-record OAI page yet bounds a dead
+                // connection; Retry-After sleeping remains separate.
+                .timeout(Duration::from_secs(60))
+                .connect_timeout(Duration::from_secs(15))
+                .build()
+                .map_err(|e| IngestError::Http(e.to_string()))?,
+        })
+    }
+}
+
+#[async_trait::async_trait]
+impl PageFetcher for ReqwestPageFetcher {
+    async fn fetch(&self, url: &str) -> Result<PageResponse, IngestError> {
+        let response = self
+            .client
             .get(url)
             .send()
             .await
             .map_err(|e| IngestError::Http(e.to_string()))?;
-        let status = resp.status();
-        if status.is_success() {
-            return resp
-                .text()
-                .await
-                .map_err(|e| IngestError::Http(e.to_string()));
+        let status = response.status();
+        let location = response
+            .headers()
+            .get(reqwest::header::LOCATION)
+            .and_then(|value| value.to_str().ok())
+            .map(str::to_string);
+        let retry_after_secs = response
+            .headers()
+            .get(reqwest::header::RETRY_AFTER)
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.trim().parse::<u64>().ok());
+        let body = if status.is_success() {
+            Some(
+                response
+                    .text()
+                    .await
+                    .map_err(|e| IngestError::Http(e.to_string()))?,
+            )
+        } else {
+            None
+        };
+
+        Ok(PageResponse {
+            status: status.as_u16(),
+            location,
+            retry_after_secs,
+            body,
+        })
+    }
+}
+
+pub async fn get_text(
+    ctx: &SourceContext,
+    url: &str,
+    on_missing: MissingPolicy,
+) -> Result<String, IngestError> {
+    let fetcher = ReqwestPageFetcher::new()?;
+    get_text_with(ctx, url, on_missing, &fetcher).await
+}
+
+async fn get_text_with(
+    ctx: &SourceContext,
+    url: &str,
+    on_missing: MissingPolicy,
+    fetcher: &dyn PageFetcher,
+) -> Result<String, IngestError> {
+    let mut current = reqwest::Url::parse(url)
+        .map_err(|error| IngestError::Http(format!("invalid URL {url}: {error}")))?;
+    let mut redirects = 0_u32;
+    let mut retries = 0_u32;
+
+    loop {
+        // This is deliberately before fetch(). On a cross-origin Location, the
+        // new origin's robots.txt is read and honored before any document
+        // request reaches that origin.
+        gate(ctx, current.as_str(), Reach::Network, on_missing).await?;
+        let response = fetcher.fetch(current.as_str()).await?;
+
+        if (200..300).contains(&response.status) {
+            return response.body.ok_or_else(|| {
+                IngestError::Http(format!("empty successful response for {current}"))
+            });
         }
-        // Honor 503 Retry-After (seconds form) with bounded retries.
-        if status.as_u16() == 503 && attempt < MAX_RETRIES {
-            let wait = resp
-                .headers()
-                .get(reqwest::header::RETRY_AFTER)
-                .and_then(|v| v.to_str().ok())
-                .and_then(|s| s.trim().parse::<u64>().ok())
-                .unwrap_or(DEFAULT_RETRY_SECS);
-            tokio::time::sleep(Duration::from_secs(wait)).await;
+
+        if matches!(response.status, 301 | 302 | 303 | 307 | 308) {
+            if redirects >= MAX_REDIRECTS {
+                return Err(IngestError::Http(format!(
+                    "giving up after {MAX_REDIRECTS} redirects for {url}"
+                )));
+            }
+            let location = response.location.ok_or_else(|| {
+                IngestError::Http(format!(
+                    "redirect {} without Location for {current}",
+                    response.status
+                ))
+            })?;
+            let next = current.join(&location).map_err(|error| {
+                IngestError::Http(format!(
+                    "invalid redirect from {current} to {location}: {error}"
+                ))
+            })?;
+            if !matches!(next.scheme(), "http" | "https") {
+                return Err(IngestError::Http(format!(
+                    "refusing non-HTTP redirect from {current} to {next}"
+                )));
+            }
+            current = next;
+            redirects += 1;
+            retries = 0;
             continue;
         }
-        return Err(IngestError::Http(format!("{status} for {url}")));
+
+        // Honor 503 Retry-After (seconds form) with bounded retries.
+        if response.status == 503 && retries < MAX_RETRIES {
+            tokio::time::sleep(Duration::from_secs(
+                response.retry_after_secs.unwrap_or(DEFAULT_RETRY_SECS),
+            ))
+            .await;
+            retries += 1;
+            continue;
+        }
+
+        return Err(IngestError::Http(format!(
+            "HTTP {} for {current}",
+            response.status
+        )));
     }
-    Err(IngestError::Http(format!(
-        "giving up after {MAX_RETRIES} retries (503) for {url}"
-    )))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
+    use std::collections::HashMap;
+    use std::sync::{Arc, Mutex};
+
+    struct FakePageFetcher {
+        responses: HashMap<String, PageResponse>,
+        calls: Mutex<Vec<String>>,
+    }
+
+    impl FakePageFetcher {
+        fn new(responses: impl IntoIterator<Item = (&'static str, PageResponse)>) -> Self {
+            Self {
+                responses: responses
+                    .into_iter()
+                    .map(|(url, response)| (url.to_string(), response))
+                    .collect(),
+                calls: Mutex::new(Vec::new()),
+            }
+        }
+
+        fn calls(&self) -> Vec<String> {
+            self.calls.lock().unwrap().clone()
+        }
+    }
+
+    #[async_trait::async_trait]
+    impl PageFetcher for FakePageFetcher {
+        async fn fetch(&self, url: &str) -> Result<PageResponse, IngestError> {
+            self.calls.lock().unwrap().push(url.to_string());
+            self.responses
+                .get(url)
+                .cloned()
+                .ok_or_else(|| IngestError::Http(format!("unexpected page fetch: {url}")))
+        }
+    }
+
+    struct PolicyRobotsFetcher {
+        responses: HashMap<String, RobotsFetch>,
+        calls: Mutex<Vec<String>>,
+    }
+
+    impl PolicyRobotsFetcher {
+        fn new(responses: impl IntoIterator<Item = (&'static str, RobotsFetch)>) -> Arc<Self> {
+            Arc::new(Self {
+                responses: responses
+                    .into_iter()
+                    .map(|(url, response)| (url.to_string(), response))
+                    .collect(),
+                calls: Mutex::new(Vec::new()),
+            })
+        }
+
+        fn calls(&self) -> Vec<String> {
+            self.calls.lock().unwrap().clone()
+        }
+    }
+
+    #[async_trait::async_trait]
+    impl RobotsFetcher for PolicyRobotsFetcher {
+        async fn fetch(&self, robots_url: &str) -> RobotsFetch {
+            self.calls.lock().unwrap().push(robots_url.to_string());
+            self.responses
+                .get(robots_url)
+                .cloned()
+                .unwrap_or(RobotsFetch::Unreachable)
+        }
+    }
+
+    fn context(fetcher: Arc<PolicyRobotsFetcher>) -> SourceContext {
+        let limiter = Arc::new(HostLimiters::per_second(1000.0));
+        SourceContext {
+            robots: RobotsGate::new(&[]),
+            limiter: limiter.clone(),
+            cursors: None,
+            robots_cache: Some(Arc::new(RobotsCache::new(
+                fetcher,
+                limiter,
+                USER_AGENT,
+                Duration::from_secs(3600),
+                16,
+            ))),
+        }
+    }
+
+    fn redirect(location: &str) -> PageResponse {
+        PageResponse {
+            status: 302,
+            location: Some(location.to_string()),
+            retry_after_secs: None,
+            body: None,
+        }
+    }
+
+    fn ok(body: &str) -> PageResponse {
+        PageResponse {
+            status: 200,
+            location: None,
+            retry_after_secs: None,
+            body: Some(body.to_string()),
+        }
+    }
+
+    #[tokio::test]
+    async fn cross_origin_redirect_reads_and_honors_new_robots_before_fetching() {
+        let robots = PolicyRobotsFetcher::new([
+            (
+                "https://first.test/robots.txt",
+                RobotsFetch::Body("User-agent: *\nAllow: /\n".to_string()),
+            ),
+            (
+                "https://second.test/robots.txt",
+                RobotsFetch::Body("User-agent: *\nDisallow: /blocked\n".to_string()),
+            ),
+        ]);
+        let ctx = context(robots.clone());
+        let pages = FakePageFetcher::new([
+            (
+                "https://first.test/start",
+                redirect("https://second.test/blocked"),
+            ),
+            (
+                "https://second.test/blocked",
+                ok("this body must never be requested"),
+            ),
+        ]);
+
+        let error = get_text_with(
+            &ctx,
+            "https://first.test/start",
+            MissingPolicy::Deny,
+            &pages,
+        )
+        .await
+        .expect_err("second origin denies the redirected path");
+
+        assert!(matches!(
+            error,
+            IngestError::RobotsDisallowed(url)
+                if url == "https://second.test/blocked"
+        ));
+        assert_eq!(
+            robots.calls(),
+            vec![
+                "https://first.test/robots.txt",
+                "https://second.test/robots.txt"
+            ]
+        );
+        assert_eq!(pages.calls(), vec!["https://first.test/start"]);
+    }
+
+    #[tokio::test]
+    async fn same_origin_redirect_reuses_the_cached_robots_policy() {
+        let robots = PolicyRobotsFetcher::new([(
+            "https://same.test/robots.txt",
+            RobotsFetch::Body("User-agent: *\nAllow: /\n".to_string()),
+        )]);
+        let ctx = context(robots.clone());
+        let pages = FakePageFetcher::new([
+            ("https://same.test/start", redirect("/final")),
+            ("https://same.test/final", ok("finished")),
+        ]);
+
+        let body = get_text_with(&ctx, "https://same.test/start", MissingPolicy::Deny, &pages)
+            .await
+            .expect("same-origin redirect allowed");
+
+        assert_eq!(body, "finished");
+        assert_eq!(robots.calls(), vec!["https://same.test/robots.txt"]);
+        assert_eq!(
+            pages.calls(),
+            vec!["https://same.test/start", "https://same.test/final"]
+        );
+    }
 }
