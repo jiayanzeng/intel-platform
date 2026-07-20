@@ -1,0 +1,21 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "style": "xml",
+    "removeComments": false,
+    "removeEmptyLines": false
+  },
+  "ignore": {
+    "useDefaultPatterns": false,
+    "useGitignore": true,
+    "customPatterns": [
+      ".git/**",
+      "target/**",
+      "data/**",
+      ".venv/**",
+      "**/__pycache__/**",
+      "**/*.pyc",
+      "repomix-output-*.xml"
+    ]
+  }
+}

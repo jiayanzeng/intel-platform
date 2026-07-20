@@ -1,0 +1,22 @@
+{
+  "default_interval_seconds": 3600,
+  "state_path": "data/scheduler_state.json",
+  "jobs": [
+    {
+      "client": "acme-research",
+      "interval_seconds": 1800,
+      "llm_enrich": false,
+      "sources": {
+        "techwire": 900,
+        "osdaily": 1800
+      },
+      "sectors": {
+        "science": 3600
+      }
+    },
+    {
+      "client": "quant-desk",
+      "interval_seconds": 7200
+    }
+  ]
+}

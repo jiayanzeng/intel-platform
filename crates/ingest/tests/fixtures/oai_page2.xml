@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <responseDate>2026-07-05T20:00:03Z</responseDate>
+  <request verb="ListRecords" resumptionToken="oai_page2.xml">https://export.arxiv.org/oai2</request>
+  <ListRecords>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.02201</identifier>
+        <datestamp>2026-07-03</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>DeepSeek-V4 Technical Report: Scaling Sparse Attention with Mixture-of-Experts</dc:title>
+          <dc:creator>DeepSeek Research</dc:creator>
+          <dc:subject>cs.LG</dc:subject>
+          <dc:description>DeepSeek-V4 combines hierarchical sparse attention with a Mixture-of-Experts backbone.</dc:description>
+          <dc:date>2026-07-03</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.02201</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.02377</identifier>
+        <datestamp>2026-07-04</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Evaluating Code Agents on Multi-Repository Refactoring Tasks</dc:title>
+          <dc:creator>Alvarez, Sofia</dc:creator>
+          <dc:subject>cs.SE</dc:subject>
+          <dc:description>Code agents built on DeepSeek and Qwen model families across multi-repository refactoring tasks.</dc:description>
+          <dc:date>2026-07-04</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.02377</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <resumptionToken cursor="2" completeListSize="4"></resumptionToken>
+  </ListRecords>
+</OAI-PMH>

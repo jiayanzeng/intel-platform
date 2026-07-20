@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>TechWire</title>
+  <item>
+    <guid>tw-001</guid>
+    <title>Rust data pipelines keep displacing JVM stacks in ingestion workloads</title>
+    <link>https://example.org/techwire/rust-pipelines</link>
+    <author>J. Mercer</author>
+    <pubDate>Wed, 01 Jul 2026 08:15:00 GMT</pubDate>
+    <description>A survey of infrastructure teams finds Rust adoption accelerating for high-throughput ingestion, with embedded search engines like Tantivy cited as a reason teams can drop external services entirely.</description>
+  </item>
+  <item>
+    <guid>tw-002</guid>
+    <title>vLLM ships Blackwell kernel optimizations</title>
+    <link>https://example.org/techwire/vllm-blackwell</link>
+    <author>J. Mercer</author>
+    <pubDate>Thu, 02 Jul 2026 10:00:00 GMT</pubDate>
+    <description>The latest vLLM release includes attention kernels tuned for NVIDIA Blackwell consumer cards, cutting decode latency for long prompts on 16GB-class hardware.</description>
+  </item>
+  <item>
+    <guid>tw-004</guid>
+    <title>DeepSeek opens V4 Pro weights for research use (syndicated)</title>
+    <link>https://example.org/techwire/deepseek-v4-weights</link>
+    <author>Newswire</author>
+    <pubDate>Sat, 04 Jul 2026 09:30:00 GMT</pubDate>
+    <description>DeepSeek said researchers can request the V4 Pro checkpoints starting today. Early adopters are serving the release through vLLM at launch. Helios Labs said it will fine-tune the model for laboratory automation workloads.</description>
+  </item>
+  <item>
+    <guid>tw-005</guid>
+    <title>Helios Labs raises Series A for autonomous lab agents</title>
+    <link>https://example.org/techwire/helios-series-a</link>
+    <author>P. Anand</author>
+    <pubDate>Sat, 04 Jul 2026 14:00:00 GMT</pubDate>
+    <description>Helios Labs, a startup building agentic systems for wet-lab automation, announced new funding today. The company said it fine-tunes DeepSeek models for instrument control and plans to expand its perception stack next quarter.</description>
+  </item>
+</channel></rss>

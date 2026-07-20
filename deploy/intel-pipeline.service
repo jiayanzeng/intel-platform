@@ -1,0 +1,22 @@
+[Unit]
+# One-shot invocation of the shell scheduler: runs whatever jobs are due
+# right now and exits. The systemd *timer* (intel-pipeline.timer) owns the
+# clock; --once makes this idempotent to fire as often as the timer likes.
+Description=intel-platform pipeline (scheduled, one-shot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/intel-platform
+Environment=PYTHONPATH=shell
+# Point at the running core and (optionally) an LLM endpoint:
+Environment=CORE_URL=http://127.0.0.1:8788
+# Environment=CORE_TOKEN=...
+# Environment=LLM_BASE_URL=http://127.0.0.1:8899/v1
+# Environment=API_KEY_PEPPER=...
+ExecStart=/usr/bin/env python3 -m intel_shell.scheduler --once
+# Least privilege — the shell only needs to reach the core and write data/:
+User=intel
+Group=intel
+ReadWritePaths=/opt/intel-platform/data

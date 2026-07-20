@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>Public Filings Digest</title>
+  <item>
+    <guid>fin-001</guid>
+    <title>Weekly digest of quarterly filings (public domain)</title>
+    <link>https://example.org/filings/weekly</link>
+    <author>Registry Bot</author>
+    <pubDate>Fri, 03 Jul 2026 06:00:00 GMT</pubDate>
+    <description>This document should never appear for acme-research: the Finance sector is not in that subscription.</description>
+  </item>
+</channel></rss>

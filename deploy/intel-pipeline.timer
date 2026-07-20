@@ -1,0 +1,13 @@
+[Unit]
+Description=Fire the intel-platform scheduler every 15 minutes
+
+[Timer]
+# Every 15 minutes after boot; the scheduler's own per-source cadences (in
+# config/schedule.json) decide which jobs actually run on each firing, so this
+# tick can be as fine as you like without over-fetching.
+OnBootSec=2min
+OnUnitActiveSec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

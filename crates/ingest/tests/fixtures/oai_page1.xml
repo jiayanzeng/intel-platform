@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <responseDate>2026-07-05T20:00:00Z</responseDate>
+  <request verb="ListRecords" metadataPrefix="oai_dc" set="cs">https://export.arxiv.org/oai2</request>
+  <ListRecords>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.00101</identifier>
+        <datestamp>2026-07-01</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Stable Routing for Sparse Mixture of Experts under Memory Constraints</dc:title>
+          <dc:creator>Chen, Wei</dc:creator>
+          <dc:subject>cs.LG</dc:subject>
+          <dc:description>Routing stability in sparse mixture of experts language models under constrained accelerator memory.</dc:description>
+          <dc:date>2026-07-01</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.00101</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.00212</identifier>
+        <datestamp>2026-07-02</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Benchmarking Retrieval-Augmented Generation for Scientific Literature Triage</dc:title>
+          <dc:creator>Haddad, Mariam</dc:creator>
+          <dc:subject>cs.CL</dc:subject>
+          <dc:description>An open benchmark for retrieval-augmented generation over scientific corpora.</dc:description>
+          <dc:date>2026-07-02</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.00212</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <resumptionToken cursor="0" completeListSize="4">oai_page2.xml</resumptionToken>
+  </ListRecords>
+</OAI-PMH>

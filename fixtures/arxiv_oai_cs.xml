@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <responseDate>2026-07-04T20:00:00Z</responseDate>
+  <request verb="ListRecords" metadataPrefix="oai_dc" set="cs">https://export.arxiv.org/oai2</request>
+  <ListRecords>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.00101</identifier>
+        <datestamp>2026-07-01</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Stable Routing for Sparse Mixture of Experts under Memory Constraints</dc:title>
+          <dc:creator>Chen, Wei</dc:creator>
+          <dc:creator>Novak, Petra</dc:creator>
+          <dc:subject>cs.LG</dc:subject>
+          <dc:description>We study routing stability in sparse mixture of experts language models under constrained accelerator memory. Experiments on open Qwen checkpoints show that routing collapse can be predicted from load-balance loss curvature, enabling early intervention during training.</dc:description>
+          <dc:date>2026-07-01</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.00101</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.00212</identifier>
+        <datestamp>2026-07-01</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Benchmarking Retrieval-Augmented Generation for Scientific Literature Triage</dc:title>
+          <dc:creator>Haddad, Mariam</dc:creator>
+          <dc:subject>cs.CL</dc:subject>
+          <dc:description>We introduce an open benchmark for retrieval-augmented generation over scientific corpora, with reference implementations in PyTorch and an evaluation harness covering citation-grounded answering and abstract triage.</dc:description>
+          <dc:date>2026-07-01</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.00212</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.00847</identifier>
+        <datestamp>2026-07-02</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Foundation Models for Time-Domain Astronomy</dc:title>
+          <dc:creator>Okafor, Rina</dc:creator>
+          <dc:subject>cs.LG</dc:subject>
+          <dc:subject>astro-ph.IM</dc:subject>
+          <dc:description>We pretrain foundation models on photometric time series from public sky surveys and demonstrate transfer to transient classification and period estimation for variable stars, using only openly licensed archival data.</dc:description>
+          <dc:date>2026-07-02</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.00847</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.01455</identifier>
+        <datestamp>2026-07-03</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>KV-Cache Compression for Long-Context Inference on Commodity GPUs</dc:title>
+          <dc:creator>Lindqvist, Johan</dc:creator>
+          <dc:subject>cs.LG</dc:subject>
+          <dc:description>We propose a KV-cache compression scheme for long-context inference that integrates with vLLM and requires no retraining, evaluated on recent NVIDIA consumer accelerators with limited memory budgets.</dc:description>
+          <dc:date>2026-07-03</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.01455</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.02201</identifier>
+        <datestamp>2026-07-04</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>DeepSeek-V4 Technical Report: Scaling Sparse Attention with Mixture-of-Experts</dc:title>
+          <dc:creator>DeepSeek Research</dc:creator>
+          <dc:subject>cs.LG</dc:subject>
+          <dc:description>We present DeepSeek-V4, combining hierarchical sparse attention with a Mixture-of-Experts backbone. The report details training stability techniques, an inference-time expert-offloading scheme, and evaluations against contemporary open baselines.</dc:description>
+          <dc:date>2026-07-04</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.02201</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:2607.02377</identifier>
+        <datestamp>2026-07-04</datestamp>
+        <setSpec>cs</setSpec>
+      </header>
+      <metadata>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                   xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <dc:title>Evaluating Code Agents on Multi-Repository Refactoring Tasks</dc:title>
+          <dc:creator>Alvarez, Sofia</dc:creator>
+          <dc:creator>Tsinghua University NLP Group</dc:creator>
+          <dc:subject>cs.SE</dc:subject>
+          <dc:description>We evaluate code agents built on DeepSeek and Qwen model families across multi-repository refactoring tasks, finding that repository-level context selection dominates raw model capability as task horizon grows.</dc:description>
+          <dc:date>2026-07-04</dc:date>
+          <dc:identifier>http://arxiv.org/abs/2607.02377</dc:identifier>
+        </oai_dc:dc>
+      </metadata>
+    </record>
+    <resumptionToken cursor="0" completeListSize="6"></resumptionToken>
+  </ListRecords>
+</OAI-PMH>

@@ -1,0 +1,22 @@
+[package]
+name = "intel-ingest"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+intel-core = { path = "../core" }
+intel-compliance = { path = "../compliance" }
+async-trait = "0.1"
+thiserror = "1"
+roxmltree = "0.19"
+reqwest = { version = "0.11", default-features = false, features = ["rustls-tls"], optional = true }
+# Only pulled in on the live path, for honoring 503 Retry-After between pages.
+tokio = { version = "1", features = ["time"], optional = true }
+
+[features]
+net = ["dep:reqwest", "dep:tokio"]
+
+[dev-dependencies]
+# Async connector tests (fixture-driven, offline). Also brings the time driver
+# the per-host limiters use.
+tokio = { version = "1", features = ["macros", "rt", "time", "sync"] }

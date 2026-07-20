@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/compliance",
+    "crates/ingest",
+    "crates/extract",
+    "crates/enrich",
+    "crates/analyze",
+    "crates/store",
+    "crates/registry",
+    "crates/view",
+    "crates/retrieve",
+    "apps/cored",
+]

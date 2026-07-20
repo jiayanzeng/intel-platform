@@ -1,0 +1,227 @@
+# CI — the check that would have caught this project's backstory.
+#
+# Twice now, ecosystem drift has broken a build nobody was building:
+# `--features net` sat broken for two full cycles because nothing in CI ever
+# compiled it, and the reason it broke at all was an uncommitted `Cargo.lock`
+# silently re-resolving to whatever crates.io published that week (HC12).
+#
+# So this file enforces three things, and each one maps to a scar:
+#   1. `--locked` everywhere        -> the lock is the build, not a suggestion
+#   2. a `--features net` job       -> the path that was broken and unwatched
+#   3. `-D warnings`                -> 0 warnings is a gate, not an aspiration
+#
+# Plus a scheduled `cargo update --dry-run` that REPORTS drift without
+# applying it. The point is to learn that the ecosystem moved *before* it
+# breaks a build, which is precisely the signal we did not have.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Mondays 06:00 UTC — the drift report, see the `drift` job.
+    - cron: "0 6 * * 1"
+
+env:
+  CARGO_TERM_COLOR: always
+  # Fail the build on any warning. `cargo check` does not do this by itself.
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # The offline path: everything except live fetching. MSRV floor is 1.75.
+  # ---------------------------------------------------------------------------
+  core:
+    name: core (pinned toolchain)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # rust-toolchain.toml pins the channel; this action honors it, so the
+      # version lives in exactly one place.
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.91"
+
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo check --workspace --locked
+        run: cargo check --workspace --locked --all-targets
+
+      - name: cargo test --workspace --locked
+        run: cargo test --workspace --locked
+
+      # fmt/clippy are their own job (`lint`) below, run for real but
+      # continue-on-error — see the rationale there.
+
+  # ---------------------------------------------------------------------------
+  # Lint: clippy + rustfmt, run FOR REAL but non-blocking (continue-on-error).
+  #
+  # Two honest constraints shaped this:
+  #  1. The dev sandbox's apt toolchain ships neither clippy nor rustfmt, so
+  #     these lints cannot be verified where the code is written — only here, on
+  #     a runner that has them. A gate you cannot run locally should not be able
+  #     to block a merge on a rule the author couldn't check first.
+  #  2. A known-and-accepted clippy divergence exists: `clippy::unnecessary_map_or`
+  #     is #![allow]'d in intel-compliance and arxiv_oai, because its fix
+  #     (`Option::is_none_or`) is Rust 1.82+ and would raise the offline MSRV
+  #     floor above the declared 1.78. That is a deliberate trade, not debt.
+  #
+  # So this job REPORTS clippy/fmt status (visible on every PR) without gating.
+  # The remaining lints it surfaces are cleanup, not correctness — see STATE §5.
+  # Flip `continue-on-error` to false once the tree is clippy-clean on a pinned
+  # toolchain and the team wants it enforced.
+  # ---------------------------------------------------------------------------
+  lint:
+    name: clippy + fmt (report only)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.91"
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+      - name: cargo clippy
+        run: cargo clippy --workspace --locked --all-targets -- -D warnings
+
+  # ---------------------------------------------------------------------------
+  # The live path. This job is the whole reason this file exists: `--features
+  # net` is not in the default build graph, so a plain `cargo check` compiles
+  # none of it, which is how it stayed broken from v0.4 to v0.6.2 without
+  # anyone noticing.
+  #
+  # It is a SEPARATE job, not a step in `core`, so that its failure is legible
+  # at a glance rather than buried in a log — and so it can carry its own,
+  # higher MSRV (>= 1.86: icu_* 2.2.0, via idna_adapter, declare that floor).
+  # ---------------------------------------------------------------------------
+  net:
+    name: live-fetch path (--features net)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.91"
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo check -p cored --features net --locked
+        run: cargo check -p cored --features net --locked --all-targets
+
+      - name: cargo test -p intel-ingest --features net --locked
+        run: cargo test -p intel-ingest --features net --locked
+
+  # ---------------------------------------------------------------------------
+  # The MSRV floor for the OFFLINE build is **1.78**, and getting to that number
+  # was the most instructive hour of this cycle.
+  #
+  #   v0.6.2 claimed "Rust 1.75 + --locked still builds the offline path." That
+  #   was FALSE and had never been run: v0.6.2 also committed `Cargo.lock` at
+  #   **format v4**, which cargo cannot even *parse* before 1.78. `cargo +1.75
+  #   check --locked` died at the lockfile, long before it reached any
+  #   dependency's MSRV.
+  #
+  #   The obvious fix — re-encode the lock as v3 — WORKS (1.75 builds, 75 tests
+  #   green; verified). It is also NOT STABLE: cargo 1.91 rewrites the lock back
+  #   to v4 the moment it has to modify it, so the v3 encoding is a hand-edit
+  #   that the next dependency change silently undoes. A floor that holds only
+  #   until someone touches the lock is not a floor. So we state the one that is
+  #   actually true and actually sustainable: **1.78**.
+  #
+  # Two lessons, both kept on the record:
+  #   1. The lockfile FORMAT is part of the MSRV surface, not just the
+  #      dependency graph. Dependency MSRVs here still permit 1.75; the lock
+  #      format does not.
+  #   2. A claimed property that nothing executes is not a property. This is the
+  #      THIRD time this project has been bitten by exactly that (--features net
+  #      unbuilt for two cycles; robots policy never fetched; this).
+  #
+  # This job is also what stops a future dependency (say, a robots.txt crate
+  # that drags in the icu_* chain — see STATE §6b) from silently raising the
+  # floor to 1.86 while every other job stays green.
+  # ---------------------------------------------------------------------------
+  msrv:
+    name: MSRV floor (offline builds on 1.78)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.78"
+      - uses: Swatinem/rust-cache@v2
+
+      # No -D warnings here: an older compiler lints differently, and we are
+      # asserting that it *builds*, not that it is lint-clean on 1.75.
+      - name: cargo check --workspace --locked (1.78)
+        env:
+          RUSTFLAGS: ""
+        run: cargo check --workspace --locked
+
+      - name: cargo test --workspace --locked (1.78)
+        env:
+          RUSTFLAGS: ""
+        run: cargo test --workspace --locked
+
+  # ---------------------------------------------------------------------------
+  # The shell. Free, and it holds the entitlement/licensing invariants that the
+  # Rust tests deliberately do not (HC1/HC2 live on both sides of the seam).
+  # ---------------------------------------------------------------------------
+  shell:
+    name: shell (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install
+        run: pip install -r shell/requirements.txt
+      - name: pytest
+        run: PYTHONPATH=shell python3 -m pytest shell/tests -q
+
+  # ---------------------------------------------------------------------------
+  # Drift report. Runs on a schedule, NEVER on a PR, and never commits anything.
+  #
+  # It exists because the failure mode we keep hitting is not "a dependency
+  # broke" — it is "a dependency broke and we found out months later, from a
+  # build error that pointed at the wrong thing." (`edition2024` surfaced as
+  # `failed to download replaced source registry 'crates-io'`, which sent two
+  # separate investigations looking in the registry instead of at MSRVs.)
+  #
+  # `continue-on-error` is deliberate: drift is information, not a failure. A
+  # red X here would train us to ignore it.
+  # ---------------------------------------------------------------------------
+  drift:
+    name: dependency drift (report only)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.91"
+
+      - name: what would cargo update do?
+        run: |
+          echo "## Dependency drift" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cargo update --dry-run --workspace 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      # The specific thing that bit us: a transitive dep quietly raising its
+      # MSRV above our floor. Surface every declared rust-version so a bump is
+      # visible in the diff of this report rather than in a broken build.
+      - name: MSRV of the resolved graph
+        run: |
+          echo "## Declared MSRVs in the resolved graph" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cargo metadata --format-version 1 --locked \
+            | python3 -c "import json,sys; [print(f\"{p['rust_version']:>8}  {p['name']} {p['version']}\") for p in sorted(json.load(sys.stdin)['packages'], key=lambda p: p.get('rust_version') or '') if p.get('rust_version')]" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

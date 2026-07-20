@@ -1,0 +1,51 @@
+{
+  "sectors": [
+    {
+      "id": "science",
+      "display_name": "Science",
+      "sources": [
+        {
+          "type": "arxiv_oai",
+          "id": "arxiv-cs",
+          "url": "https://oaipmh.arxiv.org/oai?verb=ListRecords&metadataPrefix=oai_dc&set=cs",
+          "fixture": "fixtures/arxiv_oai_cs.xml",
+          "license": "IndexOnly",
+          "robots_on_missing": "allow"
+        }
+      ]
+    },
+    {
+      "id": "technology",
+      "display_name": "Technology",
+      "sources": [
+        {
+          "type": "rss",
+          "id": "techwire",
+          "url": "https://example.org/techwire/feed.xml",
+          "fixture": "fixtures/techwire.xml",
+          "license": "CcBy"
+        },
+        {
+          "type": "rss",
+          "id": "osdaily",
+          "url": "https://example.org/osdaily/feed.xml",
+          "fixture": "fixtures/osdaily.xml",
+          "license": "IndexOnly"
+        }
+      ]
+    },
+    {
+      "id": "finance",
+      "display_name": "Finance",
+      "sources": [
+        {
+          "type": "rss",
+          "id": "filings-digest",
+          "url": "https://example.org/filings/feed.xml",
+          "fixture": "fixtures/finance.xml",
+          "license": "PublicDomain"
+        }
+      ]
+    }
+  ]
+}

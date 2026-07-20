@@ -1,0 +1,442 @@
+#!/usr/bin/env bash
+#
+# run — one entrypoint for intel-platform, so nobody has to remember the
+#       env-var-laden invocations that used to live in README §7.
+#
+# Everything is a subcommand. `./run` with no argument prints the list.
+# Every knob has a sane default and can be overridden from the environment;
+# you should not normally need to set any of them.
+#
+#   ./run test            all tests (Rust + shell)
+#   ./run demo            the full offline pipeline, start to finish, one shot
+#   ./run harvest-arxiv   the LIVE arXiv harvest — the one test only a box
+#                         with real network egress can do
+#   ./run verify-llm      point the shell at a real LLM endpoint and check it
+#
+# The offline commands need only the Rust toolchain and Python 3.12. The two
+# live commands additionally need outbound network (and, for verify-llm, a
+# model endpoint + key). They fail loudly and specifically if that is missing,
+# rather than pretending to have run.
+
+set -euo pipefail
+cd "$(dirname "$0")"
+
+# --- knobs (override from the env only if you must) -------------------------
+CORE_PORT="${CORE_PORT:-8788}"          # cored's localhost JSON port
+API_PORT="${API_PORT:-8787}"            # the public FastAPI shell
+LLM_PORT="${LLM_PORT:-8899}"            # the mock model, for offline runs
+CORE_DB="${CORE_DB:-data/core.db}"      # persistent unless a command overrides
+SUBSCRIPTIONS_PATH="${SUBSCRIPTIONS_PATH:-config/subscriptions.hashed.json}"
+RUNDIR=".run"                           # pidfiles + logs live here
+
+CORE_URL="http://127.0.0.1:${CORE_PORT}"
+API_URL="http://127.0.0.1:${API_PORT}"
+MOCK_LLM_URL="http://127.0.0.1:${LLM_PORT}/v1"
+
+# venv: create on first use, reuse thereafter. `py` is our Python.
+VENV=".venv"
+py() { "$VENV/bin/python" "$@"; }
+
+blue()  { printf '\033[34m%s\033[0m\n' "$*"; }
+green() { printf '\033[32m%s\033[0m\n' "$*"; }
+red()   { printf '\033[31m%s\033[0m\n' "$*" >&2; }
+step()  { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
+
+need_cargo() {
+  command -v cargo >/dev/null 2>&1 && return 0
+  red "cargo not found on PATH."
+  red "Install Rust (https://rustup.rs) or, on Ubuntu, 'apt-get install cargo-1.91'"
+  red "and put it on PATH. The offline build needs >= 1.78; --features net needs >= 1.86."
+  exit 1
+}
+
+ensure_venv() {
+  if [ ! -x "$VENV/bin/python" ]; then
+    step "creating Python venv (first run only)"
+    python3 -m venv "$VENV"
+    "$VENV/bin/pip" install -q -r shell/requirements.txt
+  fi
+}
+
+# Wait for an HTTP endpoint to answer, or give up with a pointer to the log.
+# Wait for an HTTP endpoint to answer AND for the process we launched to still
+# be alive. The pid check is the fix for a subtle, real failure: if a foreign
+# process already owns the port, our server fails to bind and dies, but /health
+# keeps answering — from the OTHER process — so a naive readiness poll reports
+# "ready" against the wrong server. Checking that OUR pid is alive catches that.
+wait_for_pid() { # url pid name log
+  local url="$1" pid="$2" name="$3" log="$4" i
+  for i in $(seq 1 40); do
+    if ! kill -0 "$pid" 2>/dev/null; then
+      red "$name (pid $pid) exited before becoming ready — it did not start."
+      red "Last lines of $log:"; tail -n 20 "$log" >&2 || true
+      return 1
+    fi
+    if curl -fsS -o /dev/null --max-time 2 "$url" 2>/dev/null; then return 0; fi
+    sleep 0.25
+  done
+  red "$name did not become ready. Last lines of $log:"
+  tail -n 20 "$log" >&2 || true
+  return 1
+}
+
+# Is $CORE_PORT already serving? If so it is NOT this checkout's server — refuse
+# rather than start a doomed one. The classic cause (which bit an on-site run)
+# is an orphaned cored from another copy of the repo still holding the port.
+port_is_foreign() {
+  curl -fsS -o /dev/null --max-time 2 "$CORE_URL/health" 2>/dev/null
+}
+
+# Best-effort: who is listening on $CORE_PORT? lsof is on macOS and most Linux,
+# but not guaranteed — guard it so its absence returns empty rather than a
+# 127 that would abort the caller under `set -e`.
+port_listener_pid() {
+  command -v lsof >/dev/null 2>&1 || { echo ""; return 0; }
+  lsof -tiTCP:"$CORE_PORT" -sTCP:LISTEN 2>/dev/null | head -1 || true
+}
+
+refuse_foreign_port() {
+  local pid; pid=$(port_listener_pid)
+  red "Port $CORE_PORT is already serving /health — a DIFFERENT process owns it."
+  red "This is not this checkout's server. The usual cause is an orphaned cored"
+  red "left running by another copy of the repo (e.g. one in your Trash)."
+  if [ -n "$pid" ]; then
+    red "  It is PID $pid. Inspect:  ps -p $pid -o pid,command"
+    red "  Stop it:                 kill $pid   (then re-run)"
+  else
+    red "  Find it:  lsof -iTCP:$CORE_PORT -sTCP:LISTEN -n -P"
+    red "  Stop it:  kill \$(lsof -tiTCP:$CORE_PORT -sTCP:LISTEN)"
+  fi
+  red "  Or use another port:  CORE_PORT=8790 ./run ${1:-harvest-arxiv}"
+}
+
+# --------------------------------------------------------------------------
+# daemons: start/stop cored and the mock LLM, tracked by pidfile
+# --------------------------------------------------------------------------
+_start_cored() { # extra env is inherited from caller; $1 = optional CORE_CONFIG
+  mkdir -p "$RUNDIR" "$(dirname "$CORE_DB")"
+  local cfg="${1:-}"
+  # Preflight: refuse if something already owns the port (see refuse_foreign_port).
+  if port_is_foreign; then refuse_foreign_port; return 1; fi
+  ( [ -n "$cfg" ] && export CORE_CONFIG="$cfg"
+    export CORE_DB CORE_BIND="127.0.0.1:${CORE_PORT}"
+    # nohup, not setsid: setsid does not exist on macOS. nohup is on both.
+    nohup "$CORED_BIN" >"$RUNDIR/cored.log" 2>&1 < /dev/null &
+    echo $! > "$RUNDIR/cored.pid" )
+  wait_for_pid "$CORE_URL/health" "$(cat "$RUNDIR/cored.pid")" "cored" "$RUNDIR/cored.log"
+}
+
+_start_mock_llm() {
+  mkdir -p "$RUNDIR"
+  ( nohup "$VENV/bin/python" tools/mock_openai.py >"$RUNDIR/llm.log" 2>&1 < /dev/null &
+    echo $! > "$RUNDIR/llm.pid" )
+  # the mock answers 501 on /v1/models by design, so probe a real route
+  for i in $(seq 1 40); do
+    curl -fsS -o /dev/null --max-time 2 "http://127.0.0.1:${LLM_PORT}/v1/models" 2>/dev/null && break
+    # 501 is still "up"
+    curl -sS -o /dev/null -w '%{http_code}' --max-time 2 "http://127.0.0.1:${LLM_PORT}/v1/models" 2>/dev/null | grep -q '501' && break
+    sleep 0.25
+  done
+}
+
+cmd_down() {
+  local p
+  for svc in cored llm api; do
+    if [ -f "$RUNDIR/$svc.pid" ]; then
+      p=$(cat "$RUNDIR/$svc.pid" 2>/dev/null || true)
+      [ -n "${p:-}" ] && kill "$p" 2>/dev/null || true
+      rm -f "$RUNDIR/$svc.pid"
+    fi
+  done
+  # A pidfile only tracks servers WE started. If the port is still held after
+  # that, it's a foreign process (the orphaned-cored case) — surface it, since
+  # `down` otherwise silently leaves it running and the next start will refuse.
+  if port_is_foreign; then
+    local fp; fp=$(port_listener_pid)
+    red "Note: port $CORE_PORT is still held by another process${fp:+ (PID $fp)} that this"
+    red "script did not start. If it's a stale cored, stop it:${fp:+  kill $fp}"
+    [ -z "$fp" ] && red "  lsof -iTCP:$CORE_PORT -sTCP:LISTEN -n -P   then kill that PID"
+  else
+    green "stopped."
+  fi
+}
+
+# --------------------------------------------------------------------------
+# subcommands
+# --------------------------------------------------------------------------
+cmd_test() {
+  need_cargo; ensure_venv
+  step "Rust tests (offline workspace, --locked)"
+  cargo test --workspace --locked
+  step "Rust tests (--features net path)"
+  cargo test -p intel-ingest --features net --locked
+  step "shell tests (pytest)"
+  PYTHONPATH=shell py -m pytest shell/tests -q
+  green "all tests passed."
+}
+
+cmd_build()     { need_cargo; cargo build -p cored --locked;               green "built target/debug/cored (offline)."; }
+cmd_build_net() { need_cargo; cargo build -p cored --features net --locked; green "built target/debug/cored (--features net)."; }
+
+# The whole offline pipeline, self-contained: fresh DB, ingest fixtures, run
+# two clients, print the signals, tear down. One command, no leftovers.
+cmd_demo() {
+  need_cargo; ensure_venv
+  CORED_BIN=target/debug/cored
+  cmd_build
+  local DEMO_DIR; DEMO_DIR="$(mktemp -d)"
+  local DEMO_DB="$DEMO_DIR/demo.db"
+  DEMO_CLEANUP_DIR="$DEMO_DIR"          # module-scope, so the trap can see it
+  trap 'cmd_down; rm -rf "${DEMO_CLEANUP_DIR:-}"' EXIT
+
+  step "starting cored + mock LLM"
+  CORE_DB="$DEMO_DB" _start_cored
+  _start_mock_llm
+  green "cored on $CORE_URL, mock LLM on $MOCK_LLM_URL"
+
+  step "ingesting fixtures (sectors: science, technology)"
+  curl -fsS -X POST "$CORE_URL/ingest" -H 'content-type: application/json' \
+    -d '{"sectors":["science","technology"]}' \
+    | py -c 'import json,sys; d=json.load(sys.stdin); print("  fetched:", d.get("fetched"), "| new this run:", d.get("new"))'
+
+  step "running the acme-research pipeline"
+  CORE_DB="$DEMO_DB" LLM_BASE_URL="$MOCK_LLM_URL" SUBSCRIPTIONS_PATH="$SUBSCRIPTIONS_PATH" \
+    PYTHONPATH=shell py -m intel_shell.pipeline --client acme-research 2>&1 | sed 's/^/  /' | tail -6
+
+  step "signals (science + technology)"
+  curl -fsS "$CORE_URL/view?sectors=science,technology" | py -c '
+import json,sys
+v=json.load(sys.stdin)
+print("  documents analyzed:", v["documents_analyzed"])
+print("  near-duplicate:", v["near_duplicates"])
+for s in v["signals"]:
+    print("   • %-52s score %.2f" % (s["headline"][:52], s["score"]))
+'
+  green "demo complete."
+}
+
+# --------------------------------------------------------------------------
+# THE ON-SITE TEST: a real arXiv harvest. Blocked in the dev sandbox by egress;
+# this is the one thing a box with real network can falsify that a fixture
+# cannot. It refuses to pretend: if arXiv is unreachable it stops and says so.
+# --------------------------------------------------------------------------
+cmd_harvest_arxiv() {
+  need_cargo; ensure_venv
+  CORED_BIN=target/debug/cored
+
+  step "1/5  reachability — can this box reach the configured arXiv endpoint?"
+  # Derive the probe from config, don't hardcode a host. arXiv moved its
+  # OAI-PMH endpoint once already (export.arxiv.org/oai2 -> oaipmh.arxiv.org/oai,
+  # a 301 observed 2026-07-19); a probe pinned to the old host re-breaks on the
+  # next move. We read the arxiv-cs URL, swap its verb to Identify, and FOLLOW
+  # redirects (-L) so a 301 to the new host is success, not a false negative.
+  local probe
+  probe=$(py -c '
+import json, urllib.parse as u
+c=json.load(open("config/core.json"))
+url=next(s["url"] for sec in c["sectors"] for s in sec.get("sources",[]) if s.get("id")=="arxiv-cs")
+p=u.urlsplit(url)
+print(u.urlunsplit((p.scheme, p.netloc, p.path, "verb=Identify", "")))
+')
+  local code
+  code=$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 20 "$probe" 2>/dev/null || echo 000)
+  if [ "$code" != "200" ]; then
+    red "arXiv OAI endpoint ($probe) returned HTTP $code after redirects (expected 200)."
+    red "This box cannot reach the configured arXiv endpoint, so a LIVE harvest is impossible."
+    red "That is a network/egress condition, not a code failure — do not mark T2 done."
+    red "Re-run on a box with outbound HTTPS to arXiv, or fix the arxiv-cs url in config/core.json."
+    exit 2
+  fi
+  green "  arXiv reachable at $probe (HTTP 200)."
+
+  step "2/5  building cored with --features net (real HTTP + robots.txt fetch)"
+  cargo build -p cored --features net --locked
+
+  step "3/5  generating a LIVE config (your committed config/core.json is untouched)"
+  # Same config, but tuned for a BOUNDED, OBSERVABLE smoke test:
+  #   - drop the fixture key (so it hits the wire)
+  #   - add a recent from/until date window, so we harvest a small recent slice
+  #     of CS instead of the ENTIRE set. `set=cs` with no date bound is hundreds
+  #     of pages and tens of minutes — the first live run proved that the hard
+  #     way (26 minutes, no output, killed). arXiv also asks harvesters to use
+  #     date-selective harvesting rather than pulling everything.
+  #   - cap pages, as a hard safety bound even if the window is busier than
+  #     expected. The cursor still checkpoints, so a real catch-up harvest just
+  #     re-runs to continue.
+  # url + robots_on_missing="allow" already live in config/core.json.
+  mkdir -p "$RUNDIR"
+  local LIVE_CFG="$RUNDIR/core.live.json"
+  local DAYS="${HARVEST_DAYS:-3}"        # width of the recent window
+  local MAXP="${HARVEST_MAX_PAGES:-3}"   # hard page cap for the smoke test
+  UNTIL=$(date -u +%Y-%m-%d)
+  # portable "N days ago": GNU date uses -d, BSD/macOS date uses -v
+  FROM=$(date -u -d "-${DAYS} days" +%Y-%m-%d 2>/dev/null || date -u -v-"${DAYS}"d +%Y-%m-%d)
+  export LIVE_CFG DAYS MAXP FROM UNTIL
+  py -c '
+import json, os, urllib.parse as u
+live = os.environ["LIVE_CFG"]; frm = os.environ["FROM"]; unt = os.environ["UNTIL"]; mxp = int(os.environ["MAXP"])
+c=json.load(open("config/core.json"))
+for sec in c["sectors"]:
+    for s in sec.get("sources",[]):
+        if s.get("id")=="arxiv-cs":
+            s.pop("fixture", None)
+            # add from/until to the OAI query (resumptionToken paging drops them
+            # automatically on subsequent pages, so this is safe)
+            p=u.urlsplit(s["url"])
+            q=dict(u.parse_qsl(p.query))
+            q["from"]=frm; q["until"]=unt
+            s["url"]=u.urlunsplit((p.scheme,p.netloc,p.path,u.urlencode(q),""))
+            s["max_pages"]=mxp
+json.dump(c, open(live,"w"), indent=2)
+print("  wrote " + live + ": from=" + frm + " until=" + unt + ", max_pages=" + str(mxp))
+'
+  blue  "  (bounded smoke test: last $DAYS days of CS, at most $MAXP pages."
+  blue  "   widen with HARVEST_DAYS=… HARVEST_MAX_PAGES=… ./run harvest-arxiv)"
+
+  step "4/5  starting cored (net build) and harvesting arxiv-cs for real"
+  local HARVEST_DB="${CORE_DB:-data/arxiv-live.db}"
+  CORE_DB="$HARVEST_DB" _start_cored "$LIVE_CFG"
+  green "  cored (net) on $CORE_URL, db=$HARVEST_DB"
+  blue  "  POST /ingest {sectors:[science], sources:[arxiv-cs]} — this hits the network"
+  blue  "  (live page progress streams below; a bounded run should take well under a minute)"
+  # Run the ingest in the background and tail the log so page-by-page progress
+  # is visible instead of a silent block. Guard with an overall timeout so a
+  # pathological stall can't wedge the script (the client also has a 60s
+  # per-request timeout now, but this bounds the whole multi-page run).
+  : > "$RUNDIR/ingest.out"; : > "$RUNDIR/ingest.err"; rm -f "$RUNDIR/ingest.done"
+  local http_timeout="${HARVEST_HTTP_TIMEOUT:-300}"
+  # `set +e` inside the subshell is load-bearing: the whole script runs under
+  # `set -e`, and if curl exits non-zero (e.g. a -m timeout) the subshell would
+  # otherwise abort BEFORE writing the sentinel — leaving the poll loop below to
+  # spin forever. That exact bug ate ~29 minutes on an on-site run. Here we
+  # disable errexit locally and ALWAYS write the sentinel with curl's exit code.
+  ( set +e
+    curl -sS -m "$http_timeout" -X POST "$CORE_URL/ingest" \
+       -H 'content-type: application/json' \
+       -d '{"sectors":["science"],"sources":["arxiv-cs"]}' \
+       > "$RUNDIR/ingest.out" 2>"$RUNDIR/ingest.err"
+    echo "$?" > "$RUNDIR/ingest.done" ) &
+  local ingest_pid=$!
+  # Stream cored's per-page progress until the ingest finishes. The poll is
+  # bounded (http_timeout + slack) so even a missing sentinel cannot hang it.
+  ( tail -n0 -f "$RUNDIR/cored.log" 2>/dev/null & local tp=$!
+    local waited=0 limit=$(( http_timeout + 30 ))
+    while [ ! -f "$RUNDIR/ingest.done" ] && [ "$waited" -lt "$limit" ]; do
+      sleep 0.5; waited=$(( waited + 1 ))
+    done
+    kill "$tp" 2>/dev/null ) | grep -E "page [0-9]+|cap|robots|Retry|error" --line-buffered || true
+  wait "$ingest_pid" 2>/dev/null || true
+
+  local rc; rc=$(cat "$RUNDIR/ingest.done" 2>/dev/null || echo "timeout")
+  local ingest_json; ingest_json=$(cat "$RUNDIR/ingest.out" 2>/dev/null)
+  rm -f "$RUNDIR/ingest.done"
+  if [ "$rc" != "0" ] || [ -z "$ingest_json" ]; then
+    red "ingest did not complete (curl exit=$rc). This usually means cored isn't"
+    red "actually serving on $CORE_PORT, or the request timed out (${http_timeout}s)."
+    [ -s "$RUNDIR/ingest.err" ] && { red "curl stderr:"; sed 's/^/    /' "$RUNDIR/ingest.err" >&2; }
+    red "cored.log tail:"; tail -n 20 "$RUNDIR/cored.log" >&2 || true
+    cmd_down; exit 1
+  fi
+  echo "$ingest_json" | py -c 'import json,sys; print("  RESULT:", json.dumps(json.load(sys.stdin))[:500])'
+
+  step "5/5  did the harvest actually exercise the wire? (the T2 question)"
+  # The whole point of T2 is that documents come over the network. Report that
+  # plainly instead of declaring victory on a request that returned zero.
+  local verdict
+  verdict=$(echo "$ingest_json" | py -c '
+import json,sys
+d=json.load(sys.stdin)
+fetched=d.get("fetched",0)
+r=(d.get("results") or [{}])[0]
+TAB=chr(9)
+if r.get("ok") and fetched>0:
+    print("PASS" + TAB + str(fetched) + " document(s) fetched from arXiv over the wire.")
+elif not r.get("ok"):
+    err=r.get("error")
+    print("NOT VERIFIED" + TAB + "source returned an error: " + str(err))
+else:
+    print("NOT VERIFIED" + TAB + "request succeeded but fetched 0 documents - nothing crossed the wire.")
+')
+  local tag="${verdict%%$'\t'*}"; local msg="${verdict#*$'\t'}"
+  if [ "$tag" = "PASS" ]; then green "  T2 EXERCISED: $msg"; else red "  T2 $tag: $msg"; fi
+
+  echo "  --- robots.txt fetch (first time this code path runs against a real server) ---"
+  grep -iE "robots|crawl-delay|disallow|arxiv" "$RUNDIR/cored.log" | head -10 | sed 's/^/    /' || true
+  echo "  --- paging / resumptionToken / Retry-After ---"
+  grep -iE "resumption|page|retry-after|503|cursor" "$RUNDIR/cored.log" | head -10 | sed 's/^/    /' || true
+  echo "  --- documents now in the store (science) ---"
+  curl -fsS "$CORE_URL/view?sectors=science" 2>/dev/null \
+    | py -c 'import json,sys; d=json.load(sys.stdin); print("    documents_analyzed:", d.get("documents_analyzed"))' \
+    || echo "    (view query failed)"
+  echo
+  if [ "$tag" = "PASS" ]; then
+    green "LIVE harvest reached the wire. cored still running on $CORE_URL for inspection."
+  else
+    red   "Harvest did NOT fetch documents — T2 remains unverified. cored still up for debugging."
+    red   "Paste this whole output back; the robots/paging log lines above show where it stopped."
+  fi
+  blue  "  peek: curl -s '$CORE_URL/view?sectors=science' | less"
+  blue  "  stop: ./run down"
+  echo
+  blue  "Checklist only a successful live run can confirm (HC13):"
+  echo  "   [ ] arXiv's real robots.txt (or its absence) handled correctly for /oai"
+  echo  "   [ ] page spacing on the wire was >= the configured delay"
+  echo  "   [ ] real OAI-PMH XML ingested without parse errors"
+  echo  "   [ ] resumptionToken paging fetched more than one page"
+  echo  "   [ ] (kill cored mid-harvest, ./run harvest-arxiv again → resumes from cursor)"
+}
+
+# Point the shell at a REAL model endpoint and run the full checklist.
+cmd_verify_llm() {
+  ensure_venv
+  if [ -z "${LLM_BASE_URL:-}" ]; then
+    red "Set LLM_BASE_URL to your endpoint first, e.g.:"
+    red "  export LLM_BASE_URL=https://api.your-provider.com/v1"
+    red "  export LLM_API_KEY=sk-...           # if your endpoint needs one"
+    red "  ./run verify-llm"
+    exit 2
+  fi
+  step "verifying LLM endpoint: $LLM_BASE_URL"
+  PYTHONPATH=shell py tools/verify_llm.py
+}
+
+usage() {
+  cat <<EOF
+intel-platform — ./run <command>
+
+  Offline (needs only Rust >= 1.78 + Python 3.12):
+    test           run every test: Rust workspace, --features net, and pytest
+    demo           run the whole pipeline start-to-finish, then clean up
+    build          build cored (offline)
+    build-net      build cored with --features net
+    up / down      start / stop cored + the mock LLM (for poking by hand)
+
+  Live (needs real network egress):
+    harvest-arxiv  do a REAL arXiv harvest — the test a fixture cannot stand in
+                   for. Refuses to run (exit 2) if arXiv is unreachable.
+    verify-llm     point the shell at a real model endpoint (set LLM_BASE_URL)
+                   and run the embeddings + fusion + /v1/ask checklist.
+
+  Common overrides (rarely needed): CORE_DB, CORE_PORT, API_PORT, LLM_PORT.
+
+  Examples:
+    ./run demo
+    CORE_DB=data/arxiv.db ./run harvest-arxiv
+    LLM_BASE_URL=http://localhost:8000/v1 ./run verify-llm
+EOF
+}
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  test)          cmd_test "$@" ;;
+  demo)          cmd_demo "$@" ;;
+  build)         cmd_build "$@" ;;
+  build-net)     cmd_build_net "$@" ;;
+  up)            need_cargo; ensure_venv; CORED_BIN=target/debug/cored; cmd_build; _start_cored; _start_mock_llm
+                 green "cored on $CORE_URL, mock LLM on $MOCK_LLM_URL. Stop with ./run down." ;;
+  down)          cmd_down ;;
+  harvest-arxiv) cmd_harvest_arxiv "$@" ;;
+  verify-llm)    cmd_verify_llm "$@" ;;
+  help|-h|--help) usage ;;
+  *) red "unknown command: $cmd"; echo; usage; exit 1 ;;
+esac

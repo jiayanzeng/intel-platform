@@ -1,0 +1,23 @@
+[package]
+name = "cored"
+version = "0.7.4"
+edition = "2021"
+
+[dependencies]
+intel-core = { path = "../../crates/core" }
+intel-compliance = { path = "../../crates/compliance" }
+intel-ingest = { path = "../../crates/ingest" }
+intel-extract = { path = "../../crates/extract" }
+intel-enrich = { path = "../../crates/enrich" }
+intel-analyze = { path = "../../crates/analyze" }
+intel-view = { path = "../../crates/view" }
+intel-registry = { path = "../../crates/registry" }
+intel-store = { path = "../../crates/store" }
+intel-retrieve = { path = "../../crates/retrieve" }
+axum = { version = "0.7", default-features = false, features = ["http1", "json", "query", "tokio"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+net = ["intel-ingest/net"]

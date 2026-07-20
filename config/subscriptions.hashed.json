@@ -1,0 +1,19 @@
+{
+  "subscriptions": [
+    {
+      "client": "acme-research",
+      "sectors": [
+        "science",
+        "technology"
+      ],
+      "key_hash": "2eccde457584684dcf50e7211985f8c98c35b05a03685513e5c2ca1e60606b19"
+    },
+    {
+      "client": "quant-desk",
+      "sectors": [
+        "finance"
+      ],
+      "key_hash": "dfbdba10769217b361163b45ffb2c32f165aaacf1fa4d98fd8a1b5ed84cbf01c"
+    }
+  ]
+}

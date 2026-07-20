@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>Open Source Daily</title>
+  <item>
+    <guid>osd-001</guid>
+    <title>llama.cpp merges speculative decoding revamp</title>
+    <link>https://example.org/osdaily/llamacpp-speculative</link>
+    <author>K. Ito</author>
+    <pubDate>Thu, 02 Jul 2026 07:45:00 GMT</pubDate>
+    <description>The llama.cpp project merged a reworked speculative decoding path, with maintainers reporting notable speedups when pairing small Qwen draft models with larger targets.</description>
+  </item>
+  <item>
+    <guid>osd-003</guid>
+    <title>Day-one support: DeepSeek V4 Pro lands in vLLM and llama.cpp</title>
+    <link>https://example.org/osdaily/deepseek-day-one</link>
+    <author>K. Ito</author>
+    <pubDate>Sat, 04 Jul 2026 11:20:00 GMT</pubDate>
+    <description>Within hours of release, DeepSeek V4 Pro gained serving support in vLLM and a conversion path in llama.cpp, continuing the pattern of open runtimes tracking frontier releases at launch.</description>
+  </item>
+  <item>
+    <guid>osd-004</guid>
+    <title>DeepSeek opens V4 Pro weights for research use</title>
+    <link>https://example.org/osdaily/deepseek-v4-weights</link>
+    <author>K. Ito</author>
+    <pubDate>Sat, 04 Jul 2026 08:50:00 GMT</pubDate>
+    <description>DeepSeek said researchers can request the V4 Pro checkpoints starting today. Early adopters are serving the release through vLLM at launch. Helios Labs said it will fine-tune the model for laboratory automation workloads.</description>
+  </item>
+</channel></rss>

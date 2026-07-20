@@ -1,0 +1,10 @@
+[package]
+name = "intel-view"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+intel-core = { path = "../core" }
+intel-extract = { path = "../extract" }
+intel-enrich = { path = "../enrich" }
+intel-analyze = { path = "../analyze" }

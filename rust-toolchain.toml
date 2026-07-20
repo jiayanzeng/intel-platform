@@ -1,0 +1,33 @@
+# Pinned deliberately. The ecosystem drift that blocked `--features net` for two
+# cycles (idna_adapter/indexmap requiring the unstable `edition2024` feature on
+# Rust 1.75) is not a bug to be re-discovered — it is a floor to be declared.
+#
+#   offline / default build : needs >= 1.78
+#   --features net          : needs >= 1.86
+#
+# The offline floor is 1.78 because of the LOCKFILE FORMAT, not the dependency
+# graph. `Cargo.lock` is v4 (what cargo >= 1.78 writes), and cargo cannot parse
+# v4 before 1.78 — it fails with `lock file version 4 requires
+# -Znext-lockfile-bump` before it ever looks at a dependency's MSRV.
+#
+# v0.6.2 claimed "offline works from 1.75 upward (still verified)". It did not,
+# and it had not been: that claim was written in the same change that committed
+# the v4 lock. Re-encoding the lock to v3 does restore 1.75 (measured: 75 tests
+# green) — but cargo 1.91 rewrites it back to v4 the moment it modifies the
+# lock, so v3 is a hand-edit that the next `cargo add` silently undoes. We
+# declare the floor that is true AND sustainable rather than the one that is
+# nicer.
+#
+# The `--features net` floor is separate and higher: icu_* 2.2.0 (via
+# idna_adapter) declare rust-version = 1.86, so edition2024 stabilizing in 1.85
+# is necessary but NOT sufficient.
+#
+# All four cells measured on Ubuntu 24.04, not inferred:
+#   1.75 -> lockfile parse error   1.76 -> lockfile parse error
+#   1.78 -> 0 warnings, 75 green   1.91 -> 0 warnings, 75 green, net builds
+#
+# CI's `msrv` job enforces the 1.78 floor so it cannot quietly rot again.
+# rustup honors this file; an apt-installed toolchain ignores it, so the same
+# floor is restated in README and STATE.md §5.
+[toolchain]
+channel = "1.91"

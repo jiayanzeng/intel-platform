@@ -1,0 +1,11 @@
+[package]
+name = "intel-store"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+intel-core = { path = "../core" }
+# simhash/hamming for persisted fingerprints + canonical ids (T9.1).
+intel-extract = { path = "../extract" }
+serde_json = "1"
+rusqlite = { version = "0.31", features = ["bundled"] }

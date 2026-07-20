@@ -1,0 +1,23 @@
+{
+  "entities": [
+    { "id": "deepseek", "name": "DeepSeek", "kind": "Org",
+      "aliases": ["DeepSeek", "DeepSeek-V4", "DeepSeek V4", "DeepSeek V4 Pro"] },
+    { "id": "qwen", "name": "Qwen", "kind": "Model", "aliases": ["Qwen", "Qwen3"] },
+    { "id": "nvidia", "name": "NVIDIA", "kind": "Org", "aliases": ["NVIDIA"] },
+    { "id": "vllm", "name": "vLLM", "kind": "Tech", "aliases": ["vLLM"] },
+    { "id": "llamacpp", "name": "llama.cpp", "kind": "Tech", "aliases": ["llama.cpp"] },
+    { "id": "rust", "name": "Rust", "kind": "Tech", "aliases": ["Rust"] },
+    { "id": "tantivy", "name": "Tantivy", "kind": "Tech", "aliases": ["Tantivy"] },
+    { "id": "pytorch", "name": "PyTorch", "kind": "Tech", "aliases": ["PyTorch"] },
+    { "id": "moe", "name": "Mixture-of-Experts", "kind": "Topic",
+      "aliases": ["Mixture-of-Experts", "mixture of experts"] },
+    { "id": "sparse-attention", "name": "Sparse Attention", "kind": "Topic",
+      "aliases": ["sparse attention"] },
+    { "id": "rag", "name": "Retrieval-Augmented Generation", "kind": "Topic",
+      "aliases": ["retrieval-augmented generation"] },
+    { "id": "foundation-models", "name": "Foundation Models", "kind": "Topic",
+      "aliases": ["foundation model", "foundation models"] },
+    { "id": "tsinghua", "name": "Tsinghua University", "kind": "Org",
+      "aliases": ["Tsinghua University", "Tsinghua"] }
+  ]
+}

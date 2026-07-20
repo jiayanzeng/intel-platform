@@ -1,0 +1,14 @@
+{
+  "subscriptions": [
+    {
+      "client": "acme-research",
+      "sectors": ["science", "technology"],
+      "api_key": "ak_acme_7f3d9c"
+    },
+    {
+      "client": "quant-desk",
+      "sectors": ["finance"],
+      "api_key": "ak_quant_2b81aa"
+    }
+  ]
+}

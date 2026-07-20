@@ -1,0 +1,9 @@
+[package]
+name = "intel-registry"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+intel-core = { path = "../core" }
+intel-ingest = { path = "../ingest" }
+serde = { version = "1", features = ["derive"] }
