@@ -220,11 +220,9 @@ impl Day {
     pub fn parse_rfc822ish(s: &str) -> Option<Self> {
         let parts: Vec<&str> = s.split_whitespace().collect();
         for w in parts.windows(3) {
-            if let (Ok(d), Some(m), Ok(y)) = (
-                w[0].parse::<i64>(),
-                month_num(w[1]),
-                w[2].parse::<i64>(),
-            ) {
+            if let (Ok(d), Some(m), Ok(y)) =
+                (w[0].parse::<i64>(), month_num(w[1]), w[2].parse::<i64>())
+            {
                 if let Some(day) = Self::from_ymd_checked(y, m, d) {
                     return Some(day);
                 }
@@ -443,6 +441,9 @@ mod tests {
     fn epoch_and_known_dates_are_exact() {
         assert_eq!(Day::from_ymd(1970, 1, 1).0, 0);
         assert_eq!(Day::from_ymd(2000, 3, 1).0, 11017);
-        assert_eq!(Day::parse_iso("2026-07-04").unwrap().to_string(), "2026-07-04");
+        assert_eq!(
+            Day::parse_iso("2026-07-04").unwrap().to_string(),
+            "2026-07-04"
+        );
     }
 }

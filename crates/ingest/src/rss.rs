@@ -26,7 +26,11 @@ impl RssSource {
     async fn fetch_text(&self, ctx: &SourceContext) -> Result<String, IngestError> {
         // Fixture-configured sources never touch the network, so they must not
         // trigger a robots.txt fetch either.
-        let reach = if self.fixture_path.is_some() { Reach::Fixture } else { Reach::Network };
+        let reach = if self.fixture_path.is_some() {
+            Reach::Fixture
+        } else {
+            Reach::Network
+        };
         gate(ctx, &self.feed_url, reach, self.robots_on_missing).await?;
         if let Some(p) = &self.fixture_path {
             return Ok(std::fs::read_to_string(p)?);

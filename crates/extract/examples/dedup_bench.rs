@@ -21,10 +21,32 @@ const BITS: u32 = 64;
 /// (syndicated copies), which is the shape the real corpus has.
 fn corpus(n: usize) -> Vec<String> {
     let vocab = [
-        "sparse", "attention", "mixture", "experts", "routing", "memory", "accelerator",
-        "inference", "latency", "throughput", "quantization", "kernel", "cache", "context",
-        "transformer", "checkpoint", "weights", "benchmark", "retrieval", "embedding",
-        "cluster", "gradient", "distillation", "speculative", "decoding", "tokenizer",
+        "sparse",
+        "attention",
+        "mixture",
+        "experts",
+        "routing",
+        "memory",
+        "accelerator",
+        "inference",
+        "latency",
+        "throughput",
+        "quantization",
+        "kernel",
+        "cache",
+        "context",
+        "transformer",
+        "checkpoint",
+        "weights",
+        "benchmark",
+        "retrieval",
+        "embedding",
+        "cluster",
+        "gradient",
+        "distillation",
+        "speculative",
+        "decoding",
+        "tokenizer",
     ];
     let mut out = Vec::with_capacity(n);
     let mut seed: u64 = 0x9E3779B97F4A7C15;
@@ -208,6 +230,8 @@ fn main() {
     println!("  simhash    = fingerprinting the corpus (the LINEAR term)");
     println!("  scan       = exhaustive pairwise hamming (the QUADRATIC term)");
     println!("  scan/tot   = share of dedup time the quadratic term is actually responsible for");
-    println!("  cand/pairs = fraction of all pairs banding still has to compare (100% = no pruning)");
+    println!(
+        "  cand/pairs = fraction of all pairs banding still has to compare (100% = no pruning)"
+    );
     println!("  recall     = fraction of true near-dup pairs banding finds (must be 100%)");
 }

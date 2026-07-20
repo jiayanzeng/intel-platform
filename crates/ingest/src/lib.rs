@@ -14,8 +14,8 @@ pub mod rss;
 pub mod net;
 
 use async_trait::async_trait;
-use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
 pub use intel_compliance::MissingPolicy;
+use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
 use intel_core::{Document, SectorId, SourceKind};
 use std::sync::Arc;
 use thiserror::Error;
@@ -211,7 +211,10 @@ mod gate_tests {
 
     impl CountingFetcher {
         fn new(body: RobotsFetch) -> Arc<Self> {
-            Arc::new(Self { body, calls: AtomicUsize::new(0) })
+            Arc::new(Self {
+                body,
+                calls: AtomicUsize::new(0),
+            })
         }
         fn calls(&self) -> usize {
             self.calls.load(Ordering::Relaxed)
@@ -226,10 +229,7 @@ mod gate_tests {
         }
     }
 
-    fn ctx_with(
-        fetcher: Arc<CountingFetcher>,
-        configured_denies: &[&str],
-    ) -> SourceContext {
+    fn ctx_with(fetcher: Arc<CountingFetcher>, configured_denies: &[&str]) -> SourceContext {
         let limiter = Arc::new(HostLimiters::per_second(1000.0));
         SourceContext {
             robots: RobotsGate::new(configured_denies),
@@ -247,8 +247,14 @@ mod gate_tests {
 
     #[test]
     fn origin_is_scheme_plus_host() {
-        assert_eq!(origin_of("https://export.arxiv.org/oai2?verb=x"), "https://export.arxiv.org");
-        assert_eq!(origin_of("http://example.org:8080/a/b"), "http://example.org:8080");
+        assert_eq!(
+            origin_of("https://export.arxiv.org/oai2?verb=x"),
+            "https://export.arxiv.org"
+        );
+        assert_eq!(
+            origin_of("http://example.org:8080/a/b"),
+            "http://example.org:8080"
+        );
     }
 
     #[tokio::test]
@@ -260,9 +266,14 @@ mod gate_tests {
         let f = CountingFetcher::new(RobotsFetch::Body("User-agent: *\nDisallow: /\n".into()));
         let ctx = ctx_with(f.clone(), &[]);
 
-        gate(&ctx, "https://example.org/techwire/feed.xml", Reach::Fixture, MissingPolicy::Deny)
-            .await
-            .expect("a fixture read must not be gated on a publisher's robots.txt");
+        gate(
+            &ctx,
+            "https://example.org/techwire/feed.xml",
+            Reach::Fixture,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect("a fixture read must not be gated on a publisher's robots.txt");
 
         assert_eq!(f.calls(), 0, "a fixture run fetched robots.txt");
         assert_eq!(ctx.robots_cache.as_ref().unwrap().fetches(), 0);
@@ -275,11 +286,20 @@ mod gate_tests {
         ));
         let ctx = ctx_with(f.clone(), &[]);
 
-        let err = gate(&ctx, "https://example.org/techwire/feed.xml", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect_err("publisher said no");
+        let err = gate(
+            &ctx,
+            "https://example.org/techwire/feed.xml",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("publisher said no");
         assert!(matches!(err, IngestError::RobotsDisallowed(_)));
-        assert_eq!(f.calls(), 1, "the publisher's policy must actually be fetched");
+        assert_eq!(
+            f.calls(),
+            1,
+            "the publisher's policy must actually be fetched"
+        );
     }
 
     #[tokio::test]
@@ -288,9 +308,14 @@ mod gate_tests {
             "User-agent: *\nDisallow: /admin\n".into(),
         ));
         let ctx = ctx_with(f.clone(), &[]);
-        gate(&ctx, "https://example.org/techwire/feed.xml", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect("publisher allows this path");
+        gate(
+            &ctx,
+            "https://example.org/techwire/feed.xml",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect("publisher allows this path");
         assert_eq!(f.calls(), 1);
     }
 
@@ -300,9 +325,14 @@ mod gate_tests {
         // so we take nothing — even though nothing explicitly forbade us.
         let f = CountingFetcher::new(RobotsFetch::Unreachable);
         let ctx = ctx_with(f, &[]);
-        let err = gate(&ctx, "https://example.org/anything", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect_err("unknown policy must deny");
+        let err = gate(
+            &ctx,
+            "https://example.org/anything",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("unknown policy must deny");
         assert!(matches!(err, IngestError::RobotsDisallowed(_)));
     }
 
@@ -313,12 +343,22 @@ mod gate_tests {
         let f = CountingFetcher::new(RobotsFetch::Body("User-agent: *\nDisallow:\n".into()));
         let ctx = ctx_with(f, &["/private"]);
 
-        gate(&ctx, "https://example.org/public/feed.xml", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect("allowed by both");
-        let err = gate(&ctx, "https://example.org/private/feed.xml", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect_err("configured deny-list must still apply");
+        gate(
+            &ctx,
+            "https://example.org/public/feed.xml",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect("allowed by both");
+        let err = gate(
+            &ctx,
+            "https://example.org/private/feed.xml",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("configured deny-list must still apply");
         assert!(matches!(err, IngestError::RobotsDisallowed(_)));
     }
 
@@ -360,9 +400,7 @@ mod gate_tests {
         // Guard against the knob quietly becoming "ignore robots.txt": if arXiv
         // *did* publish a robots.txt that forbade /oai, even the opted-in source
         // is refused. allow-on-missing reinterprets absence, nothing more.
-        let f = CountingFetcher::new(RobotsFetch::Body(
-            "User-agent: *\nDisallow: /oai\n".into(),
-        ));
+        let f = CountingFetcher::new(RobotsFetch::Body("User-agent: *\nDisallow: /oai\n".into()));
         let ctx = ctx_with(f, &[]);
         let err = gate(
             &ctx,
@@ -385,13 +423,22 @@ mod gate_tests {
             cursors: None,
             robots_cache: None,
         };
-        gate(&ctx, "https://example.org/public/x", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect("unchanged from before T2");
-        let err = gate(&ctx, "https://example.org/private/x", Reach::Network, MissingPolicy::Deny)
-            .await
-            .expect_err("unchanged from before T2");
+        gate(
+            &ctx,
+            "https://example.org/public/x",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect("unchanged from before T2");
+        let err = gate(
+            &ctx,
+            "https://example.org/private/x",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("unchanged from before T2");
         assert!(matches!(err, IngestError::RobotsDisallowed(_)));
     }
 }
-

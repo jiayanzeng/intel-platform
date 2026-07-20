@@ -131,7 +131,8 @@ mod tests {
 
     #[test]
     fn unrelated_texts_are_far_apart() {
-        let a = simhash("Sparse mixture of experts routing under memory constraints on accelerators");
+        let a =
+            simhash("Sparse mixture of experts routing under memory constraints on accelerators");
         let b = simhash("Coastal salinity trends from twenty years of public buoy measurements");
         assert!(hamming(a, b) > 10, "distance was {}", hamming(a, b));
     }

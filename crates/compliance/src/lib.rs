@@ -20,7 +20,6 @@
 //! parser (per-UA groups, Crawl-delay, TTL cache) and `governor` for token
 //! buckets. The shapes here are already the shapes those slot into.
 
-
 // clippy::unnecessary_map_or wants `Option::is_none_or`, stabilized in Rust
 // 1.82. This crate's floor is 1.78 (STATE §5 / rust-toolchain.toml), and
 // adopting is_none_or would silently raise it. The `map_or(true, ..)` form is
@@ -58,7 +57,10 @@ impl RobotsGate {
         Self {
             rules: disallow
                 .iter()
-                .map(|p| Rule { allow: false, pattern: (*p).to_string() })
+                .map(|p| Rule {
+                    allow: false,
+                    pattern: (*p).to_string(),
+                })
                 .collect(),
             crawl_delay: None,
         }
@@ -180,13 +182,19 @@ impl RobotsGate {
 
     /// Add a `Disallow` pattern (`*` and trailing `$` supported).
     pub fn disallow(mut self, pattern: &str) -> Self {
-        self.rules.push(Rule { allow: false, pattern: pattern.to_string() });
+        self.rules.push(Rule {
+            allow: false,
+            pattern: pattern.to_string(),
+        });
         self
     }
 
     /// Add an `Allow` pattern — an exception carved out of a broader deny.
     pub fn allow(mut self, pattern: &str) -> Self {
-        self.rules.push(Rule { allow: true, pattern: pattern.to_string() });
+        self.rules.push(Rule {
+            allow: true,
+            pattern: pattern.to_string(),
+        });
         self
     }
 
@@ -451,9 +459,8 @@ impl RobotsCache {
         // Crawl-delay the publisher supplied; apply_crawl_delay() below adopts
         // that same slower value before the document request.
         let host = host_of_origin(origin);
-        let own_delay = Duration::from_secs_f64(
-            1.0 / self.limiters.rate_for(&host).max(f64::MIN_POSITIVE),
-        );
+        let own_delay =
+            Duration::from_secs_f64(1.0 / self.limiters.rate_for(&host).max(f64::MIN_POSITIVE));
         let effective_delay = published_delay.map_or(own_delay, |d| d.max(own_delay));
         eprintln!(
             "robots: {origin} -> {disposition}; path={path}; allowed={allowed}; effective-crawl-delay={:.3}s",
@@ -476,7 +483,9 @@ impl RobotsCache {
     /// configured politeness floor; publisher policy is a lower bound on our
     /// courtesy, not a licence.
     pub async fn apply_crawl_delay(&self, origin: &str) {
-        let Some(delay) = self.crawl_delay(origin).await else { return };
+        let Some(delay) = self.crawl_delay(origin).await else {
+            return;
+        };
         let host = host_of_origin(origin);
         let requested_rps = 1.0 / delay.as_secs_f64().max(0.001);
         if requested_rps < self.limiters.rate_for(&host) {
@@ -522,7 +531,10 @@ impl RobotsCache {
         let mut map = self.entries.lock().unwrap();
         map.insert(
             origin.to_string(),
-            Entry { policy, fetched_at: Instant::now() },
+            Entry {
+                policy,
+                fetched_at: Instant::now(),
+            },
         );
         // Bounded: evict the oldest fetch until we are back under capacity.
         while map.len() > self.capacity {
@@ -691,9 +703,7 @@ mod tests {
     fn allow_carves_an_exception_out_of_a_broader_disallow() {
         // The other thing prefix-matching couldn't do: honor an explicit
         // permission. Longest match wins, so the Allow governs.
-        let g = RobotsGate::default()
-            .disallow("/data")
-            .allow("/data/open");
+        let g = RobotsGate::default().disallow("/data").allow("/data/open");
         assert!(!g.allowed("/data/secret"));
         assert!(g.allowed("/data/open/corpus.xml"));
     }
@@ -739,20 +749,35 @@ Sitemap: https://example.org/sitemap.xml
         let g = RobotsGate::parse(FIXTURE, "intel-platform/0.1 (research)");
         // Our group's rules.
         assert!(!g.allowed("/data/secret"));
-        assert!(g.allowed("/data/open/corpus.xml"), "Allow must carve the exception");
+        assert!(
+            g.allowed("/data/open/corpus.xml"),
+            "Allow must carve the exception"
+        );
         assert_eq!(g.crawl_delay(), Some(Duration::from_secs(3)));
         // The `*` group's rules must NOT be merged on top of our own. A site
         // that restricts everyone else and trusts us is a site we may crawl.
-        assert!(g.allowed("/private/thing"), "star-group rule leaked into our group");
-        assert!(g.allowed("/papers/report.pdf"), "star-group rule leaked into our group");
+        assert!(
+            g.allowed("/private/thing"),
+            "star-group rule leaked into our group"
+        );
+        assert!(
+            g.allowed("/papers/report.pdf"),
+            "star-group rule leaked into our group"
+        );
     }
 
     #[test]
     fn an_unmatched_agent_falls_back_to_the_star_group() {
         let g = RobotsGate::parse(FIXTURE, "some-other-bot/2.0");
         assert!(!g.allowed("/private/thing"));
-        assert!(!g.allowed("/papers/2026/report.pdf"), "wildcard + $ from robots.txt");
-        assert!(g.allowed("/data/secret"), "our group's rule leaked into the star group");
+        assert!(
+            !g.allowed("/papers/2026/report.pdf"),
+            "wildcard + $ from robots.txt"
+        );
+        assert!(
+            g.allowed("/data/secret"),
+            "our group's rule leaked into the star group"
+        );
         assert_eq!(g.crawl_delay(), Some(Duration::from_secs(10)));
     }
 
@@ -781,9 +806,15 @@ Sitemap: https://example.org/sitemap.xml
     fn the_longest_matching_agent_token_wins() {
         let txt = "User-agent: *\nDisallow: /\n\nUser-agent: intel\nDisallow: /deep\n\nUser-agent: intel-platform\nDisallow: /deeper\n";
         let g = RobotsGate::parse(txt, "intel-platform/0.1");
-        assert!(g.allowed("/deep"), "the shorter `intel` token should have lost");
+        assert!(
+            g.allowed("/deep"),
+            "the shorter `intel` token should have lost"
+        );
         assert!(!g.allowed("/deeper"));
-        assert!(g.allowed("/anything-else"), "the `*` group should not apply");
+        assert!(
+            g.allowed("/anything-else"),
+            "the `*` group should not apply"
+        );
     }
 
     #[test]
@@ -802,7 +833,10 @@ Sitemap: https://example.org/sitemap.xml
 
     #[test]
     fn field_names_are_case_insensitive_and_comments_are_stripped() {
-        let g = RobotsGate::parse("USER-AGENT: *\nDISALLOW: /x  # trailing comment\n", "anyone");
+        let g = RobotsGate::parse(
+            "USER-AGENT: *\nDISALLOW: /x  # trailing comment\n",
+            "anyone",
+        );
         assert!(!g.allowed("/x/y"));
     }
 
@@ -817,7 +851,10 @@ Sitemap: https://example.org/sitemap.xml
     #[test]
     fn a_malformed_body_does_not_panic_and_yields_no_rules() {
         // e.g. an HTML error page served with a 200, which is depressingly common.
-        let g = RobotsGate::parse("<!DOCTYPE html><html><body>404 not found</body></html>", "anyone");
+        let g = RobotsGate::parse(
+            "<!DOCTYPE html><html><body>404 not found</body></html>",
+            "anyone",
+        );
         assert!(g.allowed("/anything"));
     }
 
@@ -831,7 +868,10 @@ Sitemap: https://example.org/sitemap.xml
 
     impl FakeFetcher {
         fn new(reply: RobotsFetch) -> Arc<Self> {
-            Arc::new(Self { reply: std::sync::Mutex::new(reply), calls: AtomicUsize::new(0) })
+            Arc::new(Self {
+                reply: std::sync::Mutex::new(reply),
+                calls: AtomicUsize::new(0),
+            })
         }
         fn calls(&self) -> usize {
             self.calls.load(Ordering::Relaxed)
@@ -862,8 +902,18 @@ Sitemap: https://example.org/sitemap.xml
     #[tokio::test]
     async fn a_fetched_policy_governs_the_gate() {
         let c = cache_with(FakeFetcher::new(RobotsFetch::Body(FIXTURE.into())));
-        assert!(!c.allowed("https://example.org", "/data/secret", MissingPolicy::Deny).await);
-        assert!(c.allowed("https://example.org", "/data/open/x.xml", MissingPolicy::Deny).await);
+        assert!(
+            !c.allowed("https://example.org", "/data/secret", MissingPolicy::Deny)
+                .await
+        );
+        assert!(
+            c.allowed(
+                "https://example.org",
+                "/data/open/x.xml",
+                MissingPolicy::Deny
+            )
+            .await
+        );
     }
 
     #[tokio::test]
@@ -871,8 +921,14 @@ Sitemap: https://example.org/sitemap.xml
         // RFC 9309 §2.3.1.4: unreachable ⇒ assume complete disallow. We do not
         // know what this publisher permits, so we take nothing.
         let c = cache_with(FakeFetcher::new(RobotsFetch::Unreachable));
-        assert!(!c.allowed("https://example.org", "/anything", MissingPolicy::Deny).await);
-        assert!(!c.allowed("https://example.org", "/", MissingPolicy::Deny).await);
+        assert!(
+            !c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert!(
+            !c.allowed("https://example.org", "/", MissingPolicy::Deny)
+                .await
+        );
     }
 
     #[tokio::test]
@@ -880,12 +936,22 @@ Sitemap: https://example.org/sitemap.xml
         // Default (the conservative per-source value): absence of a stated
         // permission is not permission.
         let c = cache_with(FakeFetcher::new(RobotsFetch::Unavailable));
-        assert!(!c.allowed("https://example.org", "/anything", MissingPolicy::Deny).await);
+        assert!(
+            !c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
 
         // A source the operator has explicitly vetted (arXiv OAI-PMH is the real
         // case) opts into RFC-9309 behavior: a 404 robots.txt ⇒ crawl allowed.
         // Same cache, same origin — only the per-source disposition changes.
-        assert!(c.allowed("https://example.org", "/anything", MissingPolicy::RfcAllowAll).await);
+        assert!(
+            c.allowed(
+                "https://example.org",
+                "/anything",
+                MissingPolicy::RfcAllowAll
+            )
+            .await
+        );
     }
 
     #[tokio::test]
@@ -896,8 +962,22 @@ Sitemap: https://example.org/sitemap.xml
         let c = cache_with(FakeFetcher::new(RobotsFetch::Body(
             "User-agent: *\nDisallow: /secret\n".into(),
         )));
-        assert!(!c.allowed("https://example.org", "/secret/x", MissingPolicy::RfcAllowAll).await);
-        assert!(c.allowed("https://example.org", "/public/x", MissingPolicy::RfcAllowAll).await);
+        assert!(
+            !c.allowed(
+                "https://example.org",
+                "/secret/x",
+                MissingPolicy::RfcAllowAll
+            )
+            .await
+        );
+        assert!(
+            c.allowed(
+                "https://example.org",
+                "/public/x",
+                MissingPolicy::RfcAllowAll
+            )
+            .await
+        );
     }
 
     #[tokio::test]
@@ -905,7 +985,14 @@ Sitemap: https://example.org/sitemap.xml
         // 5xx / timeout still fails closed regardless of the per-source knob:
         // we do not know the policy, so we take nothing.
         let c = cache_with(FakeFetcher::new(RobotsFetch::Unreachable));
-        assert!(!c.allowed("https://example.org", "/anything", MissingPolicy::RfcAllowAll).await);
+        assert!(
+            !c.allowed(
+                "https://example.org",
+                "/anything",
+                MissingPolicy::RfcAllowAll
+            )
+            .await
+        );
     }
 
     #[tokio::test]
@@ -913,7 +1000,10 @@ Sitemap: https://example.org/sitemap.xml
         // The distinction that matters: the server *did* answer, and said
         // "no restrictions". That is a permission; a 404 is not.
         let c = cache_with(FakeFetcher::new(RobotsFetch::Body(String::new())));
-        assert!(c.allowed("https://example.org", "/anything", MissingPolicy::Deny).await);
+        assert!(
+            c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
     }
 
     #[tokio::test]
@@ -921,9 +1011,11 @@ Sitemap: https://example.org/sitemap.xml
         let f = FakeFetcher::new(RobotsFetch::Body(FIXTURE.into()));
         let c = cache_with(f.clone());
         for _ in 0..5 {
-            c.allowed("https://example.org", "/data/open", MissingPolicy::Deny).await;
+            c.allowed("https://example.org", "/data/open", MissingPolicy::Deny)
+                .await;
         }
-        c.allowed("https://other.example", "/x", MissingPolicy::Deny).await;
+        c.allowed("https://other.example", "/x", MissingPolicy::Deny)
+            .await;
         assert_eq!(f.calls(), 2, "one fetch per origin, not per request");
         assert_eq!(c.fetches(), 2);
     }
@@ -938,18 +1030,27 @@ Sitemap: https://example.org/sitemap.xml
             Duration::from_secs(600),
             64,
         );
-        assert!(!c.allowed("https://example.org", "/x", MissingPolicy::Deny).await);
+        assert!(
+            !c.allowed("https://example.org", "/x", MissingPolicy::Deny)
+                .await
+        );
         assert_eq!(f.calls(), 1);
 
         // Within the TTL: served from cache, and a changed upstream is NOT seen.
         f.set(RobotsFetch::Body(String::new()));
         tokio::time::advance(Duration::from_secs(300)).await;
-        assert!(!c.allowed("https://example.org", "/x", MissingPolicy::Deny).await);
+        assert!(
+            !c.allowed("https://example.org", "/x", MissingPolicy::Deny)
+                .await
+        );
         assert_eq!(f.calls(), 1);
 
         // Past the TTL: re-fetched, and the new policy takes effect.
         tokio::time::advance(Duration::from_secs(400)).await;
-        assert!(c.allowed("https://example.org", "/x", MissingPolicy::Deny).await);
+        assert!(
+            c.allowed("https://example.org", "/x", MissingPolicy::Deny)
+                .await
+        );
         assert_eq!(f.calls(), 2);
     }
 
@@ -964,9 +1065,14 @@ Sitemap: https://example.org/sitemap.xml
             2,
         );
         for i in 0..10 {
-            c.allowed(&format!("https://h{i}.example"), "/x", MissingPolicy::Deny).await;
+            c.allowed(&format!("https://h{i}.example"), "/x", MissingPolicy::Deny)
+                .await;
         }
-        assert_eq!(c.entries.lock().unwrap().len(), 2, "cache grew past its capacity");
+        assert_eq!(
+            c.entries.lock().unwrap().len(),
+            2,
+            "cache grew past its capacity"
+        );
     }
 
     #[tokio::test]
@@ -981,7 +1087,8 @@ Sitemap: https://example.org/sitemap.xml
             Duration::from_secs(3600),
             64,
         );
-        c.allowed("https://example.org", "/x", MissingPolicy::Deny).await;
+        c.allowed("https://example.org", "/x", MissingPolicy::Deny)
+            .await;
         assert_eq!(lim.acquires_for("example.org"), 1);
     }
 
@@ -996,11 +1103,16 @@ Sitemap: https://example.org/sitemap.xml
             64,
         );
         c.apply_crawl_delay("https://slow.example").await;
-        assert!((lim.rate_for("slow.example") - 0.1).abs() < 1e-9, "10s delay not adopted");
+        assert!(
+            (lim.rate_for("slow.example") - 0.1).abs() < 1e-9,
+            "10s delay not adopted"
+        );
 
         // Now a publisher who says "go faster than our floor". We do not.
         let c = RobotsCache::new(
-            FakeFetcher::new(RobotsFetch::Body("User-agent: *\nCrawl-delay: 0.01\n".into())),
+            FakeFetcher::new(RobotsFetch::Body(
+                "User-agent: *\nCrawl-delay: 0.01\n".into(),
+            )),
             lim.clone(),
             "intel-platform/0.1",
             Duration::from_secs(3600),

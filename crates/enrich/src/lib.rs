@@ -34,7 +34,9 @@ pub struct Gazetteer {
 impl Gazetteer {
     pub fn from_json(s: &str) -> Result<Self, serde_json::Error> {
         let f: GazetteerFile = serde_json::from_str(s)?;
-        Ok(Self { entities: f.entities })
+        Ok(Self {
+            entities: f.entities,
+        })
     }
 
     /// Resolves mentions per document (presence-based: one mention per
@@ -91,11 +93,7 @@ pub fn contains_word(hay: &str, needle: &str) -> bool {
 /// Heuristics: each token must start uppercase AND contain a lowercase
 /// letter (drops "V4", "GPU", "AI"); runs of 2-4 tokens; a leading stopword
 /// is trimmed; the run must recur in `min_docs` distinct documents.
-pub fn discover_candidates(
-    docs: &[Document],
-    gaz: &Gazetteer,
-    min_docs: usize,
-) -> Vec<Discovered> {
+pub fn discover_candidates(docs: &[Document], gaz: &Gazetteer, min_docs: usize) -> Vec<Discovered> {
     let stop: HashSet<&str> = [
         "the", "a", "an", "in", "on", "at", "for", "and", "but", "it", "this", "that", "with",
         "from", "after", "before", "new", "its", "their",
@@ -155,7 +153,12 @@ pub fn discover_candidates(
             Discovered { surface, doc_ids }
         })
         .collect();
-    out.sort_by(|a, b| b.doc_ids.len().cmp(&a.doc_ids.len()).then_with(|| a.surface.cmp(&b.surface)));
+    out.sort_by(|a, b| {
+        b.doc_ids
+            .len()
+            .cmp(&a.doc_ids.len())
+            .then_with(|| a.surface.cmp(&b.surface))
+    });
     out
 }
 

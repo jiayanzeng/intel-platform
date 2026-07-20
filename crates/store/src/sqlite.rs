@@ -224,8 +224,7 @@ impl SqliteStore {
             bind.push(s);
         }
         let rows = stmt.query_map(bind.as_slice(), |r| {
-            let license =
-                License::parse(&r.get::<_, String>(5)?).unwrap_or(License::IndexOnly);
+            let license = License::parse(&r.get::<_, String>(5)?).unwrap_or(License::IndexOnly);
             let raw_snippet: String = r.get(6)?;
             Ok(SearchHit {
                 doc_id: r.get(0)?,
@@ -533,6 +532,150 @@ impl SqliteStore {
     }
 }
 
+fn row_to_document(r: &rusqlite::Row<'_>) -> rusqlite::Result<Document> {
+    let authors: Vec<String> = serde_json::from_str(&r.get::<_, String>(7)?).unwrap_or_default();
+    let tags: Vec<String> = serde_json::from_str(&r.get::<_, String>(8)?).unwrap_or_default();
+    Ok(Document {
+        id: r.get(0)?,
+        sector: SectorId(r.get(1)?),
+        url: r.get(2)?,
+        title: r.get(3)?,
+        body: r.get(4)?,
+        published_day: r.get::<_, Option<i64>>(5)?.map(Day),
+        published_raw: r.get(6)?,
+        authors,
+        tags,
+        provenance: Provenance {
+            source_id: r.get(9)?,
+            retrieved_from: r.get(10)?,
+            kind: SourceKind::parse(&r.get::<_, String>(11)?).unwrap_or(SourceKind::Rss),
+            license: License::parse(&r.get::<_, String>(12)?).unwrap_or(License::IndexOnly),
+        },
+    })
+}
+
+// --- vector layer -------------------------------------------------------------
+//
+// Brute-force cosine over BLOB-encoded f32 vectors: exact and instant at
+// thousands of documents. The scale-up is pgvector (HNSW/IVFFlat) behind
+// these same three methods — callers never learn the difference.
+
+impl SqliteStore {
+    /// Documents that have no embedding yet for the given model — the
+    /// backfill work queue.
+    pub fn docs_missing_embeddings(&self, model: &str) -> rusqlite::Result<Vec<Document>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT d.id, d.sector, d.url, d.title, d.body, d.published_day,
+                    d.published_raw, d.authors, d.tags, d.source_id,
+                    d.retrieved_from, d.source_kind, d.license
+             FROM documents d
+             LEFT JOIN embeddings e ON e.doc_id = d.id AND e.model = ?1
+             WHERE e.doc_id IS NULL",
+        )?;
+        let rows = stmt.query_map([model], row_to_document)?;
+        rows.collect()
+    }
+
+    pub fn upsert_embeddings(
+        &self,
+        model: &str,
+        items: &[(String, Vec<f32>)],
+    ) -> rusqlite::Result<usize> {
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction()?;
+        let mut n = 0;
+        for (doc_id, vec) in items {
+            n += tx.execute(
+                "INSERT OR REPLACE INTO embeddings (doc_id, model, dim, vec)
+                 VALUES (?1, ?2, ?3, ?4)",
+                params![doc_id, model, vec.len() as i64, vec_to_blob(vec)],
+            )?;
+        }
+        tx.commit()?;
+        Ok(n)
+    }
+
+    pub fn embeddings_count(&self, model: &str) -> rusqlite::Result<usize> {
+        let conn = self.conn.lock().unwrap();
+        conn.query_row(
+            "SELECT COUNT(*) FROM embeddings WHERE model = ?1",
+            [model],
+            |r| r.get::<_, i64>(0),
+        )
+        .map(|n| n as usize)
+    }
+
+    /// Cosine-ranked nearest documents, entitlement-filtered in SQL.
+    pub fn vector_search(
+        &self,
+        model: &str,
+        query: &[f32],
+        sectors: &[String],
+        limit: usize,
+    ) -> rusqlite::Result<Vec<(String, f64)>> {
+        if sectors.is_empty() || query.is_empty() {
+            return Ok(Vec::new());
+        }
+        let conn = self.conn.lock().unwrap();
+        let placeholders = sectors.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+        let sql = format!(
+            "SELECT e.doc_id, e.vec FROM embeddings e
+             JOIN documents d ON d.id = e.doc_id
+             WHERE e.model = ?1 AND d.sector IN ({placeholders})"
+        );
+        let mut stmt = conn.prepare(&sql)?;
+        let model_owned = model.to_string();
+        let mut bind: Vec<&dyn rusqlite::ToSql> = vec![&model_owned];
+        for s in sectors {
+            bind.push(s);
+        }
+        let rows = stmt.query_map(bind.as_slice(), |r| {
+            Ok((r.get::<_, String>(0)?, r.get::<_, Vec<u8>>(1)?))
+        })?;
+        let mut scored: Vec<(String, f64)> = Vec::new();
+        for row in rows {
+            let (doc_id, blob) = row?;
+            let v = blob_to_vec(&blob);
+            scored.push((doc_id, cosine(query, &v)));
+        }
+        scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        scored.truncate(limit);
+        Ok(scored)
+    }
+}
+
+fn vec_to_blob(v: &[f32]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(v.len() * 4);
+    for x in v {
+        out.extend_from_slice(&x.to_le_bytes());
+    }
+    out
+}
+
+fn blob_to_vec(b: &[u8]) -> Vec<f32> {
+    b.chunks_exact(4)
+        .map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]]))
+        .collect()
+}
+
+fn cosine(a: &[f32], b: &[f32]) -> f64 {
+    if a.len() != b.len() || a.is_empty() {
+        return 0.0;
+    }
+    let (mut dot, mut na, mut nb) = (0.0f64, 0.0f64, 0.0f64);
+    for i in 0..a.len() {
+        dot += a[i] as f64 * b[i] as f64;
+        na += (a[i] as f64).powi(2);
+        nb += (b[i] as f64).powi(2);
+    }
+    if na == 0.0 || nb == 0.0 {
+        0.0
+    } else {
+        dot / (na.sqrt() * nb.sqrt())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -667,7 +810,10 @@ mod tests {
         );
         assert_eq!(
             s.duplicates().unwrap(),
-            vec![("techwire::tw-004".to_string(), "osdaily::osd-004".to_string())]
+            vec![(
+                "techwire::tw-004".to_string(),
+                "osdaily::osd-004".to_string()
+            )]
         );
         // Both documents are still IN the archive — canonicalization is an
         // identity, not a deletion.
@@ -704,8 +850,16 @@ mod tests {
     fn unrelated_documents_are_their_own_canonical() {
         let s = tmp_store();
         s.append_new(&[
-            doc("d1", "Sparse mixture of experts routing", "memory constraints on accelerators"),
-            doc("d2", "Coastal salinity trends", "twenty years of public buoy measurements"),
+            doc(
+                "d1",
+                "Sparse mixture of experts routing",
+                "memory constraints on accelerators",
+            ),
+            doc(
+                "d2",
+                "Coastal salinity trends",
+                "twenty years of public buoy measurements",
+            ),
         ])
         .unwrap();
         s.assign_canonical_ids(16).unwrap();
@@ -721,10 +875,7 @@ mod tests {
         let prints = s.fingerprints().unwrap();
         assert_eq!(prints.len(), 1);
         // The stored fingerprint is exactly what the analysis-time dedup uses.
-        assert_eq!(
-            prints["d1"],
-            intel_extract::simhash("T quantum widgets")
-        );
+        assert_eq!(prints["d1"], intel_extract::simhash("T quantum widgets"));
     }
 
     #[test]
@@ -734,162 +885,22 @@ mod tests {
         // An older datestamp must not roll the mark backward.
         s.complete_cursor("arxiv-cs", Some("2026-07-01")).unwrap();
         assert_eq!(
-            s.get_cursor("arxiv-cs").unwrap().unwrap().high_water.as_deref(),
+            s.get_cursor("arxiv-cs")
+                .unwrap()
+                .unwrap()
+                .high_water
+                .as_deref(),
             Some("2026-07-04")
         );
         // A newer one advances it.
         s.complete_cursor("arxiv-cs", Some("2026-07-09")).unwrap();
         assert_eq!(
-            s.get_cursor("arxiv-cs").unwrap().unwrap().high_water.as_deref(),
+            s.get_cursor("arxiv-cs")
+                .unwrap()
+                .unwrap()
+                .high_water
+                .as_deref(),
             Some("2026-07-09")
         );
-    }
-}
-
-fn row_to_document(r: &rusqlite::Row<'_>) -> rusqlite::Result<Document> {
-    let authors: Vec<String> =
-        serde_json::from_str(&r.get::<_, String>(7)?).unwrap_or_default();
-    let tags: Vec<String> =
-        serde_json::from_str(&r.get::<_, String>(8)?).unwrap_or_default();
-    Ok(Document {
-        id: r.get(0)?,
-        sector: SectorId(r.get(1)?),
-        url: r.get(2)?,
-        title: r.get(3)?,
-        body: r.get(4)?,
-        published_day: r.get::<_, Option<i64>>(5)?.map(Day),
-        published_raw: r.get(6)?,
-        authors,
-        tags,
-        provenance: Provenance {
-            source_id: r.get(9)?,
-            retrieved_from: r.get(10)?,
-            kind: SourceKind::parse(&r.get::<_, String>(11)?)
-                .unwrap_or(SourceKind::Rss),
-            license: License::parse(&r.get::<_, String>(12)?)
-                .unwrap_or(License::IndexOnly),
-        },
-    })
-}
-
-// --- vector layer -------------------------------------------------------------
-//
-// Brute-force cosine over BLOB-encoded f32 vectors: exact and instant at
-// thousands of documents. The scale-up is pgvector (HNSW/IVFFlat) behind
-// these same three methods — callers never learn the difference.
-
-impl SqliteStore {
-    /// Documents that have no embedding yet for the given model — the
-    /// backfill work queue.
-    pub fn docs_missing_embeddings(&self, model: &str) -> rusqlite::Result<Vec<Document>> {
-        let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare(
-            "SELECT d.id, d.sector, d.url, d.title, d.body, d.published_day,
-                    d.published_raw, d.authors, d.tags, d.source_id,
-                    d.retrieved_from, d.source_kind, d.license
-             FROM documents d
-             LEFT JOIN embeddings e ON e.doc_id = d.id AND e.model = ?1
-             WHERE e.doc_id IS NULL",
-        )?;
-        let rows = stmt.query_map([model], row_to_document)?;
-        rows.collect()
-    }
-
-    pub fn upsert_embeddings(
-        &self,
-        model: &str,
-        items: &[(String, Vec<f32>)],
-    ) -> rusqlite::Result<usize> {
-        let mut conn = self.conn.lock().unwrap();
-        let tx = conn.transaction()?;
-        let mut n = 0;
-        for (doc_id, vec) in items {
-            n += tx.execute(
-                "INSERT OR REPLACE INTO embeddings (doc_id, model, dim, vec)
-                 VALUES (?1, ?2, ?3, ?4)",
-                params![doc_id, model, vec.len() as i64, vec_to_blob(vec)],
-            )?;
-        }
-        tx.commit()?;
-        Ok(n)
-    }
-
-    pub fn embeddings_count(&self, model: &str) -> rusqlite::Result<usize> {
-        let conn = self.conn.lock().unwrap();
-        conn.query_row(
-            "SELECT COUNT(*) FROM embeddings WHERE model = ?1",
-            [model],
-            |r| r.get::<_, i64>(0),
-        )
-        .map(|n| n as usize)
-    }
-
-    /// Cosine-ranked nearest documents, entitlement-filtered in SQL.
-    pub fn vector_search(
-        &self,
-        model: &str,
-        query: &[f32],
-        sectors: &[String],
-        limit: usize,
-    ) -> rusqlite::Result<Vec<(String, f64)>> {
-        if sectors.is_empty() || query.is_empty() {
-            return Ok(Vec::new());
-        }
-        let conn = self.conn.lock().unwrap();
-        let placeholders = sectors.iter().map(|_| "?").collect::<Vec<_>>().join(",");
-        let sql = format!(
-            "SELECT e.doc_id, e.vec FROM embeddings e
-             JOIN documents d ON d.id = e.doc_id
-             WHERE e.model = ?1 AND d.sector IN ({placeholders})"
-        );
-        let mut stmt = conn.prepare(&sql)?;
-        let model_owned = model.to_string();
-        let mut bind: Vec<&dyn rusqlite::ToSql> = vec![&model_owned];
-        for s in sectors {
-            bind.push(s);
-        }
-        let rows = stmt.query_map(bind.as_slice(), |r| {
-            Ok((r.get::<_, String>(0)?, r.get::<_, Vec<u8>>(1)?))
-        })?;
-        let mut scored: Vec<(String, f64)> = Vec::new();
-        for row in rows {
-            let (doc_id, blob) = row?;
-            let v = blob_to_vec(&blob);
-            scored.push((doc_id, cosine(query, &v)));
-        }
-        scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
-        scored.truncate(limit);
-        Ok(scored)
-    }
-}
-
-fn vec_to_blob(v: &[f32]) -> Vec<u8> {
-    let mut out = Vec::with_capacity(v.len() * 4);
-    for x in v {
-        out.extend_from_slice(&x.to_le_bytes());
-    }
-    out
-}
-
-fn blob_to_vec(b: &[u8]) -> Vec<f32> {
-    b.chunks_exact(4)
-        .map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]]))
-        .collect()
-}
-
-fn cosine(a: &[f32], b: &[f32]) -> f64 {
-    if a.len() != b.len() || a.is_empty() {
-        return 0.0;
-    }
-    let (mut dot, mut na, mut nb) = (0.0f64, 0.0f64, 0.0f64);
-    for i in 0..a.len() {
-        dot += a[i] as f64 * b[i] as f64;
-        na += (a[i] as f64).powi(2);
-        nb += (b[i] as f64).powi(2);
-    }
-    if na == 0.0 || nb == 0.0 {
-        0.0
-    } else {
-        dot / (na.sqrt() * nb.sqrt())
     }
 }

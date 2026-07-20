@@ -24,7 +24,6 @@
 //! (resolved relative to the first page), so a fixture chain exercises the full
 //! paging/cursor path with no network.
 
-
 // clippy::unnecessary_map_or wants `Option::is_none_or`, stabilized in Rust
 // 1.82. This crate's floor is 1.78 (STATE §5 / rust-toolchain.toml), and
 // adopting is_none_or would silently raise it. The `map_or(true, ..)` form is
@@ -71,7 +70,10 @@ impl ArxivOaiSource {
         let mut docs = Vec::new();
         let mut max_datestamp: Option<String> = None;
 
-        for rec in tree.descendants().filter(|n| n.tag_name().name() == "record") {
+        for rec in tree
+            .descendants()
+            .filter(|n| n.tag_name().name() == "record")
+        {
             let header = rec.children().find(|c| c.tag_name().name() == "header");
             let identifier = header
                 .and_then(|h| child_text(h, "identifier"))
@@ -227,10 +229,16 @@ impl Source for ArxivOaiSource {
             // Compliance gate (robots + polite wait) on EVERY page request —
             // the between-pages spacing arXiv asks for. A fixture-backed harvest
             // is not a request to arXiv, so it does not fetch their robots.txt.
-            let reach = if self.fixture_path.is_some() { Reach::Fixture } else { Reach::Network };
+            let reach = if self.fixture_path.is_some() {
+                Reach::Fixture
+            } else {
+                Reach::Network
+            };
             gate(ctx, &self.endpoint_url, reach, self.robots_on_missing).await?;
 
-            let xml = self.fetch_page_text(resume.as_deref(), from.as_deref()).await?;
+            let xml = self
+                .fetch_page_text(resume.as_deref(), from.as_deref())
+                .await?;
             let tree =
                 roxmltree::Document::parse(&xml).map_err(|e| IngestError::Parse(e.to_string()))?;
             let page = self.parse_page(&tree);
@@ -255,7 +263,11 @@ impl Source for ArxivOaiSource {
                 eprintln!(
                     "  [{}] page {page_num}: total {total} docs so far, {}",
                     self.id,
-                    if next.is_some() { "more pages follow" } else { "last page" }
+                    if next.is_some() {
+                        "more pages follow"
+                    } else {
+                        "last page"
+                    }
                 );
             }
 
@@ -377,7 +389,8 @@ mod tests {
         ArxivOaiSource {
             id: "arxiv-cs".into(),
             sector: SectorId::new("science"),
-            endpoint_url: "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs".into(),
+            endpoint_url:
+                "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs".into(),
             fixture_path: Some(path),
             robots_on_missing: MissingPolicy::default(),
             max_pages: None,
@@ -398,7 +411,8 @@ mod tests {
         ArxivOaiSource {
             id: "arxiv-cs".into(),
             sector: SectorId::new("science"),
-            endpoint_url: "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs".into(),
+            endpoint_url:
+                "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs".into(),
             fixture_path: Some(fixture(fixture_name)),
             robots_on_missing: MissingPolicy::default(),
             max_pages: None,
@@ -441,8 +455,14 @@ mod tests {
         // Only page1's 2 docs — page2 was not fetched.
         assert_eq!(docs.len(), 2, "cap should stop the harvest after one page");
         let ids = doc_ids(&docs);
-        assert!(ids.iter().any(|i| i.ends_with("2607.00101")), "page1 doc present");
-        assert!(!ids.iter().any(|i| i.ends_with("2607.02201")), "page2 doc must be absent");
+        assert!(
+            ids.iter().any(|i| i.ends_with("2607.00101")),
+            "page1 doc present"
+        );
+        assert!(
+            !ids.iter().any(|i| i.ends_with("2607.02201")),
+            "page2 doc must be absent"
+        );
 
         // The next token is checkpointed, NOT the terminal None — so a resume
         // continues from page2. A cap bounds a run; it does not lose records.
@@ -462,10 +482,7 @@ mod tests {
         // After page1 the next token (page2 file) is checkpointed; after page2
         // the terminal None is checkpointed.
         let checkpoints = cur.checkpoints.lock().unwrap().clone();
-        assert_eq!(
-            checkpoints,
-            vec![Some("oai_page2.xml".to_string()), None]
-        );
+        assert_eq!(checkpoints, vec![Some("oai_page2.xml".to_string()), None]);
     }
 
     // (b) ...and a harvest resumes from a checkpoint rather than restarting.
@@ -481,8 +498,9 @@ mod tests {
             .unwrap();
         // Only page2's 2 records — page1 was NOT refetched.
         assert_eq!(docs.len(), 2);
-        assert!(doc_ids(&docs).iter().all(|i| i.ends_with("2607.02201")
-            || i.ends_with("2607.02377")));
+        assert!(doc_ids(&docs)
+            .iter()
+            .all(|i| i.ends_with("2607.02201") || i.ends_with("2607.02377")));
     }
 
     // (c) an empty resumptionToken terminates cleanly (no infinite loop).
@@ -515,18 +533,17 @@ mod tests {
         assert_eq!(cur.high_water("arxiv-cs").as_deref(), Some("2026-07-04"));
 
         // The subsequent request would carry from=<high-water>.
-        let endpoint = "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs";
+        let endpoint =
+            "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs";
         let url = oai_request_url(endpoint, None, cur.high_water("arxiv-cs").as_deref());
-        assert_eq!(
-            url,
-            format!("{endpoint}&from=2026-07-04")
-        );
+        assert_eq!(url, format!("{endpoint}&from=2026-07-04"));
     }
 
     // resume requests carry ONLY verb + resumptionToken (spec), url-encoded.
     #[test]
     fn resume_url_is_spec_shaped() {
-        let endpoint = "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs";
+        let endpoint =
+            "https://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc&set=cs";
         let url = oai_request_url(endpoint, Some("cursor|123:cs"), None);
         assert_eq!(
             url,

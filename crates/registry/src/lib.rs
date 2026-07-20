@@ -12,9 +12,9 @@
 //! (billing webhooks, trials, tier upgrades) iterates freely outside.
 
 use intel_core::{License, SectorId};
-use intel_ingest::MissingPolicy;
 use intel_ingest::arxiv_oai::ArxivOaiSource;
 use intel_ingest::rss::RssSource;
+use intel_ingest::MissingPolicy;
 use intel_ingest::Source;
 use serde::Deserialize;
 use std::collections::HashSet;

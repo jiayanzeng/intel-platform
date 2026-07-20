@@ -151,10 +151,20 @@ struct CursorAdapter(Arc<AppState>);
 
 impl CursorStore for CursorAdapter {
     fn resume_token(&self, source_id: &str) -> Option<String> {
-        self.0.store.get_cursor(source_id).ok().flatten().and_then(|c| c.cursor)
+        self.0
+            .store
+            .get_cursor(source_id)
+            .ok()
+            .flatten()
+            .and_then(|c| c.cursor)
     }
     fn high_water(&self, source_id: &str) -> Option<String> {
-        self.0.store.get_cursor(source_id).ok().flatten().and_then(|c| c.high_water)
+        self.0
+            .store
+            .get_cursor(source_id)
+            .ok()
+            .flatten()
+            .and_then(|c| c.high_water)
     }
     fn checkpoint(&self, source_id: &str, token: Option<&str>) {
         if let Err(e) = self.0.store.set_cursor_token(source_id, token) {
@@ -183,7 +193,10 @@ fn guard(state: &AppState, headers: &HeaderMap) -> Result<(), ApiErr> {
             if sent == Some(t.as_str()) {
                 Ok(())
             } else {
-                Err((StatusCode::UNAUTHORIZED, "missing or bad x-core-token".into()))
+                Err((
+                    StatusCode::UNAUTHORIZED,
+                    "missing or bad x-core-token".into(),
+                ))
             }
         }
     }
@@ -602,7 +615,10 @@ async fn view(
     let resp = compute_view_resp(&st, &sectors)?;
     st.view_cache.lock().unwrap().insert(
         key,
-        CachedView { generation: gen, resp: resp.clone() },
+        CachedView {
+            generation: gen,
+            resp: resp.clone(),
+        },
     );
     Ok(Json(resp))
 }
@@ -699,7 +715,12 @@ async fn search(
     let hits = st
         .store
         .search(&p.q, &sectors, p.limit.min(50))
-        .map_err(|_| (StatusCode::BAD_REQUEST, "invalid FTS5 query syntax".to_string()))?;
+        .map_err(|_| {
+            (
+                StatusCode::BAD_REQUEST,
+                "invalid FTS5 query syntax".to_string(),
+            )
+        })?;
     Ok(Json(
         hits.into_iter()
             .map(|h| SearchHitResp {
@@ -722,10 +743,7 @@ async fn retrieve(
     Json(req): Json<RetrieveReq>,
 ) -> Result<Json<RetrieveResp>, ApiErr> {
     guard(&st, &headers)?;
-    let qv = req
-        .model
-        .as_deref()
-        .zip(req.query_vector.as_deref());
+    let qv = req.model.as_deref().zip(req.query_vector.as_deref());
     let r = intel_retrieve::hybrid(&st.store, &req.q, &req.sectors, req.k.min(8), qv)
         .map_err(internal)?;
 
@@ -749,7 +767,9 @@ async fn retrieve(
     let mut suppressed = Vec::new();
     let mut fingerprints: Vec<u64> = Vec::new();
     for (doc_id, _) in r.fused.iter() {
-        let Some(d) = by_id.get(doc_id.as_str()) else { continue };
+        let Some(d) = by_id.get(doc_id.as_str()) else {
+            continue;
+        };
         let fp = match prints.get(doc_id.as_str()) {
             Some(fp) => *fp,
             // Pre-T9.1 rows carry no fingerprint; fall back rather than fail.
@@ -779,7 +799,10 @@ async fn embeddings_missing(
     Query(p): Query<MissingQ>,
 ) -> Result<Json<Vec<MissingDoc>>, ApiErr> {
     guard(&st, &headers)?;
-    let docs = st.store.docs_missing_embeddings(&p.model).map_err(internal)?;
+    let docs = st
+        .store
+        .docs_missing_embeddings(&p.model)
+        .map_err(internal)?;
     Ok(Json(
         docs.into_iter()
             .map(|d| MissingDoc {
@@ -802,7 +825,10 @@ async fn embeddings_upsert(
         .into_iter()
         .map(|i| (i.doc_id, i.vector))
         .collect();
-    let upserted = st.store.upsert_embeddings(&req.model, &items).map_err(internal)?;
+    let upserted = st
+        .store
+        .upsert_embeddings(&req.model, &items)
+        .map_err(internal)?;
     let total = st.store.embeddings_count(&req.model).map_err(internal)?;
     Ok(Json(UpsertResp {
         upserted,
@@ -852,14 +878,12 @@ async fn main() {
     let bind = std::env::var("CORE_BIND").unwrap_or_else(|_| "127.0.0.1:8788".into());
     let token = std::env::var("CORE_TOKEN").ok();
 
-    let cfg: CoreConfig = serde_json::from_str(
-        &std::fs::read_to_string(&config_path).expect("read core config"),
-    )
-    .expect("parse core config");
-    let gaz = Gazetteer::from_json(
-        &std::fs::read_to_string(&entities_path).expect("read entities"),
-    )
-    .expect("parse entities");
+    let cfg: CoreConfig =
+        serde_json::from_str(&std::fs::read_to_string(&config_path).expect("read core config"))
+            .expect("parse core config");
+    let gaz =
+        Gazetteer::from_json(&std::fs::read_to_string(&entities_path).expect("read entities"))
+            .expect("parse entities");
     let store = SqliteStore::open(Path::new(&db_path)).expect("open store");
 
     let n = store.count().unwrap_or(0);
@@ -880,7 +904,11 @@ async fn main() {
 
     println!(
         "cored on http://{bind}  (archive: {n} documents; token auth: {})",
-        if std::env::var("CORE_TOKEN").is_ok() { "on" } else { "off" }
+        if std::env::var("CORE_TOKEN").is_ok() {
+            "on"
+        } else {
+            "off"
+        }
     );
     let listener = tokio::net::TcpListener::bind(&bind).await.expect("bind");
     axum::serve(listener, app).await.expect("serve");
@@ -992,7 +1020,11 @@ mod tests {
     async fn each_source_in_a_sector_is_independently_addressable() {
         let st = test_state();
         let only_os = do_ingest(&st, &["technology"], Some(&["osdaily"])).await;
-        let ran: Vec<&str> = only_os.results.iter().map(|r| r.source_id.as_str()).collect();
+        let ran: Vec<&str> = only_os
+            .results
+            .iter()
+            .map(|r| r.source_id.as_str())
+            .collect();
         assert_eq!(ran, vec!["osdaily"]);
     }
 
@@ -1007,7 +1039,11 @@ mod tests {
             .find(|r| r.source_id == "ghost")
             .expect("ghost reported");
         assert!(!err.ok);
-        assert!(err.error.as_deref().unwrap_or("").contains("unknown or not entitled"));
+        assert!(err
+            .error
+            .as_deref()
+            .unwrap_or("")
+            .contains("unknown or not entitled"));
         assert_eq!(resp.fetched, 0);
     }
 
@@ -1031,7 +1067,9 @@ mod tests {
         view(
             State(st.clone()),
             HeaderMap::new(),
-            Query(SectorsQ { sectors: sectors.to_string() }),
+            Query(SectorsQ {
+                sectors: sectors.to_string(),
+            }),
         )
         .await
         .expect("view ok")
@@ -1048,7 +1086,11 @@ mod tests {
 
         // Nothing changed, so the second call must not recompute.
         let second = do_view(&st, "technology").await;
-        assert_eq!(st.view_computes.load(Ordering::SeqCst), 1, "cache was not used");
+        assert_eq!(
+            st.view_computes.load(Ordering::SeqCst),
+            1,
+            "cache was not used"
+        );
         assert_eq!(first.documents_analyzed, second.documents_analyzed);
 
         // A different sector set is a different question: it computes.
@@ -1059,7 +1101,11 @@ mod tests {
         let ing = do_ingest(&st, &["finance"], None).await;
         assert!(ing.new > 0);
         let after = do_view(&st, "finance").await;
-        assert_eq!(st.view_computes.load(Ordering::SeqCst), 3, "stale view served");
+        assert_eq!(
+            st.view_computes.load(Ordering::SeqCst),
+            3,
+            "stale view served"
+        );
         assert!(after.documents_analyzed > 0);
     }
 

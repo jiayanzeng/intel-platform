@@ -103,7 +103,10 @@ pub async fn get_text(url: &str) -> Result<String, IngestError> {
             .map_err(|e| IngestError::Http(e.to_string()))?;
         let status = resp.status();
         if status.is_success() {
-            return resp.text().await.map_err(|e| IngestError::Http(e.to_string()));
+            return resp
+                .text()
+                .await
+                .map_err(|e| IngestError::Http(e.to_string()));
         }
         // Honor 503 Retry-After (seconds form) with bounded retries.
         if status.as_u16() == 503 && attempt < MAX_RETRIES {

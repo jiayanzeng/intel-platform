@@ -127,8 +127,7 @@ pub fn analyze(
                 continue; // single-day corpus: no baseline, no burst claims
             }
             let mean = base.iter().sum::<f64>() / base.len() as f64;
-            let var =
-                base.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / base.len() as f64;
+            let var = base.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / base.len() as f64;
             let std = var.sqrt().max(0.5); // floor prevents div-by-~0 on quiet baselines
             let z = (today.len() as f64 - mean) / std;
             if z < p.z_threshold {
@@ -146,7 +145,10 @@ pub fn analyze(
             srcs.clear();
 
             let corroboration_note = if n_src >= p.min_corroborating_sources {
-                format!("; independently corroborated by {n_src} sources: {}", src_list.join(", "))
+                format!(
+                    "; independently corroborated by {n_src} sources: {}",
+                    src_list.join(", ")
+                )
             } else {
                 format!("; single-source so far ({})", src_list.join(", "))
             };
@@ -220,10 +222,8 @@ pub fn analyze(
 
     // --- association graph ----------------------------------------------------
     let n_docs = docs.len().max(1);
-    let entity_doc_count: HashMap<&str, usize> = per_entity_docs
-        .iter()
-        .map(|(k, v)| (*k, v.len()))
-        .collect();
+    let entity_doc_count: HashMap<&str, usize> =
+        per_entity_docs.iter().map(|(k, v)| (*k, v.len())).collect();
 
     let mut pair_weight: BTreeMap<(String, String), usize> = BTreeMap::new();
     for ents in per_doc_entities.values() {
@@ -247,9 +247,11 @@ pub fn analyze(
         })
         .collect();
     edges.sort_by(|x, y| {
-        y.weight
-            .cmp(&x.weight)
-            .then_with(|| y.pmi.partial_cmp(&x.pmi).unwrap_or(std::cmp::Ordering::Equal))
+        y.weight.cmp(&x.weight).then_with(|| {
+            y.pmi
+                .partial_cmp(&x.pmi)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        })
     });
 
     Analysis {
