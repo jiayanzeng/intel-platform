@@ -419,12 +419,47 @@ impl RobotsCache {
     /// publisher said no), and an `Unreachable` origin still fails closed (we do
     /// not know the policy). Only genuine *absence* is reinterpreted.
     pub async fn allowed(&self, origin: &str, path: &str, on_missing: MissingPolicy) -> bool {
-        match self.policy_for(origin).await {
-            Policy::Gate(g) => g.allowed(path),
-            Policy::Unavailable => on_missing.allows_when_absent(),
+        let policy = self.policy_for(origin).await;
+        let (allowed, disposition, published_delay) = match policy {
+            Policy::Gate(g) => {
+                let allowed = g.allowed(path);
+                (
+                    allowed,
+                    if allowed { "Body(allow)" } else { "Body(deny)" },
+                    g.crawl_delay(),
+                )
+            }
+            Policy::Unavailable => {
+                let allowed = on_missing.allows_when_absent();
+                (
+                    allowed,
+                    if allowed {
+                        "Unavailable(allow)"
+                    } else {
+                        "Unavailable(deny)"
+                    },
+                    None,
+                )
+            }
             // We could not reach the origin's policy. RFC 9309 §2.3.1.4.
-            Policy::Unreachable => false,
-        }
+            Policy::Unreachable => (false, "Unreachable(deny)", None),
+        };
+
+        // This line is operational evidence, not decoration: the live harness
+        // greps it to report the publisher disposition actually taken. The
+        // effective delay is the slower of our current per-host floor and any
+        // Crawl-delay the publisher supplied; apply_crawl_delay() below adopts
+        // that same slower value before the document request.
+        let host = host_of_origin(origin);
+        let own_delay = Duration::from_secs_f64(
+            1.0 / self.limiters.rate_for(&host).max(f64::MIN_POSITIVE),
+        );
+        let effective_delay = published_delay.map_or(own_delay, |d| d.max(own_delay));
+        eprintln!(
+            "robots: {origin} -> {disposition}; path={path}; allowed={allowed}; effective-crawl-delay={:.3}s",
+            effective_delay.as_secs_f64()
+        );
+        allowed
     }
 
     /// The `Crawl-delay` this origin published, if any.

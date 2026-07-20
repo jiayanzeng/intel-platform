@@ -95,3 +95,25 @@ correct them with a new dated entry.
   Repair requires distinguishing capped exit from exhausted completion and a
   test that asserts final persisted resume state; that repair is outside this
   verification step and was not implemented here.
+
+### 2026-07-20 · H1 — live harvest evidence now reflects actual outcomes
+
+- owner: 🤖 Codex
+- measured: positive live run against a fresh `data/live-smoke.db` fetched
+  1,764 documents over two pages (1,300 then 1,764) with 0 parse errors. The
+  robots section showed only real decisions:
+  `https://oaipmh.arxiv.org -> Unavailable(allow)`, allowed=true, effective
+  crawl-delay 0.500s. All four derived checklist boxes were checked. A
+  controlled real zero-document run (`fetched=0, new=0, ok=true`) reported NOT
+  VERIFIED and left all four boxes unchecked.
+- acceptance: capped/live robots section shows a real disposition, not page
+  output ✅ · positive checklist matches documents/pages/parse/cursor evidence
+  ✅ · zero-document checklist is fully unchecked ✅ · workspace 80, net 17,
+  shell 69 tests green and both rustc-warning checks clean ✅
+- golden E2E: unchanged — acme 13 → 12; dropped `techwire::tw-004` for
+  `osdaily::osd-004` at hamming 12; DeepSeek RISING z=10.0; re-ingest +0;
+  quant 1; `/v1/ask` 4 citations with `techwire::tw-004` suppressed.
+- commit: this H1 harness-evidence commit (see git history)
+- notes / gate: logging/checklist only; no fetch, robots, cursor, or corpus
+  outcome changed. `data/core.db` hash/size/mtime/count remained exact. T2's
+  capped-run cursor bug remains blocked and was not worked around.

@@ -41,6 +41,9 @@ blue()  { printf '\033[34m%s\033[0m\n' "$*"; }
 green() { printf '\033[32m%s\033[0m\n' "$*"; }
 red()   { printf '\033[31m%s\033[0m\n' "$*" >&2; }
 step()  { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
+checkline() { # 1|0 label
+  if [ "$1" = "1" ]; then printf '   [x] %s\n' "$2"; else printf '   [ ] %s\n' "$2"; fi
+}
 
 need_cargo() {
   command -v cargo >/dev/null 2>&1 && return 0
@@ -361,7 +364,7 @@ else:
   if [ "$tag" = "PASS" ]; then green "  T2 EXERCISED: $msg"; else red "  T2 $tag: $msg"; fi
 
   echo "  --- robots.txt fetch (first time this code path runs against a real server) ---"
-  grep -iE "robots|crawl-delay|disallow|arxiv" "$RUNDIR/cored.log" | head -10 | sed 's/^/    /' || true
+  grep -iE "robots:|effective-crawl-delay" "$RUNDIR/cored.log" | head -10 | sed 's/^/    /' || true
   echo "  --- paging / resumptionToken / Retry-After ---"
   grep -iE "resumption|page|retry-after|503|cursor" "$RUNDIR/cored.log" | head -10 | sed 's/^/    /' || true
   echo "  --- documents now in the store (science) ---"
@@ -378,12 +381,31 @@ else:
   blue  "  peek: curl -s '$CORE_URL/view?sectors=science' | less"
   blue  "  stop: ./run down"
   echo
-  blue  "Checklist only a successful live run can confirm (HC13):"
-  echo  "   [ ] arXiv's real robots.txt (or its absence) handled correctly for /oai"
-  echo  "   [ ] page spacing on the wire was >= the configured delay"
-  echo  "   [ ] real OAI-PMH XML ingested without parse errors"
-  echo  "   [ ] resumptionToken paging fetched more than one page"
-  echo  "   [ ] (kill cored mid-harvest, ./run harvest-arxiv again → resumes from cursor)"
+  # Derive every HC13 box from captured evidence. A zero-document or failed run
+  # checks none of them: reaching an endpoint is not evidence that documents
+  # crossed the wire, parsed, paged, or left durable state.
+  local metrics fetched_count source_ok page_count cursor_rows
+  metrics=$(echo "$ingest_json" | py -c '
+import json,sys
+d=json.load(sys.stdin); r=(d.get("results") or [{}])[0]
+print(str(int(d.get("fetched",0))) + "\t" + ("1" if r.get("ok") else "0"))
+')
+  IFS=$'\t' read -r fetched_count source_ok <<< "$metrics"
+  page_count=$(grep -Ec '\[arxiv-cs\] page [0-9]+:' "$RUNDIR/cored.log" || true)
+  cursor_rows=$(sqlite3 "$HARVEST_DB" \
+    "select count(*) from cursors where source_id='arxiv-cs';" 2>/dev/null || echo 0)
+
+  local docs_ok=0 pages_ok=0 parse_ok=0 cursor_ok=0
+  [ "$fetched_count" -gt 0 ] && docs_ok=1
+  [ "$docs_ok" = "1" ] && [ "$page_count" -gt 1 ] && pages_ok=1
+  [ "$docs_ok" = "1" ] && [ "$source_ok" = "1" ] && parse_ok=1
+  [ "$docs_ok" = "1" ] && [ "$cursor_rows" -gt 0 ] && cursor_ok=1
+
+  blue  "Checklist backed by this run (HC13):"
+  checkline "$docs_ok" "documents fetched over the wire: $fetched_count"
+  checkline "$pages_ok" "more than one OAI-PMH page observed: $page_count"
+  checkline "$parse_ok" "real OAI-PMH XML ingested without a parse error"
+  checkline "$cursor_ok" "arxiv-cs cursor row present in $HARVEST_DB"
 }
 
 # Point the shell at a REAL model endpoint and run the full checklist.

@@ -388,7 +388,7 @@ trigger dictates.
 
 - [x] **B0** — entering state verified, baseline numbers recorded
 - [ ] **T2 — BLOCKED** — capped run clears the resume token; interruption-resume not proven
-- [ ] **H1** — harness evidence hardened (real robots line, honest checklist)
+- [x] **H1** — harness evidence hardened (real robots line, honest checklist)
 - [ ] **T6** — clippy/fmt a blocking gate; STATE reconciled
 - [ ] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
 - [ ] **T5** — robots re-gated on the final origin after redirects

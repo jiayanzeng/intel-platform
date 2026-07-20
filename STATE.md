@@ -311,3 +311,42 @@ handoff.
   `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**, DeepSeek
   **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**, and `/v1/ask`
   **4 citations** with `techwire::tw-004` suppressed.
+
+### H1 — harvest evidence hardened (verified 2026-07-20)
+
+- `RobotsCache::allowed` now emits one behavior-neutral, greppable decision line
+  containing origin, exact disposition (`Body(allow|deny)`,
+  `Unavailable(allow|deny)`, or `Unreachable(deny)`), path, allow/deny outcome,
+  and effective crawl-delay. It performs only reads and logging; the returned
+  allow/deny value and subsequent `apply_crawl_delay` path are unchanged.
+- `run`'s robots evidence grep now matches only `robots:` /
+  `effective-crawl-delay`; it no longer includes the broad `arxiv` alternative
+  that mislabeled page progress as robots evidence.
+- The HC13 checklist is computed from the captured ingest JSON, numbered page
+  lines, and the SQLite cursor-row query. It has no static `[ ]` claims.
+- Positive live run, fresh `data/live-smoke.db`, window 2026-07-17 through
+  2026-07-20: **1,764 fetched/new**, page 1 = 1,300 and page 2 = 1,764, 0 parse
+  errors. The robots section contained only the real lines
+  `robots: https://oaipmh.arxiv.org -> Unavailable(allow) ...
+  effective-crawl-delay=0.500s`. All four evidence boxes were checked:
+  documents > 0, pages > 1, source result parse-clean, and cursor row present.
+- Negative control on the disposable smoke DB: its high-water was set beyond
+  the configured window, and the real endpoint returned `fetched=0, new=0,
+  ok=true` with one zero-document page. The harness reported **NOT VERIFIED**
+  and all four boxes were unchecked, including the cursor-row box despite a
+  stale row being present. The successful 1,764-document snapshot was restored
+  afterward; the T2 failure snapshot is preserved at
+  `/private/tmp/intel-platform-t2-blocked-live-smoke.db`.
+- Verification: `bash -n run` passed; targeted clippy for compliance + net
+  ingest passed under `-D warnings`; workspace check/test passed with 0 rustc
+  warnings and **80 tests**; net check/test passed with 0 rustc warnings and
+  **17 tests**; shell **69 passed** with the existing 1 deprecation warning.
+  Fmt's known B0 inventory remains the same 13 files; T6 still owns it.
+- Golden E2E was re-run after the change and is byte-identical in every anchor:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at
+  hamming **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1
+  document**, and `/v1/ask` **4 citations** with `techwire::tw-004` suppressed.
+  `data/core.db` remained 1,764 documents with SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+- H1 intentionally does **not** repair T2's capped-run completion bug. T2
+  remains blocked exactly as recorded above.
