@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **84 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request. The golden end-to-end remained byte-identical in T5.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **86 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. The golden end-to-end remained byte-identical in T3.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -66,7 +66,7 @@ CORE (Rust, engine)       apps/cored: /health /sectors /ingest /view /search
 8. **(v0.6) Harvest cursors live in the core store, not the shell.** New `cursors(source_id, cursor, high_water, updated_at)` table. `cursor` is the in-flight OAI-PMH `resumptionToken` (checkpointed **after every page**, so an interrupted harvest resumes mid-set instead of restarting); `high_water` is the max `datestamp` of the last *completed* harvest, replayed as `from=` for incremental fetching. High-water advance is **monotonic** (ISO dates ⇒ lexicographic max is chronological max), so a late-arriving old record can't roll the mark backward. Cursors are the documented exception to atomic-JSON persistence (HC9): they belong in SQLite, next to the documents they track. Connectors that don't page (RSS) ignore the seam entirely.
 
 9. **(v0.6/T6) Provider vocabulary is normalized INTO the neutral one, never the other way round.** `billing.apply_event` speaks `subscription.created|updated|deleted|key_rotated` and nothing else. Stripe enters through `adapters/stripe.py`, which verifies Stripe's signature scheme and maps `customer.subscription.*` onto those events. Consequences worth keeping: a second provider is a second adapter, not a change to the store or the entitlement model; and the freshness check on Stripe's signed timestamp is load-bearing, because a *genuine* captured request replayed later carries a perfectly valid MAC — the timestamp is the only thing that refuses it. Keys are compared against a *set* of active hashes, so rotation has a grace window and revocation is just rotation with none.
-10. **(v0.6/T9) Dedup identity is a function of the corpus, not of arrival order.** `dedup_near` keeps the earliest document by `(published_day, id)` — a global property. So `canonical_id` is persisted as a **re-materialization of that same rule on every ingest that adds rows**, NOT as a first-seen-wins assignment at insert. This matters more since T3: sources now run on independent clocks, so arrival order genuinely varies, and an incremental assignment would let two runs over the same 13 documents disagree about which copy is canonical. Relatedly, `/retrieve` deliberately does **not** filter by `canonical_id`: it keeps whichever of a near-dup pair *the query* ranked higher. Canonical id is a property of the corpus; relevance is a property of the question, and context assembly is a question about the question. Only the fingerprint is reused there (persisted, no longer recomputed per request).
+10. **(v0.6/T9) Dedup identity is a function of the corpus, not of arrival order.** `dedup_near` keeps the earliest document by `(published_day, id)` — a global property. So `canonical_id` is persisted as a **re-materialization of that same rule on every ingest that adds rows**, NOT as a first-seen-wins assignment at insert. This matters more since T3: sources now run on independent clocks, so arrival order genuinely varies, and an incremental assignment would let two runs over the same 13 documents disagree about which copy is canonical. Relatedly, `/retrieve` deliberately does **not** filter by `canonical_id`: it keeps whichever of a near-dup pair *the query* ranked higher. Canonical id is a property of the corpus; relevance is a property of the question, and context assembly is a question about the question. T3 now materializes `simhash(title + body)` at ingest/migration, refreshes it on document update, and makes `/view` and canonical assignment consume the persisted value; a missing value is an error, not a silent hot-path recompute.
 
 **2.11 — robots.txt is DISCOVERED, and the two gates compose one way only (T2, v0.7).**
 There are now two robots checks, and the order and direction matter:
@@ -126,7 +126,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
 **The recommended top of the v0.8 queue, in order:**
 
 1. **The live arXiv harvest** (T1 above), the moment a box with egress exists. Everything is ready; nothing else can falsify the paging.
-2. **Persist the SimHash fingerprint** — the swap T5's measurements actually justify, and the one that replaces LSH on the T8 trigger table. `simhash(title + body)` is a pure function of the document, recomputed for *every* document on *every* dedup pass, and T9.1 runs that pass on every ingest that adds rows. It is **85% of dedup cost at n=10k**. Storing it as a column at ingest changes **no output whatsoever** (same fingerprints ⇒ same drops ⇒ same canonical ids) and is far smaller than an index. *Only after that* is the pairwise scan worth attacking — and by then the honest options (a tighter threshold, or a wider fingerprint at the same absolute distance) both change dedup semantics and must be argued on the merits, not smuggled in as a performance fix.
+2. ~~**Persist the SimHash fingerprint.**~~ **COMPLETED in v0.8/T3.** The column and ingest write already existed when the step began, but `/view` still recomputed every fingerprint and no pre-column migration existed. Dedup now accepts persisted fingerprints, document updates refresh them, and the backfill was verified over a disposable pre-column copy of all 1,764 live rows with zero fingerprint or canonical-id mismatches. The golden result did not move.
 3. ~~**Turn on `clippy` + `rustfmt` in CI.**~~ **COMPLETED in v0.8/T6.** The job was not commented out; it was report-only, and B0 measured one clippy diagnostic plus 13 files of fmt drift. T6 fixed those findings in `097b017`, verified both commands clean, then promoted the job to blocking in the separate gate commit.
 
 ## 5. Known limitations (documented, not hidden)
@@ -136,7 +136,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
 - **The `--features net` floor is 1.86, and the error lies about why.** `icu_* 2.2.0` (via `idna_adapter`) declare `rust-version = 1.86`; edition2024 stabilizing in 1.85 is necessary but **not** sufficient. Worse, the failure surfaces at *dependency-download* time as `error: failed to download replaced source registry 'crates-io'`, which sends you looking at the registry instead of at MSRVs. Reproduced again this cycle on 1.75.
 - **Correction to a v0.5 note** (unchanged from v0.6): `/v1/ask`'s `context_suppressed` names `techwire::tw-004`, not `osdaily::osd-004`, for the question actually tested. Suppression at context assembly is **rank-aware by design**, so which copy of a syndicated story is dropped depends on which one the query ranked higher. Treat *"one of the pair is suppressed"* as the golden, not a specific id.
 - **`Day` values changed scale (T9.3).** `published_day` is days-since-1970. Pre-v0.6 archives spanning a month boundary would need a rebuild — **checked in v0.7: no such archive exists**, so no tool was built (T8.3).
-- **`dedup_near` recomputes every fingerprint on every pass.** This — not the quadratic scan — is the real cost: **85% of dedup time at n=10k** (measured; `cargo run --release -p intel-extract --example dedup_bench`). See §6c and the T8 note.
+- ~~**`dedup_near` recomputes every fingerprint on every pass.**~~ **RESOLVED in v0.8/T3.** The store materializes the fingerprint and `/view` passes it into `dedup_near`; a deliberately violating test double proves the function consumes the supplied value rather than recomputing it.
 - `/view` is memoized per (sector-set, generation) rather than materialized; a restart re-warms it. Cost is unmeasurable at 12 docs.
 - One SQLite connection behind a `Mutex` (fine: the shell is the single caller); `cored` binds loopback by design.
 - ~~**HC1 was not enforced on `/v1/ask`, and its test was vacuous.**~~
@@ -501,3 +501,48 @@ handoff.
   6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
   `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
   All local ports were clear after teardown.
+
+### T3 — SimHash persisted and consumed (verified 2026-07-20)
+
+- **Entering-state correction:** the runbook's statement that the 1,764-row
+  `data/core.db` had no fingerprint column was false. Direct SQLite measurement
+  returned **1,764 rows, 0 NULL `simhash`, 0 NULL `canonical_id`**, and
+  `pragma_table_info` found `simhash`. The schema, ingest-time write, canonical
+  assignment, and one stored-equals-fresh test were already present. What was
+  actually missing was a pre-column migration, update-time fingerprint refresh,
+  and use of the stored value by `/view`; `dedup_near` still recomputed it.
+- `dedup_near` now accepts `(Document, u64)` pairs. Core sector filtering loads
+  persisted pairs from the store, and a NULL fingerprint is an error rather than
+  a fallback recompute. A deliberately violating double gives two unrelated
+  documents the same supplied fingerprint: they collapse at distance 0, proving
+  the consumer uses the supplied value. `update_document` now refreshes the
+  fingerprint from the changed title/body.
+- `SqliteStore::open` now upgrades a table without `simhash` and backfills every
+  NULL from the same title-plus-body function. The backfill is transactional and
+  suspends/recreates the external-content FTS update trigger so unchanged text is
+  not deleted/reinserted. The first targeted compile failed on a lifetime in the
+  new verifier and was fixed; the next targeted test exposed the FTS-trigger
+  interaction as `database disk image is malformed`. That failure was not
+  counted as a pass. The transactional trigger suspension fixed it, and the
+  unchanged targeted command then passed **14/14** tests across extract/store/view.
+- Migration proof used disposable copy
+  `/private/tmp/intel-platform-t3.qbNTxc/precolumn.db`. Before migration it had
+  **1,764 rows** and no `simhash` column. After opening it through the shipped
+  migration: **1,764 stored fingerprints, 0 fresh-compute mismatches, 0 canonical
+  mismatches** against `data/core.db`, the column was present, and both NULL
+  counts were 0. The verifier also measured the actual archive directly:
+  **1,764 stored fingerprints, 0 mismatches**.
+- Final matrix: warning-denied workspace and net checks passed; **86 workspace
+  tests**, **19 net ingest tests**, and **70 shell tests** passed (the existing
+  third-party Starlette deprecation warning remains); clippy and fmt passed. No
+  dependency, lockfile, MSRV, sector, license, or robots-policy change.
+- Golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t3-golden.gYgAMo/final.db` and was unchanged:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
+  **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
+  and `/v1/ask` retained the ordinary mock answer, **4 citations**, and
+  `techwire::tw-004` suppression. The fixture DB finished at 14 rows with 0 NULL
+  fingerprints/canonical ids. `data/core.db` retained **1,764 rows**, 6,729,728
+  bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+  Ports 8788, 8790, 8786, and 8899 were clear after teardown.

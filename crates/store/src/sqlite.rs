@@ -134,8 +134,9 @@ impl SqliteStore {
         if let Some(dir) = path.parent() {
             let _ = std::fs::create_dir_all(dir);
         }
-        let conn = Connection::open(path)?;
+        let mut conn = Connection::open(path)?;
         conn.execute_batch(SCHEMA)?;
+        backfill_simhashes(&mut conn)?;
         Ok(Self {
             conn: Mutex::new(conn),
         })
@@ -186,6 +187,23 @@ impl SqliteStore {
              FROM documents",
         )?;
         let rows = stmt.query_map([], row_to_document)?;
+        rows.collect()
+    }
+
+    /// Documents paired with the fingerprints persisted at ingest/migration.
+    /// A missing value is an error: silently recomputing here would let a
+    /// broken migration look healthy and put the hot-path cost back.
+    pub fn load_all_with_fingerprints(&self) -> rusqlite::Result<Vec<(Document, u64)>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, sector, url, title, body, published_day, published_raw,
+                    authors, tags, source_id, retrieved_from, source_kind, license,
+                    simhash
+             FROM documents",
+        )?;
+        let rows = stmt.query_map([], |row| {
+            Ok((row_to_document(row)?, row.get::<_, i64>(13)? as u64))
+        })?;
         rows.collect()
     }
 
@@ -295,7 +313,8 @@ impl SqliteStore {
             "UPDATE documents SET
                  sector = ?2, url = ?3, title = ?4, body = ?5,
                  published_day = ?6, published_raw = ?7, authors = ?8, tags = ?9,
-                 source_id = ?10, retrieved_from = ?11, source_kind = ?12, license = ?13
+                 source_id = ?10, retrieved_from = ?11, source_kind = ?12,
+                 license = ?13, simhash = ?14
              WHERE id = ?1",
             params![
                 doc.id,
@@ -311,6 +330,7 @@ impl SqliteStore {
                 doc.provenance.retrieved_from,
                 doc.provenance.kind.as_str(),
                 doc.provenance.license.as_str(),
+                fingerprint_of(doc) as i64,
             ],
         )?;
         Ok(n > 0)
@@ -332,7 +352,73 @@ impl SqliteStore {
 /// analysis-time dedup does it, so the persisted fingerprint and the computed
 /// one can never disagree.
 fn fingerprint_of(d: &Document) -> u64 {
-    intel_extract::simhash(&format!("{} {}", d.title, d.body))
+    fingerprint_text(&d.title, &d.body)
+}
+
+fn fingerprint_text(title: &str, body: &str) -> u64 {
+    intel_extract::simhash(&format!("{title} {body}"))
+}
+
+/// Upgrade archives created before the persisted fingerprint column existed,
+/// then fill every missing value from the same title+body rule used at ingest.
+/// Existing fingerprints and canonical ids are untouched.
+fn backfill_simhashes(conn: &mut Connection) -> rusqlite::Result<usize> {
+    let has_column = {
+        let mut stmt = conn.prepare("PRAGMA table_info(documents)")?;
+        let names = stmt.query_map([], |row| row.get::<_, String>(1))?;
+        names
+            .collect::<rusqlite::Result<Vec<_>>>()?
+            .iter()
+            .any(|name| name == "simhash")
+    };
+    if has_column {
+        let missing = conn.query_row(
+            "SELECT COUNT(*) FROM documents WHERE simhash IS NULL",
+            [],
+            |row| row.get::<_, i64>(0),
+        )?;
+        if missing == 0 {
+            return Ok(0);
+        }
+    }
+
+    let tx = conn.transaction()?;
+    if !has_column {
+        tx.execute("ALTER TABLE documents ADD COLUMN simhash INTEGER", [])?;
+    }
+    let missing = {
+        let mut stmt = tx.prepare("SELECT id, title, body FROM documents WHERE simhash IS NULL")?;
+        let rows = stmt.query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+            ))
+        })?;
+        rows.collect::<rusqlite::Result<Vec<_>>>()?
+    };
+
+    // The external-content FTS trigger listens to every UPDATE, even when only
+    // simhash changes. Suspending it avoids deleting/reinserting unchanged text
+    // (and makes migration safe for an archive whose FTS index is not populated).
+    // DDL is transactional in SQLite, so interruption restores the old trigger.
+    tx.execute("DROP TRIGGER IF EXISTS documents_au", [])?;
+    for (id, title, body) in &missing {
+        tx.execute(
+            "UPDATE documents SET simhash = ?2 WHERE id = ?1",
+            params![id, fingerprint_text(title, body) as i64],
+        )?;
+    }
+    tx.execute_batch(
+        "CREATE TRIGGER documents_au AFTER UPDATE ON documents BEGIN
+            INSERT INTO documents_fts(documents_fts, rowid, title, body)
+            VALUES ('delete', old.rowid, old.title, old.body);
+            INSERT INTO documents_fts(rowid, title, body)
+            VALUES (new.rowid, new.title, new.body);
+        END;",
+    )?;
+    tx.commit()?;
+    Ok(missing.len())
 }
 
 impl SqliteStore {
@@ -680,7 +766,7 @@ fn cosine(a: &[f32], b: &[f32]) -> f64 {
 mod tests {
     use super::*;
 
-    fn tmp_store() -> SqliteStore {
+    fn tmp_path() -> std::path::PathBuf {
         use std::sync::atomic::{AtomicU64, Ordering};
         static SEQ: AtomicU64 = AtomicU64::new(0);
         let seq = SEQ.fetch_add(1, Ordering::Relaxed);
@@ -689,8 +775,11 @@ mod tests {
             .unwrap()
             .as_nanos();
         let pid = std::process::id();
-        let path = std::env::temp_dir().join(format!("intel-store-{pid}-{seq}-{n}.db"));
-        SqliteStore::open(&path).unwrap()
+        std::env::temp_dir().join(format!("intel-store-{pid}-{seq}-{n}.db"))
+    }
+
+    fn tmp_store() -> SqliteStore {
+        SqliteStore::open(&tmp_path()).unwrap()
     }
 
     #[test]
@@ -742,6 +831,7 @@ mod tests {
         s.append_new(&[doc("d1", "Original", "quantum widgets everywhere")])
             .unwrap();
         assert_eq!(hits(&s, "quantum"), 1);
+        let old_fingerprint = s.fingerprints().unwrap()["d1"];
 
         assert!(s
             .update_document(&doc("d1", "Revised", "photonic gizmos instead"))
@@ -753,6 +843,12 @@ mod tests {
         assert_eq!(hits(&s, "photonic"), 1);
         // The archive itself agrees.
         assert_eq!(s.count().unwrap(), 1);
+        let new_fingerprint = s.fingerprints().unwrap()["d1"];
+        assert_ne!(new_fingerprint, old_fingerprint);
+        assert_eq!(
+            new_fingerprint,
+            intel_extract::simhash("Revised photonic gizmos instead")
+        );
     }
 
     #[test]
@@ -880,6 +976,70 @@ mod tests {
         assert_eq!(prints.len(), 1);
         // The stored fingerprint is exactly what the analysis-time dedup uses.
         assert_eq!(prints["d1"], intel_extract::simhash("T quantum widgets"));
+    }
+
+    #[test]
+    fn migration_backfills_pre_fingerprint_archive_without_changing_identity() {
+        let path = tmp_path();
+        let legacy = rusqlite::Connection::open(&path).unwrap();
+        legacy
+            .execute_batch(
+                "CREATE TABLE documents (
+                    id TEXT PRIMARY KEY,
+                    sector TEXT NOT NULL,
+                    url TEXT,
+                    title TEXT NOT NULL,
+                    body TEXT NOT NULL,
+                    published_day INTEGER,
+                    published_raw TEXT,
+                    authors TEXT NOT NULL,
+                    tags TEXT NOT NULL,
+                    source_id TEXT NOT NULL,
+                    retrieved_from TEXT NOT NULL,
+                    source_kind TEXT NOT NULL,
+                    license TEXT NOT NULL,
+                    canonical_id TEXT
+                );
+                INSERT INTO documents VALUES
+                    ('original', 'technology', NULL, 'Alpha', 'quantum widgets',
+                     739071, '2026-07-04', '[]', '[]', 'test', 'legacy', 'rss',
+                     'CC-BY', 'original'),
+                    ('copy', 'technology', NULL, 'Beta', 'photonic gizmos',
+                     739071, '2026-07-04', '[]', '[]', 'test', 'legacy', 'rss',
+                     'CC-BY', 'original');",
+            )
+            .unwrap();
+        let columns: Vec<String> = legacy
+            .prepare("PRAGMA table_info(documents)")
+            .unwrap()
+            .query_map([], |row| row.get(1))
+            .unwrap()
+            .collect::<rusqlite::Result<_>>()
+            .unwrap();
+        assert!(!columns.iter().any(|name| name == "simhash"));
+        drop(legacy);
+
+        let migrated = SqliteStore::open(&path).unwrap();
+        assert_eq!(migrated.count().unwrap(), 2);
+        let prints = migrated.fingerprints().unwrap();
+        assert_eq!(prints.len(), 2);
+        assert_eq!(
+            prints["original"],
+            intel_extract::simhash("Alpha quantum widgets")
+        );
+        assert_eq!(
+            prints["copy"],
+            intel_extract::simhash("Beta photonic gizmos")
+        );
+        assert_eq!(
+            migrated.canonical_id("original").unwrap().as_deref(),
+            Some("original")
+        );
+        assert_eq!(
+            migrated.canonical_id("copy").unwrap().as_deref(),
+            Some("original")
+        );
+        assert_eq!(migrated.load_all_with_fingerprints().unwrap().len(), 2);
     }
 
     #[test]

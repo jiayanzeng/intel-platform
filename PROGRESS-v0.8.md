@@ -191,3 +191,29 @@ correct them with a new dated entry.
   passed alone, and a test-only pid + atomic-sequence filename fix made the full
   matrix pass. The failure and fix are recorded in STATE; no production store
   behavior changed.
+
+### 2026-07-20 · T3 — persisted fingerprints consumed without output drift
+
+- owner: 🤖 Codex
+- measured: corrected the false runbook premise: `data/core.db` already had a
+  populated `simhash` column (**1,764 rows, 0 NULL fingerprints, 0 NULL canonical
+  ids**). On a disposable copy with that column removed, store open restored it
+  and produced **1,764/1,764** stored fingerprints with **0 fresh-compute
+  mismatches** and **0 canonical-id mismatches** against the original. Direct
+  verification of the original also found 0 fingerprint mismatches.
+- acceptance: stored fingerprint equals fresh compute ✅ · pre-column migration
+  backfills the same 1,764 rows ✅ · dedup consumes the persisted value, proven
+  by a deliberately violating double ✅ · document edits refresh the value ✅ ·
+  workspace 86, net 19, shell 70 tests green; warning-denied checks, clippy, and
+  fmt clean ✅
+- golden E2E: byte-identical — fresh fixture DB; acme 13 → 12; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; re-ingest +0; quant 1; ordinary `/v1/ask` answer, 4 citations, and
+  `techwire::tw-004` suppression unchanged. `data/core.db` retained exact count,
+  hash, size, and mtime.
+- commit: this T3 persistence/migration commit (see git history)
+- notes / gate: the output gate did not trip. The first verifier compile failed
+  on an iterator lifetime and was fixed; the first migration test then exposed
+  an FTS update-trigger interaction and failed with `database disk image is
+  malformed`. It was not counted as a pass. The backfill now suspends/recreates
+  that trigger transactionally. No dependency, lockfile, MSRV, or policy change.

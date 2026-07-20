@@ -80,9 +80,12 @@ Condensed from `STATE.md §2`.
    a change to the store or entitlement model.
 8. **Dedup identity is a corpus property.** `canonical_id` is re-materialized from
    the global rule (earliest by `(published_day, id)`) on every ingest that adds
-   rows. `/retrieve` keeps whichever near-dup the *query* ranked higher —
-   relevance is a property of the question, not the corpus. Only the fingerprint
-   is reused there.
+   rows. The 64-bit `simhash(title + body)` is materialized at ingest or
+   migration and refreshed on document updates; `/view` and canonical assignment
+   consume that persisted value, and a missing value is an error rather than an
+   invitation to hide a failed migration by recomputing. `/retrieve` keeps
+   whichever near-dup the *query* ranked higher — relevance is a property of the
+   question, not the corpus. Only the persisted fingerprint is reused there.
 
 ## 4. The robots subsystem (two gates, one direction)
 

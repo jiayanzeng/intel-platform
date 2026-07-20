@@ -301,11 +301,12 @@ every call — measured at **85%** of dedup cost at n = 10k (the quadratic scan
 everyone assumed was the problem is 14.6%). Store the fingerprint as a column at
 ingest; have `dedup_near` **take** fingerprints rather than compute them.
 
-**The precondition just changed — note it.** `TASKS-v0.8.md` T3 says to build the
-migration path only if a pre-column archive exists ("in v0.7 the tool was
-correctly *not* built because none did"). **One now does:** the 2026-07-20 harvest
-wrote 1,764 documents into `data/core.db` with no fingerprint column. So the
-migration is now a real requirement, and that archive is your test fixture for it.
+**Entering-state correction (measured 2026-07-20).** The claim below was false:
+the 2026-07-20 archive did **not** lack the fingerprint column. Direct SQLite
+measurement found 1,764 documents, the `simhash` column present, 0 NULL
+fingerprints, and 0 NULL canonical ids. The required migration was therefore
+verified on a disposable copy of those exact 1,764 rows after removing only the
+copy's column; `data/core.db` remained untouched.
 
 **Decision gate — the output must not move, at all.** Same fingerprints ⇒ same
 drops ⇒ same canonical ids. If the golden E2E changes by one document, one
@@ -316,8 +317,8 @@ killed LSH.)
 **Acceptance criteria (from `TASKS-v0.8.md` T3).**
 - Golden E2E **byte-identical**.
 - A test that a stored fingerprint equals a freshly computed one.
-- A migration that backfills the column for the pre-column `data/core.db` archive,
-  verified against a fresh compute over the same rows.
+- A migration that backfills a disposable pre-column copy of all 1,764
+  `data/core.db` rows, verified against a fresh compute over those same rows.
 
 **Done when** fingerprints are persisted, dedup consumes them, and nothing about
 the output moved.
@@ -392,6 +393,6 @@ trigger dictates.
 - [x] **T6** — clippy/fmt a blocking gate; STATE reconciled
 - [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
 - [x] **T5** — robots re-gated on the final origin after redirects
-- [ ] **T3** — SimHash fingerprint persisted; migration verified on the live archive
+- [x] **T3** — SimHash persisted/consumed; migration verified on a pre-column copy of the live archive
 - [ ] **T4** — LLM endpoint wired *(or deferral recorded with the gate)*
 - [ ] **T7** — single-flight decided *(expected: deferred, one writer)*

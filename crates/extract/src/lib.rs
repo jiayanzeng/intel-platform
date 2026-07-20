@@ -82,9 +82,10 @@ pub struct DedupResult {
     pub drops: Vec<DedupDrop>,
 }
 
-/// Collapses near-duplicates, keeping the earliest by (day, id).
-pub fn dedup_near(mut docs: Vec<Document>, max_distance: u32) -> DedupResult {
-    docs.sort_by(|a, b| {
+/// Collapses near-duplicates from fingerprints persisted by the store, keeping
+/// the earliest by (day, id).
+pub fn dedup_near(mut docs: Vec<(Document, u64)>, max_distance: u32) -> DedupResult {
+    docs.sort_by(|(a, _), (b, _)| {
         a.published_day
             .cmp(&b.published_day)
             .then_with(|| a.id.cmp(&b.id))
@@ -93,8 +94,7 @@ pub fn dedup_near(mut docs: Vec<Document>, max_distance: u32) -> DedupResult {
     let mut kept: Vec<(u64, Document)> = Vec::new();
     let mut drops = Vec::new();
 
-    for d in docs {
-        let fp = simhash(&format!("{} {}", d.title, d.body));
+    for (d, fp) in docs {
         let mut matched: Option<(u32, String)> = None;
         for (kfp, k) in &kept {
             let dist = hamming(*kfp, fp);
@@ -122,6 +122,27 @@ pub fn dedup_near(mut docs: Vec<Document>, max_distance: u32) -> DedupResult {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use intel_core::{Day, License, Provenance, SectorId, SourceKind};
+
+    fn doc(id: &str, title: &str, body: &str) -> Document {
+        Document {
+            id: id.into(),
+            sector: SectorId("technology".into()),
+            url: None,
+            title: title.into(),
+            body: body.into(),
+            published_day: Day::parse_iso("2026-07-04"),
+            published_raw: Some("2026-07-04".into()),
+            authors: vec![],
+            tags: vec![],
+            provenance: Provenance {
+                source_id: "test".into(),
+                retrieved_from: "fixture".into(),
+                kind: SourceKind::Rss,
+                license: License::CcBy,
+            },
+        }
+    }
 
     #[test]
     fn identical_texts_have_zero_distance() {
@@ -142,5 +163,32 @@ mod tests {
         let a = simhash("DeepSeek said researchers can request the V4 Pro checkpoints starting today. Early adopters are serving the release through vLLM at launch.");
         let b = simhash("Syndicated: DeepSeek said researchers can request the V4 Pro checkpoints starting today. Early adopters are serving the release through vLLM at launch.");
         assert!(hamming(a, b) <= 10, "distance was {}", hamming(a, b));
+    }
+
+    #[test]
+    fn dedup_consumes_supplied_fingerprints_instead_of_recomputing() {
+        let first = doc(
+            "a",
+            "Sparse mixture of experts routing",
+            "memory constraints on accelerators",
+        );
+        let second = doc(
+            "b",
+            "Coastal salinity trends",
+            "twenty years of public buoy measurements",
+        );
+        let fresh_first = simhash(&format!("{} {}", first.title, first.body));
+        let fresh_second = simhash(&format!("{} {}", second.title, second.body));
+        assert!(hamming(fresh_first, fresh_second) > 16);
+
+        // This deliberately violating double gives unrelated documents the
+        // same stored value. Recomputing would keep both; consuming the supplied
+        // fingerprints must collapse the second and report distance zero.
+        let result = dedup_near(vec![(first, 7), (second, 7)], 16);
+        assert_eq!(result.kept.len(), 1);
+        assert_eq!(result.drops.len(), 1);
+        assert_eq!(result.drops[0].dropped_id, "b");
+        assert_eq!(result.drops[0].kept_id, "a");
+        assert_eq!(result.drops[0].distance, 0);
     }
 }

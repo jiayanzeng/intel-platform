@@ -211,14 +211,14 @@ fn parse_sectors(raw: &str) -> Vec<String> {
         .collect()
 }
 
-fn sector_corpus(state: &AppState, sectors: &[String]) -> Result<Vec<Document>, ApiErr> {
+fn sector_corpus(state: &AppState, sectors: &[String]) -> Result<Vec<(Document, u64)>, ApiErr> {
     let set: HashSet<SectorId> = sectors.iter().map(|s| SectorId::new(s)).collect();
     Ok(state
         .store
-        .load_all()
+        .load_all_with_fingerprints()
         .map_err(internal)?
         .into_iter()
-        .filter(|d| set.contains(&d.sector))
+        .filter(|(d, _)| set.contains(&d.sector))
         .collect())
 }
 

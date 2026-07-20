@@ -9,9 +9,9 @@
 //! Core-shell note: this crate is the old `intel-brief` minus `render.rs`.
 //! RENDERING LEFT THE CORE — markdown copy, section ordering, and product
 //! voice are shell business (`shell/intel_shell/briefing.py`). What stays
-//! here is the computation, because it is the hot path (SimHash over every
-//! document pair, alias scans over every body) and because its outputs are
-//! product invariants (dedup-before-statistics, evidence-linking).
+//! here is the computation, because it is the hot path (near-duplicate scans
+//! over persisted SimHashes, alias scans over every body) and because its
+//! outputs are product invariants (dedup-before-statistics, evidence-linking).
 //!
 //! At seed scale this recomputes per call (instant on hundreds of docs).
 //! At product scale: materialize per-sector views on an ingestion schedule
@@ -48,7 +48,7 @@ impl Default for ViewParams {
     }
 }
 
-pub fn compute_view(corpus: Vec<Document>, gaz: &Gazetteer, p: &ViewParams) -> View {
+pub fn compute_view(corpus: Vec<(Document, u64)>, gaz: &Gazetteer, p: &ViewParams) -> View {
     let dd = dedup_near(corpus, p.dedup_max_distance);
     let mentions = gaz.extract(&dd.kept);
     let discovered = discover_candidates(&dd.kept, gaz, p.discovery_min_docs);
