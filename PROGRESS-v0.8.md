@@ -117,3 +117,26 @@ correct them with a new dated entry.
 - notes / gate: logging/checklist only; no fetch, robots, cursor, or corpus
   outcome changed. `data/core.db` hash/size/mtime/count remained exact. T2's
   capped-run cursor bug remains blocked and was not worked around.
+
+### 2026-07-20 · T6 — clippy and fmt are clean and blocking
+
+- owner: 🤖 Codex
+- measured: lint-fix commit `097b017` moved the SQLite vector layer before the
+  test module and applied rustfmt to the 13-file B0 inventory. Clippy exits 0
+  under `-D warnings`; fmt check exits 0. Workspace check/test: 0 rustc warnings
+  and 80 passed. Net check/test: 0 rustc warnings and 17 passed. Shell: 69
+  passed with the existing 1 Starlette deprecation warning. CI now sets the
+  lint job's `continue-on-error: false`.
+- acceptance: `items_after_test_module` eliminated and clippy clean ✅ · two
+  MSRV-preserving `unnecessary_map_or` allows retained ✅ · fmt clean ✅ · lint
+  job blocking ✅ · fix and gate split into two commits ✅ · full tests green ✅
+  · stale STATE/TASKS claims corrected ✅
+- golden E2E: unchanged — fresh temporary fixture DB; acme 13 → 12; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; re-ingest +0; quant 1; `/v1/ask` 4 citations with
+  `techwire::tw-004` suppressed. `data/core.db` retained its exact count,
+  hash, size, and mtime.
+- commit: lint fix `097b017`; this separate T6 gate/status commit (see git
+  history)
+- notes / gate: no MSRV increase and no behavior change. The decision gate did
+  not trip; both commands were green before CI was made blocking.

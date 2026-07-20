@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **80 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **17 net-path ingest tests green**, and **69 shell tests green** against a FAKE core (with 1 Starlette deprecation warning). "0 warnings" means **rustc** warnings; clippy and fmt are tracked separately (see below). Golden end-to-end re-verified unchanged in B0.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **80 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **17 net-path ingest tests green**, and **69 shell tests green** against a FAKE core (with 1 Starlette deprecation warning). Clippy and fmt are both clean on pinned Rust 1.91.1 and are now a blocking CI gate. Golden end-to-end re-verified unchanged in T6.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -10,7 +10,7 @@
 - **Harness bug 3 — `down` can't reach the orphan.** A pidfile only tracks servers we started. **Fixed:** `cmd_down` now reports a still-held port after cleanup, with the PID and kill command. (Also: `_start_mock_llm` still used `setsid`; switched to `nohup` — another latent macOS break.)
 - **Test-isolation bug — parallel temp-DB collision.** `tmp_db()` named the per-test SQLite file from `SystemTime` nanos only; two parallel test threads in the same tick got the same path and clobbered each other (seen as a "fresh" DB already holding another test's rows — `new=4, fetched=7`). **Fixed:** a process-global atomic counter + pid in the name guarantees a distinct path per call. `cargo test` is now deterministic under default parallelism (verified across repeated runs).
 
-**On the "0 warnings" claim — B0 correction, measured 2026-07-20.** It means *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. The prior sentence claiming the test module had been moved last was **false**: `cargo clippy --workspace --locked --all-targets -- -D warnings` exits 101 with one `clippy::items_after_test_module` diagnostic at `crates/store/src/sqlite.rs:537`, naming the five items at lines 749–880 that still follow the test module. Re-running clippy with only that known lint allowed is otherwise clean. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. `cargo fmt --all -- --check` also exits non-zero, with diffs in 13 Rust files. CI therefore correctly remains a **report-only** lint job (`continue-on-error`) until T6 fixes the tree and promotes the gate.
+**On the "0 warnings" claim — B0 correction and T6 resolution, measured 2026-07-20.** "0 warnings" originally meant *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. B0 proved the prior claim that the test module had been moved last was **false**: clippy exited 101 on `clippy::items_after_test_module`, and fmt found diffs in 13 Rust files. T6 moved the SQLite vector layer before the test module and applied rustfmt in the separate lint-fix commit `097b017`. After that fix, `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check` both exit 0. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. CI's lint job is now explicitly blocking (`continue-on-error: false`).
 
 **T2 interruption-resume is BLOCKED by a measured code defect (2026-07-20).** A fresh `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv` fetched and parsed **1,300 real records** from page 1, reported "more pages follow," and stopped at the cap. The required cursor row immediately afterward was `cursor = NULL, high_water = '2026-07-20'`, not a non-empty next-page token. The cause is direct: `ArxivOaiSource::fetch` checkpoints `next`, breaks at the cap, then unconditionally calls `complete()`, which clears the token and advances high-water. The existing cap test inspects the intermediate fake's `checkpoints` vector but never asserts its final resume state, so it stayed green while persistence failed. Run 2 was deliberately **not** executed: it would exercise incremental high-water, the exact false-positive path the runbook forbids. T2 is not complete.
 
@@ -126,7 +126,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
 
 1. **The live arXiv harvest** (T1 above), the moment a box with egress exists. Everything is ready; nothing else can falsify the paging.
 2. **Persist the SimHash fingerprint** — the swap T5's measurements actually justify, and the one that replaces LSH on the T8 trigger table. `simhash(title + body)` is a pure function of the document, recomputed for *every* document on *every* dedup pass, and T9.1 runs that pass on every ingest that adds rows. It is **85% of dedup cost at n=10k**. Storing it as a column at ingest changes **no output whatsoever** (same fingerprints ⇒ same drops ⇒ same canonical ids) and is far smaller than an index. *Only after that* is the pairwise scan worth attacking — and by then the honest options (a tighter threshold, or a wider fingerprint at the same absolute distance) both change dedup semantics and must be argued on the merits, not smuggled in as a performance fix.
-3. **Turn on `clippy` + `rustfmt` in CI.** Staged but commented out in `.github/workflows/ci.yml`, deliberately: the v0.7 sandbox's apt toolchain ships **neither component**, so neither could be *run* — and committing a gate you have not executed is how a repo ends up with a CI that is red on arrival, which is a CI everyone learns to ignore. Run `rustup component add clippy rustfmt`, then `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check`; if clean, uncomment the block.
+3. ~~**Turn on `clippy` + `rustfmt` in CI.**~~ **COMPLETED in v0.8/T6.** The job was not commented out; it was report-only, and B0 measured one clippy diagnostic plus 13 files of fmt drift. T6 fixed those findings in `097b017`, verified both commands clean, then promoted the job to blocking in the separate gate commit.
 
 ## 5. Known limitations (documented, not hidden)
 
@@ -350,3 +350,31 @@ handoff.
   `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
 - H1 intentionally does **not** repair T2's capped-run completion bug. T2
   remains blocked exactly as recorded above.
+
+### T6 — clippy + fmt promoted to a blocking gate (verified 2026-07-20)
+
+- The lint fix and gate are separate as required. Commit `097b017` contains
+  only Rust formatting plus relocation of `row_to_document`, the embeddings
+  `impl SqliteStore`, and vector helpers before the final `#[cfg(test)] mod
+  tests`; no behavior or invariant changed. The gate/status change is the
+  following commit.
+- `cargo clippy --workspace --locked --all-targets -- -D warnings`: exit 0.
+  `items_after_test_module` no longer fires. The two deliberate
+  `unnecessary_map_or` allows remain because replacing them with
+  `Option::is_none_or` would require Rust 1.82, above the offline 1.78 floor.
+- `cargo fmt --all -- --check`: exit 0. `.github/workflows/ci.yml` now names the
+  lint job blocking and sets `continue-on-error: false`; the prior report-only
+  and "commented out" descriptions have been corrected.
+- Full regression matrix after the lint fix: warning-denied workspace check
+  exit 0; **80 workspace tests passed**; warning-denied net check exit 0; **17
+  net ingest tests passed**; shell **69 passed** with the existing single
+  third-party Starlette deprecation warning.
+- Golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t6-golden.VdLRbK/golden.db` and was unchanged:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at
+  hamming **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1
+  document**, and `/v1/ask` **4 citations** with `techwire::tw-004` suppressed.
+- Before and after the golden run, `data/core.db` remained **1,764 documents**,
+  6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`, SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+  Ports 8788, 8790, 8786, and 8899 were clear after teardown.

@@ -30,7 +30,7 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # The offline path: everything except live fetching. MSRV floor is 1.75.
+  # The offline path: everything except live fetching. MSRV floor is 1.78.
   # ---------------------------------------------------------------------------
   core:
     name: core (pinned toolchain)
@@ -53,31 +53,24 @@ jobs:
       - name: cargo test --workspace --locked
         run: cargo test --workspace --locked
 
-      # fmt/clippy are their own job (`lint`) below, run for real but
-      # continue-on-error — see the rationale there.
+      # fmt/clippy are their own blocking job (`lint`) below.
 
   # ---------------------------------------------------------------------------
-  # Lint: clippy + rustfmt, run FOR REAL but non-blocking (continue-on-error).
+  # Lint: clippy + rustfmt, blocking on every push and pull request.
   #
-  # Two honest constraints shaped this:
-  #  1. The dev sandbox's apt toolchain ships neither clippy nor rustfmt, so
-  #     these lints cannot be verified where the code is written — only here, on
-  #     a runner that has them. A gate you cannot run locally should not be able
-  #     to block a merge on a rule the author couldn't check first.
-  #  2. A known-and-accepted clippy divergence exists: `clippy::unnecessary_map_or`
-  #     is #![allow]'d in intel-compliance and arxiv_oai, because its fix
-  #     (`Option::is_none_or`) is Rust 1.82+ and would raise the offline MSRV
-  #     floor above the declared 1.78. That is a deliberate trade, not debt.
+  # A known-and-accepted clippy divergence remains:
+  # `clippy::unnecessary_map_or` is #![allow]'d in intel-compliance and
+  # arxiv_oai, because its fix (`Option::is_none_or`) is Rust 1.82+ and would
+  # raise the offline MSRV floor above the declared 1.78. That is a deliberate
+  # trade, not debt.
   #
-  # So this job REPORTS clippy/fmt status (visible on every PR) without gating.
-  # The remaining lints it surfaces are cleanup, not correctness — see STATE §5.
-  # Flip `continue-on-error` to false once the tree is clippy-clean on a pinned
-  # toolchain and the team wants it enforced.
+  # T6 verified both commands clean on the pinned 1.91.1 toolchain before
+  # promoting this job from report-only to blocking.
   # ---------------------------------------------------------------------------
   lint:
-    name: clippy + fmt (report only)
+    name: clippy + fmt (blocking)
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -156,7 +149,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       # No -D warnings here: an older compiler lints differently, and we are
-      # asserting that it *builds*, not that it is lint-clean on 1.75.
+      # asserting that it *builds*, not that it is lint-clean on 1.78.
       - name: cargo check --workspace --locked (1.78)
         env:
           RUSTFLAGS: ""

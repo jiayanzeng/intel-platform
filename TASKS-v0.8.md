@@ -201,10 +201,11 @@ fetches.
 
 ## T6 — Turn on `clippy` + `rustfmt` in CI [P2, ci — cheap, 20 minutes]
 
-Staged and **deliberately commented out** in `.github/workflows/ci.yml`: the v0.7
-sandbox's apt toolchain ships neither component, so neither could be *run*, and
-committing a gate you have not executed is how a repo ends up with a CI that is
-red on arrival — which is a CI everyone learns to ignore.
+Entering v0.8, this was already a real CI job, but it was **report-only** via
+`continue-on-error: true`; the earlier claim that it was commented out was
+false. B0 ran both tools and found one `items_after_test_module` diagnostic plus
+rustfmt diffs in 13 files. T6 fixed those findings in commit `097b017`, then
+promoted the now-clean job to blocking in a separate commit.
 
 ```
 rustup component add clippy rustfmt
@@ -213,8 +214,11 @@ cargo fmt --all -- --check
 ```
 
 **Decision gate:** if either reports findings, **fix them in a separate commit
-first**, then uncomment. Do not land a lint gate and a lint fix together — that
-is how a formatting diff hides a behavior change.
+first**, then promote the job. Do not land a lint gate and a lint fix together —
+that is how a formatting diff hides a behavior change. **Satisfied in T6:** both
+commands pass on pinned Rust 1.91.1; the two intentional
+`unnecessary_map_or` allows remain because their replacement requires Rust 1.82,
+above the offline 1.78 floor.
 
 ---
 
