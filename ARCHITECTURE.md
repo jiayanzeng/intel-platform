@@ -24,7 +24,7 @@ SHELL (Python, product layer — iterate freely)
         v  minimal JSON API over 127.0.0.1:8788, optional x-core-token
 CORE (Rust, engine — stable, invariant-bearing)
   apps/cored    /health /sectors /ingest /view /search /retrieve
-                /embeddings(/missing) /signals/record /docs   [+ /attest, T1]
+                /attest /embeddings(/missing) /signals/record /docs
   crates        core compliance ingest extract enrich analyze
                 store registry view retrieve
 ```
@@ -53,13 +53,17 @@ Condensed from `STATE.md §2`.
 
 1. **License gating lives in the core.** `store.search` nulls snippets for
    `IndexOnly`; `/view` hydrates evidence with `excerpt: Option<String>` gated by
-   `License::redistributable()`. The shell cannot leak what it never receives.
+   `License::redistributable()`; `/attest` refuses a model answer that overlaps
+   gated context. The shell receives bodies only on the internal model-context
+   seam, and the public answer is structurally checked before return.
 2. **Entitlement *decision* in the shell; sector *filtering* also in core SQL.**
    Defense in depth: a shell bug can grant wrong sectors, never bypass the filter.
 3. **The core never calls an LLM.** Embeddings round-trip through the shell;
    `/retrieve` takes `model` + `query_vector`.
 4. **Full bodies are served on internal `/retrieve` and `/docs`** — model context
    is analysis, not redistribution, and these are loopback-internal, not public.
+   Any model output derived from that context must pass through `/attest` before
+   a public response.
 5. **Source selection is core business.** `/ingest` takes `{sectors, sources?}`;
    every named source is validated against `sectors` (a source outside
    entitlement is refused, not run). Omitting `sources` preserves pre-v0.6
@@ -124,11 +128,11 @@ fixed before a second cross-origin-redirecting source goes live.
 | `/embeddings` | POST | vectors posted back by the shell | internal |
 | `/signals/record` | POST | shell posts signals back | internal |
 | `/docs` | GET | full documents | internal |
-| `/attest` *(planned, T1)* | POST | `{answer, context_doc_ids}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
+| `/attest` | POST | `{answer, context_doc_ids}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
 
 The public surface is the shell's `/v1/*`. The core is loopback-only; `/retrieve`
-and `/docs` carrying full bodies is safe precisely because nothing public reaches
-them directly.
+and `/docs` carry full bodies only for analysis, and `/attest` prevents copied
+IndexOnly context from reaching `/v1/ask`.
 
 ## 6. Invariant map (which invariant lives where, and why)
 

@@ -140,3 +140,29 @@ correct them with a new dated entry.
   history)
 - notes / gate: no MSRV increase and no behavior change. The decision gate did
   not trip; both commands were green before CI was made blocking.
+
+### 2026-07-20 · T1 — HC1 is structurally enforced on `/v1/ask`
+
+- owner: 🤖 Codex
+- measured: real-corpus n-sweep covered 1,764 live IndexOnly documents, 17,640
+  single-doc clean trials, 4,851 four-doc clean trials, and 1,763 substantive
+  seeded sentence leaks. `n=15` had 1/4,851 operational false positives;
+  **`n=16` had 0/4,851 false positives and 1,763/1,763 true positives**;
+  `n=17` fell to 1,762/1,763 true positives. Selected 16. Full curve is in
+  `STATE.md §8`.
+- acceptance: IndexOnly sentence refused in core ✅ · CcBy sentence allowed ✅ ·
+  analytical answer byte-preserved ✅ · leaking mock first proven to contain
+  gated text, then absent from public `/v1/ask` response ✅ · real Rust/HTTP
+  leaking-model E2E returned the constant refusal ✅ · n-sweep recorded ✅ ·
+  workspace 84, net 17, shell 70 tests green; clippy/fmt and both
+  warning-denied checks clean ✅
+- golden E2E: ordinary output unchanged — fresh fixture DB; acme 13 → 12;
+  dropped `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek
+  RISING z=10.0; re-ingest +0; quant 1; `/v1/ask` kept the ordinary mock answer,
+  4 citations, and `techwire::tw-004` suppression. `data/core.db` retained its
+  exact count, hash, size, and mtime.
+- commit: this T1 HC1-attestation commit (see git history)
+- notes / gate: the gate held only at `n=16`; the anticipated 8 was rejected
+  because its four-document clean FPR measured 1.0513%. One punctuation-less
+  record lacked an eligible complete sentence in the visible 800 characters
+  and is explicitly identified in STATE. No dependency or MSRV change.

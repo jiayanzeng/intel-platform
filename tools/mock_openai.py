@@ -13,19 +13,21 @@ Serves:
 
 Usage:
   python3 tools/mock_openai.py [port]          # default 8899
+  python3 tools/mock_openai.py --leak [port]   # deliberately copy IndexOnly text
   LLM_BASE_URL=http://127.0.0.1:8899/v1 PYTHONPATH=shell python3 -m intel_shell.pipeline
   LLM_BASE_URL=http://127.0.0.1:8899/v1 PYTHONPATH=shell uvicorn intel_shell.app:app
 
 Swap LLM_BASE_URL to DeepSeek's API or your own vLLM / llama.cpp server and
 nothing else changes.
 """
+import argparse
 import hashlib
 import json
 import re
-import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 DIM = 32
+MIN_LEAK_TOKENS = 16
 
 
 def embed(text: str):
@@ -36,7 +38,60 @@ def embed(text: str):
     return [x / n for x in v]
 
 
+def _index_only_bodies(user: str) -> list[str]:
+    return [
+        match.strip()
+        for match in re.findall(
+            r"^\[\d+\][^\n]*license: IndexOnly\)\n(.*?)(?=^\[\d+\]|\Z)",
+            user,
+            flags=re.MULTILINE | re.DOTALL,
+        )
+        if match.strip()
+    ]
+
+
+def leaking_sentence(user: str) -> str | None:
+    """Return source wording the attestation guard must refuse.
+
+    Prefer a complete substantive sentence. The fallback deliberately returns
+    the visible body itself, so --leak can still violate the guard when a source
+    has punctuation-free text.
+    """
+    for body in _index_only_bodies(user):
+        sentences = re.split(r"(?<=[.!?])\s+", body)
+        candidates = [
+            sentence.strip()
+            for sentence in sentences
+            if len(re.findall(r"[\w]+", sentence, flags=re.UNICODE))
+            >= MIN_LEAK_TOKENS
+        ]
+        if candidates:
+            return candidates[0]
+        return body
+    return None
+
+
+def chat_content(user: str, leak: bool = False) -> str:
+    if leak and (sentence := leaking_sentence(user)) is not None:
+        return f"MOCK-LEAK: {sentence}"
+
+    refs = re.findall(r"\[(\d+)\]", user)
+    if refs:
+        cite = "".join(f"[{r}]" for r in sorted(set(refs))[:3])
+        return (
+            "MOCK-ANSWER: synthesized from the retrieved context; "
+            f"primary support {cite}. Replace LLM_BASE_URL with a real "
+            "model endpoint for substantive answers."
+        )
+    return (
+        "MOCK-ANSWER: the retrieved context contains no relevant "
+        "documents for this question."
+    )
+
+
 class Handler(BaseHTTPRequestHandler):
+    leak = False
+
     def do_POST(self):
         length = int(self.headers.get("Content-Length", "0"))
         body = json.loads(self.rfile.read(length) or b"{}")
@@ -58,19 +113,7 @@ class Handler(BaseHTTPRequestHandler):
             for m in body.get("messages", []):
                 if m.get("role") == "user":
                     user = m.get("content", "")
-            refs = re.findall(r"\[(\d+)\]", user)
-            if refs:
-                cite = "".join(f"[{r}]" for r in sorted(set(refs))[:3])
-                content = (
-                    "MOCK-ANSWER: synthesized from the retrieved context; "
-                    f"primary support {cite}. Replace LLM_BASE_URL with a real "
-                    "model endpoint for substantive answers."
-                )
-            else:
-                content = (
-                    "MOCK-ANSWER: the retrieved context contains no relevant "
-                    "documents for this question."
-                )
+            content = chat_content(user, leak=self.leak)
             resp = {
                 "choices": [
                     {"message": {"role": "assistant", "content": content}}
@@ -93,6 +136,14 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8899
-    print(f"mock openai-compatible api on http://127.0.0.1:{port}/v1")
-    HTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("port", nargs="?", type=int, default=8899)
+    parser.add_argument("--leak", action="store_true")
+    args = parser.parse_args()
+    Handler.leak = args.leak
+    mode = "leaking" if args.leak else "normal"
+    print(
+        f"mock openai-compatible api on http://127.0.0.1:{args.port}/v1 "
+        f"({mode} mode)"
+    )
+    HTTPServer(("127.0.0.1", args.port), Handler).serve_forever()

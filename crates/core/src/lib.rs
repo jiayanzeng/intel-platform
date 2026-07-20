@@ -15,6 +15,7 @@
 //! A news aggregator stops at the archive. This platform's moat is the rest.
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::fmt;
 
 // ---------------------------------------------------------------------------
@@ -280,6 +281,82 @@ pub struct Document {
 }
 
 // ---------------------------------------------------------------------------
+// License attestation
+// ---------------------------------------------------------------------------
+
+/// Measured against the 1,764-document live archive in v0.8/T1. At 15 tokens,
+/// a clean answer that cited public document titles still produced one false
+/// positive; at 16, all 4,851 clean trials passed and all 1,763 seeded
+/// substantive sentence leaks were detected. At 17, leak recall fell.
+pub const ATTEST_NGRAM_SIZE: usize = 16;
+
+/// A refusal replaces the entire model answer. Returning a constant is easier
+/// to reason about than attempting span surgery after normalization, and it
+/// cannot accidentally retain a second overlapping copy of gated text.
+pub const ATTEST_REFUSAL: &str =
+    "Answer withheld because it reproduced non-redistributable source text.";
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AttestViolation {
+    pub doc_id: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Attestation {
+    pub clean_answer: String,
+    pub violations: Vec<AttestViolation>,
+}
+
+/// Inspect a model answer for normalized 16-token phrases copied from any
+/// IndexOnly document in its context. Redistributable documents are ignored:
+/// this is a license gate, not a general prohibition on quotation.
+pub fn attest_answer(answer: &str, context_documents: &[&Document]) -> Attestation {
+    let answer_tokens = normalized_tokens(answer);
+    let answer_ngrams: HashSet<&[String]> = answer_tokens.windows(ATTEST_NGRAM_SIZE).collect();
+
+    let violations = context_documents
+        .iter()
+        .filter(|document| document.provenance.license == License::IndexOnly)
+        .filter_map(|document| {
+            let body_tokens = normalized_tokens(&document.body);
+            body_tokens
+                .windows(ATTEST_NGRAM_SIZE)
+                .any(|window| answer_ngrams.contains(&window))
+                .then(|| AttestViolation {
+                    doc_id: document.id.clone(),
+                })
+        })
+        .collect::<Vec<_>>();
+
+    Attestation {
+        clean_answer: if violations.is_empty() {
+            answer.to_string()
+        } else {
+            ATTEST_REFUSAL.to_string()
+        },
+        violations,
+    }
+}
+
+fn normalized_tokens(value: &str) -> Vec<String> {
+    let mut tokens = Vec::new();
+    let mut current = String::new();
+
+    for character in value.chars() {
+        if character.is_alphanumeric() {
+            current.extend(character.to_lowercase());
+        } else if !current.is_empty() {
+            tokens.push(std::mem::take(&mut current));
+        }
+    }
+    if !current.is_empty() {
+        tokens.push(current);
+    }
+
+    tokens
+}
+
+// ---------------------------------------------------------------------------
 // Entities & mentions (the resolution layer)
 // ---------------------------------------------------------------------------
 
@@ -355,6 +432,67 @@ pub struct Signal {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn attestation_document(id: &str, license: License, body: &str) -> Document {
+        Document {
+            id: id.to_string(),
+            sector: SectorId::new("technology"),
+            url: None,
+            title: "Attestation fixture".to_string(),
+            body: body.to_string(),
+            published_day: None,
+            published_raw: None,
+            authors: Vec::new(),
+            tags: Vec::new(),
+            provenance: Provenance {
+                source_id: "fixture".to_string(),
+                retrieved_from: "fixture://attestation".to_string(),
+                kind: SourceKind::ClientUpload,
+                license,
+            },
+        }
+    }
+
+    const SOURCE_SENTENCE: &str = "The newly measured sparse routing system coordinates many specialized experts while preserving stable token assignments across long analytical workloads.";
+
+    #[test]
+    fn index_only_sentence_is_refused() {
+        let document = attestation_document("gated", License::IndexOnly, SOURCE_SENTENCE);
+        let answer = format!("The model copied this claim: {SOURCE_SENTENCE}");
+
+        let result = attest_answer(&answer, &[&document]);
+
+        assert_eq!(result.clean_answer, ATTEST_REFUSAL);
+        assert_eq!(
+            result.violations,
+            vec![AttestViolation {
+                doc_id: "gated".to_string()
+            }]
+        );
+    }
+
+    #[test]
+    fn cc_by_sentence_is_not_a_license_violation() {
+        let document = attestation_document("licensed", License::CcBy, SOURCE_SENTENCE);
+        let answer = format!("The licensed source says: {SOURCE_SENTENCE}");
+
+        let result = attest_answer(&answer, &[&document]);
+
+        assert_eq!(result.clean_answer, answer);
+        assert!(result.violations.is_empty());
+    }
+
+    #[test]
+    fn analytical_answer_passes_through_unmangled() {
+        let document = attestation_document("gated", License::IndexOnly, SOURCE_SENTENCE);
+        let answer =
+            "The evidence shows increased activity, but independent validation is still needed.";
+
+        let result = attest_answer(answer, &[&document]);
+
+        assert_eq!(result.clean_answer, answer);
+        assert!(result.violations.is_empty());
+    }
 
     #[test]
     fn day_iso_roundtrip() {

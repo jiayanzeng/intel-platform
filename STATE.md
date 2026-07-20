@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **80 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **17 net-path ingest tests green**, and **69 shell tests green** against a FAKE core (with 1 Starlette deprecation warning). Clippy and fmt are both clean on pinned Rust 1.91.1 and are now a blocking CI gate. Golden end-to-end re-verified unchanged in T6.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **84 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **17 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; the leaking-model E2E was refused. The normal golden end-to-end remained byte-identical in T1.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -46,7 +46,8 @@ SHELL (Python, product)   app.py /v1/* · auth.py keys→sectors · llm.py chat+
         │  CoreClient (core_client.py) — the ONLY door; httpx, injectable transport
         ▼  minimal JSON API, 127.0.0.1:8788, optional x-core-token
 CORE (Rust, engine)       apps/cored: /health /sectors /ingest /view /search
-                          /retrieve /embeddings(/missing) /signals/record /docs
+                          /retrieve /attest /embeddings(/missing)
+                          /signals/record /docs
                           crates: core compliance ingest extract enrich analyze
                                   store registry view retrieve
 ```
@@ -55,9 +56,9 @@ CORE (Rust, engine)       apps/cored: /health /sectors /ingest /view /search
 
 ## 2. Load-bearing placement decisions (do not move these casually)
 
-1. **License gating stays in the CORE.** `store.search` nulls snippets for IndexOnly; `/view` hydrates evidence with `excerpt: Option<String>` gated by `License::redistributable()`. Consequence: `briefing.py` can be rewritten arbitrarily and *cannot* leak gated text — it never receives it.
+1. **License gating stays in the CORE.** `store.search` nulls snippets for IndexOnly; `/view` hydrates evidence with `excerpt: Option<String>` gated by `License::redistributable()`; `/attest` refuses a model answer sharing a measured 16-token normalized phrase with IndexOnly context. Consequence: `briefing.py` never receives gated text, and `/v1/ask` cannot return copied gated context without the core replacing the entire answer with a constant refusal.
 2. **Entitlement DECISION in the shell, sector FILTERING in the core.** A shell bug can grant wrong sectors, never bypass filtering.
-3. **The core never calls an LLM.** Shell pulls `GET /embeddings/missing`, calls the provider, `POST /embeddings` vectors back. `/retrieve` accepts `model` + `query_vector`.
+3. **The core never calls an LLM.** Shell pulls `GET /embeddings/missing`, calls the provider, `POST /embeddings` vectors back. `/retrieve` accepts `model` + `query_vector`; `/attest` only inspects a string the shell hands it.
 4. **Full bodies ARE served on internal `/retrieve` and `/docs`** — passing IndexOnly text to a model as context is analysis, not redistribution; loopback-internal, not public.
 5. **`/view`'s `kind` is `format!("{:?}", SignalKind)`**, so the shell can post signals straight back to `/signals/record`.
 6. All v0.1–v0.3 invariants unchanged: dedup (hamming ≤16) BEFORE all statistics; mentions per (entity, doc); Corroborated suppressed when Rising; discovery on bodies only; FNV-1a determinism; RRF k=60.
@@ -138,8 +139,15 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
 - **`dedup_near` recomputes every fingerprint on every pass.** This — not the quadratic scan — is the real cost: **85% of dedup time at n=10k** (measured; `cargo run --release -p intel-extract --example dedup_bench`). See §6c and the T8 note.
 - `/view` is memoized per (sector-set, generation) rather than materialized; a restart re-warms it. Cost is unmeasurable at 12 docs.
 - One SQLite connection behind a `Mutex` (fine: the shell is the single caller); `cored` binds loopback by design.
-- **HC1 IS NOT ENFORCED ON `/v1/ask`, AND ITS TEST IS VACUOUS. This is the most serious open issue in the project.** The architecture's headline claim — "license gating lives in core, so no shell rewrite can leak gated text" (§2.1) — is **true for `/view`, `/search`, and `/brief`, and false for `/v1/ask`.** On that one endpoint the model is *deliberately* handed the full bodies of IndexOnly documents (`prompts.BODY_CAP = 800` chars each), which is defensible — reading gated text as analysis context is not redistribution. But the model's answer is then returned to the client **verbatim and uninspected** (`app.py: "answer": answer`). The only thing standing between a gated source sentence and a public API response is **one sentence in a system prompt** (`ASK_SYSTEM`: "never reproduce sentences from sources marked IndexOnly"). A prompt is not an invariant. The leak vector here is not a shell rewrite — it is the model's own output, and no core invariant touches it.
-  **Worse, the test that "covers" this cannot fail.** The only model in the suite is `tools/mock_openai.py`, a deterministic double **we wrote**, which returns a templated answer and is therefore structurally incapable of reproducing source text. The HC1 spot-check on `/v1/ask` has never been executed against anything able to violate it. This is the same failure mode that let `--features net` sit unbuilt for two cycles and let "robots-compliant" mean "compliant with a policy we wrote ourselves" — *a claimed property that nothing executes* — except that here the property is a **licensing** one. See `TASKS-v0.8.md` T1.
+- ~~**HC1 was not enforced on `/v1/ask`, and its test was vacuous.**~~
+  **RESOLVED in v0.8/T1.** The model still receives capped IndexOnly bodies as
+  internal analysis context, but its answer now goes to core `POST /attest`
+  with the exact context document ids before any public response. The core
+  checks normalized 16-token overlap only against `IndexOnly` bodies and
+  replaces the entire answer with a constant refusal on any violation; `CcBy`
+  quotation remains allowed. `tools/mock_openai.py --leak` deliberately emits
+  a source sentence. Both the shell test and a real Rust↔HTTP↔Python E2E proved
+  that sentence cannot pass, while the ordinary golden answer is unchanged.
 - **The robots gate is checked on the configured origin, but redirects are followed to a different one — NOW CONFIRMED LIVE (still open as T5).** Neither `reqwest::Client` in `crates/ingest/src/net.rs` sets a redirect policy, so reqwest's default applies: **up to 10 redirects, followed silently.** The first on-site harvest hit exactly this: `export.arxiv.org/oai2` **301-redirects** to `oaipmh.arxiv.org/oai`, so a request gated against `export.arxiv.org`'s robots.txt would fetch documents from `oaipmh.arxiv.org`, whose policy was never read. Per RFC 9309 the policy is **per-origin**, so the check must re-run on the final origin (or redirects must be disabled and followed manually). **Worked around for arXiv in v0.7.1** by pointing `config/core.json` at the canonical `oaipmh.arxiv.org/oai` directly (no redirect), but the gap is real for any other source that redirects cross-origin. See `TASKS-v0.8.md` T5.
 - **The robots cache does not de-duplicate concurrent misses.** Two simultaneous first-requests to the same origin can both fetch `/robots.txt`. Bounded, harmless (the limiter still spaces them), and not worth a single-flight lock until there is a second writer — same trigger as Postgres.
 
@@ -378,3 +386,75 @@ handoff.
   6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`, SHA-256
   `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
   Ports 8788, 8790, 8786, and 8899 were clear after teardown.
+
+### T1 — HC1 structurally enforced on `/v1/ask` (verified 2026-07-20)
+
+- Decision-gate corpus: read-only `data/core.db`, **1,764 IndexOnly live arXiv
+  documents**. Normalization is lowercase alphanumeric token runs, matching the
+  shipped Rust implementation. Clean trials comprised ten explicitly written
+  analytical answers (including the normal golden mock answer) against every
+  document, plus one answer per four-document context that repeats only the
+  already-public citation titles. That yields **17,640 single-document clean
+  trials** and **4,851 four-document clean trials**. Leak trials used one
+  substantive complete sentence (at least 12 tokens, wholly visible inside the
+  800-character model context) from **1,763 documents**; token lengths were min
+  16, p10 25, median 33, max 76. One record,
+  `arxiv-cs::oai:arXiv.org:2510.24819`, has no punctuation-delimited 12-token
+  sentence in its visible prefix and was recorded rather than silently counted.
+- Measured sweep (rates are hits / trials; `four-doc FPR` is the operational
+  selection column):
+
+  | n | single-doc FPR | four-doc FPR | seeded-leak TPR |
+  |---:|---:|---:|---:|
+  | 2 | 0.172619 | 0.490414 | 1.000000 |
+  | 3 | 0.005442 | 0.109050 | 1.000000 |
+  | 4 | 0.000000 | 0.078747 | 1.000000 |
+  | 5 | 0.000000 | 0.053185 | 1.000000 |
+  | 6 | 0.000000 | 0.030097 | 1.000000 |
+  | 7 | 0.000000 | 0.018347 | 1.000000 |
+  | 8 | 0.000000 | 0.010513 | 1.000000 |
+  | 9 | 0.000000 | 0.006390 | 1.000000 |
+  | 10 | 0.000000 | 0.004535 | 1.000000 |
+  | 11 | 0.000000 | 0.002474 | 1.000000 |
+  | 12 | 0.000000 | 0.001237 | 1.000000 |
+  | 13 | 0.000000 | 0.001031 | 1.000000 |
+  | 14 | 0.000000 | 0.000618 | 1.000000 |
+  | 15 | 0.000000 | 0.000206 | 1.000000 |
+  | **16** | **0.000000** | **0.000000** | **1.000000** |
+  | 17 | 0.000000 | 0.000000 | 0.999433 |
+  | 18 | 0.000000 | 0.000000 | 0.999433 |
+  | 19 | 0.000000 | 0.000000 | 0.998298 |
+  | 20 | 0.000000 | 0.000000 | 0.997731 |
+
+- **Selected `n = 16`, measured rather than assumed.** It is the only tested
+  point with zero false positives in all 4,851 operational clean trials and
+  100% recall across all 1,763 seeded sentences. `n = 15` retains one false
+  positive; at `n = 17`, recall begins to fall. The anticipated `n ≈ 8` would
+  have falsely refused 1.0513% of the four-document clean trials and was
+  rejected.
+- `intel_core::attest_answer` returns the original answer byte-for-byte when
+  clean, ignores redistributable licenses, and on any IndexOnly overlap returns
+  the constant `Answer withheld because it reproduced non-redistributable
+  source text.` plus document-id-only violations. `POST /attest` fails closed on
+  unknown context ids and accepts at most the same eight documents as retrieval.
+  The core still does not call an LLM.
+- The failure-capable double is real: `tools/mock_openai.py --leak` extracts a
+  substantive IndexOnly sentence from the exact prompt. The shell negative
+  control first asserted that the sentence was present in the model answer;
+  `/v1/ask` then returned only the refusal. A second E2E against real cored,
+  real HTTP, the shell API, and leaking mode produced the same refusal.
+- Acceptance matrix: core tests cover IndexOnly refusal, CcBy pass-through, and
+  unmangled analytical output; a cored test executes the handler against a real
+  store; shell executes the leaking mock. Warning-denied workspace check passed
+  with **84 Rust tests**; net check passed with **17 net tests**; shell **70
+  passed** with the existing one Starlette deprecation warning; clippy and fmt
+  both passed.
+- Normal golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t1-golden.oD23lB/golden.db` and remained exact:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
+  **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
+  and `/v1/ask` retained its ordinary mock answer, **4 citations**, and
+  `techwire::tw-004` suppression. `data/core.db` remained 1,764 documents,
+  6,729,728 bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+  All local ports were clear after teardown.

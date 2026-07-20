@@ -18,6 +18,7 @@ from intel_shell.app import create_app
 from intel_shell.briefing import render_brief
 from intel_shell.config import Subscription
 from intel_shell.core_client import CoreClient
+from tools.mock_openai import chat_content
 
 # --- canned core responses ------------------------------------------------------
 
@@ -78,6 +79,15 @@ FAKE_SEARCH = [
     }
 ]
 
+GATED_SENTENCE = (
+    "The newly measured sparse routing system coordinates many specialized experts "
+    "while preserving stable token assignments across long analytical workloads at "
+    "deployment scale."
+)
+ATTEST_REFUSAL = (
+    "Answer withheld because it reproduced non-redistributable source text."
+)
+
 FAKE_RETRIEVE = {
     "bm25": ["arxiv-cs::oai:arXiv.org:2607.02201"],
     "vector": ["arxiv-cs::oai:arXiv.org:2607.02201"],
@@ -88,8 +98,7 @@ FAKE_RETRIEVE = {
             "doc_id": "arxiv-cs::oai:arXiv.org:2607.02201",
             "sector": "science",
             "title": "DeepSeek-V4 Technical Report",
-            "body": "We present DeepSeek-V4, combining hierarchical sparse attention "
-                    "with a Mixture-of-Experts backbone." + " x" * 600,
+            "body": GATED_SENTENCE + " x" * 600,
             "url": "http://arxiv.org/abs/2607.02201",
             "source_id": "arxiv-cs",
             "day": "2026-07-04",
@@ -116,6 +125,20 @@ def fake_core_handler(request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content)
         assert body["sectors"], "shell must send explicit sectors"
         return httpx.Response(200, json=FAKE_RETRIEVE)
+    if path == "/attest":
+        body = json.loads(request.content)
+        assert body["context_doc_ids"] == [
+            "arxiv-cs::oai:arXiv.org:2607.02201"
+        ]
+        violations = []
+        clean_answer = body["answer"]
+        if GATED_SENTENCE in body["answer"]:
+            violations.append({"doc_id": body["context_doc_ids"][0]})
+            clean_answer = ATTEST_REFUSAL
+        return httpx.Response(
+            200,
+            json={"clean_answer": clean_answer, "violations": violations},
+        )
     return httpx.Response(404, text=f"no fake for {path}")
 
 
@@ -126,6 +149,13 @@ class FakeChat:
         assert "intelligence platform" in system
         assert "QUESTION:" in user
         return "FAKE-ANSWER grounded in [1]."
+
+
+class LeakingMockChat:
+    model = "mock-leak"
+
+    def chat(self, system: str, user: str) -> str:
+        return chat_content(user, leak=True)
 
 
 SUBS = [
@@ -201,6 +231,22 @@ def test_ask_builds_citations_and_answer():
     assert body["citations"][0]["license"] == "IndexOnly"
     assert body["context_suppressed"] == ["osdaily::osd-004"]
     assert body["retrieval"]["fused"] == ["arxiv-cs::oai:arXiv.org:2607.02201"]
+
+
+def test_ask_refuses_the_deliberately_leaking_mock():
+    context, _ = prompts.build_context(FAKE_RETRIEVE["context"])
+    leaking_answer = chat_content(
+        prompts.build_ask_user("what changed", context), leak=True
+    )
+    assert GATED_SENTENCE in leaking_answer, "negative control must actually leak"
+
+    c = make_client(chat=LeakingMockChat())
+    r = c.get("/v1/ask", params={"q": "what changed"}, headers=AUTH)
+
+    assert r.status_code == 200
+    body = r.json()
+    assert body["answer"] == ATTEST_REFUSAL
+    assert GATED_SENTENCE not in body["answer"]
 
 
 def test_build_context_caps_body_and_numbers_refs():

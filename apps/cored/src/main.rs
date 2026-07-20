@@ -20,8 +20,10 @@
 //!   accidentally leak IndexOnly text to subscribers. Full bodies ARE
 //!   served on the internal /retrieve and /docs endpoints: passing gated
 //!   text to a model as context is analysis, which is the position the
-//!   original design took; the shell's prompt forbids verbatim
-//!   reproduction, and this is an internal seam, not a public API.
+//!   original design took; the shell's prompt discourages verbatim
+//!   reproduction, and `/attest` structurally inspects the model answer before
+//!   the shell returns it on a public path. This is an internal seam, not a
+//!   public API.
 //!
 //! Binding: 127.0.0.1 only. Optional shared secret: set CORE_TOKEN and the
 //! shell sends `x-core-token` on every request.
@@ -34,7 +36,7 @@ use axum::http::{HeaderMap, StatusCode};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
-use intel_core::{Day, Document, SectorId, Signal};
+use intel_core::{attest_answer, Attestation, Day, Document, SectorId, Signal};
 use intel_enrich::Gazetteer;
 use intel_extract::{hamming, simhash};
 use intel_ingest::{CursorStore, SourceContext};
@@ -430,6 +432,12 @@ struct RetrieveResp {
 }
 
 #[derive(Deserialize)]
+struct AttestReq {
+    answer: String,
+    context_doc_ids: Vec<String>,
+}
+
+#[derive(Deserialize)]
 struct MissingQ {
     model: String,
 }
@@ -793,6 +801,42 @@ async fn retrieve(
     }))
 }
 
+async fn attest(
+    State(st): State<Arc<AppState>>,
+    headers: HeaderMap,
+    Json(req): Json<AttestReq>,
+) -> Result<Json<Attestation>, ApiErr> {
+    guard(&st, &headers)?;
+    if req.context_doc_ids.len() > 8 {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            "attestation accepts at most 8 context documents".to_string(),
+        ));
+    }
+
+    let all = st.store.load_all().map_err(internal)?;
+    let by_id: HashMap<&str, &Document> = all
+        .iter()
+        .map(|document| (document.id.as_str(), document))
+        .collect();
+    let mut seen = HashSet::new();
+    let mut context = Vec::with_capacity(req.context_doc_ids.len());
+    for doc_id in &req.context_doc_ids {
+        if !seen.insert(doc_id.as_str()) {
+            continue;
+        }
+        let Some(document) = by_id.get(doc_id.as_str()) else {
+            return Err((
+                StatusCode::BAD_REQUEST,
+                "unknown context document id".to_string(),
+            ));
+        };
+        context.push(*document);
+    }
+
+    Ok(Json(attest_answer(&req.answer, &context)))
+}
+
 async fn embeddings_missing(
     State(st): State<Arc<AppState>>,
     headers: HeaderMap,
@@ -896,6 +940,7 @@ async fn main() {
         .route("/view", get(view))
         .route("/search", get(search))
         .route("/retrieve", post(retrieve))
+        .route("/attest", post(attest))
         .route("/embeddings/missing", get(embeddings_missing))
         .route("/embeddings", post(embeddings_upsert))
         .route("/signals/record", post(signals_record))
@@ -989,6 +1034,36 @@ mod tests {
             .await
             .expect("ingest ok")
             .0
+    }
+
+    #[tokio::test]
+    async fn attest_endpoint_refuses_an_index_only_body() {
+        let st = test_state();
+        do_ingest(&st, &["technology"], Some(&["osdaily"])).await;
+        let document = st
+            .store
+            .load_all()
+            .expect("load documents")
+            .into_iter()
+            .find(|document| document.provenance.license == intel_core::License::IndexOnly)
+            .expect("IndexOnly fixture document");
+        let answer = format!("Copied from the source: {}", document.body);
+
+        let response = attest(
+            State(st.clone()),
+            HeaderMap::new(),
+            Json(AttestReq {
+                answer,
+                context_doc_ids: vec![document.id.clone()],
+            }),
+        )
+        .await
+        .expect("attest ok")
+        .0;
+
+        assert_eq!(response.clean_answer, intel_core::ATTEST_REFUSAL);
+        assert_eq!(response.violations.len(), 1);
+        assert_eq!(response.violations[0].doc_id, document.id);
     }
 
     // HC5 regression guard: a sector-only request runs every source in the

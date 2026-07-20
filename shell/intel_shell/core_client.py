@@ -1,6 +1,6 @@
 """CoreClient: the shell's only door into the Rust core.
 
-Ten methods over ten endpoints — that is the entire seam between the two
+Eleven methods over eleven endpoints — that is the entire seam between the two
 layers. Anything the shell can't do through this client is, by design,
 something the shell shouldn't be doing.
 
@@ -94,6 +94,12 @@ class CoreClient:
             payload["model"] = model
             payload["query_vector"] = query_vector
         return self._post("/retrieve", payload)
+
+    def attest(self, answer: str, context_doc_ids: list[str]) -> dict:
+        return self._post(
+            "/attest",
+            {"answer": answer, "context_doc_ids": list(context_doc_ids)},
+        )
 
     def embeddings_missing(self, model: str) -> list[dict]:
         return self._get("/embeddings/missing", model=model)

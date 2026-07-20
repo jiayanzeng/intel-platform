@@ -15,10 +15,11 @@ ASK_SYSTEM = (
 )
 
 # License nuance, stated plainly: passing IndexOnly text to the model as
-# context is analysis (permitted); the system prompt above forbids
-# reproducing it verbatim in the answer, and the citations give subscribers
-# the pointer to the original. This is the durable shape for paid Q&A over
-# mixed-license corpora — confirm specifics with an IP lawyer before
+# context is analysis (permitted); the system prompt above discourages
+# reproducing it verbatim, and the citations give subscribers the pointer to
+# the original. The core's /attest endpoint is the structural enforcement:
+# every model answer is checked against the license-bearing context rows before
+# the public response is returned. Confirm specifics with an IP lawyer before
 # charging for it.
 
 BODY_CAP = 800  # chars of each document body shown to the model

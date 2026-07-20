@@ -390,7 +390,7 @@ trigger dictates.
 - [ ] **T2 — BLOCKED** — capped run clears the resume token; interruption-resume not proven
 - [x] **H1** — harness evidence hardened (real robots line, honest checklist)
 - [x] **T6** — clippy/fmt a blocking gate; STATE reconciled
-- [ ] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
+- [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
 - [ ] **T5** — robots re-gated on the final origin after redirects
 - [ ] **T3** — SimHash fingerprint persisted; migration verified on the live archive
 - [ ] **T4** — LLM endpoint wired *(or deferral recorded with the gate)*

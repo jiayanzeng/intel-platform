@@ -142,6 +142,16 @@ def create_app(
         except Exception as e:  # noqa: BLE001
             raise HTTPException(status_code=502, detail=f"model endpoint error: {e}")
 
+        # HC1 is enforced in core, against the license-bearing source rows. The
+        # prompt remains useful guidance, but it is no longer the only barrier
+        # between IndexOnly context and the public response.
+        attestation = _core_guard(
+            core.attest,
+            answer,
+            [citation["doc_id"] for citation in citations],
+        )
+        answer = attestation["clean_answer"]
+
         return {
             "client": sub.client,
             "query": q,

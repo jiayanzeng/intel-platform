@@ -60,9 +60,9 @@ where it does; here is what you must never do.
 - **HC1 — no gated text on a public path.** `IndexOnly` document text must never
   reach a public API response. It may be handed to a model as *analysis context*
   on internal loopback endpoints (`/retrieve`, `/docs`) — that is not
-  redistribution — but the public surface must not carry it. (Currently violated
-  in principle on `/v1/ask`; T1 fixes it. Until then, do not add new public paths
-  that echo model output over gated context.)
+  redistribution — but the public surface must not carry it. `/v1/ask` model
+  output must pass through the core's `/attest` license check before return;
+  never bypass or move that check into the shell.
 - **HC2 — entitlement is decided in the shell; sector filtering is *also*
   enforced in core SQL.** A shell bug may grant the wrong sectors; it must never
   be able to bypass the core's filter. Never move the sector filter out of core.
