@@ -237,3 +237,23 @@ correct them with a new dated entry.
 - notes / gate: **T4 is deferred, not complete against a model.** Public egress
   is no longer the blocker; usable endpoint configuration and credentials are.
   No code, dependency, lockfile, or runtime policy changed.
+
+### 2026-07-20 · T7 — DEFERRED: single-writer trigger has not fired
+
+- owner: 🤖 Codex
+- measured: scheduler dry-run produced five configured jobs, while inspection
+  confirmed `Scheduler.tick` calls them synchronously in one loop and the shipped
+  service is one `Type=oneshot` `scheduler --once` process. Scheduler tests passed
+  8/8; `lsof data/core.db` found no active holder. `pgrep` process enumeration
+  failed with missing sysmond (exit 3) and was not counted as evidence.
+- acceptance: recorded decision that the concurrency trigger has not fired ✅ ·
+  single-flight implementation not added ✅ (required by the one-writer gate)
+- golden E2E: unchanged — fresh fixture DB; acme 13 → 12; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; re-ingest +0; quant 1; ordinary `/v1/ask` answer, 4 citations, and
+  `techwire::tw-004` suppression unchanged. `data/core.db` retained exact count,
+  hash, size, and mtime.
+- commit: this T7 gate/deferral record (see git history)
+- notes / gate: **T7 is intentionally deferred.** There is no second concurrent
+  harvester, so adding a lock would route around the task's decision gate. No
+  code, dependency, lockfile, or runtime policy changed.

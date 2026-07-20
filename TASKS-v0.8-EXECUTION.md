@@ -364,6 +364,13 @@ gate cited.
 ## Step 9 · T7 — Robots cache single-flight 🤖
 *(gated; expected outcome: skip)*
 
+**Gate result (2026-07-20): SKIPPED/DEFERRED.** The configured five jobs run
+synchronously through one scheduler loop; the supported systemd deployment is a
+single `Type=oneshot` `scheduler --once` process. Scheduler tests passed 8/8 and
+no active `data/core.db` holder was observed. The second-concurrent-writer trigger
+has not fired, so no single-flight lock or speculative concurrency test was
+added. See `STATE.md §8` and `PROGRESS-v0.8.md`.
+
 **Objective.** Two simultaneous first-requests to the same origin can both fetch
 `/robots.txt`. Bounded and harmless today (the limiter still spaces them).
 
@@ -402,4 +409,4 @@ trigger dictates.
 - [x] **T5** — robots re-gated on the final origin after redirects
 - [x] **T3** — SimHash persisted/consumed; migration verified on a pre-column copy of the live archive
 - [x] **T4 — DEFERRED** — providers reachable, but no endpoint configuration/key; real checks not run
-- [ ] **T7** — single-flight decided *(expected: deferred, one writer)*
+- [x] **T7 — DEFERRED** — single-flight skipped; supported scheduler remains one synchronous writer

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **86 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. T4 is deferred because no real-model key/configuration is present; the golden end-to-end remained byte-identical at that gate.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **86 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. T4 is deferred because no real-model key/configuration is present; T7 single-flight is deferred because the shipped scheduler remains one synchronous writer. The golden end-to-end remained byte-identical at both gates.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -151,7 +151,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
   a source sentence. Both the shell test and a real Rust↔HTTP↔Python E2E proved
   that sentence cannot pass, while the ordinary golden answer is unchanged.
 - ~~**The robots gate was checked only on the configured origin while reqwest followed redirects automatically.**~~ **RESOLVED in v0.8/T5.** Both HTTP clients now set `Policy::none()`. Document redirects are resolved manually with the full gate before each next request; robots-file redirects fail closed. A failure-capable cross-origin 302 test makes the second body available, configures that origin to disallow it, proves both robots policies were fetched, and proves the second document request never happened. A same-origin redirect makes two document requests with exactly one robots fetch.
-- **The robots cache does not de-duplicate concurrent misses.** Two simultaneous first-requests to the same origin can both fetch `/robots.txt`. Bounded, harmless (the limiter still spaces them), and not worth a single-flight lock until there is a second writer — same trigger as Postgres.
+- **The robots cache does not de-duplicate concurrent misses.** Two simultaneous first-requests to the same origin can both fetch `/robots.txt`. Bounded, harmless (the limiter still spaces them). **T7 rechecked the trigger on 2026-07-20 and deferred the lock:** the supported scheduler remains one synchronous writer and the deployment unit is one-shot; revisit only when a second concurrent harvester actually exists.
 
 ## 6. Decision log
 
@@ -565,6 +565,34 @@ handoff.
   mock was used only for the mandatory regression golden; it is not T4 evidence.
 - Golden E2E used fresh temporary DB
   `/private/tmp/intel-platform-t4-golden.x5mEQL/golden.db` and was unchanged:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
+  **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
+  and `/v1/ask` retained the ordinary mock answer, **4 citations**, and
+  `techwire::tw-004` suppression. The fixture DB finished at 14 rows with 0 NULL
+  fingerprints/canonical ids. `data/core.db` retained **1,764 rows**, 6,729,728
+  bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+  Ports 8788, 8790, 8786, and 8899 were clear after teardown.
+
+### T7 — robots single-flight skipped at one-writer gate (measured 2026-07-20)
+
+- `config/schedule.json` expands to five jobs (two source ingests, one sector
+  ingest, one refresh, and one full pipeline), confirmed by
+  `python3 -m intel_shell.scheduler --dry-run`. They are not five workers:
+  `Scheduler.tick` invokes each due `job.action()` synchronously in one `for`
+  loop. Both supported drivers preserve that topology: the in-process mode is
+  one loop, and `deploy/intel-pipeline.service` is one `Type=oneshot` process
+  running `scheduler --once`.
+- Scheduler tests passed **8/8**. `lsof data/core.db` found no active holder at
+  the decision point. A separate `pgrep` diagnostic could not enumerate
+  processes because this Mac lacks the queried sysmond service (exit 3); that
+  failed diagnostic is recorded and is not being presented as evidence.
+- Gate outcome: **SKIPPED/DEFERRED as required.** The supported deployment still
+  has exactly one synchronous writer, so the second-concurrent-harvest trigger
+  has not fired. No single-flight lock or concurrency test was added; either
+  would be speculative and would violate the task's decision gate.
+- Golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t7-golden.HPED3p/golden.db` and was unchanged:
   acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
   **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
   and `/v1/ask` retained the ordinary mock answer, **4 citations**, and
