@@ -326,7 +326,14 @@ the output moved.
 ---
 
 ## Step 8 · T4 — Point the LLM at a real endpoint 🧑
-*(blocked on egress/key — the one task that needs something Codex cannot supply)*
+*(deferred on endpoint configuration/key — requires operator input)*
+
+**Gate result (2026-07-20): DEFERRED, not passed.** DeepSeek and OpenAI are now
+reachable (both unauthenticated `/v1/models` probes returned 401), correcting the
+prior 403 egress result. But `LLM_BASE_URL` and `LLM_API_KEY` are unset, no local
+model listener exists on 8000/8899/11434, and `./run verify-llm` exits 2 asking
+for configuration. The real-endpoint checklist and HC1 spot-check were not run;
+the mock was not substituted. See `STATE.md §8` and `PROGRESS-v0.8.md`.
 
 **Objective.** Carried from v0.7/T3. `tools/verify_llm.py` runs the whole
 checklist in one command: embeddings backfill, fusion no longer BM25-only,
@@ -394,5 +401,5 @@ trigger dictates.
 - [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
 - [x] **T5** — robots re-gated on the final origin after redirects
 - [x] **T3** — SimHash persisted/consumed; migration verified on a pre-column copy of the live archive
-- [ ] **T4** — LLM endpoint wired *(or deferral recorded with the gate)*
+- [x] **T4 — DEFERRED** — providers reachable, but no endpoint configuration/key; real checks not run
 - [ ] **T7** — single-flight decided *(expected: deferred, one writer)*

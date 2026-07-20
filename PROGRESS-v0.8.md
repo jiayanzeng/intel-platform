@@ -217,3 +217,23 @@ correct them with a new dated entry.
   an FTS update-trigger interaction and failed with `database disk image is
   malformed`. It was not counted as a pass. The backfill now suspends/recreates
   that trigger transactionally. No dependency, lockfile, MSRV, or policy change.
+
+### 2026-07-20 · T4 — DEFERRED: no real-model credentials/configuration
+
+- owner: 🤖 Codex
+- measured: `LLM_BASE_URL` absent; `LLM_API_KEY` absent; no repository-local key
+  assignment; no listeners on 8000/8899/11434. Contrary to v0.7's egress note,
+  DeepSeek and OpenAI `/v1/models` are both reachable now and return 401 without
+  credentials. `./run verify-llm` exited 2 asking for endpoint configuration.
+- acceptance: `verify_llm.py` green against a real endpoint ❌ (not run; no
+  configured endpoint/key) · live-model HC1 spot-check ❌ (not run for the same
+  gate) · mock substituted ❌ (deliberately not used as T4 evidence)
+- golden E2E: unchanged — fresh fixture DB; acme 13 → 12; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; re-ingest +0; quant 1; ordinary `/v1/ask` answer, 4 citations, and
+  `techwire::tw-004` suppression unchanged. `data/core.db` retained exact count,
+  hash, size, and mtime.
+- commit: this T4 gate/deferral record (see git history)
+- notes / gate: **T4 is deferred, not complete against a model.** Public egress
+  is no longer the blocker; usable endpoint configuration and credentials are.
+  No code, dependency, lockfile, or runtime policy changed.

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **86 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. The golden end-to-end remained byte-identical in T3.
+**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **86 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. T4 is deferred because no real-model key/configuration is present; the golden end-to-end remained byte-identical at that gate.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -13,6 +13,8 @@
 **On the "0 warnings" claim — B0 correction and T6 resolution, measured 2026-07-20.** "0 warnings" originally meant *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. B0 proved the prior claim that the test module had been moved last was **false**: clippy exited 101 on `clippy::items_after_test_module`, and fmt found diffs in 13 Rust files. T6 moved the SQLite vector layer before the test module and applied rustfmt in the separate lint-fix commit `097b017`. After that fix, `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check` both exit 0. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. CI's lint job is now explicitly blocking (`continue-on-error: false`).
 
 **T2 interruption-resume is BLOCKED by a measured code defect (2026-07-20).** A fresh `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv` fetched and parsed **1,300 real records** from page 1, reported "more pages follow," and stopped at the cap. The required cursor row immediately afterward was `cursor = NULL, high_water = '2026-07-20'`, not a non-empty next-page token. The cause is direct: `ArxivOaiSource::fetch` checkpoints `next`, breaks at the cap, then unconditionally calls `complete()`, which clears the token and advances high-water. The existing cap test inspects the intermediate fake's `checkpoints` vector but never asserts its final resume state, so it stayed green while persistence failed. Run 2 was deliberately **not** executed: it would exercise incremental high-water, the exact false-positive path the runbook forbids. T2 is not complete.
+
+**T4 real-model verification is DEFERRED at its credential gate (2026-07-20).** This cycle corrects the stale egress claim: unauthenticated probes to both `https://api.deepseek.com/v1/models` and `https://api.openai.com/v1/models` now reach the providers and return **401**, not the prior proxy 403. But `LLM_BASE_URL` and `LLM_API_KEY` are both unset, no repository-local `LLM_API_KEY` assignment exists, and ports 8000/8899/11434 have no listener. `./run verify-llm` therefore exits **2** asking for endpoint configuration before it can run a model check. A reachable login wall is not a usable endpoint. Neither real-endpoint acceptance criterion was run, and the mock was not substituted.
 
 **Prior point releases (unchanged, kept for the record):** v0.7.1 per-source robots opt-in (§2.12); v0.7.2 `max_pages` cap + timeouts + progress logging; v0.7.3 removed Python 3.12-only f-strings from `run` (crashed on the on-site 3.11).
 
@@ -118,7 +120,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
 **Deferred in v0.7, each with the gate that deferred it:**
 
 1. **T1 — the first live arXiv harvest. DEFERRED: no egress. Verified, not assumed.** `curl -sI https://export.arxiv.org/oai2?verb=Identify` ⇒ **HTTP 403, `x-deny-reason: host_not_allowed`** — the sandbox proxy refuses the host, exactly as in v0.6. The task's own gate is explicit ("no egress ⇒ defer and say so; **do not mock a live harvest and mark it done** — the entire value of this task is that it is not a mock"), so nothing was faked. **This is now the single highest-value item in the project, and it is not a code problem:** `--features net` builds, paging + cursors are implemented and unit-tested, the limiter and `Retry-After` handling exist, and **as of T2 the robots gate will do a real fetch before the first request**. On any box that can reach arXiv: `cargo build -p cored --features net --locked`, drop the `"fixture"` key from `arxiv-cs` in `config/core.json`, `POST /ingest {"sectors":["science"],"sources":["arxiv-cs"]}`. **HC13 stands: fixtures prove the state machine, not the wire.** The things that genuinely cannot be tested here are a real `503 Retry-After` under load, observed ≥3s page spacing on the wire, real-world XML edge cases, and cursor durability across a real interrupt.
-2. **T3 — point the LLM at a real endpoint. DEFERRED: gate not satisfiable, and deliberately NOT mocked-and-declared-done.** Probed this cycle: `api.deepseek.com` and `api.openai.com` both **403 `host_not_allowed`** at the egress proxy; no vLLM listener on 8000/8899/11434; no `LLM_API_KEY`. (`api.anthropic.com` *is* reachable — it answers 401 — but it is not OpenAI-compatible, has no `/v1/embeddings`, and we have no key, so it is not a substitute.) `tools/verify_llm.py` still runs the entire checklist in one command; run it on a box with an endpoint and T3 closes.
+2. **T4 (v0.7/T3) — point the LLM at a real endpoint. DEFERRED at the credential/configuration gate, and deliberately NOT mocked-and-declared-done.** Re-probed 2026-07-20: DeepSeek and OpenAI now both return unauthenticated **401**, so egress is available; however `LLM_BASE_URL` and `LLM_API_KEY` are absent and no local vLLM listener exists on 8000/8899/11434. `./run verify-llm` exits 2 before model work. A configured endpoint and credential from the operator are still required; then `tools/verify_llm.py` runs the checklist.
 3. **T6 — seam hardening for multi-host. DEFERRED: condition still not met.** Core and shell still run on one host (`cored` binds `127.0.0.1:8788`; `deploy/intel-pipeline.service` sets `CORE_URL=http://127.0.0.1:8788`). `CORE_TOKEN` is implemented on both sides. Per the task's own instruction, no speculative UDS and no mTLS were written. **Trigger:** the first genuine cross-host split.
 4. **T7 — scale swaps. DEFERRED (design-level), and T5 *removed* LSH from this bucket rather than promoting it.** Postgres remains a **concurrency** trigger (a second writer), not a size one, and may never fire.
 5. **T8 — known-limitation pick-ups. All three SKIPPED on their own stated preconditions, which were checked rather than assumed.** (a) Materialize `/view`: the precondition is "if warm-up cost shows up" — the corpus is 12 documents; it has not. (b) One SQLite connection behind a `Mutex`: the trigger is a second writer; there is none. (c) A rebuild tool for pre-v0.6 `Day` encodings: the task says *"check before building it"* — **checked, and no such archive exists.** `/data` is gitignored and archives are never shipped; every DB reachable on this box was created fresh this session from fixtures, on the new encoding. Building the tool would have been building for a hypothetical.
@@ -538,6 +540,31 @@ handoff.
   dependency, lockfile, MSRV, sector, license, or robots-policy change.
 - Golden E2E used fresh temporary DB
   `/private/tmp/intel-platform-t3-golden.gYgAMo/final.db` and was unchanged:
+  acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
+  **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
+  and `/v1/ask` retained the ordinary mock answer, **4 citations**, and
+  `techwire::tw-004` suppression. The fixture DB finished at 14 rows with 0 NULL
+  fingerprints/canonical ids. `data/core.db` retained **1,764 rows**, 6,729,728
+  bytes, mtime `2026-07-20 09:22:16 +0800`, and SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+  Ports 8788, 8790, 8786, and 8899 were clear after teardown.
+
+### T4 — real model deferred at credential gate (measured 2026-07-20)
+
+- Environment checks returned absent for both `LLM_BASE_URL` and
+  `LLM_API_KEY`; an assignment-only repository scan found no `LLM_API_KEY` value.
+  `lsof` found no listeners on the documented local-model ports 8000, 8899, or
+  11434.
+- Fresh no-credential network probes corrected the previous cycle's egress
+  result: DeepSeek `/v1/models` returned **401** and OpenAI `/v1/models` returned
+  **401**. Both hosts are reachable today, but neither is usable without a key.
+  `./run verify-llm` exited **2** with its request to set `LLM_BASE_URL` and
+  `LLM_API_KEY`.
+- Gate outcome: **DEFERRED, not passed.** `verify_llm.py` was not green against a
+  real endpoint and the real-model HC1 spot-check was not run. The deterministic
+  mock was used only for the mandatory regression golden; it is not T4 evidence.
+- Golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t4-golden.x5mEQL/golden.db` and was unchanged:
   acme **13 → 12**, `techwire::tw-004` dropped for `osdaily::osd-004` at hamming
   **12**, DeepSeek **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**,
   and `/v1/ask` retained the ordinary mock answer, **4 citations**, and
