@@ -9,12 +9,12 @@
 //! Resumability & incrementality (T4):
 //! - **Paging.** Each page may end with a `<resumptionToken>`; the harvest
 //!   re-requests with that token until an empty/absent token terminates it.
-//!   The token is checkpointed (via `CursorStore`) after every page, so an
-//!   interrupted harvest resumes from exactly where it stopped rather than
-//!   restarting the whole set.
-//! - **High-water mark.** On a completed harvest the max `datestamp` seen is
-//!   stored and replayed as `from=` on the next run, so we fetch only records
-//!   newer than last time.
+//!   Each page and its next token are committed together (via `CursorStore`),
+//!   so an interrupted harvest resumes from exactly where durable documents
+//!   stop rather than restarting or skipping part of the set.
+//! - **High-water mark.** A pending maximum survives capped/restarted pages; on
+//!   final completion it is promoted and replayed as `from=` on the next run,
+//!   so incremental fetches include the whole prior harvest.
 //! - **Compliance.** The shared limiter is consulted on every page request
 //!   (arXiv asks harvesters to space requests ~3s apart); the `net` path also
 //!   honors `503 Retry-After`.
@@ -223,7 +223,6 @@ impl Source for ArxivOaiSource {
         let mut resume: Option<String> = cursors.and_then(|c| c.resume_token(&self.id));
 
         let mut out: Vec<Document> = Vec::new();
-        let mut max_datestamp: Option<String> = None;
         let mut page_num: u32 = 0;
 
         loop {
@@ -239,6 +238,22 @@ impl Source for ArxivOaiSource {
                 gate(ctx, &self.endpoint_url, reach, self.robots_on_missing).await?;
             }
 
+            if reach == Reach::Network {
+                match resume.as_deref() {
+                    Some(token) => eprintln!(
+                        "  [{}] request page {next}: resumptionToken={token}",
+                        self.id,
+                        next = page_num + 1
+                    ),
+                    None => eprintln!(
+                        "  [{}] request page {next}: fresh{}",
+                        self.id,
+                        if from.is_some() { " incremental" } else { "" },
+                        next = page_num + 1
+                    ),
+                }
+            }
+
             let xml = self
                 .fetch_page_text(ctx, resume.as_deref(), from.as_deref())
                 .await?;
@@ -247,16 +262,25 @@ impl Source for ArxivOaiSource {
             let page = self.parse_page(&tree);
             page_num += 1;
 
-            if let Some(ds) = page.max_datestamp {
-                if max_datestamp.as_deref().map_or(true, |m| ds.as_str() > m) {
-                    max_datestamp = Some(ds);
-                }
-            }
-            out.extend(page.docs);
-            let total = out.len();
-
             // Empty or absent token terminates the harvest.
             let next = page.resumption_token.filter(|t| !t.is_empty());
+
+            // The page's documents and the cursor that advances beyond them
+            // are one durability unit. If this fails, abort before claiming
+            // progress: swallowing a cursor error can either replay work or,
+            // worse, skip documents after a process interruption.
+            if let Some(c) = cursors {
+                c.commit_page(
+                    &self.id,
+                    &page.docs,
+                    next.as_deref(),
+                    page.max_datestamp.as_deref(),
+                )
+                .map_err(IngestError::Persistence)?;
+            }
+
+            out.extend(page.docs);
+            let total = out.len();
 
             // A live harvest of a large set is otherwise a silent black box: the
             // difference between "working" and "hung" is invisible without this.
@@ -272,12 +296,6 @@ impl Source for ArxivOaiSource {
                         "last page"
                     }
                 );
-            }
-
-            // Checkpoint after each page so an interrupt resumes here, not at
-            // the start of the set.
-            if let Some(c) = cursors {
-                c.checkpoint(&self.id, next.as_deref());
             }
 
             match next {
@@ -303,11 +321,6 @@ impl Source for ArxivOaiSource {
             }
         }
 
-        // Harvest complete: clear the in-flight token, advance the high-water
-        // mark to the newest datestamp seen this run.
-        if let Some(c) = cursors {
-            c.complete(&self.id, max_datestamp.as_deref());
-        }
         Ok(out)
     }
 }
@@ -318,6 +331,7 @@ mod tests {
     use crate::CursorStore;
     use intel_compliance::{HostLimiters, RobotsGate};
     use std::collections::HashMap;
+    use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{Arc, Mutex};
 
     // --- an in-memory CursorStore that records every checkpoint ------------------
@@ -326,8 +340,10 @@ mod tests {
     struct FakeCursors {
         resume: Mutex<HashMap<String, String>>,
         high_water: Mutex<HashMap<String, String>>,
+        pending_high_water: Mutex<HashMap<String, String>>,
         checkpoints: Mutex<Vec<Option<String>>>,
         completes: Mutex<Vec<Option<String>>>,
+        fail_next_commit: AtomicBool,
     }
 
     impl FakeCursors {
@@ -336,6 +352,10 @@ mod tests {
                 .lock()
                 .unwrap()
                 .insert(source_id.to_string(), token.to_string());
+        }
+
+        fn fail_next_commit(&self) {
+            self.fail_next_commit.store(true, Ordering::SeqCst);
         }
     }
 
@@ -346,7 +366,16 @@ mod tests {
         fn high_water(&self, source_id: &str) -> Option<String> {
             self.high_water.lock().unwrap().get(source_id).cloned()
         }
-        fn checkpoint(&self, source_id: &str, token: Option<&str>) {
+        fn commit_page(
+            &self,
+            source_id: &str,
+            docs: &[Document],
+            token: Option<&str>,
+            page_high_water: Option<&str>,
+        ) -> Result<usize, String> {
+            if self.fail_next_commit.swap(false, Ordering::SeqCst) {
+                return Err("injected page commit failure".to_string());
+            }
             self.checkpoints
                 .lock()
                 .unwrap()
@@ -362,19 +391,33 @@ mod tests {
                     self.resume.lock().unwrap().remove(source_id);
                 }
             }
-        }
-        fn complete(&self, source_id: &str, high_water: Option<&str>) {
-            self.completes
-                .lock()
-                .unwrap()
-                .push(high_water.map(str::to_string));
-            self.resume.lock().unwrap().remove(source_id);
-            if let Some(hw) = high_water {
-                self.high_water
-                    .lock()
-                    .unwrap()
-                    .insert(source_id.to_string(), hw.to_string());
+
+            if let Some(hw) = page_high_water {
+                let mut pending = self.pending_high_water.lock().unwrap();
+                let should_advance = pending
+                    .get(source_id)
+                    .map_or(true, |current| hw > current.as_str());
+                if should_advance {
+                    pending.insert(source_id.to_string(), hw.to_string());
+                }
             }
+
+            if token.is_none() {
+                let pending = self.pending_high_water.lock().unwrap().remove(source_id);
+                let mut completed = self.high_water.lock().unwrap();
+                let high_water = match (completed.get(source_id), pending.as_deref()) {
+                    (Some(old), Some(new)) if new > old.as_str() => Some(new.to_string()),
+                    (Some(old), _) => Some(old.clone()),
+                    (None, Some(new)) => Some(new.to_string()),
+                    (None, None) => None,
+                };
+                if let Some(hw) = &high_water {
+                    completed.insert(source_id.to_string(), hw.clone());
+                }
+                self.completes.lock().unwrap().push(high_water);
+            }
+
+            Ok(docs.len())
         }
     }
 
@@ -471,6 +514,45 @@ mod tests {
         // continues from page2. A cap bounds a run; it does not lose records.
         let checkpoints = cur.checkpoints.lock().unwrap().clone();
         assert_eq!(checkpoints, vec![Some("oai_page2.xml".to_string())]);
+        assert_eq!(
+            cur.resume_token("arxiv-cs").as_deref(),
+            Some("oai_page2.xml"),
+            "the persisted state, not merely the checkpoint call history, must retain page 2"
+        );
+        assert!(
+            cur.completes.lock().unwrap().is_empty(),
+            "a capped harvest is interrupted, not complete"
+        );
+
+        let lim = Arc::new(HostLimiters::per_second(1000.0));
+        let resumed = s.fetch(&ctx(lim, cur.clone())).await.unwrap();
+        assert_eq!(resumed.len(), 2, "the second run should fetch only page 2");
+        assert!(doc_ids(&resumed)
+            .iter()
+            .all(|id| id.ends_with("2607.02201") || id.ends_with("2607.02377")));
+        assert_eq!(cur.resume_token("arxiv-cs"), None);
+        assert_eq!(cur.high_water("arxiv-cs").as_deref(), Some("2026-07-04"));
+        assert_eq!(
+            cur.completes.lock().unwrap().as_slice(),
+            &[Some("2026-07-04".to_string())]
+        );
+    }
+
+    #[tokio::test]
+    async fn failed_page_commit_cannot_advance_the_cursor() {
+        let cur: Arc<FakeCursors> = Arc::new(FakeCursors::default());
+        cur.fail_next_commit();
+        let lim = Arc::new(HostLimiters::per_second(1000.0));
+
+        let err = source("oai_page1.xml")
+            .fetch(&ctx(lim, cur.clone()))
+            .await
+            .unwrap_err();
+
+        assert!(matches!(err, IngestError::Persistence(_)));
+        assert_eq!(cur.resume_token("arxiv-cs"), None);
+        assert!(cur.checkpoints.lock().unwrap().is_empty());
+        assert!(cur.completes.lock().unwrap().is_empty());
     }
 
     // (b) the in-flight token is checkpointed after each page...

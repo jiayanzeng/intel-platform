@@ -30,17 +30,20 @@ pub enum IngestError {
     Parse(String),
     #[error("http: {0}")]
     Http(String),
+    #[error("persistence: {0}")]
+    Persistence(String),
 }
 
-/// Persistence seam for harvest cursors, implemented by the core store and
-/// injected via `SourceContext`. A paged/incremental connector uses it to
-/// checkpoint its in-flight resumptionToken after each page (so an interrupted
-/// harvest resumes) and to read/advance a datestamp high-water mark for
-/// incremental `from=` fetching. Connectors that don't page simply ignore it.
+/// Persistence seam for paged harvests, implemented by the core store and
+/// injected via `SourceContext`. A paged/incremental connector commits each
+/// parsed page together with its next resumptionToken and datestamp high-water
+/// candidate. Keeping those values in one transaction prevents an interruption
+/// from advancing past documents that were still only held in memory.
+/// Connectors that don't page simply ignore it.
 ///
-/// Kept sync deliberately: the core store's operations are short and
-/// non-blocking, matching the rest of the store's surface, and this keeps the
-/// trait object-safe without pulling async machinery into the seam.
+/// Kept sync deliberately to match the core store's SQLite surface and keep the
+/// trait object-safe without pulling async machinery into the seam. No handle
+/// or transaction obtained here is held across a network await.
 pub trait CursorStore: Send + Sync {
     /// In-flight resumptionToken to resume from, if a prior harvest was
     /// interrupted; `None` to start a fresh harvest.
@@ -48,12 +51,17 @@ pub trait CursorStore: Send + Sync {
     /// The datestamp high-water mark from the last completed harvest, used as
     /// `from=` to request only newer records.
     fn high_water(&self, source_id: &str) -> Option<String>;
-    /// Checkpoint the in-flight token after fetching a page (`None` once the
-    /// harvest reaches its final page).
-    fn checkpoint(&self, source_id: &str, token: Option<&str>);
-    /// Mark the harvest complete: clear the token and advance the high-water
-    /// mark to the max datestamp seen this run.
-    fn complete(&self, source_id: &str, high_water: Option<&str>);
+    /// Atomically persist one parsed page and its cursor state. `next_token`
+    /// is `None` only for the final page; implementations then clear the
+    /// in-flight cursor and promote the maximum pending datestamp to the
+    /// completed high-water mark. Returns the number of genuinely new docs.
+    fn commit_page(
+        &self,
+        source_id: &str,
+        docs: &[Document],
+        next_token: Option<&str>,
+        page_high_water: Option<&str>,
+    ) -> Result<usize, String>;
 }
 
 /// Per-run politeness context handed to every source.
@@ -65,9 +73,9 @@ pub struct SourceContext {
     /// Per-host politeness clocks. Keyed by host so a slow publisher's wait
     /// isn't charged to everyone else in the run.
     pub limiter: Arc<HostLimiters>,
-    /// Cursor persistence for resumable/incremental sources. `None` disables
-    /// checkpointing (a single, non-resuming pass) — the default for tests and
-    /// for connectors that never page.
+    /// Atomic page + cursor persistence for resumable/incremental sources.
+    /// `None` disables persistence (a single, non-resuming pass) — the default
+    /// for tests and for connectors that never page.
     pub cursors: Option<Arc<dyn CursorStore>>,
     /// The **fetched** robots policy: the publisher's real `/robots.txt`,
     /// discovered per origin and cached (TTL + bounded).

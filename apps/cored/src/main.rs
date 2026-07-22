@@ -144,16 +144,42 @@ impl AppState {
 
 type ApiErr = (StatusCode, String);
 
-/// Bridges the ingest crate's `CursorStore` seam to the core store, so paged
-/// connectors (arXiv OAI) can checkpoint their resumptionToken and high-water
-/// mark in SQLite. A cursor read/write failure is non-fatal to a harvest —
-/// worst case we re-fetch a page — so errors are swallowed to a log line
-/// rather than aborting ingestion.
-struct CursorAdapter(Arc<AppState>);
+/// Bridges the ingest crate's paged-harvest seam to the core store. Page
+/// documents, the next resumptionToken, and pending high-water are committed in
+/// one SQLite transaction; a failure aborts the source instead of advancing a
+/// cursor past data that never landed.
+struct CursorAdapter {
+    state: Arc<AppState>,
+    committed_docs: Mutex<HashMap<String, usize>>,
+    new_docs: AtomicUsize,
+}
+
+impl CursorAdapter {
+    fn new(state: Arc<AppState>) -> Self {
+        Self {
+            state,
+            committed_docs: Mutex::new(HashMap::new()),
+            new_docs: AtomicUsize::new(0),
+        }
+    }
+
+    fn committed_for(&self, source_id: &str) -> usize {
+        self.committed_docs
+            .lock()
+            .unwrap()
+            .get(source_id)
+            .copied()
+            .unwrap_or(0)
+    }
+
+    fn new_count(&self) -> usize {
+        self.new_docs.load(Ordering::SeqCst)
+    }
+}
 
 impl CursorStore for CursorAdapter {
     fn resume_token(&self, source_id: &str) -> Option<String> {
-        self.0
+        self.state
             .store
             .get_cursor(source_id)
             .ok()
@@ -161,22 +187,36 @@ impl CursorStore for CursorAdapter {
             .and_then(|c| c.cursor)
     }
     fn high_water(&self, source_id: &str) -> Option<String> {
-        self.0
+        self.state
             .store
             .get_cursor(source_id)
             .ok()
             .flatten()
             .and_then(|c| c.high_water)
     }
-    fn checkpoint(&self, source_id: &str, token: Option<&str>) {
-        if let Err(e) = self.0.store.set_cursor_token(source_id, token) {
-            eprintln!("cored: cursor checkpoint failed for {source_id}: {e}");
+    fn commit_page(
+        &self,
+        source_id: &str,
+        docs: &[Document],
+        next_token: Option<&str>,
+        page_high_water: Option<&str>,
+    ) -> Result<usize, String> {
+        let new = self
+            .state
+            .store
+            .commit_harvest_page(source_id, docs, next_token, page_high_water)
+            .map_err(|error| error.to_string())?;
+        *self
+            .committed_docs
+            .lock()
+            .unwrap()
+            .entry(source_id.to_string())
+            .or_default() += docs.len();
+        self.new_docs.fetch_add(new, Ordering::SeqCst);
+        if new > 0 {
+            self.state.bump_generation();
         }
-    }
-    fn complete(&self, source_id: &str, high_water: Option<&str>) {
-        if let Err(e) = self.0.store.complete_cursor(source_id, high_water) {
-            eprintln!("cored: cursor completion failed for {source_id}: {e}");
-        }
+        Ok(new)
     }
 }
 
@@ -534,6 +574,7 @@ async fn ingest(
         .map(|v| v.iter().map(|s| s.as_str()).collect());
     let selection = select_sources(&st.cfg, &want, only.as_ref());
 
+    let cursor_adapter = Arc::new(CursorAdapter::new(st.clone()));
     let ctx = SourceContext {
         // The operator's own deny-list. It sits on top of whatever the
         // publisher's robots.txt says and can only ever refuse more (T2).
@@ -545,14 +586,16 @@ async fn ingest(
         // Persist OAI-PMH resumptionToken + datestamp high-water in the store,
         // so harvests resume after an interrupt and fetch incrementally.
         // Connectors that don't page (RSS) ignore this.
-        cursors: Some(Arc::new(CursorAdapter(st.clone()))),
+        cursors: Some(cursor_adapter.clone()),
     };
 
     let mut fetched: Vec<Document> = Vec::new();
+    let mut fetched_count = 0usize;
     let mut results = Vec::new();
     for sel in &selection.selected {
         match sel.source.fetch(&ctx).await {
             Ok(mut docs) => {
+                fetched_count += docs.len();
                 results.push(IngestSourceResult {
                     sector: sel.sector_id.clone(),
                     source_id: sel.source.id().to_string(),
@@ -562,13 +605,19 @@ async fn ingest(
                 });
                 fetched.append(&mut docs);
             }
-            Err(e) => results.push(IngestSourceResult {
-                sector: sel.sector_id.clone(),
-                source_id: sel.source.id().to_string(),
-                ok: false,
-                documents: 0,
-                error: Some(e.to_string()),
-            }),
+            Err(e) => {
+                // Earlier pages may already be durable when a later request
+                // fails. Report those documents rather than claiming zero.
+                let committed = cursor_adapter.committed_for(sel.source.id());
+                fetched_count += committed;
+                results.push(IngestSourceResult {
+                    sector: sel.sector_id.clone(),
+                    source_id: sel.source.id().to_string(),
+                    ok: false,
+                    documents: committed,
+                    error: Some(e.to_string()),
+                });
+            }
         }
     }
     // Requested source ids that matched no eligible connector: a structured
@@ -582,8 +631,8 @@ async fn ingest(
             error: Some("unknown or not entitled source id".to_string()),
         });
     }
-    let new = st.store.append_new(&fetched).map_err(internal)?;
-    if new > 0 {
+    let tail_new = st.store.append_new(&fetched).map_err(internal)?;
+    if tail_new > 0 {
         // The corpus changed: re-materialize near-dup canonical ids (T9.1) and
         // invalidate every memoized view (T9.2). Both are functions of the
         // corpus, so both are recomputed exactly when the corpus moves — once
@@ -591,8 +640,9 @@ async fn ingest(
         st.store.assign_canonical_ids(16).map_err(internal)?;
         st.bump_generation();
     }
+    let new = cursor_adapter.new_count() + tail_new;
     Ok(Json(IngestResp {
-        fetched: fetched.len(),
+        fetched: fetched_count,
         new,
         results,
     }))

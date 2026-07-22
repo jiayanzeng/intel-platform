@@ -68,12 +68,14 @@ Condensed from `STATE.md §2`.
    every named source is validated against `sectors` (a source outside
    entitlement is refused, not run). Omitting `sources` preserves pre-v0.6
    behavior; a regression test pins this.
-6. **Harvest cursors live in the core store.** `cursors(source_id, cursor,
-   high_water, updated_at)`: `cursor` is the in-flight `resumptionToken`
-   (checkpointed after every page ⇒ interrupted harvests resume mid-set);
-   `high_water` is the max datestamp of the last completed harvest, replayed as
-   `from=` for incremental fetch, advanced **monotonically** (ISO dates ⇒
-   lexicographic max is chronological max).
+6. **Harvest pages and cursors are one core-store transaction.**
+   `cursors(source_id, cursor, high_water, pending_high_water, updated_at)`:
+   each parsed page's documents, global canonical-id rematerialization, next
+   `resumptionToken`, and pending max datestamp commit atomically. An
+   interruption can therefore neither advance past documents still in memory
+   nor forget a prior page's newer datestamp. Only a final-page commit clears
+   the token/pending value and advances completed `high_water`, which remains
+   monotonic (ISO dates ⇒ lexicographic max is chronological max).
 7. **Provider vocabulary normalizes *into* the neutral event set, never out.**
    Billing speaks `subscription.created|updated|deleted|key_rotated`; Stripe
    enters through `adapters/stripe.py`. A second provider is a second adapter, not

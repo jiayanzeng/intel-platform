@@ -257,3 +257,39 @@ correct them with a new dated entry.
 - notes / gate: **T7 is intentionally deferred.** There is no second concurrent
   harvester, so adding a lock would route around the task's decision gate. No
   code, dependency, lockfile, or runtime policy changed.
+
+### 2026-07-22 · T2 corrective attempt — durable locally, BLOCKED on live run 1
+
+- owner: 🤖 Codex
+- measured: the strengthened pre-fix fake failed with checkpoint history
+  `oai_page2.xml` but actual resume state `None`. After the repair, an injected
+  fake commit failure left cursor state unchanged; an SQLite trigger aborting
+  the cursor write rolled the page insert back to 0 documents / 0 cursor rows;
+  close + reopen retained the page-2 token and `pending_high_water`, then final
+  completion promoted the max across both pages. Workspace **90**, net ingest
+  **20**, shell **70** tests passed; both `-D warnings` checks, clippy, and fmt
+  passed; locked Rust **1.78.0** offline check passed with `-D warnings`.
+- acceptance: cap leaves durable token locally ✅ · second fixture run starts at
+  page 2 and not page 1 ✅ · documents + cursor transaction rollback proven ✅ ·
+  pending high-water survives process restart ✅ · legacy cursor schema
+  migration proven ✅ · live run 1 non-NULL token ❌ (first `ListRecords`
+  request timed out before a page; no cursor row) · live run 2 begins from token
+  ❌ (correctly not run) · real XML across both runs ❌ · protected
+  `data/core.db` untouched ✅ · 503/Retry-After recorded as not observed ✅
+- golden E2E: unchanged — fresh fixture DB; initial ingest 13; acme re-ingest
+  +0; 12 analyzed; dropped `techwire::tw-004` for `osdaily::osd-004` at hamming
+  12; DeepSeek RISING z=10.0; quant 1; ordinary `/v1/ask` answer with 4
+  citations and `techwire::tw-004` suppressed. Temporary DB ended at 14 rows
+  with 0 NULL fingerprints/canonical ids; `data/core.db` retained 1,764 rows and
+  SHA-256 `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+- commit: this T2 durability/gate-record commit (see git history)
+- notes / gate: privileged arXiv Identify returned 200 and the real robots
+  verdict was `Unavailable(allow)` with 0.500s effective delay. The first
+  `ListRecords` request for 2026-07-19 through 2026-07-22 timed out:
+  `fetched=0`, `new=0`, `ok=false`; all HC13 boxes were unchecked. The prior
+  disposable smoke DB is recoverable at
+  `/private/tmp/intel-platform-live-smoke-before-t2r-20260722.db`. The complete
+  golden required `NO_PROXY/no_proxy=127.0.0.1,localhost` because macOS system
+  proxy discovery routed Python loopback through `httpcore._sync.http_proxy`;
+  direct curl and two fixture ingests proved cored stayed healthy. **T2 remains
+  unchecked and blocked; this is not a wire pass.**

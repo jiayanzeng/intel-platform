@@ -84,7 +84,7 @@ public API, and the test proving that runs in CI.
 
 ---
 
-## T2 — The first live arXiv harvest [P0, ops — WIRE REACHED 2026-07-19, paging still unverified]
+## T2 — The first live arXiv harvest [P0, ops — durable resume repaired; wire reproof still blocked]
 
 **Second on-site session. The harvest now reaches the wire** — the v0.7.1
 per-source robots fix cleared the gate (no "blocked by robots policy"), and the
@@ -111,6 +111,15 @@ History, so the next attempt starts from reality:
 - **cursor resume:** run once (hits the cap), run again, confirm it continues from
   the checkpoint rather than restarting;
 - a real `503 Retry-After` honored, if arXiv issues one under load.
+
+**2026-07-22 correction:** the capped-run path itself was defective: it
+checkpointed the next token and then unconditionally completed, clearing it.
+That direct bug and the deeper split-write window are repaired. Each parsed
+page now commits documents, canonical ids, next token, and pending high-water in
+one SQLite transaction; injected-failure and reopen tests execute those guards.
+The live reproof is still outstanding because the first permitted
+`ListRecords` request timed out with zero documents and no cursor row. Do not
+mark T2 done until the two-run wire evidence in the execution runbook exists.
 
 **Run it:** `./run harvest-arxiv` (bounded + observable now). **Paste the full
 output, including the per-page progress lines.** That is the evidence that closes

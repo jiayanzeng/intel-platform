@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-20 · **Version:** v0.7.4 (core-shell) · **Status:** **86 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **19 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. T4 is deferred because no real-model key/configuration is present; T7 single-flight is deferred because the shipped scheduler remains one synchronous writer. The golden end-to-end remained byte-identical at both gates.
+**As of:** 2026-07-22 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. Paged harvest documents, cursor, canonical ids, and pending high-water now commit atomically, but T2's two-run live proof remains blocked because arXiv's first `ListRecords` request timed out on 2026-07-22. T4 is deferred because no real-model key/configuration is present; T7 single-flight is deferred because the shipped scheduler remains one synchronous writer. The full golden end-to-end remained byte-identical.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -12,7 +12,7 @@
 
 **On the "0 warnings" claim — B0 correction and T6 resolution, measured 2026-07-20.** "0 warnings" originally meant *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. B0 proved the prior claim that the test module had been moved last was **false**: clippy exited 101 on `clippy::items_after_test_module`, and fmt found diffs in 13 Rust files. T6 moved the SQLite vector layer before the test module and applied rustfmt in the separate lint-fix commit `097b017`. After that fix, `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check` both exit 0. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. CI's lint job is now explicitly blocking (`continue-on-error: false`).
 
-**T2 interruption-resume is BLOCKED by a measured code defect (2026-07-20).** A fresh `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv` fetched and parsed **1,300 real records** from page 1, reported "more pages follow," and stopped at the cap. The required cursor row immediately afterward was `cursor = NULL, high_water = '2026-07-20'`, not a non-empty next-page token. The cause is direct: `ArxivOaiSource::fetch` checkpoints `next`, breaks at the cap, then unconditionally calls `complete()`, which clears the token and advances high-water. The existing cap test inspects the intermediate fake's `checkpoints` vector but never asserts its final resume state, so it stayed green while persistence failed. Run 2 was deliberately **not** executed: it would exercise incremental high-water, the exact false-positive path the runbook forbids. T2 is not complete.
+**T2's measured code defects are repaired, but interruption-resume remains BLOCKED at the live-wire gate (2026-07-22).** The original 2026-07-20 capped run cleared its token because `complete()` ran after the cap. A strengthened fake first reproduced that failure: it recorded the checkpoint call but its actual resume state was `None`. The repair removes the split checkpoint/complete writes: each parsed page now commits its documents, canonical-id rematerialization, next token, and `pending_high_water` in one SQLite transaction; completion promotes the maximum pending datestamp only on the final page. An injected SQLite trigger proves a failed cursor write rolls back the page documents, and a close/reopen test proves a capped page retains its token and earlier max datestamp across a process boundary. On the required live reproof, the sandboxed probe produced HTTP `000000`; the permitted external run reached arXiv and fetched the real robots disposition, but the first `ListRecords` request timed out with `fetched=0`, `new=0`, no XML page, and no cursor row. Run 2 was therefore not executed. T2 is not complete until the two capped live runs succeed.
 
 **T4 real-model verification is DEFERRED at its credential gate (2026-07-20).** This cycle corrects the stale egress claim: unauthenticated probes to both `https://api.deepseek.com/v1/models` and `https://api.openai.com/v1/models` now reach the providers and return **401**, not the prior proxy 403. But `LLM_BASE_URL` and `LLM_API_KEY` are both unset, no repository-local `LLM_API_KEY` assignment exists, and ports 8000/8899/11434 have no listener. `./run verify-llm` therefore exits **2** asking for endpoint configuration before it can run a model check. A reachable login wall is not a usable endpoint. Neither real-endpoint acceptance criterion was run, and the mock was not substituted.
 
@@ -65,7 +65,7 @@ CORE (Rust, engine)       apps/cored: /health /sectors /ingest /view /search
 5. **`/view`'s `kind` is `format!("{:?}", SignalKind)`**, so the shell can post signals straight back to `/signals/record`.
 6. All v0.1–v0.3 invariants unchanged: dedup (hamming ≤16) BEFORE all statistics; mentions per (entity, doc); Corroborated suppressed when Rising; discovery on bodies only; FNV-1a determinism; RRF k=60.
 7. **(v0.6) Source selection is core business, not shell business.** `/ingest` takes `{sectors, sources?}`. `sources` names connector ids; **each is still validated against `sectors`**, so a named source outside the caller's entitlement is refused, not run — the sector filter is not a suggestion that a source id can bypass (HC2). Selection lives in `registry::select_sources`, which returns `unknown_ids` as **structured per-id errors rather than panicking**. Omitting `sources` entirely preserves the exact pre-v0.6 behavior (every source in the sectors, in config order) — a regression test pins this (HC5).
-8. **(v0.6) Harvest cursors live in the core store, not the shell.** New `cursors(source_id, cursor, high_water, updated_at)` table. `cursor` is the in-flight OAI-PMH `resumptionToken` (checkpointed **after every page**, so an interrupted harvest resumes mid-set instead of restarting); `high_water` is the max `datestamp` of the last *completed* harvest, replayed as `from=` for incremental fetching. High-water advance is **monotonic** (ISO dates ⇒ lexicographic max is chronological max), so a late-arriving old record can't roll the mark backward. Cursors are the documented exception to atomic-JSON persistence (HC9): they belong in SQLite, next to the documents they track. Connectors that don't page (RSS) ignore the seam entirely.
+8. **(v0.6, hardened v0.8/T2) Harvest cursors live in the core store, not the shell.** The `cursors(source_id, cursor, high_water, pending_high_water, updated_at)` row is committed in the **same SQLite transaction** as each parsed page's documents and canonical-id rematerialization. `cursor` is the next OAI-PMH `resumptionToken`; `pending_high_water` retains the max datestamp seen across capped/restarted pages; only a final-page commit clears both and advances completed `high_water`. This prevents either half of the old split-write failure: advancing past documents still in memory, or losing an earlier page's maximum datestamp after restart. High-water advance remains monotonic (ISO dates ⇒ lexicographic max is chronological max). Cursors are the documented exception to atomic-JSON persistence (HC9): they belong in SQLite beside the documents they track. Connectors that don't page (RSS) ignore the seam entirely.
 
 9. **(v0.6/T6) Provider vocabulary is normalized INTO the neutral one, never the other way round.** `billing.apply_event` speaks `subscription.created|updated|deleted|key_rotated` and nothing else. Stripe enters through `adapters/stripe.py`, which verifies Stripe's signature scheme and maps `customer.subscription.*` onto those events. Consequences worth keeping: a second provider is a second adapter, not a change to the store or the entitlement model; and the freshness check on Stripe's signed timestamp is load-bearing, because a *genuine* captured request replayed later carries a perfectly valid MAC — the timestamp is the only thing that refuses it. Keys are compared against a *set* of active hashes, so rotation has a grace window and revocation is just rotation with none.
 10. **(v0.6/T9) Dedup identity is a function of the corpus, not of arrival order.** `dedup_near` keeps the earliest document by `(published_day, id)` — a global property. So `canonical_id` is persisted as a **re-materialization of that same rule on every ingest that adds rows**, NOT as a first-seen-wins assignment at insert. This matters more since T3: sources now run on independent clocks, so arrival order genuinely varies, and an incremental assignment would let two runs over the same 13 documents disagree about which copy is canonical. Relatedly, `/retrieve` deliberately does **not** filter by `canonical_id`: it keeps whichever of a near-dup pair *the query* ranked higher. Canonical id is a property of the corpus; relevance is a property of the question, and context assembly is a question about the question. T3 now materializes `simhash(title + body)` at ingest/migration, refreshes it on document update, and makes `/view` and canonical assignment consume the persisted value; a missing value is an error, not a silent hot-path recompute.
@@ -321,6 +321,54 @@ handoff.
   `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**, DeepSeek
   **RISING z=10.0**, re-ingest **+0**, quant-desk **1 document**, and `/v1/ask`
   **4 citations** with `techwire::tw-004` suppressed.
+
+### T2 corrective attempt — durable locally, live reproof blocked (2026-07-22)
+
+- The old cap guard was made failure-capable before the repair. The unchanged
+  production code then failed the strengthened assertion: checkpoint history
+  contained `oai_page2.xml`, but final `resume_token("arxiv-cs")` was `None`
+  because the common completion path cleared it.
+- The persistence seam now exposes one fallible page commit. `SqliteStore`
+  atomically inserts the page documents, rematerializes canonical ids, records
+  the next token, and accumulates `pending_high_water`. A final page promotes
+  `max(existing high_water, pending pages, final page)` and clears the in-flight
+  fields. Cursor-write failures are no longer swallowed by `cored`.
+- Failure controls executed: the in-memory cursor double injected a page-commit
+  error and proved no token advance; a SQLite `BEFORE INSERT` trigger aborted
+  the cursor upsert after the document insert and proved the transaction left
+  **0 documents and 0 cursor rows**; a close/reopen test preserved the page-2
+  token and a page-1 datestamp newer than page 2, then completed at the correct
+  earlier maximum. An old cursor table was reopened and gained the new pending
+  column.
+- Local acceptance: warning-denied workspace and net checks passed; **90
+  workspace tests**, **20 net ingest tests**, and **70 shell tests** passed (the
+  existing one Starlette deprecation warning remains); clippy and fmt passed.
+  The locked offline workspace also checked clean under Rust **1.78.0** with
+  `-D warnings`, so the MSRV floor did not move.
+- Live preflight: `./run down` succeeded and port 8788 was clear. The previous
+  disposable smoke DB was preserved at
+  `/private/tmp/intel-platform-live-smoke-before-t2r-20260722.db`; a fresh
+  `data/live-smoke.db` was used. The sandboxed probe returned HTTP `000000` and
+  was not counted. With network permission, arXiv's Identify endpoint returned
+  200 and the real robots decision was `Unavailable(allow)` with effective
+  crawl delay 0.500s, but the first `ListRecords` request for 2026-07-19 through
+  2026-07-22 timed out. Result: `fetched=0`, `new=0`, `ok=false`, no parsed XML
+  page, no cursor row, and every HC13 box unchecked. Run 2 was not executed;
+  503/Retry-After was not observed. **T2 remains blocked, not passed.**
+- Full golden E2E used fresh temporary DB
+  `/private/tmp/intel-t2r-golden.gB0kZ9/golden.db` and remained exact: initial
+  ingest **13**, acme re-ingest **+0**, analyzed **12**,
+  `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**, DeepSeek
+  **RISING z=10.0**, quant-desk **1 document**, and ordinary `/v1/ask` with **4
+  citations** and `techwire::tw-004` suppressed. The DB ended at 14 rows with 0
+  NULL fingerprints/canonical ids. `data/core.db` retained **1,764 rows** and
+  SHA-256 `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+- Verification environment note: the first sandboxed golden could not bind
+  loopback; the permitted run then exposed macOS system-proxy discovery routing
+  Python `httpx` loopback through `httpcore._sync.http_proxy` despite no proxy
+  environment variables. Direct curl proved cored stayed healthy. The recorded
+  golden set `NO_PROXY/no_proxy=127.0.0.1,localhost`; no application behavior
+  was changed. Ports 8788 and 8899 were clear after teardown.
 
 ### H1 — harvest evidence hardened (verified 2026-07-20)
 

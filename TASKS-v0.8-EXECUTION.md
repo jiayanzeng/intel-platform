@@ -63,18 +63,29 @@ DB-isolation decision is recorded.
 ## Step 2 · T2 — Close the live harvest: interruption-resume on the wire 🤖
 *(needs network egress — available on this MacBook; not doable in the sandbox)*
 
-**Gate result (2026-07-20): BLOCKED.** Run 1 fetched 1,300 real records and
-stopped at cap 1, but the persisted row was `cursor=NULL,
-high_water='2026-07-20'`. The capped break is followed by unconditional
-`complete()`, which clears the checkpoint; the existing fake test checks the
-intermediate checkpoint call but not final resume state. Run 2 was not executed
-because it would test incremental high-water, not interruption-resume. See
+**Gate result (updated 2026-07-22): STILL BLOCKED.** The 2026-07-20 run exposed
+the unconditional `complete()` bug. The authorized corrective attempt has now
+removed that split write: page documents, canonical ids, next token, and pending
+high-water commit atomically; failure-capable rollback and close/reopen tests are
+green. The required live reproof did not produce a first page, however. With
+network permission arXiv Identify returned 200 and the real robots gate allowed
+the source, but `ListRecords` timed out with `fetched=0`, `new=0`, no XML page,
+and no cursor row. Run 2 was not executed. The local defect is repaired; this
+task remains unchecked until the two capped wire runs below succeed. See
 `STATE.md §8` and `PROGRESS-v0.8.md`.
 
 **Objective.** Prove the one T2 behavior fixtures cannot: that a harvest
 interrupted mid-set **resumes from the SQLite cursor** rather than restarting.
 Paging, parsing, and multi-page `resumptionToken` were proven live on 2026-07-20;
 this is what remains.
+
+**Corrective implementation now present.** A clean cap is no longer allowed to
+fake interruption safety. The page's documents and the cursor that advances
+past them are one SQLite transaction, with `pending_high_water` retained across
+process restart. Guards include an injected commit failure, a cursor-triggered
+transaction rollback, and a close/reopen between fixture pages. Do not regress
+this back to separate `checkpoint()` / `complete()` calls while retrying the
+wire procedure.
 
 **Gate.** "Reached the wire" and "capped at N pages" are progress, not completion.
 Completion requires the resume behavior *observed on the wire against real
@@ -402,7 +413,7 @@ trigger dictates.
 ## Progress checklist
 
 - [x] **B0** — entering state verified, baseline numbers recorded
-- [ ] **T2 — BLOCKED** — capped run clears the resume token; interruption-resume not proven
+- [ ] **T2 — BLOCKED** — atomic resume repair is green locally; live run 1 timed out before an XML page/cursor
 - [x] **H1** — harness evidence hardened (real robots line, honest checklist)
 - [x] **T6** — clippy/fmt a blocking gate; STATE reconciled
 - [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock

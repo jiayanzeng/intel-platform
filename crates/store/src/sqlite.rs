@@ -23,7 +23,7 @@
 //!   "how did this signal evolve" features later.
 
 use intel_core::{Day, Document, License, Provenance, SectorId, Signal, SourceKind};
-use rusqlite::{params, Connection};
+use rusqlite::{params, Connection, OptionalExtension, Transaction};
 use std::path::Path;
 use std::sync::Mutex;
 
@@ -103,6 +103,9 @@ CREATE TABLE IF NOT EXISTS cursors (
     source_id  TEXT PRIMARY KEY,
     cursor     TEXT,
     high_water TEXT,
+    -- Max datestamp seen in the current paged harvest. It survives a capped
+    -- run and is promoted only when the final page commits.
+    pending_high_water TEXT,
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 "#;
@@ -136,6 +139,7 @@ impl SqliteStore {
         }
         let mut conn = Connection::open(path)?;
         conn.execute_batch(SCHEMA)?;
+        migrate_cursor_schema(&conn)?;
         backfill_simhashes(&mut conn)?;
         Ok(Self {
             conn: Mutex::new(conn),
@@ -146,35 +150,7 @@ impl SqliteStore {
     pub fn append_new(&self, docs: &[Document]) -> rusqlite::Result<usize> {
         let mut conn = self.conn.lock().unwrap();
         let tx = conn.transaction()?;
-        let mut n = 0;
-        for d in docs {
-            n += tx.execute(
-                "INSERT OR IGNORE INTO documents
-                 (id, sector, url, title, body, published_day, published_raw,
-                  authors, tags, source_id, retrieved_from, source_kind, license,
-                  simhash, canonical_id)
-                 VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?1)",
-                params![
-                    d.id,
-                    d.sector.0,
-                    d.url,
-                    d.title,
-                    d.body,
-                    d.published_day.map(|x| x.0),
-                    d.published_raw,
-                    serde_json::to_string(&d.authors).unwrap_or_default(),
-                    serde_json::to_string(&d.tags).unwrap_or_default(),
-                    d.provenance.source_id,
-                    d.provenance.retrieved_from,
-                    d.provenance.kind.as_str(),
-                    d.provenance.license.as_str(),
-                    // Fingerprint once, here, rather than on every request.
-                    // A fresh document starts out as its own canonical (?1);
-                    // `assign_canonical_ids` then collapses near-dups.
-                    fingerprint_of(d) as i64,
-                ],
-            )?;
-        }
+        let n = append_new_tx(&tx, docs)?;
         tx.commit()?;
         Ok(n)
     }
@@ -348,6 +324,39 @@ impl SqliteStore {
     }
 }
 
+fn append_new_tx(tx: &Transaction<'_>, docs: &[Document]) -> rusqlite::Result<usize> {
+    let mut n = 0;
+    for d in docs {
+        n += tx.execute(
+            "INSERT OR IGNORE INTO documents
+             (id, sector, url, title, body, published_day, published_raw,
+              authors, tags, source_id, retrieved_from, source_kind, license,
+              simhash, canonical_id)
+             VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?1)",
+            params![
+                d.id,
+                d.sector.0,
+                d.url,
+                d.title,
+                d.body,
+                d.published_day.map(|x| x.0),
+                d.published_raw,
+                serde_json::to_string(&d.authors).unwrap_or_default(),
+                serde_json::to_string(&d.tags).unwrap_or_default(),
+                d.provenance.source_id,
+                d.provenance.retrieved_from,
+                d.provenance.kind.as_str(),
+                d.provenance.license.as_str(),
+                // Fingerprint once, here, rather than on every request. A
+                // fresh document starts as its own canonical id; the global
+                // assignment below rematerializes near-duplicate identity.
+                fingerprint_of(d) as i64,
+            ],
+        )?;
+    }
+    Ok(n)
+}
+
 /// The text a document is fingerprinted on — title + body, exactly as the
 /// analysis-time dedup does it, so the persisted fingerprint and the computed
 /// one can never disagree.
@@ -357,6 +366,21 @@ fn fingerprint_of(d: &Document) -> u64 {
 
 fn fingerprint_text(title: &str, body: &str) -> u64 {
     intel_extract::simhash(&format!("{title} {body}"))
+}
+
+/// Upgrade cursor rows created before interrupted harvests retained their
+/// pending datestamp across process restarts.
+fn migrate_cursor_schema(conn: &Connection) -> rusqlite::Result<()> {
+    let has_pending = conn
+        .prepare("PRAGMA table_info(cursors)")?
+        .query_map([], |row| row.get::<_, String>(1))?
+        .collect::<rusqlite::Result<Vec<_>>>()?
+        .iter()
+        .any(|name| name == "pending_high_water");
+    if !has_pending {
+        conn.execute("ALTER TABLE cursors ADD COLUMN pending_high_water TEXT", [])?;
+    }
+    Ok(())
 }
 
 /// Upgrade archives created before the persisted fingerprint column existed,
@@ -450,53 +474,7 @@ impl SqliteStore {
     pub fn assign_canonical_ids(&self, max_distance: u32) -> rusqlite::Result<usize> {
         let mut conn = self.conn.lock().unwrap();
         let tx = conn.transaction()?;
-
-        // (sector, published_day, id, simhash), in the dedup's own order.
-        let rows: Vec<(String, Option<i64>, String, u64)> = {
-            let mut stmt = tx.prepare(
-                "SELECT sector, published_day, id, simhash FROM documents
-                 WHERE simhash IS NOT NULL
-                 ORDER BY sector, published_day, id",
-            )?;
-            let it = stmt.query_map([], |r| {
-                Ok((
-                    r.get::<_, String>(0)?,
-                    r.get::<_, Option<i64>>(1)?,
-                    r.get::<_, String>(2)?,
-                    r.get::<_, i64>(3)? as u64,
-                ))
-            })?;
-            it.collect::<rusqlite::Result<Vec<_>>>()?
-        };
-
-        let mut assignments: Vec<(String, String)> = Vec::new(); // (id, canonical_id)
-        let mut sector = String::new();
-        let mut kept: Vec<(u64, String)> = Vec::new();
-        for (sec, _day, id, fp) in rows {
-            if sec != sector {
-                sector = sec;
-                kept.clear();
-            }
-            match kept
-                .iter()
-                .find(|(kfp, _)| intel_extract::hamming(*kfp, fp) <= max_distance)
-            {
-                Some((_, canonical)) => assignments.push((id, canonical.clone())),
-                None => {
-                    kept.push((fp, id.clone()));
-                    assignments.push((id.clone(), id)); // its own canonical
-                }
-            }
-        }
-
-        let mut changed = 0usize;
-        for (id, canonical) in &assignments {
-            changed += tx.execute(
-                "UPDATE documents SET canonical_id = ?2
-                 WHERE id = ?1 AND (canonical_id IS NULL OR canonical_id <> ?2)",
-                params![id, canonical],
-            )?;
-        }
+        let changed = assign_canonical_ids_tx(&tx, max_distance)?;
         tx.commit()?;
         Ok(changed)
     }
@@ -530,15 +508,76 @@ impl SqliteStore {
     }
 }
 
+fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite::Result<usize> {
+    // (sector, published_day, id, simhash), in the dedup's own order.
+    let rows: Vec<(String, Option<i64>, String, u64)> = {
+        let mut stmt = tx.prepare(
+            "SELECT sector, published_day, id, simhash FROM documents
+             WHERE simhash IS NOT NULL
+             ORDER BY sector, published_day, id",
+        )?;
+        let it = stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, Option<i64>>(1)?,
+                r.get::<_, String>(2)?,
+                r.get::<_, i64>(3)? as u64,
+            ))
+        })?;
+        it.collect::<rusqlite::Result<Vec<_>>>()?
+    };
+
+    let mut assignments: Vec<(String, String)> = Vec::new();
+    let mut sector = String::new();
+    let mut kept: Vec<(u64, String)> = Vec::new();
+    for (sec, _day, id, fp) in rows {
+        if sec != sector {
+            sector = sec;
+            kept.clear();
+        }
+        match kept
+            .iter()
+            .find(|(kept_fp, _)| intel_extract::hamming(*kept_fp, fp) <= max_distance)
+        {
+            Some((_, canonical)) => assignments.push((id, canonical.clone())),
+            None => {
+                kept.push((fp, id.clone()));
+                assignments.push((id.clone(), id));
+            }
+        }
+    }
+
+    let mut changed = 0usize;
+    for (id, canonical) in &assignments {
+        changed += tx.execute(
+            "UPDATE documents SET canonical_id = ?2
+             WHERE id = ?1 AND (canonical_id IS NULL OR canonical_id <> ?2)",
+            params![id, canonical],
+        )?;
+    }
+    Ok(changed)
+}
+
+fn lexical_max(left: Option<&str>, right: Option<&str>) -> Option<String> {
+    match (left, right) {
+        (Some(a), Some(b)) => Some(if a >= b { a } else { b }.to_string()),
+        (Some(a), None) => Some(a.to_string()),
+        (None, Some(b)) => Some(b.to_string()),
+        (None, None) => None,
+    }
+}
+
 /// A harvest cursor: what a resumable/incremental source needs to remember
 /// between runs. `cursor` is the in-flight resumptionToken (None when the last
 /// harvest finished cleanly); `high_water` is the max datestamp seen by the
-/// last completed harvest.
+/// last completed harvest; `pending_high_water` is the max seen so far in the
+/// interrupted harvest identified by `cursor`.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Cursor {
     pub source_id: String,
     pub cursor: Option<String>,
     pub high_water: Option<String>,
+    pub pending_high_water: Option<String>,
     pub updated_at: Option<String>,
 }
 
@@ -548,7 +587,7 @@ impl SqliteStore {
         let conn = self.conn.lock().unwrap();
         let row = conn
             .query_row(
-                "SELECT source_id, cursor, high_water, updated_at
+                "SELECT source_id, cursor, high_water, pending_high_water, updated_at
                  FROM cursors WHERE source_id = ?1",
                 [source_id],
                 |r| {
@@ -556,7 +595,8 @@ impl SqliteStore {
                         source_id: r.get(0)?,
                         cursor: r.get(1)?,
                         high_water: r.get(2)?,
-                        updated_at: r.get(3)?,
+                        pending_high_water: r.get(3)?,
+                        updated_at: r.get(4)?,
                     })
                 },
             )
@@ -568,53 +608,60 @@ impl SqliteStore {
         }
     }
 
-    /// Checkpoint an in-flight resumptionToken mid-harvest (`None` clears it),
-    /// preserving any existing high-water mark. Called after each page so an
-    /// interrupted harvest can resume from exactly where it stopped.
-    pub fn set_cursor_token(&self, source_id: &str, token: Option<&str>) -> rusqlite::Result<()> {
-        let conn = self.conn.lock().unwrap();
-        conn.execute(
-            "INSERT INTO cursors (source_id, cursor, high_water, updated_at)
-             VALUES (?1, ?2, NULL, datetime('now'))
-             ON CONFLICT(source_id) DO UPDATE SET
-                 cursor = excluded.cursor,
-                 updated_at = datetime('now')",
-            params![source_id, token],
-        )?;
-        Ok(())
-    }
-
-    /// Mark a harvest complete: clear the in-flight token and advance the
-    /// high-water mark to `max(existing, new)`. Datestamps are ISO
-    /// (YYYY-MM-DD), so lexicographic max is chronological max.
-    pub fn complete_cursor(
+    /// Persist one parsed harvest page as a single durability unit: documents,
+    /// global canonical-id materialization, next resumptionToken, and pending
+    /// datestamp. If any write fails the transaction rolls back all of them, so
+    /// the cursor can never advance past documents that did not land.
+    pub fn commit_harvest_page(
         &self,
         source_id: &str,
-        high_water: Option<&str>,
-    ) -> rusqlite::Result<()> {
-        let existing = self.get_cursor(source_id)?.and_then(|c| c.high_water);
-        let advanced = match (existing.as_deref(), high_water) {
-            (Some(old), Some(new)) => {
-                if new > old {
-                    Some(new)
-                } else {
-                    Some(old)
-                }
-            }
-            (Some(old), None) => Some(old),
-            (None, new) => new,
+        docs: &[Document],
+        next_token: Option<&str>,
+        page_high_water: Option<&str>,
+    ) -> rusqlite::Result<usize> {
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction()?;
+        let new = append_new_tx(&tx, docs)?;
+        if new > 0 {
+            assign_canonical_ids_tx(&tx, 16)?;
+        }
+
+        let existing = tx
+            .query_row(
+                "SELECT high_water, pending_high_water FROM cursors WHERE source_id = ?1",
+                [source_id],
+                |row| {
+                    Ok((
+                        row.get::<_, Option<String>>(0)?,
+                        row.get::<_, Option<String>>(1)?,
+                    ))
+                },
+            )
+            .optional()?;
+        let (completed, pending) = existing.unwrap_or((None, None));
+        let pending = lexical_max(pending.as_deref(), page_high_water);
+        let (cursor, high_water, pending_high_water) = match next_token {
+            Some(token) => (Some(token), completed, pending),
+            None => (
+                None,
+                lexical_max(completed.as_deref(), pending.as_deref()),
+                None,
+            ),
         };
-        let conn = self.conn.lock().unwrap();
-        conn.execute(
-            "INSERT INTO cursors (source_id, cursor, high_water, updated_at)
-             VALUES (?1, NULL, ?2, datetime('now'))
+
+        tx.execute(
+            "INSERT INTO cursors
+             (source_id, cursor, high_water, pending_high_water, updated_at)
+             VALUES (?1, ?2, ?3, ?4, datetime('now'))
              ON CONFLICT(source_id) DO UPDATE SET
-                 cursor = NULL,
+                 cursor = excluded.cursor,
                  high_water = excluded.high_water,
+                 pending_high_water = excluded.pending_high_water,
                  updated_at = datetime('now')",
-            params![source_id, advanced],
+            params![source_id, cursor, high_water, pending_high_water],
         )?;
-        Ok(())
+        tx.commit()?;
+        Ok(new)
     }
 }
 
@@ -783,21 +830,115 @@ mod tests {
     }
 
     #[test]
-    fn cursor_absent_then_checkpoint_then_complete() {
+    fn cursor_absent_then_page_checkpoint_then_completion() {
         let s = tmp_store();
         assert_eq!(s.get_cursor("arxiv-cs").unwrap(), None);
 
-        // Mid-harvest checkpoint of a resumptionToken.
-        s.set_cursor_token("arxiv-cs", Some("tok-page2")).unwrap();
+        s.commit_harvest_page("arxiv-cs", &[], Some("tok-page2"), Some("2026-07-02"))
+            .unwrap();
         let c = s.get_cursor("arxiv-cs").unwrap().unwrap();
         assert_eq!(c.cursor.as_deref(), Some("tok-page2"));
         assert_eq!(c.high_water, None);
+        assert_eq!(c.pending_high_water.as_deref(), Some("2026-07-02"));
 
-        // Completing clears the token and records the high-water mark.
-        s.complete_cursor("arxiv-cs", Some("2026-07-04")).unwrap();
+        s.commit_harvest_page("arxiv-cs", &[], None, Some("2026-07-04"))
+            .unwrap();
         let c = s.get_cursor("arxiv-cs").unwrap().unwrap();
         assert_eq!(c.cursor, None);
         assert_eq!(c.high_water.as_deref(), Some("2026-07-04"));
+        assert_eq!(c.pending_high_water, None);
+    }
+
+    #[test]
+    fn page_documents_and_cursor_roll_back_together() {
+        let s = tmp_store();
+        s.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "CREATE TRIGGER fail_cursor BEFORE INSERT ON cursors
+                 BEGIN SELECT RAISE(ABORT, 'injected cursor failure'); END;",
+            )
+            .unwrap();
+
+        let result = s.commit_harvest_page(
+            "arxiv-cs",
+            &[doc("page-1", "Original", "quantum widgets everywhere")],
+            Some("page-2-token"),
+            Some("2026-07-05"),
+        );
+        assert!(result.is_err(), "the injected cursor write must fail");
+        assert_eq!(s.count().unwrap(), 0, "the page insert must roll back");
+        assert_eq!(s.get_cursor("arxiv-cs").unwrap(), None);
+    }
+
+    #[test]
+    fn completed_high_water_includes_pages_before_resume() {
+        let path = tmp_path();
+        let s = SqliteStore::open(&path).unwrap();
+        s.commit_harvest_page(
+            "arxiv-cs",
+            &[doc("page-1", "First", "alpha")],
+            Some("page-2-token"),
+            Some("2026-07-05"),
+        )
+        .unwrap();
+        drop(s);
+
+        // Reopen the database to model a process stop between capped runs.
+        let s = SqliteStore::open(&path).unwrap();
+        let interrupted = s.get_cursor("arxiv-cs").unwrap().unwrap();
+        assert_eq!(interrupted.cursor.as_deref(), Some("page-2-token"));
+        assert_eq!(
+            interrupted.pending_high_water.as_deref(),
+            Some("2026-07-05")
+        );
+        assert_eq!(interrupted.high_water, None);
+
+        s.commit_harvest_page(
+            "arxiv-cs",
+            &[doc("page-2", "Second", "beta")],
+            None,
+            Some("2026-07-04"),
+        )
+        .unwrap();
+        drop(s);
+
+        let s = SqliteStore::open(&path).unwrap();
+        let completed = s.get_cursor("arxiv-cs").unwrap().unwrap();
+        assert_eq!(completed.cursor, None);
+        assert_eq!(completed.pending_high_water, None);
+        assert_eq!(completed.high_water.as_deref(), Some("2026-07-05"));
+        assert_eq!(s.count().unwrap(), 2);
+    }
+
+    #[test]
+    fn old_cursor_table_gains_pending_high_water_column() {
+        let path = tmp_path();
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE cursors (
+                source_id TEXT PRIMARY KEY,
+                cursor TEXT,
+                high_water TEXT,
+                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+             );",
+        )
+        .unwrap();
+        drop(conn);
+
+        let s = SqliteStore::open(&path).unwrap();
+        let columns = s
+            .conn
+            .lock()
+            .unwrap()
+            .prepare("PRAGMA table_info(cursors)")
+            .unwrap()
+            .query_map([], |row| row.get::<_, String>(1))
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap();
+        assert!(columns.iter().any(|name| name == "pending_high_water"));
     }
 
     fn doc(id: &str, title: &str, body: &str) -> Document {
@@ -1045,9 +1186,11 @@ mod tests {
     #[test]
     fn high_water_is_monotonic() {
         let s = tmp_store();
-        s.complete_cursor("arxiv-cs", Some("2026-07-04")).unwrap();
+        s.commit_harvest_page("arxiv-cs", &[], None, Some("2026-07-04"))
+            .unwrap();
         // An older datestamp must not roll the mark backward.
-        s.complete_cursor("arxiv-cs", Some("2026-07-01")).unwrap();
+        s.commit_harvest_page("arxiv-cs", &[], None, Some("2026-07-01"))
+            .unwrap();
         assert_eq!(
             s.get_cursor("arxiv-cs")
                 .unwrap()
@@ -1057,7 +1200,8 @@ mod tests {
             Some("2026-07-04")
         );
         // A newer one advances it.
-        s.complete_cursor("arxiv-cs", Some("2026-07-09")).unwrap();
+        s.commit_harvest_page("arxiv-cs", &[], None, Some("2026-07-09"))
+            .unwrap();
         assert_eq!(
             s.get_cursor("arxiv-cs")
                 .unwrap()
