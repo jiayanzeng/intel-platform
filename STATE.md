@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-22 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. Paged harvest documents, cursor, canonical ids, and pending high-water now commit atomically, but T2's two-run live proof remains blocked because arXiv's first `ListRecords` request timed out on 2026-07-22. T4 is deferred because no real-model key/configuration is present; T7 single-flight is deferred because the shipped scheduler remains one synchronous writer. The full golden end-to-end remained byte-identical.
+**As of:** 2026-07-23 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **70 shell tests green** against a failure-capable fake core/model (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is now complete:** two capped live arXiv runs proved durable interruption-resume, with run 2's first request carrying run 1's persisted resumption token and adding the next 1,300 real documents rather than restarting page 1. T4 is deferred because no real-model key/configuration is present; T7 single-flight is deferred because the shipped scheduler remains one synchronous writer. The full golden end-to-end remained byte-identical.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -12,7 +12,7 @@
 
 **On the "0 warnings" claim — B0 correction and T6 resolution, measured 2026-07-20.** "0 warnings" originally meant *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. B0 proved the prior claim that the test module had been moved last was **false**: clippy exited 101 on `clippy::items_after_test_module`, and fmt found diffs in 13 Rust files. T6 moved the SQLite vector layer before the test module and applied rustfmt in the separate lint-fix commit `097b017`. After that fix, `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check` both exit 0. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. CI's lint job is now explicitly blocking (`continue-on-error: false`).
 
-**T2's measured code defects are repaired, but interruption-resume remains BLOCKED at the live-wire gate (2026-07-22).** The original 2026-07-20 capped run cleared its token because `complete()` ran after the cap. A strengthened fake first reproduced that failure: it recorded the checkpoint call but its actual resume state was `None`. The repair removes the split checkpoint/complete writes: each parsed page now commits its documents, canonical-id rematerialization, next token, and `pending_high_water` in one SQLite transaction; completion promotes the maximum pending datestamp only on the final page. An injected SQLite trigger proves a failed cursor write rolls back the page documents, and a close/reopen test proves a capped page retains its token and earlier max datestamp across a process boundary. On the required live reproof, the sandboxed probe produced HTTP `000000`; the permitted external run reached arXiv and fetched the real robots disposition, but the first `ListRecords` request timed out with `fetched=0`, `new=0`, no XML page, and no cursor row. Run 2 was therefore not executed. T2 is not complete until the two capped live runs succeed.
+**T2 interruption-resume is complete on the live wire (2026-07-23).** The original 2026-07-20 capped run cleared its token because `complete()` ran after the cap. A strengthened fake reproduced that failure before the repair; injected commit and SQLite-trigger failures then proved the atomic page guard can fail and rolls documents and cursor back together. On 2026-07-23, live run 1 fetched 1,300 real arXiv records and durably stored token `verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-21%26until%3D2026-07-22%26set%3Dcs%26skip%3D522`. After stopping and restarting `cored`, live run 2's first request carried that exact token and added the next 1,300 records; its next token advanced to `from%3D2026-07-22...skip%3D88`. Both runs reported `ok=true`, 0 parse errors, and a real `Unavailable(allow)` robots disposition with 0.500s effective crawl delay. No 503/Retry-After was observed. `data/core.db` remained byte-identical.
 
 **T4 real-model verification is DEFERRED at its credential gate (2026-07-20).** This cycle corrects the stale egress claim: unauthenticated probes to both `https://api.deepseek.com/v1/models` and `https://api.openai.com/v1/models` now reach the providers and return **401**, not the prior proxy 403. But `LLM_BASE_URL` and `LLM_API_KEY` are both unset, no repository-local `LLM_API_KEY` assignment exists, and ports 8000/8899/11434 have no listener. `./run verify-llm` therefore exits **2** asking for endpoint configuration before it can run a model check. A reachable login wall is not a usable endpoint. Neither real-endpoint acceptance criterion was run, and the mock was not substituted.
 
@@ -369,6 +369,54 @@ handoff.
   environment variables. Direct curl proved cored stayed healthy. The recorded
   golden set `NO_PROXY/no_proxy=127.0.0.1,localhost`; no application behavior
   was changed. Ports 8788 and 8899 were clear after teardown.
+
+### T2 closed — interruption-resume proven on the live wire (2026-07-23)
+
+- Preflight: the worktree was clean at `2b036d9`; `./run down` succeeded and
+  port 8788 was clear. The 2026-07-22 zero-row timeout artifact was preserved at
+  `/private/tmp/intel-platform-live-smoke-t2-timeout-20260722.db`, and both live
+  runs used a fresh `data/live-smoke.db`. The sandboxed reachability probe again
+  returned HTTP `000000` and was not counted; the permitted commands reached
+  arXiv Identify with HTTP 200.
+- Run 1 command: `HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run
+  harvest-arxiv`, generated window `2026-07-19` through `2026-07-22`. It fetched
+  and added **1,300** real records, reported `ok=true`, parsed the page without
+  an observed error, reported that more pages followed, and stopped at cap 1.
+  SQLite then held 1,300 documents and the non-NULL next token
+  `verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-21%26until%3D2026-07-22%26set%3Dcs%26skip%3D522`,
+  with `high_water=NULL` and `pending_high_water=2026-07-21`.
+- Run 1's logs/config were preserved under
+  `/private/tmp/intel-platform-t2-run1-20260723-*`. `cored` was stopped, port
+  8788 was independently confirmed clear, and the identical capped command was
+  run again. **Run 2's first request carried the exact run-1 token**, so it
+  resumed rather than fetching the fresh first page. It fetched and added the
+  next **1,300** real records with `ok=true`; the store reached **2,600** rows
+  and 2,487 analyzed documents. The next durable token advanced to
+  `verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-22%26until%3D2026-07-22%26set%3Dcs%26skip%3D88`,
+  with `high_water=NULL` and `pending_high_water=2026-07-22`. Run 2 evidence is
+  preserved under `/private/tmp/intel-platform-t2-run2-20260723-*`.
+- Both runs emitted the real robots verdict `Unavailable(allow)` and an
+  effective crawl delay of 0.500s. Across the two live pages the harness
+  reported no XML parse error. A 503/Retry-After response was **not observed**;
+  it was not forced. The smoke DB has 0 NULL fingerprints and 0 NULL canonical
+  ids.
+- Full acceptance on the resulting tree: warning-denied offline and net checks
+  passed; **90 workspace tests**, **20 net ingest tests**, and **70 shell tests**
+  passed (the existing one Starlette deprecation warning remains); clippy and
+  fmt passed. The locked offline workspace checked clean under Rust **1.78.0**
+  with `-D warnings`.
+- Full golden E2E used fresh temporary DB
+  `/private/tmp/intel-platform-t2-golden.gyEOy7/golden.db` and remained exact:
+  initial ingest **13**, acme re-ingest **+0**, analyzed **12**,
+  `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**, DeepSeek
+  **RISING z=10.0**, quant-desk **1 document**, and ordinary `/v1/ask` with **4
+  citations**, no retrieval degradation notes, and `techwire::tw-004`
+  suppressed. The temporary DB ended at 14 rows with 0 NULL fingerprints or
+  canonical ids. Before and after the live runs and golden, `data/core.db`
+  remained **1,764 rows** with SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+- Teardown: `cored` and the mock model were stopped; ports 8788 and 8899 were
+  clear. The live gate did not trip, so T2 is complete.
 
 ### H1 — harvest evidence hardened (verified 2026-07-20)
 

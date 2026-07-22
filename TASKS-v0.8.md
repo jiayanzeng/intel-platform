@@ -84,14 +84,15 @@ public API, and the test proving that runs in CI.
 
 ---
 
-## T2 — The first live arXiv harvest [P0, ops — durable resume repaired; wire reproof still blocked]
+## T2 — The first live arXiv harvest [P0, ops — COMPLETE]
 
-**Second on-site session. The harvest now reaches the wire** — the v0.7.1
-per-source robots fix cleared the gate (no "blocked by robots policy"), and the
-v0.7.2 changes made the run bounded and observable. But it is **still not done**,
-because the sandbox has no egress and the bounded run has not yet been captured.
+**Completed on the live wire 2026-07-23.** The v0.7.1 per-source robots fix
+cleared the gate, v0.7.2 made the run bounded and observable, and the v0.8
+atomic-page repair made interruption durable. Two capped real arXiv runs now
+prove that a process restart resumes from the stored token instead of restarting
+page 1.
 
-History, so the next attempt starts from reality:
+History, retained so the closure remains auditable:
 
 - **v0.7.0 → blocked at reachability:** arXiv had migrated `export.arxiv.org/oai2`
   → `oaipmh.arxiv.org/oai` (301). Config now points at the canonical host.
@@ -103,28 +104,25 @@ History, so the next attempt starts from reality:
   `max_pages` cap, 60s/15s timeouts, per-page progress (STATE header). The smoke
   test now injects a 3-day window + 3-page cap and streams progress.
 
-**What the next bounded run must show, and it is ALL that is left for T2:**
-- real OAI-PMH XML from `oaipmh.arxiv.org` parsed without error;
-- `resumptionToken` paging across **>1 page on the wire** (if a 3-day CS window is
-  one page, widen it: `HARVEST_DAYS=10 ./run harvest-arxiv`);
-- the `max_pages` cap stopping cleanly with the cursor checkpointed;
-- **cursor resume:** run once (hits the cap), run again, confirm it continues from
-  the checkpoint rather than restarting;
-- a real `503 Retry-After` honored, if arXiv issues one under load.
+**Completion evidence:** run 1 fetched 1,300 real records and left a non-NULL
+token ending in `skip%3D522`. After stopping and restarting `cored`, run 2's
+first request carried that exact token, added the next 1,300 records, and left a
+new token ending in `skip%3D88`. Both pages parsed without an observed error.
+The real robots disposition was captured; arXiv did not issue a 503/Retry-After.
 
 **2026-07-22 correction:** the capped-run path itself was defective: it
 checkpointed the next token and then unconditionally completed, clearing it.
 That direct bug and the deeper split-write window are repaired. Each parsed
 page now commits documents, canonical ids, next token, and pending high-water in
 one SQLite transaction; injected-failure and reopen tests execute those guards.
-The live reproof is still outstanding because the first permitted
-`ListRecords` request timed out with zero documents and no cursor row. Do not
-mark T2 done until the two-run wire evidence in the execution runbook exists.
+The first permitted live reproof timed out with zero documents and no cursor
+row, so it was correctly recorded as blocked. The later 2026-07-23 two-run wire
+evidence in the execution runbook closes that gate without weakening it.
 
-**Run it:** `./run harvest-arxiv` (bounded + observable now). **Paste the full
-output, including the per-page progress lines.** That is the evidence that closes
-T2 — and the decision gate still stands: "reached the wire" and "capped at 3
-pages" are progress, not completion, until the paging/resume behavior is seen.
+**Closure:** exact commands, tokens, counts, regression results, and preserved
+log locations are recorded in `STATE.md §8` and `PROGRESS-v0.8.md`. The decision
+gate remains the rule for future changes: "reached the wire" is not resume
+evidence unless the stored token is observed in the next process's first request.
 
 ---
 

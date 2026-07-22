@@ -293,3 +293,42 @@ correct them with a new dated entry.
   proxy discovery routed Python loopback through `httpcore._sync.http_proxy`;
   direct curl and two fixture ingests proved cored stayed healthy. **T2 remains
   unchecked and blocked; this is not a wire pass.**
+
+### 2026-07-23 · T2 — interruption-resume proven on the live wire
+
+- owner: 🤖 Codex
+- measured: clean preflight at `2b036d9`; `./run down` succeeded and port 8788
+  was clear. The zero-row 2026-07-22 timeout DB was preserved, then run 1 used a
+  fresh `data/live-smoke.db` and command `HARVEST_MAX_PAGES=1
+  CORE_DB=data/live-smoke.db ./run harvest-arxiv`. The sandboxed HTTP `000000`
+  probe was not counted. With network permission, Identify returned 200; run 1
+  fetched/added **1,300**, reported `ok=true`, and durably stored token
+  `verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-21%26until%3D2026-07-22%26set%3Dcs%26skip%3D522`
+  with `pending_high_water=2026-07-21`. After stopping `cored` and independently
+  confirming the port clear, the identical run 2 began with that exact token,
+  fetched/added the next **1,300**, reached 2,600 stored / 2,487 analyzed, and
+  advanced the token to `from%3D2026-07-22...skip%3D88` with
+  `pending_high_water=2026-07-22`.
+- acceptance: run 1 non-NULL cursor ✅ · run 2's first request used that exact
+  cursor and did not restart fresh page 1 ✅ · two real OAI-PMH pages parsed
+  with no observed error and both results `ok=true` ✅ · real robots verdict
+  `Unavailable(allow)` with 0.500s effective delay captured on both runs ✅ ·
+  503/Retry-After explicitly **not observed** ✅ · protected `data/core.db`
+  remained 1,764 rows and byte-identical ✅ · workspace **90**, net ingest
+  **20**, and shell **70** tests passed; both warning-denied checks, clippy, fmt,
+  and locked Rust **1.78.0** offline check passed ✅
+- golden E2E: unchanged — fresh temporary fixture DB; initial ingest 13; acme
+  re-ingest +0; 12 analyzed; dropped `techwire::tw-004` for
+  `osdaily::osd-004` at hamming 12; DeepSeek RISING z=10.0; quant-desk 1;
+  ordinary `/v1/ask` answer with 4 citations, no retrieval degradation notes,
+  and `techwire::tw-004` suppressed. Temporary DB ended at 14 rows with 0 NULL
+  fingerprints/canonical ids. `data/core.db` retained SHA-256
+  `ddb2c7fb81038b670104fb8d619e7cd15a021f3e9028ba6be59f0604fafc8f3a`.
+- commit: atomic implementation `2b036d9`; this T2 closure/status commit (see
+  git history)
+- notes / gate: T2 is complete. Run-1 evidence is preserved under
+  `/private/tmp/intel-platform-t2-run1-20260723-*`; run-2 evidence under
+  `/private/tmp/intel-platform-t2-run2-20260723-*`; the golden DB under
+  `/private/tmp/intel-platform-t2-golden.gyEOy7/`. No 503 was forced, no
+  production policy was weakened, and no code or dependency changed in the
+  closure commit.

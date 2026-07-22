@@ -63,16 +63,15 @@ DB-isolation decision is recorded.
 ## Step 2 · T2 — Close the live harvest: interruption-resume on the wire 🤖
 *(needs network egress — available on this MacBook; not doable in the sandbox)*
 
-**Gate result (updated 2026-07-22): STILL BLOCKED.** The 2026-07-20 run exposed
-the unconditional `complete()` bug. The authorized corrective attempt has now
-removed that split write: page documents, canonical ids, next token, and pending
-high-water commit atomically; failure-capable rollback and close/reopen tests are
-green. The required live reproof did not produce a first page, however. With
-network permission arXiv Identify returned 200 and the real robots gate allowed
-the source, but `ListRecords` timed out with `fetched=0`, `new=0`, no XML page,
-and no cursor row. Run 2 was not executed. The local defect is repaired; this
-task remains unchecked until the two capped wire runs below succeed. See
-`STATE.md §8` and `PROGRESS-v0.8.md`.
+**Gate result (updated 2026-07-23): PASSED.** The 2026-07-20 run exposed the
+unconditional `complete()` bug; the 2026-07-22 attempt repaired the split write
+and proved rollback/reopen locally but timed out before a live XML page. The
+2026-07-23 reproof completed the exact two-run procedure below. Run 1 fetched
+1,300 records and left a non-NULL token ending in `skip%3D522`. After a process
+restart, run 2's first request carried that exact token and added the next 1,300
+records; its next token advanced to `skip%3D88`. Both runs reported `ok=true`
+and no parse error. `data/core.db` stayed byte-identical. See `STATE.md §8` and
+`PROGRESS-v0.8.md`.
 
 **Objective.** Prove the one T2 behavior fixtures cannot: that a harvest
 interrupted mid-set **resumes from the SQLite cursor** rather than restarting.
@@ -123,8 +122,9 @@ interruption-resume path, and is easily mistaken for a passing resume test.
 - `data/core.db` (the golden corpus) is untouched by these runs.
 - 503/Retry-After: honored-and-captured, or explicitly recorded as not observed.
 
-**Done when** the cursor row + the two runs' logs together show resume-from-cursor
-on the wire, recorded in `STATE.md §2.11`/`§8` and `PROGRESS-v0.8.md`.
+**Done (2026-07-23).** The cursor row + the two runs' logs show
+resume-from-cursor on the wire; the measured evidence is recorded in
+`STATE.md §8` and `PROGRESS-v0.8.md`.
 
 ---
 
@@ -413,7 +413,7 @@ trigger dictates.
 ## Progress checklist
 
 - [x] **B0** — entering state verified, baseline numbers recorded
-- [ ] **T2 — BLOCKED** — atomic resume repair is green locally; live run 1 timed out before an XML page/cursor
+- [x] **T2** — atomic resume proven across a process restart by two capped live arXiv runs
 - [x] **H1** — harness evidence hardened (real robots line, honest checklist)
 - [x] **T6** — clippy/fmt a blocking gate; STATE reconciled
 - [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
