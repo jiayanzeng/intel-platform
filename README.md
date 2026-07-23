@@ -122,11 +122,57 @@ etc.), and tears everything down. No env vars, no leftover processes.
 To poke at it by hand instead of the one-shot demo:
 
 ```bash
-./run up       # cored on :8788, mock model on :8899, public API you can start yourself
+./run up       # cored on :8788 and mock model on :8899
+./run api      # public shell on :8787; loads model settings from .env
 curl -H "Authorization: Bearer ak_acme_7f3d9c"  localhost:8787/v1/signals
 curl -H "Authorization: Bearer ak_acme_7f3d9c" "localhost:8787/v1/search?q=sparse+attention"
 ./run down     # stop everything
 ```
+
+### Configure real models once
+
+`./run` automatically loads a root `.env`. The file is ignored by Git; only the
+secret-free template is committed:
+
+```bash
+test -e .env || cp .env.example .env
+chmod 600 .env
+${EDITOR:-vi} .env
+./run config       # prints resolved URLs/models and the harvest DB; never keys
+```
+
+The chat profiles let one file hold both a LAN server and an online provider:
+
+```dotenv
+LLM_CHAT_PROFILE=lan                   # change only this line to: online
+
+LLM_LAN_BASE_URL=http://192.168.0.192:8080/v1
+LLM_LAN_API_KEY=
+LLM_LAN_CHAT_MODEL=your-lan-chat-model
+
+LLM_ONLINE_BASE_URL=https://api.deepseek.com/v1
+LLM_ONLINE_API_KEY=replace-with-your-key
+LLM_ONLINE_CHAT_MODEL=deepseek-chat
+```
+
+Embeddings are configured independently:
+
+```dotenv
+LLM_EMBED_BASE_URL=https://your-embedding-provider.example/v1
+LLM_EMBED_API_KEY=replace-with-your-key
+LLM_EMBED_MODEL=your-embedding-model
+```
+
+This separation is required, not cosmetic. In the 2026-07-23 operator run, the
+LAN server returned **501** from `POST /v1/embeddings`, while DeepSeek returned
+**404**. Both can be chat candidates, but neither tested endpoint can populate
+vectors. T4 needs a provider that really implements OpenAI-compatible
+`POST /embeddings`; the verifier will report failure rather than silently call
+BM25-only retrieval a pass.
+
+The old `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL` variables remain supported
+for a single provider that implements both chat and embeddings. Role-specific
+and selected-profile values take precedence.
 
 ### The two things `./run` cannot fake
 
@@ -135,19 +181,67 @@ deterministic and needs no network. Two commands reach the real world, and each
 **refuses to pretend** if it can't:
 
 ```bash
-./run harvest-arxiv    # a REAL arXiv harvest. Checks reachability first; if
+./run harvest-arxiv    # a REAL arXiv harvest into data/live-smoke.db. Checks
+                       # reachability first; if
                        # arXiv is unreachable it stops with exit 2 and tells you
                        # so, rather than silently "passing" against fixtures.
 
-LLM_BASE_URL=https://api.your-provider.com/v1 ./run verify-llm
-                       # point the shell at a real model endpoint and run the
-                       # embeddings + fusion + /v1/ask checklist.
+./run verify-llm       # loads .env; creates and tears down an isolated fixture
+                       # core; runs embeddings + fusion + public HC1 checks.
 ```
 
-`harvest-arxiv` needs outbound HTTPS to `export.arxiv.org`; `verify-llm` needs
-an OpenAI-compatible endpoint (and a key, via `LLM_API_KEY`, if it wants one).
-These are the only two capabilities the offline dev box lacks, and they are
-exactly what on-site testing is for.
+`harvest-arxiv` needs outbound HTTPS to the configured arXiv endpoint. A bare
+run uses `data/live-smoke.db`; an intentional named override remains possible as
+`CORE_DB=data/named-smoke.db ./run harvest-arxiv`. Never point a smoke run at
+`data/core.db`.
+
+`verify-llm` needs both a chat-completions endpoint and an embeddings endpoint.
+It owns a fresh temporary fixture database and its `cored` process, so no
+separate `./run up` is required.
+
+### Exact test sequence
+
+Run these from the repository root:
+
+```bash
+# 1. Make sure no stale service owns the core port.
+./run down
+lsof -nP -iTCP:8788 -sTCP:LISTEN       # no output is the expected result
+
+# 2. Full deterministic test suite: workspace, net feature, and shell.
+./run test
+
+# 3. Offline golden demo. This always forces the deterministic mock even when
+#    .env selects a real model.
+./run demo
+
+# 4. Confirm profile resolution without exposing keys or making requests.
+./run config
+
+# 5. Real-model verification. Requires chat + embedding settings in .env.
+./run verify-llm
+```
+
+Expected real-model success includes: embeddings missing count decreases,
+`retrieval.notes` is empty, hybrid retrieval returns context, `/v1/ask` returns
+citations, at least one cited document is `IndexOnly`, and the public answer has
+no 16-token overlap with gated source bodies. A 404/501 embeddings response,
+BM25-only fallback, core disconnect, or traceback is not a pass.
+
+For an additional interactive public-API check, use two terminals:
+
+```bash
+# terminal 1
+./run up
+
+# terminal 2
+./run api
+curl -H "Authorization: Bearer ak_acme_7f3d9c" \
+  "http://127.0.0.1:8787/v1/ask?q=What+is+DeepSeek-V4%3F"
+
+# cleanup
+./run down
+```
 
 <details><summary>Under the hood — the raw commands <code>./run</code> wraps, if you need them</summary>
 
@@ -169,9 +263,10 @@ at a config with the `arxiv-cs` `"fixture"` key removed (`./run harvest-arxiv`
 generates that config for you, leaving `config/core.json` untouched).
 </details>
 
-Degradation is graceful and explicit: no `LLM_BASE_URL` → `/v1/ask` returns
-503 with a clear message; no embed model → the core's vector leg is empty,
-fusion reduces to BM25, and `retrieval.notes` says so.
+Degradation is graceful and explicit in the public API: no configured chat
+endpoint makes `/v1/ask` return 503; an embedding failure leaves the vector leg
+empty and records the reason in `retrieval.notes`. The T4 verifier is stricter:
+either condition is a failed acceptance criterion, never a pass.
 
 ### Hashed API keys
 

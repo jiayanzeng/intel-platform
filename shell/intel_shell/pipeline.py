@@ -82,7 +82,7 @@ def run(client_arg: str | None, subs_path: str | None, data_dir: str,
     # --- embeddings backfill (the SHELL calls the model; the core stores) -----
     embed = embed_from_env()
     if embed is None:
-        print("  embeddings: skipped (LLM_BASE_URL not set)")
+        print("  embeddings: skipped (LLM_EMBED_BASE_URL/LLM_BASE_URL not set)")
     else:
         missing = core.embeddings_missing(embed.model)
         if not missing:
@@ -129,7 +129,7 @@ def run(client_arg: str | None, subs_path: str | None, data_dir: str,
     if llm_enrich:
         chat = chat_from_env()
         if chat is None:
-            print("  llm-enrich: skipped (LLM_BASE_URL not set)")
+            print("  llm-enrich: skipped (chat endpoint not configured)")
         else:
             ids = view.get("kept_doc_ids", [])[:10]
             docs = core.docs(ids) if ids else []

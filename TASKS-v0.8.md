@@ -154,16 +154,20 @@ no such archive did).
 
 ---
 
-## T4 — Point the LLM at a real endpoint [P1, shell — blocked on egress/key]
+## T4 — Point the LLM at a real endpoint [P1, shell — DEFERRED: embeddings unavailable]
 
 Carried from v0.7/T3. `tools/verify_llm.py` already runs the whole checklist in
 one command: embeddings backfill, fusion no longer BM25-only, `retrieval.notes`
-clean.
+clean. T4C made the command self-contained on a fresh fixture core and split
+chat from embedding configuration.
 
-**Decision gate:** no reachable OpenAI-compatible endpoint and no key ⇒ **defer**;
-do not declare it done against the mock. v0.7 verified `api.deepseek.com` and
-`api.openai.com` both return 403 at the egress proxy, no vLLM listener exists,
-and no key is present.
+**Decision gate:** no reachable OpenAI-compatible embedding endpoint ⇒
+**defer**; do not declare it done against the mock or BM25-only retrieval. On
+2026-07-23 the operator's LAN server returned 501 from `POST /v1/embeddings`,
+DeepSeek returned 404, and a later LAN retry returned `No route to host`. No
+real embedding backfill or live-model HC1 check passed, so T4 remains deferred.
+Chat and embeddings may use different providers through `LLM_CHAT_*` and
+`LLM_EMBED_*`.
 
 **This task and T1 are worth far more together than apart.** T1 builds the guard;
 T4 supplies the first model capable of tripping it. Once both are done, run the

@@ -337,26 +337,26 @@ the output moved.
 ---
 
 ## Step 8 · T4 — Point the LLM at a real endpoint 🧑
-*(deferred on endpoint configuration/key — requires operator input)*
+*(deferred: tested chat endpoints do not provide usable embeddings)*
 
-**Gate result (2026-07-20): DEFERRED, not passed.** DeepSeek and OpenAI are now
-reachable (both unauthenticated `/v1/models` probes returned 401), correcting the
-prior 403 egress result. But `LLM_BASE_URL` and `LLM_API_KEY` are unset, no local
-model listener exists on 8000/8899/11434, and `./run verify-llm` exits 2 asking
-for configuration. The real-endpoint checklist and HC1 spot-check were not run;
-the mock was not substituted. See `STATE.md §8` and `PROGRESS-v0.8.md`.
+**Gate result (updated 2026-07-23): DEFERRED, not passed.** The operator tested
+both a LAN model and DeepSeek. Their `POST /v1/embeddings` responses were 501 and
+404 respectively; a later LAN retry returned `No route to host`. No real
+embedding backfill or real public HC1 check completed. T4C added split-provider
+configuration and a self-contained verifier, but its successful mock control is
+not T4 evidence. See `STATE.md §8` and `PROGRESS-v0.8.md`.
 
 **Objective.** Carried from v0.7/T3. `tools/verify_llm.py` runs the whole
 checklist in one command: embeddings backfill, fusion no longer BM25-only,
 `retrieval.notes` clean.
 
-**Human input required.** A reachable OpenAI-compatible endpoint **and** a key.
-v0.7 verified `api.deepseek.com` and `api.openai.com` both 403 at the egress proxy
-and no local vLLM exists.
+**Human input required.** A reachable OpenAI-compatible **embedding** endpoint
+(plus any required key). Chat may remain on either tested provider.
 
-**Gate.** No reachable endpoint and no key ⇒ **defer**; do not declare it done
-against the mock. If the operator provides `LLM_BASE_URL` (+ `LLM_API_KEY`), run
-`./run verify-llm` and proceed.
+**Gate.** No reachable embedding endpoint ⇒ **defer**; do not declare it done
+against the mock or BM25-only retrieval. Configure `LLM_EMBED_BASE_URL`
+(plus `LLM_EMBED_API_KEY` when required), run `./run verify-llm`, and proceed
+only if all real-endpoint checks pass.
 
 **This pairs with T1.** Once both are done, run the HC1 spot-check for real: ask a
 question whose best evidence is an `IndexOnly` document and confirm the public
@@ -398,6 +398,68 @@ trigger dictates.
 
 ---
 
+## Step 10 · T4C — Make real-model configuration reproducible 🤖 ✅ DONE
+*(follow-up from operator testing on 2026-07-23; T4's real-endpoint gate still applies)*
+
+**Result (2026-07-23).** Completed exactly as scoped. The final matrix passed
+90 workspace, 20 net, and 77 shell tests; warning-denied offline/net checks,
+clippy, fmt, and locked Rust 1.78 all passed. The full golden E2E was unchanged.
+The real LAN retry failed with `No route to host`, so T4 remains deferred; the
+mock's 6/6 result is recorded only as a failure-capable harness control.
+
+**Entering evidence.** The operator ran both a LAN model server and DeepSeek.
+The LAN server returned `501 Not Implemented` from `POST /v1/embeddings`;
+DeepSeek returned `404 Not Found` from that route. Both are therefore usable as
+chat candidates only, not as the embedding endpoint T4 requires. The same
+session also reproduced loopback proxy interference (`core unreachable: Server
+disconnected without sending a response`), left a run-owned `cored` orphan on
+8788, and ran `harvest-arxiv` against the global `data/core.db` default instead
+of an isolated smoke DB.
+
+**Objective.** Make model credentials and endpoint selection persistent,
+secret-safe, role-correct, and reproducible:
+
+1. Load a gitignored root `.env` from `./run`, with a committed
+   `.env.example`.
+2. Store both LAN and online chat profiles and select one without changing the
+   command line.
+3. Configure embeddings independently, because a chat-compatible endpoint is
+   not necessarily embedding-compatible. Keep legacy `LLM_BASE_URL` fallback.
+4. Make `./run verify-llm` self-contained on a fresh fixture DB and report
+   endpoint failures without a traceback.
+5. Prevent loopback core traffic from inheriting an HTTP proxy.
+6. Make bare `./run harvest-arxiv` default to `data/live-smoke.db`; an explicit
+   `CORE_DB=...` override must still work.
+7. Document exact offline, LAN, online, split-provider, API, and cleanup
+   commands.
+
+**Gate.** Configuration convenience is not T4 completion. If the configured
+embedding endpoint does not implement OpenAI-compatible `POST /embeddings`, or
+the real public HC1 check does not execute successfully, record the observed
+status and leave T4 deferred. Do not silently fall back to the mock, BM25-only
+retrieval, or a different database and call it a pass.
+
+**Acceptance criteria.**
+- `.env` and profile variants are ignored; `.env.example` contains no secret.
+- A failure-capable test proves LAN/online chat selection and independent
+  embedding configuration override an intentionally wrong legacy endpoint.
+- A failure-capable test proves a loopback core client refuses proxy inheritance.
+- Legacy one-endpoint configuration remains compatible.
+- `bash -n run` passes; a bare harvest resolves to `data/live-smoke.db` without
+  making a network request, and explicit `CORE_DB` still wins.
+- `verify-llm` creates/tears down its own temporary fixture core and reports a
+  missing/unsupported embedding endpoint as a measured failure, not a traceback.
+- Full warning-denied Rust checks/tests, net checks/tests, clippy, fmt, shell
+  tests, Rust 1.78 check, and golden E2E pass unchanged.
+- `STATE.md`, `PROGRESS-v0.8.md`, this runbook, and user instructions record what
+  actually ran.
+
+**Done when** the configuration/harness behavior above is verified and committed
+as one task. T4 itself changes from deferred only if its separate real-endpoint
+acceptance criteria pass.
+
+---
+
 ## Deferred beyond v0.8 (gates that keep them out)
 
 - **Multi-host seam (UDS / mTLS).** One host today; `CORE_TOKEN` exists on both
@@ -419,5 +481,6 @@ trigger dictates.
 - [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
 - [x] **T5** — robots re-gated on the final origin after redirects
 - [x] **T3** — SimHash persisted/consumed; migration verified on a pre-column copy of the live archive
-- [x] **T4 — DEFERRED** — providers reachable, but no endpoint configuration/key; real checks not run
+- [x] **T4 — DEFERRED** — tested chat providers returned 501/404 for embeddings; real HC1 did not pass
 - [x] **T7 — DEFERRED** — single-flight skipped; supported scheduler remains one synchronous writer
+- [x] **T4C** — secret-safe split model configuration and self-contained verifier

@@ -21,10 +21,22 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Load local endpoints and secrets once, before any defaults are resolved.
+# `.env` is gitignored; `.env.example` documents the accepted keys. ENV_FILE
+# permits an alternate local file without changing any command arguments.
+ENV_FILE="${ENV_FILE:-.env}"
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "$ENV_FILE"
+  set +a
+fi
+
 # --- knobs (override from the env only if you must) -------------------------
 CORE_PORT="${CORE_PORT:-8788}"          # cored's localhost JSON port
 API_PORT="${API_PORT:-8787}"            # the public FastAPI shell
 LLM_PORT="${LLM_PORT:-8899}"            # the mock model, for offline runs
+if [ -n "${CORE_DB:-}" ]; then CORE_DB_EXPLICIT=1; else CORE_DB_EXPLICIT=0; fi
 CORE_DB="${CORE_DB:-data/core.db}"      # persistent unless a command overrides
 SUBSCRIPTIONS_PATH="${SUBSCRIPTIONS_PATH:-config/subscriptions.hashed.json}"
 RUNDIR=".run"                           # pidfiles + logs live here
@@ -43,6 +55,14 @@ red()   { printf '\033[31m%s\033[0m\n' "$*" >&2; }
 step()  { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
 checkline() { # 1|0 label
   if [ "$1" = "1" ]; then printf '   [x] %s\n' "$2"; else printf '   [ ] %s\n' "$2"; fi
+}
+
+harvest_db_path() {
+  if [ "$CORE_DB_EXPLICIT" = "1" ]; then
+    printf '%s\n' "$CORE_DB"
+  else
+    printf '%s\n' "data/live-smoke.db"
+  fi
 }
 
 need_cargo() {
@@ -181,6 +201,17 @@ cmd_test() {
 cmd_build()     { need_cargo; cargo build -p cored --locked;               green "built target/debug/cored (offline)."; }
 cmd_build_net() { need_cargo; cargo build -p cored --features net --locked; green "built target/debug/cored (--features net)."; }
 
+cmd_api() {
+  ensure_venv
+  if ! curl -fsS -o /dev/null --max-time 2 "$CORE_URL/health" 2>/dev/null; then
+    red "cored is not reachable at $CORE_URL. Start it first with ./run up."
+    exit 2
+  fi
+  green "public shell on http://127.0.0.1:$API_PORT (model config from $ENV_FILE)"
+  PYTHONPATH=shell exec "$VENV/bin/python" -m uvicorn intel_shell.app:app \
+    --host 127.0.0.1 --port "$API_PORT"
+}
+
 # The whole offline pipeline, self-contained: fresh DB, ingest fixtures, run
 # two clients, print the signals, tear down. One command, no leftovers.
 cmd_demo() {
@@ -203,7 +234,9 @@ cmd_demo() {
     | py -c 'import json,sys; d=json.load(sys.stdin); print("  fetched:", d.get("fetched"), "| new this run:", d.get("new"))'
 
   step "running the acme-research pipeline"
-  CORE_DB="$DEMO_DB" LLM_BASE_URL="$MOCK_LLM_URL" SUBSCRIPTIONS_PATH="$SUBSCRIPTIONS_PATH" \
+  CORE_DB="$DEMO_DB" LLM_CHAT_PROFILE= \
+    LLM_CHAT_BASE_URL="$MOCK_LLM_URL" LLM_EMBED_BASE_URL="$MOCK_LLM_URL" \
+    LLM_BASE_URL="$MOCK_LLM_URL" SUBSCRIPTIONS_PATH="$SUBSCRIPTIONS_PATH" \
     PYTHONPATH=shell py -m intel_shell.pipeline --client acme-research 2>&1 | sed 's/^/  /' | tail -6
 
   step "signals (science + technology)"
@@ -297,7 +330,12 @@ print("  wrote " + live + ": from=" + frm + " until=" + unt + ", max_pages=" + s
   blue  "   widen with HARVEST_DAYS=… HARVEST_MAX_PAGES=… ./run harvest-arxiv)"
 
   step "4/5  starting cored (net build) and harvesting arxiv-cs for real"
-  local HARVEST_DB="${CORE_DB:-data/arxiv-live.db}"
+  # Live smoke is isolated by default. The old expression appeared to fall
+  # back to a live DB, but the global CORE_DB default had already populated
+  # data/core.db, so a bare command silently wrote the protected archive.
+  # An explicit CORE_DB=... still wins for deliberate, named runs.
+  local HARVEST_DB
+  HARVEST_DB="$(harvest_db_path)"
   CORE_DB="$HARVEST_DB" _start_cored "$LIVE_CFG"
   green "  cored (net) on $CORE_URL, db=$HARVEST_DB"
   blue  "  POST /ingest {sectors:[science], sources:[arxiv-cs]} — this hits the network"
@@ -408,18 +446,87 @@ print(str(int(d.get("fetched",0))) + "\t" + ("1" if r.get("ok") else "0"))
   checkline "$cursor_ok" "arxiv-cs cursor row present in $HARVEST_DB"
 }
 
-# Point the shell at a REAL model endpoint and run the full checklist.
-cmd_verify_llm() {
+# Print resolved, non-secret configuration without making a network request.
+cmd_config() {
   ensure_venv
-  if [ -z "${LLM_BASE_URL:-}" ]; then
-    red "Set LLM_BASE_URL to your endpoint first, e.g.:"
-    red "  export LLM_BASE_URL=https://api.your-provider.com/v1"
-    red "  export LLM_API_KEY=sk-...           # if your endpoint needs one"
-    red "  ./run verify-llm"
+  echo "environment file: $ENV_FILE"
+  echo "chat profile: ${LLM_CHAT_PROFILE:-direct/legacy}"
+  PYTHONPATH=shell py -c '
+from intel_shell.llm import chat_from_env, embed_from_env
+chat = chat_from_env()
+embed = embed_from_env()
+print("chat endpoint:", chat.base_url if chat else "(unset)")
+print("chat model:", chat.model if chat else "(unset)")
+print("embedding endpoint:", embed.base_url if embed else "(unset)")
+print("embedding model:", embed.model if embed else "(unset)")
+'
+  echo "harvest DB: $(harvest_db_path)"
+  echo "keys: redacted (inspect .env locally)"
+}
+
+# Point the shell at REAL chat and embedding endpoints and run the full
+# checklist against an isolated fixture core. The wrapper owns the core
+# lifecycle; callers no longer need to guess whether something is listening.
+cmd_verify_llm() {
+  need_cargo; ensure_venv
+  case "${LLM_CHAT_PROFILE:-}" in
+    ""|lan|online) ;;
+    *) red "LLM_CHAT_PROFILE must be 'lan', 'online', or blank."; exit 2 ;;
+  esac
+
+  local chat_base embed_base
+  chat_base=$(PYTHONPATH=shell py -c '
+from intel_shell.llm import chat_from_env
+c = chat_from_env()
+print(c.base_url if c else "")
+')
+  embed_base=$(PYTHONPATH=shell py -c '
+from intel_shell.llm import embed_from_env
+e = embed_from_env()
+print(e.base_url if e else "")
+')
+  if [ -z "$chat_base" ]; then
+    red "No chat endpoint resolved. Fill .env and select LLM_CHAT_PROFILE=lan"
+    red "or online (or set LLM_CHAT_BASE_URL). See .env.example."
     exit 2
   fi
-  step "verifying LLM endpoint: $LLM_BASE_URL"
-  PYTHONPATH=shell py tools/verify_llm.py
+  if [ -z "$embed_base" ]; then
+    red "No embedding endpoint resolved. Set LLM_EMBED_BASE_URL to a server"
+    red "that implements POST /v1/embeddings. Chat-only endpoints do not pass T4."
+    exit 2
+  fi
+
+  step "resolved model configuration (keys redacted)"
+  cmd_config
+
+  CORED_BIN=target/debug/cored
+  cmd_build
+  local VERIFY_DIR; VERIFY_DIR="$(mktemp -d)"
+  local VERIFY_DB="$VERIFY_DIR/verify.db"
+  VERIFY_CLEANUP_DIR="$VERIFY_DIR"
+  trap 'cmd_down; rm -rf "${VERIFY_CLEANUP_DIR:-}"' EXIT
+
+  step "starting isolated fixture core"
+  CORE_DB="$VERIFY_DB" _start_cored
+  green "cored on $CORE_URL, db=$VERIFY_DB"
+
+  step "ingesting deterministic fixtures for real-model verification"
+  local ingest_json
+  ingest_json=$(curl -fsS -X POST "$CORE_URL/ingest" \
+    -H 'content-type: application/json' \
+    -d '{"sectors":["science","technology"]}')
+  echo "$ingest_json" | py -c '
+import json, sys
+d = json.load(sys.stdin)
+print("  fetched:", d.get("fetched"), "| new:", d.get("new"))
+if d.get("fetched") != 13 or d.get("new") != 13:
+    raise SystemExit("expected a fresh 13-document fixture ingest")
+'
+
+  step "running embeddings, fusion, and public HC1 checks"
+  CORE_URL="$CORE_URL" SUBSCRIPTIONS_PATH="config/subscriptions.hashed.json" \
+    PYTHONPATH=shell py tools/verify_llm.py
+  green "real-model verification complete."
 }
 
 usage() {
@@ -429,6 +536,8 @@ intel-platform — ./run <command>
   Offline (needs only Rust >= 1.78 + Python 3.12):
     test           run every test: Rust workspace, --features net, and pytest
     demo           run the whole pipeline start-to-finish, then clean up
+    config         show resolved model endpoints and safe harvest DB (no keys)
+    api            run the public shell with model configuration from .env
     build          build cored (offline)
     build-net      build cored with --features net
     up / down      start / stop cored + the mock LLM (for poking by hand)
@@ -436,15 +545,17 @@ intel-platform — ./run <command>
   Live (needs real network egress):
     harvest-arxiv  do a REAL arXiv harvest — the test a fixture cannot stand in
                    for. Refuses to run (exit 2) if arXiv is unreachable.
-    verify-llm     point the shell at a real model endpoint (set LLM_BASE_URL)
-                   and run the embeddings + fusion + /v1/ask checklist.
+    verify-llm     load .env, start an isolated fixture core, and verify the
+                   selected real chat + embedding endpoints end to end.
 
   Common overrides (rarely needed): CORE_DB, CORE_PORT, API_PORT, LLM_PORT.
 
   Examples:
     ./run demo
-    CORE_DB=data/arxiv.db ./run harvest-arxiv
-    LLM_BASE_URL=http://localhost:8000/v1 ./run verify-llm
+    ./run config
+    ./run harvest-arxiv                    # defaults to data/live-smoke.db
+    CORE_DB=data/named-smoke.db ./run harvest-arxiv
+    ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }
 
@@ -459,6 +570,8 @@ case "$cmd" in
   down)          cmd_down ;;
   harvest-arxiv) cmd_harvest_arxiv "$@" ;;
   verify-llm)    cmd_verify_llm "$@" ;;
+  config)        cmd_config ;;
+  api)           cmd_api ;;
   help|-h|--help) usage ;;
   *) red "unknown command: $cmd"; echo; usage; exit 1 ;;
 esac

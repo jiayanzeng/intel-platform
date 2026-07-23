@@ -118,7 +118,11 @@ def create_app(
         if chat is None:
             raise HTTPException(
                 status_code=503,
-                detail="ask requires a configured model endpoint (set LLM_BASE_URL)",
+                detail=(
+                    "ask requires a configured chat endpoint "
+                    "(set LLM_CHAT_PROFILE/LLM_CHAT_BASE_URL; "
+                    "legacy LLM_BASE_URL is also supported)"
+                ),
             )
 
         extra_notes: list[str] = []

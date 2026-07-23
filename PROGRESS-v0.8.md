@@ -332,3 +332,51 @@ correct them with a new dated entry.
   `/private/tmp/intel-platform-t2-golden.gyEOy7/`. No 503 was forced, no
   production policy was weakened, and no code or dependency changed in the
   closure commit.
+
+### 2026-07-23 · T4C — reproducible split-provider model configuration
+
+- owner: 🤖 Codex
+- measured: root `.env` and variants are ignored; committed `.env.example`
+  contains no API-key-shaped secret. LAN/online chat profiles, an independent
+  embedding role, and the legacy shared fallback all resolved under
+  failure-capable tests. A proxy-sensitive fake proved loopback core clients set
+  `trust_env=False` while remote clients retain it. `./run config` measured a
+  bare harvest target of `data/live-smoke.db`; the ignored local file resolves
+  the supplied LAN chat URL, keeps the DeepSeek chat URL ready, leaves both keys
+  blank, and leaves embeddings unset. Explicit
+  `CORE_DB=data/named-smoke.db` still won. Missing embedding configuration made
+  `./run verify-llm` exit 2 cleanly without a traceback.
+- acceptance: ignore/example secret checks ✅ · deliberately wrong legacy
+  endpoint overridden by both chat profiles and the embedding role ✅ ·
+  loopback proxy inheritance refused by a failure-capable test ✅ · legacy
+  one-endpoint compatibility ✅ · `bash -n run` and safe/explicit harvest DB
+  resolution ✅ · isolated verifier creates, ingests 13 fixtures, checks, and
+  tears down ✅ · endpoint failures reported as measured failures, not
+  tracebacks ✅ · warning-denied workspace/net checks, **90** workspace tests,
+  **20** net tests, clippy, fmt, **77** shell tests, and locked Rust **1.78.0**
+  check all passed ✅ · documentation/status/runbook updated ✅
+- real-model gate: operator measurements were LAN embeddings HTTP **501** and
+  DeepSeek embeddings HTTP **404**. The Codex LAN retry started an isolated
+  fixture core and ingested 13 documents but received **No route to host**.
+  Therefore embeddings did not populate and the real public HC1 check did not
+  pass. **T4 remains deferred.** A deterministic mock passed **6/6 required
+  verifier checks** with one latency diagnostic; that validates the harness
+  only and was not substituted for real-model evidence.
+- golden E2E: unchanged — final temporary DB
+  `/private/tmp/intel-platform-t4c-final-golden.UCwRAP/golden.db`; initial
+  fixture ingest 13; acme re-ingest +0; 12 analyzed; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0; second acme run +0; quant-desk exactly 1 document; ordinary
+  `/v1/ask` answer with 4 citations, no retrieval notes, and
+  `techwire::tw-004` suppressed. DB finished 14/0/0 with integrity `ok`; ports
+  8788 and 8899 were clear.
+- commit: this T4C implementation/status commit (see git history)
+- notes / gate: before implementation, `data/core.db` had already changed from
+  the T2 handoff hash after the operator's reported bare zero-document harvest.
+  Direct measurement found its logical corpus unchanged at 1,764/0/0 and
+  integrity `ok`, but SHA-256 now
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`;
+  size 6,729,728 bytes; mtime `2026-07-23 20:08:13 +0800`; cursor
+  `arxiv-cs|NULL|2026-07-20|NULL|2026-07-23 12:08:13`. T4C made no further
+  change to that file. No dependency, lockfile, sector, license, robots, or
+  dedup invariant changed.
