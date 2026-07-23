@@ -500,6 +500,61 @@ subsequent task, not a workaround inside this gate record.
 
 ---
 
+## Step 12 · T4H — Fail fast and bound real-model verification 🤖 ✅ DONE
+*(follow-up to the T4W interrupt; T4's provider gate remains unchanged)*
+
+**Result (2026-07-23).** Pre-fix failure controls reported 6 failed / 7 passed;
+post-fix targeted controls passed 14/14. The live DMXAPI 503 run stopped after
+one embedding call in 2.4s, before fusion/chat, with no traceback and clean
+teardown. A deterministic success control still passed 6/6 through public HC1.
+The full 90/20/84 matrix, warning/lint/MSRV gates, complete golden, protected
+DB, and port teardown all remained exact. T4 is still deferred.
+
+**Entering evidence.** T4W recorded DMXAPI embedding HTTP 503 on two operator
+runs and one independent Codex probe. The verifier nevertheless continued after
+the required embedding leg failed. Its second operator run then waited in LAN
+chat until interrupted at 1m41s and printed a `KeyboardInterrupt` traceback.
+`ChatClient` and `EmbedClient` currently hard-code a 120-second timeout.
+
+**Objective.** Make a failed prerequisite terminate the verifier cleanly and
+make every provider wait explicitly bounded:
+
+1. Stop verification immediately after embedding backfill or fusion fails.
+   Never call chat after a required prerequisite has already failed.
+2. Add positive per-role timeouts configured by
+   `LLM_CHAT_TIMEOUT_SECONDS` / `LLM_EMBED_TIMEOUT_SECONDS`, with
+   `LLM_TIMEOUT_SECONDS` as the shared fallback.
+3. Show resolved timeout values in `./run config`, never keys.
+4. Put bounded defaults in `.env.example` and the ignored local `.env`.
+5. Preserve the complete success path: a working provider must still execute
+   embeddings, fusion, real public `/v1/ask`, IndexOnly context, and HC1.
+
+**Gate.** This is harness control flow only. A 503 remains a T4 failure. Do not
+retry around it, switch providers, degrade to BM25, skip attestation on a
+successful prerequisite path, or count a fast failure as T4 progress.
+
+**Acceptance criteria.**
+- A failure-capable embedding double raises on the first backfill call while a
+  callable chat/public-API double is prepared to fail the test if reached; the
+  verifier exits nonzero after exactly one embedding call and never reaches it.
+- Failure-capable configuration tests prove role-specific timeout values
+  override a deliberately wrong shared value; legacy shared timeout remains
+  compatible; non-positive or malformed values are refused.
+- A live run against the currently configured 503 embedding provider stops at
+  the embedding stage, prints no traceback, does not call LAN chat, and tears
+  down its temporary core.
+- A deterministic successful control still completes every required verifier
+  check, including public HC1.
+- Full warning-denied Rust checks/tests, net checks/tests, clippy, fmt, shell
+  tests, Rust 1.78 check, and complete golden E2E pass unchanged.
+- `STATE.md`, `PROGRESS-v0.8.md`, this runbook, `.env.example`, and user
+  instructions record what actually ran.
+
+**Done when** the failed-prerequisite path is bounded and clean, the success path
+still proves HC1, T4 remains honestly deferred, and the task is committed alone.
+
+---
+
 ## Deferred beyond v0.8 (gates that keep them out)
 
 - **Multi-host seam (UDS / mTLS).** One host today; `CORE_TOKEN` exists on both
@@ -525,3 +580,4 @@ subsequent task, not a workaround inside this gate record.
 - [x] **T7 — DEFERRED** — single-flight skipped; supported scheduler remains one synchronous writer
 - [x] **T4C** — secret-safe split model configuration and self-contained verifier
 - [x] **T4W** — split-provider 503 plus partial real HC1 evidence recorded
+- [x] **T4H** — verifier fails fast on prerequisites and bounds provider waits

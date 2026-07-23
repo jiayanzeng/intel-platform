@@ -26,6 +26,9 @@ LLM_ENV_KEYS = (
     "LLM_EMBED_BASE_URL",
     "LLM_EMBED_API_KEY",
     "LLM_EMBED_MODEL",
+    "LLM_CHAT_TIMEOUT_SECONDS",
+    "LLM_EMBED_TIMEOUT_SECONDS",
+    "LLM_TIMEOUT_SECONDS",
     "LLM_BASE_URL",
     "LLM_API_KEY",
     "LLM_MODEL",
@@ -120,3 +123,62 @@ def test_loopback_core_client_cannot_inherit_proxy_environment(
     core_client.CoreClient("https://remote-core.test")
 
     assert [call["trust_env"] for call in calls] == [False, False, True]
+
+
+def test_role_timeouts_override_wrong_shared_timeout(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _clear_llm_env(monkeypatch)
+    monkeypatch.setenv("LLM_CHAT_BASE_URL", "https://chat.test/v1")
+    monkeypatch.setenv("LLM_EMBED_BASE_URL", "https://embed.test/v1")
+    monkeypatch.setenv("LLM_TIMEOUT_SECONDS", "999")
+    monkeypatch.setenv("LLM_CHAT_TIMEOUT_SECONDS", "7.5")
+    monkeypatch.setenv("LLM_EMBED_TIMEOUT_SECONDS", "8.5")
+    calls: list[dict] = []
+
+    def capture_client(**kwargs):
+        calls.append(kwargs)
+        return object()
+
+    monkeypatch.setattr(llm.httpx, "Client", capture_client)
+
+    chat = llm.chat_from_env()
+    embed = llm.embed_from_env()
+
+    assert chat is not None
+    assert embed is not None
+    assert [call["timeout"] for call in calls] == [7.5, 8.5]
+    assert chat.timeout_seconds == 7.5
+    assert embed.timeout_seconds == 8.5
+
+
+def test_legacy_shared_timeout_configures_both_roles(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _clear_llm_env(monkeypatch)
+    monkeypatch.setenv("LLM_BASE_URL", "https://shared.test/v1")
+    monkeypatch.setenv("LLM_TIMEOUT_SECONDS", "9")
+    calls: list[dict] = []
+
+    def capture_client(**kwargs):
+        calls.append(kwargs)
+        return object()
+
+    monkeypatch.setattr(llm.httpx, "Client", capture_client)
+
+    assert llm.chat_from_env() is not None
+    assert llm.embed_from_env() is not None
+    assert [call["timeout"] for call in calls] == [9.0, 9.0]
+
+
+@pytest.mark.parametrize("bad_timeout", ["0", "-1", "not-a-number"])
+def test_invalid_model_timeout_is_refused(
+    monkeypatch: pytest.MonkeyPatch,
+    bad_timeout: str,
+) -> None:
+    _clear_llm_env(monkeypatch)
+    monkeypatch.setenv("LLM_CHAT_BASE_URL", "https://chat.test/v1")
+    monkeypatch.setenv("LLM_CHAT_TIMEOUT_SECONDS", bad_timeout)
+
+    with pytest.raises(llm.LlmError, match="LLM_CHAT_TIMEOUT_SECONDS"):
+        llm.chat_from_env()

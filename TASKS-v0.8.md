@@ -170,7 +170,10 @@ split-provider run used DMXAPI for embeddings: that role returned 503 twice,
 while the independent LAN-chat/public-HC1 leg passed once with 4 IndexOnly
 citations and no gated overlap. The verifier correctly reported 3/5, not a
 pass. Chat and embeddings may use different providers through `LLM_CHAT_*` and
-`LLM_EMBED_*`; every required leg must pass in the same run.
+`LLM_EMBED_*`; every required leg must pass in the same run. T4H makes that
+ordering executable: embedding backfill and fusion are prerequisites, so either
+failure stops before chat/public HC1. Per-role positive timeouts bound each
+provider call; a faster, cleaner 503 is still a T4 failure.
 
 **This task and T1 are worth far more together than apart.** T1 builds the guard;
 T4 supplies the first model capable of tripping it. Once both are done, run the

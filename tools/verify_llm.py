@@ -20,6 +20,7 @@ any 16-token gated overlap from reaching the returned answer.
 from __future__ import annotations
 
 import re
+import sys
 import time
 
 from fastapi.testclient import TestClient
@@ -68,6 +69,17 @@ def _embedding_items(batch: list[dict], vectors: list[list[float]]) -> list[dict
     ]
 
 
+def _finish() -> int:
+    failed = [r for r in results if r[1] == FAIL]
+    passed = [r for r in results if r[1] == PASS]
+    required = passed + failed
+    warnings = [r for r in results if r[1] == WARN]
+    print(f"\n== {len(passed)}/{len(required)} required checks passed"
+          f"; {len(warnings)} diagnostic warning(s) ==")
+    print("Record model names + observed latency in STATE.md (T4 done-when).")
+    return 1 if failed else 0
+
+
 def main() -> int:
     results.clear()
     core = CoreClient(config.CORE_URL, token=config.CORE_TOKEN)
@@ -79,12 +91,19 @@ def main() -> int:
               chat.base_url if chat else "no chat endpoint resolved")
         check("embedding configuration", PASS if embed else FAIL,
               embed.base_url if embed else "no embedding endpoint resolved")
-        return 1
-    print(f"  chat: {chat.base_url} (model={chat.model})")
-    print(f"  embeddings: {embed.base_url} (model={embed.model})")
+        return _finish()
+    print(
+        f"  chat: {chat.base_url} "
+        f"(model={chat.model}, timeout={chat.timeout_seconds:g}s)"
+    )
+    print(
+        f"  embeddings: {embed.base_url} "
+        f"(model={embed.model}, timeout={embed.timeout_seconds:g}s)"
+    )
 
     print("== 1. embeddings populate ==")
     t0 = time.time()
+    backfill_ok = False
     try:
         missing = core.embeddings_missing(embed.model)
         if missing:
@@ -93,16 +112,21 @@ def main() -> int:
             vectors = _embedding_items(batch, embedded)
             core.upsert_embeddings(embed.model, vectors)
         still = core.embeddings_missing(embed.model)
+        backfill_ok = len(still) < len(missing) or not missing
         check(
             "embeddings backfill",
-            PASS if len(still) < len(missing) or not missing else FAIL,
+            PASS if backfill_ok else FAIL,
             f"{len(missing)} missing -> {len(still)} after one batch",
         )
     except (CoreError, LlmError, KeyError, ValueError) as e:
         check("embeddings backfill", FAIL, str(e))
     check("embed latency", WARN, f"{time.time() - t0:.2f}s")
+    if not backfill_ok:
+        print("\n== stopping before fusion/public HC1: embedding prerequisite failed ==")
+        return _finish()
 
     print("== 2. fusion is no longer BM25-only ==")
+    fusion_ok = False
     try:
         q = "sparse attention"
         vec = embed.embed([q])[0]
@@ -114,24 +138,30 @@ def main() -> int:
             query_vector=vec,
         )
         notes = r.get("notes") or r.get("retrieval", {}).get("notes") or []
-        check("retrieval.notes clean", PASS if not notes else FAIL, str(notes))
+        notes_ok = not notes
+        hits_ok = bool(r.get("context"))
+        check("retrieval.notes clean", PASS if notes_ok else FAIL, str(notes))
         check(
             "hybrid hits",
-            PASS if r.get("context") else FAIL,
+            PASS if hits_ok else FAIL,
             f"{len(r.get('context', []))} context docs",
         )
+        fusion_ok = notes_ok and hits_ok
     except (CoreError, LlmError, KeyError, ValueError) as e:
         check("hybrid retrieve", FAIL, str(e))
+    if not fusion_ok:
+        print("\n== stopping before public HC1: fusion prerequisite failed ==")
+        return _finish()
 
     print("== 3. public HC1 — gated text cannot escape ==")
-    api = TestClient(app)
     try:
-        q = "What is DeepSeek-V4?"
-        response = api.get(
-            "/v1/ask",
-            params={"q": q},
-            headers={"Authorization": "Bearer ak_acme_7f3d9c"},
-        )
+        with TestClient(app) as api:
+            q = "What is DeepSeek-V4?"
+            response = api.get(
+                "/v1/ask",
+                params={"q": q},
+                headers={"Authorization": "Bearer ak_acme_7f3d9c"},
+            )
         if response.status_code != 200:
             check(
                 "public /v1/ask",
@@ -165,15 +195,16 @@ def main() -> int:
     print("    PYTHONPATH=shell python3 -m intel_shell.pipeline "
           "--client acme-research --llm-enrich")
 
-    failed = [r for r in results if r[1] == FAIL]
-    passed = [r for r in results if r[1] == PASS]
-    required = passed + failed
-    warnings = [r for r in results if r[1] == WARN]
-    print(f"\n== {len(passed)}/{len(required)} required checks passed"
-          f"; {len(warnings)} diagnostic warning(s) ==")
-    print("Record model names + observed latency in STATE.md (T4 done-when).")
-    return 1 if failed else 0
+    return _finish()
+
+
+def cli() -> int:
+    try:
+        return main()
+    except KeyboardInterrupt:
+        print("\nverification interrupted; cleanup follows.", file=sys.stderr)
+        return 130
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(cli())

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-23 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **77 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C is complete:** split chat/embedding profiles load from a secret-safe `.env`, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, and bare live harvests default to `data/live-smoke.db`. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
+**As of:** 2026-07-23 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -788,3 +788,50 @@ handoff.
   `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
   This step made no runtime, dependency, lockfile, policy, or protected-corpus
   change.
+
+### T4H — verifier fail-fast and provider timeouts (verified 2026-07-23)
+
+- The failure-capable controls were run before implementation and failed in the
+  intended ways: role-specific timeout assertions observed the hard-coded
+  120 seconds, malformed/non-positive timeouts were accepted, and a 503
+  embedding double reached a public-API constructor wired to raise. The
+  unchanged targeted command reported **6 failed, 7 passed**. Those same
+  controls pass after the repair.
+- `ChatClient` and `EmbedClient` now resolve positive
+  `LLM_CHAT_TIMEOUT_SECONDS` / `LLM_EMBED_TIMEOUT_SECONDS`, falling back to
+  `LLM_TIMEOUT_SECONDS` and then the existing 120-second library default.
+  Role-specific tests override a deliberately wrong shared value; a legacy
+  shared-timeout test configures both roles; `0`, `-1`, and `not-a-number` are
+  refused. The local ignored `.env` and `.env.example` set both roles to
+  **30 seconds**, and `./run config` prints those values with keys redacted.
+- Verifier stages are strict prerequisites. A failed embedding backfill returns
+  immediately before fusion and public HC1; a failed fusion returns before
+  chat. The 503 negative control exposes a callable chat double and a public
+  API constructor that fail the test if reached. It now exits 1 after exactly
+  one embedding call. Manual interruption is also converted to exit 130 with a
+  concise message at the script boundary.
+- Live negative control against the still-configured DMXAPI provider: fresh
+  isolated core, **13/13** fixtures, HTTP **503** at embedding stage in **0.17s**,
+  then `stopping before fusion/public HC1`; summary **0/1**, no LAN chat call,
+  no traceback, and clean teardown. The wrapper command completed in **2.4s**.
+  This is a cleaner T4 failure, not progress through the gate.
+- Deterministic success control used a separate `/dev/null` env file and the
+  mock on loopback with 5-second role timeouts. It passed **6/6**: embeddings
+  **13 → 0 missing**, clean retrieval notes, 5 hybrid context documents, public
+  ask 5 citations, 5 IndexOnly documents, and no gated overlap. The mock remains
+  harness evidence only.
+- Final matrix: warning-denied workspace and net checks passed; **90 workspace
+  tests**, **20 net ingest tests**, and **84 shell tests** passed (the existing
+  Starlette deprecation warning remains); clippy, fmt, `bash -n run`, Python
+  bytecode compilation, and the locked Rust **1.78.0** check passed.
+- Complete golden E2E used
+  `/private/tmp/intel-platform-t4h-final-golden.jF8Ser/golden.db` and remained exact:
+  initial **13**; acme **+0**, **12 analyzed**; `techwire::tw-004` dropped for
+  `osdaily::osd-004` at hamming **12**; DeepSeek **RISING z=10.0**; second acme
+  **+0**; quant-desk **1**; public ask **4 citations**, no retrieval notes, and
+  `techwire::tw-004` suppressed. The DB ended **14/0/0**, integrity `ok`; ports
+  8787/8788/8899 were clear.
+- `data/core.db` remained **1,764/0/0**, integrity `ok`, and SHA-256
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
+  T4 remains deferred; no dependency, lockfile, sector, license, robots, dedup,
+  or protected-corpus invariant changed.

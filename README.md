@@ -161,6 +161,10 @@ Embeddings are configured independently:
 LLM_EMBED_BASE_URL=https://your-embedding-provider.example/v1
 LLM_EMBED_API_KEY=replace-with-your-key
 LLM_EMBED_MODEL=your-embedding-model
+
+# Bound provider waits; role-specific values override LLM_TIMEOUT_SECONDS.
+LLM_CHAT_TIMEOUT_SECONDS=30
+LLM_EMBED_TIMEOUT_SECONDS=30
 ```
 
 This separation is required, not cosmetic. In the 2026-07-23 operator run, the
@@ -168,7 +172,10 @@ LAN server returned **501** from `POST /v1/embeddings`, while DeepSeek returned
 **404**. Both can be chat candidates, but neither tested endpoint can populate
 vectors. T4 needs a provider that really implements OpenAI-compatible
 `POST /embeddings`; the verifier will report failure rather than silently call
-BM25-only retrieval a pass.
+BM25-only retrieval a pass. The verifier is prerequisite-ordered: if embedding
+backfill or hybrid fusion fails, it stops before chat/public HC1. This prevents
+an already-failed run from waiting on another provider and makes the output
+unambiguous.
 
 The old `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL` variables remain supported
 for a single provider that implements both chat and embeddings. Role-specific
@@ -226,7 +233,9 @@ Expected real-model success includes: embeddings missing count decreases,
 `retrieval.notes` is empty, hybrid retrieval returns context, `/v1/ask` returns
 citations, at least one cited document is `IndexOnly`, and the public answer has
 no 16-token overlap with gated source bodies. A 404/501 embeddings response,
-BM25-only fallback, core disconnect, or traceback is not a pass.
+BM25-only fallback, core disconnect, or traceback is not a pass. A 503 embedding
+response now terminates the verifier at stage 1 without calling chat; fix or
+replace that embedding provider before retrying.
 
 For an additional interactive public-API check, use two terminals:
 

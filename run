@@ -457,8 +457,10 @@ chat = chat_from_env()
 embed = embed_from_env()
 print("chat endpoint:", chat.base_url if chat else "(unset)")
 print("chat model:", chat.model if chat else "(unset)")
+print("chat timeout:", f"{chat.timeout_seconds:g}s" if chat else "(unset)")
 print("embedding endpoint:", embed.base_url if embed else "(unset)")
 print("embedding model:", embed.model if embed else "(unset)")
+print("embedding timeout:", f"{embed.timeout_seconds:g}s" if embed else "(unset)")
 '
   echo "harvest DB: $(harvest_db_path)"
   echo "keys: redacted (inspect .env locally)"

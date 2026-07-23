@@ -412,3 +412,39 @@ correct them with a new dated entry.
   `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
   Documentation only; no runtime, dependency, lockfile, policy, or protected
   corpus change.
+
+### 2026-07-23 · T4H — verifier fails fast with bounded provider waits
+
+- owner: 🤖 Codex
+- measured: pre-fix negative controls reported **6 failed, 7 passed**: timeout
+  doubles saw 120s instead of role values, three invalid values were accepted,
+  and the 503 embedding double reached a public-API constructor prepared to
+  fail. After implementation the final targeted command passed **14/14**,
+  including a controlled `KeyboardInterrupt` that exits 130 without a traceback.
+  Role timeouts override a deliberately wrong shared timeout, the legacy shared
+  fallback still configures both roles, and invalid/non-positive values fail.
+- live negative control: DMXAPI returned HTTP **503** after 0.17s on a fresh
+  13-document isolated core. The verifier stopped immediately with **0/1**,
+  never called fusion or LAN chat, printed no traceback, and cleaned up. The
+  wrapper completed in **2.4s**. T4 remains deferred.
+- success control: isolated mock configuration with 5s role timeouts passed
+  **6/6** — embeddings 13 missing → 0; clean retrieval notes; 5 hybrid docs;
+  public ask 5 citations; 5 IndexOnly citation documents; no gated overlap.
+  This proves the success path remains complete but is not real-model evidence.
+- acceptance: failure-capable prerequisite guard ✅ · role/shared/invalid timeout
+  guards ✅ · live 503 fail-fast/no-chat/no-traceback/teardown ✅ · deterministic
+  full success path ✅ · warning-denied offline/net checks, **90** workspace
+  tests, **20** net tests, clippy, fmt, **84** shell tests, `bash -n run`,
+  Python bytecode compile, and locked Rust **1.78.0** check all passed ✅ ·
+  `.env.example`, README, runbook, STATE, and progress updated ✅
+- golden E2E: exact on
+  `/private/tmp/intel-platform-t4h-final-golden.jF8Ser/golden.db` — initial 13; acme
+  +0 and 12 analyzed; dropped `techwire::tw-004` for `osdaily::osd-004` at
+  hamming 12; DeepSeek z=10.0; second acme +0; quant-desk 1; public ask 4
+  citations, no retrieval notes, `techwire::tw-004` suppressed; DB 14/0/0,
+  integrity `ok`; ports 8787/8788/8899 clear.
+- commit: this T4H harness-hardening commit (see git history)
+- notes: `data/core.db` remained 1,764/0/0, integrity `ok`, SHA-256
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
+  No dependency, lockfile, sector, license, robots, dedup, or protected-corpus
+  invariant changed.

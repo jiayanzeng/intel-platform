@@ -26,6 +26,10 @@ Env:
   LLM_EMBED_API_KEY      independent embedding Bearer token
   LLM_EMBED_MODEL        embedding model name
 
+  LLM_CHAT_TIMEOUT_SECONDS / LLM_EMBED_TIMEOUT_SECONDS
+                         positive per-role request timeouts
+  LLM_TIMEOUT_SECONDS    backward-compatible shared timeout fallback
+
   LLM_BASE_URL / LLM_API_KEY / LLM_MODEL remain backward-compatible fallbacks
   for one provider that implements both chat and embeddings.
 
@@ -40,6 +44,7 @@ sources — no data gatekeeper is involved.
 
 from __future__ import annotations
 
+import math
 import os
 
 import httpx
@@ -49,8 +54,28 @@ class LlmError(RuntimeError):
     pass
 
 
+DEFAULT_MODEL_TIMEOUT_SECONDS = 120.0
+
+
 def _model_from_env(var: str) -> str:
     return os.environ.get(var) or os.environ.get("LLM_MODEL") or "default"
+
+
+def _timeout_from_env(role: str) -> float:
+    role_var = f"LLM_{role}_TIMEOUT_SECONDS"
+    role_raw = os.environ.get(role_var)
+    shared_raw = os.environ.get("LLM_TIMEOUT_SECONDS")
+    raw = role_raw or shared_raw
+    if raw is None:
+        return DEFAULT_MODEL_TIMEOUT_SECONDS
+    source = role_var if role_raw else "LLM_TIMEOUT_SECONDS"
+    try:
+        timeout = float(raw)
+    except ValueError as e:
+        raise LlmError(f"{source} must be a positive number") from e
+    if not math.isfinite(timeout) or timeout <= 0:
+        raise LlmError(f"{source} must be a positive number")
+    return timeout
 
 
 def _chat_settings_from_env() -> tuple[str | None, str | None, str]:
@@ -87,12 +112,19 @@ def _embed_settings_from_env() -> tuple[str | None, str | None, str]:
 
 
 class ChatClient:
-    def __init__(self, base_url: str, api_key: str | None = None, model: str = "default"):
+    def __init__(
+        self,
+        base_url: str,
+        api_key: str | None = None,
+        model: str = "default",
+        timeout_seconds: float = DEFAULT_MODEL_TIMEOUT_SECONDS,
+    ):
         self.base_url = base_url.rstrip("/")
         self.model = model
+        self.timeout_seconds = timeout_seconds
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         self._c = httpx.Client(
-            base_url=self.base_url, headers=headers, timeout=120.0
+            base_url=self.base_url, headers=headers, timeout=timeout_seconds
         )
 
     def chat(self, system: str, user: str) -> str:
@@ -119,12 +151,19 @@ class ChatClient:
 
 
 class EmbedClient:
-    def __init__(self, base_url: str, api_key: str | None = None, model: str = "default"):
+    def __init__(
+        self,
+        base_url: str,
+        api_key: str | None = None,
+        model: str = "default",
+        timeout_seconds: float = DEFAULT_MODEL_TIMEOUT_SECONDS,
+    ):
         self.base_url = base_url.rstrip("/")
         self.model = model
+        self.timeout_seconds = timeout_seconds
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         self._c = httpx.Client(
-            base_url=self.base_url, headers=headers, timeout=120.0
+            base_url=self.base_url, headers=headers, timeout=timeout_seconds
         )
 
     def embed(self, texts: list[str]) -> list[list[float]]:
@@ -144,11 +183,11 @@ def chat_from_env() -> ChatClient | None:
     base, api_key, model = _chat_settings_from_env()
     if not base:
         return None
-    return ChatClient(base, api_key, model)
+    return ChatClient(base, api_key, model, _timeout_from_env("CHAT"))
 
 
 def embed_from_env() -> EmbedClient | None:
     base, api_key, model = _embed_settings_from_env()
     if not base:
         return None
-    return EmbedClient(base, api_key, model)
+    return EmbedClient(base, api_key, model, _timeout_from_env("EMBED"))
