@@ -460,6 +460,46 @@ acceptance criteria pass.
 
 ---
 
+## Step 11 · T4W — Record the split-provider wire result 🤖 ✅ DONE
+*(new operator evidence on 2026-07-23; documentation-only gate record)*
+
+**Result (2026-07-23).** A fresh one-vector Codex probe independently reproduced
+DMXAPI HTTP 503. The operator's first verifier run remains a partial 3/5: real
+LAN chat and public HC1 passed, while embedding backfill and hybrid fusion
+failed. The second run's chat interrupt is recorded as a harness defect. The
+full 90/20/77 matrix, warning/lint/MSRV gates, complete golden, protected DB,
+and port teardown all remained exact.
+
+**Entering evidence.** With LAN chat plus a separately configured DMXAPI
+embedding role, the operator ran `./run verify-llm` twice. Both runs ingested 13
+fresh fixtures into an isolated database. Both embedding calls returned
+`503 Service Unavailable`, so backfill and hybrid retrieval failed. The first
+run continued through the real LAN chat path: public `/v1/ask` returned 4
+citations, all 4 cited documents were `IndexOnly`, and the answer had no
+16-token gated overlap. The second run stalled in chat until interrupted,
+printing a `KeyboardInterrupt` traceback.
+
+**Gate.** T4 requires embeddings backfill, clean fusion, and the real public HC1
+check in the same successful run. A 503 embedding response trips the gate:
+record it and keep T4 deferred. Do not substitute the mock, BM25-only retrieval,
+or the independently successful chat/HC1 leg.
+
+**Acceptance criteria.**
+- Re-probe the configured embedding role once and record the actual wire result.
+- Record the first run as a partial **3/5**, not a T4 pass.
+- Record the second run's interrupt/traceback as a separate harness defect, not
+  an endpoint success or failure.
+- Confirm the protected archive is unchanged and the complete golden E2E still
+  matches every anchor.
+- Update `STATE.md`, `PROGRESS-v0.8.md`, this runbook, and T4's rationale with
+  the measured result; make no runtime change in this step.
+
+**Done when** the 503 gate result and partial real HC1 evidence are recorded in
+one documentation-only commit. Verifier timeout/fail-fast behavior is a
+subsequent task, not a workaround inside this gate record.
+
+---
+
 ## Deferred beyond v0.8 (gates that keep them out)
 
 - **Multi-host seam (UDS / mTLS).** One host today; `CORE_TOKEN` exists on both
@@ -481,6 +521,7 @@ acceptance criteria pass.
 - [x] **T1** — HC1 structural on `/v1/ask` via `/attest` + leaking mock
 - [x] **T5** — robots re-gated on the final origin after redirects
 - [x] **T3** — SimHash persisted/consumed; migration verified on a pre-column copy of the live archive
-- [x] **T4 — DEFERRED** — tested chat providers returned 501/404 for embeddings; real HC1 did not pass
+- [x] **T4 — DEFERRED** — DMXAPI embeddings/fusion returned 503; real HC1 passed only as an independent 3/5 leg
 - [x] **T7 — DEFERRED** — single-flight skipped; supported scheduler remains one synchronous writer
 - [x] **T4C** — secret-safe split model configuration and self-contained verifier
+- [x] **T4W** — split-provider 503 plus partial real HC1 evidence recorded

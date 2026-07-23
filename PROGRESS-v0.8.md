@@ -380,3 +380,35 @@ correct them with a new dated entry.
   `arxiv-cs|NULL|2026-07-20|NULL|2026-07-23 12:08:13`. T4C made no further
   change to that file. No dependency, lockfile, sector, license, robots, or
   dedup invariant changed.
+
+### 2026-07-23 · T4W — split-provider wire gate recorded
+
+- owner: 🤖 Codex
+- measured: operator run 1 used LAN chat plus DMXAPI embeddings on a fresh
+  13-document fixture DB. DMXAPI returned HTTP 503 for backfill and fusion.
+  The independent real LAN-chat/public-HC1 leg returned 4 citations, all 4
+  `IndexOnly`, with no 16-token gated overlap. The verifier reported **3/5**,
+  not a pass. Operator run 2 repeated the 503s, then stalled in chat until
+  interrupted at 1m41s and printed a `KeyboardInterrupt` traceback. A fresh
+  Codex one-vector probe independently reproduced HTTP 503 from the configured
+  `/v1/embeddings` route.
+- acceptance: configured embedding role re-probed on the wire and 503 recorded
+  ✅ · partial 3/5 explicitly not promoted to T4 completion ✅ · interrupt
+  classified as a verifier defect rather than endpoint evidence ✅ · protected
+  archive unchanged ✅ · warning-denied offline/net checks, **90** workspace
+  tests, **20** net tests, clippy, fmt, **77** shell tests, `bash -n run`, and
+  locked Rust **1.78.0** check all passed ✅ · complete golden unchanged ✅
+- gate: **T4 remains deferred.** Required real embedding backfill and hybrid
+  fusion failed. The mock and BM25-only path were not substituted; the
+  independently successful HC1 leg is retained as useful partial evidence only.
+- golden E2E: exact on
+  `/private/tmp/intel-platform-t4w-golden.5nqKKI/golden.db` — initial 13; acme
+  +0 and 12 analyzed; dropped `techwire::tw-004` for `osdaily::osd-004` at
+  hamming 12; DeepSeek z=10.0; second acme +0; quant-desk 1; public ask 4
+  citations, no retrieval notes, `techwire::tw-004` suppressed; DB 14/0/0,
+  integrity `ok`; ports 8788/8899 clear.
+- commit: this T4W gate/status commit (see git history)
+- notes: `data/core.db` remained 1,764/0/0, integrity `ok`, SHA-256
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
+  Documentation only; no runtime, dependency, lockfile, policy, or protected
+  corpus change.

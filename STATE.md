@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-23 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **77 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C is complete:** split chat/embedding profiles now load from a secret-safe `.env`, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, and bare live harvests default to `data/live-smoke.db`. T4 itself remains deferred because neither tested provider supplied a usable embeddings endpoint, so the real-model HC1 check did not pass. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
+**As of:** 2026-07-23 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **77 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C is complete:** split chat/embedding profiles load from a secret-safe `.env`, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, and bare live harvests default to `data/live-smoke.db`. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -14,7 +14,7 @@
 
 **T2 interruption-resume is complete on the live wire (2026-07-23).** The original 2026-07-20 capped run cleared its token because `complete()` ran after the cap. A strengthened fake reproduced that failure before the repair; injected commit and SQLite-trigger failures then proved the atomic page guard can fail and rolls documents and cursor back together. On 2026-07-23, live run 1 fetched 1,300 real arXiv records and durably stored token `verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-21%26until%3D2026-07-22%26set%3Dcs%26skip%3D522`. After stopping and restarting `cored`, live run 2's first request carried that exact token and added the next 1,300 records; its next token advanced to `from%3D2026-07-22...skip%3D88`. Both runs reported `ok=true`, 0 parse errors, and a real `Unavailable(allow)` robots disposition with 0.500s effective crawl delay. No 503/Retry-After was observed. `data/core.db` remained byte-identical.
 
-**T4 real-model verification remains DEFERRED at its embedding/HC1 gate (2026-07-23).** The operator supplied and exercised two real chat candidates: the LAN server returned **501 Not Implemented** from `POST /v1/embeddings`, and DeepSeek returned **404 Not Found** from that route. A Codex retry to the LAN endpoint later failed with **No route to host** for both roles. These are measured non-results for T4: neither run populated embeddings or completed the public HC1 check. T4C now makes that distinction executable by configuring chat and embeddings independently and by refusing to count BM25-only or mock behavior as T4 evidence. Its deterministic mock control passed **6/6 required harness checks** with one latency diagnostic, but remains harness evidence only.
+**T4 real-model verification remains DEFERRED at its embedding gate (updated 2026-07-23).** The operator first exercised two chat candidates as shared providers: the LAN server returned **501 Not Implemented** from `POST /v1/embeddings`, DeepSeek returned **404 Not Found**, and a later Codex LAN retry failed with **No route to host**. After T4C split the roles, the operator configured DMXAPI embeddings and ran the isolated verifier twice. Both runs ingested 13 fresh fixtures; both DMXAPI calls returned **503 Service Unavailable**, so embedding backfill and hybrid fusion failed. The first run nevertheless completed the independent LAN-chat/public-HC1 leg: `/v1/ask` returned 4 citations, all 4 cited documents were IndexOnly, and no 16-token gated overlap escaped. The verifier correctly summarized **3/5 required checks passed**, which is partial evidence, not T4 completion. The second run repeated the 503s and then stalled in chat until the operator interrupted it after 1m41s, exposing a separate verifier fail-fast/timeout defect. A fresh Codex one-vector probe independently reproduced the DMXAPI 503. T4C's deterministic mock control remains harness evidence only; it is not substituted for the failed real embedding role.
 
 **Protected archive correction (measured before and after T4C on 2026-07-23).** Between the T2 handoff and T4C preflight, the operator reported running a bare zero-document arXiv harvest against `data/core.db`. Direct measurement found the logical corpus unchanged at **1,764 rows, 0 NULL `simhash`, 0 NULL `canonical_id`, integrity `ok`**, but the file was no longer byte-identical: SHA-256 is now `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`, size **6,729,728 bytes**, mtime `2026-07-23 20:08:13 +0800`, and the `arxiv-cs` cursor row is `cursor=NULL`, `high_water=2026-07-20`, `pending_high_water=NULL`, `updated_at=2026-07-23 12:08:13`. T4C made no further change to that file; its golden and verifier runs used temporary databases. Bare future harvests now resolve to `data/live-smoke.db`.
 
@@ -747,3 +747,44 @@ handoff.
   DeepSeek 404 embedding responses, followed by the Codex LAN reachability
   failure, mean no real embedding backfill or real public HC1 pass occurred.
   No mock or BM25-only result was promoted to real-model evidence.
+
+### T4W — split-provider wire gate recorded (verified 2026-07-23)
+
+- Resolved non-secret roles were LAN chat at
+  `http://192.168.0.192:8080/v1`, model `default`, and DMXAPI embeddings at
+  `https://www.dmxapi.cn/v1`, model `openAI`. Keys remained redacted.
+- Operator run 1 created an isolated fixture DB and ingested **13/13** fresh
+  documents. Both embedding operations returned HTTP **503**, so backfill and
+  hybrid retrieval failed. The real LAN chat request did complete: public
+  `/v1/ask` returned **4 citations**, all 4 cited documents were `IndexOnly`,
+  and the returned answer contained no 16-token gated overlap. Verifier result:
+  **3/5 required checks passed**, one latency diagnostic. This is a partial
+  real HC1 pass and an overall T4 failure.
+- Operator run 2 independently repeated the embedding 503 at 0.14s and the
+  fusion failure, then blocked in the public chat request. The operator
+  interrupted it after **1m41s**; Starlette/AnyIO printed a
+  `KeyboardInterrupt` traceback before cleanup stopped the core. That outcome is
+  a verifier control-flow/timeout defect, not provider success and not a second
+  HC1 result.
+- A fresh Codex probe sourced the ignored `.env`, printed only the redacted
+  endpoint/model, and made one embedding request. It independently returned
+  HTTP **503 Service Unavailable** from
+  `https://www.dmxapi.cn/v1/embeddings`. T4's embedding gate therefore remains
+  tripped; no mock, BM25-only result, or independent chat success was promoted
+  to completion.
+- Documentation-only acceptance matrix: warning-denied workspace and net
+  checks passed; **90 workspace tests**, **20 net ingest tests**, and **77 shell
+  tests** passed (the existing Starlette deprecation warning remains); clippy,
+  fmt, `bash -n run`, and the locked Rust **1.78.0** offline check passed.
+- Complete golden E2E used
+  `/private/tmp/intel-platform-t4w-golden.5nqKKI/golden.db` and remained exact:
+  initial fixture ingest **13**; acme re-ingest **+0**; **12** analyzed;
+  `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**; DeepSeek
+  **RISING z=10.0**; second acme run **+0**; quant-desk exactly **1 document**;
+  public `/v1/ask` **4 citations**, no retrieval notes, and
+  `techwire::tw-004` suppressed. The DB ended **14/0/0**, integrity `ok`; ports
+  8788 and 8899 were clear.
+- `data/core.db` remained **1,764/0/0**, integrity `ok`, and SHA-256
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
+  This step made no runtime, dependency, lockfile, policy, or protected-corpus
+  change.

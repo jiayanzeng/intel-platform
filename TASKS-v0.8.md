@@ -165,9 +165,12 @@ chat from embedding configuration.
 **defer**; do not declare it done against the mock or BM25-only retrieval. On
 2026-07-23 the operator's LAN server returned 501 from `POST /v1/embeddings`,
 DeepSeek returned 404, and a later LAN retry returned `No route to host`. No
-real embedding backfill or live-model HC1 check passed, so T4 remains deferred.
-Chat and embeddings may use different providers through `LLM_CHAT_*` and
-`LLM_EMBED_*`.
+real embedding backfill passed, so T4 remains deferred. A subsequent
+split-provider run used DMXAPI for embeddings: that role returned 503 twice,
+while the independent LAN-chat/public-HC1 leg passed once with 4 IndexOnly
+citations and no gated overlap. The verifier correctly reported 3/5, not a
+pass. Chat and embeddings may use different providers through `LLM_CHAT_*` and
+`LLM_EMBED_*`; every required leg must pass in the same run.
 
 **This task and T1 are worth far more together than apart.** T1 builds the guard;
 T4 supplies the first model capable of tripping it. Once both are done, run the
