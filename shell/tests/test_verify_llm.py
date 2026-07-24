@@ -2,7 +2,17 @@
 
 import tools.verify_llm as verify_llm
 from intel_shell.llm import LlmError
-from tools.verify_llm import ATTEST_NGRAM, _embedding_items, _has_gated_overlap
+from tools.verify_llm import (
+    ATTEST_NGRAM,
+    ATTEST_REFUSAL,
+    GUARD_FIRED,
+    LEAK,
+    NOT_EXERCISED,
+    _embedding_items,
+    _finish,
+    _has_gated_overlap,
+    _record_adversarial_outcome,
+)
 
 
 def test_verifier_uses_the_real_missing_queue_doc_id_shape() -> None:
@@ -19,6 +29,85 @@ def test_verifier_detects_a_deliberate_public_gated_overlap() -> None:
     leaking_answer = "analysis " + gated + " conclusion"
 
     assert _has_gated_overlap(leaking_answer, docs) is True
+
+
+def test_adversarial_leak_control_fails_the_verifier(capsys) -> None:
+    gated = " ".join(f"gated{i}" for i in range(ATTEST_NGRAM + 4))
+    leaking_answer = "verbatim " + gated
+    docs = [
+        {
+            "doc_id": "source::gated",
+            "license": "IndexOnly",
+            "body": gated,
+        }
+    ]
+    verify_llm.results.clear()
+
+    outcome = _record_adversarial_outcome(
+        public_answer=leaking_answer,
+        raw_answer=leaking_answer,
+        docs=docs,
+        attestation={"clean_answer": leaking_answer, "violations": []},
+    )
+
+    assert outcome == LEAK
+    assert _finish() == 1
+    output = capsys.readouterr().out
+    assert "[FAIL] adversarial HC1 guard" in output
+    assert "LEAK" in output
+    assert "source::gated" in output
+
+
+def test_adversarial_guard_fired_records_violation(capsys) -> None:
+    gated = " ".join(f"gated{i}" for i in range(ATTEST_NGRAM + 4))
+    docs = [
+        {
+            "doc_id": "source::gated",
+            "license": "IndexOnly",
+            "body": gated,
+        }
+    ]
+    verify_llm.results.clear()
+
+    outcome = _record_adversarial_outcome(
+        public_answer=ATTEST_REFUSAL,
+        raw_answer=gated,
+        docs=docs,
+        attestation={
+            "clean_answer": ATTEST_REFUSAL,
+            "violations": [{"doc_id": "source::gated"}],
+        },
+    )
+
+    assert outcome == GUARD_FIRED
+    assert verify_llm.results[-1][1] == verify_llm.PASS
+    output = capsys.readouterr().out
+    assert "GUARD FIRED" in output
+    assert "violations: ['source::gated']" in output
+
+
+def test_adversarial_paraphrase_is_not_exercised(capsys) -> None:
+    gated = " ".join(f"gated{i}" for i in range(ATTEST_NGRAM + 4))
+    docs = [
+        {
+            "doc_id": "source::gated",
+            "license": "IndexOnly",
+            "body": gated,
+        }
+    ]
+    paraphrase = "The model summarized the passage without quoting it."
+    verify_llm.results.clear()
+
+    outcome = _record_adversarial_outcome(
+        public_answer=paraphrase,
+        raw_answer=paraphrase,
+        docs=docs,
+        attestation={"clean_answer": paraphrase, "violations": []},
+    )
+
+    assert outcome == NOT_EXERCISED
+    assert verify_llm.results[-1][1] == verify_llm.WARN
+    assert "NOT EXERCISED" in capsys.readouterr().out
 
 
 def test_verifier_ignores_short_or_redistributable_overlap() -> None:

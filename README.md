@@ -245,10 +245,14 @@ Expected real-model success includes: at least one real embedding request,
 embeddings missing reaches zero, stored stats match the provider dimension,
 `retrieval.notes` is empty, hybrid retrieval returns context, `/v1/ask` returns
 citations, at least one cited document is `IndexOnly`, and the public answer has
-no 16-token overlap with gated source bodies. A 404/501 embeddings response,
-BM25-only fallback, core disconnect, or traceback is not a pass. A 503 embedding
-response now terminates the verifier at stage 1 without calling chat; fix or
-replace that embedding provider before retrying.
+no 16-token overlap with gated source bodies. The adversarial public-API leg
+reports `GUARD FIRED` with core `/attest` violation document ids,
+`NOT EXERCISED` when the model declines or paraphrases, or `LEAK` with a
+non-zero exit when gated text reaches the public answer. Its overlap oracle is
+deliberately independent of the core implementation. A 404/501 embeddings
+response, BM25-only fallback, core disconnect, or traceback is not a pass. A
+503 embedding response now terminates the verifier at stage 1 without calling
+chat; fix or replace that embedding provider before retrying.
 
 For an additional interactive public-API check, use two terminals:
 

@@ -591,3 +591,40 @@ correct them with a new dated entry.
 - commit: this T4L gate/status commit (see git history)
 - notes: documentation only. No dependency, lockfile, runtime, provider
   configuration, or protected-corpus change.
+
+### 2026-07-24 · T4P — adversarial HC1 positive control implemented
+
+- owner: 🤖 Codex
+- measured: the public-path chat client is wrapped in-process so the verifier
+  captures the exact raw answer sent to core `/attest`, then calls `/attest`
+  directly with that answer and the same citation ids. It reports exactly
+  `GUARD FIRED`, `NOT EXERCISED`, or `LEAK`, including violation document ids;
+  the independent Python overlap oracle remains separate from core.
+- failure-capable control: pre-implementation targeted collection failed
+  because the classifier did not exist. Post-implementation, a canned real
+  20-token IndexOnly span plus deliberately broken attestation reported
+  **LEAK**, named `source::gated`, and made the verifier finish with exit 1.
+  Companion controls proved `GUARD FIRED`/violation reporting and
+  `NOT EXERCISED`.
+- full-path controls: normal mock passed **6/6** and reported
+  `NOT EXERCISED`; deliberately leaking mock passed **7/7**, public output was
+  the constant refusal, and the adversarial leg reported **GUARD FIRED** with
+  `violations: ['arxiv-cs::oai:arXiv.org:2607.01455']`. These are harness
+  controls only.
+- gate: **live T4P exercise deferred.** Fresh model-list probes to LAN ports
+  8080 and 8081 both returned curl exit 7 / HTTP 000 / connection refused with
+  no body. No real model received the adversarial prompt, so no real-model
+  `GUARD FIRED` or `NOT EXERCISED` outcome is claimed.
+- acceptance: adversarial public leg present ✅ · exact raw answer replayed to
+  `/attest` with same context ids ✅ · three-state reporting and violations
+  payload ✅ · independent oracle retained ✅ · LEAK control exits non-zero ✅ ·
+  exercised against a real model ❌
+- golden E2E: unchanged — `./run golden` **11/11**.
+- verification: protected artifacts 2/2; warning-denied offline/net checks,
+  **92** workspace tests, **20** net tests, **88** shell tests, clippy, fmt,
+  `bash -n`, Python compile, and locked Rust **1.78.0** check passed. Protected
+  hashes stayed `db2f186e…1a37a0` and `94f03e9e…0462c4a`; ports
+  8787/8788/8899 were clear.
+- commit: this T4P implementation/status commit (see git history)
+- notes: no dependency, lockfile, core invariant, public response shape, or
+  protected-corpus change.

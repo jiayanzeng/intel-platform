@@ -495,7 +495,7 @@ still settling.
 - [x] **P1** — bare harvest cannot overwrite `live-smoke.db`; protected-artifact list + `verify-artifacts`
 - [x] **E1** — embedding dimension/model-key collision closed in core, shell, and verifier; three controls proven
 - [ ] **T4L — DEFERRED (transport gate)** — ports 8080/8081 refused connections; no HTTP body, API model name, or dimension measured
-- [ ] **T4P** — adversarial HC1 leg reports GUARD FIRED / NOT EXERCISED / LEAK, with `violations` payload
+- [ ] **T4P — DEFERRED (real-model gate)** — verifier and three controls complete; LAN chat refused connections, so no real-model outcome
 - [ ] **T4** — closed in one uninterrupted run, or deferred with the exact stage and response body
 - [ ] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch
 - [ ] **C1** — CI runs Python 3.11 and 3.12; shellcheck on `run`; floor recorded
