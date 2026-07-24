@@ -533,11 +533,13 @@ by a new dated entry. Follow it.
    and a date greater than or equal to the previous entry's.
 3. Wire it into `./run test`. Scope it to the newest entry so history stays
    readable without a mass rewrite the file's own rules forbid.
-4. From this cycle forward, `AGENTS.md §5.7` is satisfied only by a real hash.
-   Since the hash is not known until the commit exists, the accepted pattern is:
-   commit, then `git commit --amend` the progress line with the resulting short
-   hash, or write the hash in the *next* entry's `notes`. Pick one, record it in
-   `AGENTS.md §5`, and use it consistently for the rest of this cycle.
+4. From this cycle forward, `AGENTS.md §5` is satisfied only by a real hash.
+   The original amend suggestion was self-invalidating: adding a commit's hash
+   to its own contents changes that hash. The executable pattern is therefore:
+   commit the task implementation, append the progress entry with that real
+   hash, run `./run progress-check`, and commit the append-only audit record
+   separately before starting the next task. Record and use that pattern
+   consistently for the rest of this cycle.
 
 **Failure-capable control.** Append a scratch entry with `- commit: see git
 history` — `./run progress-check` must exit 1 naming that line. Then one with a

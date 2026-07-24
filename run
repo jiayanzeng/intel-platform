@@ -268,6 +268,10 @@ cmd_version_check() {
   python3 tools/version_check.py
 }
 
+cmd_progress_check() {
+  python3 tools/progress_check.py
+}
+
 cmd_verify_fingerprints() {
   need_cargo
   if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
@@ -294,6 +298,8 @@ cmd_test() {
   verify_fingerprint_fixture
   step "release version consistency"
   cmd_version_check
+  step "append-only progress record"
+  cmd_progress_check
   step "Rust tests (offline workspace, --locked)"
   cargo test --workspace --locked
   step "Rust tests (--features net path)"
@@ -754,6 +760,7 @@ intel-platform — ./run <command>
   Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
     version-check  reconcile release files and an exact HEAD release tag
+    progress-check validate the newest append-only progress entry
     verify-fingerprints <db> [reference-db]
                    report missing/stale fingerprints without repairing them
     demo           print the whole pipeline start-to-finish, then clean up
@@ -788,6 +795,7 @@ cmd="${1:-help}"; shift || true
 case "$cmd" in
   test)          cmd_test "$@" ;;
   version-check) cmd_version_check "$@" ;;
+  progress-check) cmd_progress_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
   demo)          cmd_demo "$@" ;;

@@ -172,12 +172,17 @@ the next:
 6. **Update `STATE.md`**: the header line (test counts, warning status, golden
    E2E status) and the relevant section, with what you **measured**, not what you
    hoped. Correct any prior claim you found to be false.
-7. **Append a `PROGRESS-v0.8.md` entry**: date, task id, owner, the measured
-   result, each acceptance criterion pass/fail, golden-E2E delta, commit hash.
-8. **Check the box** for the task in `TASKS-v0.8.2-EXECUTION.md`.
-9. **Commit** — one task per commit. Never combine a lint gate with a lint fix,
-   or a formatting diff with a behavior change; that is how a real change hides
-   inside noise.
+7. **Check the box** for the task in `TASKS-v0.8.2-EXECUTION.md`.
+8. **Commit the task implementation** — one task per implementation commit.
+   Never combine a lint gate with a lint fix, or a formatting diff with a
+   behavior change; that is how a real change hides inside noise.
+9. **Append the `PROGRESS-v0.8.md` entry after that commit exists**: date, task
+   id, owner, measured result, each acceptance criterion pass/fail, golden-E2E
+   delta, and the real 7–40 character implementation commit hash. Run
+   `./run progress-check`, then commit that append-only entry in a separate
+   audit-record commit before starting the next task. Do not amend an entry to
+   contain its own commit hash: changing commit contents changes the hash, so
+   that proposed self-reference cannot be true.
 
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
