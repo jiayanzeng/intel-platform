@@ -488,7 +488,7 @@ evidence record without interpreting the cycle name.
 - [x] **V1** — `/view` cold/warm measured against a predeclared SLO; cold
   trigger promoted to future V2
 - [x] **D4** — all deferred triggers re-audited; no gate bypassed
-- [ ] **R2** — release disposition recorded and, if applicable, tagged
+- [x] **R2** — release disposition recorded and, if applicable, tagged
 
 ## Standing prohibitions
 

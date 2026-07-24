@@ -899,3 +899,76 @@ recorded here in a separate audit-record commit.
   reports imported ✅ · no deferred subsystem implemented ✅ · golden 11/11 ✅ ·
   artifacts 2/2 ✅ · both Python lanes and full Rust matrix green ✅
 - commit: d692aefc6038f332bf7022ac6929dde0a41ef202
+
+### 2026-07-25 · R2 — release v0.9.0 with one explicit identity
+
+- owner: 🧑 operator + 🤖 Codex
+- gate: passed. The pre-edit worktree was clean, protected artifacts matched
+  **2/2**, current version sources agreed at 0.8.0, and the permitted isolated
+  golden passed **11/11**. The first sandboxed golden attempt was denied its
+  loopback bind before assertions and is recorded as a non-result.
+- disposition: after seeing the actual diff, the operator explicitly approved
+  **v0.9.0**. Runtime/storage/internal-API behavior changed since v0.8.0, so
+  neither operational-only v0.8.1 nor no release described the artifact.
+- inventory: the release candidate covered **29 prior commits** and **44
+  changed paths** since `v0.8.0`; `STATE.md` classifies every path exactly once
+  as runtime/storage/internal API, public/release metadata, operations,
+  executable evidence/controls, or documentation/task metadata.
+- carried non-results: P2's transport block was superseded by its successful
+  in-cycle live rerun; the real adversarial model outcome remains
+  `NOT EXERCISED`; V1's cold misses are promoted to V2; D4 continues to defer
+  T7, Postgres, pgvector, and multi-host work under measured triggers;
+  manifest admission and dependency constraints remain v0.10 candidates; and
+  no remote CI-runner execution is claimed.
+- durable policy: `ARCHITECTURE.md §8` now separates execution-cycle names from
+  artifact versions. An annotated tag to an exact release commit is
+  authoritative; all five version sources and the newest changelog entry must
+  agree. A later progress audit does not move the tag.
+- failure-capable control: only `shell/intel_shell/__init__.py` was changed
+  from 0.8.0 to 0.8.1. `./run version-check` exited **1** and named that file
+  and value. Byte-for-byte restoration returned SHA-256
+  `996bd313663052d57f490c0af219f1604898dd7e91a35b892fffee54401ac713`,
+  after which the checker passed.
+- release metadata: Rust package, Python package, public FastAPI literal,
+  `STATE.md`, and `CHANGELOG.md` all read 0.9.0. Cargo regenerated only the
+  local `cored` lock entry from 0.8.0 to 0.9.0; dependency resolution and lock
+  format did not change.
+- measured matrix: the release candidate passed all **16/16**
+  `./run ci-local` jobs twice; the second run used the exact release-commit
+  content. That final run included warning-denied workspace
+  check and **98 tests**, warning-denied net check and **20 tests**, clippy,
+  fmt, ShellCheck 0.11.0, Python 3.11 byte-compilation, warning-denied locked
+  Rust 1.78 check/tests, **105 Python 3.11 shell tests**, golden **11/11**,
+  protected artifacts **2/2**, persisted fingerprints, version consistency,
+  and progress validation. The independent Python 3.12.13 rerun passed the
+  same **105 tests**; both lanes emitted one third-party Starlette warning.
+- release identity: implementation/release commit
+  `4c59db2727eda1c81beae3ff38be883a26a92ae8`; annotated tag object
+  `548ffdfec4e414570ddecf813aa2f2d616662487` (`intel-platform v0.9.0`);
+  `v0.9.0^{}` dereferences exactly to the release commit.
+- golden-E2E delta: **none**. All eleven named assertions remained exact.
+- exact verification commands:
+
+  ```bash
+  ./run version-check
+  ./run verify-artifacts
+  ./run golden
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  git diff --name-status v0.8.0
+  git diff --stat v0.8.0
+  git diff --check
+  git diff -- Cargo.lock
+  git cat-file -t v0.9.0
+  git rev-parse v0.9.0
+  git rev-parse v0.9.0^{}
+  git rev-parse HEAD
+  git status --porcelain=v1
+  ```
+
+- acceptance: explicit release rationale ✅ · every diff path classified ✅ ·
+  every carried non-result disposed ✅ · durable cycle/release policy ✅ · all
+  version sources agree ✅ · changelog exact ✅ · mismatch control fails ✅ ·
+  full matrix and both Python lanes green ✅ · golden 11/11 ✅ · protected
+  artifacts 2/2 ✅ · annotated tag exact and release worktree clean ✅
+- commit: 4c59db2727eda1c81beae3ff38be883a26a92ae8
