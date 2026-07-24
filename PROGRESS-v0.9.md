@@ -163,3 +163,83 @@ recorded here in a separate audit-record commit.
   one-entry progress file passed; the old v0.8 default still passed before this
   file existed.
 - commit: 1054994
+
+### 2026-07-24 · A1 — protected evidence has one executable provenance manifest
+
+- owner: 🤖 Codex
+- gate: clear. Pre-edit `./run verify-artifacts` matched both B0 hashes, and
+  the proposed external JSON record required no SQLite mutation.
+- implementation: replaced the hash-only
+  `config/protected-artifacts.sha256` with the single atomic
+  `config/protected-artifacts.json` authority. Each record carries path,
+  SHA-256, bytes, purpose/provenance, document count, integrity and NULL
+  expectations, and complete cursor rows. The standard-library verifier checks
+  the manifest schema and all recorded facts through read-only SQLite; the new
+  deterministic `./run evidence-report` reports measured values without
+  changing the manifest or databases.
+- lifecycle/guard: the checked manifest policy declares evidence immutable,
+  live harvests fresh-path-only, and new admission contingent on an explicit
+  task with captured wire evidence and operator review. Relative,
+  `./`-relative, absolute, and symlink aliases of the two protected paths were
+  each refused before reachability with exit 2 using that same manifest.
+- failure-capable controls:
+  - byte control: adding a table only to a disposable `core.db` copy retained
+    the original record, exited 1, and named `core.db field=sha256`; actual
+    SHA-256 was
+    `811d8b6c32f9bb976bd4dc9e49a524940ac3183faec9d31044bc59196d987482`.
+  - logical corpus control: deleting one copied document and refreshing the
+    disposable record's hash/size exited 1 only on `core.db field=documents`,
+    with 1,764 expected and 1,763 actual.
+  - logical cursor control: setting the copied `arxiv-cs` cursor to
+    `a1-control` and refreshing hash/size exited 1 only on
+    `core.db field=cursors.arxiv-cs.cursor`.
+  - the five committed disposable-database tests passed and preserve those
+    failures, deterministic reporting, and canonical alias resolution.
+- verification: `./run test` began with the stronger 2/2 verification and
+  passed **98 workspace**, **20 net**, and **93 Python 3.11 shell** tests.
+  The isolated Python **3.12.13** lane independently passed the same **93**
+  shell tests. `./run ci-local` passed all **16/16** jobs: version,
+  Python-floor compilation, ShellCheck, warning-denied workspace/net checks and
+  tests, clippy, fmt, locked Rust 1.78 check/tests, shell tests, golden,
+  protected artifacts, persisted fingerprints, and progress validation. CI
+  now validates the committed manifest schema and runs the disposable verifier
+  controls; no CI runner execution is claimed.
+- golden-E2E delta: **none**. The output-preserving task passed all **11/11**
+  named assertions with the same 13→12 corpus, near-duplicate decision,
+  DeepSeek z=10.0 signal, quant-desk count, and four-citation public answer.
+- final isolation: `data/core.db` remained
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  / 6,729,728 bytes / 1,764 documents, and `data/live-smoke.db` remained
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`
+  / 9,490,432 bytes / 2,600 documents. Both had integrity `ok`, zero NULL
+  fingerprint/identity fields, and one matching cursor. `Cargo.lock` was
+  untouched.
+- acceptance: one authoritative manifest ✅ · hash and logical metadata
+  checked ✅ · refusal covers both paths and canonical aliases ✅ · three
+  controls fail on their intended fields ✅ · protected bytes unchanged ✅ ·
+  golden unchanged ✅
+- exact verification commands:
+
+  ```bash
+  python3 tools/evidence_artifacts.py validate
+  ./run verify-artifacts
+  ./run evidence-report
+  ./run evidence-report > /private/tmp/intel-evidence-report-1.json
+  ./run evidence-report > /private/tmp/intel-evidence-report-2.json
+  cmp /private/tmp/intel-evidence-report-1.json \
+    /private/tmp/intel-evidence-report-2.json
+  PYTHONPATH=shell .venv/bin/python \
+    -m pytest shell/tests/test_evidence_artifacts.py -q
+  bash -n run
+  shellcheck ./run
+  ./run ci-local
+  ./run test
+  PYTHONPATH=shell \
+    /private/tmp/intel-platform-py312-baseline.wqTLIV/venv/bin/python \
+    -m pytest shell/tests -q
+  ./run version-check
+  ./run verify-artifacts
+  shasum -a 256 data/core.db data/live-smoke.db
+  ```
+
+- commit: 2adf486
