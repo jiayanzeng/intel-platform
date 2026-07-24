@@ -1045,3 +1045,39 @@ correct them with a new dated entry.
   matched two lines in its own active runbook and could not literally return
   zero while preserving closed rationale; its exclusions are now explicit and
   executable rather than silently reporting a false pass.
+
+### 2026-07-24 · D2 — newest progress entry is machine-checked
+
+- owner: 🤖 Codex
+- correction: the runbook audit counted 30 commit lines with 26 vague values.
+  Re-measurement after the intervening cycle entries found **38** dated entries
+  and 38 `- commit:` fields (excluding the format example), with **0** values
+  matching the required hash-only form: 36 were wholly narrative and the two
+  containing `097b017` / `2b036d9` also contained prose. Historical lines
+  remain untouched.
+- ordering correction: the T4 closure block at line **654** precedes its T4P
+  implementation block at **676** and an earlier stopped-at-gate event at
+  **713**. This append records the defect without reordering history.
+- implementation: `tools/progress_check.py` validates only the newest dated
+  entry's ISO header, owner, real 7–40 character Git commit, and nondecreasing
+  date. `./run progress-check` is wired into `./run test`.
+- failure-capable controls: a scratch newest entry with
+  `- commit: see git history` exited **1** and named line 1052; a replacement
+  dated 2026-07-23 exited **1** and named both its line 1049 and the previous
+  2026-07-24 entry line 1019. Both scratch entries were removed.
+- hash protocol: implementation commit first, then this append-only audit
+  record names its real hash. This avoids the runbook's impossible original
+  suggestion that a commit amend could include the hash that the amend itself
+  changes.
+- acceptance: both planted defects rejected with named reasons ✅ · clean
+  newest entry passes ✅ · correction appended without editing history ✅ ·
+  real-hash protocol recorded in `AGENTS.md` ✅ · Python 3.11 compile, Bash
+  syntax, and ShellCheck pass ✅
+- golden E2E: unchanged — **11/11**.
+- verification: `./run test` passed **98 workspace / 20 net / 88 shell**;
+  protected artifacts **2/2 MATCH**; `git diff --check` clean; `Cargo.lock`
+  untouched.
+- commit: 5a3f3f8
+- notes / gate: D2 used the documented two-phase audit protocol. Commit
+  `5a3f3f8` contains the checker, harness integration, and workflow rule; this
+  later audit-record commit contains only status/checklist documentation.

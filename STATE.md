@@ -147,6 +147,23 @@ case-insensitive command produced no output. Golden remained 11/11,
 `version-check` passed at 0.8.0 with the expected ahead-of-tag warning, and
 both protected artifacts remained exact.
 
+**D2 is complete (measured 2026-07-24).** The progress log's earlier audit
+count was itself stale after this cycle's new entries: immediately before D2 it
+contained 38 dated entries and 38 commit fields, with zero hash-only values;
+36 were narrative and the two containing `097b017` / `2b036d9` also contained
+prose. Its recorded event order also places T4 closure at line 654 before the
+T4P implementation at 676 and an earlier gate event at 713. History remains
+unchanged; the correction is a new entry. `tools/progress_check.py` now
+validates the newest entry's ISO header, owner, nondecreasing date, and real
+7–40 character Git commit, and `./run test` executes it. An invalid narrative
+commit and a backwards date each exited 1 with the offending line named. The
+original amend suggestion was rejected because content containing its own hash
+changes that hash; the executable protocol is an implementation commit followed
+by an append-only audit-record commit naming the real implementation hash.
+Implementation commit `5a3f3f8` is recorded in the newest entry, which passes
+the checker. The integrated test run passed 98 workspace, 20 net, and 88 shell
+tests; golden remained 11/11 and both protected hashes remained exact.
+
 **R1 release decision (2026-07-24): cut v0.8.0.** The operator selected option
 (b). Harvest durability, public-path HC1 enforcement, and persisted fingerprint
 identity materially change the shipped artifact, so keeping the runtime at
