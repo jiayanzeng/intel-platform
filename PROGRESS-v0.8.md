@@ -651,6 +651,28 @@ correct them with a new dated entry.
   `bash -n`, and locked Rust **1.78.0** all passed.
 - commit: this T4P completion/status commit (see git history)
 
+### 2026-07-24 · T4 closure — one uninterrupted real-model run green
+
+- owner: 🤖 Codex
+- measured: separate fresh run passed **6/6** required checks. Models:
+  `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf` chat and
+  `embeddinggemma-300M-Q8_0.gguf` embeddings, each 30s timeout. The SSH
+  loopback aliases carried requests to the direct LAN roles recorded in
+  `.env`.
+- stages: 13/13 fixture ingest ✅ · one real embedding request, 13 missing → 0,
+  dimension/stats 768, 0.16s ✅ · clean fusion and five context docs, 0.02s ✅ ·
+  public ask 12.97s, four citations/all IndexOnly/no overlap ✅ · adversarial
+  ask 6.00s, NOT EXERCISED, `violations: []`, never LEAK ✅
+- acceptance: all required checks green in the same run ✅ · model names,
+  dimension, and stage latencies recorded ✅ · no prior partial result carried
+  forward ✅ · protected artifacts unchanged ✅
+- golden/verification: golden **11/11**, artifacts **2/2**, warning-denied
+  offline/net checks, **92** workspace, **20** net, **88** shell, clippy, fmt,
+  `bash -n`, Python compile, and locked Rust **1.78.0** all passed.
+- commit: this T4 closure implementation/status commit (see git history)
+- notes: T4 is complete. The real model did not exercise the attestation guard;
+  failure-capable GUARD FIRED and LEAK controls remain the structural evidence.
+
 ### 2026-07-24 · T4P — adversarial HC1 positive control implemented
 
 - owner: 🤖 Codex

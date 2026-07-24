@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **92 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **88 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK`. **T4 remains deferred at embedding backfill:** its last required uninterrupted run ingested 13 fresh fixtures, then the then-configured DMXAPI embedding endpoint returned HTTP 503 in 0.16s; the new local split roles have not yet been exercised in the separate final closure run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **92 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **88 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK`. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -1234,3 +1234,39 @@ handoff.
 - Post-task verification remained green: golden **11/11**, artifacts **2/2**,
   warning-denied offline/net checks, **92 workspace**, **20 net**, and
   **88 shell** tests, clippy, fmt, `bash -n run`, and locked Rust **1.78.0**.
+
+### T4 — closed in one uninterrupted real-model run (verified 2026-07-24)
+
+- Preflight ran in the required order: local services stopped; ports
+  8787/8788/8899 clear; protected artifacts **2/2 MATCH**; direct production
+  config resolved chat `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf` at LAN `:8080/v1`
+  and embeddings `embeddinggemma-300M-Q8_0.gguf` at LAN `:8081/v1`, both with
+  30s timeouts. The command runner used the operator's loopback SSH aliases
+  `:18080/:18081` for those same servers because its private-LAN route is
+  isolated.
+- One separate `./run verify-llm` execution ran without interruption on a
+  fresh database, ingested **13 fetched / 13 new**, and passed **6/6 required
+  checks** with five diagnostics:
+  - embedding backfill: one real 13-document request, **13 missing → 0**,
+    provider/stored dimension **768**, stats count 13 and consistent,
+    **0.16s**;
+  - fusion: clean notes, five hybrid context documents, **0.02s**;
+  - ordinary public `/v1/ask`: **12.97s**, four citations, all four IndexOnly,
+    no independent-oracle 16-token overlap;
+  - adversarial public `/v1/ask`: **6.00s**, **NOT EXERCISED**,
+    `violations: []`, seven IndexOnly context documents, and never `LEAK`.
+- This satisfies T4's three-way gate: `NOT EXERCISED` is an allowed completed
+  outcome, while remaining explicitly not evidence that a real model tripped
+  `/attest`. Earlier real or mock checks were not carried into the closure
+  result; every required check above comes from this single run.
+- `tools/verify_llm.py` now prints per-stage fusion, ordinary-ask, and
+  adversarial-ask latencies in addition to its existing embedding latency, so
+  this evidence is executable rather than reconstructed from a wall clock.
+- Post-run verification passed: golden **11/11**, protected artifacts **2/2**,
+  warning-denied offline/net checks, **92 workspace**, **20 net**, and
+  **88 shell** tests, clippy, fmt, `bash -n run`, Python bytecode compilation,
+  and locked warning-denied Rust **1.78.0** check. Protected hashes remained
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+  ports 8787/8788/8899 were clear after teardown.
