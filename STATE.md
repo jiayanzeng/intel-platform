@@ -1,6 +1,71 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **98 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **88 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). `./run ci-local` executed all 16 local matrix jobs successfully, including clippy/fmt on pinned Rust 1.91.1 and the locked offline graph on Rust 1.78.0. `.github/workflows/ci.yml` configures the corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is the local matrix and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 B0 re-measured the entering state at `d09eda8`, 15 commits past annotated tag `v0.8.0`.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **88 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+
+**v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
+description was stale: `git status --porcelain` was empty at
+`d09eda8cd611c3465aaad7a828465bdb8d8de26f`, described as
+`v0.8.0-15-gd09eda8`, not `091a203` plus one later documentation commit.
+Annotated tag object `314c1dd914a3d8e9193445874a419ed762581e6e` dereferences to
+release commit `bfc8c5af85734583f966ee70d2ec521155432205`, which is an
+ancestor of HEAD with 15 intervening commits. `git remote -v` produced no
+output. `./run version-check` read 0.8.0 from the Rust package, Python package,
+FastAPI literal, this header, and the newest changelog release; the changelog's
+`v0.8.0 — 2026-07-24` entry matches the tag, and the ahead-of-tag warning is
+expected.
+
+The current matrix also corrects the draft's stale 92-test count. Pinned
+Rust/Cargo **1.91.1** passed warning-denied locked workspace check and **98**
+tests, warning-denied net check and **20** net tests, clippy, and fmt.
+Rust/Cargo **1.78.0** passed warning-denied locked workspace check and the same
+**98** tests. Python **3.11.4** byte-compiled every file under `tools/` and
+`shell/` and passed **88** shell tests. The system Python **3.12.13** has no
+`pytest`, so its preliminary command stopped before collection and is not
+counted; the existing isolated 3.12.13 environment from B0.2 passed
+`pip check` and all **88** tests without any download. Both counted lanes
+reported the same one third-party Starlette deprecation warning. ShellCheck
+**0.11.0** passed `run`.
+
+`./run down` completed and independent `lsof` checks proved ports 8787, 8788,
+and 8899 clear. `./run verify-artifacts` passed 2/2, followed by direct
+read-only measurement:
+
+- `data/core.db`: SHA-256
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`,
+  **6,729,728 bytes**, **1,764 documents**, 0 NULL `simhash`, 0 NULL
+  `canonical_id`, integrity `ok`; cursor `arxiv-cs | NULL | 2026-07-20 | NULL
+  | 2026-07-23 12:08:13`.
+- `data/live-smoke.db`: SHA-256
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`,
+  **9,490,432 bytes**, **2,600 documents**, 0 NULL `simhash`, 0 NULL
+  `canonical_id`, integrity `ok`; cursor `arxiv-cs |
+  verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-22%26until%3D2026-07-22%26set%3Dcs%26skip%3D88
+  | NULL | 2026-07-22 | 2026-07-22 23:45:38`.
+
+The failure-capable artifact control copied `data/core.db` beneath
+`/private/tmp`, recorded its real expected hash in a disposable manifest, and
+mutated only that copy with a planted SQLite table. Its hash changed to
+`525370f250e4de32865dbc41f2dbd016f3da5fe754154080e25e1c9a2de28aea`;
+`./run verify-artifacts <disposable-manifest>` exited 1, printed both hashes,
+and reported 0/1 match. The real manifest immediately returned 2/2.
+
+`./run golden` used disposable database
+`/var/folders/cl/4zcmgrj928n_y07msdz5pjj00000gn/T/tmp.bWX2BZjuKG/golden.db`
+and passed all 11 named assertions: 13/13 initial ingest; acme completion and
+12 analyzed; the exact near-duplicate pair at hamming 12; DeepSeek RISING at
+z=10.0 from three sources; second acme ingest +0; quant-desk 1 document;
+`/v1/ask` four citations with `techwire::tw-004` suppressed; IndexOnly snippets
+NULL; search hits acme 6 / quant 0; and bad-key 401.
+
+`./run config` was read-only and redacted: LAN chat resolves to
+`http://192.168.0.192:8080/v1`,
+`gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`, timeout 30s; LAN embeddings resolve to
+`http://192.168.0.192:8081/v1`,
+`embeddinggemma-300M-Q8_0.gguf`, timeout 30s. The embedding dimension remains
+the previously wire-evidenced **768**; B0 made no provider request and makes no
+claim that either endpoint is currently reachable. Final artifact verification
+again returned 2/2 exact, all three local ports were clear, and `Cargo.lock`
+was untouched.
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,

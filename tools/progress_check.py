@@ -11,7 +11,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PROGRESS = ROOT / "PROGRESS-v0.8.md"
+CURRENT_PROGRESS = ROOT / "PROGRESS-v0.9.md"
+PREVIOUS_PROGRESS = ROOT / "PROGRESS-v0.8.md"
+DEFAULT_PROGRESS = (
+    CURRENT_PROGRESS if CURRENT_PROGRESS.exists() else PREVIOUS_PROGRESS
+)
 HEADER_RE = re.compile(
     r"^### ([0-9]{4}-[0-9]{2}-[0-9]{2}) · ([^·\n]+?) — (.+)$"
 )
@@ -59,8 +63,8 @@ def check(path: Path) -> int:
         for index, line in enumerate(lines)
         if line.startswith("### ") and not line.startswith("### <date>")
     ]
-    if len(headers) < 2:
-        return fail(path, 1, "expected at least two dated progress entries")
+    if not headers:
+        return fail(path, 1, "expected at least one dated progress entry")
 
     latest_index, latest_header = headers[-1]
     latest_match = HEADER_RE.fullmatch(latest_header)
@@ -74,24 +78,31 @@ def check(path: Path) -> int:
     if latest_date is None:
         return fail(path, latest_index + 1, "newest header has an invalid ISO date")
 
-    previous_index, previous_header = headers[-2]
-    previous_match = HEADER_RE.fullmatch(previous_header)
-    if previous_match is None:
-        return fail(
-            path,
-            previous_index + 1,
-            "previous header does not match the progress-entry format",
+    if len(headers) > 1:
+        previous_index, previous_header = headers[-2]
+        previous_match = HEADER_RE.fullmatch(previous_header)
+        if previous_match is None:
+            return fail(
+                path,
+                previous_index + 1,
+                "previous header does not match the progress-entry format",
+            )
+        previous_date = parse_date(
+            path, previous_index + 1, previous_match.group(1)
         )
-    previous_date = parse_date(path, previous_index + 1, previous_match.group(1))
-    if previous_date is None:
-        return fail(path, previous_index + 1, "previous header has an invalid ISO date")
-    if latest_date < previous_date:
-        return fail(
-            path,
-            latest_index + 1,
-            f"date {latest_date} precedes previous entry date {previous_date} "
-            f"(line {previous_index + 1})",
-        )
+        if previous_date is None:
+            return fail(
+                path,
+                previous_index + 1,
+                "previous header has an invalid ISO date",
+            )
+        if latest_date < previous_date:
+            return fail(
+                path,
+                latest_index + 1,
+                f"date {latest_date} precedes previous entry date {previous_date} "
+                f"(line {previous_index + 1})",
+            )
 
     section = lines[latest_index + 1 :]
     owners = [

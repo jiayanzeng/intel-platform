@@ -315,7 +315,7 @@ evidence record without interpreting the cycle name.
 
 ## Cycle checklist
 
-- [ ] **B0** — entering state re-measured; v0.8.0 tag/HEAD relationship recorded
+- [x] **B0** — entering state re-measured; v0.8.0 tag/HEAD relationship recorded
 - [ ] **A1** — protected evidence has one executable provenance manifest
 - [ ] **P2** — provider capability probe reproducible; real wire disposition recorded
 - [ ] **V1** — `/view` cold/warm measured against a predeclared SLO
