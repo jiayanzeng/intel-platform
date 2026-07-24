@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-23 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
+**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state, registered the 1,764-document archive and 2,600-document live-smoke corpus by exact SHA-256, and captured the current manual golden command sequence for G1. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -835,3 +835,93 @@ handoff.
   `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
   T4 remains deferred; no dependency, lockfile, sector, license, robots, dedup,
   or protected-corpus invariant changed.
+
+## 9. v0.8.1 measured execution
+
+### B0.1 — entering baseline (verified 2026-07-24)
+
+- **Entering-state correction recorded before proceeding:** `git log --oneline
+  -5` confirmed `HEAD` at `6d42a75` (`fix: bound real-model verification`), but
+  `git status --porcelain` returned
+  `?? TASKS-v0.8.1-EXECUTION.md`. The runbook's clean-worktree assertion was
+  therefore false: the operator-added v0.8.1 runbook was present and untracked,
+  exactly as reported in the task request. No other worktree change was present.
+- Toolchains measured: pinned `rustc/cargo 1.91.1`, floor
+  `rustc/cargo 1.78.0`, and Python **3.11.4** in both the system interpreter and
+  `.venv`.
+- Full matrix: warning-denied workspace check exit 0; **90 workspace tests**
+  passed; warning-denied `cored --features net` check exit 0; **20 net ingest
+  tests** passed; **84 shell tests** passed with the existing one third-party
+  Starlette deprecation warning; clippy and fmt exit 0; locked warning-denied
+  Rust **1.78.0** workspace check exit 0.
+- `./run down` completed, and `lsof -nP -iTCP:<port> -sTCP:LISTEN` confirmed
+  ports **8787, 8788, and 8899 clear** before the artifact measurements.
+- Protected artifact measurements:
+  - `data/core.db`: **1,764 documents**, 0 NULL `simhash`, 0 NULL
+    `canonical_id`, integrity `ok`; **6,729,728 bytes**; mtime
+    `2026-07-23 20:08:13 +0800`; SHA-256
+    `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`;
+    cursor row `arxiv-cs | NULL | 2026-07-20 | NULL |
+    2026-07-23 12:08:13`.
+  - `data/live-smoke.db`: **2,600 documents**, 0 NULL `simhash`, 0 NULL
+    `canonical_id`, integrity `ok`; **9,490,432 bytes**; mtime
+    `2026-07-23 07:45:38 +0800`; SHA-256
+    `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+    cursor row `arxiv-cs |
+    verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-22%26until%3D2026-07-22%26set%3Dcs%26skip%3D88
+    | NULL | 2026-07-22 | 2026-07-22 23:45:38`.
+- The golden ran on disposable database
+  `/private/tmp/intel-platform-b0.1-golden.L0tF8n/full-golden.db`. The first
+  sandboxed bind was refused by the execution environment (`Operation not
+  permitted`) and was not counted; the permitted local-only run completed
+  normally. Exact measured result: initial ingest **fetched=13, new=13**; first
+  acme pipeline re-ingest **+0**; **12 documents analyzed**;
+  `techwire::tw-004` dropped for `osdaily::osd-004` at hamming **12**; DeepSeek
+  **RISING, z=10.0**, corroborated by **3 sources**; second acme ingest **+0**;
+  quant-desk **1 document**; `/v1/ask` returned **4 citations**, suppressed
+  `techwire::tw-004`, and had clean retrieval notes; acme search for `deepseek`
+  returned **6 hits** versus quant-desk **0**, with every `IndexOnly` snippet
+  NULL; a bad key returned **401**. The disposable DB ended at **14 rows**, 0
+  NULL fingerprints/canonical ids, integrity `ok`.
+- The explicit command sequence used for that golden, in order, was:
+
+  ```bash
+  export ENV_FILE=/dev/null
+  export CORE_DB=/private/tmp/intel-platform-b0.1-golden.L0tF8n/full-golden.db
+  export SUBSCRIPTIONS_PATH=config/subscriptions.hashed.json
+  export LLM_CHAT_PROFILE=
+  export LLM_CHAT_BASE_URL=http://127.0.0.1:8899/v1
+  export LLM_EMBED_BASE_URL=http://127.0.0.1:8899/v1
+  export LLM_BASE_URL=http://127.0.0.1:8899/v1
+  export NO_PROXY=127.0.0.1,localhost
+  export no_proxy=127.0.0.1,localhost
+  ./run up
+  curl -fsS -X POST http://127.0.0.1:8788/ingest \
+    -H 'content-type: application/json' \
+    -d '{"sectors":["science","technology"]}'
+  PYTHONPATH=shell .venv/bin/python -m intel_shell.pipeline \
+    --client acme-research
+  curl -fsS 'http://127.0.0.1:8788/view?sectors=science,technology'
+  PYTHONPATH=shell .venv/bin/python -m intel_shell.pipeline \
+    --client acme-research
+  PYTHONPATH=shell .venv/bin/python -m intel_shell.pipeline \
+    --client quant-desk
+  PYTHONPATH=shell .venv/bin/python -m uvicorn intel_shell.app:app \
+    --host 127.0.0.1 --port 8787
+  curl -fsS -H 'Authorization: Bearer ak_acme_7f3d9c' --get \
+    --data-urlencode 'q=What is DeepSeek-V4?' \
+    http://127.0.0.1:8787/v1/ask
+  curl -fsS -H 'Authorization: Bearer ak_acme_7f3d9c' --get \
+    --data-urlencode 'q=deepseek' http://127.0.0.1:8787/v1/search
+  curl -fsS -H 'Authorization: Bearer ak_quant_2b81aa' --get \
+    --data-urlencode 'q=deepseek' http://127.0.0.1:8787/v1/search
+  curl -sS -o /dev/null -w '%{http_code}\n' \
+    -H 'Authorization: Bearer bad-key' http://127.0.0.1:8787/v1/signals
+  ./run down
+  ```
+
+  The API server was backgrounded solely so the four public requests could
+  execute in the same captured run; teardown killed it before `./run down`.
+- After the golden, both protected hashes matched the values above and all
+  three local ports were clear. No source, license, robots, dedup, dependency,
+  lockfile, or protected-database bytes changed.

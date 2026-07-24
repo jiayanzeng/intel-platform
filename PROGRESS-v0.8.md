@@ -448,3 +448,32 @@ correct them with a new dated entry.
   `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`.
   No dependency, lockfile, sector, license, robots, dedup, or protected-corpus
   invariant changed.
+
+### 2026-07-24 · B0.1 — v0.8.1 entering state verified and registered
+
+- owner: 🤖 Codex
+- measured: `HEAD` is `6d42a75`; the only false entering claim was a clean
+  worktree, because the operator-added `TASKS-v0.8.1-EXECUTION.md` was
+  untracked. Warning-denied offline/net checks passed; **90** workspace tests,
+  **20** net tests, and **84** shell tests passed (one existing Starlette
+  deprecation warning); clippy, fmt, and the locked warning-denied Rust
+  **1.78.0** check passed. Ports 8787/8788/8899 were clear.
+- acceptance: every entering-state number confirmed or corrected in `STATE.md`
+  ✅ · `data/core.db` measured at 1,764/0/0, integrity `ok`, 6,729,728 bytes,
+  SHA-256 `db2f186e…1a37a0` ✅ · `data/live-smoke.db` measured at 2,600/0/0,
+  integrity `ok`, 9,490,432 bytes, SHA-256 `94f03e9e…0462c4a` ✅ · both cursor
+  rows, mtimes, and full hashes recorded ✅ · manual golden command sequence
+  captured in full ✅
+- golden E2E: unchanged on disposable DB
+  `/private/tmp/intel-platform-b0.1-golden.L0tF8n/full-golden.db` — initial
+  fetched/new 13/13; first and second acme re-ingests +0; 12 analyzed; dropped
+  `techwire::tw-004` for `osdaily::osd-004` at hamming 12; DeepSeek RISING
+  z=10.0 from 3 sources; quant-desk 1; public ask 4 citations with
+  `techwire::tw-004` suppressed and clean notes; acme/quant `deepseek` search
+  6/0, every IndexOnly snippet NULL; bad key 401; DB 14/0/0, integrity `ok`.
+- commit: this B0.1 baseline/status commit (see git history)
+- notes / gate: the clean-worktree correction was written to `STATE.md` before
+  the remaining measurements. The first sandboxed local bind failed with
+  `Operation not permitted` and was not counted; the permitted local-only run
+  passed. Both protected DB hashes were unchanged afterward; no runtime,
+  dependency, lockfile, policy, or corpus change was made.
