@@ -470,3 +470,129 @@ recorded here in a separate audit-record commit.
   self-hits belong to this dated correction entry: the command is evidence,
   while each quoted line is the already-enumerated historical or correction
   reference, not a new live operational authority.
+
+### 2026-07-24 · P2 — provider-probe harness shipped; live leg blocked
+
+- owner: 🤖 Codex + 🧑 operator route action pending
+- gate: **tripped for the live leg only.** Both configured direct `/health`
+  routes returned curl exit 7 / HTTP 000 / `Couldn't connect to server`; the
+  operator-owned SSH-forward aliases were not listening. D3's blocked-path
+  clause therefore permits the harness half to ship but leaves P2 unchecked.
+  No mock result is promoted to wire evidence, no provider identity or
+  dimension is re-measured, and no correction-cycle file is opened.
+- implementation: added `./run probe-providers`, which uses the same resolved
+  chat and embedding roles as the product path. The selected profile/direct
+  role remains authoritative for provider endpoint, model, credential, and
+  timeout. Per-command `LLM_CHAT_TRANSPORT_BASE_URL` and
+  `LLM_EMBED_TRANSPORT_BASE_URL` values replace only the effective request
+  route after identity resolution; loopback aliases ignore ambient proxies.
+  `./run config` now prints both configured and effective endpoints, models,
+  role timeouts, and the predeclared embedding dimension with keys redacted.
+- capability sequence: the command captures chat `/health` and `/v1/models`,
+  then requires the known HTTP 501 chat-embeddings diagnosis without failing
+  the overall probe. It next captures embedding `/health` and `/v1/models`,
+  requests one short embedding, requires exactly one finite vector at index 0,
+  and compares its measured width to `LLM_EMBED_EXPECTED_DIMENSION`. It reports
+  a bounded redacted body and status for every response; a transport failure
+  explicitly reports `status=none body=none`.
+- classifications: exactly `PASS`, `TRANSPORT BLOCKED`, `IDENTITY CHANGED`,
+  and `CAPABILITY FAILED`. Only `PASS` exits zero. Missing/invalid expected
+  dimension is a capability failure rather than an inferred value. A transport
+  alias cannot weaken the non-loopback provider-model requirement in
+  `verify-llm`.
+- failure-capable controls:
+  - passing local doubles returned chat's known 501 and one four-dimensional
+    embedding. Both doubles echoed their Authorization values; neither secret
+    appeared in probe output and both were replaced with `[REDACTED]`.
+  - a wrong chat model produced `IDENTITY CHANGED`, exit non-zero.
+  - an empty embedding item list produced `CAPABILITY FAILED`, exit non-zero.
+  - a five-dimensional vector against expected width four produced
+    `IDENTITY CHANGED`, exit non-zero.
+  - a real 200 ms delayed health response under a 50 ms embedding-role timeout
+    raised `ReadTimeout`, produced `TRANSPORT BLOCKED`, and exited non-zero.
+  The targeted provider/config command passed **15/15** tests.
+- direct-route live disposition:
+
+  ```text
+  http://192.168.0.192:8080/health
+  curl exit=7 status=000 after 1 ms
+  curl: (7) Failed to connect ... Couldn't connect to server
+
+  http://192.168.0.192:8081/health
+  curl exit=7 status=000 after 1 ms
+  curl: (7) Failed to connect ... Couldn't connect to server
+  ```
+
+  With expected dimension 768, the new command stopped at its first live
+  prerequisite and exited 1:
+
+  ```text
+  chat health: route=http://192.168.0.192:8080/health status=none body=none error=ConnectError: [Errno 65] No route to host
+  TRANSPORT BLOCKED: chat health could not complete on http://192.168.0.192:8080/health
+  ```
+
+- transport-alias disposition: the configured identities remained the LAN
+  Gemma and EmbeddingGemma roles, while `./run config` showed effective
+  loopback routes `127.0.0.1:18080/18081`. The probe returned
+  `[Errno 61] Connection refused` at chat `:18080/health`; an independent
+  bounded curl to embedding `:18081/health` returned exit 7 / HTTP 000 /
+  `Couldn't connect to server` after 0 ms. No forward was inferred from T4's
+  historical evidence.
+- live acceptance: **non-result, P2 remains open.** `./run verify-llm` was not
+  invoked because the minimal probe did not pass. Required next action:
+  operator starts the same SSH forwards and confirms the route; Codex reruns
+  the exact probe in-cycle and, only after `PASS`, runs one fresh uninterrupted
+  verifier. P2's checkbox stays unchecked until both halves are recorded.
+- measured matrix: `./run ci-local` passed all **16/16** jobs—version,
+  Python-floor byte-compilation, ShellCheck, warning-denied workspace check and
+  **98 tests**, warning-denied net check and **20 tests**, clippy, fmt, locked
+  Rust 1.78 check/tests, **99 Python 3.11 shell tests**, golden **11/11**,
+  protected artifacts **2/2**, persisted fingerprints, and progress
+  validation. The rebuilt Python 3.12.13 lane independently passed the same
+  **99 shell tests**; both lanes emitted one third-party Starlette warning.
+  A separate golden run with hostile inherited transport aliases pointing to
+  unused loopback ports still passed 11/11, proving the deterministic mock path
+  clears live overrides.
+- golden-E2E delta: **none**. All eleven named assertions remained exact.
+- final isolation: `data/core.db` remained
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  / 6,729,728 bytes / 1,764 documents; `data/live-smoke.db` remained
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`
+  / 9,490,432 bytes / 2,600 documents. Both records matched all logical
+  fields. `Cargo.lock`, `shell/requirements.txt`, and `ARCHITECTURE.md` were
+  untouched.
+- exact harness commands:
+
+  ```bash
+  PYTHONPATH=shell .venv/bin/python \
+    -m pytest shell/tests/test_provider_probe.py \
+    shell/tests/test_llm_config.py -q
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
+  LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:18080/v1 \
+  LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:18081/v1 \
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run config
+  LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:18080/v1 \
+  LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:18081/v1 \
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
+  ```
+
+- exact regression commands:
+
+  ```bash
+  bash -n run
+  shellcheck ./run
+  ./run ci-local
+  LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:1/v1 \
+  LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:2/v1 ./run golden
+  ./run verify-artifacts
+  ```
+
+- acceptance: harness half shipped ✅ · configured/effective roles redacted ✅ ·
+  every request role-timeout-bounded ✅ · four classifications and non-zero
+  failure exits proven ✅ · wrong model, short data, wrong dimension, and stall
+  controls proven ✅ · keys absent from output ✅ · live leg recorded as an
+  exact unchecked non-result ⏳ · protected artifacts exact ✅ · golden
+  unchanged ✅
+- commit: 18887f7113c27bb2f0b91d5a0b37fb396961ac64
