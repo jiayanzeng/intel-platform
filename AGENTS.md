@@ -10,9 +10,10 @@ anything, and re-read the two documents it points at:
 - **`STATE.md`** — authoritative for *current status* (what is true right now).
   You update this after every task; see §5.
 
-Task work for this cycle is ordered in **`TASKS-v0.8-EXECUTION.md`**, and every
-completed step is logged in **`PROGRESS-v0.8.md`**. Full per-task rationale lives
-in **`TASKS-v0.8.md`**.
+Task work for this cycle is ordered in **`TASKS-v0.8.2-EXECUTION.md`**; the
+next cycle is ordered in **`TASKS-v0.9-EXECUTION.md`**. Every completed step
+continues to be logged in **`PROGRESS-v0.8.md`** so the correction trail stays
+contiguous. Full original v0.8 per-task rationale lives in **`TASKS-v0.8.md`**.
 
 ## 0. The one rule the others serve
 
@@ -150,7 +151,8 @@ warnings; clippy is tracked separately until T6 promotes it to a gate.)
 You do **not** batch status updates. After each task, in order, before starting
 the next:
 
-1. **Read** the task's objective and decision gate in `TASKS-v0.8-EXECUTION.md`.
+1. **Read** the task's objective and decision gate in
+   `TASKS-v0.8.2-EXECUTION.md`.
 2. **Check the gate first.** If it trips, record and stop (§1).
 3. **Implement** the change.
 4. **Run every acceptance criterion** listed for the task and **capture the
@@ -164,7 +166,7 @@ the next:
    hoped. Correct any prior claim you found to be false.
 7. **Append a `PROGRESS-v0.8.md` entry**: date, task id, owner, the measured
    result, each acceptance criterion pass/fail, golden-E2E delta, commit hash.
-8. **Check the box** for the task in `TASKS-v0.8-EXECUTION.md`.
+8. **Check the box** for the task in `TASKS-v0.8.2-EXECUTION.md`.
 9. **Commit** — one task per commit. Never combine a lint gate with a lint fix,
    or a formatting diff with a behavior change; that is how a real change hides
    inside noise.

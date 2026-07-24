@@ -838,3 +838,18 @@ correct them with a new dated entry.
 - notes / gate: gate clear. The system Python 3.12 lacked pytest; an isolated
   temporary 3.12 environment was created from `shell/requirements.txt`, and
   its actual 88-test pass is the result counted. `Cargo.lock` was untouched.
+
+### 2026-07-24 · D0 — agent contract points at the active conformance cycle
+
+- owner: 🤖 Codex
+- measured: `AGENTS.md` now names `TASKS-v0.8.2-EXECUTION.md` as the current
+  cycle, `TASKS-v0.9-EXECUTION.md` as the next cycle, and
+  `PROGRESS-v0.8.md` as the intentionally contiguous correction trail.
+- acceptance: no live instruction points at `TASKS-v0.8-EXECUTION.md` ✅ ·
+  `rg "TASKS-v0\\.8-EXECUTION" AGENTS.md` returned no matches ✅ · line-by-line
+  diff review found only pointer/continuity edits and no rule change ✅
+- golden E2E: unchanged — **11/11**.
+- verification: protected artifacts **2/2 MATCH**; `git diff --check` clean.
+- commit: this D0 pointer commit (see git history)
+- notes / gate: gate clear. No stale status claim or block rule was edited;
+  those remain assigned to D1.

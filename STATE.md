@@ -16,6 +16,14 @@ both. Their post-census hashes remained exact. Git measured
 `v0.8.0-2-ge212a7c`; the only entering worktree item was the operator-added
 untracked `TASKS-v0.8.2-EXECUTION.md`, and `git remote -v` produced no output.
 
+**D0 is complete (measured 2026-07-24).** `AGENTS.md` now points its active
+cycle header and per-task workflow at `TASKS-v0.8.2-EXECUTION.md`, names
+`TASKS-v0.9-EXECUTION.md` as the next cycle, and keeps `PROGRESS-v0.8.md` as
+the contiguous correction trail. A repository search found no remaining
+`TASKS-v0.8-EXECUTION` pointer in `AGENTS.md`; line-by-line diff review found
+only those pointer/continuity edits and no rule change. Golden remained 11/11
+and protected artifacts remained 2/2 exact.
+
 **R1 release decision (2026-07-24): cut v0.8.0.** The operator selected option
 (b). Harvest durability, public-path HC1 enforcement, and persisted fingerprint
 identity materially change the shipped artifact, so keeping the runtime at
