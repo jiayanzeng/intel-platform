@@ -243,3 +243,230 @@ recorded here in a separate audit-record commit.
   ```
 
 - commit: 2adf486
+
+### 2026-07-24 · D3 — v0.9 runbook reconciled with measured state
+
+- owner: 🤖 Codex
+- gate: clear. Before any tracked edit, `./run verify-artifacts` matched both
+  protected records exactly and `./run golden` passed all **11/11** named
+  assertions. No rule, command, source file, dependency, lockfile, or protected
+  artifact changed.
+- entering/provenance corrections: the original v0.9 entering-state and closing
+  drafting paragraphs remain intact. Dated additions record B0 `1054994` and
+  A1 `2adf486`: clean
+  `d09eda8cd611c3465aaad7a828465bdb8d8de26f`,
+  `v0.8.0-15-gd09eda8`, 15 commits after release commit `bfc8c5a` and annotated
+  tag object `314c1dd`; **98 workspace / 20 net / 88 shell** tests at B0 and
+  **93 shell** tests after A1; and
+  `config/protected-artifacts.json` as the sole expected-hash authority after
+  A1 deleted the legacy SHA-256 list. The closing correction records B0 and A1
+  as executed on 2026-07-24.
+- id/numbering disposition: no committed record outside the active runbook
+  cited the old P2/V1/deferred-audit/R2 step-number assignments. D3 therefore
+  became **Step 3** and P2/V1/D4/R2 became **Steps 4–7**; the Step 2A fallback
+  was not used. The colliding unstarted v0.9 `D1` is now `D4`. The already
+  committed v0.9 `A1` is retained and explicitly distinguished from v0.8.2's
+  fingerprint-verifier `A1`.
+- remaining-task correction: V1's recommended thresholds now derive from A3's
+  **0.016264 s** post-change `POST /retrieve` measurement on the 2,600-row
+  archive (`learning`, sector `science`, `k=8`). The predeclared recommendation
+  is cold p95 **10× = 162.640 ms** and warm p95 **2× = 32.528 ms**, with anchor,
+  factors/reasons, exact firing values, and host plausibility recorded before
+  timing. An SLO that cannot fire is a defect. V1 requires disposable copies of
+  both 1,764- and 2,600-row archives, both distributions and their slope,
+  sectors drawn from `config/core.json`, non-zero counts for every sample, and
+  warm cache hits against an unmoved generation; an empty-sector warm path
+  fails. V1 now has 🤖 + 🧑 ownership. P2 ships its harness half under a
+  transport block but keeps the live leg an exact unchecked non-result for an
+  in-cycle rerun. R2 must state the disposition of every carried non-result.
+- STATE corrections: a dated addition supersedes P1's preserved present-tense
+  reference to the deleted hash list without editing the P1 body. A second
+  dated addition records that manifest admission is not executable: code
+  validates the fixed `admission` literal, but nothing records or verifies the
+  claimed wire evidence and operator review when an expected hash changes.
+  Git review remains the sole prose control. A failure-capable admission control
+  is a v0.10 candidate triggered before the first proposed protected-artifact
+  admission or expected-hash change; D3 implemented no control.
+- Python-lane order: the old counted Python 3.12 lane and the Python 3.11 lane
+  were frozen, in that order, before `.venv/py312` was cleared or populated.
+  The exact commands were:
+
+  ```bash
+  /private/tmp/intel-platform-py312-baseline.wqTLIV/venv/bin/python -m pip freeze
+  .venv/bin/python -m pip freeze
+  ```
+
+- old Python 3.12 lane `pip freeze` stdout, verbatim:
+
+  ```text
+  annotated-doc==0.0.4
+  annotated-types==0.8.0
+  anyio==4.14.2
+  certifi==2026.7.22
+  click==8.4.2
+  fastapi==0.139.2
+  h11==0.16.0
+  httpcore==1.0.9
+  httpx==0.28.1
+  idna==3.18
+  iniconfig==2.3.0
+  packaging==26.2
+  pluggy==1.6.0
+  pydantic==2.13.4
+  pydantic_core==2.46.4
+  Pygments==2.20.0
+  pytest==9.1.1
+  starlette==1.3.1
+  typing-inspection==0.4.2
+  typing_extensions==4.16.0
+  uvicorn==0.51.0
+  ```
+
+- Python 3.11 lane `pip freeze` stdout, verbatim:
+
+  ```text
+  annotated-doc==0.0.4
+  annotated-types==0.7.0
+  anyio==4.14.2
+  certifi==2026.6.17
+  click==8.4.2
+  fastapi==0.139.2
+  h11==0.16.0
+  httpcore==1.0.9
+  httpx==0.28.1
+  idna==3.18
+  iniconfig==2.3.0
+  packaging==26.2
+  pluggy==1.6.0
+  pydantic==2.13.4
+  pydantic_core==2.46.4
+  Pygments==2.20.0
+  pytest==9.1.1
+  starlette==1.3.1
+  typing-inspection==0.4.2
+  typing_extensions==4.16.0
+  uvicorn==0.51.0
+  ```
+
+- Python-lane finding: the frozen lanes differ only at `annotated-types`
+  (3.11 **0.7.0**, old 3.12 **0.8.0**) and `certifi` (3.11 **2026.6.17**,
+  old 3.12 **2026.7.22**). After both freezes, Python 3.12.13 created the
+  ignored `.venv/py312`; installation from the unchanged
+  `shell/requirements.txt` resolved byte-for-byte to the old 3.12 freeze,
+  `pip check` reported no broken requirements, and the lane passed **93 shell
+  tests** with one Starlette warning. The requirements are floors, not pins,
+  so the command is repeatable but the resolved environment is not
+  reproducible. Pinning or a constraints file is a v0.10 candidate; D3 did not
+  edit the build input. The old temp lane remains present.
+- exact Python 3.12 rebuild/verification commands:
+
+  ```bash
+  python3.12 -m venv --clear .venv/py312
+  .venv/py312/bin/python -m pip install -r shell/requirements.txt
+  .venv/py312/bin/python -m pip check
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  ```
+
+- measured matrix: `./run ci-local` passed all **16/16** jobs: version
+  consistency; Python 3.11 byte-compilation; ShellCheck; warning-denied locked
+  workspace check and **98 tests**; warning-denied locked net check and
+  **20 tests**; clippy; fmt; warning-denied locked Rust 1.78 check and
+  **98 tests**; **93 Python 3.11 shell tests** with one Starlette warning;
+  golden **11/11**; protected artifacts **2/2** exact; persisted-fingerprint
+  fixture; and progress validation. The new Python 3.12.13 lane independently
+  passed **93 shell tests** with the same single warning. Final
+  `./run version-check`, `./run verify-artifacts`, ShellCheck, Python 3.11
+  byte-compilation, and golden **11/11** also passed.
+- golden-E2E delta: **none**. The final run retained all eleven named
+  assertions: 13 initial documents, 12 analyzed, the exact hamming-12
+  near-duplicate decision, DeepSeek RISING at z=10.0, zero second-ingest
+  additions, quant-desk count one, four citations with the duplicate
+  suppressed, NULL IndexOnly snippets, sector-disjoint search counts, and
+  bad-key 401.
+- protected evidence: final verification retained
+  `data/core.db` at
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`,
+  6,729,728 bytes, 1,764 documents, and `data/live-smoke.db` at
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`,
+  9,490,432 bytes, 2,600 documents; both records matched all logical facts.
+- grep 1 — old step-number citations in committed records outside the active
+  runbook. Exit **1** with no stdout means no citation:
+
+  ```bash
+  git grep -nE \
+    '(Step 3.{0,80}P2|P2.{0,80}Step 3|Step 4.{0,80}V1|V1.{0,80}Step 4|Step 5.{0,80}D1|D1.{0,80}Step 5|Step 6.{0,80}R2|R2.{0,80}Step 6)' \
+    HEAD -- '*.md' ':!TASKS-v0.9-EXECUTION.md'
+  ```
+
+  ```text
+  <no matches>
+  ```
+
+- grep 2 — live old id and unstarted closed-runbook task-heading collisions.
+  Both commands exited **1** with no stdout:
+
+  ```bash
+  grep -nE '(^|[^[:alnum:]_])D1([^[:alnum:]_]|$)' \
+    TASKS-v0.9-EXECUTION.md
+  grep -nE \
+    '^## (Step [^ ]+ · )?(P2|V1|D4|R2)([[:space:]]|—|·)' \
+    TASKS-v0.8.md TASKS-v0.8-EXECUTION.md \
+    TASKS-v0.8.1-EXECUTION.md TASKS-v0.8.2-EXECUTION.md
+  ```
+
+  ```text
+  <no live v0.9 D1 matches>
+  <no closed-runbook P2/V1/D4/R2 task-heading matches>
+  ```
+
+- grep 3 — all remaining legacy hash-list references:
+
+  ```bash
+  grep -rn --include='*.md' --exclude-dir=.git --exclude-dir=.venv \
+    --exclude-dir=target --exclude-dir=data \
+    'protected-artifacts.sha256' .
+  ```
+
+  ```text
+  ./PROGRESS-v0.9.md:173:  `config/protected-artifacts.sha256` with the single atomic
+  ./PROGRESS-v0.8.md:521:  `config/protected-artifacts.sha256` ✅ · canonicalized protected paths refused
+  ./STATE.md:72:`config/protected-artifacts.sha256` has been removed, and
+  ./STATE.md:159:`config/protected-artifacts.sha256` is historical. A1 deleted that file;
+  ./STATE.md:1475:- `config/protected-artifacts.sha256` records the complete B0.1 hashes for
+  ./TASKS-v0.8.2-EXECUTION.md:22:documents), recorded in `config/protected-artifacts.sha256`.
+  ./TASKS-v0.9-EXECUTION.md:17:with hashes recorded in `config/protected-artifacts.sha256`. The dedicated LAN
+  ./TASKS-v0.9-EXECUTION.md:28:> deleting `config/protected-artifacts.sha256`. The asserted paragraph above
+  ./TASKS-v0.9-EXECUTION.md:119:**Objective.** `config/protected-artifacts.sha256` proves byte identity, but not
+  ```
+
+  The first hit is A1's completed append-only history; the second is
+  closed-cycle P1 history; STATE lines 72 and 159 are the new A1 and D3 dated
+  corrections; STATE line 1475 is P1's deliberately preserved historical
+  body; the v0.8.2 hit is closed-cycle entering history; v0.9 line 17 is the
+  preserved entering hypothesis, line 28 is its dated correction, and line 119
+  is A1's historical objective. There are no live operational references.
+- acceptance: entering state bannered, not rewritten ✅ · closing provenance
+  appended ✅ · P1 superseded by dated addition, body untouched ✅ ·
+  `D1`→`D4`, no live collision ✅ · committed A1 disambiguated, not renamed ✅ ·
+  Step 3 / Steps 4–7 path recorded ✅ · V1 SLO anchored with exact firing
+  values, both corpora, slope, and warm-path validity ✅ · V1 owner corrected
+  ✅ · P2 blocked path and R2 non-result disposition defined ✅ · Python 3.12
+  command executed and measured ✅ · floors-not-pins and manifest-admission
+  risks recorded as v0.10 candidates ✅ · no source, rule, command, dependency,
+  lockfile, or protected-data change ✅
+- commit: d8d7551421242a9d32eb47077628607e0b06f565
+- progress-check failure control: changing only the D3 value above to
+  `NOT_A_HASH` made `./run progress-check` exit **1** and name the exact field:
+
+  ```text
+  progress-check: ERROR: PROGRESS-v0.9.md:457: commit must be 7-40 lowercase hexadecimal characters; found 'NOT_A_HASH'
+  ```
+
+  Restoring the real hash returned the file to its pre-control SHA-256
+  byte-for-byte, and `./run progress-check` then passed while naming D3 and the
+  real implementation hash.
+- final grep disposition: after this append, D3 audit line 427 is the captured
+  search command and lines 431–439 are its quoted nine-line output. Those ten
+  self-hits belong to this dated correction entry: the command is evidence,
+  while each quoted line is the already-enumerated historical or correction
+  reference, not a new live operational authority.
