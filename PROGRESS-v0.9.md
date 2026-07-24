@@ -798,3 +798,104 @@ recorded here in a separate audit-record commit.
   unchanged ✅ · protected artifacts exact ✅ · full matrix and both Python
   lanes green ✅
 - commit: be3124787b5b3ee53caf9ea618c54bb86c79e35b
+
+### 2026-07-24 · D4 — every deferred trigger re-audited executably
+
+- owner: 🤖 Codex
+- gate: respected. D4 measured five triggers and implemented none of their
+  deferred subsystems. Production disposition is **4 defer / 1 promote**:
+  T7, Postgres, pgvector, and multi-host remain deferred; `/view` retains V1's
+  promotion to already-scoped future design task V2.
+- T7 measurement: two schedule specs expand to five jobs, but
+  `Scheduler.tick` calls each due action in one serial loop. The documented
+  deployment modes are alternatives: one `Type=oneshot` systemd `--once`
+  process or one long-lived loop. Supported simultaneous harvest callers:
+  **1**. The live process census found **0** scheduler processes, **0** `cored`
+  processes, and no listener on loopback 8788.
+- Postgres measurement: production `cored` constructs exactly **1**
+  `SqliteStore` backed by one `Mutex<Connection>`; the shell has **0** direct
+  `CORE_DB` writers. Executable source guards inventory startup schema/
+  migration/backfill; document/FTS/canonical/cursor ingest; embedding upserts;
+  signal history; and maintenance-only update/delete. Public billing,
+  admin-key, and subscription-migration writers target the separate
+  `SUBSCRIPTIONS_PATH` scope and never the core archive.
+- pgvector measurement: both protected archives contain **0** original
+  embedding rows. Byte-for-byte disposable copies were seeded with
+  deterministic **768-dimensional** vectors for every document. The shipped
+  release-mode Rust `SqliteStore::vector_search` exact-cosine path was warmed
+  once and measured 30 times, limit 8, with zero dimension mismatches:
+  - 1,764 rows: min/median/p95/max
+    **4.072458/4.421105/7.055666/7.284666 ms**.
+  - 2,600 rows: **6.954083/7.415417/8.961583/9.536292 ms**.
+  - two-point p95 slope: **2.279805 ms per 1,000 documents**.
+  The largest p95 remains below A3's measured **16.264 ms** whole-request
+  anchor. That anchor is not relabeled as a retrieval SLO; the audit used
+  measured latency instead of a round row threshold. The existing scale note
+  names order 10⁵–10⁶ documents, so pgvector remains deferred.
+- multi-host measurement: `cored` defaults to `127.0.0.1:8788`; shell config
+  and the systemd unit both use `http://127.0.0.1:8788`. Committed progress
+  records, deployment config, and shell defaults contained **0** remote
+  `CORE_URL` hits. The D4 golden run exercised the real core/shell seam over
+  same-host loopback. No recorded core/shell request crosses hosts.
+- `/view` measurement: D4 imported all four V1 report summaries and both
+  cross-corpus slopes. Both archives missed cold in both runs, every warm cell
+  passed, and `materialization-trigger-fired` remains **promote → V2**. No
+  cache table or materialized representation was added.
+- failure-capable control: synthetic input with exactly two concurrent
+  harvesters and two archive writers printed
+  `PROMOTE T7 robots single-flight`, `PROMOTE Postgres`, and `CONTROL FIRED`;
+  it kept the unrelated synthetic triggers deferred and exited **1**.
+  Targeted audit tests passed **3/3**.
+- evidence: `evidence/v0.9/deferred-audit/report.json` preserves the five
+  unchanged triggers, exact dispositions, process/deployment facts, write
+  inventory, every cosine sample, protected identities, source locations,
+  source hashes, and the measured Git/worktree subject.
+- lint finding: the first full matrix passed through net tests, then stopped
+  at clippy's `manual_is_multiple_of` diagnostic in the new example. The
+  suggested `usize::is_multiple_of` is newer than the Rust 1.78 floor, so a
+  narrow reasoned allow was added. Targeted clippy passed and Rust 1.78
+  compiled the example; the audit report was regenerated against that exact
+  final source hash.
+- measured matrix: the complete rerun passed all **16/16** `./run ci-local`
+  jobs—version, Python 3.11 byte-compilation, ShellCheck, warning-denied
+  workspace check and **98 tests**, warning-denied net check and **20 tests**,
+  clippy, fmt, locked Rust 1.78 check/tests, **105 Python 3.11 shell tests**,
+  golden **11/11**, protected artifacts **2/2**, persisted fingerprints, and
+  prior progress validation. Python 3.12.13 independently passed the same
+  **105 shell tests**. Both lanes emitted one third-party Starlette warning.
+- golden-E2E delta: **none**. All eleven named assertions remained exact.
+- final isolation: protected artifacts matched 2/2 before and after the
+  failure control, every production audit attempt, and the full matrix.
+  Disposable databases were removed. `Cargo.lock` was untouched.
+- exact audit and control commands:
+
+  ```bash
+  ./run audit-deferred --control two-harvesters-two-writers
+  ./run audit-deferred \
+    --output evidence/v0.9/deferred-audit/report.json
+  PYTHONPATH=shell .venv/bin/python \
+    -m pytest shell/tests/test_deferred_audit.py -q
+  ```
+
+- exact verification commands:
+
+  ```bash
+  cargo clippy -p intel-store --example cosine_bench --locked -- -D warnings
+  rustup run 1.78.0 cargo check \
+    -p intel-store --example cosine_bench --locked
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  ./run version-check
+  ./run verify-artifacts
+  ./run progress-check
+  git diff --check
+  git diff -- Cargo.lock
+  ```
+
+- acceptance: all five triggers measured ✅ · every row preserves its
+  unchanged trigger ✅ · two-harvester/two-writer control fires ✅ · exact
+  cosine measured at both evidenced corpus sizes ✅ · full SQLite write
+  ownership recorded ✅ · bind/deployment/process topology recorded ✅ · V1
+  reports imported ✅ · no deferred subsystem implemented ✅ · golden 11/11 ✅ ·
+  artifacts 2/2 ✅ · both Python lanes and full Rust matrix green ✅
+- commit: d692aefc6038f332bf7022ac6929dde0a41ef202
