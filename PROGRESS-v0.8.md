@@ -1081,3 +1081,38 @@ correct them with a new dated entry.
 - notes / gate: D2 used the documented two-phase audit protocol. Commit
   `5a3f3f8` contains the checker, harness integration, and workflow rule; this
   later audit-record commit contains only status/checklist documentation.
+
+### 2026-07-24 · C2 — local CI matrix executed
+
+- owner: 🤖 Codex
+- operator decision: proceed local-only. `git remote -v` produced no output,
+  and no CI runner execution has been observed.
+- implementation: `./run ci-local` executes the configured matrix in order,
+  stops at the first failure, and prints a per-job summary. The shell workflow
+  now asserts that ShellCheck is installed and prints its version before
+  linting.
+- failure-capable control: a temporary PEP 701 f-string compiled under Python
+  **3.12.13**; `./run ci-local` then stopped at its Python **3.11.4** floor job
+  with `SyntaxError: f-string: unmatched '{'`, reporting the version job PASS
+  and the floor job FAIL. The control was removed before the clean run.
+- acceptance: operator choice recorded ✅ · local matrix executed with captured
+  output ✅ · failure stopped and named at the correct job ✅ · ShellCheck
+  presence/version asserted ✅ · `STATE.md` distinguishes configured workflow
+  jobs from measured local execution and records no runner evidence ✅
+- measured clean matrix: **16/16 jobs PASS** — version consistency; Python 3.11
+  byte-compile; ShellCheck **0.11.0** presence/lint; warning-denied workspace
+  check/test; warning-denied net check/test; clippy; fmt; locked Rust 1.78
+  check/test; **88 shell tests**; golden; protected artifacts; fingerprint
+  fixture; and progress validation. Workspace tests numbered **98** and net
+  ingest tests **20**.
+- golden E2E: unchanged — **11/11**.
+- verification: protected artifacts **2/2 MATCH** with hashes
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+  fingerprint fixture had zero NULLs and mismatches; Bash syntax, ShellCheck,
+  version-check, progress-check, and `git diff --check` passed; `Cargo.lock`
+  untouched.
+- commit: 1939505
+- notes / gate: C2 is complete on the local-only branch. The workflow remains
+  configured but unobserved on a CI runner; `./run ci-local` is the execution
+  evidence.
