@@ -753,7 +753,7 @@ intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
-    version-check  assert every public/package version matches STATE.md
+    version-check  reconcile release files and an exact HEAD release tag
     verify-fingerprints <db> [reference-db]
                    report missing/stale fingerprints without repairing them
     demo           print the whole pipeline start-to-finish, then clean up

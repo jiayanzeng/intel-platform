@@ -180,6 +180,10 @@ jobs:
         python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
+        with:
+          # version-check compares the nearest release tag. A depth-1 checkout
+          # ahead of that tag would reduce the check to an avoidable warning.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}

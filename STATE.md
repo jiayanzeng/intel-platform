@@ -113,6 +113,21 @@ workspace tests, 20 net tests, 88 shell tests, warning-denied offline/net
 checks, clippy, fmt, ShellCheck, and locked Rust 1.78 check/tests. Golden
 remained 11/11 and both protected artifact hashes remained exact.
 
+**A6 is complete (measured 2026-07-24).** `./run version-check` now
+reconciles the newest `CHANGELOG.md` release heading with the Rust package,
+Python package, FastAPI literal, and `STATE.md` header. It also reads
+`git describe --tags --abbrev=0`: an exact HEAD tag must match the package,
+while the normal ahead-of-tag development state is an explicit warning rather
+than a failure. The CI shell checkout now uses full history so the tag check
+actually executes there. A changelog-only `v0.8.1` plant exited 1 and named
+`CHANGELOG.md`; a disposable scratch branch with exact tag `v0.8.1` exited 1
+and named the tag/package mismatch. After restoration, the current mid-cycle
+tree warned that HEAD is ahead of `v0.8.0` and passed at 0.8.0; a detached
+scratch checkout of exact tag `v0.8.0` also passed under Python 3.11.4.
+`./run test` passed 98 workspace, 20 net, and 88 shell tests; floor
+byte-compilation, Bash syntax, and ShellCheck passed. Golden remained 11/11
+and protected artifacts remained 2/2 exact.
+
 **R1 release decision (2026-07-24): cut v0.8.0.** The operator selected option
 (b). Harvest durability, public-path HC1 enforcement, and persisted fingerprint
 identity materially change the shipped artifact, so keeping the runtime at

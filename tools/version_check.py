@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Fail when intel-platform's hand-maintained release versions diverge."""
+"""Fail when intel-platform's release files or an exact release tag diverge."""
 
 from __future__ import annotations
 
 import ast
 import re
+import subprocess
 import sys
 import tomllib
 from pathlib import Path
@@ -15,6 +16,8 @@ CARGO_TOML = ROOT / "apps/cored/Cargo.toml"
 PYTHON_INIT = ROOT / "shell/intel_shell/__init__.py"
 FASTAPI_APP = ROOT / "shell/intel_shell/app.py"
 STATE = ROOT / "STATE.md"
+CHANGELOG = ROOT / "CHANGELOG.md"
+TAG_SOURCE = "git describe --tags --abbrev=0"
 
 
 def relative(path: Path) -> str:
@@ -82,6 +85,45 @@ def state_version() -> str:
     return matches[0]
 
 
+def changelog_version() -> str:
+    matches = re.findall(
+        r"^## v([0-9]+\.[0-9]+\.[0-9]+)(?:\s|$)",
+        CHANGELOG.read_text(),
+        flags=re.MULTILINE,
+    )
+    if not matches:
+        raise ValueError(
+            f"{relative(CHANGELOG)}: expected at least one ## vX.Y.Z heading"
+        )
+    return matches[0]
+
+
+def git_output(*args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+
+def nearest_tag() -> tuple[str, bool] | None:
+    described = git_output("describe", "--tags", "--abbrev=0")
+    if described.returncode != 0:
+        detail = described.stderr.strip() or "no reachable tag"
+        print(f"version-check: WARNING: {TAG_SOURCE} unavailable: {detail}")
+        return None
+
+    tag = described.stdout.strip()
+    match = re.fullmatch(r"v([0-9]+\.[0-9]+\.[0-9]+)", tag)
+    if match is None:
+        raise ValueError(f"{TAG_SOURCE}: expected vX.Y.Z, found {tag!r}")
+
+    exact = git_output("describe", "--tags", "--exact-match", "HEAD")
+    return match.group(1), exact.returncode == 0 and exact.stdout.strip() == tag
+
+
 def main() -> int:
     try:
         cargo_data = tomllib.loads(CARGO_TOML.read_text())
@@ -90,7 +132,9 @@ def main() -> int:
             relative(PYTHON_INIT): python_package_version(),
             relative(FASTAPI_APP): fastapi_version(),
             relative(STATE): state_version(),
+            relative(CHANGELOG): changelog_version(),
         }
+        tag = nearest_tag()
     except (KeyError, OSError, SyntaxError, tomllib.TOMLDecodeError, ValueError) as error:
         print(f"version-check: ERROR: {error}", file=sys.stderr)
         return 1
@@ -114,6 +158,27 @@ def main() -> int:
         for path, version in mismatches:
             print(f"  {path}: {version}", file=sys.stderr)
         return 1
+
+    if tag is not None:
+        tag_version, exact = tag
+        state = "exact HEAD tag" if exact else "nearest ancestor; HEAD is ahead"
+        print(f"{TAG_SOURCE}: {tag_version} ({state})")
+        if exact and tag_version != canonical_version:
+            print(
+                f"version-check: ERROR: exact HEAD tag is {tag_version}, "
+                f"but {canonical_path} is {canonical_version}",
+                file=sys.stderr,
+            )
+            return 1
+        if not exact:
+            if tag_version == canonical_version:
+                detail = f"version remains {canonical_version}"
+            else:
+                detail = (
+                    f"tag is {tag_version}; working tree version is "
+                    f"{canonical_version}"
+                )
+            print(f"version-check: WARNING: HEAD is ahead of its tag; {detail}")
 
     print(f"version-check: PASS ({canonical_version})")
     return 0

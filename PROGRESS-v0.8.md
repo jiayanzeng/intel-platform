@@ -988,3 +988,30 @@ correct them with a new dated entry.
 - commit: this A5 cache-bound commit (see git history)
 - notes / gate: gate clear. Empty results for all-unknown sector requests are
   still returned, but never retained in the process-scoped cache.
+
+### 2026-07-24 · A6 — release identity now includes changelog and tag
+
+- owner: 🤖 Codex
+- implementation: `version-check` parses the first `## vX.Y.Z` changelog
+  heading and reconciles it with the four existing file sources. It reads
+  `git describe --tags --abbrev=0`; an exact HEAD tag is blocking, while an
+  ahead-of-tag tree warns and passes. The CI shell job fetches full history so
+  this tag check is not reduced to a shallow-clone warning.
+- failure-capable controls: changing only `CHANGELOG.md` to `v0.8.1` exited
+  **1** and named `CHANGELOG.md: 0.8.1` ✅ · a disposable local clone on scratch
+  branch `a6-tag-control`, exact-tagged `v0.8.1`, exited **1** and named the
+  exact tag versus `apps/cored/Cargo.toml` mismatch ✅ · both controls were
+  restored outside the working tree.
+- measured clean paths: the real mid-cycle tree printed nearest tag
+  **0.8.0**, warned that HEAD is ahead, and passed at **0.8.0**; a detached
+  disposable exact `v0.8.0` checkout passed under Python **3.11.4**.
+- acceptance: both mismatches refused and named ✅ · ahead-of-tag state passes
+  with warning ✅ · exact 0.8.0 tag passes ✅ · Python 3.11 floor passes ✅
+- golden E2E: unchanged — **11/11**.
+- verification: `./run test` passed **98 workspace / 20 net / 88 shell**;
+  protected artifacts **2/2 MATCH**; Python 3.11 byte-compile, Bash syntax,
+  ShellCheck, and `git diff --check` clean; `Cargo.lock` untouched.
+- commit: this A6 version-identity commit (see git history)
+- notes / gate: gate clear. A repository with no reachable tag gets an
+  explicit warning; the CI checkout fetches tags, so that fallback is not the
+  expected CI path.
