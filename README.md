@@ -201,18 +201,25 @@ deterministic and needs no network. Two commands reach the real world, and each
 ./run verify-llm       # loads .env; creates and tears down an isolated fixture
                        # core; runs embeddings + fusion + public HC1 checks.
 
-./run verify-artifacts # checks the recorded SHA-256 of both evidence DBs.
+./run verify-artifacts # checks bytes, corpus facts, and cursors for both DBs.
+./run evidence-report  # prints those measured facts without changing anything.
 ```
 
 `harvest-arxiv` needs outbound HTTPS to the configured arXiv endpoint. A bare
 run uses a new `data/live-<UTC-timestamp>-<pid>.db`; an intentional named
 override remains possible as
 `CORE_DB=data/named-smoke.db ./run harvest-arxiv`.
-`config/protected-artifacts.sha256` records `data/core.db` and
-`data/live-smoke.db` as evidence artifacts. A live harvest refuses either path
-(including absolute or `./` spellings), prints its recorded hash, and gives an
-exact safe override command. `./run test` verifies both hashes before running
-the Rust and Python suites.
+`config/protected-artifacts.json` is the one authority for `data/core.db` and
+`data/live-smoke.db`: it records each immutable evidence artifact's hash, byte
+size, corpus facts, cursor state, purpose, and provenance. A live harvest
+refuses either path (including relative, absolute, `./`, and symlink aliases),
+prints its recorded hash, and gives an exact safe override command.
+`./run test` verifies the full record before running the Rust and Python suites.
+
+Protected artifacts are immutable evidence. Every future live harvest uses the
+fresh path printed by `./run harvest-arxiv`; it never reuses a protected path.
+A new protected artifact is admitted only by an explicit task with captured
+wire evidence and operator review, followed by one atomic manifest update.
 
 `verify-llm` needs both a chat-completions endpoint and an embeddings endpoint.
 It owns a fresh temporary fixture database and its `cored` process, so no

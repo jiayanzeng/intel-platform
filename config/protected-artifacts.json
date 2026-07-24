@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "lifecycle": {
+    "policy": "immutable_evidence",
+    "live_harvest": "fresh_path_only",
+    "admission": "explicit_task_with_captured_wire_evidence_and_operator_review"
+  },
+  "artifacts": [
+    {
+      "path": "data/core.db",
+      "sha256": "db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0",
+      "bytes": 6729728,
+      "purpose": "Protected live arXiv archive used for corpus migration and HC1 attestation evidence.",
+      "provenance": "Live arXiv OAI-PMH archive with 1,764 documents; a later zero-document operator harvest advanced only the recorded cursor timestamp before these immutable bytes were admitted.",
+      "expected": {
+        "documents": 1764,
+        "integrity_check": "ok",
+        "null_simhash": 0,
+        "null_canonical_id": 0,
+        "cursors": [
+          {
+            "source_id": "arxiv-cs",
+            "cursor": null,
+            "high_water": "2026-07-20",
+            "pending_high_water": null,
+            "updated_at": "2026-07-23 12:08:13"
+          }
+        ]
+      }
+    },
+    {
+      "path": "data/live-smoke.db",
+      "sha256": "94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a",
+      "bytes": 9490432,
+      "purpose": "Protected two-page live arXiv interruption-resume wire evidence.",
+      "provenance": "Two capped live OAI-PMH runs fetched 1,300 documents each; the second run resumed from the first run's token and durably advanced to the recorded continuation state.",
+      "expected": {
+        "documents": 2600,
+        "integrity_check": "ok",
+        "null_simhash": 0,
+        "null_canonical_id": 0,
+        "cursors": [
+          {
+            "source_id": "arxiv-cs",
+            "cursor": "verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-22%26until%3D2026-07-22%26set%3Dcs%26skip%3D88",
+            "high_water": null,
+            "pending_high_water": "2026-07-22",
+            "updated_at": "2026-07-22 23:45:38"
+          }
+        ]
+      }
+    }
+  ]
+}

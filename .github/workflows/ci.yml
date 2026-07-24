@@ -47,6 +47,12 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
+      # Protected databases are local evidence and intentionally uncommitted.
+      # CI validates the one authoritative manifest's schema; the shell lane
+      # below exercises all verifier mismatch controls on disposable databases.
+      - name: validate protected-evidence manifest
+        run: python3 tools/evidence_artifacts.py validate
+
       - name: cargo check --workspace --locked
         run: cargo check --workspace --locked --all-targets
 
@@ -202,6 +208,8 @@ jobs:
         run: shellcheck ./run
       - name: install
         run: pip install -r shell/requirements.txt
+      - name: evidence verifier controls
+        run: PYTHONPATH=shell python3 -m pytest shell/tests/test_evidence_artifacts.py -q
       - name: pytest
         run: PYTHONPATH=shell python3 -m pytest shell/tests -q
 

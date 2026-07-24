@@ -41,6 +41,7 @@ if [ -n "${CORE_DB:-}" ]; then CORE_DB_EXPLICIT=1; else CORE_DB_EXPLICIT=0; fi
 CORE_DB="${CORE_DB:-data/core.db}"      # persistent unless a command overrides
 SUBSCRIPTIONS_PATH="${SUBSCRIPTIONS_PATH:-config/subscriptions.hashed.json}"
 RUNDIR=".run"                           # pidfiles + logs live here
+EVIDENCE_MANIFEST="config/protected-artifacts.json"
 
 CORE_URL="http://127.0.0.1:${CORE_PORT}"
 API_URL="http://127.0.0.1:${API_PORT}"
@@ -79,41 +80,27 @@ harvest_db_path() {
   fi
 }
 
-absolute_path() {
-  py -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$1"
-}
-
-sha256_file() {
-  if command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 "$1" | awk '{print $1}'
-  elif command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$1" | awk '{print $1}'
-  else
-    red "Neither shasum nor sha256sum is available; cannot verify artifacts."
-    return 2
-  fi
-}
-
 refuse_protected_harvest() {
   local target="$1"
-  local manifest="config/protected-artifacts.sha256"
-  local target_abs expected path path_abs suggestion
-  target_abs=$(absolute_path "$target")
-  while read -r expected path; do
-    [ -z "${expected:-}" ] && continue
-    case "$expected" in \#*) continue ;; esac
-    path_abs=$(absolute_path "$path")
-    if [ "$target_abs" = "$path_abs" ]; then
-      suggestion=$(fresh_harvest_db_path)
-      red "REFUSED: live harvest target '$target' is a protected artifact."
-      red "Recorded SHA-256: $expected"
-      red "Protection record: $manifest ($path)"
-      red "Choose a fresh destination with exactly:"
-      red "  CORE_DB=$suggestion ./run harvest-arxiv"
-      return 1
+  local match status expected path suggestion
+  if match=$(python3 tools/evidence_artifacts.py \
+      --manifest "$EVIDENCE_MANIFEST" --root . protected "$target"); then
+    expected="${match%%$'\t'*}"
+    path="${match#*$'\t'}"
+    suggestion=$(fresh_harvest_db_path)
+    red "REFUSED: live harvest target '$target' is a protected artifact."
+    red "Recorded SHA-256: $expected"
+    red "Protection record: $EVIDENCE_MANIFEST ($path)"
+    red "Choose a fresh destination with exactly:"
+    red "  CORE_DB=$suggestion ./run harvest-arxiv"
+    return 1
+  else
+    status=$?
+    if [ "$status" -eq 1 ]; then
+      return 0
     fi
-  done < "$manifest"
-  return 0
+    return "$status"
+  fi
 }
 
 need_cargo() {
@@ -417,43 +404,11 @@ cmd_ci_local() {
 }
 
 cmd_verify_artifacts() {
-  ensure_venv
-  local manifest="${1:-config/protected-artifacts.sha256}"
-  local expected path actual
-  local total=0 matched=0 failed=0
-  if [ ! -f "$manifest" ]; then
-    red "protected-artifact manifest not found: $manifest"
-    return 1
-  fi
-  while read -r expected path; do
-    [ -z "${expected:-}" ] && continue
-    case "$expected" in \#*) continue ;; esac
-    total=$((total + 1))
-    if [ ! -f "$path" ]; then
-      red "MISSING  $path (expected SHA-256 $expected)"
-      failed=1
-      continue
-    fi
-    actual=$(sha256_file "$path") || return $?
-    if [ "$actual" = "$expected" ]; then
-      green "MATCH  $path  sha256=$actual"
-      matched=$((matched + 1))
-    else
-      red "MISMATCH  $path"
-      red "  expected: $expected"
-      red "  actual:   $actual"
-      failed=1
-    fi
-  done < "$manifest"
-  if [ "$total" -eq 0 ]; then
-    red "protected-artifact manifest has no records: $manifest"
-    return 1
-  fi
-  if [ "$failed" -ne 0 ]; then
-    red "protected artifacts: $matched/$total match"
-    return 1
-  fi
-  green "protected artifacts: $matched/$total match"
+  python3 tools/evidence_artifacts.py "$@" verify
+}
+
+cmd_evidence_report() {
+  python3 tools/evidence_artifacts.py "$@" report
 }
 
 cmd_build()     { need_cargo; cargo build -p cored --locked;               green "built target/debug/cored (offline)."; }
@@ -874,7 +829,9 @@ intel-platform — ./run <command>
     demo           print the whole pipeline start-to-finish, then clean up
     golden         assert every golden E2E invariant, then clean up
     verify-artifacts
-                   verify recorded evidence-database SHA-256 values
+                   verify recorded evidence bytes, corpus facts, and cursors
+    evidence-report
+                   print deterministic measured evidence facts without writes
     config         show resolved model endpoints and safe harvest DB (no keys)
     api            run the public shell with model configuration from .env
     build          build cored (offline)
@@ -907,6 +864,7 @@ case "$cmd" in
   progress-check) cmd_progress_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
+  evidence-report) cmd_evidence_report "$@" ;;
   demo)          cmd_demo "$@" ;;
   golden)        cmd_golden "$@" ;;
   build)         cmd_build "$@" ;;

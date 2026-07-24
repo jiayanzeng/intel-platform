@@ -1,5 +1,0 @@
-# Recorded evidence artifacts. Format: SHA-256, then repository-relative path.
-# Live harvests must never open either path; `./run verify-artifacts` re-hashes
-# them, and `./run test` makes that verification part of every local test run.
-db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0  data/core.db
-94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a  data/live-smoke.db

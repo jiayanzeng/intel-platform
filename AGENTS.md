@@ -217,8 +217,10 @@ handle yourself:
 Before any live harvest, run `./run verify-artifacts`. A bare
 `./run harvest-arxiv` resolves to a fresh
 `data/live-<UTC-timestamp>-<pid>.db` and prints it before the first request.
-`config/protected-artifacts.sha256` records `data/core.db` and
-`data/live-smoke.db`; the harness must refuse both as live-harvest targets. Do
-not bypass that refusal—choose the fresh path it prints.
+`config/protected-artifacts.json` is the single provenance authority for
+`data/core.db` and `data/live-smoke.db`; the harness must refuse both as
+live-harvest targets. Protected artifacts are immutable evidence. Do not bypass
+that refusal—choose the fresh path it prints. Admit a new protected artifact
+only through an explicit task with captured wire evidence and operator review.
 
 Record every block precisely. A block is a non-result, never a pass.

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 B0 re-measured the entering state at `d09eda8`, 15 commits past annotated tag `v0.8.0`.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **88 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 A1 gives protected evidence one executable provenance manifest.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **93 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -66,6 +66,68 @@ the previously wire-evidenced **768**; B0 made no provider request and makes no
 claim that either endpoint is currently reachable. Final artifact verification
 again returned 2/2 exact, all three local ports were clear, and `Cargo.lock`
 was untouched.
+
+**v0.9 A1 is complete (measured 2026-07-24).** The gate passed before any
+edit: both protected hashes matched the B0 values. The old
+`config/protected-artifacts.sha256` has been removed, and
+`config/protected-artifacts.json` is now the only expected-hash authority. Its
+two records combine relative path, SHA-256, byte size, purpose/provenance,
+document count, integrity expectation, NULL `simhash` / `canonical_id`
+expectations, and complete cursor rows. The manifest also carries the checked
+immutable-evidence, fresh-harvest-only, and explicit wire-evidence/operator
+review admission policy.
+
+`./run verify-artifacts` opened both databases read-only and matched every
+recorded field: `data/core.db` remained
+`db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`,
+6,729,728 bytes, 1,764 documents, integrity `ok`, 0/0 NULL counts, and one
+cursor; `data/live-smoke.db` remained
+`94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`,
+9,490,432 bytes, 2,600 documents, integrity `ok`, 0/0 NULL counts, and one
+cursor. Two consecutive `./run evidence-report` outputs compared
+byte-identical. The report contains only deterministic measured database
+facts; it does not rewrite the manifest or either database.
+
+Failure-capable controls used only a `data/core.db` copy under
+`/private/tmp/intel-a1-controls.t6KW9J`. Adding a table while retaining the
+original record exited 1 and named `core.db field=sha256` (actual
+`811d8b6c32f9bb976bd4dc9e49a524940ac3183faec9d31044bc59196d987482`).
+Deleting one copied document, then recording the copy's fresh hash and byte
+size, exited 1 only on `core.db field=documents` (1,764 expected, 1,763
+actual). Changing the copied `arxiv-cs` cursor to `a1-control`, again with a
+fresh matching hash and size, exited 1 only on
+`core.db field=cursors.arxiv-cs.cursor`. Five automated disposable-database
+tests preserve the same three controls plus deterministic-report and
+canonical-path coverage.
+
+Live-harvest attempts against `data/core.db`, `./data/live-smoke.db`, the
+absolute `data/core.db` path, and a symlink to `data/core.db` each stopped
+before reachability with exit 2, named the matching JSON record, and printed a
+fresh safe destination. `./run test` began with full 2/2 evidence verification
+and passed 98 workspace, 20 net, and 93 Python 3.11 tests. The isolated Python
+3.12.13 lane independently passed the same 93 tests. `./run ci-local` passed
+all 16 configured jobs, including warning-denied offline/net builds, clippy,
+fmt, ShellCheck, Python floor compilation, locked Rust 1.78 check/tests, the
+11/11 golden E2E, and final evidence verification. CI now validates the
+committed manifest schema and executes the disposable verifier controls; no CI
+runner execution is claimed. Final hashes remained exact, and `Cargo.lock`
+was untouched.
+
+Exact A1 verification commands included:
+
+```bash
+python3 tools/evidence_artifacts.py validate
+./run verify-artifacts
+./run evidence-report
+PYTHONPATH=shell .venv/bin/python \
+  -m pytest shell/tests/test_evidence_artifacts.py -q
+shellcheck ./run
+./run ci-local
+./run test
+PYTHONPATH=shell \
+  /private/tmp/intel-platform-py312-baseline.wqTLIV/venv/bin/python \
+  -m pytest shell/tests -q
+```
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,
