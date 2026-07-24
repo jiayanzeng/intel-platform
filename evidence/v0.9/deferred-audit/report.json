@@ -1,0 +1,444 @@
+{
+  "host": {
+    "logical_cpu_count": 12,
+    "machine": "arm64",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.11.4"
+  },
+  "measured_at": "2026-07-24T16:11:36Z",
+  "measurements": {
+    "multi_host": {
+      "cored_default_bind": "127.0.0.1:8788",
+      "deployment_core_and_shell_host": "same host",
+      "deployment_core_url": "http://127.0.0.1:8788",
+      "recorded_cross_host_core_shell_requests": 0,
+      "recorded_remote_core_url_hits": [],
+      "shell_default_core_url": "http://127.0.0.1:8788",
+      "source_evidence": [
+        "apps/cored/src/main.rs:1066",
+        "shell/intel_shell/config.py:46",
+        "deploy/intel-pipeline.service:14"
+      ]
+    },
+    "pgvector": {
+      "a3_retrieve_anchor_ms": 16.264,
+      "algorithm": "brute-force exact cosine over deterministic 768d vectors",
+      "archive_reports": [
+        {
+          "algorithm": "brute-force exact cosine",
+          "database": "disposable copy of data/core.db",
+          "dimension": 768,
+          "dimension_mismatches": 0,
+          "documents": 1764,
+          "engine": "intel_store::SqliteStore::vector_search",
+          "limit": 8,
+          "maximum_ms": 7.2846660000000005,
+          "measured_samples": 30,
+          "median_ms": 4.4211045,
+          "minimum_ms": 4.072458,
+          "p95_method": "nearest-rank: sorted_samples[ceil(0.95*n)-1]",
+          "p95_ms": 7.055666,
+          "protected_archive": {
+            "bytes": 6729728,
+            "copy_seeded_embedding_rows": 1764,
+            "original_embedding_rows": 0,
+            "path": "data/core.db",
+            "sha256": "db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0"
+          },
+          "samples_ms": [
+            6.574916999999999,
+            7.2846660000000005,
+            7.055666,
+            6.794667,
+            6.0759170000000005,
+            5.297916,
+            4.6124160000000005,
+            4.2350840000000005,
+            4.282625,
+            4.650042,
+            4.340584,
+            4.128167,
+            4.263958,
+            4.472042,
+            4.239917,
+            4.072458,
+            4.210334,
+            4.433000000000001,
+            4.211333000000001,
+            4.110499999999999,
+            4.181875,
+            4.413209,
+            4.254916,
+            4.179042,
+            4.610125,
+            4.932042,
+            4.333082999999999,
+            4.6295,
+            4.7155000000000005,
+            4.428999999999999
+          ],
+          "sector": "science",
+          "warmup_samples": 1
+        },
+        {
+          "algorithm": "brute-force exact cosine",
+          "database": "disposable copy of data/live-smoke.db",
+          "dimension": 768,
+          "dimension_mismatches": 0,
+          "documents": 2600,
+          "engine": "intel_store::SqliteStore::vector_search",
+          "limit": 8,
+          "maximum_ms": 9.536292,
+          "measured_samples": 30,
+          "median_ms": 7.415417,
+          "minimum_ms": 6.954083,
+          "p95_method": "nearest-rank: sorted_samples[ceil(0.95*n)-1]",
+          "p95_ms": 8.961583000000001,
+          "protected_archive": {
+            "bytes": 9490432,
+            "copy_seeded_embedding_rows": 2600,
+            "original_embedding_rows": 0,
+            "path": "data/live-smoke.db",
+            "sha256": "94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a"
+          },
+          "samples_ms": [
+            8.6985,
+            9.536292,
+            8.961583000000001,
+            8.504707999999999,
+            7.642916,
+            7.788958,
+            7.427042,
+            7.152958,
+            7.119000000000001,
+            7.451208,
+            7.5814580000000005,
+            7.333916,
+            7.025791,
+            7.036542,
+            7.580875,
+            7.460541,
+            6.954083,
+            6.958666,
+            7.017125,
+            7.85625,
+            7.145167,
+            7.292584000000001,
+            7.152042,
+            7.403792,
+            7.324917,
+            7.053042,
+            8.174541,
+            8.085542,
+            7.758208,
+            7.039625
+          ],
+          "sector": "science",
+          "warmup_samples": 1
+        }
+      ],
+      "comparison_note": "A3's 16.264 ms full-request observation is an anchor, not a retrieval SLO; the current exact-cosine component remains below even that measured request cost.",
+      "engine": "intel_store::SqliteStore::vector_search",
+      "largest_evidenced_corpus": 2600,
+      "largest_p95_below_a3_anchor": true,
+      "largest_p95_ms": 8.961583000000001,
+      "scale_note_order_of_magnitude": "10^5\u201310^6 documents",
+      "two_point_p95_ms_per_1000_documents": 2.2798050239234455
+    },
+    "scheduler": {
+      "active_cored_processes": 0,
+      "active_scheduler_processes": 0,
+      "configured_jobs": 2,
+      "cored_processes": [],
+      "documented_deployment_modes": [
+        "one Type=oneshot scheduler owned by one systemd timer",
+        "one long-lived in-process scheduler loop"
+      ],
+      "documented_modes_are_alternatives": true,
+      "execution_within_one_scheduler": "serial for-loop",
+      "expanded_jobs": 5,
+      "loopback_8788_accepting": false,
+      "scheduler_processes": [],
+      "source_evidence": [
+        "shell/intel_shell/scheduler.py:256",
+        "shell/intel_shell/scheduler.py:259",
+        "deploy/intel-pipeline.service:10",
+        "deploy/intel-pipeline.service:18",
+        "deploy/intel-pipeline.timer:9",
+        "deploy/README.md:4"
+      ],
+      "supported_simultaneous_harvest_callers": 1
+    },
+    "view": {
+      "cross_corpus_slopes": [
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": -1150.105083,
+          "large_documents": 2600,
+          "large_p95_ms": 543.318334,
+          "p95_ms_per_1000_documents": -1375.723783,
+          "path": "cold",
+          "small_documents": 1764,
+          "small_p95_ms": 1693.423417
+        },
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": 4.419959,
+          "large_documents": 2600,
+          "large_p95_ms": 12.584125,
+          "p95_ms_per_1000_documents": 5.287032,
+          "path": "warm",
+          "small_documents": 1764,
+          "small_p95_ms": 8.164166
+        },
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": 160.970792,
+          "large_documents": 2600,
+          "large_p95_ms": 523.764917,
+          "p95_ms_per_1000_documents": 192.548794,
+          "path": "cold",
+          "small_documents": 1764,
+          "small_p95_ms": 362.794125
+        },
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": 4.096124,
+          "large_documents": 2600,
+          "large_p95_ms": 12.565458,
+          "p95_ms_per_1000_documents": 4.89967,
+          "path": "warm",
+          "small_documents": 1764,
+          "small_p95_ms": 8.469334
+        }
+      ],
+      "gate": {
+        "exit_code": 1,
+        "outcomes": [
+          {
+            "disposition": "design-trigger-fired",
+            "documents": 1764,
+            "misses": 2,
+            "path": "cold",
+            "runs": 2
+          },
+          {
+            "disposition": "pass",
+            "documents": 1764,
+            "misses": 0,
+            "path": "warm",
+            "runs": 2
+          },
+          {
+            "disposition": "design-trigger-fired",
+            "documents": 2600,
+            "misses": 2,
+            "path": "cold",
+            "runs": 2
+          },
+          {
+            "disposition": "pass",
+            "documents": 2600,
+            "misses": 0,
+            "path": "warm",
+            "runs": 2
+          }
+        ],
+        "overall": "materialization-trigger-fired",
+        "rule": "two misses for the same archive/path fire the design trigger; one miss requires another recorded run"
+      },
+      "promoted_task": "V2",
+      "reports": [
+        {
+          "cold_p95_ms": 1693.423417,
+          "cold_passed": false,
+          "documents": 1764,
+          "protected_path": "data/core.db",
+          "run": 1,
+          "warm_p95_ms": 8.164166,
+          "warm_passed": true
+        },
+        {
+          "cold_p95_ms": 543.318334,
+          "cold_passed": false,
+          "documents": 2600,
+          "protected_path": "data/live-smoke.db",
+          "run": 1,
+          "warm_p95_ms": 12.584125,
+          "warm_passed": true
+        },
+        {
+          "cold_p95_ms": 362.794125,
+          "cold_passed": false,
+          "documents": 1764,
+          "protected_path": "data/core.db",
+          "run": 2,
+          "warm_p95_ms": 8.469334,
+          "warm_passed": true
+        },
+        {
+          "cold_p95_ms": 523.764917,
+          "cold_passed": false,
+          "documents": 2600,
+          "protected_path": "data/live-smoke.db",
+          "run": 2,
+          "warm_p95_ms": 12.565458,
+          "warm_passed": true
+        }
+      ],
+      "slo": {
+        "anchor": {
+          "milliseconds": 16.264,
+          "source": "A3 POST /retrieve, 2600 rows, learning/science/k=8"
+        },
+        "cold": {
+          "fires_at_ms": 162.64,
+          "headroom_factor": 10.0,
+          "reason": "new cored process, SQLite open, sector corpus load, and view analysis"
+        },
+        "physically_plausible_on_host": "yes",
+        "predeclared_before_timing": true,
+        "warm": {
+          "fires_at_ms": 32.528,
+          "headroom_factor": 2.0,
+          "reason": "valid generation-cache hit near measured local HTTP/store cost"
+        }
+      }
+    },
+    "writers": {
+      "archive_write_inventory": [
+        {
+          "owner": "cored startup",
+          "path": "SqliteStore::open",
+          "source": "apps/cored/src/main.rs:1075",
+          "writes": "schema/FTS triggers, cursor migration, missing-fingerprint backfill"
+        },
+        {
+          "owner": "cored /ingest",
+          "path": "append_new + assign_canonical_ids",
+          "sources": [
+            "apps/cored/src/main.rs:702",
+            "apps/cored/src/main.rs:708"
+          ],
+          "writes": "documents/FTS and corpus-derived canonical_id"
+        },
+        {
+          "owner": "cored paged /ingest",
+          "path": "commit_harvest_page",
+          "source": "apps/cored/src/main.rs:244",
+          "writes": "documents/FTS, canonical_id, and cursor in one transaction"
+        },
+        {
+          "owner": "cored /embeddings",
+          "path": "upsert_embeddings",
+          "source": "apps/cored/src/main.rs:1022",
+          "writes": "embeddings"
+        },
+        {
+          "owner": "cored /signals/record",
+          "path": "record_signals",
+          "source": "apps/cored/src/main.rs:1039",
+          "writes": "signals_history"
+        },
+        {
+          "owner": "store maintenance/test surface; no product caller",
+          "path": "update_document + delete_document",
+          "sources": [
+            "crates/store/src/sqlite.rs:353",
+            "crates/store/src/sqlite.rs:384"
+          ],
+          "writes": "documents/FTS and embeddings"
+        }
+      ],
+      "archive_writer": "single cored process; one Mutex<rusqlite::Connection>",
+      "separate_shell_configuration_writers": [
+        {
+          "database": "SUBSCRIPTIONS_PATH, never CORE_DB",
+          "owner": "public billing handlers",
+          "path": "SqliteSubscriptionStore.save",
+          "source": "shell/intel_shell/app.py:214"
+        },
+        {
+          "database": "SUBSCRIPTIONS_PATH, never CORE_DB",
+          "owner": "admin key CLI",
+          "path": "SqliteSubscriptionStore.save",
+          "source": "tools/admin_keys.py:66"
+        },
+        {
+          "database": "destination subscription DB, never CORE_DB",
+          "owner": "one-shot subscription migration",
+          "path": "SqliteSubscriptionStore.save",
+          "source": "tools/migrate_subscriptions.py:42"
+        }
+      ],
+      "shell_direct_archive_writers": 0,
+      "supported_archive_writer_processes": 1
+    }
+  },
+  "schema_version": 1,
+  "subject": {
+    "head_commit": "3a1f8bb10753037faefd61336ca04cd4df30dc41",
+    "measured_source_sha256": {
+      "crates/store/examples/cosine_bench.rs": "e9f86f8c7eb2aa200249b458be128d28d767d44cb3f1a595ee411bd728f1bffd",
+      "crates/store/src/sqlite.rs": "0290cc36f3b1295d3c354b5eaca31e45fb1b228b318c849fa25acdaa6777be08",
+      "deploy/intel-pipeline.service": "cc5460cac995256bb3097a33b9693cc233de2fed79afbfb05f9522855b3183d5",
+      "deploy/intel-pipeline.timer": "bfd534f5c1ad2d77bf835ed7e42a7bb058a7d081b198d8758c08e1f47a0c392d",
+      "docs/T8-scale-design-note.md": "bca751e1b5946d10a9ad2e43dd32f288212b88fc47939b4603aa41e7552f554a",
+      "evidence/v0.9/view-benchmark/summary.json": "c4df6d94fde139806365bc304b5f72701803bbe3fb05e508f6101867ea309934",
+      "shell/intel_shell/scheduler.py": "08668f579ac442e2fc9072b2f6363561951ce301e38cb5392d9c3315af829181",
+      "tools/audit_deferred.py": "2ca1253daa8de6f762f16b3d2efb3415799171035e226f2cfadf2faa440e8ddd"
+    },
+    "worktree_dirty": true,
+    "worktree_status": [
+      " M STATE.md",
+      " M TASKS-v0.9-EXECUTION.md",
+      " M run",
+      "?? crates/store/examples/cosine_bench.rs",
+      "?? shell/tests/test_deferred_audit.py",
+      "?? tools/audit_deferred.py"
+    ]
+  },
+  "summary": {
+    "deferred": 4,
+    "implemented_deferred_subsystems": 0,
+    "promoted": 1
+  },
+  "task": "v0.9 D4",
+  "triggers": [
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "T7 robots single-flight",
+      "measurement": "1 supported simultaneous harvest caller(s); 0 active scheduler process(es)",
+      "unchanged_trigger": "a second concurrent harvester"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "Postgres",
+      "measurement": "1 supported archive writer process(es); shell direct archive writers=0",
+      "unchanged_trigger": "a second archive writer"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "pgvector",
+      "measurement": "largest evidenced corpus=2600; exact-cosine p95=8.961583 ms; A3 request anchor=16.264 ms",
+      "unchanged_trigger": "exact cosine over the archive stops fitting the measured request budget"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "Multi-host seam hardening",
+      "measurement": "recorded cross-host core/shell requests=0; bind=127.0.0.1:8788; CORE_URL=http://127.0.0.1:8788",
+      "unchanged_trigger": "an actual core/shell host split"
+    },
+    {
+      "disposition": "promote",
+      "future_task": "V2",
+      "id": "/view materialization",
+      "measurement": "V1 gate=materialization-trigger-fired; promoted task=V2",
+      "unchanged_trigger": "cold or warm p95 crosses the predeclared V1 SLO in both runs"
+    }
+  ]
+}

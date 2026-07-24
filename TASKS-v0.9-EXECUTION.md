@@ -60,6 +60,12 @@ may implement the deferred design merely because v0.9 mentions it.
 | Multi-host seam hardening (UDS/mTLS) | an actual core/shell host split | record bind/deployment topology |
 | `/view` materialization | measured warm-up cost crossing a defined SLO | benchmark a disposable archive copy first |
 
+> **Measured correction — 2026-07-24 (D4).** The first four triggers remain
+> deferred after executable measurement. `/view` is no longer deferred: V1
+> crossed its cold SLO in both runs for both archives and promoted scoped
+> future design task V2. D4 imported that result and implemented none of the
+> five deferred subsystems.
+
 ---
 
 ## Step 1 · B0 — Rebuild the entering state from commands 🤖
@@ -423,6 +429,14 @@ trigger · golden and protected artifacts unchanged.
 
 **Done when** "deferred" is a current measurement, not inherited folklore.
 
+**Measured disposition — 2026-07-24.** The production audit reports four
+deferred and one promoted: T7 has one supported serial harvester, the core
+archive has one supported writer process, exact 768-dimensional cosine p95 is
+7.055666 ms at 1,764 rows and 8.961583 ms at 2,600 rows, and core/shell remain
+same-host loopback. `/view` retains V1's promotion to V2. A synthetic two-
+harvester/two-writer input promoted T7 and Postgres and exited non-zero. No
+deferred subsystem was implemented.
+
 ---
 
 ## Step 7 · R2 — Close the cycle with one explicit release identity 🧑
@@ -473,7 +487,7 @@ evidence record without interpreting the cycle name.
 - [x] **P2** — provider capability probe reproducible; real wire disposition recorded
 - [x] **V1** — `/view` cold/warm measured against a predeclared SLO; cold
   trigger promoted to future V2
-- [ ] **D4** — all deferred triggers re-audited; no gate bypassed
+- [x] **D4** — all deferred triggers re-audited; no gate bypassed
 - [ ] **R2** — release disposition recorded and, if applicable, tagged
 
 ## Standing prohibitions

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 V1 is complete: both protected archives passed the warm `/view` SLO but missed the cold SLO in both independent runs, so the gate promoted future design task V2 and no materialization was implemented.** The measured V1 tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **102 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 D4 is complete: T7 single-flight, Postgres, pgvector, and multi-host hardening remain deferred by current measurements; `/view` remains promoted to future V2, and no deferred subsystem was implemented.** The measured D4 tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **105 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -411,6 +411,85 @@ V2 design task to `TASKS-v0.9-EXECUTION.md` and stopped without a cache table or
 other materialization. V2 must first decompose cold startup/load/analysis/body
 cost and prove restart-safe invalidation before choosing a representation;
 the in-memory warm cache is already within SLO.
+
+**v0.9 D4 is complete; four triggers remain deferred and `/view` remains
+promoted (measured 2026-07-24).** `./run audit-deferred` made the five-item
+table executable against repository, deployment, live-process, protected-
+archive, and V1 evidence. Its exact report is
+`evidence/v0.9/deferred-audit/report.json`.
+
+| item | unchanged trigger | measured production state | disposition |
+|---|---|---|---|
+| T7 robots single-flight | a second concurrent harvester | `config/schedule.json` has 2 specs expanding to 5 jobs, but `Scheduler.tick` invokes them in one serial loop. The documented systemd and in-process modes are alternatives; the unit is one `Type=oneshot --once` process. Supported simultaneous harvest callers: **1**. Process census: **0** schedulers, **0** `cored`, port 8788 not accepting. | **defer** |
+| Postgres | a second archive writer | Production constructs exactly **1** `SqliteStore` in `cored`, backed by one `Mutex<Connection>`; the shell has **0** direct `CORE_DB` writers. | **defer** |
+| pgvector | exact cosine over the archive stops fitting the measured request budget | Shipped release-mode `SqliteStore::vector_search`, exact cosine over deterministic **768d** vectors: **7.055666 ms p95** at 1,764 rows and **8.961583 ms p95** at 2,600 rows, below A3's measured **16.264 ms** full-request anchor. | **defer** |
+| multi-host seam hardening | an actual core/shell host split | Core default bind `127.0.0.1:8788`; shell default and systemd `CORE_URL=http://127.0.0.1:8788`; **0** recorded remote `CORE_URL` hits and no active deployment process. | **defer** |
+| `/view` materialization | cold or warm p95 crosses the predeclared V1 SLO in both runs | V1's four reports show both archives missed cold in both runs and all warm cells passed. | **promote → V2**, already scoped; no implementation |
+
+The T7 count is callers, not configured jobs: two source jobs, one sector job,
+one refresh, and one full pipeline job can all be due, but the same scheduler
+calls `job.action()` serially. The current process census used `ps`; no project
+scheduler or `cored` process was present, and an independent connect probe
+found no listener on loopback 8788. The one supported deployment may be either
+the one-shot systemd timer or one long-lived loop, as the deployment guide
+requires the operator to pick one. Starting both is not the supported topology
+and would be the unchanged second-harvester trigger.
+
+The archive write inventory remains core-owned:
+
+- `SqliteStore::open` owns schema/FTS creation, cursor migration, and missing-
+  fingerprint backfill at `cored` startup.
+- `/ingest` owns `append_new` plus corpus-wide canonical-id rematerialization;
+  the paged path owns documents, canonical ids, and cursor in one
+  `commit_harvest_page` transaction.
+- `/embeddings` owns embedding upserts and `/signals/record` owns
+  `signals_history`.
+- `update_document` and `delete_document` remain maintenance/test surfaces
+  with no production `cored` caller.
+- The public billing handlers, admin-key CLI, and one-shot subscription
+  migration may write the separately selected `SUBSCRIPTIONS_PATH` through
+  `SqliteSubscriptionStore.save`; none names or writes `CORE_DB`. This is the
+  already-recorded HC9 shell-configuration scope, not a second archive writer.
+
+The pgvector audit measured the shipped Rust method rather than a Python cosine
+approximation. Both protected archives originally contain **0 embedding
+rows**. One byte-for-byte temporary copy of each was seeded with deterministic
+768-dimensional vectors for every document, warmed once, and measured for
+**30** searches returning eight hits with zero dimension mismatches. The
+1,764-row distribution was min/median/p95/max
+**4.072458/4.421105/7.055666/7.284666 ms**. The 2,600-row distribution was
+**6.954083/7.415417/8.961583/9.536292 ms**, a measured two-point p95 slope of
+**2.279805 ms per 1,000 documents**. The scale note's order-of-magnitude
+expectation remains 10⁵–10⁶ documents. A3's 16.264 ms observation is an
+anchor, not a retrieval SLO; current exact cosine remains below even that
+measured whole-request cost, so no round document threshold was substituted
+for latency and pgvector remains deferred.
+
+The failure-capable control supplied exactly two harvesters and two archive
+writers. It printed `PROMOTE T7 robots single-flight` and `PROMOTE Postgres`,
+kept the other three synthetic triggers deferred, printed `CONTROL FIRED`, and
+exited **1**. The production audit then printed four deferrals plus
+`PROMOTE /view materialization`, named V2, and exited zero because the measured
+promotion was recorded rather than bypassed. Both runs verified protected
+artifacts 2/2 before and after. No single-flight lock, Postgres/pgvector code,
+UDS/mTLS seam, or `/view` materialization was added.
+
+The first full-matrix attempt stopped at clippy after every earlier job passed:
+the new benchmark's MSRV-compatible even-length median check triggered
+`manual_is_multiple_of`. Clippy's suggested `usize::is_multiple_of` is newer
+than the Rust 1.78 floor, so the example carries the same narrow, reasoned
+allowance pattern already used elsewhere in the repository. Targeted clippy
+then passed, and Rust 1.78 compiled the example. The regenerated audit report
+records the hash of that exact lint-clean source.
+
+The complete rerun passed all **16/16** `./run ci-local` jobs:
+version-check; Python 3.11 floor byte-compilation; ShellCheck; warning-denied
+workspace check and **98 tests**; warning-denied net check and **20 tests**;
+clippy; fmt; locked Rust 1.78 check/tests; **105 Python 3.11 shell tests**;
+golden **11/11**; protected artifacts **2/2**; persisted fingerprints; and
+progress validation. The Python 3.12.13 lane independently passed the same
+**105 shell tests**. Both lanes emitted the one third-party Starlette warning.
+`Cargo.lock` was untouched.
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,
