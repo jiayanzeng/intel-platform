@@ -880,3 +880,31 @@ correct them with a new dated entry.
 - notes / gate: gate clear. The golden E2E database is process-owned and
   deleted on exit, so the core job uses the new deterministic one-document
   scratch fixture; no protected archive was opened through `SqliteStore`.
+
+### 2026-07-24 · A2 — all persisted-fingerprint consumers fail closed
+
+- owner: 🤖 Codex
+- pre-fix controls: two unchanged store tests failed 0/2: `/view` load exposed
+  only SQLite `Invalid column type Null`, and canonical assignment silently
+  returned `Ok(0)`. A scratch live core measured `/view` 500 unnamed,
+  `/retrieve` **200** with `golden::fingerprint-control`, and ingest/canonical
+  assignment **200** while the row remained NULL/NULL.
+- measured after: the same scratch core returned **500** at `/view`,
+  `/retrieve`, and ingest-triggered canonical assignment. Every response named
+  `golden::fingerprint-control` and `./run verify-fingerprints`; a direct query
+  still measured `simhash IS NULL=1`, `canonical_id IS NULL=1`.
+- implementation: added `missing_fingerprints()`; `/view` decodes nullable
+  storage into a document-naming error; `/retrieve` deleted its recompute arm
+  and refuses an absent fused id; canonical assignment dropped
+  `WHERE simhash IS NOT NULL` and errors on the first missing value.
+  `STATE.md §2.10` and the schema comment now describe the enforced behavior.
+- acceptance: three sites changed and proven before/after ✅ · A1 controls
+  rerun (clean pass; NULL simhash/canonical and stale-body all exit 1) ✅ ·
+  `rg "simhash\\(" apps/cored/src/main.rs` returned no matches ✅ · full matrix
+  **95 workspace / 20 net / 88 shell** ✅ · warning-denied checks, clippy, fmt,
+  ShellCheck, and locked Rust 1.78 check/tests ✅ · protected hashes exact ✅
+- golden E2E: unchanged — **11/11**, so the corpus-movement gate is clear.
+- commit: this A2 invariant-closure commit (see git history)
+- notes / gate: present archive risk remains low and measured: B0.2 found zero
+  NULL fingerprints/canonical ids in both protected archives. This closes a
+  structural defect without claiming an observed protected-corpus failure.

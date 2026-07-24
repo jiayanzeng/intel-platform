@@ -38,7 +38,7 @@ use axum::{Json, Router};
 use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
 use intel_core::{attest_answer, Attestation, Day, Document, SectorId, Signal};
 use intel_enrich::Gazetteer;
-use intel_extract::{hamming, simhash};
+use intel_extract::hamming;
 use intel_ingest::{CursorStore, SourceContext};
 use intel_registry::{select_sources, CoreConfig};
 use intel_store::SqliteStore;
@@ -288,6 +288,21 @@ fn doc_dto(d: &Document) -> DocDto {
         authors: d.authors.clone(),
         tags: d.tags.clone(),
     }
+}
+
+fn persisted_fingerprint(
+    fingerprints: &HashMap<String, u64>,
+    document_id: &str,
+) -> Result<u64, ApiErr> {
+    fingerprints.get(document_id).copied().ok_or_else(|| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!(
+                "persisted simhash is missing for document '{document_id}'; \
+                 run ./run verify-fingerprints <database>"
+            ),
+        )
+    })
 }
 
 // --- DTOs -------------------------------------------------------------------
@@ -835,11 +850,7 @@ async fn retrieve(
         let Some(d) = by_id.get(doc_id.as_str()) else {
             continue;
         };
-        let fp = match prints.get(doc_id.as_str()) {
-            Some(fp) => *fp,
-            // Pre-T9.1 rows carry no fingerprint; fall back rather than fail.
-            None => simhash(&format!("{} {}", d.title, d.body)),
-        };
+        let fp = persisted_fingerprint(&prints, doc_id)?;
         if fingerprints.iter().any(|k| hamming(*k, fp) <= 16) {
             suppressed.push(d.id.clone());
             continue;
@@ -1106,6 +1117,18 @@ mod tests {
             .await
             .expect("ingest ok")
             .0
+    }
+
+    #[test]
+    fn retrieve_refuses_a_fused_document_without_a_persisted_fingerprint() {
+        let error = persisted_fingerprint(&HashMap::new(), "missing-retrieve-fingerprint")
+            .expect_err("retrieve must fail closed rather than recompute");
+        assert_eq!(error.0, StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(
+            error.1.contains("missing-retrieve-fingerprint"),
+            "{error:?}"
+        );
+        assert!(error.1.contains("verify-fingerprints"), "{error:?}");
     }
 
     #[tokio::test]

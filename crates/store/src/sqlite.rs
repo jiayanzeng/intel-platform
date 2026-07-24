@@ -23,6 +23,7 @@
 //!   "how did this signal evolve" features later.
 
 use intel_core::{Day, Document, License, Provenance, SectorId, Signal, SourceKind};
+use rusqlite::types::Type;
 use rusqlite::{params, Connection, OptionalExtension, Transaction};
 use std::path::Path;
 use std::sync::Mutex;
@@ -45,9 +46,11 @@ CREATE TABLE IF NOT EXISTS documents (
     -- SimHash fingerprint, computed once at ingest instead of re-derived on
     -- every /view and /retrieve request. Stored as INTEGER (u64 bit-cast).
     simhash       INTEGER,
-    -- The document this one collapses to under near-dup detection. A document
-    -- that is nobody's duplicate is its own canonical id, so `canonical_id` is
-    -- always set and `canonical_id = id` means "this is the original". (T9.1)
+    -- The document this one collapses to under near-dup detection. The column
+    -- remains nullable so legacy archives can be inspected, but every insert
+    -- sets it and canonical assignment refuses a missing fingerprint rather
+    -- than leaving the id silently NULL. The verifier reports either defect.
+    -- `canonical_id = id` means "this is the original". (T9.1/A2)
     canonical_id  TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_documents_sector ON documents(sector);
@@ -178,7 +181,11 @@ impl SqliteStore {
              FROM documents",
         )?;
         let rows = stmt.query_map([], |row| {
-            Ok((row_to_document(row)?, row.get::<_, i64>(13)? as u64))
+            let document = row_to_document(row)?;
+            let fingerprint = row
+                .get::<_, Option<i64>>(13)?
+                .ok_or_else(|| missing_fingerprint_error(13, &document.id))?;
+            Ok((document, fingerprint as u64))
         })?;
         rows.collect()
     }
@@ -446,6 +453,18 @@ fn backfill_simhashes(conn: &mut Connection) -> rusqlite::Result<usize> {
 }
 
 impl SqliteStore {
+    /// Document ids whose persisted fingerprint is missing.
+    ///
+    /// This is an integrity query, not a repair path. Callers that enforce the
+    /// persisted-fingerprint invariant can name the exact broken rows.
+    pub fn missing_fingerprints(&self) -> rusqlite::Result<Vec<String>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt =
+            conn.prepare("SELECT id FROM documents WHERE simhash IS NULL ORDER BY id")?;
+        let rows = stmt.query_map([], |r| r.get(0))?;
+        rows.collect()
+    }
+
     /// Every document's persisted fingerprint, by id.
     pub fn fingerprints(&self) -> rusqlite::Result<std::collections::HashMap<String, u64>> {
         let conn = self.conn.lock().unwrap();
@@ -513,15 +532,18 @@ fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite:
     let rows: Vec<(String, Option<i64>, String, u64)> = {
         let mut stmt = tx.prepare(
             "SELECT sector, published_day, id, simhash FROM documents
-             WHERE simhash IS NOT NULL
              ORDER BY sector, published_day, id",
         )?;
         let it = stmt.query_map([], |r| {
+            let id = r.get::<_, String>(2)?;
+            let fingerprint = r
+                .get::<_, Option<i64>>(3)?
+                .ok_or_else(|| missing_fingerprint_error(3, &id))?;
             Ok((
                 r.get::<_, String>(0)?,
                 r.get::<_, Option<i64>>(1)?,
-                r.get::<_, String>(2)?,
-                r.get::<_, i64>(3)? as u64,
+                id,
+                fingerprint as u64,
             ))
         })?;
         it.collect::<rusqlite::Result<Vec<_>>>()?
@@ -556,6 +578,17 @@ fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite:
         )?;
     }
     Ok(changed)
+}
+
+fn missing_fingerprint_error(column: usize, id: &str) -> rusqlite::Error {
+    rusqlite::Error::InvalidColumnType(
+        column,
+        format!(
+            "persisted simhash for document '{id}' is NULL; \
+             run ./run verify-fingerprints <database>"
+        ),
+        Type::Null,
+    )
 }
 
 fn lexical_max(left: Option<&str>, right: Option<&str>) -> Option<String> {
@@ -1238,6 +1271,63 @@ mod tests {
         assert_eq!(prints.len(), 1);
         // The stored fingerprint is exactly what the analysis-time dedup uses.
         assert_eq!(prints["d1"], intel_extract::simhash("T quantum widgets"));
+    }
+
+    #[test]
+    fn view_load_names_a_document_with_a_missing_fingerprint() {
+        let s = tmp_store();
+        s.append_new(&[doc("missing-view-fingerprint", "T", "body")])
+            .unwrap();
+        s.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE documents SET simhash = NULL
+                 WHERE id = 'missing-view-fingerprint'",
+                [],
+            )
+            .unwrap();
+
+        assert_eq!(
+            s.missing_fingerprints().unwrap(),
+            vec!["missing-view-fingerprint".to_string()]
+        );
+        let error = s
+            .load_all_with_fingerprints()
+            .expect_err("a missing fingerprint must fail the view load");
+        let message = error.to_string();
+        assert!(message.contains("missing-view-fingerprint"), "{message}");
+        assert!(message.contains("verify-fingerprints"), "{message}");
+    }
+
+    #[test]
+    fn canonical_assignment_refuses_a_missing_fingerprint() {
+        let s = tmp_store();
+        s.append_new(&[doc("missing-canonical-fingerprint", "T", "body")])
+            .unwrap();
+        s.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE documents SET simhash = NULL, canonical_id = NULL
+                 WHERE id = 'missing-canonical-fingerprint'",
+                [],
+            )
+            .unwrap();
+
+        let error = s
+            .assign_canonical_ids(16)
+            .expect_err("canonical assignment must not silently skip the document");
+        let message = error.to_string();
+        assert!(
+            message.contains("missing-canonical-fingerprint"),
+            "{message}"
+        );
+        assert!(message.contains("verify-fingerprints"), "{message}");
+        assert_eq!(
+            s.canonical_id("missing-canonical-fingerprint").unwrap(),
+            None
+        );
     }
 
     #[test]
