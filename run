@@ -268,10 +268,30 @@ cmd_version_check() {
   python3 tools/version_check.py
 }
 
+cmd_verify_fingerprints() {
+  need_cargo
+  if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    red "usage: ./run verify-fingerprints <database> [canonical-reference-database]"
+    return 2
+  fi
+  cargo run --quiet -p intel-store --example verify_fingerprints -- "$@"
+}
+
+verify_fingerprint_fixture() {
+  local fixture_dir fixture_db
+  fixture_dir="$(mktemp -d)"
+  fixture_db="$fixture_dir/golden-fingerprint-fixture.db"
+  cargo run --quiet -p intel-store --example fingerprint_fixture -- "$fixture_db"
+  cmd_verify_fingerprints "$fixture_db"
+  rm -rf "$fixture_dir"
+}
+
 cmd_test() {
   need_cargo; ensure_venv
   step "protected evidence artifacts"
   cmd_verify_artifacts
+  step "persisted fingerprint integrity"
+  verify_fingerprint_fixture
   step "release version consistency"
   cmd_version_check
   step "Rust tests (offline workspace, --locked)"
@@ -734,6 +754,8 @@ intel-platform — ./run <command>
   Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
     version-check  assert every public/package version matches STATE.md
+    verify-fingerprints <db> [reference-db]
+                   report missing/stale fingerprints without repairing them
     demo           print the whole pipeline start-to-finish, then clean up
     golden         assert every golden E2E invariant, then clean up
     verify-artifacts
@@ -766,6 +788,7 @@ cmd="${1:-help}"; shift || true
 case "$cmd" in
   test)          cmd_test "$@" ;;
   version-check) cmd_version_check "$@" ;;
+  verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
   demo)          cmd_demo "$@" ;;
   golden)        cmd_golden "$@" ;;

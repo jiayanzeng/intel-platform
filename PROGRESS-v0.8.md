@@ -853,3 +853,30 @@ correct them with a new dated entry.
 - commit: this D0 pointer commit (see git history)
 - notes / gate: gate clear. No stale status claim or block rule was edited;
   those remain assigned to D1.
+
+### 2026-07-24 · A1 — fingerprint verifier observes defects before repair
+
+- owner: 🤖 Codex
+- measured: pre-fix NULL-simhash control exited 0, backfilled the row, and left
+  0 NULLs; a correct-fingerprint/NULL-canonical control also exited 0. After
+  the fix, each control exited **1**, printed the offending
+  `golden::fingerprint-control` id, and a direct read-only query still counted
+  the planted NULL. A stale-body control exited **1** and named the same id.
+  The clean deterministic fixture exited 0 with `null_fingerprints=0`,
+  `null_canonical_ids=0`, and `fingerprint_mismatches=0`.
+- implementation: raw `SQLITE_OPEN_READ_ONLY` queries run before
+  `SqliteStore::open`; `./run verify-fingerprints <db> [reference-db]` added;
+  `./run test` runs it immediately after artifact verification; core CI creates
+  the same scratch fixture and executes the command.
+- acceptance: planted NULL simhash rejected and named ✅ · NULL survived the
+  run ✅ · planted NULL canonical id rejected and named ✅ · planted stale
+  fingerprint rejected ✅ · clean fixture printed all three zero counts ✅ ·
+  integrated `./run test` passed 92 workspace / 20 net / 88 shell tests ✅ ·
+  `bash -n run` and ShellCheck passed ✅ · core CI step present ✅
+- golden E2E: unchanged — **11/11**.
+- verification: warning-denied offline/net checks, clippy, and fmt passed;
+  protected artifacts **2/2 MATCH**; `Cargo.lock` untouched.
+- commit: this A1 verifier commit (see git history)
+- notes / gate: gate clear. The golden E2E database is process-owned and
+  deleted on exit, so the core job uses the new deterministic one-document
+  scratch fixture; no protected archive was opened through `SqliteStore`.

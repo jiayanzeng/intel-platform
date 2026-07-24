@@ -24,6 +24,25 @@ the contiguous correction trail. A repository search found no remaining
 only those pointer/continuity edits and no rule change. Golden remained 11/11
 and protected artifacts remained 2/2 exact.
 
+**A1 is complete (measured 2026-07-24).** The fingerprint verifier now queries
+NULL `simhash` and `canonical_id` rows through a raw read-only SQLite
+connection before any `SqliteStore::open`, prints both counts, names up to ten
+offending ids, and refuses either defect without repairing it. Before the fix,
+a planted NULL fingerprint was silently backfilled and a planted NULL
+canonical id passed; afterward, each control exited 1, named
+`golden::fingerprint-control`, and a direct read-only query proved the NULL
+still present. A stale body edit also exited 1 and named the id; a clean
+fixture printed `null_fingerprints=0`, `null_canonical_ids=0`, and
+`fingerprint_mismatches=0`. `./run verify-fingerprints` is executed immediately
+after protected-artifact verification in `./run test`, and the core CI job has
+the same check over a deterministic scratch fixture. The runbook's claim that
+core CI could reuse the golden E2E database was stale: `./run golden` owns and
+deletes that database inside its process, so A1 added a one-document
+failure-capable fixture builder rather than copying a protected archive.
+Final verification passed 92 workspace tests, 20 net tests, 88 shell tests,
+warning-denied offline/net checks, clippy, fmt, Bash syntax, and ShellCheck;
+golden remained 11/11 and protected artifacts remained 2/2 exact.
+
 **R1 release decision (2026-07-24): cut v0.8.0.** The operator selected option
 (b). Harvest durability, public-path HC1 enforcement, and persisted fingerprint
 identity materially change the shipped artifact, so keeping the runtime at

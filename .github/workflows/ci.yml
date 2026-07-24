@@ -53,6 +53,13 @@ jobs:
       - name: cargo test --workspace --locked
         run: cargo test --workspace --locked
 
+      - name: verify persisted fingerprints on the golden fixture
+        run: |
+          fixture_dir="$(mktemp -d)"
+          fixture_db="$fixture_dir/golden-fingerprint-fixture.db"
+          cargo run --quiet -p intel-store --example fingerprint_fixture -- "$fixture_db"
+          ./run verify-fingerprints "$fixture_db"
+
       # fmt/clippy are their own blocking job (`lint`) below.
 
   # ---------------------------------------------------------------------------

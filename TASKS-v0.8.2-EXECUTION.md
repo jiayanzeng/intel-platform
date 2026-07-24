@@ -627,7 +627,7 @@ open the materialization gate.** Measuring is not implementing.
 
 - [x] **B0.2** — entering state re-measured; NULL simhash/canonical census on both protected archives; hashes exact after the census
 - [x] **D0** — `AGENTS.md` points at the cycle actually being executed
-- [ ] **A1** — fingerprint verifier can fail; planted NULL survives the run; wired into `./run test` and CI
+- [x] **A1** — fingerprint verifier can fail; planted NULL survives the run; wired into `./run test` and CI
 - [ ] **A2** — `/retrieve`, `fingerprints()`, and canonical assignment all fail closed on a missing fingerprint; `STATE.md §2.10` corrected
 - [ ] **A3** — sector filtering and id lookup in SQL at all four call sites; `/retrieve` cost measured against a disposable live copy
 - [ ] **A4** — `/attest` scope non-forgeable, or the risk explicitly accepted with a trigger
