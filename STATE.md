@@ -1068,6 +1068,14 @@ handoff.
   `--embeddings` diagnosis was neither confirmed nor refuted in this attempt,
   and the embedding endpoint's API-reported model name and vector dimension
   remain unmeasured.
+- A later operator-requested LAN retry ruled out an address/proxy mistake. The
+  Codex host's active `en0` address measured **192.168.0.105/24**, and ARP
+  resolved `192.168.0.192` to `5c:b4:7e:cd:45:92` on that interface. Requests
+  to both `/health` and `/v1/models` were repeated with `curl --noproxy '*'`;
+  ports 8080 and 8081 still returned exit **7** / status **000** immediately.
+  ICMP reported `No route to host`, while the ARP entry proves the target was
+  visible at layer 2. The remaining evidence is therefore server-side: neither
+  published TCP port accepted a connection during the retry window.
 - The T4L decision gate is **tripped and the step is deferred**. No fallback
   provider or mock was tried. `./run config` still resolves LAN chat
   `http://192.168.0.192:8080/v1`, model `default`, but retains the previously

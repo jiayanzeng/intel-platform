@@ -592,6 +592,20 @@ correct them with a new dated entry.
 - notes: documentation only. No dependency, lockfile, runtime, provider
   configuration, or protected-corpus change.
 
+### 2026-07-24 · T4L retry — LAN path confirmed, service ports still closed
+
+- owner: 🤖 Codex
+- measured: local `en0` is `192.168.0.105/24`; ARP resolved LAN target
+  `192.168.0.192` to `5c:b4:7e:cd:45:92`. Direct proxy-bypassed health/model
+  requests to ports 8080 and 8081 still returned curl exit 7 / HTTP 000 /
+  connection refused. ICMP reported `No route to host`.
+- gate: unchanged. The LAN address and subnet are correct, but neither Docker
+  published port accepted TCP. No 501 body, API model name, or vector dimension
+  was measured, and no local provider configuration was written.
+- regression: `./run golden` remained **11/11**; protected artifacts remained
+  **2/2 MATCH**.
+- commit: this T4L retry/status commit (see git history)
+
 ### 2026-07-24 · T4P — adversarial HC1 positive control implemented
 
 - owner: 🤖 Codex
