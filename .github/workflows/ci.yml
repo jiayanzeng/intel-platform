@@ -192,6 +192,11 @@ jobs:
       - name: byte-compile all Python at the 3.11 floor
         if: matrix.python-version == '3.11'
         run: find tools shell -type f -name '*.py' -print0 | xargs -0 python3.11 -m py_compile
+      - name: assert ShellCheck is installed
+        if: matrix.python-version == '3.11'
+        run: |
+          command -v shellcheck
+          shellcheck --version
       - name: shellcheck run harness
         if: matrix.python-version == '3.11'
         run: shellcheck ./run

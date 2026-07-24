@@ -309,6 +309,113 @@ cmd_test() {
   green "all tests passed."
 }
 
+CI_LOCAL_RESULTS=()
+
+ci_local_summary() {
+  local result status label
+  step "ci-local summary"
+  for result in "${CI_LOCAL_RESULTS[@]}"; do
+    status="${result%%|*}"
+    label="${result#*|}"
+    if [ "$status" = "PASS" ]; then
+      green "PASS  $label"
+    else
+      red "FAIL  $label"
+    fi
+  done
+}
+
+ci_local_job() {
+  local label="$1"
+  shift
+  step "ci-local: $label"
+  if "$@"; then
+    CI_LOCAL_RESULTS+=("PASS|$label")
+    return 0
+  else
+    local status=$?
+    CI_LOCAL_RESULTS+=("FAIL|$label")
+    ci_local_summary
+    return "$status"
+  fi
+}
+
+ci_floor_compile() {
+  command -v python3.11
+  find tools shell -type f -name '*.py' -print0 \
+    | xargs -0 python3.11 -m py_compile
+}
+
+ci_shellcheck() {
+  command -v shellcheck
+  shellcheck --version
+  shellcheck ./run
+}
+
+ci_workspace_check() {
+  RUSTFLAGS="-D warnings" cargo check --workspace --locked --all-targets
+}
+
+ci_workspace_test() {
+  RUSTFLAGS="-D warnings" cargo test --workspace --locked
+}
+
+ci_net_check() {
+  RUSTFLAGS="-D warnings" \
+    cargo check -p cored --features net --locked --all-targets
+}
+
+ci_net_test() {
+  RUSTFLAGS="-D warnings" \
+    cargo test -p intel-ingest --features net --locked
+}
+
+ci_clippy() {
+  cargo clippy --workspace --locked --all-targets -- -D warnings
+}
+
+ci_fmt() {
+  cargo fmt --all -- --check
+}
+
+ci_msrv_check() {
+  RUSTFLAGS="" rustup run 1.78.0 cargo check --workspace --locked
+}
+
+ci_msrv_test() {
+  RUSTFLAGS="" rustup run 1.78.0 cargo test --workspace --locked
+}
+
+ci_pytest() {
+  PYTHONPATH=shell py -m pytest shell/tests -q
+}
+
+cmd_ci_local() {
+  need_cargo
+  ensure_venv
+  CI_LOCAL_RESULTS=()
+
+  ci_local_job "release version consistency" cmd_version_check || return $?
+  ci_local_job "Python 3.11 floor byte-compile" ci_floor_compile || return $?
+  ci_local_job "ShellCheck presence and harness lint" ci_shellcheck || return $?
+  ci_local_job "workspace check (-D warnings)" ci_workspace_check || return $?
+  ci_local_job "workspace test (-D warnings)" ci_workspace_test || return $?
+  ci_local_job "net check (-D warnings)" ci_net_check || return $?
+  ci_local_job "net test (-D warnings)" ci_net_test || return $?
+  ci_local_job "clippy" ci_clippy || return $?
+  ci_local_job "rustfmt" ci_fmt || return $?
+  ci_local_job "Rust 1.78 locked check" ci_msrv_check || return $?
+  ci_local_job "Rust 1.78 locked test" ci_msrv_test || return $?
+  ci_local_job "shell pytest" ci_pytest || return $?
+  ci_local_job "golden E2E" cmd_golden || return $?
+  ci_local_job "protected artifacts" cmd_verify_artifacts || return $?
+  ci_local_job "persisted fingerprints" verify_fingerprint_fixture || return $?
+  ci_local_job "append-only progress record" cmd_progress_check || return $?
+
+  ci_local_summary
+  green "ci-local passed all ${#CI_LOCAL_RESULTS[@]} jobs."
+}
+
 cmd_verify_artifacts() {
   ensure_venv
   local manifest="${1:-config/protected-artifacts.sha256}"
@@ -759,6 +866,7 @@ intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
+    ci-local       execute the configured CI matrix locally, stopping on failure
     version-check  reconcile release files and an exact HEAD release tag
     progress-check validate the newest append-only progress entry
     verify-fingerprints <db> [reference-db]
@@ -794,6 +902,7 @@ EOF
 cmd="${1:-help}"; shift || true
 case "$cmd" in
   test)          cmd_test "$@" ;;
+  ci-local)      cmd_ci_local "$@" ;;
   version-check) cmd_version_check "$@" ;;
   progress-check) cmd_progress_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;

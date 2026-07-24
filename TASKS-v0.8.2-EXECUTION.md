@@ -640,7 +640,7 @@ open the materialization gate.** Measuring is not implementing.
 - [x] **A6** — `version-check` covers changelog and tag; both planted mismatches caught
 - [x] **D1** — HC9 resolved by scope; every stale status claim corrected; closed-cycle rationale bannered, not rewritten
 - [x] **D2** — progress-log format executable; correction entry appended; no past entry edited
-- [ ] **C2** — CI executed or honestly downgraded; ShellCheck presence asserted
+- [x] **C2** — CI executed or honestly downgraded; ShellCheck presence asserted
 
 ---
 
