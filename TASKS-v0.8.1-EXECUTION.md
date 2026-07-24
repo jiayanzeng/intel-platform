@@ -496,7 +496,7 @@ still settling.
 - [x] **E1** — embedding dimension/model-key collision closed in core, shell, and verifier; three controls proven
 - [ ] **T4L — DEFERRED (transport gate)** — ports 8080/8081 refused connections; no HTTP body, API model name, or dimension measured
 - [ ] **T4P — DEFERRED (real-model gate)** — verifier and three controls complete; LAN chat refused connections, so no real-model outcome
-- [ ] **T4** — closed in one uninterrupted run, or deferred with the exact stage and response body
+- [ ] **T4 — DEFERRED (embedding gate)** — uninterrupted run stopped at DMXAPI HTTP 503 after 13/13 fixture ingest; 0/1; client did not expose response body
 - [ ] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch
 - [ ] **C1** — CI runs Python 3.11 and 3.12; shellcheck on `run`; floor recorded
 - [ ] **v0.9** — runbook drafted; deferred items kept deferred with their triggers

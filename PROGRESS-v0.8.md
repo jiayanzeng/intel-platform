@@ -628,3 +628,23 @@ correct them with a new dated entry.
 - commit: this T4P implementation/status commit (see git history)
 - notes: no dependency, lockfile, core invariant, public response shape, or
   protected-corpus change.
+
+### 2026-07-24 · T4 — uninterrupted closure run stopped at embedding gate
+
+- owner: 🤖 Codex
+- preflight: `./run down`; ports 8787/8788/8899 clear; protected artifacts
+  2/2; redacted config resolved LAN chat `:8080`, model `default`, 30s, and
+  DMXAPI embeddings, model `openAI`, 30s.
+- measured: one uninterrupted isolated run ingested **13/13** fresh fixtures.
+  DMXAPI `POST /v1/embeddings` returned HTTP **503 Service Unavailable** after
+  **0.16s**. The verifier stopped immediately at **0/1 required checks** and
+  exited 1; fusion, chat, public HC1, and the adversarial leg were not called.
+- gate: **T4 deferred at embedding backfill.** No earlier partial success or
+  mock evidence was carried into this run, and no retry/provider substitution
+  was attempted. The client surfaced status/URL but not the provider response
+  body; that requested evidence is absent and is not guessed.
+- golden/verification: golden **11/11**; artifacts **2/2**; warning-denied
+  offline/net checks; **92** workspace, **20** net, and **88** shell tests;
+  clippy, fmt, `bash -n`, Python compile, and locked Rust **1.78.0** check all
+  passed. Protected hashes remained exact.
+- commit: this T4 gate/status commit (see git history)
