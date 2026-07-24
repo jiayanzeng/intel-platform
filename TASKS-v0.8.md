@@ -1,5 +1,14 @@
 # TASKS-v0.8 — work order
 
+> **Closed-cycle status correction — 2026-07-24.** The body below is preserved
+> as historical v0.8 rationale, not live status or instructions. T4 later
+> closed with a 6/6 uninterrupted real-model run; T1 shipped core `/attest` for
+> the trusted shell path (A4 subsequently recorded that an arbitrary shell
+> rewrite can still bypass it); and the protected archives now contain 1,764
+> and 2,600 documents. The golden fixture still analyzes 12 documents. Those
+> facts supersede the body's deferred-T4, stale-HC1, and
+> 12-document-corpus statements without rewriting the closed rationale.
+
 **Entering state:** v0.7.0. 75 Rust tests, 69 shell tests, 0 warnings on both
 build configurations. `robots.txt` is fetched for real (v0.7/T2); CI exists and
 enforces `--locked`, `-D warnings`, the `--features net` path, and the 1.78 MSRV

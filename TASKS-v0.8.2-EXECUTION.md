@@ -499,8 +499,11 @@ this project already fixed once gets reintroduced.
 
 **Acceptance.** HC9 stated identically in both files, with the exception list ✅ ·
 `TASKS-v0.8.md` banner added, body unrewritten ✅ · items 5 and 6 corrected ✅ ·
-step-count typo fixed ✅ · `grep -rn "currently violated" *.md` returns nothing
-live ✅ · no rule changed except HC9's scope, which is a rewording of an existing
+step-count typo fixed ✅ ·
+`grep -rni "currently violated" --exclude=TASKS-v0.8.md
+--exclude=TASKS-v0.8.2-EXECUTION.md -- *.md` returns nothing live (the excluded
+files are the preserved closed rationale and this self-referential criterion)
+✅ · no rule changed except HC9's scope, which is a rewording of an existing
 rule and is called out as such in the commit message ✅.
 
 **Golden.** `11/11`, unchanged. **Commit:** one D1 documentation commit.
@@ -633,7 +636,7 @@ open the materialization gate.** Measuring is not implementing.
 - [x] **A4** — `/attest` scope non-forgeable, or the risk explicitly accepted with a trigger
 - [x] **A5** — view cache bounded and its key validated
 - [x] **A6** — `version-check` covers changelog and tag; both planted mismatches caught
-- [ ] **D1** — HC9 resolved by scope; every stale status claim corrected; closed-cycle rationale bannered, not rewritten
+- [x] **D1** — HC9 resolved by scope; every stale status claim corrected; closed-cycle rationale bannered, not rewritten
 - [ ] **D2** — progress-log format executable; correction entry appended; no past entry edited
 - [ ] **C2** — CI executed or honestly downgraded; ShellCheck presence asserted
 

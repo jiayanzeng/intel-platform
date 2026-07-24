@@ -1015,3 +1015,33 @@ correct them with a new dated entry.
 - notes / gate: gate clear. A repository with no reachable tag gets an
   explicit warning; the CI checkout fetches tags, so that fallback is not the
   expected CI path.
+
+### 2026-07-24 · D1 — persistence scope and stale status reconciled
+
+- owner: 🤖 Codex
+- HC9 measurement: source inspection found core SQLite tables `documents`,
+  `embeddings`, `signals_history`, and `cursors`, plus shell-selected
+  `subscriptions`; the former cursor-only wording contradicted the tree.
+- implementation: `AGENTS.md` and `ARCHITECTURE.md` now carry identical HC9
+  ownership scope and the same three recorded SQLite scopes (cursors,
+  subscriptions, core archive tables). Atomic JSON remains the shell-config
+  default; new SQLite-backed shell config still requires a recorded reason.
+- stale-status corrections: added a dated banner to closed `TASKS-v0.8.md`
+  covering T4 closure, shipped-path HC1/A4 scope, live archive sizes, and the
+  12-document golden distinction; changed the v0.8.1 step count from nine to
+  ten; made clippy's blocking status and the eleven-check golden current in
+  `AGENTS.md`.
+- acceptance: HC9 wording/list aligned ✅ · closed rationale diff is **9
+  additions / 0 deletions** ✅ · clippy and golden labels corrected ✅ ·
+  step-count typo corrected ✅ · corrected case-insensitive live-claim grep
+  (excluding its own criterion and the preserved closed rationale) produced no
+  output ✅ · only HC9 ownership scope changed, matching existing storage ✅
+- golden E2E: unchanged — **11/11**.
+- verification: `version-check` PASS at **0.8.0** with expected ahead-of-tag
+  warning; protected artifacts **2/2 MATCH**; `git diff --check` clean;
+  `Cargo.lock` untouched.
+- commit: this D1 documentation commit (see git history)
+- notes / gate: gate clear. The originally written lowercase grep criterion
+  matched two lines in its own active runbook and could not literally return
+  zero while preserving closed rationale; its exclusions are now explicit and
+  executable rather than silently reporting a false pass.

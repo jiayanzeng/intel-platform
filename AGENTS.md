@@ -75,9 +75,17 @@ where it does; here is what you must never do.
   `RobotsCache` live in `AppState`. Never rebuild them per request; a per-request
   robots cache re-fetches every publisher's `robots.txt` on every ingest, which
   makes "compliance" a worse citizen than none.
-- **HC9 — persistence is atomic-JSON, with cursors as the one documented SQLite
-  exception.** Do not add new SQLite tables for things that are not the harvest
-  cursors without recording why.
+- **HC9 — persistence scope is explicit.** HC9 governs shell-owned
+  configuration: atomic JSON is the default, and any new SQLite-backed shell
+  configuration needs a recorded reason. The core archive is SQLite by design.
+  The recorded SQLite scopes are:
+  - **Harvest cursors:** live beside documents so a page and its continuation
+    state commit in one transaction.
+  - **Subscriptions:** shell-owned configuration may explicitly select
+    `sqlite:///…` for transactional billing, key rotation, and revocation;
+    atomic JSON remains the default.
+  - **Core store tables:** `documents`, `embeddings`, and `signals_history`
+    are archive/query state, not shell-owned configuration.
 - **HC12 — never delete `Cargo.lock` to "fix" a resolution error; understand it.
   The lockfile *format* is part of the MSRV surface, not just the dependency
   graph.** A format-v4 lock cannot be parsed below Rust 1.78. Re-encoding to v3
@@ -133,7 +141,7 @@ cargo test  --workspace --locked
 cargo check -p cored --features net --locked --all-targets
 cargo test  -p intel-ingest --features net --locked
 
-# lint (must be clean before it becomes a gate — see T6)
+# lint (clean and blocking in CI since T6)
 cargo clippy --workspace --locked --all-targets -- -D warnings
 cargo fmt --all -- --check
 
@@ -144,7 +152,7 @@ PYTHONPATH=shell python3 -m pytest shell/tests -q
 
 `RUSTFLAGS="-D warnings"` is the standing rule for the offline and net builds:
 **0 warnings is a gate, not an aspiration.** ("0 warnings" means *rustc*
-warnings; clippy is tracked separately until T6 promotes it to a gate.)
+warnings; clippy is an independent blocking gate.)
 
 ## 5. The per-task workflow — status is updated in real time
 
@@ -176,7 +184,8 @@ the next:
 The golden pipeline is the regression anchor. **`./run golden` is the
 authoritative, executable definition; the prose below is a human summary. If
 they ever disagree, the command's named assertion failure is the finding — do
-not edit the assertion to bless the drift.** Its expected outcome (v0.7):
+not edit the assertion to bless the drift.** Its current eleven-check expected
+outcome:
 
 > acme corpus 13 → 12 analyzed; `techwire::tw-004` dropped for `osdaily::osd-004`
 > at hamming 12; DeepSeek RISING z = 10.0; a re-run adds 0; quant-desk sees 1

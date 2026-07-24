@@ -29,11 +29,13 @@ CORE (Rust, engine — stable, invariant-bearing)
                 store registry view retrieve
 ```
 
-The design intent: **the core holds the invariants so the shell can be rewritten
-arbitrarily without endangering them.** `briefing.py` can be rebuilt from scratch
-and still cannot leak gated text, because it never receives gated text. That
-property is the whole point of the split, and it is why the placement decisions
-below are load-bearing.
+The design intent: **source-side invariants live in the core so product-layer
+iteration cannot bypass them.** `briefing.py` can be rebuilt from scratch and
+still cannot leak gated text, because it never receives gated text. The
+shell-owned public answer path is the recorded A4 exception: the shipped shell
+attests it correctly, but an arbitrary rewrite is not constrained until public
+egress crosses a core-owned boundary. That exact boundary is why the placement
+decisions below are load-bearing.
 
 ## 2. Config ownership
 
@@ -46,6 +48,19 @@ below are load-bearing.
 
 Core-owned config describes *what exists and how it may be used*; shell-owned
 config describes *who may see it and when to fetch it*. Do not cross these.
+
+**HC9 — persistence scope is explicit.** HC9 governs shell-owned
+configuration: atomic JSON is the default, and any new SQLite-backed shell
+configuration needs a recorded reason. The core archive is SQLite by design.
+The recorded SQLite scopes are:
+
+- **Harvest cursors:** live beside documents so a page and its continuation
+  state commit in one transaction.
+- **Subscriptions:** shell-owned configuration may explicitly select
+  `sqlite:///…` for transactional billing, key rotation, and revocation;
+  atomic JSON remains the default.
+- **Core store tables:** `documents`, `embeddings`, and `signals_history`
+  are archive/query state, not shell-owned configuration.
 
 ## 3. Load-bearing placement decisions (do not move casually)
 
@@ -157,7 +172,7 @@ rewrite that omits the call or supplies a false scope (A4 accepted risk).
 | HC2 sector filtering | core SQL | a shell bug must not bypass it |
 | HC3 no LLM in core | core (by omission) | keeps the engine deterministic and offline-testable |
 | HC8 politeness | core `AppState` | a TTL / limiter that doesn't outlive the request is theatre |
-| HC9 atomic-JSON persistence | shell + core store | cursors are the one SQLite exception, by their nature |
+| HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
 | HC12 lock discipline | CI (`--locked`, MSRV job) | the lock *is* the build; its format is part of MSRV |
 | HC13 fixtures ≠ wire | tests + live-run policy | three bugs came from believing otherwise |
 

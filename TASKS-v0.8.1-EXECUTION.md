@@ -34,7 +34,7 @@ updated with measurements, not intentions.
 evidence was never promoted, the T2 repair found the deeper split-write bug rather
 than the visible one, and a false clippy claim was caught and corrected at B0.
 What v0.8 did *not* do is turn its own central invariant into something a machine
-checks. Five of the nine steps below are the project's own §0 rule
+checks. Five of the ten steps below are the project's own §0 rule
 (*a claimed property that nothing executes is not a property*) turned on the
 project's own regression discipline.
 

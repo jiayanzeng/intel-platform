@@ -128,6 +128,25 @@ scratch checkout of exact tag `v0.8.0` also passed under Python 3.11.4.
 byte-compilation, Bash syntax, and ShellCheck passed. Golden remained 11/11
 and protected artifacts remained 2/2 exact.
 
+**D1 is complete (measured 2026-07-24).** HC9 now has identical ownership-scope
+wording and the same three-item SQLite list in `AGENTS.md` and
+`ARCHITECTURE.md`: atomic JSON is the default for shell-owned configuration;
+subscriptions may explicitly use SQLite for transactional business changes;
+the core archive's document/vector/signal tables are SQLite by design; and
+harvest cursors live there so page data and continuation state commit
+atomically. This is a scope clarification of the implemented rule, not
+permission for unrecorded persistence. The closed `TASKS-v0.8.md` body was not
+rewritten: `git diff --numstat` measured 9 additions and 0 deletions for its
+dated status banner, which supersedes the stale T4, HC1, and 12-document live
+claims while preserving their rationale. `AGENTS.md` now describes clippy as
+blocking and the golden as eleven checks; the v0.8.1 runbook now counts ten
+steps. The live-claim grep initially demonstrated that its literal criterion
+matched its own runbook text; the criterion now explicitly excludes that
+self-reference and the preserved closed rationale, and the corrected
+case-insensitive command produced no output. Golden remained 11/11,
+`version-check` passed at 0.8.0 with the expected ahead-of-tag warning, and
+both protected artifacts remained exact.
+
 **R1 release decision (2026-07-24): cut v0.8.0.** The operator selected option
 (b). Harvest durability, public-path HC1 enforcement, and persisted fingerprint
 identity materially change the shipped artifact, so keeping the runtime at
@@ -249,7 +268,7 @@ CORE (Rust, engine)       apps/cored: /health /sectors /ingest /view /search
 5. **`/view`'s `kind` is `format!("{:?}", SignalKind)`**, so the shell can post signals straight back to `/signals/record`.
 6. All v0.1–v0.3 invariants unchanged: dedup (hamming ≤16) BEFORE all statistics; mentions per (entity, doc); Corroborated suppressed when Rising; discovery on bodies only; FNV-1a determinism; RRF k=60.
 7. **(v0.6) Source selection is core business, not shell business.** `/ingest` takes `{sectors, sources?}`. `sources` names connector ids; **each is still validated against `sectors`**, so a named source outside the caller's entitlement is refused, not run — the sector filter is not a suggestion that a source id can bypass (HC2). Selection lives in `registry::select_sources`, which returns `unknown_ids` as **structured per-id errors rather than panicking**. Omitting `sources` entirely preserves the exact pre-v0.6 behavior (every source in the sectors, in config order) — a regression test pins this (HC5).
-8. **(v0.6, hardened v0.8/T2) Harvest cursors live in the core store, not the shell.** The `cursors(source_id, cursor, high_water, pending_high_water, updated_at)` row is committed in the **same SQLite transaction** as each parsed page's documents and canonical-id rematerialization. `cursor` is the next OAI-PMH `resumptionToken`; `pending_high_water` retains the max datestamp seen across capped/restarted pages; only a final-page commit clears both and advances completed `high_water`. This prevents either half of the old split-write failure: advancing past documents still in memory, or losing an earlier page's maximum datestamp after restart. High-water advance remains monotonic (ISO dates ⇒ lexicographic max is chronological max). Cursors are the documented exception to atomic-JSON persistence (HC9): they belong in SQLite beside the documents they track. Connectors that don't page (RSS) ignore the seam entirely.
+8. **(v0.6, hardened v0.8/T2) Harvest cursors live in the core store, not the shell.** The `cursors(source_id, cursor, high_water, pending_high_water, updated_at)` row is committed in the **same SQLite transaction** as each parsed page's documents and canonical-id rematerialization. `cursor` is the next OAI-PMH `resumptionToken`; `pending_high_water` retains the max datestamp seen across capped/restarted pages; only a final-page commit clears both and advances completed `high_water`. This prevents either half of the old split-write failure: advancing past documents still in memory, or losing an earlier page's maximum datestamp after restart. High-water advance remains monotonic (ISO dates ⇒ lexicographic max is chronological max). Under HC9's ownership scope, cursors are recorded core-archive state: they belong in SQLite beside the documents whose page commit they make atomic. Connectors that don't page (RSS) ignore the seam entirely.
 
 9. **(v0.6/T6) Provider vocabulary is normalized INTO the neutral one, never the other way round.** `billing.apply_event` speaks `subscription.created|updated|deleted|key_rotated` and nothing else. Stripe enters through `adapters/stripe.py`, which verifies Stripe's signature scheme and maps `customer.subscription.*` onto those events. Consequences worth keeping: a second provider is a second adapter, not a change to the store or the entitlement model; and the freshness check on Stripe's signed timestamp is load-bearing, because a *genuine* captured request replayed later carries a perfectly valid MAC — the timestamp is the only thing that refuses it. Keys are compared against a *set* of active hashes, so rotation has a grace window and revocation is just rotation with none.
 10. **(v0.6/T9, closed v0.8.2/A2) Dedup identity is a function of the corpus, not of arrival order.** `dedup_near` keeps the earliest document by `(published_day, id)` — a global property. So `canonical_id` is persisted as a **re-materialization of that same rule on every ingest that adds rows**, NOT as a first-seen-wins assignment at insert. This matters more since T3: sources now run on independent clocks, so arrival order genuinely varies, and an incremental assignment would let two runs over the same 13 documents disagree about which copy is canonical. Relatedly, `/retrieve` deliberately does **not** filter by `canonical_id`: it keeps whichever of a near-dup pair *the query* ranked higher. Canonical id is a property of the corpus; relevance is a property of the question, and context assembly is a question about the question. T3 materializes `simhash(title + body)` at ingest/migration and refreshes it on document update. A2 closes all three consumers: `/view` maps a NULL to a document-naming error; `/retrieve` refuses a fused id absent from the persisted-fingerprint map; canonical assignment reads every row and errors on the first NULL instead of silently excluding it. No request path recomputes a missing fingerprint. `missing_fingerprints()` and `./run verify-fingerprints` name broken rows. B0.2 measured zero such rows and zero NULL canonical ids in both protected archives, so this repair closes the structural guarantee without changing their corpus identity.
