@@ -683,3 +683,118 @@ recorded here in a separate audit-record commit.
   keys absent ✅ · protected artifacts exact ✅ · golden unchanged ✅ · P2
   checked complete ✅
 - commit: 3187f1eeba7c370bd5e546d756655500862ccf6f
+
+### 2026-07-24 · V1 — `/view` benchmark measured; cold trigger promoted
+
+- owner: 🤖 Codex + 🧑 operator-approved SLO
+- predeclaration: before the first sample, the operator approved A3's
+  **16.264 ms** `POST /retrieve` measurement on the 2,600-row archive
+  (`learning`, sector `science`, `k=8`) as the cost anchor; cold p95
+  **162.640 ms** (**10×**) and warm p95 **32.528 ms** (**2×**) as the exact
+  firing values; and both values as physically plausible on this host. The
+  reasons and nearest-rank p95 rule are preserved in
+  `evidence/v0.9/view-benchmark/SLO.md`.
+- harness: `./run benchmark-view` verifies both protected artifacts before
+  and after, builds `cored`, copies each protected archive byte-for-byte below
+  one temporary directory, and uses only those copies. Its standard-library
+  Python runner records the source commit plus exact source hashes, worktree
+  state, hardware/OS, archive identity/hash/count, configured sector,
+  iteration counts, every sample, min/median/p95/max, pass/miss, and both
+  run-specific two-point slopes. No disposable database is retained.
+- validity: cold means ten distinct `cored` processes and each process's first
+  `/view`; warm means one unmeasured prime plus 100 measured requests on one
+  process. The requested `science` sector is present in `config/core.json`.
+  Every sample asserted positive `documents_analyzed`. Internal diagnostic
+  headers asserted every cold request was a cache miss and every warm request
+  a hit against the prime's unchanged generation; the JSON body did not
+  change.
+- measured host: Apple M2 Pro (`Mac14,10`), arm64, 12 logical CPUs,
+  17,179,869,184 bytes memory, macOS 26.5.2 / Darwin 25.5.0, Python 3.11.4.
+- measured distributions:
+  - run 1, 1,764 rows: cold min/median/p95/max
+    **355.928250/359.743021/1,693.423417/1,693.423417 ms — MISS**;
+    warm **7.588208/7.938833/8.164166/8.247958 ms — PASS**.
+  - run 1, 2,600 rows: cold
+    **513.055167/520.936854/543.318334/543.318334 ms — MISS**;
+    warm **11.874875/12.223333/12.584125/14.415709 ms — PASS**.
+  - run 2, 1,764 rows: cold
+    **355.089125/358.776729/362.794125/362.794125 ms — MISS**;
+    warm **7.662750/7.996229/8.469334/23.716958 ms — PASS**.
+  - run 2, 2,600 rows: cold
+    **510.943958/519.269458/523.764917/523.764917 ms — MISS**;
+    warm **11.966916/12.329937/12.565458/12.839708 ms — PASS**.
+- slopes: run 1's retained 1,764-row cold outlier produced
+  **−1,375.723783 ms p95 per 1,000 documents**, so it is reported rather than
+  interpreted as scaling. Run 2 cold measured **192.548794 ms/1,000 docs**.
+  Warm measured **5.287032** and **4.899670 ms/1,000 docs** in runs 1 and 2.
+  Exact samples and calculations are under
+  `evidence/v0.9/view-benchmark/`.
+- failure-capable controls: the delayed endpoint exited **1** after naming
+  cold **223.578458 ms** over 162.640 and warm **220.598291 ms** over 32.528;
+  both checks fired. The empty-sector double exited **1** and named
+  `documents_analyzed=0` on the purported warm hit. Targeted tests passed
+  **3/3** under Python 3.11.
+- gate: **FIRED**. Both archives missed cold in both independent runs; all
+  warm cells passed. V1 stopped without materialization and added future
+  design task V2, which must decompose the cold cost and prove restart-safe
+  invalidation before selecting an implementation. The 1,693.423417 ms
+  outlier was retained, and the second complete run still missed, so removing
+  it cannot change the disposition.
+- measured matrix: `./run ci-local` passed all **16/16** jobs—version,
+  Python 3.11 byte-compilation, ShellCheck, warning-denied workspace check and
+  **98 tests**, warning-denied net check and **20 tests**, clippy, fmt, locked
+  Rust 1.78 check/tests, **102 Python 3.11 shell tests**, golden **11/11**,
+  protected artifacts **2/2**, persisted fingerprints, and prior progress
+  validation. Python 3.12.13 independently passed the same **102 shell
+  tests**. Both shell lanes emitted one third-party Starlette warning.
+- golden-E2E delta: **none**. The post-benchmark standalone run and the full
+  matrix each passed all eleven named assertions.
+- final isolation: both protected hashes and all logical fields remained
+  exact before and after every control and benchmark, and again after the
+  matrix. `Cargo.lock` was untouched. No cache table, materialized view,
+  dependency, protected-data write, architecture invariant, or JSON response
+  change was introduced.
+- exact benchmark commands:
+
+  ```bash
+  ./run benchmark-view \
+    --anchor-ms 16.264 \
+    --anchor-source "A3 POST /retrieve, 2600 rows, learning/science/k=8" \
+    --cold-factor 10 \
+    --cold-reason \
+      "new cored process, SQLite open, sector corpus load, and view analysis" \
+    --warm-factor 2 \
+    --warm-reason \
+      "valid generation-cache hit near measured local HTTP/store cost" \
+    --cold-slo-ms 162.640 --warm-slo-ms 32.528 \
+    --physically-plausible yes --sector science --control delayed
+
+  ./run benchmark-view [same SLO arguments] --control empty-sector
+
+  ./run benchmark-view [same SLO arguments] \
+    --cold-iterations 10 --warm-iterations 100 \
+    --output-dir evidence/v0.9/view-benchmark
+  ```
+
+- exact regression commands:
+
+  ```bash
+  PYTHONPATH=shell .venv/bin/python \
+    -m pytest shell/tests/test_benchmark_view.py -q
+  ./run golden
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  ./run version-check
+  ./run verify-artifacts
+  git diff --check
+  git diff -- Cargo.lock
+  ```
+
+- acceptance: SLO fixed and failure-capable before timing ✅ · both disposable
+  archives and two complete runs measured ✅ · all four exact distributions
+  and slopes stored ✅ · configured/non-empty sector asserted ✅ · warm
+  hit/unmoved generation asserted ✅ · delayed and empty controls failed
+  loudly ✅ · cold trigger promoted to V2 without implementation ✅ · golden
+  unchanged ✅ · protected artifacts exact ✅ · full matrix and both Python
+  lanes green ✅
+- commit: be3124787b5b3ee53caf9ea618c54bb86c79e35b
