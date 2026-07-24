@@ -58,7 +58,8 @@ endpoints are the whole contract.
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |
 | `GET /embeddings/missing?model` | backfill work queue |
-| `POST /embeddings {model, items}` | store shell-computed vectors |
+| `GET /embeddings/stats?model` | stored vector count and dimension for one model key |
+| `POST /embeddings {model, items}` | store shell-computed vectors; rejects a dimension change under an existing model key |
 | `POST /signals/record {client, window_end, signals}` | audit trail |
 | `GET /docs?ids=` | full documents (internal) |
 
@@ -172,7 +173,11 @@ LAN server returned **501** from `POST /v1/embeddings`, while DeepSeek returned
 **404**. Both can be chat candidates, but neither tested endpoint can populate
 vectors. T4 needs a provider that really implements OpenAI-compatible
 `POST /embeddings`; the verifier will report failure rather than silently call
-BM25-only retrieval a pass. The verifier is prerequisite-ordered: if embedding
+BM25-only retrieval a pass. `LLM_EMBED_MODEL` is required for every non-loopback
+provider; the reserved offline key is `mock-embed-32`. Reusing a generic model
+name across providers is refused when dimensions differ, and `/retrieve`
+reports any pre-existing mismatched rows in `notes`. The verifier is
+prerequisite-ordered: if embedding
 backfill or hybrid fusion fails, it stops before chat/public HC1. This prevents
 an already-failed run from waiting on another provider and makes the output
 unambiguous.
@@ -236,7 +241,8 @@ lsof -nP -iTCP:8788 -sTCP:LISTEN       # no output is the expected result
 ./run verify-llm
 ```
 
-Expected real-model success includes: embeddings missing count decreases,
+Expected real-model success includes: at least one real embedding request,
+embeddings missing reaches zero, stored stats match the provider dimension,
 `retrieval.notes` is empty, hybrid retrieval returns context, `/v1/ask` returns
 citations, at least one cited document is `IndexOnly`, and the public answer has
 no 16-token overlap with gated source bodies. A 404/501 embeddings response,

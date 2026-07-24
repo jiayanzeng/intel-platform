@@ -127,6 +127,9 @@ class CoreClient:
     def embeddings_missing(self, model: str) -> list[dict]:
         return self._get("/embeddings/missing", model=model)
 
+    def embeddings_stats(self, model: str) -> dict:
+        return self._get("/embeddings/stats", model=model)
+
     def upsert_embeddings(self, model: str, items: list[dict]) -> dict:
         """items: [{"doc_id": ..., "vector": [...]}, ...]"""
         return self._post("/embeddings", {"model": model, "items": items})

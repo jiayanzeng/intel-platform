@@ -12,7 +12,9 @@
 //!   service, which fits the no-gatekeeper constraint nicely.
 
 pub mod sqlite;
-pub use sqlite::{Cursor, SearchHit, SqliteStore};
+pub use sqlite::{
+    Cursor, EmbeddingStats, EmbeddingWriteError, SearchHit, SqliteStore, VectorSearchResult,
+};
 
 use intel_core::Document;
 use std::collections::HashSet;

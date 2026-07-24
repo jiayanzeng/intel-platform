@@ -529,3 +529,38 @@ correct them with a new dated entry.
   `/private/tmp`; neither protected file was deleted, renamed, or rewritten.
   Final hashes remained `db2f186e…1a37a0` and `94f03e9e…0462c4a`; no
   dependency, lockfile, source, license, robots, sector, or dedup change.
+
+### 2026-07-24 · E1 — embedding model-key and dimension collision closed
+
+- owner: 🤖 Codex
+- measured: all three failure-capable controls failed before the fix. Store
+  accepted a 1,024-dimensional vector after a 32-dimensional vector under
+  `shared-model` (`Ok(1)`); `/retrieve` emitted no note for a planted
+  32-versus-1,024 row/query mismatch; and the verifier reported a green
+  zero-request backfill on a fresh pre-embedded database before reaching the
+  later-stage failure double. After the fix, the upsert is rejected
+  transactionally with model/existing/received dimensions, retrieval reports
+  one ignored mismatched vector, and the verifier fails and stops when no real
+  embedding request occurred.
+- acceptance: one stored dimension per model key ✅ · structured mismatch names
+  `shared-model`, 32, and 1,024 ✅ · `/retrieve` dimension note visible ✅ ·
+  `/embeddings/stats` exposes count/dimension/inconsistency ✅ · reserved
+  `mock-embed-32` key explicit in demo/golden ✅ · unnamed non-loopback provider
+  exits 2 before services ✅ · fresh verifier requires ≥1 provider request,
+  zero missing, and matching stored dimension ✅ · all three pre/post controls
+  proven ✅ · HC3 intact ✅ · warning-denied checks, **92** workspace tests,
+  **20** net tests, **85** shell tests, clippy, fmt, `bash -n`, Python compile,
+  and locked Rust **1.78.0** check passed ✅
+- success control: isolated deterministic mock passed **6/6** — 13 missing → 0,
+  one request, provider/stored dimension 32, clean notes, five hybrid docs,
+  five public citations, five IndexOnly citation documents, and no gated
+  overlap. This validates the harness only; it is not real-model evidence.
+- golden E2E: unchanged — `./run golden` **11/11**; the strict-dimension
+  decision gate did not trip.
+- commit: this E1 implementation/status commit (see git history)
+- notes: `./run verify-artifacts` remained 2/2. Protected hashes stayed
+  `db2f186e…1a37a0` and `94f03e9e…0462c4a`; port 8788 was clear. The first
+  isolated success attempt encountered an ambient-proxy disconnect and was not
+  counted; the corrected loopback run set `NO_PROXY`/`no_proxy` and passed. No
+  dependency, lockfile, provider call from core, or policy/protected-corpus
+  change.

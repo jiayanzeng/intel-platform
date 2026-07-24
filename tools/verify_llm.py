@@ -104,19 +104,36 @@ def main() -> int:
     print("== 1. embeddings populate ==")
     t0 = time.time()
     backfill_ok = False
+    embedding_requests = 0
     try:
         missing = core.embeddings_missing(embed.model)
+        provider_dim = None
+        stats = None
         if missing:
             batch = missing[:16]
+            embedding_requests += 1
             embedded = embed.embed([d["body"] for d in batch])
+            provider_dim = len(embedded[0]) if embedded else None
             vectors = _embedding_items(batch, embedded)
             core.upsert_embeddings(embed.model, vectors)
         still = core.embeddings_missing(embed.model)
-        backfill_ok = len(still) < len(missing) or not missing
+        if embedding_requests:
+            stats = core.embeddings_stats(embed.model)
+        stats_ok = (
+            stats is not None
+            and provider_dim is not None
+            and stats.get("dim") == provider_dim
+            and not stats.get("inconsistent_dimensions", False)
+        )
+        backfill_ok = embedding_requests > 0 and not still and stats_ok
         check(
             "embeddings backfill",
             PASS if backfill_ok else FAIL,
-            f"{len(missing)} missing -> {len(still)} after one batch",
+            (
+                f"{len(missing)} missing -> {len(still)}; "
+                f"{embedding_requests} real embedding request(s); "
+                f"provider dim={provider_dim}; stored stats={stats}"
+            ),
         )
     except (CoreError, LlmError, KeyError, ValueError) as e:
         check("embeddings backfill", FAIL, str(e))

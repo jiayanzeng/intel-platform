@@ -72,6 +72,44 @@ def test_verifier_stops_after_failed_embedding_prerequisite(
     assert "stopping before fusion/public HC1" in capsys.readouterr().out
 
 
+def test_verifier_rejects_a_fresh_database_that_is_already_preembedded(
+    monkeypatch,
+    capsys,
+) -> None:
+    class ForbiddenEmbed:
+        base_url = "https://embed.test/v1"
+        model = "shared-model"
+        timeout_seconds = 3.0
+
+        def embed(self, texts: list[str]) -> list[list[float]]:
+            raise AssertionError(
+                "fusion/public stages must not run after a zero-request backfill"
+            )
+
+    class CallableChat:
+        base_url = "https://chat.test/v1"
+        model = "chat-model"
+        timeout_seconds = 3.0
+
+    class PreembeddedCore:
+        def embeddings_missing(self, model: str) -> list[dict]:
+            return []
+
+    monkeypatch.setattr(
+        verify_llm,
+        "CoreClient",
+        lambda *args, **kwargs: PreembeddedCore(),
+    )
+    monkeypatch.setattr(verify_llm, "chat_from_env", lambda: CallableChat())
+    monkeypatch.setattr(verify_llm, "embed_from_env", lambda: ForbiddenEmbed())
+
+    assert verify_llm.main() == 1
+    output = capsys.readouterr().out
+    assert "[FAIL] embeddings backfill" in output
+    assert "0 real embedding request" in output
+    assert "stopping before fusion/public HC1" in output
+
+
 def test_verifier_interrupt_exits_cleanly(monkeypatch, capsys) -> None:
     def interrupted() -> int:
         raise KeyboardInterrupt

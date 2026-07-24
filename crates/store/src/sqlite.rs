@@ -693,6 +693,61 @@ fn row_to_document(r: &rusqlite::Row<'_>) -> rusqlite::Result<Document> {
 // thousands of documents. The scale-up is pgvector (HNSW/IVFFlat) behind
 // these same three methods — callers never learn the difference.
 
+#[derive(Debug)]
+pub enum EmbeddingWriteError {
+    Database(rusqlite::Error),
+    DimensionMismatch {
+        model: String,
+        existing_dim: usize,
+        received_dim: usize,
+    },
+}
+
+impl std::fmt::Display for EmbeddingWriteError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Database(error) => error.fmt(f),
+            Self::DimensionMismatch {
+                model,
+                existing_dim,
+                received_dim,
+            } => write!(
+                f,
+                "embedding dimension mismatch for model '{model}': \
+                 existing dimension {existing_dim}, received {received_dim}"
+            ),
+        }
+    }
+}
+
+impl std::error::Error for EmbeddingWriteError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Database(error) => Some(error),
+            Self::DimensionMismatch { .. } => None,
+        }
+    }
+}
+
+impl From<rusqlite::Error> for EmbeddingWriteError {
+    fn from(error: rusqlite::Error) -> Self {
+        Self::Database(error)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EmbeddingStats {
+    pub count: usize,
+    pub dim: Option<usize>,
+    pub inconsistent_dimensions: bool,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct VectorSearchResult {
+    pub hits: Vec<(String, f64)>,
+    pub dimension_mismatches: usize,
+}
+
 impl SqliteStore {
     /// Documents that have no embedding yet for the given model — the
     /// backfill work queue.
@@ -714,9 +769,31 @@ impl SqliteStore {
         &self,
         model: &str,
         items: &[(String, Vec<f32>)],
-    ) -> rusqlite::Result<usize> {
+    ) -> Result<usize, EmbeddingWriteError> {
         let mut conn = self.conn.lock().unwrap();
         let tx = conn.transaction()?;
+        let mut expected_dim = tx
+            .query_row(
+                "SELECT dim FROM embeddings WHERE model = ?1 LIMIT 1",
+                [model],
+                |row| row.get::<_, i64>(0),
+            )
+            .optional()?
+            .map(|dim| dim as usize);
+        for (_, vector) in items {
+            match expected_dim {
+                Some(existing_dim) if vector.len() != existing_dim => {
+                    return Err(EmbeddingWriteError::DimensionMismatch {
+                        model: model.to_string(),
+                        existing_dim,
+                        received_dim: vector.len(),
+                    });
+                }
+                None => expected_dim = Some(vector.len()),
+                Some(_) => {}
+            }
+        }
+
         let mut n = 0;
         for (doc_id, vec) in items {
             n += tx.execute(
@@ -727,6 +804,32 @@ impl SqliteStore {
         }
         tx.commit()?;
         Ok(n)
+    }
+
+    pub fn embeddings_stats(&self, model: &str) -> rusqlite::Result<EmbeddingStats> {
+        let conn = self.conn.lock().unwrap();
+        let (count, min_dim, max_dim) = conn.query_row(
+            "SELECT COUNT(*), MIN(dim), MAX(dim)
+             FROM embeddings WHERE model = ?1",
+            [model],
+            |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, Option<i64>>(1)?,
+                    row.get::<_, Option<i64>>(2)?,
+                ))
+            },
+        )?;
+        let inconsistent_dimensions = min_dim != max_dim;
+        Ok(EmbeddingStats {
+            count: count as usize,
+            dim: if inconsistent_dimensions {
+                None
+            } else {
+                min_dim.map(|dim| dim as usize)
+            },
+            inconsistent_dimensions,
+        })
     }
 
     pub fn embeddings_count(&self, model: &str) -> rusqlite::Result<usize> {
@@ -746,14 +849,17 @@ impl SqliteStore {
         query: &[f32],
         sectors: &[String],
         limit: usize,
-    ) -> rusqlite::Result<Vec<(String, f64)>> {
+    ) -> rusqlite::Result<VectorSearchResult> {
         if sectors.is_empty() || query.is_empty() {
-            return Ok(Vec::new());
+            return Ok(VectorSearchResult {
+                hits: Vec::new(),
+                dimension_mismatches: 0,
+            });
         }
         let conn = self.conn.lock().unwrap();
         let placeholders = sectors.iter().map(|_| "?").collect::<Vec<_>>().join(",");
         let sql = format!(
-            "SELECT e.doc_id, e.vec FROM embeddings e
+            "SELECT e.doc_id, e.dim, e.vec FROM embeddings e
              JOIN documents d ON d.id = e.doc_id
              WHERE e.model = ?1 AND d.sector IN ({placeholders})"
         );
@@ -764,17 +870,32 @@ impl SqliteStore {
             bind.push(s);
         }
         let rows = stmt.query_map(bind.as_slice(), |r| {
-            Ok((r.get::<_, String>(0)?, r.get::<_, Vec<u8>>(1)?))
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, i64>(1)?,
+                r.get::<_, Vec<u8>>(2)?,
+            ))
         })?;
         let mut scored: Vec<(String, f64)> = Vec::new();
+        let mut dimension_mismatches = 0;
         for row in rows {
-            let (doc_id, blob) = row?;
+            let (doc_id, recorded_dim, blob) = row?;
             let v = blob_to_vec(&blob);
-            scored.push((doc_id, cosine(query, &v)));
+            if recorded_dim < 0 || recorded_dim as usize != v.len() || v.len() != query.len() {
+                dimension_mismatches += 1;
+                continue;
+            }
+            match cosine(query, &v) {
+                Some(score) => scored.push((doc_id, score)),
+                None => dimension_mismatches += 1,
+            }
         }
         scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
         scored.truncate(limit);
-        Ok(scored)
+        Ok(VectorSearchResult {
+            hits: scored,
+            dimension_mismatches,
+        })
     }
 }
 
@@ -792,9 +913,9 @@ fn blob_to_vec(b: &[u8]) -> Vec<f32> {
         .collect()
 }
 
-fn cosine(a: &[f32], b: &[f32]) -> f64 {
+fn cosine(a: &[f32], b: &[f32]) -> Option<f64> {
     if a.len() != b.len() || a.is_empty() {
-        return 0.0;
+        return None;
     }
     let (mut dot, mut na, mut nb) = (0.0f64, 0.0f64, 0.0f64);
     for i in 0..a.len() {
@@ -803,9 +924,9 @@ fn cosine(a: &[f32], b: &[f32]) -> f64 {
         nb += (b[i] as f64).powi(2);
     }
     if na == 0.0 || nb == 0.0 {
-        0.0
+        Some(0.0)
     } else {
-        dot / (na.sqrt() * nb.sqrt())
+        Some(dot / (na.sqrt() * nb.sqrt()))
     }
 }
 
@@ -1117,6 +1238,27 @@ mod tests {
         assert_eq!(prints.len(), 1);
         // The stored fingerprint is exactly what the analysis-time dedup uses.
         assert_eq!(prints["d1"], intel_extract::simhash("T quantum widgets"));
+    }
+
+    #[test]
+    fn one_model_name_cannot_mix_embedding_dimensions() {
+        let s = tmp_store();
+        s.append_new(&[
+            doc("d1", "First", "first embedding"),
+            doc("d2", "Second", "second embedding"),
+        ])
+        .unwrap();
+        s.upsert_embeddings("shared-model", &[("d1".into(), vec![1.0; 32])])
+            .unwrap();
+
+        let err = s
+            .upsert_embeddings("shared-model", &[("d2".into(), vec![1.0; 1024])])
+            .expect_err("a model key must have exactly one stored dimension");
+        let message = err.to_string();
+        assert!(message.contains("shared-model"), "{message}");
+        assert!(message.contains("32"), "{message}");
+        assert!(message.contains("1024"), "{message}");
+        assert_eq!(s.embeddings_count("shared-model").unwrap(), 1);
     }
 
     #[test]

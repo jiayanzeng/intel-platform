@@ -353,6 +353,7 @@ cmd_demo() {
   step "running the acme-research pipeline"
   CORE_DB="$DEMO_DB" LLM_CHAT_PROFILE= \
     LLM_CHAT_BASE_URL="$MOCK_LLM_URL" LLM_EMBED_BASE_URL="$MOCK_LLM_URL" \
+    LLM_CHAT_MODEL=mock-chat LLM_EMBED_MODEL=mock-embed-32 \
     LLM_BASE_URL="$MOCK_LLM_URL" SUBSCRIPTIONS_PATH="$SUBSCRIPTIONS_PATH" \
     PYTHONPATH=shell py -m intel_shell.pipeline --client acme-research 2>&1 | sed 's/^/  /' | tail -6
 
@@ -387,11 +388,11 @@ cmd_golden() {
   export LLM_CHAT_PROFILE=
   export LLM_CHAT_BASE_URL="$MOCK_LLM_URL"
   export LLM_CHAT_API_KEY=
-  export LLM_CHAT_MODEL=default
+  export LLM_CHAT_MODEL=mock-chat
   export LLM_CHAT_TIMEOUT_SECONDS=5
   export LLM_EMBED_BASE_URL="$MOCK_LLM_URL"
   export LLM_EMBED_API_KEY=
-  export LLM_EMBED_MODEL=default
+  export LLM_EMBED_MODEL=mock-embed-32
   export LLM_EMBED_TIMEOUT_SECONDS=5
   export LLM_BASE_URL="$MOCK_LLM_URL"
   export LLM_API_KEY=
@@ -665,6 +666,22 @@ print(e.base_url if e else "")
   if [ -z "$embed_base" ]; then
     red "No embedding endpoint resolved. Set LLM_EMBED_BASE_URL to a server"
     red "that implements POST /v1/embeddings. Chat-only endpoints do not pass T4."
+    exit 2
+  fi
+  local embed_loopback
+  embed_loopback=$(EMBED_BASE="$embed_base" py -c '
+import ipaddress, os, urllib.parse
+host = urllib.parse.urlsplit(os.environ["EMBED_BASE"]).hostname or ""
+try:
+    loopback = ipaddress.ip_address(host).is_loopback
+except ValueError:
+    loopback = host.lower() == "localhost"
+print("1" if loopback else "0")
+')
+  if [ "$embed_loopback" != "1" ] && [ -z "${LLM_EMBED_MODEL:-}" ]; then
+    red "LLM_EMBED_MODEL is required for a non-loopback embedding endpoint."
+    red "An unnamed real provider would reuse the ambiguous key 'default' and"
+    red "can silently collide with vectors from a different model/dimension."
     exit 2
   fi
 

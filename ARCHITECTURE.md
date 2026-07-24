@@ -24,7 +24,7 @@ SHELL (Python, product layer — iterate freely)
         v  minimal JSON API over 127.0.0.1:8788, optional x-core-token
 CORE (Rust, engine — stable, invariant-bearing)
   apps/cored    /health /sectors /ingest /view /search /retrieve
-                /attest /embeddings(/missing) /signals/record /docs
+                /attest /embeddings(/missing,/stats) /signals/record /docs
   crates        core compliance ingest extract enrich analyze
                 store registry view retrieve
 ```
@@ -132,6 +132,7 @@ redirects fail closed rather than silently moving to another origin.
 | `/search` | GET | ranked docs; snippets nulled for IndexOnly | **snippet gated** |
 | `/retrieve` | POST | context assembly; full bodies (model context) | internal |
 | `/embeddings/missing` | GET | backfill work queue | internal |
+| `/embeddings/stats` | GET | stored vector count/dimension for one model key | internal |
 | `/embeddings` | POST | vectors posted back by the shell | internal |
 | `/signals/record` | POST | shell posts signals back | internal |
 | `/docs` | GET | full documents | internal |

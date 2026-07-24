@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **92 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **85 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -1003,3 +1003,50 @@ handoff.
   ports 8787/8788/8899 were clear. No protected bytes were deleted, renamed, or
   rewritten, and no dependency, lockfile, source, license, robots, sector, or
   dedup behavior changed.
+
+### E1 — embedding model keys enforce one dimension (verified 2026-07-24)
+
+- The pre-fix controls all failed in the intended way. Store accepted a
+  1,024-dimensional vector after a 32-dimensional vector under
+  `shared-model` (`Ok(1)`); `/retrieve` returned `notes: []` for a planted
+  32-versus-1,024 mismatch; and a freshly ingested but pre-embedded verifier
+  database printed a green `0 missing -> 0` backfill before reaching a
+  failure-capable later-stage double. Those are the three silent-success paths
+  E1 was required to remove.
+- `SqliteStore::upsert_embeddings` now validates an entire write against the
+  dimension already stored for its model key before inserting anything. Its
+  structured `DimensionMismatch` error names the model plus existing and
+  received dimensions. The 32→1,024 control now fails the write, reports
+  `shared-model`, `32`, and `1024`, and leaves the count at one.
+- Vector search filters rows whose recorded/blob dimension differs from the
+  query and returns a mismatch count. `/retrieve` turns that count into a
+  visible note; the planted control reports one ignored stored embedding for
+  `shared-model` against query dimension 1,024 and returns no vector hits.
+  `GET /embeddings/stats?model=` reports count, common dimension, and whether
+  legacy rows contain inconsistent dimensions.
+- The mock roles now use reserved explicit names (`mock-chat` and
+  `mock-embed-32`). `verify-llm` exits **2 before starting services** when a
+  non-loopback embedding endpoint has no `LLM_EMBED_MODEL`; the measured
+  control named the ambiguous model-key risk. `.env.example` requires an
+  explicit embedding model.
+- A fresh verifier database now passes backfill only after at least one provider
+  request, zero remaining missing documents, and stored statistics matching the
+  returned dimension. The pre-embedded control now prints **FAIL**, reports
+  zero real requests, and stops before fusion/public HC1. A corrected isolated
+  mock success control (with ambient proxy bypassed for loopback) passed **6/6**:
+  13 missing → 0, one request, provider/stored dimension 32, clean retrieval
+  notes, five hybrid context documents, five public citations, five IndexOnly
+  citation documents, and no gated overlap. This is harness evidence only, not
+  real-provider evidence.
+- `./run golden` remained exactly **11/11**, so E1's strict dimension guard did
+  not trip its decision gate. Final matrix: warning-denied offline and net
+  checks passed; **92 workspace tests**, **20 net tests**, and **85 shell
+  tests** passed; clippy, fmt, `bash -n run`, Python bytecode compilation, and
+  locked warning-denied Rust **1.78.0** check passed.
+- `./run verify-artifacts` remained **2/2 MATCH**. Final hashes are
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+  port 8788 was clear. HC3 is intact: core only stores and compares vectors and
+  makes no provider calls. No dependency, lockfile, source, license, robots,
+  sector, dedup, or protected-corpus behavior changed.

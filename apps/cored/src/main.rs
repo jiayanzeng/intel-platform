@@ -489,6 +489,13 @@ struct MissingDoc {
     body: String,
 }
 
+#[derive(Serialize)]
+struct EmbeddingStatsResp {
+    count: usize,
+    dim: Option<usize>,
+    inconsistent_dimensions: bool,
+}
+
 #[derive(Deserialize)]
 struct EmbedItem {
     doc_id: String,
@@ -908,6 +915,20 @@ async fn embeddings_missing(
     ))
 }
 
+async fn embeddings_stats(
+    State(st): State<Arc<AppState>>,
+    headers: HeaderMap,
+    Query(p): Query<MissingQ>,
+) -> Result<Json<EmbeddingStatsResp>, ApiErr> {
+    guard(&st, &headers)?;
+    let stats = st.store.embeddings_stats(&p.model).map_err(internal)?;
+    Ok(Json(EmbeddingStatsResp {
+        count: stats.count,
+        dim: stats.dim,
+        inconsistent_dimensions: stats.inconsistent_dimensions,
+    }))
+}
+
 async fn embeddings_upsert(
     State(st): State<Arc<AppState>>,
     headers: HeaderMap,
@@ -992,6 +1013,7 @@ async fn main() {
         .route("/retrieve", post(retrieve))
         .route("/attest", post(attest))
         .route("/embeddings/missing", get(embeddings_missing))
+        .route("/embeddings/stats", get(embeddings_stats))
         .route("/embeddings", post(embeddings_upsert))
         .route("/signals/record", post(signals_record))
         .route("/docs", get(docs))
@@ -1114,6 +1136,75 @@ mod tests {
         assert_eq!(response.clean_answer, intel_core::ATTEST_REFUSAL);
         assert_eq!(response.violations.len(), 1);
         assert_eq!(response.violations[0].doc_id, document.id);
+    }
+
+    #[tokio::test]
+    async fn retrieve_reports_stored_embedding_dimension_mismatches() {
+        let st = test_state();
+        do_ingest(&st, &["technology"], Some(&["techwire"])).await;
+        let doc_id = st.store.load_all().unwrap()[0].id.clone();
+        st.store
+            .upsert_embeddings("shared-model", &[(doc_id, vec![1.0; 32])])
+            .unwrap();
+        let stats = embeddings_stats(
+            State(st.clone()),
+            HeaderMap::new(),
+            Query(MissingQ {
+                model: "shared-model".into(),
+            }),
+        )
+        .await
+        .expect("embedding stats")
+        .0;
+        assert_eq!(stats.count, 1);
+        assert_eq!(stats.dim, Some(32));
+        assert!(!stats.inconsistent_dimensions);
+        let upsert_error = match embeddings_upsert(
+            State(st.clone()),
+            HeaderMap::new(),
+            Json(UpsertReq {
+                model: "shared-model".into(),
+                items: vec![EmbedItem {
+                    doc_id: "different-document".into(),
+                    vector: vec![1.0; 1024],
+                }],
+            }),
+        )
+        .await
+        {
+            Ok(_) => panic!("mixed dimensions must be refused by the endpoint"),
+            Err(error) => error,
+        };
+        assert_eq!(upsert_error.0, StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(upsert_error.1.contains("shared-model"), "{upsert_error:?}");
+        assert!(upsert_error.1.contains("32"), "{upsert_error:?}");
+        assert!(upsert_error.1.contains("1024"), "{upsert_error:?}");
+
+        let response = retrieve(
+            State(st),
+            HeaderMap::new(),
+            Json(RetrieveReq {
+                q: "DeepSeek".into(),
+                sectors: vec!["technology".into()],
+                k: 5,
+                model: Some("shared-model".into()),
+                query_vector: Some(vec![1.0; 1024]),
+            }),
+        )
+        .await
+        .expect("retrieve remains available with an explicit diagnostic")
+        .0;
+
+        assert!(
+            response.notes.iter().any(|note| {
+                note.contains("shared-model")
+                    && note.contains("1 stored embedding")
+                    && note.contains("1024")
+            }),
+            "dimension mismatch must be visible in /retrieve notes: {:?}",
+            response.notes
+        );
+        assert!(response.vector.is_empty());
     }
 
     // HC5 regression guard: a sector-only request runs every source in the

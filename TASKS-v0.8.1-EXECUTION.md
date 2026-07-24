@@ -493,7 +493,7 @@ still settling.
 - [x] **B0.1** — entering state re-measured; both protected DB hashes recorded; golden procedure captured verbatim
 - [x] **G1** — `./run golden` asserts every documented number; perturbation control fails correctly; CI job blocking
 - [x] **P1** — bare harvest cannot overwrite `live-smoke.db`; protected-artifact list + `verify-artifacts`
-- [ ] **E1** — embedding dimension/model-key collision closed in core, shell, and verifier; three controls proven
+- [x] **E1** — embedding dimension/model-key collision closed in core, shell, and verifier; three controls proven
 - [ ] **T4L** — 501 diagnosis confirmed; local embedding server reachable, model name and dimension recorded
 - [ ] **T4P** — adversarial HC1 leg reports GUARD FIRED / NOT EXERCISED / LEAK, with `violations` payload
 - [ ] **T4** — closed in one uninterrupted run, or deferred with the exact stage and response body

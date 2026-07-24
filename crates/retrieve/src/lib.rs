@@ -79,12 +79,27 @@ pub fn hybrid(
 
     // Vector leg — only if the shell supplied a query embedding.
     let vector: Vec<String> = match query_vector {
-        Some((model, qv)) if !qv.is_empty() => store
-            .vector_search(model, qv, sectors, top_k)
-            .map_err(|e| e.to_string())?
-            .into_iter()
-            .map(|(id, _)| id)
-            .collect(),
+        Some((model, qv)) if !qv.is_empty() => {
+            let search = store
+                .vector_search(model, qv, sectors, top_k)
+                .map_err(|e| e.to_string())?;
+            if search.dimension_mismatches > 0 {
+                let noun = if search.dimension_mismatches == 1 {
+                    "embedding"
+                } else {
+                    "embeddings"
+                };
+                notes.push(format!(
+                    "vector leg ignored {} stored {} for model '{}' because \
+                     its dimension did not match query dimension {}",
+                    search.dimension_mismatches,
+                    noun,
+                    model,
+                    qv.len()
+                ));
+            }
+            search.hits.into_iter().map(|(id, _)| id).collect()
+        }
         Some(_) => {
             notes.push("vector leg skipped: empty query vector supplied".into());
             Vec::new()
