@@ -629,6 +629,28 @@ correct them with a new dated entry.
   `bash -n`, and locked Rust **1.78.0** all passed.
 - commit: this T4L completion/status commit (see git history)
 
+### 2026-07-24 · T4P completion — real adversarial outcome measured
+
+- owner: 🤖 Codex
+- measured: real forwarded Gemma chat + EmbeddingGemma run ingested 13/13 and
+  passed **6/6**. Embeddings completed 13 missing → 0 in one 13-full-body
+  request, dimension/stats 768, latency 0.50s; retrieval notes were clean with
+  five hybrid context documents.
+- public HC1: ordinary answer returned four citations, all four IndexOnly, with
+  no independent-oracle overlap. Adversarial outcome was **NOT EXERCISED** with
+  `violations: []` and seven IndexOnly context documents. No real-model guard
+  firing is claimed.
+- HC13: no batch-size rejection, short response, context-window rejection, or
+  stall observed. Silent truncation and raw pre-sort response ordering remain
+  unobservable from this client response.
+- acceptance: adversarial leg exercised against real model ✅ · three-state
+  outcome and violations recorded ✅ · LEAK control remains proven ✅ ·
+  result classified as non-pass/non-leak rather than promoted to guard firing ✅
+- golden/verification: golden **11/11**, artifacts **2/2**, warning-denied
+  offline/net checks, **92** workspace, **20** net, **88** shell, clippy, fmt,
+  `bash -n`, and locked Rust **1.78.0** all passed.
+- commit: this T4P completion/status commit (see git history)
+
 ### 2026-07-24 · T4P — adversarial HC1 positive control implemented
 
 - owner: 🤖 Codex

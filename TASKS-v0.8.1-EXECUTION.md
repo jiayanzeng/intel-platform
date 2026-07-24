@@ -495,7 +495,7 @@ still settling.
 - [x] **P1** — bare harvest cannot overwrite `live-smoke.db`; protected-artifact list + `verify-artifacts`
 - [x] **E1** — embedding dimension/model-key collision closed in core, shell, and verifier; three controls proven
 - [x] **T4L** — 501 diagnosis confirmed; dedicated LAN embedding model measured at 768 dimensions; split roles configured
-- [ ] **T4P — DEFERRED (real-model gate)** — verifier and three controls complete; LAN chat refused connections, so no real-model outcome
+- [x] **T4P** — real Gemma adversarial leg reported NOT EXERCISED with no violations; GUARD FIRED and LEAK controls preserved
 - [ ] **T4 — DEFERRED (embedding gate)** — uninterrupted run stopped at DMXAPI HTTP 503 after 13/13 fixture ingest; 0/1; client did not expose response body
 - [ ] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch
 - [ ] **C1** — CI runs Python 3.11 and 3.12; shellcheck on `run`; floor recorded
