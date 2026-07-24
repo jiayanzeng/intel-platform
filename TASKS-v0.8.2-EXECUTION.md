@@ -630,7 +630,7 @@ open the materialization gate.** Measuring is not implementing.
 - [x] **A1** — fingerprint verifier can fail; planted NULL survives the run; wired into `./run test` and CI
 - [x] **A2** — `/retrieve`, `fingerprints()`, and canonical assignment all fail closed on a missing fingerprint; `STATE.md §2.10` corrected
 - [x] **A3** — sector filtering and id lookup in SQL at all four call sites; `/retrieve` cost measured against a disposable live copy
-- [ ] **A4** — `/attest` scope non-forgeable, or the risk explicitly accepted with a trigger
+- [x] **A4** — `/attest` scope non-forgeable, or the risk explicitly accepted with a trigger
 - [ ] **A5** — view cache bounded and its key validated
 - [ ] **A6** — `version-check` covers changelog and tag; both planted mismatches caught
 - [ ] **D1** — HC9 resolved by scope; every stale status claim corrected; closed-cycle rationale bannered, not rewritten

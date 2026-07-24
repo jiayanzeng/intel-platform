@@ -938,3 +938,29 @@ correct them with a new dated entry.
 - notes / gate: output-preservation gate clear. The benchmark copies lived
   under `/private/tmp`; neither protected archive was opened through
   `SqliteStore` or modified.
+
+### 2026-07-24 · A4 — accepted risk: a receipt cannot bind a shell-owned prompt
+
+- owner: 🤖 Codex
+- measured: source tracing found `/retrieve` returns context before the shell
+  constructs the prompt, `/attest` receives only values the shell chooses, and
+  the shell owns the public `/v1/ask` response. Under the proposed
+  `{answer, receipt}` request, a valid receipt minted for retrieval B is
+  indistinguishable from the intended receipt for retrieval A; no request
+  field identifies which context actually entered the prompt. Omitting
+  `/attest` altogether also leaves no event for the core to refuse.
+- acceptance: prescribed different-retrieval negative control cannot be made
+  failure-capable with the proposed seam ❌ · no misleading receipt mechanism
+  shipped ✅ · accepted risk and exact trust boundary recorded in
+  `STATE.md §2.1` ✅ · revisit trigger recorded ✅ · `ARCHITECTURE.md` corrected
+  to stop claiming arbitrary shell rewrites are constrained ✅
+- golden E2E: expected before execution and measured unchanged: **11/11**,
+  including `/v1/ask` at **4 citations**.
+- verification: protected artifacts **2/2 MATCH**; `git diff --check` clean;
+  no runtime seam or `Cargo.lock` change.
+- commit: this A4 gate-result commit (see git history)
+- notes / gate: **gate tripped.** The shipped shell remains in the trusted
+  computing base for answer attestation. Revisit before supporting an
+  untrusted/third-party shell or restating rewrite-resistant HC1; the required
+  design must make public egress traverse a non-bypassable core-owned
+  attestation boundary without moving the model call into core (HC3).

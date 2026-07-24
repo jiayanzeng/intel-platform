@@ -54,8 +54,13 @@ Condensed from `STATE.md §2`.
 1. **License gating lives in the core.** `store.search` nulls snippets for
    `IndexOnly`; `/view` hydrates evidence with `excerpt: Option<String>` gated by
    `License::redistributable()`; `/attest` refuses a model answer that overlaps
-   gated context. The shell receives bodies only on the internal model-context
-   seam, and the public answer is structurally checked before return.
+   gated context. The shipped shell receives bodies only on the internal
+   model-context seam and checks the answer before return. A4 proved that the
+   shell remains in this path's trusted computing base: a receipt cannot tell
+   the core which retrieval actually supplied a shell-owned prompt or force a
+   rewritten shell to call `/attest`. Supporting an untrusted shell requires a
+   non-bypassable, core-owned public-response boundary; HC3 still keeps the
+   model call itself out of core.
 2. **Entitlement *decision* in the shell; sector *filtering* also in core SQL.**
    Defense in depth: a shell bug can grant wrong sectors, never bypass the filter.
 3. **The core never calls an LLM.** Embeddings round-trip through the shell;
@@ -139,14 +144,16 @@ redirects fail closed rather than silently moving to another origin.
 | `/attest` | POST | `{answer, context_doc_ids}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
 
 The public surface is the shell's `/v1/*`. The core is loopback-only; `/retrieve`
-and `/docs` carry full bodies only for analysis, and `/attest` prevents copied
-IndexOnly context from reaching `/v1/ask`.
+and `/docs` carry full bodies only for analysis, and the shipped shell sends
+model output through `/attest` before `/v1/ask` returns it. This prevents copied
+IndexOnly context on the shipped path, but does not constrain an arbitrary
+rewrite that omits the call or supplies a false scope (A4 accepted risk).
 
 ## 6. Invariant map (which invariant lives where, and why)
 
 | invariant | enforced in | why there |
 |---|---|---|
-| HC1 no gated text public | core (`/search`, `/view`; `/attest` for `/v1/ask`) | the shell is rewritable; an invariant a rewrite can delete is not one |
+| HC1 no gated text public | core (`/search`, `/view`); core + trusted shipped shell (`/attest` for `/v1/ask`) | source gating is unconditional; answer attestation is effective on the shipped path but remains bypassable by a rewritten shell until public egress crosses a core-owned boundary (A4) |
 | HC2 sector filtering | core SQL | a shell bug must not bypass it |
 | HC3 no LLM in core | core (by omission) | keeps the engine deterministic and offline-testable |
 | HC8 politeness | core `AppState` | a TTL / limiter that doesn't outlive the request is theatre |
