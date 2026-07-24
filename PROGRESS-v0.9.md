@@ -596,3 +596,90 @@ recorded here in a separate audit-record commit.
   exact unchecked non-result ⏳ · protected artifacts exact ✅ · golden
   unchanged ✅
 - commit: 18887f7113c27bb2f0b91d5a0b37fb396961ac64
+
+### 2026-07-24 · P2 — live provider leg completed in-cycle
+
+- owner: 🤖 Codex + 🧑 operator-owned SSH forwards
+- gate: clear on the resumed run. The operator confirmed the same SSH forwards
+  used for T4. `./run config` preserved the configured LAN provider identities
+  and 30-second role timeouts while resolving only transport to chat
+  `http://127.0.0.1:18080/v1` and embeddings
+  `http://127.0.0.1:18081/v1`; keys remained redacted.
+- minimal live probe: **PASS**. Chat `/health` and `/v1/models` returned HTTP
+  200 and the configured
+  `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf` identity. Intentional chat
+  `/v1/embeddings` returned HTTP 501 with the required body:
+  `This server does not support embeddings. Start it with --embeddings`.
+  Embedding `/health` and `/v1/models` returned HTTP 200 and
+  `embeddinggemma-300M-Q8_0.gguf`. One short embedding request returned HTTP
+  200, exactly one index-0 vector, and measured dimension **768**, equal to the
+  predeclared expected value. No transport, identity, or capability gate fired.
+- uninterrupted verifier: one fresh `./run verify-llm` run owned
+  `/var/folders/cl/4zcmgrj928n_y07msdz5pjj00000gn/T/tmp.dnoAki7ze5/verify.db`,
+  ingested **13 fetched / 13 new**, and passed **6/6 required checks**:
+  - embedding backfill made exactly one real request, reached **13 missing →
+    0**, measured provider dimension **768**, and matched stored stats
+    `{count: 13, dim: 768, inconsistent_dimensions: false}` in **0.47s**;
+  - fusion reported clean notes and five hybrid context documents in
+    **0.04s**;
+  - ordinary public `/v1/ask` completed in **17.01s**, returned four citations,
+    exercised four IndexOnly citation documents, and returned no
+    independent-oracle gated overlap after attestation;
+  - adversarial public `/v1/ask` completed in **9.04s** and reported
+    `NOT EXERCISED`, `violations: []`, across seven IndexOnly context
+    documents. This is not evidence that a real model tripped `/attest`, and
+    the outcome was never `LEAK`.
+- diagnostics: the verifier reported five non-failing diagnostics—four stage
+  latencies and the adversarial `NOT EXERCISED` outcome—plus the existing
+  third-party Starlette deprecation warning. It completed without interruption,
+  tore down the isolated core, and exited zero.
+- measured matrix: the post-live `./run ci-local` passed all **16/16** jobs:
+  version, Python-floor byte-compilation, ShellCheck, warning-denied workspace
+  check and **98 tests**, warning-denied net check and **20 tests**, clippy,
+  fmt, locked Rust 1.78 check/tests, **99 Python 3.11 shell tests**, golden
+  **11/11**, protected artifacts **2/2**, persisted fingerprints, and progress
+  validation. The Python 3.12.13 lane independently passed the same **99 shell
+  tests**. Both shell lanes emitted one Starlette warning.
+- golden-E2E delta: **none**. All eleven named assertions remained exact.
+- final isolation: `./run down` completed; ports 8787, 8788, and 8899 had no
+  listener. `data/core.db` remained
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  / 6,729,728 bytes / 1,764 documents, and `data/live-smoke.db` remained
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`
+  / 9,490,432 bytes / 2,600 documents; all logical fields matched. No provider
+  configuration, dependency, lockfile, architecture invariant, or protected
+  artifact changed.
+- exact live commands:
+
+  ```bash
+  LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:18080/v1 \
+  LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:18081/v1 \
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run config
+
+  LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:18080/v1 \
+  LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:18081/v1 \
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
+
+  LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:18080/v1 \
+  LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:18081/v1 \
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run verify-llm
+  ```
+
+- exact regression commands:
+
+  ```bash
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  ./run down
+  lsof -nP -iTCP:8787 -sTCP:LISTEN
+  lsof -nP -iTCP:8788 -sTCP:LISTEN
+  lsof -nP -iTCP:8899 -sTCP:LISTEN
+  ./run verify-artifacts
+  ```
+
+- acceptance: harness half recorded ✅ · minimal live probe passed ✅ ·
+  chat 501 diagnosis and both identities captured ✅ · embedding index and
+  dimension 768 measured ✅ · one uninterrupted 6/6 verifier recorded ✅ ·
+  keys absent ✅ · protected artifacts exact ✅ · golden unchanged ✅ · P2
+  checked complete ✅
+- commit: 3187f1eeba7c370bd5e546d756655500862ccf6f
