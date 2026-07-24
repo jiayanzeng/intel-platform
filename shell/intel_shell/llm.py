@@ -30,6 +30,10 @@ Env:
                          positive per-role request timeouts
   LLM_TIMEOUT_SECONDS    backward-compatible shared timeout fallback
 
+  LLM_CHAT_TRANSPORT_BASE_URL / LLM_EMBED_TRANSPORT_BASE_URL
+                         optional per-command routes for the already-resolved
+                         provider identities (for example, SSH local forwards)
+
   LLM_BASE_URL / LLM_API_KEY / LLM_MODEL remain backward-compatible fallbacks
   for one provider that implements both chat and embeddings.
 
@@ -44,8 +48,10 @@ sources — no data gatekeeper is involved.
 
 from __future__ import annotations
 
+import ipaddress
 import math
 import os
+import urllib.parse
 
 import httpx
 
@@ -111,6 +117,21 @@ def _embed_settings_from_env() -> tuple[str | None, str | None, str]:
     )
 
 
+def _transport_base_url(role: str, provider_base_url: str) -> str:
+    return (
+        os.environ.get(f"LLM_{role}_TRANSPORT_BASE_URL")
+        or provider_base_url
+    )
+
+
+def _is_loopback(base_url: str) -> bool:
+    host = urllib.parse.urlsplit(base_url).hostname or ""
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return host.lower() == "localhost"
+
+
 class ChatClient:
     def __init__(
         self,
@@ -118,13 +139,18 @@ class ChatClient:
         api_key: str | None = None,
         model: str = "default",
         timeout_seconds: float = DEFAULT_MODEL_TIMEOUT_SECONDS,
+        provider_base_url: str | None = None,
     ):
         self.base_url = base_url.rstrip("/")
+        self.provider_base_url = (provider_base_url or base_url).rstrip("/")
         self.model = model
         self.timeout_seconds = timeout_seconds
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         self._c = httpx.Client(
-            base_url=self.base_url, headers=headers, timeout=timeout_seconds
+            base_url=self.base_url,
+            headers=headers,
+            timeout=timeout_seconds,
+            trust_env=not _is_loopback(self.base_url),
         )
 
     def chat(self, system: str, user: str) -> str:
@@ -157,13 +183,18 @@ class EmbedClient:
         api_key: str | None = None,
         model: str = "default",
         timeout_seconds: float = DEFAULT_MODEL_TIMEOUT_SECONDS,
+        provider_base_url: str | None = None,
     ):
         self.base_url = base_url.rstrip("/")
+        self.provider_base_url = (provider_base_url or base_url).rstrip("/")
         self.model = model
         self.timeout_seconds = timeout_seconds
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         self._c = httpx.Client(
-            base_url=self.base_url, headers=headers, timeout=timeout_seconds
+            base_url=self.base_url,
+            headers=headers,
+            timeout=timeout_seconds,
+            trust_env=not _is_loopback(self.base_url),
         )
 
     def embed(self, texts: list[str]) -> list[list[float]]:
@@ -183,11 +214,25 @@ def chat_from_env() -> ChatClient | None:
     base, api_key, model = _chat_settings_from_env()
     if not base:
         return None
-    return ChatClient(base, api_key, model, _timeout_from_env("CHAT"))
+    transport_base = _transport_base_url("CHAT", base)
+    return ChatClient(
+        transport_base,
+        api_key,
+        model,
+        _timeout_from_env("CHAT"),
+        provider_base_url=base,
+    )
 
 
 def embed_from_env() -> EmbedClient | None:
     base, api_key, model = _embed_settings_from_env()
     if not base:
         return None
-    return EmbedClient(base, api_key, model, _timeout_from_env("EMBED"))
+    transport_base = _transport_base_url("EMBED", base)
+    return EmbedClient(
+        transport_base,
+        api_key,
+        model,
+        _timeout_from_env("EMBED"),
+        provider_base_url=base,
+    )

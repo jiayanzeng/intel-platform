@@ -28,6 +28,8 @@ LLM_ENV_KEYS = (
     "LLM_EMBED_MODEL",
     "LLM_CHAT_TIMEOUT_SECONDS",
     "LLM_EMBED_TIMEOUT_SECONDS",
+    "LLM_CHAT_TRANSPORT_BASE_URL",
+    "LLM_EMBED_TRANSPORT_BASE_URL",
     "LLM_TIMEOUT_SECONDS",
     "LLM_BASE_URL",
     "LLM_API_KEY",
@@ -169,6 +171,47 @@ def test_legacy_shared_timeout_configures_both_roles(
     assert llm.chat_from_env() is not None
     assert llm.embed_from_env() is not None
     assert [call["timeout"] for call in calls] == [9.0, 9.0]
+
+
+def test_transport_overrides_route_only_after_role_identity_resolution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _clear_llm_env(monkeypatch)
+    monkeypatch.setenv("LLM_CHAT_PROFILE", "lan")
+    monkeypatch.setenv("LLM_LAN_BASE_URL", "http://lan.test/v1")
+    monkeypatch.setenv("LLM_LAN_API_KEY", "lan-secret")
+    monkeypatch.setenv("LLM_LAN_CHAT_MODEL", "lan-chat")
+    monkeypatch.setenv("LLM_EMBED_BASE_URL", "https://embed.test/v1")
+    monkeypatch.setenv("LLM_EMBED_API_KEY", "embed-secret")
+    monkeypatch.setenv("LLM_EMBED_MODEL", "embed-model")
+    monkeypatch.setenv(
+        "LLM_CHAT_TRANSPORT_BASE_URL",
+        "http://127.0.0.1:18080/v1",
+    )
+    monkeypatch.setenv(
+        "LLM_EMBED_TRANSPORT_BASE_URL",
+        "http://127.0.0.1:18081/v1",
+    )
+    calls: list[dict] = []
+
+    def capture_client(**kwargs):
+        calls.append(kwargs)
+        return object()
+
+    monkeypatch.setattr(llm.httpx, "Client", capture_client)
+
+    chat = llm.chat_from_env()
+    embed = llm.embed_from_env()
+
+    assert chat is not None
+    assert embed is not None
+    assert chat.provider_base_url == "http://lan.test/v1"
+    assert chat.base_url == "http://127.0.0.1:18080/v1"
+    assert chat.model == "lan-chat"
+    assert embed.provider_base_url == "https://embed.test/v1"
+    assert embed.base_url == "http://127.0.0.1:18081/v1"
+    assert embed.model == "embed-model"
+    assert [call["trust_env"] for call in calls] == [False, False]
 
 
 @pytest.mark.parametrize("bad_timeout", ["0", "-1", "not-a-number"])

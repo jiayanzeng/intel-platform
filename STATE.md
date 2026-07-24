@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 D3 reconciles the active runbook with measured B0/A1 state before P2.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **93 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 P2's failure-capable provider-probe harness is shipped locally, but its live leg is transport-blocked and P2 remains open.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **99 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -244,6 +244,63 @@ protected evidence 2/2, fingerprint fixture, and progress validation. The
 fresh Python 3.12 lane independently passed the same **93 shell tests**.
 No Rust, Python, `run`, dependency, requirement, architecture, or protected
 data change was made; `Cargo.lock` remained untouched.
+
+**v0.9 P2 harness half is complete; live leg is a non-result (measured
+2026-07-24).** `./run probe-providers` resolves the selected chat and embedding
+identities through the same shell configuration as the product path. Optional
+`LLM_CHAT_TRANSPORT_BASE_URL` and `LLM_EMBED_TRANSPORT_BASE_URL` values replace
+only the request route after identity resolution; configured endpoint, model,
+credential, and role timeout remain authoritative. Loopback transport aliases
+disable ambient proxies. `./run config` prints configured and effective
+endpoints, models, timeouts, and the expected embedding dimension with keys
+redacted. `LLM_EMBED_EXPECTED_DIMENSION` must name the last wire-measured width;
+the command will not infer or refresh it.
+
+The bounded probe requests chat `/health` and `/v1/models`, requires the known
+HTTP 501 unsupported-embeddings diagnosis from the chat role, then requests
+embedding `/health`, `/v1/models`, and one short embedding. Success requires
+the configured identities, exactly one index-0 finite vector, and the
+predeclared dimension. Every response records route, status, and a bounded,
+key-redacted body. No-response failures explicitly record `status=none` and
+`body=none`. The only outcomes are `PASS`, `TRANSPORT BLOCKED`,
+`IDENTITY CHANGED`, and `CAPABILITY FAILED`; only `PASS` exits zero.
+
+Five local-double controls are failure-capable. The passing double returned the
+known chat 501 and one four-dimensional embedding while echoing both
+Authorization values; output replaced both with `[REDACTED]`. A wrong chat
+model and a five-versus-four vector each produced `IDENTITY CHANGED`; an empty
+embedding list produced `CAPABILITY FAILED`; and a real 200 ms delayed health
+response under a 50 ms role timeout produced `ReadTimeout` and
+`TRANSPORT BLOCKED`. All three failure classes exited non-zero. The targeted
+provider/config suite passed **15/15**; the full shell suite passed **99 tests**
+under Python 3.11.4 and independently under the rebuilt Python 3.12.13 lane,
+each with the one third-party Starlette warning.
+
+The live gate is blocked. Bounded direct curls to
+`http://192.168.0.192:8080/health` and
+`http://192.168.0.192:8081/health` each returned exit **7**, HTTP **000**,
+`Couldn't connect to server`, in 1 ms. The new command, with expected
+dimension **768**, classified the direct chat route `TRANSPORT BLOCKED`, exit
+1, with `[Errno 65] No route to host`; it correctly stopped before later
+provider stages. The prior transport-only aliases are also absent:
+`http://127.0.0.1:18080/health` returned `[Errno 61] Connection refused`, and
+`:18081/health` returned curl exit 7 / HTTP 000 immediately. No provider HTTP
+response exists, no model or dimension was re-measured, and `./run verify-llm`
+was not invoked. The required next action remains operator-owned: start the
+same SSH forwards and confirm the route, then rerun the probe and, only after
+`PASS`, one uninterrupted verifier in this cycle. P2's checkbox remains open;
+this non-result does not create a correction-cycle file.
+
+Local acceptance passed all **16/16** `./run ci-local` jobs: warning-denied
+workspace/net checks, **98 workspace tests**, **20 net tests**, clippy, fmt,
+locked Rust 1.78 check/tests, ShellCheck, Python floor byte-compilation, the
+**99-test** Python 3.11 shell lane, golden **11/11**, protected artifacts
+**2/2**, fingerprint fixture, version consistency, and progress validation.
+A hostile inherited pair of transport aliases pointing at unused loopback
+ports was planted around a separate golden run; golden still passed 11/11,
+proving its deterministic mock route clears live overrides. No dependency or
+architecture invariant changed; `Cargo.lock` and both protected artifacts
+remained untouched.
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,

@@ -230,6 +230,17 @@ error, then re-run that leg in this cycle once the operator confirms the route.
 Do not open a new correction-cycle file. P2's checklist box remains unchecked
 until both the harness and live-wire halves are recorded.
 
+**Execution status — 2026-07-24.** The harness half is implemented and its
+failure-capable controls are green. The configured direct health routes
+`http://192.168.0.192:8080/health` and `:8081/health` each returned curl exit 7,
+HTTP 000, `Couldn't connect to server`; the command classified the direct chat
+route `TRANSPORT BLOCKED` with `[Errno 65] No route to host`. The prior
+transport-only aliases are not currently present: chat
+`http://127.0.0.1:18080/health` returned `[Errno 61] Connection refused`, and
+embedding `:18081/health` returned curl exit 7 / HTTP 000. The live leg is
+therefore a non-result awaiting the named operator tunnel action and an
+in-cycle rerun. P2 remains unchecked.
+
 **Steps.**
 1. Document environment precedence for direct LAN settings and per-command
    transport overrides. `./run config` must print the effective, redacted

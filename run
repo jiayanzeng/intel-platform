@@ -12,12 +12,13 @@
 #   ./run golden          assert the complete golden E2E, start to finish
 #   ./run harvest-arxiv   the LIVE arXiv harvest — the one test only a box
 #                         with real network egress can do
+#   ./run probe-providers bounded identity/capability probe for both model roles
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
 #
-# The offline commands need only the Rust toolchain and Python 3.11+. The two
-# live commands additionally need outbound network (and, for verify-llm, a
-# model endpoint + key). They fail loudly and specifically if that is missing,
-# rather than pretending to have run.
+# The offline commands need only the Rust toolchain and Python 3.11+. The live
+# commands additionally need outbound network (and the model commands need
+# configured endpoints/keys). They fail loudly and specifically if that is
+# missing, rather than pretending to have run.
 
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -449,6 +450,7 @@ cmd_demo() {
   step "running the acme-research pipeline"
   CORE_DB="$DEMO_DB" LLM_CHAT_PROFILE='' \
     LLM_CHAT_BASE_URL="$MOCK_LLM_URL" LLM_EMBED_BASE_URL="$MOCK_LLM_URL" \
+    LLM_CHAT_TRANSPORT_BASE_URL='' LLM_EMBED_TRANSPORT_BASE_URL='' \
     LLM_CHAT_MODEL=mock-chat LLM_EMBED_MODEL=mock-embed-32 \
     LLM_BASE_URL="$MOCK_LLM_URL" SUBSCRIPTIONS_PATH="$SUBSCRIPTIONS_PATH" \
     PYTHONPATH=shell py -m intel_shell.pipeline --client acme-research 2>&1 | sed 's/^/  /' | tail -6
@@ -486,10 +488,12 @@ cmd_golden() {
   export LLM_CHAT_API_KEY=
   export LLM_CHAT_MODEL=mock-chat
   export LLM_CHAT_TIMEOUT_SECONDS=5
+  export LLM_CHAT_TRANSPORT_BASE_URL=
   export LLM_EMBED_BASE_URL="$MOCK_LLM_URL"
   export LLM_EMBED_API_KEY=
   export LLM_EMBED_MODEL=mock-embed-32
   export LLM_EMBED_TIMEOUT_SECONDS=5
+  export LLM_EMBED_TRANSPORT_BASE_URL=
   export LLM_BASE_URL="$MOCK_LLM_URL"
   export LLM_API_KEY=
   export LLM_TIMEOUT_SECONDS=5
@@ -719,19 +723,17 @@ cmd_config() {
   ensure_venv
   echo "environment file: $ENV_FILE"
   echo "chat profile: ${LLM_CHAT_PROFILE:-direct/legacy}"
-  PYTHONPATH=shell py -c '
-from intel_shell.llm import chat_from_env, embed_from_env
-chat = chat_from_env()
-embed = embed_from_env()
-print("chat endpoint:", chat.base_url if chat else "(unset)")
-print("chat model:", chat.model if chat else "(unset)")
-print("chat timeout:", f"{chat.timeout_seconds:g}s" if chat else "(unset)")
-print("embedding endpoint:", embed.base_url if embed else "(unset)")
-print("embedding model:", embed.model if embed else "(unset)")
-print("embedding timeout:", f"{embed.timeout_seconds:g}s" if embed else "(unset)")
-'
+  PYTHONPATH=shell py tools/probe_providers.py --config-only "$@"
   echo "harvest DB: $(harvest_db_path)"
-  echo "keys: redacted (inspect .env locally)"
+}
+
+# Probe the already-resolved provider identities without touching the core or
+# protected archives. Transport-only overrides can point the command runner at
+# operator-owned forwards while models, credentials, and timeouts still come
+# from the selected roles.
+cmd_probe_providers() {
+  ensure_venv
+  PYTHONPATH=shell py tools/probe_providers.py "$@"
 }
 
 # Point the shell at REAL chat and embedding endpoints and run the full
@@ -744,7 +746,7 @@ cmd_verify_llm() {
     *) red "LLM_CHAT_PROFILE must be 'lan', 'online', or blank."; exit 2 ;;
   esac
 
-  local chat_base embed_base
+  local chat_base embed_base embed_provider_base
   chat_base=$(PYTHONPATH=shell py -c '
 from intel_shell.llm import chat_from_env
 c = chat_from_env()
@@ -754,6 +756,11 @@ print(c.base_url if c else "")
 from intel_shell.llm import embed_from_env
 e = embed_from_env()
 print(e.base_url if e else "")
+')
+  embed_provider_base=$(PYTHONPATH=shell py -c '
+from intel_shell.llm import embed_from_env
+e = embed_from_env()
+print(e.provider_base_url if e else "")
 ')
   if [ -z "$chat_base" ]; then
     red "No chat endpoint resolved. Fill .env and select LLM_CHAT_PROFILE=lan"
@@ -766,7 +773,7 @@ print(e.base_url if e else "")
     exit 2
   fi
   local embed_loopback
-  embed_loopback=$(EMBED_BASE="$embed_base" py -c '
+  embed_loopback=$(EMBED_BASE="$embed_provider_base" py -c '
 import ipaddress, os, urllib.parse
 host = urllib.parse.urlsplit(os.environ["EMBED_BASE"]).hostname or ""
 try:
@@ -841,6 +848,9 @@ intel-platform — ./run <command>
   Live (needs real network egress):
     harvest-arxiv  do a REAL arXiv harvest — the test a fixture cannot stand in
                    for. Refuses to run (exit 2) if arXiv is unreachable.
+    probe-providers
+                   bounded health/models/capability probe for the resolved
+                   chat and embedding roles; never prints keys
     verify-llm     load .env, start an isolated fixture core, and verify the
                    selected real chat + embedding endpoints end to end.
 
@@ -852,6 +862,7 @@ intel-platform — ./run <command>
     ./run config
     ./run harvest-arxiv                    # fresh data/live-<timestamp>-<pid>.db
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
+    LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }
@@ -873,8 +884,9 @@ case "$cmd" in
                  green "cored on $CORE_URL, mock LLM on $MOCK_LLM_URL. Stop with ./run down." ;;
   down)          cmd_down ;;
   harvest-arxiv) cmd_harvest_arxiv "$@" ;;
+  probe-providers) cmd_probe_providers "$@" ;;
   verify-llm)    cmd_verify_llm "$@" ;;
-  config)        cmd_config ;;
+  config)        cmd_config "$@" ;;
   api)           cmd_api ;;
   help|-h|--help) usage ;;
   *) red "unknown command: $cmd"; echo; usage; exit 1 ;;

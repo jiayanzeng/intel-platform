@@ -162,6 +162,7 @@ Embeddings are configured independently:
 LLM_EMBED_BASE_URL=https://your-embedding-provider.example/v1
 LLM_EMBED_API_KEY=replace-with-your-key
 LLM_EMBED_MODEL=your-embedding-model
+LLM_EMBED_EXPECTED_DIMENSION=replace-with-last-measured-width
 
 # Bound provider waits; role-specific values override LLM_TIMEOUT_SECONDS.
 LLM_CHAT_TIMEOUT_SECONDS=30
@@ -186,11 +187,38 @@ The old `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL` variables remain supporte
 for a single provider that implements both chat and embeddings. Role-specific
 and selected-profile values take precedence.
 
-### The two things `./run` cannot fake
+Provider identity and transport are resolved in that order. The selected
+profile or direct role supplies the configured endpoint, model, credential, and
+timeout. For a command runner that cannot route the configured endpoint,
+`LLM_CHAT_TRANSPORT_BASE_URL` and `LLM_EMBED_TRANSPORT_BASE_URL` replace only
+the request route for that invocation; they do not change the expected model,
+credential, or timeout. Keep machine-specific tunnel aliases uncommitted:
+
+```bash
+LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:<chat-port>/v1 \
+LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:<embedding-port>/v1 \
+LLM_EMBED_EXPECTED_DIMENSION=<last-measured-width> \
+  ./run config
+
+LLM_CHAT_TRANSPORT_BASE_URL=http://127.0.0.1:<chat-port>/v1 \
+LLM_EMBED_TRANSPORT_BASE_URL=http://127.0.0.1:<embedding-port>/v1 \
+LLM_EMBED_EXPECTED_DIMENSION=<last-measured-width> \
+  ./run probe-providers
+```
+
+The per-command transport variables have precedence over the configured role
+endpoints because they are applied after identity resolution. `./run config`
+prints both configured and effective endpoints, models, timeouts, and the
+expected dimension with keys redacted. The probe bounds every request by its
+role timeout and exits non-zero as `TRANSPORT BLOCKED`, `IDENTITY CHANGED`, or
+`CAPABILITY FAILED`; only `PASS` permits `./run verify-llm` to follow with the
+same transport overrides.
+
+### The two live seams `./run` cannot fake
 
 Everything above runs against fixtures and a mock model, on purpose — it is
-deterministic and needs no network. Two commands reach the real world, and each
-**refuses to pretend** if it can't:
+deterministic and needs no network. The following commands reach the real
+world, and each **refuses to pretend** if it can't:
 
 ```bash
 ./run harvest-arxiv    # a REAL arXiv harvest into a fresh timestamped DB.
@@ -200,6 +228,9 @@ deterministic and needs no network. Two commands reach the real world, and each
 
 ./run verify-llm       # loads .env; creates and tears down an isolated fixture
                        # core; runs embeddings + fusion + public HC1 checks.
+
+./run probe-providers  # bounded health/models/capability probe for the same
+                       # configured roles; reports one of four classifications.
 
 ./run verify-artifacts # checks bytes, corpus facts, and cursors for both DBs.
 ./run evidence-report  # prints those measured facts without changing anything.
