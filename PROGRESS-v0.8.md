@@ -810,3 +810,31 @@ correct them with a new dated entry.
   shell tests under Python 3.11.4 and 3.12.13; clippy, fmt, ShellCheck, floor
   byte-compilation, and locked Rust **1.78.0** check/tests passed.
 - commit: this v0.9 runbook/status commit (see git history)
+
+### 2026-07-24 · B0.2 — v0.8.2 entering state and archive integrity verified
+
+- owner: 🤖 Codex
+- measured: clean Cargo target; pinned Rust/Cargo 1.91.1; floor Rust/Cargo
+  1.78.0; Python 3.11.4 and 3.12.13. Workspace tests **92**, net tests **20**,
+  and shell tests **88** on each Python lane. Warning-denied offline/net checks,
+  clippy, fmt, ShellCheck 0.11.0, Python byte-compilation, and locked Rust 1.78
+  check/tests all exited 0.
+- provenance: `HEAD=e212a7cdf269c171e1db4fb06002090a0939a95a`;
+  `git describe --tags=v0.8.0-2-ge212a7c`; worktree contained only
+  `?? TASKS-v0.8.2-EXECUTION.md`; `git remote -v` produced no output.
+- census: read-only direct SQLite measured `data/core.db` as
+  **1,764 documents / 0 NULL simhash / 0 NULL canonical_id / integrity ok** and
+  `data/live-smoke.db` as
+  **2,600 documents / 0 NULL simhash / 0 NULL canonical_id / integrity ok**.
+  Post-census artifact verification remained **2/2 MATCH** at
+  `db2f186e…1a37a0` and `94f03e9e…0462c4a`.
+- acceptance: every entering claim re-measured ✅ · remote output captured
+  verbatim (empty) ✅ · all archive census values captured ✅ · both integrity
+  checks `ok` ✅ · both hashes exact after census ✅ · no false entering claim
+  found ✅
+- golden E2E: unchanged — permitted loopback run passed **11/11**. The first
+  sandboxed attempt could not bind port 8788 and made no assertions.
+- commit: this B0.2 baseline/status commit (see git history)
+- notes / gate: gate clear. The system Python 3.12 lacked pytest; an isolated
+  temporary 3.12 environment was created from `shell/requirements.txt`, and
+  its actual 88-test pass is the result counted. `Cargo.lock` was untouched.
