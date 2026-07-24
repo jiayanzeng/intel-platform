@@ -165,15 +165,25 @@ jobs:
   # Rust tests deliberately do not (HC1/HC2 live on both sides of the seam).
   # ---------------------------------------------------------------------------
   shell:
-    name: shell (pytest)
+    name: shell (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
       - name: release version consistency
         run: ./run version-check
+      - name: byte-compile all Python at the 3.11 floor
+        if: matrix.python-version == '3.11'
+        run: find tools shell -type f -name '*.py' -print0 | xargs -0 python3.11 -m py_compile
+      - name: shellcheck run harness
+        if: matrix.python-version == '3.11'
+        run: shellcheck ./run
       - name: install
         run: pip install -r shell/requirements.txt
       - name: pytest

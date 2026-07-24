@@ -121,6 +121,7 @@ zero-dependency implementation.
 
 Toolchain is pinned by `rust-toolchain.toml`. This MacBook runs 1.91.1, which
 satisfies both floors, so nothing in this cycle is toolchain-blocked here.
+Python 3.11 is the supported shell and harness minimum; CI also exercises 3.12.
 
 ```
 # offline path (MSRV floor 1.78) — everything except live fetching

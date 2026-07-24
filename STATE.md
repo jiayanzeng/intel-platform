@@ -24,6 +24,25 @@ offline/net checks, clippy, fmt, Python compile, shell syntax, and locked Rust
 port 8788 and made no assertions; the permitted rerun passed all 11/11 golden
 checks. Both protected artifact hashes remained exact.
 
+**C1 is complete (measured 2026-07-24).** Python **3.11.4** is now the
+documented shell/harness floor, and the CI shell job is a blocking 3.11/3.12
+matrix. Its floor lane byte-compiles every Python file under `tools/` and
+`shell/` with `python3.11 -m py_compile` and runs ShellCheck over `run`. The
+failure-capable control planted a PEP 701 f-string in
+`tools/version_check.py`: Python **3.12.13** compiled it, while Python 3.11.4
+exited 1 with `SyntaxError: f-string: unmatched '{'`; the line was removed and
+both complete trees then compiled cleanly. Both interpreter lanes passed all
+88 shell tests. A preliminary local 3.12 invocation omitted
+`PYTHONPATH=shell` and failed during collection without exercising tests; the
+CI-shaped rerun included that environment and passed, and only that run is
+counted. ShellCheck **0.11.0** initially reported two unused poll counters, one
+ambiguous empty assignment, two redundant same-command environment
+assignments, and the intentional `CORE_CONFIG` subshell scope. The real
+findings were fixed; the two scope diagnostics have narrow, reasoned
+`SC2030`/`SC2031` disables. `shellcheck ./run` and `bash -n run` now exit 0.
+The full Rust/shell matrix passed, golden remained 11/11, and both protected
+artifact hashes remained exact.
+
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
 - **Root cause — a foreign process owned the port.** An orphaned `cored` from another copy of the repo (in the operator's `.Trash`) was still listening on 8788. This checkout's server failed to bind (`Address already in use`) and died.

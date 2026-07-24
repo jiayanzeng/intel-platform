@@ -498,7 +498,7 @@ still settling.
 - [x] **T4P** — real Gemma adversarial leg reported NOT EXERCISED with no violations; GUARD FIRED and LEAK controls preserved
 - [x] **T4** — closed in one uninterrupted real-model run: 6/6 required checks; models, dimension, and stage latencies recorded
 - [x] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch
-- [ ] **C1** — CI runs Python 3.11 and 3.12; shellcheck on `run`; floor recorded
+- [x] **C1** — CI runs Python 3.11 and 3.12; shellcheck on `run`; floor recorded
 - [ ] **v0.9** — runbook drafted; deferred items kept deferred with their triggers
 
 ---

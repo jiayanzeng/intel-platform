@@ -755,3 +755,32 @@ correct them with a new dated entry.
   checks; **92** workspace, **20** net, and **88** shell tests; clippy, fmt,
   `bash -n`, Python compile; locked Rust **1.78.0** check/tests all passed.
 - commit: this R1 release commit (see git history)
+
+### 2026-07-24 · C1 — on-site Python floor and shell harness enforced in CI
+
+- owner: 🤖 Codex
+- implementation: the blocking shell job is now a Python **3.11/3.12** matrix.
+  The 3.11 lane byte-compiles every Python file under `tools/` and `shell/`
+  with `python3.11 -m py_compile` and runs `shellcheck ./run`. `AGENTS.md §4`
+  records Python 3.11 as the supported floor; `run`'s help and header agree.
+- failure-capable control: planted a same-quote PEP 701 f-string in
+  `tools/version_check.py`. Python **3.12.13** accepted it; Python **3.11.4**
+  exited 1 and named that file with `SyntaxError: f-string: unmatched '{'`.
+  Removed the line and both complete trees compiled cleanly.
+- shellcheck control: ShellCheck **0.11.0** initially exited 1 on unused poll
+  counters, an ambiguous empty assignment, redundant same-command environment
+  assignments, and the intentional daemon-subshell `CORE_CONFIG` scope.
+  Replaced both polls with arithmetic counters, made the empty string explicit,
+  removed the redundant assignments, and added only narrow, reasoned
+  `SC2030`/`SC2031` disables. `shellcheck ./run` and `bash -n run` now pass.
+- Python matrix: **88 tests passed** under both 3.11.4 and 3.12.13 with the
+  existing Starlette warning. A preliminary local 3.12 command omitted
+  `PYTHONPATH=shell` and failed collection; the CI-shaped rerun included it and
+  is the measured pass.
+- acceptance: both Python lanes green ✅ · 3.12-only construct rejected by the
+  3.11 floor ✅ · complete floor byte-compile ✅ · shellcheck blocking and clean
+  ✅ · Python floor recorded ✅
+- golden/verification: golden unchanged at **11/11**; protected artifacts
+  **2/2** exact; warning-denied offline/net checks, **92** workspace tests,
+  **20** net tests, clippy, fmt, and locked Rust **1.78.0** check/tests passed.
+- commit: this C1 implementation/status commit (see git history)

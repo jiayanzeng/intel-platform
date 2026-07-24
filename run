@@ -14,7 +14,7 @@
 #                         with real network egress can do
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
 #
-# The offline commands need only the Rust toolchain and Python 3.12. The two
+# The offline commands need only the Rust toolchain and Python 3.11+. The two
 # live commands additionally need outbound network (and, for verify-llm, a
 # model endpoint + key). They fail loudly and specifically if that is missing,
 # rather than pretending to have run.
@@ -139,8 +139,8 @@ ensure_venv() {
 # keeps answering — from the OTHER process — so a naive readiness poll reports
 # "ready" against the wrong server. Checking that OUR pid is alive catches that.
 wait_for_pid() { # url pid name log
-  local url="$1" pid="$2" name="$3" log="$4" i
-  for i in $(seq 1 40); do
+  local url="$1" pid="$2" name="$3" log="$4" attempt
+  for ((attempt = 0; attempt < 40; attempt++)); do
     if ! kill -0 "$pid" 2>/dev/null; then
       red "$name (pid $pid) exited before becoming ready — it did not start."
       red "Last lines of $log:"; tail -n 20 "$log" >&2 || true
@@ -192,6 +192,8 @@ _start_cored() { # extra env is inherited from caller; $1 = optional CORE_CONFIG
   local cfg="${1:-}"
   # Preflight: refuse if something already owns the port (see refuse_foreign_port).
   if port_is_foreign; then refuse_foreign_port; return 1; fi
+  # CORE_CONFIG is intentionally scoped to the daemon-launch subshell.
+  # shellcheck disable=SC2030
   ( [ -n "$cfg" ] && export CORE_CONFIG="$cfg"
     export CORE_DB CORE_BIND="127.0.0.1:${CORE_PORT}"
     # nohup, not setsid: setsid does not exist on macOS. nohup is on both.
@@ -204,11 +206,11 @@ _start_mock_llm() {
   mkdir -p "$RUNDIR"
   ( nohup "$VENV/bin/python" tools/mock_openai.py >"$RUNDIR/llm.log" 2>&1 < /dev/null &
     echo $! > "$RUNDIR/llm.pid" )
-  local pid status i
+  local pid status attempt
   pid=$(cat "$RUNDIR/llm.pid")
   # Probe a real POST route. The mock has no GET route, so a GET readiness
   # check cannot distinguish "up" from BaseHTTPRequestHandler's 501 response.
-  for i in $(seq 1 40); do
+  for ((attempt = 0; attempt < 40; attempt++)); do
     if ! kill -0 "$pid" 2>/dev/null; then
       red "mock LLM (pid $pid) exited before becoming ready."
       red "Last lines of $RUNDIR/llm.log:"; tail -n 20 "$RUNDIR/llm.log" >&2 || true
@@ -357,7 +359,7 @@ cmd_demo() {
     | py -c 'import json,sys; d=json.load(sys.stdin); print("  fetched:", d.get("fetched"), "| new this run:", d.get("new"))'
 
   step "running the acme-research pipeline"
-  CORE_DB="$DEMO_DB" LLM_CHAT_PROFILE= \
+  CORE_DB="$DEMO_DB" LLM_CHAT_PROFILE='' \
     LLM_CHAT_BASE_URL="$MOCK_LLM_URL" LLM_EMBED_BASE_URL="$MOCK_LLM_URL" \
     LLM_CHAT_MODEL=mock-chat LLM_EMBED_MODEL=mock-embed-32 \
     LLM_BASE_URL="$MOCK_LLM_URL" SUBSCRIPTIONS_PATH="$SUBSCRIPTIONS_PATH" \
@@ -403,6 +405,8 @@ cmd_golden() {
   export LLM_BASE_URL="$MOCK_LLM_URL"
   export LLM_API_KEY=
   export LLM_TIMEOUT_SECONDS=5
+  # This main-shell export is independent of _start_cored's launch subshell.
+  # shellcheck disable=SC2031
   export CORE_CONFIG="config/core.json"
   export CORE_ENTITIES="config/entities.json"
   export SUBSCRIPTIONS_PATH="config/subscriptions.hashed.json"
@@ -417,8 +421,7 @@ cmd_golden() {
   green "isolated services ready; db=$GOLDEN_DB"
 
   step "asserting the golden end-to-end"
-  CORE_URL="$CORE_URL" API_URL="$API_URL" PYTHONPATH=shell \
-    py tools/golden_e2e.py \
+  PYTHONPATH=shell py tools/golden_e2e.py \
       --core-url "$CORE_URL" \
       --api-url "$API_URL" \
       --data-dir "$GOLDEN_DATA"
@@ -728,7 +731,7 @@ usage() {
   cat <<EOF
 intel-platform — ./run <command>
 
-  Offline (needs only Rust >= 1.78 + Python 3.12):
+  Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
     version-check  assert every public/package version matches STATE.md
     demo           print the whole pipeline start-to-finish, then clean up
