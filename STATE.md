@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **92 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **88 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is deferred at its transport gate:** after the operator supplied separate chat and embedding launch commands, ports 8080 and 8081 both refused TCP connections, so the prior 501 diagnosis could not be confirmed and no embedding model or dimension was measured. **T4P's verifier implementation and failure controls are complete, but its live exercise is deferred:** the adversarial public path reports `GUARD FIRED`, `NOT EXERCISED`, or `LEAK` and preserves `/attest` violations, but no real model has tripped it because LAN chat remains unreachable. **T4 remains deferred at embedding backfill:** its required uninterrupted run ingested 13 fresh fixtures, then the configured DMXAPI embedding endpoint returned HTTP 503 in 0.16s; the verifier stopped at 0/1 without calling fusion, chat, public HC1, or the adversarial leg. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **92 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **88 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P's verifier implementation and failure controls are complete, but its live exercise is deferred:** the adversarial public path reports `GUARD FIRED`, `NOT EXERCISED`, or `LEAK` and preserves `/attest` violations, but no real model has tripped it yet. **T4 remains deferred at embedding backfill:** its last required uninterrupted run ingested 13 fresh fixtures, then the then-configured DMXAPI embedding endpoint returned HTTP 503 in 0.16s; the new local embedding role has not yet been exercised by that full run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -1175,3 +1175,35 @@ handoff.
   `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`.
   No runtime, dependency, lockfile, provider configuration, or
   protected-corpus change occurred.
+
+### T4L — local embedding role confirmed over live SSH-forwarded wire (verified 2026-07-24)
+
+- The operator demonstrated both LAN health endpoints returning HTTP 200 from
+  `192.168.0.105`, while Codex's command runner and in-app browser remained
+  unable to route private-LAN addresses. A user-owned SSH local forward mapped
+  chat to `127.0.0.1:18080` and embeddings to `127.0.0.1:18081`; these are
+  transport-only aliases for the real servers, not mock endpoints.
+- Both forwarded `/health` and `/v1/models` endpoints returned HTTP **200**.
+  Chat reported `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`, completion capability,
+  context 32,768. Embeddings reported
+  `embeddinggemma-300M-Q8_0.gguf`, context 2,048, metadata width 768.
+- The required diagnosis is now confirmed from the body, not inferred:
+  `POST :18080/v1/embeddings` returned HTTP **501** and
+  `{"error":{"code":501,"message":"This server does not support embeddings. Start it with \`--embeddings\`","type":"not_supported_error"}}`.
+  The dedicated `POST :18081/v1/embeddings` returned HTTP **200**, one item at
+  index 0, model `embeddinggemma-300M-Q8_0.gguf`, and an actually measured
+  vector length of **768**.
+- The ignored `.env` now resolves the production roles directly:
+  LAN chat `http://192.168.0.192:8080/v1` with the reported Gemma model, and
+  LAN embeddings `http://192.168.0.192:8081/v1` with the reported
+  EmbeddingGemma model; both timeouts remain 30s. `./run config` printed these
+  exact non-secret values. DMXAPI's prior 503 evidence remains above.
+- HC13 boundary at this step: the short one-item wire request proved endpoint,
+  shape, index, and dimension. Full-document context-window behavior, a
+  13-document batch, short/out-of-order responses, and load stalls were not
+  exercised here and remain for the uninterrupted T4 verifier; they are not
+  inferred from the one-item success.
+- Post-task verification remained green: `./run golden` **11/11**, protected
+  artifacts **2/2**, warning-denied offline/net checks, **92 workspace**,
+  **20 net**, and **88 shell** tests, clippy, fmt, `bash -n run`, and locked
+  warning-denied Rust **1.78.0** check. Protected hashes remained exact.

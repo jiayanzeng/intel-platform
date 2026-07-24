@@ -494,7 +494,7 @@ still settling.
 - [x] **G1** — `./run golden` asserts every documented number; perturbation control fails correctly; CI job blocking
 - [x] **P1** — bare harvest cannot overwrite `live-smoke.db`; protected-artifact list + `verify-artifacts`
 - [x] **E1** — embedding dimension/model-key collision closed in core, shell, and verifier; three controls proven
-- [ ] **T4L — DEFERRED (transport gate)** — ports 8080/8081 refused connections; no HTTP body, API model name, or dimension measured
+- [x] **T4L** — 501 diagnosis confirmed; dedicated LAN embedding model measured at 768 dimensions; split roles configured
 - [ ] **T4P — DEFERRED (real-model gate)** — verifier and three controls complete; LAN chat refused connections, so no real-model outcome
 - [ ] **T4 — DEFERRED (embedding gate)** — uninterrupted run stopped at DMXAPI HTTP 503 after 13/13 fixture ingest; 0/1; client did not expose response body
 - [ ] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch

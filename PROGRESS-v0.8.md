@@ -606,6 +606,29 @@ correct them with a new dated entry.
   **2/2 MATCH**.
 - commit: this T4L retry/status commit (see git history)
 
+### 2026-07-24 · T4L completion — dedicated LAN embeddings measured
+
+- owner: 🤖 Codex + 🧑 operator SSH-forward input
+- measured: forwarded chat/embedding health and model-list endpoints all
+  returned HTTP 200. Chat model is
+  `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`; its embedding request returned the exact
+  HTTP 501 body naming `--embeddings`. Dedicated model is
+  `embeddinggemma-300M-Q8_0.gguf`; a real embedding request returned one
+  index-0 vector of **768 dimensions**.
+- configuration: ignored `.env` now names the reported models and direct LAN
+  endpoints `:8080/v1` and `:8081/v1`; redacted `./run config` confirmed both.
+  The 503 DMXAPI record was preserved.
+- HC13: short single-item wire shape/index/dimension observed. Full bodies,
+  13-item batch behavior, ordering/short responses, and load stalls remain
+  untested until T4.
+- acceptance: 501 diagnosis/body confirmed ✅ · dedicated endpoint reachable
+  ✅ · API model name and measured dimension recorded ✅ · split roles explicit
+  ✅ · DMXAPI evidence preserved ✅
+- golden/verification: golden **11/11**, artifacts **2/2**, warning-denied
+  offline/net checks, **92** workspace, **20** net, **88** shell, clippy, fmt,
+  `bash -n`, and locked Rust **1.78.0** all passed.
+- commit: this T4L completion/status commit (see git history)
+
 ### 2026-07-24 · T4P — adversarial HC1 positive control implemented
 
 - owner: 🤖 Codex
