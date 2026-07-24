@@ -349,6 +349,45 @@ task by the gate · protected hashes exact · golden unchanged.
 **Done when** `/view` has a measured threshold and disposition rather than
 "we'll know when it matters."
 
+**Gate disposition — measured 2026-07-24.** The approved 162.640 ms cold p95
+was missed by both archives in both independent runs; the 32.528 ms warm p95
+passed in all four cells. The design trigger therefore fired. V1 stopped
+without implementing materialization and promoted V2 below. Exact samples,
+distributions, host identity, source hashes, and both run-specific slopes are
+preserved under `evidence/v0.9/view-benchmark/`.
+
+### Promoted future design task · V2 — Design restart-safe `/view` materialization
+
+**Status.** v0.10 candidate created by V1's fired gate; this is not an
+additional v0.9 execution step.
+
+**Measured input.** With a 16.264 ms A3 anchor and a predeclared 162.640 ms
+cold / 32.528 ms warm p95 SLO, the 1,764-row archive measured cold p95
+1,693.423417 ms and 362.794125 ms, while the 2,600-row archive measured
+543.318334 ms and 523.764917 ms. Their warm p95 values were respectively
+8.164166/8.469334 ms and 12.584125/12.565458 ms. The 1,693.423417 ms sample is
+retained as an outlier; the second complete run still missed, so discarding it
+cannot reverse the gate.
+
+**Objective.** Design—not yet implement—a restart-safe derived representation
+that addresses the cold path while preserving the already-passing in-process
+generation cache. First separate process/SQLite startup from sector corpus
+load, analysis, serialization, and response transfer so the design targets the
+measured cost rather than assuming a cache table is the answer.
+
+**Constraints.** The design must preserve HC1, core-SQL sector enforcement
+(HC2), core's no-LLM boundary (HC3), and corpus-derived dedup identity. Any
+persisted core representation is archive/query state under HC9, never
+shell-owned configuration. Its key and invalidation proof must cover archive
+identity, sector set, algorithm/schema version, and every corpus mutation; an
+in-memory generation that resets on restart is not sufficient.
+
+**Gate and acceptance.** Do not select an implementation until a
+failure-capable stale-result control proves invalidation requirements. Any
+later implementation must rerun V1's two-archive, two-run benchmark and meet
+both predeclared thresholds without changing the JSON response, protected
+artifacts, or golden 11/11 result.
+
 ---
 
 ## Step 6 · D4 — Re-audit every deferred trigger, without implementing it 🤖
@@ -432,7 +471,8 @@ evidence record without interpreting the cycle name.
 - [x] **A1** — protected evidence has one executable provenance manifest
 - [x] **D3** — v0.9 runbook corrected against measured B0/A1 state
 - [x] **P2** — provider capability probe reproducible; real wire disposition recorded
-- [ ] **V1** — `/view` cold/warm measured against a predeclared SLO
+- [x] **V1** — `/view` cold/warm measured against a predeclared SLO; cold
+  trigger promoted to future V2
 - [ ] **D4** — all deferred triggers re-audited; no gate bypassed
 - [ ] **R2** — release disposition recorded and, if applicable, tagged
 

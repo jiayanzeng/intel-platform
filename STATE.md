@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 P2 is complete: its failure-capable provider probe and one fresh uninterrupted real-wire verifier run are both recorded.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **99 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 V1 is complete: both protected archives passed the warm `/view` SLO but missed the cold SLO in both independent runs, so the gate promoted future design task V2 and no materialization was implemented.** The measured V1 tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **102 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -347,6 +347,70 @@ lane independently passed the same **99** shell tests. Golden remained
 was valid. Both P2 halves are now recorded and its checklist box is checked.
 No provider configuration, dependency, lockfile, architecture invariant, or
 protected artifact changed.
+
+**v0.9 V1 is complete; the `/view` cold trigger fired (measured
+2026-07-24).** The operator approved the SLO before the first sample. It is
+anchored to A3's 16.264 ms `POST /retrieve` measurement on the 2,600-row
+archive (`learning`, sector `science`, `k=8`): cold p95 fires above
+**162.640 ms** (10×, covering a new process, SQLite open, sector corpus load,
+and analysis), while warm p95 fires above **32.528 ms** (2×, requiring a real
+cache hit to remain near the measured local HTTP/store cost). Both values were
+declared physically plausible on this Apple M2 Pro / 12 logical CPU /
+17,179,869,184-byte / macOS 26.5.2 host. The declaration is preserved at
+`evidence/v0.9/view-benchmark/SLO.md`.
+
+`./run benchmark-view` verified both protected hashes, built `cored`, made one
+byte-for-byte temporary copy of each archive, and measured two complete runs
+per copy. Each cold distribution contains ten new-process/first-request
+samples. Each warm distribution contains 100 timed requests after an unmeasured
+prime on one process. The query sector `science` was read from
+`config/core.json`; every timed response asserted a positive
+`documents_analyzed`. Internal `/view` diagnostic headers now expose
+`x-intel-view-cache: hit|miss` and the numeric
+`x-intel-view-generation`, allowing every warm sample to assert a hit against
+the prime's unmoved generation without changing the JSON body.
+
+Measured p95 results:
+
+| run | protected archive | documents | cold p95 / 162.640 ms | warm p95 / 32.528 ms |
+|---:|---|---:|---:|---:|
+| 1 | `data/core.db` copy | 1,764 | **1,693.423417 ms — MISS** | **8.164166 ms — PASS** |
+| 1 | `data/live-smoke.db` copy | 2,600 | **543.318334 ms — MISS** | **12.584125 ms — PASS** |
+| 2 | `data/core.db` copy | 1,764 | **362.794125 ms — MISS** | **8.469334 ms — PASS** |
+| 2 | `data/live-smoke.db` copy | 2,600 | **523.764917 ms — MISS** | **12.565458 ms — PASS** |
+
+The retained 1,693.423417 ms first-run outlier makes that run's cold two-point
+slope negative and unsuitable as a scaling estimate; it was not discarded.
+The second complete run still missed the cold gate and measured
+**192.548794 ms p95 per 1,000 documents** between the two corpus points. Warm
+slopes were **5.287032** and **4.899670 ms p95 per 1,000 documents**. Exact
+samples, min/median/p95/max, archive hashes, source hashes, hardware, and both
+slopes are preserved in the four reports and `summary.json` under
+`evidence/v0.9/view-benchmark/`.
+
+Failure-capable controls ran through the same command. A delayed local endpoint
+measured cold **223.578458 ms** and warm **220.598291 ms**, named both paths,
+and exited 1. A separate empty-sector double returned zero documents on its
+purported warm hit; the benchmark named the non-positive count and exited 1.
+The targeted test file passed 3/3. Both protected artifacts were 2/2 exact
+before and after every control and the real benchmark, and the post-benchmark
+golden run remained 11/11.
+
+Final local acceptance passed all **16/16** `./run ci-local` jobs:
+version-check; Python 3.11 floor byte-compilation; ShellCheck; warning-denied
+workspace check and **98 tests**; warning-denied net check and **20 tests**;
+clippy; fmt; locked Rust 1.78 check/tests; **102 Python 3.11 shell tests**;
+golden **11/11**; protected artifacts **2/2**; persisted fingerprints; and
+progress validation. The rebuilt Python 3.12.13 lane independently passed the
+same **102 shell tests**. Both shell lanes emitted the one third-party
+Starlette warning. `Cargo.lock` was untouched.
+
+The gate disposition is **promote, not implement**: both archives missed the
+cold SLO in both runs, while every warm cell passed. V1 added the scoped future
+V2 design task to `TASKS-v0.9-EXECUTION.md` and stopped without a cache table or
+other materialization. V2 must first decompose cold startup/load/analysis/body
+cost and prove restart-safe invalidation before choosing a representation;
+the in-memory warm cache is already within SLO.
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,

@@ -32,7 +32,7 @@
 //!      CORE_DB (data/intel.db), CORE_BIND (127.0.0.1:8788), CORE_TOKEN.
 
 use axum::extract::{Query, State};
-use axum::http::{HeaderMap, StatusCode};
+use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
@@ -720,7 +720,7 @@ async fn view(
     State(st): State<Arc<AppState>>,
     headers: HeaderMap,
     Query(q): Query<SectorsQ>,
-) -> Result<Json<ViewResp>, ApiErr> {
+) -> Result<(HeaderMap, Json<ViewResp>), ApiErr> {
     guard(&st, &headers)?;
     let sectors = configured_view_sectors(&st, &q.sectors);
 
@@ -737,7 +737,7 @@ async fn view(
         .filter(|hit| hit.generation == gen)
         .map(|hit| hit.resp.clone());
     if let Some(response) = cached {
-        return Ok(Json(response));
+        return Ok((view_cache_headers("hit", gen), Json(response)));
     }
 
     let resp = compute_view_resp(&st, &sectors)?;
@@ -750,7 +750,18 @@ async fn view(
             },
         );
     }
-    Ok(Json(resp))
+    Ok((view_cache_headers("miss", gen), Json(resp)))
+}
+
+fn view_cache_headers(status: &'static str, generation: u64) -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert("x-intel-view-cache", HeaderValue::from_static(status));
+    headers.insert(
+        "x-intel-view-generation",
+        HeaderValue::from_str(&generation.to_string())
+            .expect("u64 generation is always a valid header value"),
+    );
+    headers
 }
 
 /// The actual work behind `/view` — everything the cache is there to avoid.
@@ -1376,8 +1387,8 @@ mod tests {
 
     // --- T9.2: /view caching ------------------------------------------------
 
-    async fn do_view(st: &Arc<AppState>, sectors: &str) -> ViewResp {
-        view(
+    async fn do_view_with_headers(st: &Arc<AppState>, sectors: &str) -> (HeaderMap, ViewResp) {
+        let (headers, response) = view(
             State(st.clone()),
             HeaderMap::new(),
             Query(SectorsQ {
@@ -1385,8 +1396,12 @@ mod tests {
             }),
         )
         .await
-        .expect("view ok")
-        .0
+        .expect("view ok");
+        (headers, response.0)
+    }
+
+    async fn do_view(st: &Arc<AppState>, sectors: &str) -> ViewResp {
+        do_view_with_headers(st, sectors).await.1
     }
 
     #[tokio::test]
@@ -1416,11 +1431,17 @@ mod tests {
         let st = test_state();
         do_ingest(&st, &["technology"], None).await;
 
-        let first = do_view(&st, "technology").await;
+        let (first_headers, first) = do_view_with_headers(&st, "technology").await;
+        assert_eq!(first_headers["x-intel-view-cache"], "miss");
         assert_eq!(st.view_computes.load(Ordering::SeqCst), 1);
 
         // Nothing changed, so the second call must not recompute.
-        let second = do_view(&st, "technology").await;
+        let (second_headers, second) = do_view_with_headers(&st, "technology").await;
+        assert_eq!(second_headers["x-intel-view-cache"], "hit");
+        assert_eq!(
+            first_headers["x-intel-view-generation"],
+            second_headers["x-intel-view-generation"]
+        );
         assert_eq!(
             st.view_computes.load(Ordering::SeqCst),
             1,

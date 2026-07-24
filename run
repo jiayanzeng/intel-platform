@@ -412,6 +412,24 @@ cmd_evidence_report() {
   python3 tools/evidence_artifacts.py "$@" report
 }
 
+cmd_benchmark_view() {
+  need_cargo
+  step "protected artifacts before /view benchmark"
+  cmd_verify_artifacts
+  step "building cored benchmark subject"
+  cmd_build
+  step "failure-capable /view benchmark"
+  local status
+  if python3 tools/benchmark_view.py "$@"; then
+    status=0
+  else
+    status=$?
+  fi
+  step "protected artifacts after /view benchmark"
+  cmd_verify_artifacts
+  return "$status"
+}
+
 cmd_build()     { need_cargo; cargo build -p cored --locked;               green "built target/debug/cored (offline)."; }
 cmd_build_net() { need_cargo; cargo build -p cored --features net --locked; green "built target/debug/cored (--features net)."; }
 
@@ -839,6 +857,8 @@ intel-platform — ./run <command>
                    verify recorded evidence bytes, corpus facts, and cursors
     evidence-report
                    print deterministic measured evidence facts without writes
+    benchmark-view measure cold/warm /view p95 over disposable protected
+                   archives; thresholds and their derivation are required
     config         show resolved model endpoints and safe harvest DB (no keys)
     api            run the public shell with model configuration from .env
     build          build cored (offline)
@@ -863,6 +883,7 @@ intel-platform — ./run <command>
     ./run harvest-arxiv                    # fresh data/live-<timestamp>-<pid>.db
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
     LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
+    ./run benchmark-view --help
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }
@@ -876,6 +897,7 @@ case "$cmd" in
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
   evidence-report) cmd_evidence_report "$@" ;;
+  benchmark-view) cmd_benchmark_view "$@" ;;
   demo)          cmd_demo "$@" ;;
   golden)        cmd_golden "$@" ;;
   build)         cmd_build "$@" ;;
