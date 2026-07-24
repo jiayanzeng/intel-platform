@@ -564,3 +564,30 @@ correct them with a new dated entry.
   counted; the corrected loopback run set `NO_PROXY`/`no_proxy` and passed. No
   dependency, lockfile, provider call from core, or policy/protected-corpus
   change.
+
+### 2026-07-24 · T4L — local embedding server transport gate
+
+- owner: 🤖 Codex + 🧑 operator launch input
+- measured: the operator supplied separate chat (`:8080`, no embeddings flag)
+  and dedicated embedding (`:8081`, `embeddinggemma-300M-Q8_0.gguf`,
+  `--embeddings`) Docker commands. Live `POST :8080/v1/embeddings`,
+  `GET :8081/v1/models`, `POST :8081/v1/embeddings`, and a bounded
+  `GET :8081/health` retry all returned curl exit **7**, HTTP **000**, and
+  `Couldn't connect to server`; no response body was received.
+- gate: **T4L deferred.** The historical 501 body could not be confirmed or
+  refuted, and no API-reported local model name or embedding dimension was
+  measured. The local endpoint was not written into `.env`; redacted
+  `./run config` still reports LAN chat plus the prior DMXAPI embedding role,
+  whose 503 evidence remains in `STATE.md`. No mock or fifth provider was used.
+- acceptance: exact transport failure recorded ✅ · supplied launch parameters
+  distinguished from wire evidence ✅ · DMXAPI evidence preserved ✅ ·
+  reachable local embedding endpoint/model/dimension ❌ · split local role in
+  config ❌
+- golden E2E: unchanged — `./run golden` **11/11**.
+- verification: protected artifacts **2/2**; warning-denied offline/net checks,
+  **92** workspace tests, **20** net tests, **85** shell tests, clippy, fmt, and
+  locked warning-denied Rust **1.78.0** check passed. Protected hashes stayed
+  `db2f186e…1a37a0` and `94f03e9e…0462c4a`; ports 8787/8788/8899 were clear.
+- commit: this T4L gate/status commit (see git history)
+- notes: documentation only. No dependency, lockfile, runtime, provider
+  configuration, or protected-corpus change.
