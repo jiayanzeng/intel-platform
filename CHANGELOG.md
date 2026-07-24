@@ -2,6 +2,41 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.9.0 — 2026-07-25
+
+### Added
+
+- One executable JSON authority for protected-artifact hashes and logical
+  provenance, with deterministic evidence reports and failure-capable controls.
+- Bounded, secret-redacted provider capability probing that distinguishes
+  transport blocks, identity drift, and capability failures before a full live
+  verifier run.
+- Reproducible `/view` and exact-cosine benchmarks plus an executable audit of
+  every deferred scale and deployment trigger.
+- A local 16-job release matrix, Python 3.11/3.12 lanes, and append-only
+  progress-record validation.
+
+### Changed
+
+- Missing persisted fingerprints now fail closed at `/view`, `/retrieve`, and
+  canonical-id materialization instead of being recomputed or skipped.
+- Core document reads are sector- and id-scoped in SQL, and the process-scoped
+  `/view` cache is bounded, validates configured sectors, and exposes internal
+  hit/generation diagnostics without changing its JSON response.
+- Provider identity is independent from a per-command transport route, allowing
+  the same configured LAN models to be probed through operator-owned forwards.
+- Execution-cycle names and artifact-release identities are now explicitly
+  separate; the annotated tag and agreeing version sources define a release.
+
+### Deferred
+
+- `/view` restart materialization is promoted to future design task V2 after
+  both protected archive sizes missed the predeclared cold p95 SLO twice; every
+  warm distribution passed.
+- T7 single-flight, Postgres, pgvector, and multi-host hardening remain deferred
+  by measured triggers. Manifest-admission enforcement, dependency constraints,
+  and a real-model `GUARD FIRED` observation remain named future work.
+
 ## v0.8.0 — 2026-07-24
 
 ### Added

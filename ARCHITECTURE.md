@@ -183,3 +183,25 @@ measurement that settled them, and a struck reason is *removed* rather than kept
 (a dead reason is worse than none). `feed-rs`, `texting_robots`, and LSH banding
 are all *correctly absent*, and the log says why, with numbers. New dependency or
 scale decisions follow the three-clause gate in `AGENTS.md §3`.
+
+## 8. Execution cycles and artifact releases
+
+An execution-cycle name is a planning and evidence namespace, not an artifact
+version. Completing `TASKS-vX.Y-EXECUTION.md` does not by itself create, imply,
+or move a `vX.Y.Z` release.
+
+Release identity is chosen explicitly at the cycle-closing release task after
+the measured diff is classified:
+
+- runtime, storage, or public/API behavior requires the corresponding minor
+  release;
+- operations and evidence-only changes may use a patch release;
+- a cycle with no shipped change may close with no release.
+
+For an actual release, the authoritative mapping is the annotated Git tag to
+its exact release commit. The Rust package, Python package, public FastAPI
+literal, `STATE.md` header, and newest `CHANGELOG.md` release must agree with
+that tag. A separate append-only progress audit may follow the tagged commit;
+it records the release commit hash and does not move the tag. A no-release
+close instead names the intentionally unreleased commits and leaves every
+version source and tag unchanged.
