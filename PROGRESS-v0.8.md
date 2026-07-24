@@ -964,3 +964,27 @@ correct them with a new dated entry.
   untrusted/third-party shell or restating rewrite-resistant HC1; the required
   design must make public egress traverse a non-bypassable core-owned
   attestation boundary without moving the model call into core (HC3).
+
+### 2026-07-24 · A5 — `/view` cache bounded and keyed by configured sectors
+
+- owner: 🤖 Codex
+- pre-fix control: the new 300-configured-sector test failed at the 257th
+  request with `view cache exceeded its declared bound`.
+- implementation: introduced named `VIEW_CACHE_CAPACITY = 256`; `ViewCache`
+  evicts oldest insertions first; `/view` intersects request sectors with
+  `cfg.sectors`, sorts and de-duplicates them, and skips caching when none are
+  configured.
+- measured after: 300 distinct configured keys never exceeded **256** entries;
+  the newest valid entry remained a hit without incrementing `view_computes`;
+  **50** nonexistent-sector requests added **0** entries. Existing memoization,
+  generation invalidation, and no-op-ingest cache tests passed.
+- acceptance: bound enforced under test ✅ · unknown sector creates no entry
+  ✅ · hit/miss and generation behavior unchanged ✅ · full matrix **98
+  workspace / 20 net / 88 shell** ✅ · warning-denied checks, clippy, fmt,
+  ShellCheck, and locked Rust 1.78 check/tests ✅
+- golden E2E: unchanged — **11/11**.
+- verification: protected artifacts **2/2 MATCH**; `git diff --check` clean;
+  `Cargo.lock` untouched.
+- commit: this A5 cache-bound commit (see git history)
+- notes / gate: gate clear. Empty results for all-unknown sector requests are
+  still returned, but never retained in the process-scoped cache.

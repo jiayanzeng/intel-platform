@@ -44,7 +44,7 @@ use intel_registry::{select_sources, CoreConfig};
 use intel_store::SqliteStore;
 use intel_view::{compute_view, entity_names, ViewParams};
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
@@ -62,7 +62,7 @@ struct AppState {
     /// whole pipeline (dedup, gazetteer scan, bursts, PMI) over the entire
     /// corpus, so recomputing it per request was pure waste: between ingests the
     /// answer cannot change. (T9.2)
-    view_cache: Mutex<HashMap<String, CachedView>>,
+    view_cache: Mutex<ViewCache>,
     /// Counts actual recomputations — lets a test prove the cache is doing
     /// something rather than merely returning equal values.
     view_computes: AtomicUsize,
@@ -89,6 +89,43 @@ struct AppState {
 struct CachedView {
     generation: u64,
     resp: ViewResp,
+}
+
+/// `/view` results can hold evidence and graph data for an entire sector set.
+/// Keep the process-scoped memo bounded just as the robots cache is bounded:
+/// callers must not be able to turn distinct query strings into permanent
+/// process memory. Eviction is oldest insertion first.
+const VIEW_CACHE_CAPACITY: usize = 256;
+
+#[derive(Default)]
+struct ViewCache {
+    entries: HashMap<String, CachedView>,
+    oldest: VecDeque<String>,
+}
+
+impl ViewCache {
+    fn get(&self, key: &str) -> Option<&CachedView> {
+        self.entries.get(key)
+    }
+
+    fn insert(&mut self, key: String, value: CachedView) {
+        if self.entries.remove(&key).is_some() {
+            self.oldest.retain(|existing| existing != &key);
+        }
+        while self.entries.len() >= VIEW_CACHE_CAPACITY {
+            let Some(oldest) = self.oldest.pop_front() else {
+                break;
+            };
+            self.entries.remove(&oldest);
+        }
+        self.oldest.push_back(key.clone());
+        self.entries.insert(key, value);
+    }
+
+    #[cfg(test)]
+    fn len(&self) -> usize {
+        self.entries.len()
+    }
 }
 
 /// Our default politeness floor: 2 requests/second to any one publisher. A
@@ -129,7 +166,7 @@ impl AppState {
             cfg,
             token,
             generation: AtomicU64::new(0),
-            view_cache: Mutex::new(HashMap::new()),
+            view_cache: Mutex::new(ViewCache::default()),
             view_computes: AtomicUsize::new(0),
             robots_cache: build_robots_cache(limiter.clone()),
             limiter,
@@ -249,6 +286,22 @@ fn parse_sectors(raw: &str) -> Vec<String> {
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty())
         .collect()
+}
+
+fn configured_view_sectors(state: &AppState, raw: &str) -> Vec<String> {
+    let configured: HashSet<&str> = state
+        .cfg
+        .sectors
+        .iter()
+        .map(|sector| sector.id.as_str())
+        .collect();
+    let mut sectors: Vec<String> = parse_sectors(raw)
+        .into_iter()
+        .filter(|sector| configured.contains(sector.as_str()))
+        .collect();
+    sectors.sort();
+    sectors.dedup();
+    sectors
 }
 
 fn sector_corpus(state: &AppState, sectors: &[String]) -> Result<Vec<(Document, u64)>, ApiErr> {
@@ -669,30 +722,34 @@ async fn view(
     Query(q): Query<SectorsQ>,
 ) -> Result<Json<ViewResp>, ApiErr> {
     guard(&st, &headers)?;
-    let sectors = parse_sectors(&q.sectors);
+    let sectors = configured_view_sectors(&st, &q.sectors);
 
-    // The cache key is the sector set (order-normalized by parse_sectors's
-    // caller contract; we sort to be certain), and the entry is only good for
-    // the generation it was built in.
-    let mut key_parts = sectors.clone();
-    key_parts.sort();
-    let key = key_parts.join(",");
+    // Only configured sectors become cache keys. An all-unknown request still
+    // receives the empty view but cannot allocate a permanent cache entry.
+    let key = sectors.join(",");
     let gen = st.generation.load(Ordering::SeqCst);
 
-    if let Some(hit) = st.view_cache.lock().unwrap().get(&key) {
-        if hit.generation == gen {
-            return Ok(Json(hit.resp.clone()));
-        }
+    let cached = st
+        .view_cache
+        .lock()
+        .unwrap()
+        .get(&key)
+        .filter(|hit| hit.generation == gen)
+        .map(|hit| hit.resp.clone());
+    if let Some(response) = cached {
+        return Ok(Json(response));
     }
 
     let resp = compute_view_resp(&st, &sectors)?;
-    st.view_cache.lock().unwrap().insert(
-        key,
-        CachedView {
-            generation: gen,
-            resp: resp.clone(),
-        },
-    );
+    if !sectors.is_empty() {
+        st.view_cache.lock().unwrap().insert(
+            key,
+            CachedView {
+                generation: gen,
+                resp: resp.clone(),
+            },
+        );
+    }
     Ok(Json(resp))
 }
 
@@ -1098,6 +1155,29 @@ mod tests {
         Arc::new(AppState::new(store, gaz, cfg, None))
     }
 
+    fn empty_sector_state(sector_count: usize) -> Arc<AppState> {
+        let root = root();
+        let sectors: Vec<serde_json::Value> = (0..sector_count)
+            .map(|index| {
+                serde_json::json!({
+                    "id": format!("sector-{index:03}"),
+                    "display_name": format!("Sector {index:03}"),
+                    "sources": []
+                })
+            })
+            .collect();
+        let cfg: CoreConfig = serde_json::from_value(serde_json::json!({
+            "sectors": sectors
+        }))
+        .expect("parse empty-sector test config");
+        let gaz = Gazetteer::from_json(
+            &std::fs::read_to_string(root.join("config/entities.json")).expect("read entities"),
+        )
+        .expect("parse entities");
+        let store = SqliteStore::open(&tmp_db()).expect("open store");
+        Arc::new(AppState::new(store, gaz, cfg, None))
+    }
+
     async fn do_ingest(
         st: &Arc<AppState>,
         sectors: &[&str],
@@ -1377,5 +1457,34 @@ mod tests {
         assert_eq!(again.new, 0);
         do_view(&st, "technology").await;
         assert_eq!(st.view_computes.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn view_cache_is_bounded_and_unknown_sectors_do_not_enter_it() {
+        let st = empty_sector_state(300);
+
+        for index in 0..300 {
+            do_view(&st, &format!("sector-{index:03}")).await;
+            assert!(
+                st.view_cache.lock().unwrap().len() <= VIEW_CACHE_CAPACITY,
+                "view cache exceeded its declared bound"
+            );
+        }
+        assert_eq!(st.view_cache.lock().unwrap().len(), VIEW_CACHE_CAPACITY);
+
+        // The newest valid entry survived eviction and remains a cache hit.
+        let computes = st.view_computes.load(Ordering::SeqCst);
+        do_view(&st, "sector-299").await;
+        assert_eq!(st.view_computes.load(Ordering::SeqCst), computes);
+
+        let cached = st.view_cache.lock().unwrap().len();
+        for index in 0..50 {
+            do_view(&st, &format!("nonexistent-{index:02}")).await;
+        }
+        assert_eq!(
+            st.view_cache.lock().unwrap().len(),
+            cached,
+            "unknown sectors must not create cache entries"
+        );
     }
 }
