@@ -151,6 +151,43 @@ pip install -r shell/requirements.txt
 PYTHONPATH=shell python3 -m pytest shell/tests -q
 ```
 
+Rebuild the local Python 3.12 lane in the repository's already-ignored
+`.venv/` tree; do not inherit a random `/private/tmp` environment:
+
+```
+python3.12 -m venv --clear .venv/py312
+.venv/py312/bin/python -m pip install -r shell/requirements.txt
+PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+```
+
+This command was executed on 2026-07-24 with Python 3.12.13 and resolved the
+following environment. It is a dated measurement, not a guarantee:
+`shell/requirements.txt` declares floors rather than pins.
+
+```
+annotated-doc==0.0.4
+annotated-types==0.8.0
+anyio==4.14.2
+certifi==2026.7.22
+click==8.4.2
+fastapi==0.139.2
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+idna==3.18
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.20.0
+pytest==9.1.1
+starlette==1.3.1
+typing-inspection==0.4.2
+typing_extensions==4.16.0
+uvicorn==0.51.0
+```
+
 `RUSTFLAGS="-D warnings"` is the standing rule for the offline and net builds:
 **0 warnings is a gate, not an aspiration.** ("0 warnings" means *rustc*
 warnings; clippy is an independent blocking gate.)

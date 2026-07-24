@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 A1 gives protected evidence one executable provenance manifest.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **93 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 D3 reconciles the active runbook with measured B0/A1 state before P2.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **93 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -128,6 +128,122 @@ PYTHONPATH=shell \
   /private/tmp/intel-platform-py312-baseline.wqTLIV/venv/bin/python \
   -m pytest shell/tests -q
 ```
+
+**v0.9 D3 is complete (measured 2026-07-24).** Its pre-edit gate passed:
+`./run verify-artifacts` matched both records and `./run golden` passed all
+11/11 assertions before any tracked edit. The active runbook now preserves its
+original entering and drafting hypotheses and appends dated corrections naming
+B0 `1054994` and A1 `2adf486`. A committed-record search found no citation of
+P2/V1/deferred-audit/R2's old numeric steps outside the active runbook, so D3
+became Step 3 and those unstarted tasks became Steps 4–7; the Step 2A fallback
+was not used. The v0.9 evidence-manifest A1 is explicitly distinguished from
+v0.8.2's fingerprint-verifier A1, while its committed id remains unchanged.
+The colliding deferred-audit id is now D4.
+
+V1's proposed round 1,000/100 ms ceilings are superseded by an anchored
+recommendation. A3's measured post-change request on the 2,600-row archive was
+16.264 ms for `POST /retrieve` with `learning`, sector `science`, `k=8`.
+Recommended predeclared p95 thresholds are 10× that anchor for cold
+(162.640 ms) and 2× for warm (32.528 ms), with the factors, exact firing
+values, rationale, and physical plausibility fixed before any sample. V1 now
+requires separate disposable 1,764- and 2,600-row archive measurements, both
+distributions and their slope, configured `science` sectors, non-zero document
+counts, and warm cache hits against an unmoved generation. An empty-sector
+warm run or an SLO that cannot fire is a failed benchmark. P2 now ships its
+failure-capable harness half even when transport is blocked, but keeps its
+checklist box open and records the live leg as a non-result until an in-cycle
+rerun succeeds. R2 must inventory the disposition of every non-result carried
+out of the cycle.
+
+**P1 supersession — 2026-07-24.** P1's preserved present-tense reference to
+`config/protected-artifacts.sha256` is historical. A1 deleted that file;
+`config/protected-artifacts.json` is the sole current expected-hash authority.
+The P1 section body remains unchanged.
+
+**Manifest-admission risk — 2026-07-24.** Source search found the `admission`
+literal in the JSON manifest, the schema validator that accepts only that
+literal, and the disposable test fixture. Nothing records or verifies the
+claimed wire evidence and operator review when an expected hash is edited.
+The A1 controls intentionally refreshed disposable manifests after logical
+mutations, demonstrating the same remaining bypass shape: a manifest edit can
+bless changed bytes. Git review is the sole control and is prose. A v0.10
+candidate must make admission failure-capable before the first proposal to add
+a protected artifact or change an expected protected hash; until that trigger,
+only evidence verification—not admission—is claimed executable. D3 implements
+no control.
+
+**Python 3.12 environment correction — 2026-07-24.** The old counted lane at
+`/private/tmp/intel-platform-py312-baseline.wqTLIV/venv` was frozen before
+replacement. The Python 3.11 `.venv` freeze was captured independently:
+
+```text
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.14.2
+certifi==2026.6.17
+click==8.4.2
+fastapi==0.139.2
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+idna==3.18
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.20.0
+pytest==9.1.1
+starlette==1.3.1
+typing-inspection==0.4.2
+typing_extensions==4.16.0
+uvicorn==0.51.0
+```
+
+The old Python 3.12 lane froze as:
+
+```text
+annotated-doc==0.0.4
+annotated-types==0.8.0
+anyio==4.14.2
+certifi==2026.7.22
+click==8.4.2
+fastapi==0.139.2
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+idna==3.18
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.20.0
+pytest==9.1.1
+starlette==1.3.1
+typing-inspection==0.4.2
+typing_extensions==4.16.0
+uvicorn==0.51.0
+```
+
+The sets differ at `annotated-types` (0.7.0 versus 0.8.0) and `certifi`
+(2026.6.17 versus 2026.7.22). A fresh Python 3.12.13 lane was then built at
+the ignored `.venv/py312` from the literal commands now recorded in
+`AGENTS.md §4`; its freeze compared byte-identical to the old 3.12 set and
+passed **93 tests** with the same one Starlette warning. This match is a dated
+measurement, not reproducibility: `shell/requirements.txt` contains lower
+bounds, not pins, so the command is repeatable but may resolve differently
+later. Pinning or a constraints file is a v0.10 candidate; D3 did not change
+the build input.
+
+Final local acceptance passed all **16/16** `./run ci-local` jobs: version
+consistency, Python 3.11 byte-compilation, ShellCheck, warning-denied workspace
+check and **98 tests**, warning-denied net check and **20 tests**, clippy, fmt,
+locked Rust 1.78 check/tests, **93 Python 3.11 shell tests**, golden 11/11,
+protected evidence 2/2, fingerprint fixture, and progress validation. The
+fresh Python 3.12 lane independently passed the same **93 shell tests**.
+No Rust, Python, `run`, dependency, requirement, architecture, or protected
+data change was made; `Cargo.lock` remained untouched.
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,

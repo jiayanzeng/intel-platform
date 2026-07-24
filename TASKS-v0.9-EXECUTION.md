@@ -17,6 +17,17 @@ are `data/core.db` (1,764 documents) and `data/live-smoke.db` (2,600 documents),
 with hashes recorded in `config/protected-artifacts.sha256`. The dedicated LAN
 models last passed one uninterrupted 6/6 verifier run.
 
+> **Measured correction — 2026-07-24 (B0 `1054994`, A1 `2adf486`).**
+> B0 found the tree clean at
+> `d09eda8cd611c3465aaad7a828465bdb8d8de26f`, described as
+> `v0.8.0-15-gd09eda8`: 15 commits past release commit `bfc8c5a` (annotated
+> tag object `314c1dd`), not `091a203` plus one later documentation commit.
+> It measured **98 workspace / 20 net / 88 shell** tests, not 92 workspace
+> tests. A1 raised the shell count to **93** and made
+> `config/protected-artifacts.json` the sole expected-hash authority while
+> deleting `config/protected-artifacts.sha256`. The asserted paragraph above
+> remains intact as the hypothesis B0 tested.
+
 **Every sentence above is a hypothesis until Step 1 measures it.** Prior
 measurements are not permission to skip the entering-state run.
 
@@ -100,6 +111,11 @@ artifacts unchanged.
 
 ## Step 2 · A1 — Give protected evidence one executable provenance record 🤖
 
+**ID note (2026-07-24).** This v0.9 A1 is the evidence-provenance manifest
+task. It is distinct from v0.8.2 A1, which made the fingerprint verifier
+failure-capable; the committed v0.9 id is retained because `2adf486` and its
+audit record already refer to it.
+
 **Objective.** `config/protected-artifacts.sha256` proves byte identity, but not
 what each database is evidence *of*. Make path, hash, corpus facts, cursor state,
 and provenance one machine-checked record. Preserve one authority rather than
@@ -144,7 +160,52 @@ without relying on a paragraph in `STATE.md`.
 
 ---
 
-## Step 3 · P2 — Make the real provider wire probe reproducible 🤖 + 🧑
+## Step 3 · D3 — Make the v0.9 runbook true against measured state 🤖
+
+**Objective.** Preserve the original hypotheses while adding dated corrections
+for what B0 and A1 measured, remove task-id ambiguity, and make the unstarted
+tasks capable of producing meaningful evidence.
+
+**Gate.** Protected artifacts must be 2/2 exact and golden 11/11 before editing.
+This step changes documentation and task metadata only: no Rust, Python,
+`run`, dependency, build input, protected data, or architecture rule change,
+and no implementation of P2, V1, D4, or R2.
+
+**Steps.**
+1. Banner the entering-state correction and append the closing provenance
+   correction without rewriting either historical paragraph.
+2. Supersede the historical P1 hash-list reference through a dated STATE
+   addition; distinguish the two committed A1 tasks; rename the colliding
+   deferred-audit id to D4.
+3. Record the step-number citation search, insert D3, and renumber the
+   uncited remaining steps.
+4. Anchor V1's predeclared SLO to A3's measured cost, require both protected
+   corpus sizes, and make empty-sector/cache-invalid warm runs fail.
+5. Define P2's transport-block disposition and require R2 to inventory every
+   carried non-result.
+6. Rebuild and measure a repo-local ignored Python 3.12 lane; record that
+   requirements floors are repeatable rather than pinned/reproducible.
+7. Record the unexecuted manifest-admission policy as a named future risk; do
+   not implement its control here.
+
+**Failure-capable controls.** Prove the old live deferred-audit id and
+unstarted id collisions are absent; enumerate every remaining historical
+legacy SHA-256-manifest reference; and make a malformed commit value in the
+new progress entry fail `./run progress-check` before restoring it byte-for-byte.
+
+**Acceptance criteria.** Corrections appended, not rewritten · ids and step
+numbers unambiguous · V1 threshold can fire and both corpus points are required
+· P2 live non-result cannot masquerade as completion · Python 3.12 lane rebuilt
+and measured · manifest-admission risk recorded · no repository command, code,
+build input, architecture rule, lockfile, or protected-data change · full
+matrix, golden, and artifact checks green.
+
+**Done when** this file describes the measured cycle and every remaining gate
+can still distinguish pass from non-result.
+
+---
+
+## Step 4 · P2 — Make the real provider wire probe reproducible 🤖 + 🧑
 
 **Objective.** T4 succeeded only after separating provider identity from the
 command runner's transport: the deployment host reached
@@ -157,10 +218,17 @@ runner.** Start the same SSH forwards used for T4 and report that they are
 ready. Codex performs every subsequent probe and verification.
 
 **Gate.** Transport failure is not provider failure. If health cannot be
-reached, record the exact route and error and stop; do not rewrite the committed
-profile, switch providers, or substitute the mock. If model identity or
-embedding dimension differs from the last evidence, stop before a full verifier
-run and treat it as a model-change decision.
+reached, record the exact route and error and stop the live leg; do not rewrite
+the committed profile, switch providers, or substitute the mock. If model
+identity or embedding dimension differs from the last evidence, stop before a
+full verifier run and treat it as a model-change decision.
+
+**Blocked-path disposition.** A transport block still ships and records the
+harness half: the probe command, all four classifications, and the local-double
+failure controls. Record the live leg as a non-result with its exact route and
+error, then re-run that leg in this cycle once the operator confirms the route.
+Do not open a new correction-cycle file. P2's checklist box remains unchecked
+until both the harness and live-wire halves are recorded.
 
 **Steps.**
 1. Document environment precedence for direct LAN settings and per-command
@@ -185,67 +253,89 @@ short embedding data, wrong vector dimension, and a stalled response. Prove
 each classification and timeout. These controls validate the harness only;
 the real endpoint run is still required by HC13.
 
-**Acceptance criteria.** Minimal provider probe is executable and bounded ·
-transport and provider failures are distinct · model/dimension drift stops the
-run · keys absent from output · one uninterrupted real verifier result recorded
-or an exact gate failure recorded · protected artifacts unchanged · golden
-unchanged.
+**Acceptance criteria.** Harness half shipped even if transport is blocked ·
+minimal provider probe is executable and bounded · transport and provider
+failures are distinct · model/dimension drift stops the run · keys absent from
+output · live leg records one uninterrupted real verifier result, or remains an
+explicit unchecked non-result awaiting an in-cycle rerun · protected artifacts
+unchanged · golden unchanged.
 
-**Done when** repeating the LAN capability evidence is one command plus, only
-when necessary, the named tunnel action.
+**Done when** both halves are recorded: the failure-capable harness, and live
+LAN capability evidence from one command plus, only when necessary, the named
+tunnel action.
 
 ---
 
-## Step 4 · V1 — Measure `/view`; do not materialize it yet 🧑
+## Step 5 · V1 — Measure `/view`; do not materialize it yet 🤖 + 🧑
 
-**One human input: approve or replace the SLO before measurement.** Recommended
-reference-host SLO: cold `/view` p95 ≤ **1,000 ms** across ten process restarts,
-and warm `/view` p95 ≤ **100 ms** across 100 requests. Record the chosen values
-before the first timing so the threshold cannot move to fit the result.
+**One human input: approve or replace the anchored SLO before measurement.**
+A3 measured one post-change `POST /retrieve` on a disposable copy of the
+2,600-row archive at **0.016264 s** for `learning`, sector `science`, `k=8`.
+That one-shot value is a cost anchor, not an SLO. The recommended reference-host
+rule is cold p95 ≤ **10 × anchor = 162.640 ms** across ten process restarts and
+warm p95 ≤ **2 × anchor = 32.528 ms** across 100 requests. Ten-fold cold
+headroom accommodates process startup, SQLite open, sector-scoped load, and
+analysis absent from the retrieval anchor; two-fold warm headroom requires a
+real cache hit to remain close to the already-measured local HTTP/store cost.
+The operator may approve or replace the factors and values, but before the
+first sample V1 must record (a) this source measurement, (b) each chosen
+headroom factor and its reason, (c) the exact p95 value whose breach fires the
+trigger, and (d) whether that value is physically plausible on this host. An
+implausibly high threshold must be rejected before timing.
 
-**Objective.** Measure restart warm-up against a disposable copy of the
-1,764-row archive. This task is a benchmark and decision, not permission to
-implement materialization.
+**Objective.** Measure restart warm-up against disposable copies of both
+protected archives—1,764 and 2,600 rows—so the evidence has two corpus points
+and a slope. This task is a benchmark and decision, not permission to implement
+materialization.
 
-**Gate.** If both cold and warm p95 meet the predeclared SLO in two independent
-runs, `/view` materialization remains deferred. If either misses in both runs,
-the trigger fires: stop and write a design task with the measurements. Do not
-implement a cache table inside V1. A one-off outlier is rerun and reported, not
-silently discarded.
+**Gate.** If both archives' cold and warm p95 meet the predeclared SLO in two
+independent runs, `/view` materialization remains deferred. If either archive's
+cold or warm p95 misses in both runs, the trigger fires: stop and write a design
+task with the measurements. Do not implement a cache table inside V1. A one-off
+outlier is rerun and reported, not silently discarded. An SLO that cannot fire
+is a defect, not a pass.
 
 **Steps.**
-1. Verify the protected hash, create a byte-for-byte copy below `mktemp -d`,
-   and point `CORE_DB` only at that copy.
+1. Verify both protected hashes, create one byte-for-byte copy of each archive
+   below `mktemp -d`, and point `CORE_DB` only at the active copy.
 2. Add a standard-library benchmark tool and `./run benchmark-view`. It must
-   record commit, hardware/OS summary, corpus count, sector query, iteration
-   count, cold samples, warm samples, min/median/p95/max, and failures.
-3. Cold measurement means a new `cored` process and first `/view` request for
-   every sample. Warm measurement reuses one process and the same sector set so
-   it exercises the generation cache.
-4. Run the complete benchmark twice. Store the reports under a documented
-   evidence path; do not store the disposable database.
-5. Re-hash both protected databases after the benchmark and run golden.
+   record commit, hardware/OS summary, archive identity, corpus count, sector
+   query, iteration count, cold samples, warm samples, min/median/p95/max,
+   failures, and the two-point size/latency slope.
+3. Draw the requested sector set from `config/core.json`; both protected
+   archives use `science`. Every sample must assert a non-zero document count.
+4. Cold measurement means a new `cored` process and first `/view` request for
+   every sample. Warm measurement reuses one process and the same valid sector
+   set, asserts a cache hit, and proves the backing generation did not move.
+5. Run the complete benchmark twice for each archive. Store all four reports
+   and the cross-corpus slope under a documented evidence path; do not store
+   either disposable database.
+6. Re-hash both protected databases after the benchmark and run golden.
 
 **Failure-capable control.** Give the benchmark a local delayed endpoint and
 prove the declared SLO produces a non-zero exit naming `cold`, `warm`, or both.
 
-**Acceptance criteria.** SLO fixed before timing · disposable 1,764-row copy
-used · two complete reports with distributions, not one stopwatch value · slow
-control fails · materialization explicitly deferred or promoted to a separate
-design task by the gate · protected hashes exact · golden unchanged.
+**Acceptance criteria.** Anchor, factors, firing values, and host plausibility
+fixed before timing · an SLO that cannot fire is a defect, not a pass ·
+disposable 1,764-row and 2,600-row copies used · both distributions and their
+slope reported · sectors come from `config/core.json` · every sample has a
+non-zero document count · every warm sample is a cache hit against an unmoved
+generation · an empty-sector warm path fails the benchmark · slow control
+fails · materialization explicitly deferred or promoted to a separate design
+task by the gate · protected hashes exact · golden unchanged.
 
 **Done when** `/view` has a measured threshold and disposition rather than
 "we'll know when it matters."
 
 ---
 
-## Step 5 · D1 — Re-audit every deferred trigger, without implementing it 🤖
+## Step 6 · D4 — Re-audit every deferred trigger, without implementing it 🤖
 
 **Objective.** Make the defer table at the top executable as an audit. The
 result is allowed—and expected—to be "all still deferred."
 
 **Gate.** A fired trigger promotes only a future design task. It does not grant
-permission to implement the deferred subsystem inside D1.
+permission to implement the deferred subsystem inside D4.
 
 **Steps.**
 1. T7: inspect scheduler code, deployment units, and live process topology.
@@ -274,7 +364,7 @@ trigger · golden and protected artifacts unchanged.
 
 ---
 
-## Step 6 · R2 — Close the cycle with one explicit release identity 🧑
+## Step 7 · R2 — Close the cycle with one explicit release identity 🧑
 
 **One human input: choose the release disposition after seeing the actual
 diff.** Recommendation rule:
@@ -292,7 +382,8 @@ chosen, document which commits remain intentionally unreleased.
 
 **Steps.**
 1. Inventory the diff since `v0.8.0` and classify each change as runtime,
-   storage, public API, operations, evidence, or documentation.
+   storage, public API, operations, evidence, or documentation. State the
+   disposition of every non-result carried out of the cycle.
 2. Record in `ARCHITECTURE.md` the durable relationship between execution-cycle
    names and artifact releases.
 3. For a release, update all version sources together, update `CHANGELOG.md`,
@@ -317,9 +408,10 @@ evidence record without interpreting the cycle name.
 
 - [x] **B0** — entering state re-measured; v0.8.0 tag/HEAD relationship recorded
 - [x] **A1** — protected evidence has one executable provenance manifest
+- [x] **D3** — v0.9 runbook corrected against measured B0/A1 state
 - [ ] **P2** — provider capability probe reproducible; real wire disposition recorded
 - [ ] **V1** — `/view` cold/warm measured against a predeclared SLO
-- [ ] **D1** — all deferred triggers re-audited; no gate bypassed
+- [ ] **D4** — all deferred triggers re-audited; no gate bypassed
 - [ ] **R2** — release disposition recorded and, if applicable, tagged
 
 ## Standing prohibitions
@@ -346,3 +438,7 @@ Drafted against `main` at `091a203`, `v0.8.0` at `bfc8c5a`, and the measured
 v0.8.1 handoff through C1 on 2026-07-24. The v0.9 tasks themselves have not been
 executed. Step B0 deliberately re-verifies every entering claim before any
 implementation.
+
+**Execution correction — 2026-07-24.** B0 and A1 were executed on
+2026-07-24 and are recorded by implementation commits `1054994` and
+`2adf486` plus their separate audit commits.
