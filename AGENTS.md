@@ -196,4 +196,11 @@ handle yourself:
   prints the exact `lsof` / `kill` command; surface that to the operator rather
   than guessing. Run `./run down` and check `lsof -i :8788` before a harvest.
 
+Before any live harvest, run `./run verify-artifacts`. A bare
+`./run harvest-arxiv` resolves to a fresh
+`data/live-<UTC-timestamp>-<pid>.db` and prints it before the first request.
+`config/protected-artifacts.sha256` records `data/core.db` and
+`data/live-smoke.db`; the harness must refuse both as live-harvest targets. Do
+not bypass that refusal—choose the fresh path it prints.
+
 Record every block precisely. A block is a non-result, never a pass.

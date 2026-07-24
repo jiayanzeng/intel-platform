@@ -507,3 +507,25 @@ correct them with a new dated entry.
   `CORE_TOKEN`, which correctly made core requests return 401; the harness now
   unsets it. Both failures were repaired and not counted as passes. No
   dependency, lockfile, policy, or protected-corpus change.
+
+### 2026-07-24 · P1 — live harvests cannot overwrite recorded evidence
+
+- owner: 🤖 Codex
+- measured: bare `./run config` resolved a fresh
+  `data/live-20260724T064350Z-16718.db`; explicit
+  `CORE_DB=data/named-smoke.db` still won. Protected-target controls for
+  `data/core.db` and `./data/live-smoke.db` both exited 2 before egress, naming
+  the full recorded hash and a safe exact override command.
+- acceptance: fresh timestamp/PID default printed before the first request ✅ ·
+  both protected paths and B0.1 hashes recorded in
+  `config/protected-artifacts.sha256` ✅ · canonicalized protected paths refused
+  legibly ✅ · `./run verify-artifacts` reports 2/2 match ✅ · planted scratch
+  mismatch exits 1 and reports expected/actual hashes plus 0/1 ✅ · artifact
+  verification runs first in `./run test` ✅ · README and `AGENTS.md §7`
+  updated ✅ · both protected databases unchanged ✅ · full matrix green ✅
+- golden E2E: unchanged, `./run golden` **11/11**.
+- commit: this P1 protection/status commit (see git history)
+- notes / gate: the mismatch control modified only a disposable copy under
+  `/private/tmp`; neither protected file was deleted, renamed, or rewritten.
+  Final hashes remained `db2f186e…1a37a0` and `94f03e9e…0462c4a`; no
+  dependency, lockfile, source, license, robots, sector, or dedup change.

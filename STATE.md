@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` now owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their hashes are verified by `./run verify-artifacts` and `./run test`. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -969,3 +969,37 @@ handoff.
   `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`.
   Ports 8787/8788/8899 were clear after teardown. No dependency, lockfile,
   source, policy, license, sector, dedup, or protected-corpus change occurred.
+
+### P1 — live-harvest evidence paths protected (verified 2026-07-24)
+
+- `harvest_db_path()` now gives a bare command a fresh
+  `data/live-<UTC timestamp>-<pid>.db` and adds a numeric suffix if that path
+  already exists. `ENV_FILE=/dev/null ./run config` measured
+  `data/live-20260724T064350Z-16718.db`; an explicit
+  `CORE_DB=data/named-smoke.db` remained unchanged.
+- `config/protected-artifacts.sha256` records the complete B0.1 hashes for
+  `data/core.db` and `data/live-smoke.db`. The live-harvest command resolves and
+  prints its destination **before the reachability request**, compares
+  canonicalized paths, and refuses any protected entry.
+- Failure-capable path controls: `CORE_DB=data/core.db` and
+  `CORE_DB=./data/live-smoke.db` both exited **2 before network access**, named
+  the artifact and manifest, printed its full recorded SHA-256, and supplied an
+  exact fresh `CORE_DB=data/live-…db ./run harvest-arxiv` incantation.
+- `./run verify-artifacts` measured **2/2 MATCH**. A disposable byte-for-byte
+  copy of `data/core.db` was then appended with `planted-mismatch`; verification
+  against a disposable manifest exited **1**, reporting expected
+  `db2f186e…1a37a0` versus actual
+  `2223a92b24024ba80ce288e6c4550287336fdfcabf71d7db0f7701406c62e183`
+  and **0/1 match**. The real manifest immediately returned 2/2 again.
+- `ENV_FILE=/dev/null ./run test` now begins with the artifact check and
+  measured 2/2 exact matches before **90 workspace**, **20 net**, and **84 shell
+  tests** passed. The standalone final matrix also passed warning-denied
+  offline/net checks, the same test counts, clippy, fmt, `bash -n run`, and the
+  locked warning-denied Rust **1.78.0** check.
+- `./run golden` remained **11/11**. Final real hashes are still
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+  ports 8787/8788/8899 were clear. No protected bytes were deleted, renamed, or
+  rewritten, and no dependency, lockfile, source, license, robots, sector, or
+  dedup behavior changed.

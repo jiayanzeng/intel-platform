@@ -188,19 +188,26 @@ deterministic and needs no network. Two commands reach the real world, and each
 **refuses to pretend** if it can't:
 
 ```bash
-./run harvest-arxiv    # a REAL arXiv harvest into data/live-smoke.db. Checks
-                       # reachability first; if
+./run harvest-arxiv    # a REAL arXiv harvest into a fresh timestamped DB.
+                       # Prints the path before checking reachability; if
                        # arXiv is unreachable it stops with exit 2 and tells you
                        # so, rather than silently "passing" against fixtures.
 
 ./run verify-llm       # loads .env; creates and tears down an isolated fixture
                        # core; runs embeddings + fusion + public HC1 checks.
+
+./run verify-artifacts # checks the recorded SHA-256 of both evidence DBs.
 ```
 
 `harvest-arxiv` needs outbound HTTPS to the configured arXiv endpoint. A bare
-run uses `data/live-smoke.db`; an intentional named override remains possible as
-`CORE_DB=data/named-smoke.db ./run harvest-arxiv`. Never point a smoke run at
-`data/core.db`.
+run uses a new `data/live-<UTC-timestamp>-<pid>.db`; an intentional named
+override remains possible as
+`CORE_DB=data/named-smoke.db ./run harvest-arxiv`.
+`config/protected-artifacts.sha256` records `data/core.db` and
+`data/live-smoke.db` as evidence artifacts. A live harvest refuses either path
+(including absolute or `./` spellings), prints its recorded hash, and gives an
+exact safe override command. `./run test` verifies both hashes before running
+the Rust and Python suites.
 
 `verify-llm` needs both a chat-completions endpoint and an embeddings endpoint.
 It owns a fresh temporary fixture database and its `cored` process, so no

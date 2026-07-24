@@ -58,12 +58,62 @@ checkline() { # 1|0 label
   if [ "$1" = "1" ]; then printf '   [x] %s\n' "$2"; else printf '   [ ] %s\n' "$2"; fi
 }
 
+fresh_harvest_db_path() {
+  local stamp base candidate suffix
+  stamp=$(date -u +%Y%m%dT%H%M%SZ)
+  base="data/live-${stamp}-$$"
+  candidate="${base}.db"
+  suffix=0
+  while [ -e "$candidate" ]; do
+    suffix=$((suffix + 1))
+    candidate="${base}-${suffix}.db"
+  done
+  printf '%s\n' "$candidate"
+}
+
 harvest_db_path() {
   if [ "$CORE_DB_EXPLICIT" = "1" ]; then
     printf '%s\n' "$CORE_DB"
   else
-    printf '%s\n' "data/live-smoke.db"
+    fresh_harvest_db_path
   fi
+}
+
+absolute_path() {
+  py -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$1"
+}
+
+sha256_file() {
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$1" | awk '{print $1}'
+  elif command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{print $1}'
+  else
+    red "Neither shasum nor sha256sum is available; cannot verify artifacts."
+    return 2
+  fi
+}
+
+refuse_protected_harvest() {
+  local target="$1"
+  local manifest="config/protected-artifacts.sha256"
+  local target_abs expected path path_abs suggestion
+  target_abs=$(absolute_path "$target")
+  while read -r expected path; do
+    [ -z "${expected:-}" ] && continue
+    case "$expected" in \#*) continue ;; esac
+    path_abs=$(absolute_path "$path")
+    if [ "$target_abs" = "$path_abs" ]; then
+      suggestion=$(fresh_harvest_db_path)
+      red "REFUSED: live harvest target '$target' is a protected artifact."
+      red "Recorded SHA-256: $expected"
+      red "Protection record: $manifest ($path)"
+      red "Choose a fresh destination with exactly:"
+      red "  CORE_DB=$suggestion ./run harvest-arxiv"
+      return 1
+    fi
+  done < "$manifest"
+  return 0
 }
 
 need_cargo() {
@@ -214,6 +264,8 @@ cmd_down() {
 # --------------------------------------------------------------------------
 cmd_test() {
   need_cargo; ensure_venv
+  step "protected evidence artifacts"
+  cmd_verify_artifacts
   step "Rust tests (offline workspace, --locked)"
   cargo test --workspace --locked
   step "Rust tests (--features net path)"
@@ -221,6 +273,46 @@ cmd_test() {
   step "shell tests (pytest)"
   PYTHONPATH=shell py -m pytest shell/tests -q
   green "all tests passed."
+}
+
+cmd_verify_artifacts() {
+  ensure_venv
+  local manifest="${1:-config/protected-artifacts.sha256}"
+  local expected path actual
+  local total=0 matched=0 failed=0
+  if [ ! -f "$manifest" ]; then
+    red "protected-artifact manifest not found: $manifest"
+    return 1
+  fi
+  while read -r expected path; do
+    [ -z "${expected:-}" ] && continue
+    case "$expected" in \#*) continue ;; esac
+    total=$((total + 1))
+    if [ ! -f "$path" ]; then
+      red "MISSING  $path (expected SHA-256 $expected)"
+      failed=1
+      continue
+    fi
+    actual=$(sha256_file "$path") || return $?
+    if [ "$actual" = "$expected" ]; then
+      green "MATCH  $path  sha256=$actual"
+      matched=$((matched + 1))
+    else
+      red "MISMATCH  $path"
+      red "  expected: $expected"
+      red "  actual:   $actual"
+      failed=1
+    fi
+  done < "$manifest"
+  if [ "$total" -eq 0 ]; then
+    red "protected-artifact manifest has no records: $manifest"
+    return 1
+  fi
+  if [ "$failed" -ne 0 ]; then
+    red "protected artifacts: $matched/$total match"
+    return 1
+  fi
+  green "protected artifacts: $matched/$total match"
 }
 
 cmd_build()     { need_cargo; cargo build -p cored --locked;               green "built target/debug/cored (offline)."; }
@@ -334,6 +426,12 @@ cmd_golden() {
 cmd_harvest_arxiv() {
   need_cargo; ensure_venv
   CORED_BIN=target/debug/cored
+  local HARVEST_DB
+  HARVEST_DB="$(harvest_db_path)"
+  blue "LIVE harvest database: $HARVEST_DB"
+  if ! refuse_protected_harvest "$HARVEST_DB"; then
+    exit 2
+  fi
 
   step "1/5  reachability — can this box reach the configured arXiv endpoint?"
   # Derive the probe from config, don't hardcode a host. arXiv moved its
@@ -405,12 +503,9 @@ print("  wrote " + live + ": from=" + frm + " until=" + unt + ", max_pages=" + s
   blue  "   widen with HARVEST_DAYS=… HARVEST_MAX_PAGES=… ./run harvest-arxiv)"
 
   step "4/5  starting cored (net build) and harvesting arxiv-cs for real"
-  # Live smoke is isolated by default. The old expression appeared to fall
-  # back to a live DB, but the global CORE_DB default had already populated
-  # data/core.db, so a bare command silently wrote the protected archive.
-  # An explicit CORE_DB=... still wins for deliberate, named runs.
-  local HARVEST_DB
-  HARVEST_DB="$(harvest_db_path)"
+  # Live smoke is isolated by default. A bare run gets the fresh, printed path
+  # resolved before reachability; an explicit CORE_DB still wins only when it
+  # is not one of the recorded protected artifacts.
   CORE_DB="$HARVEST_DB" _start_cored "$LIVE_CFG"
   green "  cored (net) on $CORE_URL, db=$HARVEST_DB"
   blue  "  POST /ingest {sectors:[science], sources:[arxiv-cs]} — this hits the network"
@@ -611,9 +706,11 @@ usage() {
 intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.12):
-    test           run every test: Rust workspace, --features net, and pytest
+    test           verify protected artifacts, then run all Rust/Python tests
     demo           print the whole pipeline start-to-finish, then clean up
     golden         assert every golden E2E invariant, then clean up
+    verify-artifacts
+                   verify recorded evidence-database SHA-256 values
     config         show resolved model endpoints and safe harvest DB (no keys)
     api            run the public shell with model configuration from .env
     build          build cored (offline)
@@ -632,7 +729,7 @@ intel-platform — ./run <command>
     ./run demo
     ./run golden
     ./run config
-    ./run harvest-arxiv                    # defaults to data/live-smoke.db
+    ./run harvest-arxiv                    # fresh data/live-<timestamp>-<pid>.db
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
@@ -641,6 +738,7 @@ EOF
 cmd="${1:-help}"; shift || true
 case "$cmd" in
   test)          cmd_test "$@" ;;
+  verify-artifacts) cmd_verify_artifacts "$@" ;;
   demo)          cmd_demo "$@" ;;
   golden)        cmd_golden "$@" ;;
   build)         cmd_build "$@" ;;
