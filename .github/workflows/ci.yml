@@ -172,6 +172,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: release version consistency
+        run: ./run version-check
       - name: install
         run: pip install -r shell/requirements.txt
       - name: pytest

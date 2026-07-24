@@ -729,3 +729,29 @@ correct them with a new dated entry.
   clippy, fmt, `bash -n`, Python compile, and locked Rust **1.78.0** check all
   passed. Protected hashes remained exact.
 - commit: this T4 gate/status commit (see git history)
+
+### 2026-07-24 · R1 — v0.8.0 release identity made executable
+
+- owner: 🤖 Codex
+- decision: operator selected option **(b), cut v0.8.0**. Harvest durability,
+  HC1 enforcement, and persisted fingerprint identity are material release
+  changes, so leaving runtime artifacts at v0.7.4 would make deployed evidence
+  ambiguous.
+- implementation: Rust `cored`, Python `__version__`, FastAPI, and the STATE
+  header now report 0.8.0; Cargo's lock entry records `cored` 0.8.0; a v0.8.0
+  changelog records T1/T2/T3/T4/T5/T6 completion and T7's measured deferral.
+  Dependency-free `./run version-check` parses all four sources, runs inside
+  `./run test`, and is a blocking CI step.
+- failure-capable control: planted Python `__version__ = "0.8.1"`;
+  `./run version-check` exited 1 and named
+  `shell/intel_shell/__init__.py: 0.8.1` as the disagreeing file. Restored to
+  0.8.0 and the command passed.
+- acceptance: release decision/rationale recorded ✅ · four version sources
+  agree ✅ · version gate wired into test and CI ✅ · planted mismatch rejected
+  with named file ✅ · changelog present ✅ · release tag target `v0.8.0` ✅
+- golden E2E: unchanged — permitted loopback run passed **11/11**. An initial
+  sandboxed invocation could not bind port 8788 and made no assertions.
+- verification: protected artifacts **2/2** exact; warning-denied offline/net
+  checks; **92** workspace, **20** net, and **88** shell tests; clippy, fmt,
+  `bash -n`, Python compile; locked Rust **1.78.0** check/tests all passed.
+- commit: this R1 release commit (see git history)

@@ -262,10 +262,16 @@ cmd_down() {
 # --------------------------------------------------------------------------
 # subcommands
 # --------------------------------------------------------------------------
+cmd_version_check() {
+  python3 tools/version_check.py
+}
+
 cmd_test() {
   need_cargo; ensure_venv
   step "protected evidence artifacts"
   cmd_verify_artifacts
+  step "release version consistency"
+  cmd_version_check
   step "Rust tests (offline workspace, --locked)"
   cargo test --workspace --locked
   step "Rust tests (--features net path)"
@@ -724,6 +730,7 @@ intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.12):
     test           verify protected artifacts, then run all Rust/Python tests
+    version-check  assert every public/package version matches STATE.md
     demo           print the whole pipeline start-to-finish, then clean up
     golden         assert every golden E2E invariant, then clean up
     verify-artifacts
@@ -755,6 +762,7 @@ EOF
 cmd="${1:-help}"; shift || true
 case "$cmd" in
   test)          cmd_test "$@" ;;
+  version-check) cmd_version_check "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
   demo)          cmd_demo "$@" ;;
   golden)        cmd_golden "$@" ;;

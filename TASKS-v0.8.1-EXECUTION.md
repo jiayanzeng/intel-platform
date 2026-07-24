@@ -497,7 +497,7 @@ still settling.
 - [x] **T4L** — 501 diagnosis confirmed; dedicated LAN embedding model measured at 768 dimensions; split roles configured
 - [x] **T4P** — real Gemma adversarial leg reported NOT EXERCISED with no violations; GUARD FIRED and LEAK controls preserved
 - [x] **T4** — closed in one uninterrupted real-model run: 6/6 required checks; models, dimension, and stage latencies recorded
-- [ ] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch
+- [x] **R1** — release decision recorded; `version-check` wired in and proven to fail on mismatch
 - [ ] **C1** — CI runs Python 3.11 and 3.12; shellcheck on `run`; floor recorded
 - [ ] **v0.9** — runbook drafted; deferred items kept deferred with their triggers
 
