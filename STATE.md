@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 P2's failure-capable provider-probe harness is shipped locally, but its live leg is transport-blocked and P2 remains open.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **99 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-24 · **Version:** v0.8.0 (core-shell) · **Status:** **v0.9 P2 is complete: its failure-capable provider probe and one fresh uninterrupted real-wire verifier run are both recorded.** The clean tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **99 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -301,6 +301,52 @@ ports was planted around a separate golden run; golden still passed 11/11,
 proving its deterministic mock route clears live overrides. No dependency or
 architecture invariant changed; `Cargo.lock` and both protected artifacts
 remained untouched.
+
+**v0.9 P2 live leg completed on the in-cycle rerun (measured 2026-07-24).**
+This dated result supersedes the live non-result above without deleting it.
+After the operator confirmed the SSH forwards, `./run config` retained the
+configured LAN identities while resolving chat transport to
+`http://127.0.0.1:18080/v1` and embedding transport to
+`http://127.0.0.1:18081/v1`; both role timeouts remained 30 seconds and keys
+remained redacted.
+
+The exact minimal probe passed. Chat `/health` and `/v1/models` returned HTTP
+200 and identified `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`; the intentional chat
+`POST /v1/embeddings` returned the required HTTP 501 body stating that the
+server does not support embeddings without `--embeddings`. Embedding `/health`
+and `/v1/models` returned HTTP 200 and identified
+`embeddinggemma-300M-Q8_0.gguf`; one short `POST /v1/embeddings` returned HTTP
+200, exactly one item at index 0, and a measured vector dimension of **768**,
+matching the predeclared expected value. Final classification was `PASS`; no
+identity or capability gate fired.
+
+One subsequent `./run verify-llm` execution ran uninterrupted on a fresh
+temporary fixture database and passed **6/6 required checks**:
+
+- fixture ingest: **13 fetched / 13 new**;
+- embedding backfill: **13 missing → 0**, exactly one real provider request,
+  provider dimension **768**, stored stats `{count: 13, dim: 768,
+  inconsistent_dimensions: false}`, latency **0.47s**;
+- fusion: clean retrieval notes, five hybrid context documents, latency
+  **0.04s**;
+- ordinary public `/v1/ask`: **17.01s**, four citations, all four cited
+  documents IndexOnly, and no independent-oracle gated overlap after
+  attestation;
+- adversarial public `/v1/ask`: **9.04s**, `NOT EXERCISED`,
+  `violations: []`, with seven IndexOnly context documents. This remains
+  explicitly not evidence that a real model tripped `/attest`, and it was
+  never `LEAK`.
+
+The verifier reported five diagnostic warnings—four measured latencies plus
+the adversarial `NOT EXERCISED` outcome—and also emitted the existing
+third-party Starlette deprecation warning. It stopped its isolated core
+cleanly. The post-live `./run ci-local` matrix passed **16/16** with **98
+workspace**, **20 net**, and **99 Python 3.11 shell** tests; the Python 3.12.13
+lane independently passed the same **99** shell tests. Golden remained
+**11/11**, protected evidence remained **2/2** exact, and the progress record
+was valid. Both P2 halves are now recorded and its checklist box is checked.
+No provider configuration, dependency, lockfile, architecture invariant, or
+protected artifact changed.
 
 **B0.2 is complete (measured 2026-07-24).** The v0.8.2 entering-state
 gate passed from a clean Cargo target: 92 workspace Rust tests, 20 net tests,

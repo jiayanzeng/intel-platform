@@ -241,6 +241,17 @@ embedding `:18081/health` returned curl exit 7 / HTTP 000. The live leg is
 therefore a non-result awaiting the named operator tunnel action and an
 in-cycle rerun. P2 remains unchecked.
 
+**Live completion — 2026-07-24.** After the operator confirmed the SSH
+forwards, the exact transport-override probe passed: both health/model routes
+returned HTTP 200, chat returned the required HTTP 501 unsupported-embeddings
+diagnosis, and embedding returned one index-0 vector from the configured
+EmbeddingGemma model at the predeclared **768** dimensions. One fresh,
+uninterrupted `./run verify-llm` then passed **6/6** required checks with
+13 missing → 0 embeddings in one request, consistent stored dimension 768,
+clean five-document hybrid retrieval, four attested IndexOnly citations with
+no public overlap, and adversarial `NOT EXERCISED` / no violations. Both
+harness and live halves are now recorded; P2 is complete.
+
 **Steps.**
 1. Document environment precedence for direct LAN settings and per-command
    transport overrides. `./run config` must print the effective, redacted
@@ -420,7 +431,7 @@ evidence record without interpreting the cycle name.
 - [x] **B0** — entering state re-measured; v0.8.0 tag/HEAD relationship recorded
 - [x] **A1** — protected evidence has one executable provenance manifest
 - [x] **D3** — v0.9 runbook corrected against measured B0/A1 state
-- [ ] **P2** — provider capability probe reproducible; real wire disposition recorded
+- [x] **P2** — provider capability probe reproducible; real wire disposition recorded
 - [ ] **V1** — `/view` cold/warm measured against a predeclared SLO
 - [ ] **D4** — all deferred triggers re-audited; no gate bypassed
 - [ ] **R2** — release disposition recorded and, if applicable, tagged
