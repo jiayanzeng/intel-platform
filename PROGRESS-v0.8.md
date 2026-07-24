@@ -477,3 +477,33 @@ correct them with a new dated entry.
   `Operation not permitted` and was not counted; the permitted local-only run
   passed. Both protected DB hashes were unchanged afterward; no runtime,
   dependency, lockfile, policy, or corpus change was made.
+
+### 2026-07-24 · G1 — golden E2E is one executable, blocking check
+
+- owner: 🤖 Codex
+- measured: `./run golden` owns a fresh temporary DB/output directory plus real
+  core, mock-model, and public-API processes; the restored tree exited 0 with
+  **11/11 named checks**. A temporary 20-word perturbation to the syndicated
+  fixture moved it out of the duplicate threshold; the same command exited 1
+  with **7/11**, explicitly failing the hamming-12 check and reporting the
+  dependent 13-doc, z=12.0, and 5-citation drift. Restoring the fixture returned
+  the command to 11/11.
+- acceptance: one-command lifecycle and disposable writes ✅ · every
+  `AGENTS.md §6` number asserted with named output ✅ · planted fixture drift
+  exits non-zero and names the correct check ✅ · blocking push/PR CI job
+  present with `continue-on-error: false` ✅ · `AGENTS.md §5.5/§6` updated to
+  make the command authoritative ✅ · full matrix green: 90 workspace, 20 net,
+  84 shell, warning-denied checks, clippy, fmt, `bash -n`, Python compile, and
+  locked Rust 1.78 ✅ · both protected hashes unchanged ✅
+- golden E2E: exact, **11/11** — initial 13/13; 12 analyzed; exact
+  `techwire::tw-004` → `osdaily::osd-004` duplicate at hamming 12; DeepSeek
+  RISING z=10.0 from 3 sources; second acme +0; quant 1; public ask 4 citations
+  and `techwire::tw-004` suppressed; all IndexOnly snippets NULL; DeepSeek
+  search 6/0; bad key 401.
+- commit: this G1 harness/CI/status commit (see git history)
+- notes / gate: the first implementation run failed before assertions because
+  the background API lacked `PYTHONPATH=shell`; the pid-aware readiness check
+  surfaced it immediately. A later hardening trial exported an empty
+  `CORE_TOKEN`, which correctly made core requests return 401; the harness now
+  unsets it. Both failures were repaired and not counted as passes. No
+  dependency, lockfile, policy, or protected-corpus change.

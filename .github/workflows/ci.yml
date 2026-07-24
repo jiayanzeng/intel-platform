@@ -178,6 +178,28 @@ jobs:
         run: PYTHONPATH=shell python3 -m pytest shell/tests -q
 
   # ---------------------------------------------------------------------------
+  # The cross-language regression anchor. Unit tests cannot stand in for this:
+  # it starts the real Rust core, deterministic model double, and public Python
+  # API against one disposable database, then asserts every documented corpus,
+  # entitlement, licensing, retrieval, and citation value.
+  # ---------------------------------------------------------------------------
+  golden:
+    name: golden E2E (blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.91"
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: assert the golden end-to-end
+        run: ./run golden
+
+  # ---------------------------------------------------------------------------
   # Drift report. Runs on a schedule, NEVER on a PR, and never commits anything.
   #
   # It exists because the failure mode we keep hitting is not "a dependency

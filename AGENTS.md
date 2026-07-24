@@ -155,9 +155,9 @@ the next:
 4. **Run every acceptance criterion** listed for the task and **capture the
    output** — command text and result. Self-verify; do not ask the operator to
    run anything you can run yourself.
-5. **Run the golden E2E** (§6). If it moves by even one document / id / distance
-   on a task meant to preserve it, **stop** — that is corpus corruption, not
-   progress.
+5. **Run `./run golden`** (§6). Its exit code defines whether the regression
+   anchor held. If it moves by even one document / id / distance on a task meant
+   to preserve it, **stop** — that is corpus corruption, not progress.
 6. **Update `STATE.md`**: the header line (test counts, warning status, golden
    E2E status) and the relevant section, with what you **measured**, not what you
    hoped. Correct any prior claim you found to be false.
@@ -170,7 +170,10 @@ the next:
 
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
-The golden pipeline is the regression anchor. Its expected outcome (v0.7):
+The golden pipeline is the regression anchor. **`./run golden` is the
+authoritative, executable definition; the prose below is a human summary. If
+they ever disagree, the command's named assertion failure is the finding — do
+not edit the assertion to bless the drift.** Its expected outcome (v0.7):
 
 > acme corpus 13 → 12 analyzed; `techwire::tw-004` dropped for `osdaily::osd-004`
 > at hamming 12; DeepSeek RISING z = 10.0; a re-run adds 0; quant-desk sees 1

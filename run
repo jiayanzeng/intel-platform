@@ -8,7 +8,8 @@
 # you should not normally need to set any of them.
 #
 #   ./run test            all tests (Rust + shell)
-#   ./run demo            the full offline pipeline, start to finish, one shot
+#   ./run demo            print the full offline pipeline, start to finish
+#   ./run golden          assert the complete golden E2E, start to finish
 #   ./run harvest-arxiv   the LIVE arXiv harvest — the one test only a box
 #                         with real network egress can do
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
@@ -153,13 +154,37 @@ _start_mock_llm() {
   mkdir -p "$RUNDIR"
   ( nohup "$VENV/bin/python" tools/mock_openai.py >"$RUNDIR/llm.log" 2>&1 < /dev/null &
     echo $! > "$RUNDIR/llm.pid" )
-  # the mock answers 501 on /v1/models by design, so probe a real route
+  local pid status i
+  pid=$(cat "$RUNDIR/llm.pid")
+  # Probe a real POST route. The mock has no GET route, so a GET readiness
+  # check cannot distinguish "up" from BaseHTTPRequestHandler's 501 response.
   for i in $(seq 1 40); do
-    curl -fsS -o /dev/null --max-time 2 "http://127.0.0.1:${LLM_PORT}/v1/models" 2>/dev/null && break
-    # 501 is still "up"
-    curl -sS -o /dev/null -w '%{http_code}' --max-time 2 "http://127.0.0.1:${LLM_PORT}/v1/models" 2>/dev/null | grep -q '501' && break
+    if ! kill -0 "$pid" 2>/dev/null; then
+      red "mock LLM (pid $pid) exited before becoming ready."
+      red "Last lines of $RUNDIR/llm.log:"; tail -n 20 "$RUNDIR/llm.log" >&2 || true
+      return 1
+    fi
+    status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 2 \
+      -X POST "$MOCK_LLM_URL/embeddings" \
+      -H 'content-type: application/json' \
+      -d '{"model":"readiness","input":["probe"]}' 2>/dev/null || true)
+    [ "$status" = "200" ] && return 0
     sleep 0.25
   done
+  red "mock LLM did not become ready. Last lines of $RUNDIR/llm.log:"
+  tail -n 20 "$RUNDIR/llm.log" >&2 || true
+  return 1
+}
+
+_start_api() {
+  mkdir -p "$RUNDIR"
+  ( export CORE_URL SUBSCRIPTIONS_PATH PYTHONPATH=shell
+    nohup "$VENV/bin/python" -m uvicorn intel_shell.app:app \
+      --host 127.0.0.1 --port "$API_PORT" \
+      >"$RUNDIR/api.log" 2>&1 < /dev/null &
+    echo $! > "$RUNDIR/api.pid" )
+  wait_for_pid "$API_URL/health" "$(cat "$RUNDIR/api.pid")" \
+    "public API" "$RUNDIR/api.log"
 }
 
 cmd_down() {
@@ -249,6 +274,56 @@ for s in v["signals"]:
     print("   • %-52s score %.2f" % (s["headline"][:52], s["score"]))
 '
   green "demo complete."
+}
+
+# The regression anchor. Unlike `demo`, every documented value is asserted and
+# the exit code carries the result. All writes land below one fresh temporary
+# directory; neither live database nor generated briefs under data/ are touched.
+cmd_golden() {
+  need_cargo; ensure_venv
+  CORED_BIN=target/debug/cored
+  cmd_build
+
+  local GOLDEN_DIR GOLDEN_DB GOLDEN_DATA
+  GOLDEN_DIR="$(mktemp -d)"
+  GOLDEN_DB="$GOLDEN_DIR/golden.db"
+  GOLDEN_DATA="$GOLDEN_DIR/output"
+  GOLDEN_CLEANUP_DIR="$GOLDEN_DIR"
+  trap 'cmd_down; rm -rf "${GOLDEN_CLEANUP_DIR:-}"' EXIT
+
+  # The golden is deterministic and must ignore provider choices from .env.
+  export LLM_CHAT_PROFILE=
+  export LLM_CHAT_BASE_URL="$MOCK_LLM_URL"
+  export LLM_CHAT_API_KEY=
+  export LLM_CHAT_MODEL=default
+  export LLM_CHAT_TIMEOUT_SECONDS=5
+  export LLM_EMBED_BASE_URL="$MOCK_LLM_URL"
+  export LLM_EMBED_API_KEY=
+  export LLM_EMBED_MODEL=default
+  export LLM_EMBED_TIMEOUT_SECONDS=5
+  export LLM_BASE_URL="$MOCK_LLM_URL"
+  export LLM_API_KEY=
+  export LLM_TIMEOUT_SECONDS=5
+  export CORE_CONFIG="config/core.json"
+  export CORE_ENTITIES="config/entities.json"
+  export SUBSCRIPTIONS_PATH="config/subscriptions.hashed.json"
+  unset CORE_TOKEN API_KEY_PEPPER
+  export NO_PROXY="127.0.0.1,localhost"
+  export no_proxy="127.0.0.1,localhost"
+
+  step "starting isolated golden core + mock model + public API"
+  CORE_DB="$GOLDEN_DB" _start_cored
+  _start_mock_llm
+  _start_api
+  green "isolated services ready; db=$GOLDEN_DB"
+
+  step "asserting the golden end-to-end"
+  CORE_URL="$CORE_URL" API_URL="$API_URL" PYTHONPATH=shell \
+    py tools/golden_e2e.py \
+      --core-url "$CORE_URL" \
+      --api-url "$API_URL" \
+      --data-dir "$GOLDEN_DATA"
+  green "golden end-to-end passed."
 }
 
 # --------------------------------------------------------------------------
@@ -537,7 +612,8 @@ intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.12):
     test           run every test: Rust workspace, --features net, and pytest
-    demo           run the whole pipeline start-to-finish, then clean up
+    demo           print the whole pipeline start-to-finish, then clean up
+    golden         assert every golden E2E invariant, then clean up
     config         show resolved model endpoints and safe harvest DB (no keys)
     api            run the public shell with model configuration from .env
     build          build cored (offline)
@@ -554,6 +630,7 @@ intel-platform — ./run <command>
 
   Examples:
     ./run demo
+    ./run golden
     ./run config
     ./run harvest-arxiv                    # defaults to data/live-smoke.db
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
@@ -565,6 +642,7 @@ cmd="${1:-help}"; shift || true
 case "$cmd" in
   test)          cmd_test "$@" ;;
   demo)          cmd_demo "$@" ;;
+  golden)        cmd_golden "$@" ;;
   build)         cmd_build "$@" ;;
   build-net)     cmd_build_net "$@" ;;
   up)            need_cargo; ensure_venv; CORED_BIN=target/debug/cored; cmd_build; _start_cored; _start_mock_llm

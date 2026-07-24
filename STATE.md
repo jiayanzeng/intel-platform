@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state, registered the 1,764-document archive and 2,600-document live-smoke corpus by exact SHA-256, and captured the current manual golden command sequence for G1. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer. The full golden end-to-end remained byte-identical.
+**As of:** 2026-07-24 · **Version:** v0.7.4 (core-shell) · **Status:** **90 Rust workspace tests green with 0 _rustc_ warnings** (`cargo check --workspace --locked --all-targets` under `RUSTFLAGS=-D warnings`, both the offline and `--features net` builds), **20 net-path ingest tests green**, and **84 shell tests green** against failure-capable doubles (with 1 Starlette deprecation warning). Clippy and fmt are clean on pinned Rust 1.91.1 and blocking in CI; the locked offline graph is also clean under Rust 1.78.0. B0.1 re-measured the complete entering state and registered both evidence databases by exact SHA-256. **G1 is complete:** `./run golden` now owns a disposable cross-language lifecycle, asserts all eleven regression anchors, fails demonstrably on fixture drift, and runs as a blocking CI job. HC1 is structurally enforced on `/v1/ask` by core `/attest`; cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4 remains deferred:** a split-provider run exercised real LAN chat and passed the public HC1 leg once, but the configured DMXAPI embedding role returned 503, so embeddings and fusion did not pass in that run. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
@@ -925,3 +925,47 @@ handoff.
 - After the golden, both protected hashes matched the values above and all
   three local ports were clear. No source, license, robots, dedup, dependency,
   lockfile, or protected-database bytes changed.
+
+### G1 — golden E2E made executable (verified 2026-07-24)
+
+- `./run golden` now builds the offline core, creates a fresh `mktemp -d`
+  database and brief-output directory, starts the real Rust HTTP core,
+  deterministic 32-dimensional mock model, and public FastAPI shell, executes
+  all subscriber flows over loopback HTTP, and tears down all three services
+  plus the temporary directory on EXIT. It never points a write at `data/`.
+- `tools/golden_e2e.py` prints and enforces **11 named checks**: initial
+  fetched/new 13/13; acme pipeline completion; 12 analyzed; exact near-duplicate
+  ids and hamming 12; DeepSeek RISING at 10.0 from three sources; second acme
+  ingest +0; quant-desk 1; public ask 4 citations with `techwire::tw-004`
+  suppressed; all IndexOnly search snippets NULL; acme/quant DeepSeek hits 6/0;
+  and bad-key 401. The restored-tree command exited 0 with **11/11**.
+- Failure-capable control executed before trusting the harness: 20 unique words
+  were temporarily appended to the `techwire::tw-004` fixture body. The
+  unchanged command exited **1** with **7/11** passing and explicitly named
+  `near-duplicate drops techwire::tw-004, keeps osdaily::osd-004 at hamming 12`
+  as failed. Dependent checks also caught 13 analyzed, no duplicate pair,
+  DeepSeek z=12.0, and 5 citations/no suppression. The fixture was restored
+  byte-for-byte; the next run returned 11/11.
+- Mock readiness now probes a real embedding POST and remains pid-aware; public
+  API readiness is also pid-aware. The first implementation run exposed a
+  missing `PYTHONPATH=shell` export and failed loudly before assertions; that
+  was repaired and is not counted as a pass. A later attempt to neutralize
+  ambient core authentication by exporting an empty `CORE_TOKEN` correctly
+  produced HTTP 401; the deterministic harness now **unsets** the token instead,
+  matching the normal token-off state, and the following 11/11 run is the one
+  counted.
+- `AGENTS.md §5.5` now requires the command rather than a hand-reimplemented
+  ritual, and §6 names its assertions as authoritative over the human summary.
+  `.github/workflows/ci.yml` has a separate `golden E2E (blocking)` push/PR job
+  with `continue-on-error: false`.
+- Final matrix: warning-denied offline and net checks passed; **90 workspace
+  tests**, **20 net ingest tests**, and **84 shell tests** passed (the existing
+  one Starlette warning remains); clippy, fmt, `bash -n run`, Python bytecode
+  compilation, and the locked warning-denied Rust **1.78.0** check passed.
+- Both protected hashes remained exact:
+  `data/core.db`
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and `data/live-smoke.db`
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`.
+  Ports 8787/8788/8899 were clear after teardown. No dependency, lockfile,
+  source, policy, license, sector, dedup, or protected-corpus change occurred.
