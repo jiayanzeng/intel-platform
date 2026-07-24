@@ -43,6 +43,21 @@ findings were fixed; the two scope diagnostics have narrow, reasoned
 The full Rust/shell matrix passed, golden remained 11/11, and both protected
 artifact hashes remained exact.
 
+**The v0.9 execution runbook is drafted, not executed (2026-07-24).**
+`TASKS-v0.9-EXECUTION.md` opens with a fresh B0 and six ordered,
+decision-gated tasks: baseline verification, one executable evidence-provenance
+manifest, a reproducible real-provider wire probe, a disposable 1,764-row
+`/view` cold/warm benchmark against a predeclared SLO, an audit of every
+deferred trigger, and an explicit release close. It adds no ingestion source or
+subscriber-facing surface. T7 single-flight, Postgres, pgvector, multi-host
+UDS/mTLS, and `/view` materialization remain deferred under their unchanged
+triggers; the runbook permits measurement or promotion to a future design task,
+not implementation around a gate. Draft verification passed the full matrix:
+92 workspace tests, 20 net tests, 88 shell tests under Python 3.11.4 and
+3.12.13, warning-denied offline/net checks, clippy, fmt, ShellCheck, floor
+byte-compilation, and locked Rust 1.78 check/tests. Golden remained 11/11 and
+both protected hashes remained exact.
+
 **v0.7.4 acts on a detailed third-party (Codex) review that found the real root cause of the failed on-site harvest — plus three orchestration bugs and one test-isolation bug, all mine, all now fixed.** The 34-minute silence was *not* a long harvest and *not* the harvest logic; it was the `run` harness failing against an environment condition and then hanging on a control-flow bug:
 
 - **Root cause — a foreign process owned the port.** An orphaned `cored` from another copy of the repo (in the operator's `.Trash`) was still listening on 8788. This checkout's server failed to bind (`Address already in use`) and died.

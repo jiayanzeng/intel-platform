@@ -784,3 +784,29 @@ correct them with a new dated entry.
   **2/2** exact; warning-denied offline/net checks, **92** workspace tests,
   **20** net tests, clippy, fmt, and locked Rust **1.78.0** check/tests passed.
 - commit: this C1 implementation/status commit (see git history)
+
+### 2026-07-24 · v0.9 — next execution runbook drafted
+
+- owner: 🤖 Codex
+- scope: added `TASKS-v0.9-EXECUTION.md` as an evidence-and-operations cycle
+  with no new ingestion source or subscriber-facing product surface.
+- order: fresh B0 baseline → executable evidence provenance → reproducible
+  provider-wire probe → disposable `/view` cold/warm benchmark with
+  predeclared SLO → deferred-trigger audit → explicit release close.
+- gates preserved: T7 remains triggered only by a second concurrent harvester;
+  Postgres by a second writer; pgvector by measured corpus/latency beyond
+  SQLite's comfort; UDS/mTLS by an actual host split; `/view` materialization by
+  measured warm-up crossing the defined SLO. Benchmark/audit tasks may promote
+  future design work but may not implement around those gates.
+- evidence discipline: every task has an objective, gate, measured acceptance
+  criteria, failure-capable control, golden check, protected-artifact check,
+  real-wire/fixture boundary, and one-task commit requirement. The v0.9 tasks
+  are explicitly **not executed** by drafting them.
+- acceptance: fresh B0 first ✅ · all five required deferred triggers explicit
+  and unchanged ✅ · `/view` disposable-copy measurement/SLO task present ✅ ·
+  provider, live-evidence, and release identity addressed before new surface ✅
+- golden/verification: golden **11/11**; artifacts **2/2** exact;
+  warning-denied offline/net checks; **92** workspace, **20** net, and **88**
+  shell tests under Python 3.11.4 and 3.12.13; clippy, fmt, ShellCheck, floor
+  byte-compilation, and locked Rust **1.78.0** check/tests passed.
+- commit: this v0.9 runbook/status commit (see git history)
