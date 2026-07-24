@@ -36,7 +36,7 @@ use axum::http::{HeaderMap, StatusCode};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
-use intel_core::{attest_answer, Attestation, Day, Document, SectorId, Signal};
+use intel_core::{attest_answer, Attestation, Day, Document, Signal};
 use intel_enrich::Gazetteer;
 use intel_extract::hamming;
 use intel_ingest::{CursorStore, SourceContext};
@@ -252,14 +252,7 @@ fn parse_sectors(raw: &str) -> Vec<String> {
 }
 
 fn sector_corpus(state: &AppState, sectors: &[String]) -> Result<Vec<(Document, u64)>, ApiErr> {
-    let set: HashSet<SectorId> = sectors.iter().map(|s| SectorId::new(s)).collect();
-    Ok(state
-        .store
-        .load_all_with_fingerprints()
-        .map_err(internal)?
-        .into_iter()
-        .filter(|(d, _)| set.contains(&d.sector))
-        .collect())
+    state.store.documents_in_sectors(sectors).map_err(internal)
 }
 
 /// One-line excerpt, whitespace-normalized, hard-capped. (Moved here from
@@ -839,7 +832,8 @@ async fn retrieve(
     // context even when the other one is the better answer to *this* question.
     // Canonical id is a property of the corpus; relevance is a property of the
     // query, and context assembly is a question about the query.
-    let all = st.store.load_all().map_err(internal)?;
+    let fused_ids: Vec<&str> = r.fused.iter().map(|(id, _)| id.as_str()).collect();
+    let all = st.store.documents_by_ids(&fused_ids).map_err(internal)?;
     let by_id: HashMap<&str, &Document> = all.iter().map(|d| (d.id.as_str(), d)).collect();
     let prints = st.store.fingerprints().map_err(internal)?;
 
@@ -882,7 +876,11 @@ async fn attest(
         ));
     }
 
-    let all = st.store.load_all().map_err(internal)?;
+    let requested_ids: Vec<&str> = req.context_doc_ids.iter().map(String::as_str).collect();
+    let all = st
+        .store
+        .documents_by_ids(&requested_ids)
+        .map_err(internal)?;
     let by_id: HashMap<&str, &Document> = all
         .iter()
         .map(|document| (document.id.as_str(), document))
@@ -983,14 +981,10 @@ async fn docs(
     Query(p): Query<DocsQ>,
 ) -> Result<Json<Vec<DocDto>>, ApiErr> {
     guard(&st, &headers)?;
-    let want: HashSet<String> = parse_sectors(&p.ids).into_iter().collect();
-    let all = st.store.load_all().map_err(internal)?;
-    Ok(Json(
-        all.iter()
-            .filter(|d| want.contains(&d.id))
-            .map(doc_dto)
-            .collect(),
-    ))
+    let ids = parse_sectors(&p.ids);
+    let id_refs: Vec<&str> = ids.iter().map(String::as_str).collect();
+    let documents = st.store.documents_by_ids(&id_refs).map_err(internal)?;
+    Ok(Json(documents.iter().map(doc_dto).collect()))
 }
 
 // --- main -----------------------------------------------------------------------
@@ -1313,6 +1307,28 @@ mod tests {
         .await
         .expect("view ok")
         .0
+    }
+
+    #[tokio::test]
+    async fn view_excludes_documents_outside_the_sql_sector_filter() {
+        let st = test_state();
+        do_ingest(&st, &["technology", "finance"], None).await;
+        let finance_ids: Vec<String> = st
+            .store
+            .documents_in_sectors(&["finance".to_string()])
+            .unwrap()
+            .into_iter()
+            .map(|(document, _)| document.id)
+            .collect();
+        assert!(!finance_ids.is_empty());
+
+        let technology = do_view(&st, "technology").await;
+        assert!(
+            finance_ids
+                .iter()
+                .all(|id| !technology.kept_doc_ids.contains(id)),
+            "unentitled finance document escaped the SQL filter"
+        );
     }
 
     #[tokio::test]

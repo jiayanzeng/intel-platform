@@ -908,3 +908,33 @@ correct them with a new dated entry.
 - notes / gate: present archive risk remains low and measured: B0.2 found zero
   NULL fingerprints/canonical ids in both protected archives. This closes a
   structural defect without claiming an observed protected-corpus failure.
+
+### 2026-07-24 · A3 — sector and id scoping moved into core SQL
+
+- owner: 🤖 Codex
+- implementation: `documents_in_sectors` applies bound sector predicates and
+  returns persisted fingerprints; `documents_by_ids` binds every requested id.
+  `/view`, `/retrieve`, `/attest`, and `/docs` now use those methods.
+  `load_all` is documented for genuine whole-archive integrity/export/test
+  consumers only.
+- failure-capable controls: a finance row inserted beside technology rows was
+  absent from the store's technology query and from `/view` ✅ · an id
+  `quoted',finance-doc` returned exactly itself through `documents_by_ids`,
+  proving binding rather than interpolation ✅ · empty sector/id lists returned
+  empty results ✅
+- measured performance: fresh disposable copies of the protected 2,600-row
+  archive, same `POST /retrieve` request (`learning`, `science`, `k=8`):
+  **0.039740s before** and **0.016264s after**. Both were HTTP 200 with
+  fused/context/suppressed = **8/8/0**. The 2.44× ratio is one-shot wall-clock
+  evidence, not a promoted SLO.
+- acceptance: four handler call sites converted ✅ · sector predicate proven
+  in store SQL ✅ · injection-shaped id safely bound ✅ · unentitled sector
+  absent from `/view` ✅ · full matrix **97 workspace / 20 net / 88 shell** ✅ ·
+  warning-denied checks, clippy, fmt, ShellCheck, and locked Rust 1.78
+  check/tests ✅
+- golden E2E: unchanged — **11/11**.
+- verification: protected artifacts **2/2 MATCH**; `Cargo.lock` untouched.
+- commit: this A3 SQL-scoping commit (see git history)
+- notes / gate: output-preservation gate clear. The benchmark copies lived
+  under `/private/tmp`; neither protected archive was opened through
+  `SqliteStore` or modified.

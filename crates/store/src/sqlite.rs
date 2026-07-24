@@ -158,6 +158,10 @@ impl SqliteStore {
         Ok(n)
     }
 
+    /// Load the whole archive for integrity/export operations and tests.
+    ///
+    /// Request handlers that answer a sector- or id-scoped question must use
+    /// the SQL-filtered methods below rather than materializing every body.
     pub fn load_all(&self) -> rusqlite::Result<Vec<Document>> {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare(
@@ -187,6 +191,62 @@ impl SqliteStore {
                 .ok_or_else(|| missing_fingerprint_error(13, &document.id))?;
             Ok((document, fingerprint as u64))
         })?;
+        rows.collect()
+    }
+
+    /// Documents in the requested sectors, paired with persisted fingerprints.
+    ///
+    /// HC2 lives in this SQL predicate. An empty entitlement returns no rows.
+    pub fn documents_in_sectors(
+        &self,
+        sectors: &[String],
+    ) -> rusqlite::Result<Vec<(Document, u64)>> {
+        if sectors.is_empty() {
+            return Ok(Vec::new());
+        }
+        let conn = self.conn.lock().unwrap();
+        let placeholders = sectors.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+        let sql = format!(
+            "SELECT id, sector, url, title, body, published_day, published_raw,
+                    authors, tags, source_id, retrieved_from, source_kind, license,
+                    simhash
+             FROM documents
+             WHERE sector IN ({placeholders})"
+        );
+        let mut stmt = conn.prepare(&sql)?;
+        let mut bind: Vec<&dyn rusqlite::ToSql> = Vec::with_capacity(sectors.len());
+        for sector in sectors {
+            bind.push(sector);
+        }
+        let rows = stmt.query_map(bind.as_slice(), |row| {
+            let document = row_to_document(row)?;
+            let fingerprint = row
+                .get::<_, Option<i64>>(13)?
+                .ok_or_else(|| missing_fingerprint_error(13, &document.id))?;
+            Ok((document, fingerprint as u64))
+        })?;
+        rows.collect()
+    }
+
+    /// Fetch only the named documents. Every id is a bound parameter.
+    pub fn documents_by_ids(&self, ids: &[&str]) -> rusqlite::Result<Vec<Document>> {
+        if ids.is_empty() {
+            return Ok(Vec::new());
+        }
+        let conn = self.conn.lock().unwrap();
+        let placeholders = ids.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+        let sql = format!(
+            "SELECT id, sector, url, title, body, published_day, published_raw,
+                    authors, tags, source_id, retrieved_from, source_kind, license
+             FROM documents
+             WHERE id IN ({placeholders})"
+        );
+        let mut stmt = conn.prepare(&sql)?;
+        let mut bind: Vec<&dyn rusqlite::ToSql> = Vec::with_capacity(ids.len());
+        for id in ids {
+            bind.push(id);
+        }
+        let rows = stmt.query_map(bind.as_slice(), row_to_document)?;
         rows.collect()
     }
 
@@ -1271,6 +1331,33 @@ mod tests {
         assert_eq!(prints.len(), 1);
         // The stored fingerprint is exactly what the analysis-time dedup uses.
         assert_eq!(prints["d1"], intel_extract::simhash("T quantum widgets"));
+    }
+
+    #[test]
+    fn sector_and_id_scoped_queries_bind_and_filter_in_sql() {
+        let s = tmp_store();
+        let technology = doc("technology-doc", "Technology", "accelerators");
+        let mut finance = doc("finance-doc", "Finance", "quarterly filing");
+        finance.sector = SectorId("finance".into());
+        let shaped_id = "quoted',finance-doc";
+        let shaped = doc(shaped_id, "Bound id", "parameter control");
+        s.append_new(&[technology, finance, shaped]).unwrap();
+
+        let rows = s.documents_in_sectors(&["technology".to_string()]).unwrap();
+        let ids: Vec<&str> = rows
+            .iter()
+            .map(|(document, _)| document.id.as_str())
+            .collect();
+        assert_eq!(ids.len(), 2);
+        assert!(ids.contains(&"technology-doc"));
+        assert!(ids.contains(&shaped_id));
+        assert!(!ids.contains(&"finance-doc"));
+        assert!(s.documents_in_sectors(&[]).unwrap().is_empty());
+
+        let bound = s.documents_by_ids(&[shaped_id]).unwrap();
+        assert_eq!(bound.len(), 1);
+        assert_eq!(bound[0].id, shaped_id);
+        assert!(s.documents_by_ids(&[]).unwrap().is_empty());
     }
 
     #[test]
