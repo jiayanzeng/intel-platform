@@ -207,7 +207,9 @@ jobs:
         if: matrix.python-version == '3.11'
         run: shellcheck ./run
       - name: install
-        run: pip install -r shell/requirements.txt
+        run: pip install -c shell/constraints.txt -r shell/requirements.txt
+      - name: verify pinned Python environment
+        run: python3 tools/python_constraints.py shell/constraints.txt
       - name: evidence verifier controls
         run: PYTHONPATH=shell python3 -m pytest shell/tests/test_evidence_artifacts.py -q
       - name: pytest

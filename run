@@ -43,6 +43,7 @@ CORE_DB="${CORE_DB:-data/core.db}"      # persistent unless a command overrides
 SUBSCRIPTIONS_PATH="${SUBSCRIPTIONS_PATH:-config/subscriptions.hashed.json}"
 RUNDIR=".run"                           # pidfiles + logs live here
 EVIDENCE_MANIFEST="config/protected-artifacts.json"
+PYTHON_CONSTRAINTS="shell/constraints.txt"
 
 CORE_URL="http://127.0.0.1:${CORE_PORT}"
 API_URL="http://127.0.0.1:${API_PORT}"
@@ -116,8 +117,18 @@ ensure_venv() {
   if [ ! -x "$VENV/bin/python" ]; then
     step "creating Python venv (first run only)"
     python3 -m venv "$VENV"
-    "$VENV/bin/pip" install -q -r shell/requirements.txt
+    "$VENV/bin/pip" install -q \
+      -c "$PYTHON_CONSTRAINTS" -r shell/requirements.txt
   fi
+}
+
+verify_python_constraints() {
+  py tools/python_constraints.py "$PYTHON_CONSTRAINTS"
+}
+
+cmd_python_env_check() {
+  ensure_venv
+  verify_python_constraints
 }
 
 # Wait for an HTTP endpoint to answer, or give up with a pointer to the log.
@@ -288,6 +299,8 @@ verify_fingerprint_fixture() {
 
 cmd_test() {
   need_cargo; ensure_venv
+  step "reproducible Python environment"
+  verify_python_constraints
   step "protected evidence artifacts"
   cmd_verify_artifacts
   step "persisted fingerprint integrity"
@@ -383,6 +396,7 @@ ci_msrv_test() {
 }
 
 ci_pytest() {
+  verify_python_constraints
   PYTHONPATH=shell py -m pytest shell/tests -q
 }
 
@@ -878,6 +892,8 @@ intel-platform — ./run <command>
     checklist-audit
                    resolve every checked task to progress and a real commit
     progress-check validate the newest append-only progress entry
+    python-env-check
+                   require the active venv to match shell/constraints.txt
     verify-fingerprints <db> [reference-db]
                    report missing/stale fingerprints without repairing them
     demo           print the whole pipeline start-to-finish, then clean up
@@ -928,6 +944,7 @@ case "$cmd" in
   cycle-check)   cmd_cycle_check "$@" ;;
   checklist-audit) cmd_checklist_audit "$@" ;;
   progress-check) cmd_progress_check "$@" ;;
+  python-env-check) cmd_python_env_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
   evidence-report) cmd_evidence_report "$@" ;;

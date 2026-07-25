@@ -311,7 +311,8 @@ curl -H "Authorization: Bearer ak_acme_7f3d9c" \
 
 ```bash
 cargo run -p cored                                          # core on :8788
-pip install -r shell/requirements.txt
+pip install -c shell/constraints.txt -r shell/requirements.txt
+python3 tools/python_constraints.py shell/constraints.txt
 python3 tools/mock_openai.py &                              # mock model on :8899
 LLM_BASE_URL=http://127.0.0.1:8899/v1 \
   PYTHONPATH=shell python3 -m intel_shell.pipeline --client acme-research

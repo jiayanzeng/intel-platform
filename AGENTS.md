@@ -150,8 +150,11 @@ cargo clippy --workspace --locked --all-targets -- -D warnings
 cargo fmt --all -- --check
 
 # shell (holds the entitlement/licensing invariants the Rust tests do not)
-pip install -r shell/requirements.txt
-PYTHONPATH=shell python3 -m pytest shell/tests -q
+python3 -m venv --clear .venv
+.venv/bin/python -m pip install \
+  -c shell/constraints.txt -r shell/requirements.txt
+.venv/bin/python tools/python_constraints.py shell/constraints.txt
+PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
 ```
 
 Rebuild the local Python 3.12 lane in the repository's already-ignored
@@ -159,13 +162,16 @@ Rebuild the local Python 3.12 lane in the repository's already-ignored
 
 ```
 python3.12 -m venv --clear .venv/py312
-.venv/py312/bin/python -m pip install -r shell/requirements.txt
+.venv/py312/bin/python -m pip install \
+  -c shell/constraints.txt -r shell/requirements.txt
+.venv/py312/bin/python tools/python_constraints.py shell/constraints.txt
 PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
 ```
 
-This command was executed on 2026-07-24 with Python 3.12.13 and resolved the
-following environment. It is a dated measurement, not a guarantee:
-`shell/requirements.txt` declares floors rather than pins.
+Both clean rebuilds were executed on 2026-07-25 with Python 3.11.4 and
+3.12.13. Their application/test resolutions were byte-identical and are
+enforced by `shell/constraints.txt`; `shell/requirements.txt` remains the
+declaration of floors.
 
 ```
 annotated-doc==0.0.4
@@ -173,7 +179,7 @@ annotated-types==0.8.0
 anyio==4.14.2
 certifi==2026.7.22
 click==8.4.2
-fastapi==0.139.2
+fastapi==0.140.0
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
