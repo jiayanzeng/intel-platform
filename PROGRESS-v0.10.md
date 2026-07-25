@@ -721,3 +721,102 @@ new dated entries.
   ./run verify-artifacts
   ./run progress-check
   ```
+
+### 2026-07-25 · X1 — real-model adversarial battery completed
+
+- owner: Codex
+- commit: 956e84583575a3229f269aa2d6f64a0a20b154ac
+- result: COMPLETE with aggregate **`NOT EXERCISED`**, explicitly not a pass.
+  Operator-established loopback forwards made both configured provider roles
+  reachable. All 45 declared real-model cells ran without a `LEAK`; 44 model
+  calls completed and one timed out after retrieval had already put its named
+  target in context.
+- gate: NOT TRIPPED. No real public or raw gated overlap occurred. The gate's
+  permitted whole-battery non-result applies: 0 `GUARD FIRED`, 45
+  `NOT EXERCISED`, 0 `LEAK`.
+- battery declared before execution: PASS. The five immutable shapes are
+  verbatim quotation, sentence continuation, translation round-trip, formatted
+  extraction, and chunked reconstruction. Their declaration SHA-256 is
+  `d7e918244ac0d3b61b73d62c1222c384b4d31bbbd1f4b45efa69d804b3d14048`.
+- every IndexOnly document targeted: PASS. The fresh 13-document fixture ingest
+  discovered nine IndexOnly rows, and the complete matrix contains each of
+  their five shapes exactly once. All 45 cells record
+  `target_in_context=true` and `valid_attempt=true`.
+- per-attempt matrix and aggregate: PASS. The final report is
+  `evidence/v0.10/real-model-adversarial/report.json`, SHA-256
+  `98fb3a3a1acac844aeccd0da0be2457ff9327ee0733f8570d7edc34b1870f13c`.
+  The one non-completing model call is explicitly retained as HTTP 502,
+  120048.445 ms, `model_completed=false`; the recording core proved the
+  targeted document had already reached context.
+- interruption evidence: PASS. The three preserved partial reports have
+  SHA-256 values
+  `ff154b7ccde7276b7a75f9d6d0eac7ef2fecd98e58ee99381da92f566a62a551`,
+  `0272a11a73afbd8210740c46c3f5d02a5175d84138166cfcf58baa2659461780`,
+  and
+  `2851eda7ba129368e33975437350788cb556dc565a8a01baad7606eb89d91d46`.
+  Resume validation pinned the battery, target corpus, and provider identities,
+  reused valid cells only, and retried invalid cells only.
+- failure-capable control: PASS. The matched leaking-mock report contains the
+  same 45 target/shape pairs and classified 45 `GUARD FIRED`, 0
+  `NOT EXERCISED`, 0 `LEAK`; all 45 raw answers overlapped gated text and all
+  public answers remained clean. Its SHA-256 is
+  `ba504a524f9b5df3e7c0bea68523f5b6f6b05aff28090f812c845c60cae9340c`.
+  The separate classifier control also emitted all three values, including a
+  deliberately unattested `LEAK`.
+- evidence hygiene: PASS. All five JSON reports exclude prompts, raw/public
+  answers, credentials, authorization headers, endpoint addresses, LAN
+  addresses, and tunnel aliases. They retain only the declared secret-free
+  operational fields.
+- ordinary-path acceptance: PASS. The real provider probe measured chat model
+  `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`, its exact 501 embeddings diagnosis,
+  embedding model `embeddinggemma-300M-Q8_0.gguf`, and 768-dimensional
+  embeddings. The ordinary verifier ingested 13 documents, embedded 13→0 in
+  one provider request, exercised lexical and hybrid retrieval, and returned
+  four IndexOnly citations with no public overlap.
+- regression acceptance: PASS. Fourteen focused verifier tests passed. Both
+  complete Python lanes passed 120 tests with one third-party Starlette
+  warning. The exact implementation tree passed `./run ci-local` 18/18,
+  including 99 workspace tests, 20 net tests, warning-denied builds,
+  clippy/fmt, and the Rust 1.78 lane.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. Local CI and the final direct
+  `./run verify-artifacts` passed 2/2 at the exact protected hashes.
+- exact command families:
+
+  ```bash
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
+  LLM_CHAT_TIMEOUT_SECONDS=30 ./run verify-llm \
+    --adversarial-report \
+    evidence/v0.10/real-model-adversarial/attempt-1-timeout.json
+  LLM_CHAT_TIMEOUT_SECONDS=60 ./run verify-llm \
+    --adversarial-resume-from \
+    evidence/v0.10/real-model-adversarial/attempt-1-timeout.json \
+    --adversarial-report \
+    evidence/v0.10/real-model-adversarial/attempt-2-timeout.json
+  LLM_CHAT_TIMEOUT_SECONDS=120 ./run verify-llm \
+    --adversarial-resume-from \
+    evidence/v0.10/real-model-adversarial/attempt-2-timeout.json \
+    --adversarial-report \
+    evidence/v0.10/real-model-adversarial/attempt-3-timeout.json
+  LLM_CHAT_TIMEOUT_SECONDS=120 ./run verify-llm \
+    --adversarial-resume-from \
+    evidence/v0.10/real-model-adversarial/attempt-3-timeout.json \
+    --adversarial-report \
+    evidence/v0.10/real-model-adversarial/report.json
+  python3 tools/mock_openai.py --leak 8899
+  ./run verify-llm --adversarial-report \
+    evidence/v0.10/real-model-adversarial/leak-control.json
+  PYTHONPATH=shell .venv/bin/python tools/verify_llm.py \
+    --classifier-control
+  PYTHONPATH=shell .venv/bin/python -m pytest \
+    shell/tests/test_verify_llm.py -q
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  python3 -m py_compile tools/verify_llm.py \
+    shell/tests/test_verify_llm.py
+  shellcheck run
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ```
