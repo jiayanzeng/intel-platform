@@ -902,8 +902,8 @@ intel-platform — ./run <command>
                    verify recorded evidence bytes, corpus facts, and cursors
     evidence-report
                    print deterministic measured evidence facts without writes
-    benchmark-view measure cold/warm /view p95 over disposable protected
-                   archives; thresholds and their derivation are required
+    benchmark-view measure cold/warm /view p95 or V2 cold-stage decomposition
+                   over disposable protected archives; thresholds required
     audit-deferred audit all five deferred-design triggers; exact cosine is
                    measured over disposable protected-archive copies
     config         show resolved model endpoints and safe harvest DB (no keys)

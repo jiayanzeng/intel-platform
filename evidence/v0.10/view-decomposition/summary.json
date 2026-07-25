@@ -1,0 +1,238 @@
+{
+  "host": {
+    "cpu_brand": "Apple M2 Pro",
+    "hardware_model": "Mac14,10",
+    "logical_cpu_count": 12,
+    "machine": "arm64",
+    "memory_bytes": "17179869184",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.11.4",
+    "release": "25.5.0",
+    "system": "Darwin"
+  },
+  "measured_at": "2026-07-25T01:44:59Z",
+  "prior_v1_outlier_disposition": {
+    "core_main_to_listener_ready_p95_ms": 4.43,
+    "finding": "reproduced and localized outside timed core startup; host scheduling/process-observation cause not further explained",
+    "localized_stage": "process_spawn_to_listener_ready",
+    "localized_stage_p95_ms": 1344.24875,
+    "reproduced_cold_p95_ms": 1696.9485,
+    "store_open_p95_ms": 2.845
+  },
+  "prior_v1_outlier_ms": 1693.423417,
+  "reports": [
+    {
+      "body_sha256": [
+        "43af73a081eca3d0e57f646b54129df2a27550b129a56729683fd7c0c413784f"
+      ],
+      "cold_p95_ms": 1696.9485,
+      "documents": 1764,
+      "run": 1,
+      "stage_p95_ms": {
+        "analysis": 330.248,
+        "client_json_decode": 1.137333,
+        "handler_other_residual": 0.984,
+        "handler_total": 350.902,
+        "http_transfer": 1.202375,
+        "process_main_to_listener_ready": 4.43,
+        "process_spawn_to_listener_ready": 1344.24875,
+        "response_build": 1.217,
+        "sector_load": 14.453,
+        "serialization": 5.091,
+        "startup_other_residual": 1341.40375,
+        "store_connection": 0.48,
+        "store_cursor_migration": 0.081,
+        "store_fingerprint_backfill": 1.857,
+        "store_open": 2.845,
+        "store_schema_fts": 0.687,
+        "unattributed_residual": 0.172667,
+        "wire_request_total": 352.104375
+      },
+      "stage_share_of_cold_p95_percent": {
+        "analysis": 19.461286,
+        "client_json_decode": 0.067022,
+        "handler_other_residual": 0.057986,
+        "handler_total": 20.678412,
+        "http_transfer": 0.070855,
+        "process_main_to_listener_ready": 0.261057,
+        "process_spawn_to_listener_ready": 79.215648,
+        "response_build": 0.071717,
+        "sector_load": 0.851705,
+        "serialization": 0.300009,
+        "startup_other_residual": 79.047994,
+        "store_connection": 0.028286,
+        "store_cursor_migration": 0.004773,
+        "store_fingerprint_backfill": 0.109432,
+        "store_open": 0.167654,
+        "store_schema_fts": 0.040484,
+        "unattributed_residual": 0.010175,
+        "wire_request_total": 20.749267
+      }
+    },
+    {
+      "body_sha256": [
+        "5685e69aafe006ef2cfaf33836a99d36310b9a314594edbd9163ee25bbc8af81"
+      ],
+      "cold_p95_ms": 540.458167,
+      "documents": 2600,
+      "run": 1,
+      "stage_p95_ms": {
+        "analysis": 463.776,
+        "client_json_decode": 1.074167,
+        "handler_other_residual": 1.402,
+        "handler_total": 502.16,
+        "http_transfer": 1.645,
+        "process_main_to_listener_ready": 4.158,
+        "process_spawn_to_listener_ready": 35.547167,
+        "response_build": 1.605,
+        "sector_load": 36.963,
+        "serialization": 7.739,
+        "startup_other_residual": 32.950167,
+        "store_connection": 0.162,
+        "store_cursor_migration": 0.033,
+        "store_fingerprint_backfill": 3.138,
+        "store_open": 3.7,
+        "store_schema_fts": 0.496,
+        "unattributed_residual": 0.191083,
+        "wire_request_total": 503.805
+      },
+      "stage_share_of_cold_p95_percent": {
+        "analysis": 85.811637,
+        "client_json_decode": 0.198751,
+        "handler_other_residual": 0.25941,
+        "handler_total": 92.913759,
+        "http_transfer": 0.304371,
+        "process_main_to_listener_ready": 0.769347,
+        "process_spawn_to_listener_ready": 6.577228,
+        "response_build": 0.29697,
+        "sector_load": 6.839197,
+        "serialization": 1.431933,
+        "startup_other_residual": 6.09671,
+        "store_connection": 0.029975,
+        "store_cursor_migration": 0.006106,
+        "store_fingerprint_backfill": 0.580618,
+        "store_open": 0.684604,
+        "store_schema_fts": 0.091774,
+        "unattributed_residual": 0.035356,
+        "wire_request_total": 93.218131
+      }
+    },
+    {
+      "body_sha256": [
+        "43af73a081eca3d0e57f646b54129df2a27550b129a56729683fd7c0c413784f"
+      ],
+      "cold_p95_ms": 374.208,
+      "documents": 1764,
+      "run": 2,
+      "stage_p95_ms": {
+        "analysis": 319.076,
+        "client_json_decode": 0.744292,
+        "handler_other_residual": 1.064,
+        "handler_total": 340.294,
+        "http_transfer": 1.053583,
+        "process_main_to_listener_ready": 2.719,
+        "process_spawn_to_listener_ready": 34.141708,
+        "response_build": 0.972,
+        "sector_load": 15.493,
+        "serialization": 4.896,
+        "startup_other_residual": 32.145708,
+        "store_connection": 0.171,
+        "store_cursor_migration": 0.034,
+        "store_fingerprint_backfill": 1.671,
+        "store_open": 2.233,
+        "store_schema_fts": 0.449,
+        "unattributed_residual": 0.156666,
+        "wire_request_total": 341.274458
+      },
+      "stage_share_of_cold_p95_percent": {
+        "analysis": 85.267017,
+        "client_json_decode": 0.198898,
+        "handler_other_residual": 0.284334,
+        "handler_total": 90.937126,
+        "http_transfer": 0.28155,
+        "process_main_to_listener_ready": 0.726601,
+        "process_spawn_to_listener_ready": 9.123725,
+        "response_build": 0.259749,
+        "sector_load": 4.140211,
+        "serialization": 1.308363,
+        "startup_other_residual": 8.590332,
+        "store_connection": 0.045697,
+        "store_cursor_migration": 0.009086,
+        "store_fingerprint_backfill": 0.446543,
+        "store_open": 0.596727,
+        "store_schema_fts": 0.119987,
+        "unattributed_residual": 0.041866,
+        "wire_request_total": 91.199135
+      }
+    },
+    {
+      "body_sha256": [
+        "5685e69aafe006ef2cfaf33836a99d36310b9a314594edbd9163ee25bbc8af81"
+      ],
+      "cold_p95_ms": 544.959125,
+      "documents": 2600,
+      "run": 2,
+      "stage_p95_ms": {
+        "analysis": 479.292,
+        "client_json_decode": 1.004042,
+        "handler_other_residual": 1.378,
+        "handler_total": 508.472,
+        "http_transfer": 1.209,
+        "process_main_to_listener_ready": 3.602,
+        "process_spawn_to_listener_ready": 34.284292,
+        "response_build": 1.582,
+        "sector_load": 22.148,
+        "serialization": 7.658,
+        "startup_other_residual": 31.678,
+        "store_connection": 0.166,
+        "store_cursor_migration": 0.029,
+        "store_fingerprint_backfill": 2.497,
+        "store_open": 3.096,
+        "store_schema_fts": 0.507,
+        "unattributed_residual": 0.193666,
+        "wire_request_total": 509.681
+      },
+      "stage_share_of_cold_p95_percent": {
+        "analysis": 87.950082,
+        "client_json_decode": 0.184242,
+        "handler_other_residual": 0.252863,
+        "handler_total": 93.304613,
+        "http_transfer": 0.221852,
+        "process_main_to_listener_ready": 0.660967,
+        "process_spawn_to_listener_ready": 6.291168,
+        "response_build": 0.290297,
+        "sector_load": 4.064158,
+        "serialization": 1.405243,
+        "startup_other_residual": 5.812913,
+        "store_connection": 0.030461,
+        "store_cursor_migration": 0.005322,
+        "store_fingerprint_backfill": 0.4582,
+        "store_open": 0.568116,
+        "store_schema_fts": 0.093035,
+        "unattributed_residual": 0.035538,
+        "wire_request_total": 93.526464
+      }
+    }
+  ],
+  "schema_version": 1,
+  "subject": {
+    "head_commit": "97c1474fca0b37350cec566a56623e495bc4f607",
+    "measured_source_sha256": {
+      "apps/cored/src/main.rs": "2aadb426d3e4d8b34c77b5dec2d94d3baf700c7ec2dfd3860293cce4e263669b",
+      "run": "05f15a095c30b8d0249dd085a774f76e6bc3db4e5059ee0f0eee284b2be81c2f",
+      "tools/benchmark_view.py": "5288d6f830b0e56e626052255479ba07c8bd2267c4843da6aa5c8fcec5e56f1d"
+    },
+    "tracked_diff_sha256": "14af66482aa3f2c51b5a25135138cbda83ee865506f58e811bd655841128fc0b",
+    "worktree_dirty": true,
+    "worktree_status": [
+      " M apps/cored/src/main.rs",
+      " M crates/store/src/lib.rs",
+      " M crates/store/src/sqlite.rs",
+      " M tools/benchmark_view.py",
+      "?? shell/tests/test_view_invalidation.py",
+      "?? tools/view_invalidation.py"
+    ]
+  },
+  "task": "v0.10 V2"
+}

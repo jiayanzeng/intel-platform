@@ -27,6 +27,7 @@ use rusqlite::types::Type;
 use rusqlite::{params, Connection, OptionalExtension, Transaction};
 use std::path::Path;
 use std::sync::Mutex;
+use std::time::Instant;
 
 const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS documents (
@@ -113,11 +114,25 @@ CREATE TABLE IF NOT EXISTS cursors (
 );
 "#;
 
+fn elapsed_us(started: Instant) -> u64 {
+    u64::try_from(started.elapsed().as_micros()).unwrap_or(u64::MAX)
+}
+
 pub struct SqliteStore {
     // rusqlite::Connection is !Sync; a Mutex makes the store shareable from
     // async handlers. Queries here are short and never held across awaits.
     // Production: a connection pool (r2d2/deadpool) or sqlx.
     conn: Mutex<Connection>,
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+pub struct StoreOpenTimings {
+    pub total_us: u64,
+    pub connection_us: u64,
+    pub schema_fts_us: u64,
+    pub cursor_migration_us: u64,
+    pub fingerprint_backfill_us: u64,
+    pub fingerprints_backfilled: usize,
 }
 
 #[derive(Debug)]
@@ -137,16 +152,48 @@ pub struct SearchHit {
 
 impl SqliteStore {
     pub fn open(path: &Path) -> rusqlite::Result<Self> {
+        Self::open_with_timings(path).map(|(store, _)| store)
+    }
+
+    /// Open the archive and expose startup-only diagnostics without changing
+    /// the database contract. `/view` decomposition consumes these timings;
+    /// ordinary callers keep using `open`.
+    pub fn open_with_timings(path: &Path) -> rusqlite::Result<(Self, StoreOpenTimings)> {
+        let total_started = Instant::now();
         if let Some(dir) = path.parent() {
             let _ = std::fs::create_dir_all(dir);
         }
+
+        let connection_started = Instant::now();
         let mut conn = Connection::open(path)?;
+        let connection_us = elapsed_us(connection_started);
+
+        let schema_started = Instant::now();
         conn.execute_batch(SCHEMA)?;
+        let schema_fts_us = elapsed_us(schema_started);
+
+        let cursor_started = Instant::now();
         migrate_cursor_schema(&conn)?;
-        backfill_simhashes(&mut conn)?;
-        Ok(Self {
-            conn: Mutex::new(conn),
-        })
+        let cursor_migration_us = elapsed_us(cursor_started);
+
+        let backfill_started = Instant::now();
+        let fingerprints_backfilled = backfill_simhashes(&mut conn)?;
+        let fingerprint_backfill_us = elapsed_us(backfill_started);
+
+        let timings = StoreOpenTimings {
+            total_us: elapsed_us(total_started),
+            connection_us,
+            schema_fts_us,
+            cursor_migration_us,
+            fingerprint_backfill_us,
+            fingerprints_backfilled,
+        };
+        Ok((
+            Self {
+                conn: Mutex::new(conn),
+            },
+            timings,
+        ))
     }
 
     /// Idempotent append: returns how many documents were genuinely new.
@@ -1479,7 +1526,9 @@ mod tests {
         assert!(!columns.iter().any(|name| name == "simhash"));
         drop(legacy);
 
-        let migrated = SqliteStore::open(&path).unwrap();
+        let (migrated, timings) = SqliteStore::open_with_timings(&path).unwrap();
+        assert_eq!(timings.fingerprints_backfilled, 2);
+        assert!(timings.total_us >= timings.fingerprint_backfill_us);
         assert_eq!(migrated.count().unwrap(), 2);
         let prints = migrated.fingerprints().unwrap();
         assert_eq!(prints.len(), 2);

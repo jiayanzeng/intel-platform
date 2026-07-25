@@ -31,8 +31,10 @@
 //! Env: CORE_CONFIG (config/core.json), CORE_ENTITIES (config/entities.json),
 //!      CORE_DB (data/intel.db), CORE_BIND (127.0.0.1:8788), CORE_TOKEN.
 
+use axum::body::Body;
 use axum::extract::{Query, State};
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
+use axum::response::{IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
@@ -41,13 +43,14 @@ use intel_enrich::Gazetteer;
 use intel_extract::hamming;
 use intel_ingest::{CursorStore, SourceContext};
 use intel_registry::{select_sources, CoreConfig};
-use intel_store::SqliteStore;
+use intel_store::{SqliteStore, StoreOpenTimings};
 use intel_view::{compute_view, entity_names, ViewParams};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 
 struct AppState {
     store: SqliteStore,
@@ -66,6 +69,10 @@ struct AppState {
     /// Counts actual recomputations — lets a test prove the cache is doing
     /// something rather than merely returning equal values.
     view_computes: AtomicUsize,
+    /// Startup diagnostics are immutable facts from this process. They are
+    /// exposed only as internal `/view` headers for V2 decomposition.
+    store_open_timings: StoreOpenTimings,
+    process_main_to_listener_ready_us: AtomicU64,
     /// Politeness clocks, per publisher — **process-scoped, not request-scoped**.
     ///
     /// These used to be built fresh inside the `/ingest` handler, which meant
@@ -158,7 +165,18 @@ fn build_robots_cache(_limiter: Arc<HostLimiters>) -> Option<Arc<RobotsCache>> {
 }
 
 impl AppState {
+    #[cfg(test)]
     fn new(store: SqliteStore, gaz: Gazetteer, cfg: CoreConfig, token: Option<String>) -> Self {
+        Self::new_with_startup(store, gaz, cfg, token, StoreOpenTimings::default())
+    }
+
+    fn new_with_startup(
+        store: SqliteStore,
+        gaz: Gazetteer,
+        cfg: CoreConfig,
+        token: Option<String>,
+        store_open_timings: StoreOpenTimings,
+    ) -> Self {
         let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
         Self {
             store,
@@ -168,6 +186,8 @@ impl AppState {
             generation: AtomicU64::new(0),
             view_cache: Mutex::new(ViewCache::default()),
             view_computes: AtomicUsize::new(0),
+            store_open_timings,
+            process_main_to_listener_ready_us: AtomicU64::new(0),
             robots_cache: build_robots_cache(limiter.clone()),
             limiter,
         }
@@ -464,6 +484,62 @@ struct ViewResp {
     discovered: Vec<DiscoveredDto>,
 }
 
+#[derive(Clone, Copy, Default)]
+struct ViewStageTimings {
+    sector_load_us: u64,
+    analysis_us: u64,
+    response_build_us: u64,
+}
+
+struct ViewHttpResponse {
+    headers: HeaderMap,
+    body: ViewResp,
+    stages: ViewStageTimings,
+    handler_started: Instant,
+}
+
+impl IntoResponse for ViewHttpResponse {
+    fn into_response(mut self) -> Response {
+        let serialization_started = Instant::now();
+        diagnostic_delay("serialization");
+        let body = serde_json::to_vec(&self.body).expect("ViewResp must serialize");
+        let serialization_us = elapsed_us(serialization_started);
+        let handler_total_us = elapsed_us(self.handler_started);
+
+        insert_timing_header(
+            &mut self.headers,
+            "x-intel-view-stage-sector-load-us",
+            self.stages.sector_load_us,
+        );
+        insert_timing_header(
+            &mut self.headers,
+            "x-intel-view-stage-analysis-us",
+            self.stages.analysis_us,
+        );
+        insert_timing_header(
+            &mut self.headers,
+            "x-intel-view-stage-response-build-us",
+            self.stages.response_build_us,
+        );
+        insert_timing_header(
+            &mut self.headers,
+            "x-intel-view-stage-serialization-us",
+            serialization_us,
+        );
+        insert_timing_header(
+            &mut self.headers,
+            "x-intel-view-stage-handler-total-us",
+            handler_total_us,
+        );
+        self.headers
+            .insert("content-type", HeaderValue::from_static("application/json"));
+
+        let mut response = Response::new(Body::from(body));
+        *response.headers_mut() = self.headers;
+        response
+    }
+}
+
 #[derive(Deserialize)]
 struct SearchQ {
     q: String,
@@ -720,7 +796,8 @@ async fn view(
     State(st): State<Arc<AppState>>,
     headers: HeaderMap,
     Query(q): Query<SectorsQ>,
-) -> Result<(HeaderMap, Json<ViewResp>), ApiErr> {
+) -> Result<ViewHttpResponse, ApiErr> {
+    let handler_started = Instant::now();
     guard(&st, &headers)?;
     let sectors = configured_view_sectors(&st, &q.sectors);
 
@@ -737,10 +814,15 @@ async fn view(
         .filter(|hit| hit.generation == gen)
         .map(|hit| hit.resp.clone());
     if let Some(response) = cached {
-        return Ok((view_cache_headers("hit", gen), Json(response)));
+        return Ok(ViewHttpResponse {
+            headers: view_cache_headers(&st, "hit", gen),
+            body: response,
+            stages: ViewStageTimings::default(),
+            handler_started,
+        });
     }
 
-    let resp = compute_view_resp(&st, &sectors)?;
+    let (resp, stages) = compute_view_resp(&st, &sectors)?;
     if !sectors.is_empty() {
         st.view_cache.lock().unwrap().insert(
             key,
@@ -750,10 +832,41 @@ async fn view(
             },
         );
     }
-    Ok((view_cache_headers("miss", gen), Json(resp)))
+    Ok(ViewHttpResponse {
+        headers: view_cache_headers(&st, "miss", gen),
+        body: resp,
+        stages,
+        handler_started,
+    })
 }
 
-fn view_cache_headers(status: &'static str, generation: u64) -> HeaderMap {
+fn elapsed_us(started: Instant) -> u64 {
+    u64::try_from(started.elapsed().as_micros()).unwrap_or(u64::MAX)
+}
+
+fn diagnostic_delay(stage: &str) {
+    if std::env::var("CORE_VIEW_DIAGNOSTIC_DELAY_STAGE").as_deref() != Ok(stage) {
+        return;
+    }
+    let delay_ms = std::env::var("CORE_VIEW_DIAGNOSTIC_DELAY_MS")
+        .ok()
+        .and_then(|raw| raw.parse::<u64>().ok())
+        .unwrap_or(0)
+        .min(10_000);
+    if delay_ms > 0 {
+        std::thread::sleep(Duration::from_millis(delay_ms));
+    }
+}
+
+fn insert_timing_header(headers: &mut HeaderMap, name: &'static str, value: u64) {
+    headers.insert(
+        name,
+        HeaderValue::from_str(&value.to_string())
+            .expect("u64 timing is always a valid header value"),
+    );
+}
+
+fn view_cache_headers(st: &AppState, status: &'static str, generation: u64) -> HeaderMap {
     let mut headers = HeaderMap::new();
     headers.insert("x-intel-view-cache", HeaderValue::from_static(status));
     headers.insert(
@@ -761,15 +874,63 @@ fn view_cache_headers(status: &'static str, generation: u64) -> HeaderMap {
         HeaderValue::from_str(&generation.to_string())
             .expect("u64 generation is always a valid header value"),
     );
+    insert_timing_header(
+        &mut headers,
+        "x-intel-view-stage-process-main-to-listener-ready-us",
+        st.process_main_to_listener_ready_us.load(Ordering::SeqCst),
+    );
+    insert_timing_header(
+        &mut headers,
+        "x-intel-view-stage-store-open-us",
+        st.store_open_timings.total_us,
+    );
+    insert_timing_header(
+        &mut headers,
+        "x-intel-view-stage-store-connection-us",
+        st.store_open_timings.connection_us,
+    );
+    insert_timing_header(
+        &mut headers,
+        "x-intel-view-stage-store-schema-fts-us",
+        st.store_open_timings.schema_fts_us,
+    );
+    insert_timing_header(
+        &mut headers,
+        "x-intel-view-stage-store-cursor-migration-us",
+        st.store_open_timings.cursor_migration_us,
+    );
+    insert_timing_header(
+        &mut headers,
+        "x-intel-view-stage-store-fingerprint-backfill-us",
+        st.store_open_timings.fingerprint_backfill_us,
+    );
+    headers.insert(
+        "x-intel-view-fingerprints-backfilled",
+        HeaderValue::from_str(&st.store_open_timings.fingerprints_backfilled.to_string())
+            .expect("usize count is always a valid header value"),
+    );
     headers
 }
 
 /// The actual work behind `/view` — everything the cache is there to avoid.
-fn compute_view_resp(st: &Arc<AppState>, sectors: &[String]) -> Result<ViewResp, ApiErr> {
+fn compute_view_resp(
+    st: &Arc<AppState>,
+    sectors: &[String],
+) -> Result<(ViewResp, ViewStageTimings), ApiErr> {
     st.view_computes.fetch_add(1, Ordering::SeqCst);
-    let corpus = sector_corpus(st, sectors)?;
-    let v = compute_view(corpus, &st.gaz, &ViewParams::default());
 
+    let load_started = Instant::now();
+    diagnostic_delay("sector_load");
+    let corpus = sector_corpus(st, sectors)?;
+    let sector_load_us = elapsed_us(load_started);
+
+    let analysis_started = Instant::now();
+    diagnostic_delay("analysis");
+    let v = compute_view(corpus, &st.gaz, &ViewParams::default());
+    let analysis_us = elapsed_us(analysis_started);
+
+    let response_started = Instant::now();
+    diagnostic_delay("response_build");
     let docs: HashMap<&str, &Document> = v.dd.kept.iter().map(|d| (d.id.as_str(), d)).collect();
     let names = entity_names(&st.gaz.entities);
 
@@ -818,7 +979,7 @@ fn compute_view_resp(st: &Arc<AppState>, sectors: &[String]) -> Result<ViewResp,
         })
         .collect();
 
-    Ok(ViewResp {
+    let response = ViewResp {
         window_end: v.analysis.window_end.map(|d| d.to_string()),
         documents_analyzed: v.dd.kept.len(),
         kept_doc_ids: v.dd.kept.iter().map(|d| d.id.clone()).collect(),
@@ -843,7 +1004,16 @@ fn compute_view_resp(st: &Arc<AppState>, sectors: &[String]) -> Result<ViewResp,
                 doc_ids: d.doc_ids.clone(),
             })
             .collect(),
-    })
+    };
+    let response_build_us = elapsed_us(response_started);
+    Ok((
+        response,
+        ViewStageTimings {
+            sector_load_us,
+            analysis_us,
+            response_build_us,
+        },
+    ))
 }
 
 async fn search(
@@ -1059,6 +1229,7 @@ async fn docs(
 
 #[tokio::main]
 async fn main() {
+    let process_main_started = Instant::now();
     let config_path = std::env::var("CORE_CONFIG").unwrap_or_else(|_| "config/core.json".into());
     let entities_path =
         std::env::var("CORE_ENTITIES").unwrap_or_else(|_| "config/entities.json".into());
@@ -1072,10 +1243,17 @@ async fn main() {
     let gaz =
         Gazetteer::from_json(&std::fs::read_to_string(&entities_path).expect("read entities"))
             .expect("parse entities");
-    let store = SqliteStore::open(Path::new(&db_path)).expect("open store");
+    let (store, store_open_timings) =
+        SqliteStore::open_with_timings(Path::new(&db_path)).expect("open store");
 
     let n = store.count().unwrap_or(0);
-    let state = Arc::new(AppState::new(store, gaz, cfg, token));
+    let state = Arc::new(AppState::new_with_startup(
+        store,
+        gaz,
+        cfg,
+        token,
+        store_open_timings,
+    ));
 
     let app = Router::new()
         .route("/health", get(health))
@@ -1090,8 +1268,12 @@ async fn main() {
         .route("/embeddings", post(embeddings_upsert))
         .route("/signals/record", post(signals_record))
         .route("/docs", get(docs))
-        .with_state(state);
+        .with_state(state.clone());
 
+    let listener = tokio::net::TcpListener::bind(&bind).await.expect("bind");
+    state
+        .process_main_to_listener_ready_us
+        .store(elapsed_us(process_main_started), Ordering::SeqCst);
     println!(
         "cored on http://{bind}  (archive: {n} documents; token auth: {})",
         if std::env::var("CORE_TOKEN").is_ok() {
@@ -1100,7 +1282,6 @@ async fn main() {
             "off"
         }
     );
-    let listener = tokio::net::TcpListener::bind(&bind).await.expect("bind");
     axum::serve(listener, app).await.expect("serve");
 }
 
@@ -1388,7 +1569,7 @@ mod tests {
     // --- T9.2: /view caching ------------------------------------------------
 
     async fn do_view_with_headers(st: &Arc<AppState>, sectors: &str) -> (HeaderMap, ViewResp) {
-        let (headers, response) = view(
+        let response = view(
             State(st.clone()),
             HeaderMap::new(),
             Query(SectorsQ {
@@ -1397,7 +1578,7 @@ mod tests {
         )
         .await
         .expect("view ok");
-        (headers, response.0)
+        (response.headers, response.body)
     }
 
     async fn do_view(st: &Arc<AppState>, sectors: &str) -> ViewResp {
@@ -1463,6 +1644,41 @@ mod tests {
             "stale view served"
         );
         assert!(after.documents_analyzed > 0);
+    }
+
+    #[tokio::test]
+    async fn view_diagnostic_headers_cover_startup_and_request_stages() {
+        let st = test_state();
+        do_ingest(&st, &["technology"], None).await;
+        let response = view(
+            State(st),
+            HeaderMap::new(),
+            Query(SectorsQ {
+                sectors: "technology".to_string(),
+            }),
+        )
+        .await
+        .expect("view ok")
+        .into_response();
+
+        for name in [
+            "x-intel-view-stage-process-main-to-listener-ready-us",
+            "x-intel-view-stage-store-open-us",
+            "x-intel-view-stage-store-schema-fts-us",
+            "x-intel-view-stage-store-cursor-migration-us",
+            "x-intel-view-stage-store-fingerprint-backfill-us",
+            "x-intel-view-stage-sector-load-us",
+            "x-intel-view-stage-analysis-us",
+            "x-intel-view-stage-response-build-us",
+            "x-intel-view-stage-serialization-us",
+            "x-intel-view-stage-handler-total-us",
+        ] {
+            assert!(
+                response.headers().get(name).is_some(),
+                "missing diagnostic header {name}"
+            );
+        }
+        assert_eq!(response.headers()["content-type"], "application/json");
     }
 
     #[tokio::test]

@@ -33,6 +33,30 @@ CORE_ENTITIES = ROOT / "config" / "entities.json"
 CORED = ROOT / "target" / "debug" / "cored"
 EXPECTED_ARCHIVES = (1764, 2600)
 REPORT_SCHEMA = 1
+V2_BODY_BASELINES = {
+    1764: "43af73a081eca3d0e57f646b54129df2a27550b129a56729683fd7c0c413784f",
+    2600: "5685e69aafe006ef2cfaf33836a99d36310b9a314594edbd9163ee25bbc8af81",
+}
+V2_ANALYZED_DOCUMENTS = {1764: 1708, 2600: 2487}
+DIAGNOSTIC_HEADERS = {
+    "process_main_to_listener_ready": (
+        "x-intel-view-stage-process-main-to-listener-ready-us"
+    ),
+    "store_open": "x-intel-view-stage-store-open-us",
+    "store_connection": "x-intel-view-stage-store-connection-us",
+    "store_schema_fts": "x-intel-view-stage-store-schema-fts-us",
+    "store_cursor_migration": (
+        "x-intel-view-stage-store-cursor-migration-us"
+    ),
+    "store_fingerprint_backfill": (
+        "x-intel-view-stage-store-fingerprint-backfill-us"
+    ),
+    "sector_load": "x-intel-view-stage-sector-load-us",
+    "analysis": "x-intel-view-stage-analysis-us",
+    "response_build": "x-intel-view-stage-response-build-us",
+    "serialization": "x-intel-view-stage-serialization-us",
+    "handler_total": "x-intel-view-stage-handler-total-us",
+}
 
 
 class BenchmarkFailure(RuntimeError):
@@ -199,14 +223,42 @@ def opener() -> urllib.request.OpenerDirector:
 def get_json(
     url: str, *, measured: bool, timeout: float = 180.0
 ) -> tuple[float, dict[str, Any], dict[str, str]]:
+    elapsed_ms, payload, headers, _ = get_json_with_body(
+        url,
+        measured=measured,
+        timeout=timeout,
+    )
+    return elapsed_ms, payload, headers
+
+
+def get_json_with_body(
+    url: str, *, measured: bool, timeout: float = 180.0
+) -> tuple[float, dict[str, Any], dict[str, str], bytes]:
     started = time.perf_counter_ns()
     with opener().open(url, timeout=timeout) as response:
-        payload = json.loads(response.read())
+        body = response.read()
+        payload = json.loads(body)
         headers = {key.lower(): value for key, value in response.headers.items()}
     elapsed_ms = (time.perf_counter_ns() - started) / 1_000_000
     if not isinstance(payload, dict):
         raise BenchmarkFailure(f"{url}: JSON response was not an object")
-    return (elapsed_ms if measured else 0.0), payload, headers
+    return (elapsed_ms if measured else 0.0), payload, headers, body
+
+
+def get_json_diagnostic(
+    url: str, timeout: float = 180.0
+) -> tuple[float, float, dict[str, Any], dict[str, str], bytes]:
+    started = time.perf_counter_ns()
+    with opener().open(url, timeout=timeout) as response:
+        body = response.read()
+        headers = {key.lower(): value for key, value in response.headers.items()}
+    wire_elapsed_ms = (time.perf_counter_ns() - started) / 1_000_000
+    decode_started = time.perf_counter_ns()
+    payload = json.loads(body)
+    decode_ms = (time.perf_counter_ns() - decode_started) / 1_000_000
+    if not isinstance(payload, dict):
+        raise BenchmarkFailure(f"{url}: JSON response was not an object")
+    return wire_elapsed_ms, decode_ms, payload, headers, body
 
 
 def wait_until_ready(server: "Server", timeout: float = 15.0) -> None:
@@ -278,9 +330,18 @@ class Server:
 
 
 class CoreServer(Server):
-    def __init__(self, database: Path, log_path: Path):
+    def __init__(
+        self,
+        database: Path,
+        log_path: Path,
+        *,
+        diagnostic_delay_stage: str | None = None,
+        diagnostic_delay_ms: int = 0,
+    ):
         self.database = database
         self.log_path = log_path
+        self.diagnostic_delay_stage = diagnostic_delay_stage
+        self.diagnostic_delay_ms = diagnostic_delay_ms
         self.process: subprocess.Popen[bytes] | None = None
         self.log_handle: Any = None
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as candidate:
@@ -299,6 +360,15 @@ class CoreServer(Server):
             }
         )
         environment.pop("CORE_TOKEN", None)
+        environment.pop("CORE_VIEW_DIAGNOSTIC_DELAY_STAGE", None)
+        environment.pop("CORE_VIEW_DIAGNOSTIC_DELAY_MS", None)
+        if self.diagnostic_delay_stage is not None:
+            environment["CORE_VIEW_DIAGNOSTIC_DELAY_STAGE"] = (
+                self.diagnostic_delay_stage
+            )
+            environment["CORE_VIEW_DIAGNOSTIC_DELAY_MS"] = str(
+                self.diagnostic_delay_ms
+            )
         self.log_handle = self.log_path.open("wb")
         self.process = subprocess.Popen(
             [str(CORED)],
@@ -537,6 +607,439 @@ def make_core_factory(
         return CoreServer(database, log_dir / f"{label}-{counter}.log")
 
     return factory
+
+
+def diagnostic_header_ms(headers: dict[str, str], stage: str) -> float:
+    name = DIAGNOSTIC_HEADERS[stage]
+    raw = headers.get(name)
+    try:
+        value = int(raw)  # type: ignore[arg-type]
+    except (TypeError, ValueError) as error:
+        raise BenchmarkFailure(
+            f"missing or invalid diagnostic header {name}: {raw!r}"
+        ) from error
+    if value < 0:
+        raise BenchmarkFailure(f"negative diagnostic header {name}: {value}")
+    return value / 1000
+
+
+def decomposition_cold_samples(
+    factory: ServerFactory,
+    sector: str,
+    iterations: int,
+    expected_documents: int,
+) -> list[dict[str, Any]]:
+    samples: list[dict[str, Any]] = []
+    expected_body_hash = V2_BODY_BASELINES[expected_documents]
+    for _ in range(iterations):
+        server = factory()
+        cold_started = time.perf_counter_ns()
+        try:
+            server.start()
+            wait_until_ready(server)
+            spawn_ready_ms = (
+                time.perf_counter_ns() - cold_started
+            ) / 1_000_000
+            (
+                wire_ms,
+                decode_ms,
+                payload,
+                headers,
+                body,
+            ) = get_json_diagnostic(view_url(server, sector))
+            cold_total_ms = (
+                time.perf_counter_ns() - cold_started
+            ) / 1_000_000
+            documents, generation = inspect_view(
+                payload,
+                headers,
+                "miss",
+            )
+            expected_analyzed = V2_ANALYZED_DOCUMENTS[expected_documents]
+            if documents != expected_analyzed:
+                raise BenchmarkFailure(
+                    f"decomposition expected {expected_analyzed} analyzed "
+                    f"documents, observed {documents}"
+                )
+            body_hash = hashlib.sha256(body).hexdigest()
+            if body_hash != expected_body_hash:
+                raise BenchmarkFailure(
+                    f"{expected_documents}-document /view body changed: "
+                    f"expected {expected_body_hash}, observed {body_hash}"
+                )
+
+            measured = {
+                stage: diagnostic_header_ms(headers, stage)
+                for stage in DIAGNOSTIC_HEADERS
+            }
+            handler_components = sum(
+                measured[stage]
+                for stage in (
+                    "sector_load",
+                    "analysis",
+                    "response_build",
+                    "serialization",
+                )
+            )
+            handler_other_ms = max(
+                measured["handler_total"] - handler_components,
+                0.0,
+            )
+            http_transfer_ms = max(
+                wire_ms - measured["handler_total"],
+                0.0,
+            )
+            startup_other_ms = max(
+                spawn_ready_ms - measured["store_open"],
+                0.0,
+            )
+            attributed = (
+                spawn_ready_ms
+                + handler_components
+                + handler_other_ms
+                + http_transfer_ms
+                + decode_ms
+            )
+            samples.append(
+                {
+                    "cold_total": cold_total_ms,
+                    "process_spawn_to_listener_ready": spawn_ready_ms,
+                    "process_main_to_listener_ready": measured[
+                        "process_main_to_listener_ready"
+                    ],
+                    "store_open": measured["store_open"],
+                    "store_connection": measured["store_connection"],
+                    "store_schema_fts": measured["store_schema_fts"],
+                    "store_cursor_migration": measured[
+                        "store_cursor_migration"
+                    ],
+                    "store_fingerprint_backfill": measured[
+                        "store_fingerprint_backfill"
+                    ],
+                    "startup_other_residual": startup_other_ms,
+                    "sector_load": measured["sector_load"],
+                    "analysis": measured["analysis"],
+                    "response_build": measured["response_build"],
+                    "serialization": measured["serialization"],
+                    "handler_other_residual": handler_other_ms,
+                    "http_transfer": http_transfer_ms,
+                    "client_json_decode": decode_ms,
+                    "unattributed_residual": max(
+                        cold_total_ms - attributed,
+                        0.0,
+                    ),
+                    "handler_total": measured["handler_total"],
+                    "wire_request_total": wire_ms,
+                    "generation": generation,
+                    "body_sha256": body_hash,
+                    "fingerprints_backfilled": int(
+                        headers.get(
+                            "x-intel-view-fingerprints-backfilled",
+                            "-1",
+                        )
+                    ),
+                }
+            )
+        finally:
+            server.stop()
+    return samples
+
+
+def decomposition_stage_report(
+    samples: list[dict[str, Any]],
+) -> dict[str, Any]:
+    cold = distribution([float(sample["cold_total"]) for sample in samples])
+    cold_p95 = float(cold["p95_ms"])
+    stages: dict[str, Any] = {}
+    excluded = {
+        "generation",
+        "body_sha256",
+        "fingerprints_backfilled",
+        "cold_total",
+    }
+    for stage in sorted(samples[0].keys() - excluded):
+        values = [float(sample[stage]) for sample in samples]
+        measured = distribution(values)
+        measured["share_of_cold_p95_percent"] = round(
+            float(measured["p95_ms"]) * 100 / cold_p95,
+            6,
+        )
+        stages[stage] = measured
+    return {
+        "cold": cold,
+        "stages": stages,
+        "body_sha256": sorted(
+            {str(sample["body_sha256"]) for sample in samples}
+        ),
+        "generations": [
+            int(sample["generation"]) for sample in samples
+        ],
+        "fingerprints_backfilled": [
+            int(sample["fingerprints_backfilled"]) for sample in samples
+        ],
+        "stage_relationships": {
+            "process_spawn_to_listener_ready": (
+                "inclusive startup parent measured by the harness"
+            ),
+            "store_open": (
+                "nested within process startup; connection, schema/FTS, "
+                "cursor migration, and fingerprint backfill are nested within it"
+            ),
+            "request_path": (
+                "sector_load + analysis + response_build + serialization + "
+                "handler_other_residual + http_transfer + client_json_decode"
+            ),
+        },
+    }
+
+
+def decomposition_output_paths(output_dir: Path) -> list[Path]:
+    paths = [
+        output_dir
+        / f"run-{run_number}-{label}.json"
+        for run_number in (1, 2)
+        for label in ("core-1764", "live-smoke-2600")
+    ]
+    paths.append(output_dir / "summary.json")
+    existing = [path for path in paths if path.exists()]
+    if existing:
+        raise BenchmarkFailure(
+            "refusing to overwrite decomposition evidence: "
+            + ", ".join(str(path) for path in existing)
+        )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return paths
+
+
+def run_decomposition(args: argparse.Namespace) -> int:
+    if not CORED.is_file():
+        raise BenchmarkFailure(
+            f"{CORED} does not exist; build cored before benchmarking"
+        )
+    if args.cold_iterations != 10:
+        raise BenchmarkFailure(
+            "V2 decomposition evidence requires exactly 10 cold samples"
+        )
+    configured = configured_sector_ids(CORE_CONFIG)
+    if args.sector not in configured:
+        raise BenchmarkFailure(
+            f"sector {args.sector!r} is absent from {CORE_CONFIG}"
+        )
+    output_dir = Path(args.output_dir).resolve()
+    report_paths = decomposition_output_paths(output_dir)
+    records = archive_records(MANIFEST)
+    subject = git_subject()
+    host = host_summary()
+    reports: list[dict[str, Any]] = []
+
+    with tempfile.TemporaryDirectory(
+        prefix="intel-view-decomposition-"
+    ) as temp:
+        temp_dir = Path(temp)
+        log_dir = temp_dir / "logs"
+        log_dir.mkdir()
+        report_index = 0
+        for run_number in (1, 2):
+            for record in records:
+                documents = int(record["expected"]["documents"])
+                source = ROOT / str(record["path"])
+                if sha256(source) != record["sha256"]:
+                    raise BenchmarkFailure(
+                        f"{record['path']}: protected hash mismatch"
+                    )
+                copy_path = (
+                    temp_dir
+                    / f"run-{run_number}-archive-{documents}.db"
+                )
+                shutil.copyfile(source, copy_path)
+                copy_before = sha256(copy_path)
+                factory = make_core_factory(
+                    copy_path,
+                    log_dir,
+                    f"run-{run_number}-{documents}",
+                )
+                samples = decomposition_cold_samples(
+                    factory,
+                    args.sector,
+                    args.cold_iterations,
+                    documents,
+                )
+                copy_after = sha256(copy_path)
+                if copy_after != copy_before:
+                    raise BenchmarkFailure(
+                        f"{copy_path}: disposable archive bytes changed"
+                    )
+                measured = decomposition_stage_report(samples)
+                if any(
+                    count != 0
+                    for count in measured["fingerprints_backfilled"]
+                ):
+                    raise BenchmarkFailure(
+                        f"{documents}: protected copy unexpectedly backfilled "
+                        "one or more fingerprints"
+                    )
+                report = {
+                    "schema_version": 1,
+                    "task": "v0.10 V2",
+                    "run": run_number,
+                    "measured_at": time.strftime(
+                        "%Y-%m-%dT%H:%M:%SZ",
+                        time.gmtime(),
+                    ),
+                    "subject": subject,
+                    "host": host,
+                    "query": {"sector": args.sector},
+                    "archive": {
+                        "protected_path": record["path"],
+                        "documents": documents,
+                        "protected_sha256": record["sha256"],
+                        "copy_sha256_before": copy_before,
+                        "copy_sha256_after": copy_after,
+                    },
+                    "iterations": args.cold_iterations,
+                    **measured,
+                }
+                report_paths[report_index].write_text(
+                    json.dumps(report, indent=2, sort_keys=True) + "\n"
+                )
+                report_index += 1
+                reports.append(report)
+                print(
+                    f"V2 run {run_number} archive {documents}: "
+                    f"cold p95={report['cold']['p95_ms']:.6f} ms; "
+                    f"startup={report['stages']['process_spawn_to_listener_ready']['p95_ms']:.6f} ms; "
+                    f"load={report['stages']['sector_load']['p95_ms']:.6f} ms; "
+                    f"analysis={report['stages']['analysis']['p95_ms']:.6f} ms"
+                )
+
+    summary = {
+        "schema_version": 1,
+        "task": "v0.10 V2",
+        "measured_at": time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ",
+            time.gmtime(),
+        ),
+        "subject": subject,
+        "host": host,
+        "prior_v1_outlier_ms": 1693.423417,
+        "prior_v1_outlier_disposition": {
+            "reproduced_cold_p95_ms": reports[0]["cold"]["p95_ms"],
+            "localized_stage": "process_spawn_to_listener_ready",
+            "localized_stage_p95_ms": reports[0]["stages"][
+                "process_spawn_to_listener_ready"
+            ]["p95_ms"],
+            "core_main_to_listener_ready_p95_ms": reports[0]["stages"][
+                "process_main_to_listener_ready"
+            ]["p95_ms"],
+            "store_open_p95_ms": reports[0]["stages"]["store_open"][
+                "p95_ms"
+            ],
+            "finding": (
+                "reproduced and localized outside timed core startup; "
+                "host scheduling/process-observation cause not further explained"
+            ),
+        },
+        "reports": [
+            {
+                "run": report["run"],
+                "documents": report["archive"]["documents"],
+                "cold_p95_ms": report["cold"]["p95_ms"],
+                "stage_p95_ms": {
+                    name: stage["p95_ms"]
+                    for name, stage in report["stages"].items()
+                },
+                "stage_share_of_cold_p95_percent": {
+                    name: stage["share_of_cold_p95_percent"]
+                    for name, stage in report["stages"].items()
+                },
+                "body_sha256": report["body_sha256"],
+            }
+            for report in reports
+        ],
+    }
+    report_paths[-1].write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n"
+    )
+    for record in records:
+        if sha256(ROOT / str(record["path"])) != record["sha256"]:
+            raise BenchmarkFailure(
+                f"{record['path']}: protected bytes changed during decomposition"
+            )
+    print(f"V2 decomposition: PASS; evidence={output_dir}")
+    return 0
+
+
+def run_decomposition_control(args: argparse.Namespace) -> int:
+    if not CORED.is_file():
+        raise BenchmarkFailure(
+            f"{CORED} does not exist; build cored before control"
+        )
+    record = archive_records(MANIFEST)[0]
+    documents = int(record["expected"]["documents"])
+    with tempfile.TemporaryDirectory(
+        prefix="intel-view-decomposition-control-"
+    ) as temp:
+        temp_dir = Path(temp)
+        database = temp_dir / "control.db"
+        shutil.copyfile(ROOT / str(record["path"]), database)
+        log_dir = temp_dir / "logs"
+        log_dir.mkdir()
+
+        baseline_factory = make_core_factory(
+            database,
+            log_dir,
+            "baseline",
+        )
+        baseline = decomposition_cold_samples(
+            baseline_factory,
+            args.sector,
+            3,
+            documents,
+        )
+
+        counter = 0
+
+        def delayed_factory() -> Server:
+            nonlocal counter
+            counter += 1
+            return CoreServer(
+                database,
+                log_dir / f"delayed-{counter}.log",
+                diagnostic_delay_stage="analysis",
+                diagnostic_delay_ms=100,
+            )
+
+        delayed = decomposition_cold_samples(
+            delayed_factory,
+            args.sector,
+            3,
+            documents,
+        )
+
+    baseline_report = decomposition_stage_report(baseline)
+    delayed_report = decomposition_stage_report(delayed)
+    analysis_delta = (
+        float(delayed_report["stages"]["analysis"]["median_ms"])
+        - float(baseline_report["stages"]["analysis"]["median_ms"])
+    )
+    load_delta = abs(
+        float(delayed_report["stages"]["sector_load"]["median_ms"])
+        - float(baseline_report["stages"]["sector_load"]["median_ms"])
+    )
+    print(
+        "decomposition control: "
+        f"analysis median delta={analysis_delta:.6f} ms; "
+        f"sector_load median delta={load_delta:.6f} ms"
+    )
+    if analysis_delta >= 80.0 and load_delta < 40.0:
+        print(
+            "PASS: injected analysis delay appeared in analysis and not "
+            "sector_load"
+        )
+        return 1
+    raise BenchmarkFailure(
+        "decomposition delay control was not isolated to the named stage"
+    )
 
 
 def benchmark_archive(
@@ -899,6 +1402,16 @@ def parser() -> argparse.ArgumentParser:
     value.add_argument("--warm-iterations", type=int, default=100)
     value.add_argument("--output-dir")
     value.add_argument(
+        "--decompose",
+        action="store_true",
+        help="run the v0.10 V2 cold-stage decomposition",
+    )
+    value.add_argument(
+        "--decomposition-control",
+        action="store_true",
+        help="inject an analysis delay and exit non-zero when detected",
+    )
+    value.add_argument(
         "--control", choices=("delayed", "empty-sector")
     )
     return value
@@ -912,10 +1425,22 @@ def main() -> int:
         raise BenchmarkFailure("SLO values must be positive")
     if args.cold_iterations <= 0 or args.warm_iterations <= 0:
         raise BenchmarkFailure("iteration counts must be positive")
+    if args.decompose and args.decomposition_control:
+        raise BenchmarkFailure(
+            "--decompose and --decomposition-control are mutually exclusive"
+        )
+    if args.control and (args.decompose or args.decomposition_control):
+        raise BenchmarkFailure(
+            "V1 controls cannot be combined with V2 decomposition modes"
+        )
     if args.control:
         return run_control(args)
+    if args.decomposition_control:
+        return run_decomposition_control(args)
     if not args.output_dir:
         raise BenchmarkFailure("--output-dir is required outside control mode")
+    if args.decompose:
+        return run_decomposition(args)
     if args.cold_iterations != 10 or args.warm_iterations != 100:
         raise BenchmarkFailure(
             "V1 evidence requires exactly 10 cold and 100 warm samples"

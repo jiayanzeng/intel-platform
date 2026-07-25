@@ -718,7 +718,7 @@ evidence record without interpreting the cycle name.
 - [x] **D1** — v0.9 provenance closed; v0.6/v0.7 retired to historical status
 - [x] **A2** — protected-artifact admission is failure-capable
 - [x] **C1** — both Python lanes pinned by constraints and reproduced exactly
-- [ ] **V2** — `/view` cold path decomposed; restart-safe design proven against
+- [x] **V2** — `/view` cold path decomposed; restart-safe design proven against
   every mutation class; nothing materialized
 - [ ] **D5** — seven deferral triggers re-audited from measurement
 - [ ] **X1** — real-model adversarial battery executed and honestly classified
