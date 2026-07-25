@@ -882,3 +882,66 @@ new dated entries.
   terminal conclusions, per-job timestamps, exact toolchain versions, and the
   ShellCheck/version-check diagnostics. The authenticated GitHub page created
   and closed PR #1 under the operator's explicit approval.
+
+### 2026-07-25 · G2 — CI runner measured and compatibility correction verified
+
+- owner: Codex
+- commit: 403c5670e481de0682922bc19d8014112e6fd781
+- result: PASS. The first observed run remains recorded as a real failure;
+  standalone compatibility commit
+  `3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0` corrected it, and subsequent
+  main run `30143171409` passed all seven executable jobs. The scheduled-only
+  drift job was skipped on the push event and is not described as executed.
+- implementation trail: measurement/evidence checkpoint
+  `4244a187683c0f078548c1d2e1727d1d0a8f1114`, checkpoint audit
+  `6071f28`, compatibility fix `3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0`,
+  and this completion commit. The lint finding and lint fix remain separate.
+- runner acceptance: PASS. Run `30143171409` executed exact main commit
+  `3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0` for 43 seconds. Clippy+fmt
+  passed in 20s, golden in 36s, net in 25s, Rust 1.78 in 39s, core in 27s,
+  Python 3.11 in 24s, and Python 3.12 in 27s. The Python 3.11 lane's
+  `shellcheck run harness` step passed with ShellCheck 0.9.0.
+- failure-capable control: PASS. PR #1's planted 9.9.9 mismatch caused both
+  shell lanes to fail at `release version consistency`, naming the file and
+  value. The PR is closed unmerged; its local and remote branch are deleted.
+- job-set comparison: PASS as a measured difference. Local CI has 18 ordered
+  checks; GitHub has seven executable push/PR job nodes plus one
+  scheduled-only node. The evidence names all four local-only gates and all
+  three runner-only checks rather than claiming equivalence.
+- release identity: PASS. Remote `main` resolved to compatibility commit
+  `3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0` at the acceptance check;
+  control branch resolution returned no row; annotated tag object
+  `548ffdfec4e414570ddecf813aa2f2d616662487` remained dereferenced to release
+  commit `4c59db2727eda1c81beae3ff38be883a26a92ae8`.
+- evidence: `evidence/v0.10/ci-runner/report.json`, SHA-256
+  `2a8d4db07c6b4cbde72052d336360191b98c6d4dab7138961c0185fd504226c9`.
+- local acceptance: PASS. `jq` confirmed the initial failure, later success,
+  seven successful executable jobs, one skipped scheduled job, and control
+  cleanup. ShellCheck 0.11.0, `bash -n`, `git diff --check`, and the earlier
+  full `./run ci-local` all passed; local CI was 18/18 at compatibility commit
+  `3648918`.
+- golden-E2E delta: none. The first sandboxed attempt could not bind loopback
+  and made no assertions; the permitted rerun passed 11/11. The correction
+  run's golden job independently passed.
+- protected artifact delta: none. Direct verification passed 2/2 at exact
+  recorded hashes.
+- exact commands and external observations:
+
+  ```bash
+  shellcheck run
+  bash -n run
+  ./run down
+  ./run ci-local
+  git push origin main
+  jq -e '<G2 report acceptance expression>' \
+    evidence/v0.10/ci-runner/report.json
+  ./run golden
+  ./run verify-artifacts
+  git ls-remote origin refs/heads/main \
+    refs/heads/codex/g2-version-mismatch-control \
+    refs/tags/v0.9.0 'refs/tags/v0.9.0^{}'
+  ```
+
+  GitHub Actions API supplied the terminal run and job conclusions,
+  timestamps, runner identities, and the passing ShellCheck step for
+  `30143171409`.
