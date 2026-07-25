@@ -320,3 +320,58 @@ new dated entries.
   ./run golden
   ./run verify-artifacts
   ```
+
+### 2026-07-25 · D1 — finished-cycle provenance validated and closed
+
+- owner: Codex
+- commit: 8fb74f01ffc608468bf340370f86e34fbcc7d8f4
+- result: PASS. D0 and A1 now validate every historical closure, authority
+  disposition, progress entry, and Git identity required by D1.
+- gate: PASS. The D1A provenance repairs remain dated appends or explicit
+  strikethrough corrections; no closed rationale or original progress entry
+  was rewritten.
+- closing-record acceptance: PASS. Four inactive execution runbooks each have
+  exactly one dated closing record and zero unchecked boxes. v0.8/v0.8.1
+  resolve to annotated v0.8.0; v0.8.2 has an 11-commit no-release record; v0.9
+  resolves all seven tasks and annotated v0.9.0.
+- carried-disposition acceptance: PASS. v0.9 preserves adversarial
+  `NOT EXERCISED`, T7/Postgres/pgvector/multi-host deferrals, V2 promotion
+  without materialization, protected-admission/constraints candidates, no
+  remote, and no observed runner execution.
+- historical-authority acceptance: PASS. v0.6/v0.7 are dated historical-only
+  task files. Their authority sentences remain preserved inside
+  strikethroughs; v0.7's false offline 1.75 claim remains preserved inside a
+  strikethrough followed by the measured 1.78 correction.
+- auditor acceptance: PASS. Before D1's two-commit close, `cycle-check` passed
+  and `checklist-audit` reported 44/44/44 with zero exemptions. After this
+  append supplied D1's implementation hash, both pass and checklist evidence
+  is **45/45/45**, zero exemptions.
+- failure-capable control: PASS. In
+  `/private/tmp/intel-d1-controls.6juKqq`, restoring the v0.7 authority claim
+  made `./run cycle-check` exit non-zero and name `TASKS-v0.7.md:8`; the
+  corrected disposable tree passed before and after.
+- local-CI acceptance: PASS. The exact implementation tree passed all 18/18
+  local jobs, including both auditors, 98 workspace tests, 20 net tests, and
+  105 Python 3.11 shell tests.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. Local CI and the final direct
+  `./run verify-artifacts` each passed 2/2 with exact hashes.
+- exact commands:
+
+  ```bash
+  git rev-parse v0.9.0
+  git rev-parse 'v0.9.0^{}'
+  git cat-file -e '<each v0.9 task hash>^{commit}'
+  ./run cycle-check
+  ./run checklist-audit
+  python3 - '<effective inactive-authority and v0.7 floor scan>'
+  python3.11 -m py_compile tools/cycle_check.py
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-d1-controls.6juKqq/restored-authority/run cycle-check
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-d1-controls.6juKqq/base/run cycle-check
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ```
