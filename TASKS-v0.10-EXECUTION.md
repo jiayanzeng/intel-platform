@@ -723,7 +723,7 @@ evidence record without interpreting the cycle name.
 - [x] **D5** — seven deferral triggers re-audited from measurement
 - [x] **X1** — real-model adversarial battery executed and honestly classified
 - [x] **G2** — one observed CI-runner execution, or a dated decline
-- [ ] **R3** — release disposition recorded and, if applicable, tagged
+- [x] **R3** — release disposition recorded and, if applicable, tagged
 
 ## Standing prohibitions
 
@@ -767,3 +767,50 @@ refuted defect is deleted from this cycle rather than worked around.
 recorded the D0/A1/D1 dependency cycle in `acbbae4` and audit `890676b`; no D0
 implementation shipped. The operator approved the dated D1A bootstrap above
 before D0 resumes.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-25
+- **Release disposition:** release
+- **Release:** `v0.10.0`
+- **Release commit:** `45fa3d49860643fdb2595d82340e364d33566e7d`
+- **Annotated tag object:** `f70fd84ca0995088d2890096f3429bb878409979`
+
+The twelve executed task records resolve to these implementation commits:
+
+- B0 — `86039925e519eee63814861c48e46370544085b5`
+- D1A — `9e53d325ff6fe00d5d5a470076fd9e8f4f825ce3`
+- D0 — `8b7cbacde7f4d4f77cc74a68f46c7f559ef9dcb2`
+  (after the ordering gate at
+  `acbbae4dcfe4d68152f07827c9fb585cf9ffc627`)
+- A1 — `ce9d8932f3d0e74bcc254fa83cc7a102722aad00`
+- D1 — `8fb74f01ffc608468bf340370f86e34fbcc7d8f4`
+- A2 — `54fc23b78ec6ea529afd388dea1d8b188c6ee30b`
+- C1 — `4bb80fff16c53b99e1e1c121d20fa4d5b6fc5f67`
+- V2 — `a8ff3714a6c333d64d5e78ff680ff97291765a88`
+- D5 — `0adc739233d69a90e4d6141e17f75acd771873e8`
+- X1 — `956e84583575a3229f269aa2d6f64a0a20b154ac`
+  (after endpoint-gate preparation at
+  `03c2420dc0f4e0c676afa75b25beb84b1a307330`)
+- G2 — `403c5670e481de0682922bc19d8014112e6fd781`
+  (including compatibility fix
+  `3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0`)
+- R3/release — `45fa3d49860643fdb2595d82340e364d33566e7d`
+
+The operator selected v0.10.0 because the cycle changes shipped runtime and
+internal API behavior: `/view` exposes diagnostic timing headers and the store
+reports measured open phases. The JSON body, public API, database schema, and
+cache representation remain unchanged, but a patch release would understate
+the shipped runtime seam.
+
+Carried dispositions are explicit. X1's 45-cell real-model aggregate is
+`NOT EXERCISED`, never a no-leak claim; its failure-capable mock and leak
+controls fired separately. G2 is complete after the first runner failure, a
+separate ShellCheck 0.9.0 compatibility correction, and subsequent green main
+runs; its planted PR is closed unmerged and its branch deleted. D5 leaves T7
+single-flight, Postgres, pgvector, multi-host hardening, and the A4
+untrusted-shell boundary deferred. `/view` materialization was promoted to a
+future implementation after V2 measured and designed it, but no materialized
+storage shipped in this cycle. The release commit contains the classified
+55-path diff, agreeing version authorities, changelog, and mechanically
+updated lockfile; this later closing record does not move the tag.

@@ -945,3 +945,65 @@ new dated entries.
   GitHub Actions API supplied the terminal run and job conclusions,
   timestamps, runner identities, and the passing ShellCheck step for
   `30143171409`.
+
+### 2026-07-25 · R3 — v0.10.0 release identity created
+
+- owner: Codex
+- commit: 45fa3d49860643fdb2595d82340e364d33566e7d
+- result: PASS. The operator selected v0.10.0 because the shipped
+  internal `/view` timing headers and measured store-open phases change
+  runtime/internal-API behavior even though the JSON body, public API,
+  database schema, and cache representation remain unchanged.
+- release identity: PASS.
+  `v0.10.0` is annotated tag object
+  `f70fd84ca0995088d2890096f3429bb878409979`, which dereferences exactly to
+  release commit `45fa3d49860643fdb2595d82340e364d33566e7d`. The tag annotation
+  is `intel-platform v0.10.0`.
+- diff inventory: PASS. All 55 paths in `v0.9.0..v0.10.0` are classified
+  exactly once in `STATE.md`: three runtime/storage/internal API, six
+  public/release metadata, three operations, 29 executable evidence/controls,
+  and 14 documentation/task metadata paths.
+- version authorities: PASS. Rust package, Python package, FastAPI literal,
+  `STATE.md`, and newest changelog entry all read 0.10.0. Cargo mechanically
+  changed only the `cored` package version in `Cargo.lock`; no dependency
+  resolution changed.
+- mismatch control: PASS. A temporary 9.9.9 Python package value made
+  `./run version-check` exit 1 and name
+  `shell/intel_shell/__init__.py: 9.9.9`. Restoration returned SHA-256
+  `0bd4d3a8ef91761ac81d64c548480010a53830ca4a440598c4c481027d369e05`,
+  identical to the pre-control hash, and the checker passed again.
+- carried dispositions: X1 remains `NOT EXERCISED`, not a no-leak claim. G2 is
+  complete with its first failure, separate compatibility correction, green
+  reruns, and deleted control branch. D5 leaves T7 single-flight, Postgres,
+  pgvector, multi-host hardening, and the A4 untrusted-shell boundary
+  deferred. V2 leaves `/view` materialization for a future implementation.
+- candidate acceptance: PASS. Before the release commit, `./run ci-local`
+  passed 18/18 with 99 workspace tests, 20 net tests, 120 Python 3.11 tests,
+  clippy/fmt, warning-denied builds, Rust 1.78, golden 11/11, protected
+  artifacts 2/2, fingerprints, and both lifecycle auditors. The first
+  sandboxed Python 3.12 run completed 113 tests with seven loopback-bind
+  permission failures; the permitted rerun passed all 120 with one
+  third-party Starlette warning.
+- final closure audit: PASS. Against the checked runbook, exact closing record,
+  and this R3 entry, `./run ci-local` passed 18/18; `cycle-check` reported
+  v0.10 closed with five closed execution runbooks; `checklist-audit` resolved
+  52/52 checked tasks; `progress-check` resolved this release commit; version
+  check matched the exact HEAD tag; golden remained 11/11; protected artifacts
+  remained 2/2; and the separate Python 3.12 lane passed 120/120.
+- exact commands:
+
+  ```bash
+  git diff --name-status v0.9.0
+  ./run verify-artifacts
+  ./run version-check
+  cargo check -p cored
+  ./run cycle-check
+  shasum -a 256 shell/intel_shell/__init__.py
+  ./run version-check
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  git tag -a v0.10.0 -m 'intel-platform v0.10.0'
+  git rev-parse v0.10.0
+  git rev-parse 'v0.10.0^{}'
+  git cat-file -t v0.10.0
+  ```
