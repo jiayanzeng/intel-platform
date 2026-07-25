@@ -57,7 +57,12 @@ def shown(path: Path, root: Path) -> str:
 
 
 def strip_corrections(text: str) -> str:
-    return re.sub(r"~~.*?~~", "", text, flags=re.DOTALL)
+    return re.sub(
+        r"~~.*?~~",
+        lambda match: "\n" * match.group(0).count("\n"),
+        text,
+        flags=re.DOTALL,
+    )
 
 
 def git_output(root: Path, *args: str) -> str | None:
@@ -204,13 +209,13 @@ def check_closed_execution(
 def check_authority(
     path: Path, text: str, root: Path, errors: list[str]
 ) -> None:
-    effective = strip_corrections(text)
-    for phrase in AUTHORITY_PATTERNS:
-        if phrase in effective:
-            errors.append(
-                f"{shown(path, root)}: inactive task file retains "
-                f"present-tense authority claim {phrase!r}"
-            )
+    for number, line in enumerate(strip_corrections(text).splitlines(), 1):
+        for phrase in AUTHORITY_PATTERNS:
+            if phrase in line:
+                errors.append(
+                    f"{shown(path, root)}:{number}: inactive task file retains "
+                    f"present-tense authority claim {phrase!r}"
+                )
 
 
 def run(root: Path = ROOT) -> int:
