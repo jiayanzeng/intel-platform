@@ -235,19 +235,26 @@ def run(root: Path = ROOT) -> int:
             )
 
     execution_files = sorted(root.glob("TASKS-v*-EXECUTION.md"))
+    active_state = "missing"
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         unchecked = len(UNCHECKED_RE.findall(active_text))
         closing = active_text.count(CLOSING_HEADING)
-        if unchecked < 1:
+        if unchecked >= 1 and closing == 0:
+            active_state = "open"
+        elif unchecked == 0 and closing == 1:
+            active_state = "closed"
+            check_closed_execution(identity.runbook, active_text, root, errors)
+        elif unchecked < 1:
             errors.append(
-                f"{shown(identity.runbook, root)}: active runbook must have "
-                "at least one unchecked box"
+                f"{shown(identity.runbook, root)}: declared runbook must be "
+                "open with at least one unchecked box or carry one valid "
+                "closing record"
             )
-        if closing:
+        if closing and unchecked:
             errors.append(
-                f"{shown(identity.runbook, root)}: active runbook must not "
-                f"contain {CLOSING_HEADING!r}"
+                f"{shown(identity.runbook, root)}: declared runbook cannot "
+                f"mix unchecked boxes with {CLOSING_HEADING!r}"
             )
 
     for path in execution_files:
@@ -300,9 +307,10 @@ def run(root: Path = ROOT) -> int:
         )
         return 1
 
-    closed = len(execution_files) - 1
+    closed = len(execution_files) - (active_state == "open")
     print(
         f"cycle-check: PASS (active={identity.name}, "
+        f"state={active_state}, "
         f"runbook={shown(identity.runbook, root)}, "
         f"progress={shown(identity.progress, root)}, "
         f"closed_execution={closed}, historical={len(plain_task_files)})"

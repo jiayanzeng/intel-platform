@@ -2,6 +2,49 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.10.0 — 2026-07-25
+
+### Added
+
+- Executable active-cycle and checked-task auditors, plus failure-capable
+  protected-artifact admission that rejects both byte drift and logical
+  provenance drift.
+- Reproducible Python 3.11/3.12 constraints, verified locally and on the first
+  observed GitHub Actions executions.
+- A decomposed `/view` cold-path benchmark and restart-invalidation verifier
+  covering every mutation class without adding materialized storage.
+- A resumable 45-cell real-model adversarial battery with separate
+  failure-capable guard and leak controls.
+
+### Changed
+
+- The internal loopback `/view` response now exposes startup, SQLite-open,
+  analysis, response-build, and serialization timing headers. Its JSON body,
+  cache representation, public API, and database schema are unchanged.
+- Deferred-design auditing now derives every progress input, measures seven
+  triggers, and records CI-runner and `/view` promotions without implementing
+  the five still-deferred subsystems.
+- CI installs from the reproduced Python constraints and verifies that the
+  resolved environment matches them before testing.
+
+### Fixed
+
+- The run harness is compatible with both local ShellCheck 0.11.0 and the
+  runner's ShellCheck 0.9.0 diagnostics.
+- The declared cycle checker accepts the current runbook's explicit closed
+  state after release while continuing to reject a zero-unchecked runbook that
+  has no valid closing record.
+
+### Carried dispositions
+
+- X1's real-model aggregate remains `NOT EXERCISED`, not a no-leak claim;
+  failure-capable controls independently observed both `GUARD FIRED` and
+  deliberate raw overlap without public overlap.
+- T7 single-flight, Postgres, pgvector, multi-host seam hardening, and the A4
+  untrusted-shell boundary remain deferred under their measured triggers.
+- `/view` materialization remains a future implementation task; v0.10.0 ships
+  only its measured design and internal diagnostic seam.
+
 ## v0.9.0 — 2026-07-25
 
 ### Added

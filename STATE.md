@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.10 B0, the operator-approved D1A provenance bootstrap, D0, A1, D1, A2, C1, V2, D5, X1, and G2 are complete; execution has reached R3's explicit release-disposition gate.** All seven deferred-design triggers remain executable measurements: five remain deferred, CI-runner evidence and `/view` are promoted, and `/view` still has no materialization. The entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook. Every finished execution runbook now carries a dated release/no-release record; v0.6/v0.7 are explicitly historical, and the false Rust 1.75 floor is struck in favor of measured 1.78. The measured local tree passes **99 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **120 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, local ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes **18/18** jobs with blocking cycle-consistency and checked-task-evidence jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; operator-approved `origin` now holds `main` and the unchanged tag. GitHub Actions run **30142540466** is the first observed runner execution: six executable job nodes passed, Python 3.11 failed because runner ShellCheck 0.9.0 emitted SC2120/SC2119/SC2015 that local 0.11.0 did not, and the scheduled drift job was skipped on the push event. Compatibility commit `3648918` corrected those diagnostics; subsequent main run **30143171409** passed all seven executable jobs in 43 seconds, including ShellCheck 0.9.0, while scheduled drift was correctly skipped. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the same golden job passed on runner execution 30142540466 in 76 seconds. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** a prior SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; X1 later exercised both roles through operator-established loopback forwards without recording their aliases. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-25 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10 B0, the operator-approved D1A provenance bootstrap, D0, A1, D1, A2, C1, V2, D5, X1, and G2 are complete; the operator selected v0.10.0 at R3 and the release candidate is undergoing its exact-tag and final-definition-of-done checks.** All seven deferred-design triggers remain executable measurements: five remain deferred, CI-runner evidence and `/view` are promoted, and `/view` still has no materialization. The entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook. Every finished execution runbook now carries a dated release/no-release record; v0.6/v0.7 are explicitly historical, and the false Rust 1.75 floor is struck in favor of measured 1.78. The measured local tree passes **99 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **120 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, local ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes **18/18** jobs with blocking cycle-consistency and checked-task-evidence jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; operator-approved `origin` now holds `main` and the unchanged tag. GitHub Actions run **30142540466** is the first observed runner execution: six executable job nodes passed, Python 3.11 failed because runner ShellCheck 0.9.0 emitted SC2120/SC2119/SC2015 that local 0.11.0 did not, and the scheduled drift job was skipped on the push event. Compatibility commit `3648918` corrected those diagnostics; subsequent main run **30143171409** passed all seven executable jobs in 43 seconds, including ShellCheck 0.9.0, while scheduled drift was correctly skipped. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the same golden job passed on runner execution 30142540466 in 76 seconds. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** a prior SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; X1 later exercised both roles through operator-established loopback forwards without recording their aliases. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported
@@ -580,6 +580,93 @@ event. Most importantly, the Python 3.11 lane's `shellcheck run harness` step
 passed with runner ShellCheck 0.9.0. The first failure remains part of the
 evidence; the later run proves the compatible correction rather than erasing
 the divergence.
+
+**v0.10 R3 selected v0.10.0 and the release candidate is in progress
+(measured 2026-07-25).** The operator explicitly selected **v0.10.0** after
+reviewing the actual `v0.9.0..HEAD` diff. The minor disposition follows
+`ARCHITECTURE.md §8`: `apps/cored/src/main.rs` changes runtime behavior by
+adding internal `/view` timing headers, and the store exposes measured
+SQLite-open phases. The `/view` JSON body, public API, database schema, and
+cache representation remain unchanged, but the shipped runtime/internal API
+seam is still a real behavior change. A patch release was therefore not used.
+
+The pre-release gate ran against clean local and remote main commit
+`67aef084da9da22d27d84506a881bce7d4569e15`. GitHub Actions run
+[30143340195](https://github.com/jiayanzeng/intel-platform/actions/runs/30143340195)
+passed at that exact head; protected-artifact verification passed 2/2;
+`./run version-check` read 0.9.0 from all five authorities; and no
+`v0.10.0` tag existed. After the release edits, Cargo changed only the `cored`
+package version in `Cargo.lock`; no dependency resolution moved. All five
+authorities now read 0.10.0, while the nearest ancestor tag remains v0.9.0
+until the candidate is committed and tagged.
+
+The complete release-candidate diff contains **55 paths**, each classified
+exactly once:
+
+- **runtime, storage, or internal API (3):**
+  `apps/cored/src/main.rs`, `crates/store/src/lib.rs`, and
+  `crates/store/src/sqlite.rs`.
+- **public/release metadata (6):** `CHANGELOG.md`, `Cargo.lock`, `STATE.md`,
+  `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`, and
+  `shell/intel_shell/app.py`.
+- **operations (3):** `.github/workflows/ci.yml`, `run`, and
+  `shell/constraints.txt`.
+- **executable evidence and controls (29):**
+  `config/checklist-exemptions.json`,
+  `config/protected-artifacts.json`;
+  `evidence/v0.10/ci-runner/report.json`,
+  `evidence/v0.10/deferred-audit/report.json`,
+  `evidence/v0.10/real-model-adversarial/attempt-1-timeout.json`,
+  `attempt-2-timeout.json`, `attempt-3-timeout.json`, `leak-control.json`,
+  and `report.json` in that same adversarial directory;
+  `evidence/v0.10/view-decomposition/run-1-core-1764.json`,
+  `run-1-live-smoke-2600.json`, `run-2-core-1764.json`,
+  `run-2-live-smoke-2600.json`, and `summary.json` in that same view directory;
+  `shell/tests/test_deferred_audit.py`,
+  `shell/tests/test_evidence_artifacts.py`,
+  `shell/tests/test_python_constraints.py`,
+  `shell/tests/test_verify_llm.py`,
+  `shell/tests/test_view_invalidation.py`;
+  `tools/audit_deferred.py`, `tools/benchmark_view.py`,
+  `tools/checklist_audit.py`, `tools/cycle_check.py`,
+  `tools/cycle_identity.py`, `tools/evidence_artifacts.py`,
+  `tools/progress_check.py`, `tools/python_constraints.py`,
+  `tools/verify_llm.py`, and `tools/view_invalidation.py`.
+- **documentation and task metadata (14):** `AGENTS.md`, `ARCHITECTURE.md`,
+  `PROGRESS-v0.10.md`, `PROGRESS-v0.8.md`, `PROGRESS-v0.9.md`, `README.md`,
+  `TASKS-v0.10-EXECUTION.md`, `TASKS-v0.6.md`, `TASKS-v0.7.md`,
+  `TASKS-v0.8-EXECUTION.md`, `TASKS-v0.8.1-EXECUTION.md`,
+  `TASKS-v0.8.2-EXECUTION.md`, `TASKS-v0.9-EXECUTION.md`, and
+  `docs/V2-VIEW-DESIGN.md`.
+
+Every carried non-result has a disposition. X1 remains **NOT EXERCISED** across
+45 valid real-model cells: this is not a no-leak claim; its failure-capable
+mock observed 45 guard firings and the separate leak control observed raw
+overlap without public overlap. G2 is complete: the first real runner exposed
+ShellCheck 0.9.0 divergence, the separate correction passed, and the planted
+version mismatch PR was closed unmerged with its branch deleted. D5's T7,
+Postgres, pgvector, multi-host hardening, and A4 untrusted-shell boundary rows
+remain deferred under their measured triggers. Its CI row was promoted and
+completed by G2. Its `/view` row was promoted to the measured V2 design, but no
+materialized table, migration, or cache representation shipped. The cycle
+checker now validates the declared runbook as open while work remains or
+closed after one exact release record; it still rejects zero unchecked boxes
+without that record.
+
+The release-candidate failure control changed only
+`shell/intel_shell/__init__.py` from 0.10.0 to 9.9.9.
+`./run version-check` exited 1 and named that exact file and value. Restoring
+it returned SHA-256
+`0bd4d3a8ef91761ac81d64c548480010a53830ca4a440598c4c481027d369e05`,
+identical to the pre-control hash, and the five-authority check passed again.
+The candidate then passed `./run ci-local` **18/18**: 99 workspace tests, 20
+net tests, warning-denied checks, clippy/fmt, Rust 1.78 check/tests, 120 Python
+3.11 shell tests, golden 11/11, protected artifacts 2/2, persisted
+fingerprints, and both lifecycle auditors. The first sandboxed Python 3.12
+attempt completed 113 tests and reported seven loopback-bind permission
+failures; the permitted rerun passed all **120** with the same single
+third-party Starlette warning. No release tag has yet been created at this
+candidate checkpoint.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
