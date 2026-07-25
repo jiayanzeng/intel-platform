@@ -375,3 +375,62 @@ new dated entries.
   ./run golden
   ./run verify-artifacts
   ```
+
+### 2026-07-25 · A2 — protected-artifact admission made failure-capable
+
+- owner: Codex
+- commit: 54fc23b78ec6ea529afd388dea1d8b188c6ee30b
+- result: PASS. Manifest schema 2 makes protected-artifact admission an
+  append-only chain enforced by `tools/evidence_artifacts.py`.
+- gate: PASS. A2 admitted no new artifact, changed neither expected hash nor
+  database byte, and required no write to either protected database.
+- schema acceptance: PASS. Every artifact carries a non-empty admission
+  record array. Each exact-shape record names task, ISO date, admitted SHA-256,
+  prior SHA-256, captured wire command/output reference, operator approval,
+  and explicit retroactive status. The artifact hash must equal the newest
+  record, and every non-initial prior hash must equal its predecessor.
+- retroactive acceptance: PASS. Both original records are explicitly
+  `retroactive: true` and cite immutable Git records for the already-observed
+  harvest and B0 hash evidence. They do not claim a fresh wire run or fresh
+  review.
+- failure-capable controls: PASS 4/4. Nine targeted tests include controls
+  proving that an expected-hash edit without a record fails, missing wire
+  evidence or operator approval fails naming its field, a bad prior hash fails
+  naming the chain break, and a complete chained record over a disposable
+  artifact validates and verifies.
+- shell acceptance: PASS. The exact implementation tree passed 109/109 shell
+  tests under Python 3.11.4 and 109/109 under Python 3.12.13; each reported the
+  same one third-party Starlette deprecation warning.
+- local-CI acceptance: PASS. `./run ci-local` passed all 18/18 jobs, including
+  schema-2 artifact validation, both auditors, 98 workspace tests, 20 net
+  tests, clippy/fmt, locked Rust 1.78 checks/tests, Python byte-compilation,
+  ShellCheck, and golden.
+- checklist acceptance: PASS. Before this required audit append, A2 was the
+  sole expected two-commit gap. After the real implementation hash above was
+  recorded, `./run checklist-audit` reported 46/46/46 with zero exemptions.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. Before and after A2,
+  `data/core.db` remained
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and `data/live-smoke.db` remained
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+  final direct verification passed 2/2.
+- exact commands:
+
+  ```bash
+  python3 tools/evidence_artifacts.py validate
+  ./run verify-artifacts
+  shasum -a 256 data/core.db data/live-smoke.db
+  PYTHONPATH=shell python3 -m pytest \
+    shell/tests/test_evidence_artifacts.py -vv
+  PYTHONPATH=shell python3 -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  python3 -m py_compile tools/evidence_artifacts.py \
+    shell/tests/test_evidence_artifacts.py
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ./run checklist-audit
+  ./run progress-check
+  ```
