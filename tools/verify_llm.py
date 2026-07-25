@@ -277,6 +277,47 @@ def _new_adversarial_report(
     }
 
 
+def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
+    prior = json.loads(path.read_text())
+    if prior.get("battery", {}).get("sha256") != report["battery"]["sha256"]:
+        raise ValueError(f"{path}: resume battery declaration does not match")
+    if (
+        prior.get("battery", {}).get("target_doc_ids")
+        != report["battery"]["target_doc_ids"]
+    ):
+        raise ValueError(f"{path}: resume target corpus does not match")
+    if prior.get("provider_roles") != report["provider_roles"]:
+        raise ValueError(f"{path}: resume provider identities do not match")
+
+    valid: list[dict] = []
+    keys: set[tuple[str, str]] = set()
+    for attempt in prior.get("attempts", []):
+        if not attempt.get("valid_attempt"):
+            continue
+        key = (attempt["target_doc_id"], attempt["shape"])
+        if key in keys:
+            raise ValueError(f"{path}: duplicate valid resume attempt {key}")
+        keys.add(key)
+        valid.append(attempt)
+
+    report["attempts"] = valid
+    report["counts"] = {
+        outcome: sum(
+            attempt["outcome"] == outcome for attempt in valid
+        )
+        for outcome in (GUARD_FIRED, NOT_EXERCISED, LEAK)
+    }
+    report["resume"] = {
+        "source_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "prior_attempts": len(prior.get("attempts", [])),
+        "reused_valid_attempts": len(valid),
+        "retried_invalid_attempts": (
+            len(prior.get("attempts", [])) - len(valid)
+        ),
+    }
+    return keys
+
+
 class _RecordingChat:
     """Capture the exact raw answer the public path sends to core /attest."""
 
@@ -290,6 +331,25 @@ class _RecordingChat:
         return answer
 
 
+class _RecordingCore:
+    """Retain retrieved context even when the downstream model times out."""
+
+    def __init__(self, delegate: CoreClient):
+        self._delegate = delegate
+        self.last_retrieve_context_ids: list[str] = []
+
+    def retrieve(self, *args, **kwargs) -> dict:
+        result = self._delegate.retrieve(*args, **kwargs)
+        self.last_retrieve_context_ids = [
+            document["doc_id"]
+            for document in result.get("context", [])
+        ]
+        return result
+
+    def __getattr__(self, name: str):
+        return getattr(self._delegate, name)
+
+
 def _embedding_items(batch: list[dict], vectors: list[list[float]]) -> list[dict]:
     return [
         {"doc_id": doc["doc_id"], "vector": vector}
@@ -300,12 +360,13 @@ def _embedding_items(batch: list[dict], vectors: list[list[float]]) -> list[dict
 def _run_adversarial_battery(
     *,
     api,
-    core: CoreClient,
+    core: _RecordingCore,
     recording_chat: _RecordingChat,
     gated_docs: list[dict],
     chat_model: str,
     embed_model: str,
     report_path: Path | None,
+    resume_from: Path | None,
 ) -> dict:
     if report_path is not None and report_path.exists():
         raise ValueError(
@@ -320,14 +381,21 @@ def _run_adversarial_battery(
         "%Y-%m-%dT%H:%M:%SZ",
         time.gmtime(),
     )
+    completed_keys: set[tuple[str, str]] = set()
+    if resume_from is not None:
+        completed_keys = _resume_valid_attempts(resume_from, report)
     if report_path is not None:
         _write_adversarial_report(report_path, report)
 
     stop_for_leak = False
     for target in sorted(gated_docs, key=lambda item: item["doc_id"]):
         for shape in ADVERSARIAL_SHAPES:
+            attempt_key = (target["doc_id"], shape["id"])
+            if attempt_key in completed_keys:
+                continue
             prompt = _adversarial_prompt(shape, target)
             recording_chat.last_answer = None
+            core.last_retrieve_context_ids = []
             started = time.perf_counter()
             response = api.get(
                 "/v1/ask",
@@ -345,6 +413,7 @@ def _run_adversarial_battery(
                 "model": chat_model,
                 "latency_ms": latency_ms,
                 "http_status": response.status_code,
+                "model_completed": False,
                 "target_in_context": False,
                 "context_doc_ids": [],
                 "gated_context_doc_ids": [],
@@ -354,28 +423,38 @@ def _run_adversarial_battery(
                 "outcome": NOT_EXERCISED,
                 "valid_attempt": False,
             }
+            context_ids = list(core.last_retrieve_context_ids)
+            context_docs = core.docs(context_ids) if context_ids else []
+            attempt["gated_context_doc_ids"] = [
+                document["doc_id"]
+                for document in context_docs
+                if document.get("license") == "IndexOnly"
+            ]
             if response.status_code == 200:
                 body = response.json()
-                context_ids = [
+                response_context_ids = [
                     citation["doc_id"]
                     for citation in body.get("citations", [])
                 ]
-                docs = core.docs(context_ids)
-                attempt["context_doc_ids"] = context_ids
-                attempt["target_in_context"] = (
-                    target["doc_id"] in context_ids
-                )
+                if response_context_ids != context_ids:
+                    raise ValueError(
+                        "public citations diverged from retrieved context: "
+                        f"{response_context_ids} != {context_ids}"
+                    )
                 if recording_chat.last_answer is not None:
+                    attempt["model_completed"] = True
                     raw_answer = recording_chat.last_answer
                     attestation = core.attest(raw_answer, context_ids)
                     classification = _classify_adversarial_outcome(
                         public_answer=body.get("answer", ""),
                         raw_answer=raw_answer,
-                        docs=docs,
+                        docs=context_docs,
                         attestation=attestation,
                     )
                     attempt.update(classification)
-                    attempt["valid_attempt"] = attempt["target_in_context"]
+            attempt["context_doc_ids"] = context_ids
+            attempt["target_in_context"] = target["doc_id"] in context_ids
+            attempt["valid_attempt"] = attempt["target_in_context"]
 
             report["attempts"].append(attempt)
             report["counts"][attempt["outcome"]] += 1
@@ -540,7 +619,10 @@ def _finish() -> int:
     return 1 if failed else 0
 
 
-def main(adversarial_report: Path | None = None) -> int:
+def main(
+    adversarial_report: Path | None = None,
+    adversarial_resume_from: Path | None = None,
+) -> int:
     results.clear()
     core = CoreClient(config.CORE_URL, token=config.CORE_TOKEN)
     chat, embed = chat_from_env(), embed_from_env()
@@ -640,8 +722,9 @@ def main(adversarial_report: Path | None = None) -> int:
     print("== 3. public HC1 — gated text cannot escape ==")
     try:
         recording_chat = _RecordingChat(chat)
+        recording_core = _RecordingCore(core)
         public_app = create_app(
-            core=core,
+            core=recording_core,
             subscriptions=config.load_subscription_store(),
             chat=recording_chat,
             embed=embed,
@@ -700,12 +783,13 @@ def main(adversarial_report: Path | None = None) -> int:
                 else:
                     _run_adversarial_battery(
                         api=api,
-                        core=core,
+                        core=recording_core,
                         recording_chat=recording_chat,
                         gated_docs=fixture_gated,
                         chat_model=chat.model,
                         embed_model=embed.model,
                         report_path=adversarial_report,
+                        resume_from=adversarial_resume_from,
                     )
     except (CoreError, LlmError, KeyError, ValueError) as e:
         check("HC1 public spot-check", FAIL, str(e))
@@ -731,6 +815,14 @@ def cli(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--adversarial-resume-from",
+        type=Path,
+        help=(
+            "reuse valid cells from a prior secret-free matrix and retry "
+            "only its invalid cells"
+        ),
+    )
+    parser.add_argument(
         "--classifier-control",
         action="store_true",
         help="demonstrate all three HC1 classifier values using doubles",
@@ -738,10 +830,23 @@ def cli(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.classifier_control:
         return run_classifier_control()
+    if (
+        args.adversarial_resume_from is not None
+        and args.adversarial_report is None
+    ):
+        parser.error(
+            "--adversarial-resume-from requires --adversarial-report"
+        )
     try:
-        if args.adversarial_report is None:
+        if (
+            args.adversarial_report is None
+            and args.adversarial_resume_from is None
+        ):
             return main()
-        return main(adversarial_report=args.adversarial_report)
+        return main(
+            adversarial_report=args.adversarial_report,
+            adversarial_resume_from=args.adversarial_resume_from,
+        )
     except KeyboardInterrupt:
         print("\nverification interrupted; cleanup follows.", file=sys.stderr)
         return 130

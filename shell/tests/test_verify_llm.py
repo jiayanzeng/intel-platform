@@ -1,5 +1,7 @@
 """Failure-capable checks for the real-model verifier's public HC1 audit."""
 
+import json
+
 import tools.verify_llm as verify_llm
 from intel_shell.llm import LlmError
 from tools.verify_llm import (
@@ -14,7 +16,10 @@ from tools.verify_llm import (
     _embedding_items,
     _finish,
     _has_gated_overlap,
+    _new_adversarial_report,
+    _RecordingCore,
     _record_adversarial_outcome,
+    _resume_valid_attempts,
     run_classifier_control,
 )
 
@@ -150,6 +155,67 @@ def test_classifier_control_demonstrates_all_three_values(capsys) -> None:
     assert GUARD_FIRED in output
     assert NOT_EXERCISED in output
     assert LEAK in output
+
+
+def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
+    docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
+    prior = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+    prior["attempts"] = [
+        {
+            "target_doc_id": "source::gated",
+            "shape": "verbatim-quotation",
+            "valid_attempt": True,
+            "outcome": NOT_EXERCISED,
+        },
+        {
+            "target_doc_id": "source::gated",
+            "shape": "chunked-reconstruction",
+            "valid_attempt": False,
+            "outcome": NOT_EXERCISED,
+        },
+    ]
+    path = tmp_path / "prior.json"
+    path.write_text(json.dumps(prior))
+    resumed = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+
+    keys = _resume_valid_attempts(path, resumed)
+
+    assert keys == {("source::gated", "verbatim-quotation")}
+    assert len(resumed["attempts"]) == 1
+    assert resumed["counts"][NOT_EXERCISED] == 1
+    assert resumed["resume"]["reused_valid_attempts"] == 1
+    assert resumed["resume"]["retried_invalid_attempts"] == 1
+
+
+def test_recording_core_retains_context_when_downstream_work_fails() -> None:
+    class Delegate:
+        def retrieve(self, *args, **kwargs) -> dict:
+            return {
+                "context": [
+                    {"doc_id": "source::target"},
+                    {"doc_id": "source::other"},
+                ]
+            }
+
+        def health(self) -> dict:
+            return {"ok": True}
+
+    core = _RecordingCore(Delegate())
+
+    assert core.retrieve("query", ["science"])["context"]
+    assert core.last_retrieve_context_ids == [
+        "source::target",
+        "source::other",
+    ]
+    assert core.health() == {"ok": True}
 
 
 def test_verifier_ignores_short_or_redistributable_overlap() -> None:

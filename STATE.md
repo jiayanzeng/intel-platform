@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.10 B0, the operator-approved D1A provenance bootstrap, D0, A1, D1, A2, C1, V2, and D5 are complete; X1 is deferred at its real-endpoint gate after zero battery attempts because the configured LAN chat host is unreachable; execution advances to G2.** All seven deferred-design triggers remain executable measurements: six are deferred and `/view` alone is promoted to its scoped future implementation without materialization. The entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook. Every finished execution runbook now carries a dated release/no-release record; v0.6/v0.7 are explicitly historical, and the false Rust 1.75 floor is struck in favor of measured 1.78. The measured tree passes **99 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **118 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes **18/18** jobs with blocking cycle-consistency and checked-task-evidence jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; HEAD entered one append-only audit commit ahead at `280f6ab`, this checkout has no remote, and no CI-runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** a prior SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` resolves both direct LAN roles, but X1 re-measured the chat host as unreachable on 2026-07-25. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.10 B0, the operator-approved D1A provenance bootstrap, D0, A1, D1, A2, C1, V2, D5, and X1 are complete; X1's full real-model battery is honestly classified `NOT EXERCISED`, not passed, and execution awaits the G2 operator decision.** All seven deferred-design triggers remain executable measurements: six are deferred and `/view` alone is promoted to its scoped future implementation without materialization. The entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook. Every finished execution runbook now carries a dated release/no-release record; v0.6/v0.7 are explicitly historical, and the false Rust 1.75 floor is struck in favor of measured 1.78. The measured tree passes **99 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **120 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes **18/18** jobs with blocking cycle-consistency and checked-task-evidence jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; HEAD entered one append-only audit commit ahead at `280f6ab`, this checkout has no remote, and no CI-runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** a prior SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; X1 later exercised both roles through operator-established loopback forwards without recording their aliases. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported
@@ -416,8 +416,8 @@ Four targeted registry tests passed. The exact production tree then passed
 under both Python 3.11.4 and 3.12.13, and `./run ci-local` **18/18**. Golden
 remained 11/11 and both protected artifacts remained exact at 2/2.
 
-**v0.10 X1 is deferred at the real-endpoint gate (measured 2026-07-25);
-the real battery did not run.** The battery was declared in
+**v0.10 X1's first checkpoint was deferred at the real-endpoint gate
+(measured 2026-07-25); the real battery had not yet run.** The battery was declared in
 `tools/verify_llm.py` before any attempt: verbatim quotation, sentence
 continuation, translation round-trip, formatted extraction, and chunked
 reconstruction, nested across every IndexOnly document discovered from the
@@ -444,14 +444,73 @@ runs. No mock was substituted. The harness-only
 `tools/verify_llm.py --classifier-control` used the leak double plus a
 simulated core refusal to emit `GUARD FIRED`, a paraphrase double to emit
 `NOT EXERCISED`, and a deliberately unattested path to emit `LEAK`; these are
-failure-capable classifier controls, not real-model evidence. X1 remains
-unchecked until both configured roles are reachable and the complete matrix
-runs without a leak. The harness change passed **12/12** focused verifier
+failure-capable classifier controls, not real-model evidence. At that
+checkpoint X1 remained unchecked until both configured roles were reachable
+and the complete matrix ran without a leak. The harness change passed
+**12/12** focused verifier
 tests and the complete **118/118** shell suite under both Python 3.11.4 and
 3.12.13, each with the same one third-party Starlette warning. The exact
 harness tree passed `./run ci-local` **18/18**, the final direct golden
 lifecycle **11/11**, and protected-artifact verification **2/2**. These
 regression results do not change the real-model deferral.
+
+**v0.10 X1 is complete with an honest `NOT EXERCISED` result (measured
+2026-07-25); no real-model `LEAK` occurred and this is not a pass.** The
+operator-established loopback forwards made both configured roles reachable
+without committing their aliases. The provider probe measured chat model
+`gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`: health and model discovery returned 200
+and its embeddings route returned the required exact 501. The separate
+`embeddinggemma-300M-Q8_0.gguf` role returned 200 for health, discovery, and
+embeddings and produced vectors of dimension 768.
+
+The ordinary verifier path freshly ingested 13 fixture documents, embedded
+13→0 with one real provider request whose 768-dimensional output matched
+stored statistics, exercised lexical and hybrid retrieval, and returned four
+IndexOnly citations with no gated overlap in the public answer. The declared
+battery then targeted all **9** IndexOnly documents with all **5** prompt
+shapes: **45/45** cells were valid because the named target reached retrieved
+model context. The complete matrix aggregate is **`NOT EXERCISED`**:
+0 `GUARD FIRED`, 45 `NOT EXERCISED`, 0 `LEAK`, with zero raw or public gated
+overlaps. Forty-four cells completed normally. The remaining
+`arxiv-cs::oai:arXiv.org:2607.01455` × `chunked-reconstruction` cell returned
+HTTP 502 after 120048.445 ms because the model did not complete; the recording
+core had already captured the target in retrieved context, so the cell is a
+valid targeted attempt and remains explicitly marked `model_completed=false`.
+
+Interrupted runs were preserved rather than overwritten:
+`attempt-1-timeout.json` SHA-256
+`ff154b7ccde7276b7a75f9d6d0eac7ef2fecd98e58ee99381da92f566a62a551`,
+`attempt-2-timeout.json`
+`0272a11a73afbd8210740c46c3f5d02a5175d84138166cfcf58baa2659461780`,
+and `attempt-3-timeout.json`
+`2851eda7ba129368e33975437350788cb556dc565a8a01baad7606eb89d91d46`.
+The resumable verifier validated the unchanged battery declaration, target
+corpus, and provider identities, reused only valid cells, and retried only
+invalid cells. The final secret-free matrix is
+`evidence/v0.10/real-model-adversarial/report.json`, SHA-256
+`98fb3a3a1acac844aeccd0da0be2457ff9327ee0733f8570d7edc34b1870f13c`;
+its battery declaration hash is
+`d7e918244ac0d3b61b73d62c1222c384b4d31bbbd1f4b45efa69d804b3d14048`.
+
+The matched failure-capable run used exactly the same 45 target/shape pairs.
+`tools/mock_openai.py --leak` produced 45 raw gated overlaps, core attestation
+blocked every one, and the matrix aggregate was **`GUARD FIRED`**:
+45 guard firings, 0 not-exercised cells, 0 leaks, and zero public overlaps.
+Its report is
+`evidence/v0.10/real-model-adversarial/leak-control.json`, SHA-256
+`ba504a524f9b5df3e7c0bea68523f5b6f6b05aff28090f812c845c60cae9340c`.
+The separate classifier control also emitted `NOT EXERCISED`, `GUARD FIRED`,
+and a deliberately unattested `LEAK`. A scan of all five reports found no
+credentials, authorization headers, endpoint addresses, prompts, raw answers,
+public answers, or tunnel aliases.
+
+The completed verifier passed **14/14** focused tests and the full **120/120**
+shell suite under both Python 3.11.4 and 3.12.13, each with the same one
+third-party Starlette warning. The exact tree passed `./run ci-local`
+**18/18**; its 99 workspace tests, 20 net tests, warning-denied builds,
+clippy/fmt, both shell lanes, and Rust 1.78 lane were green. The final direct
+`./run golden` remained **11/11**, and protected-artifact verification remained
+**2/2** at the exact recorded hashes.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
