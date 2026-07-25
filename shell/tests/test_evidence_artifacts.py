@@ -43,22 +43,49 @@ def _create_database(path: Path) -> None:
 
 
 def _manifest(database: Path) -> dict[str, Any]:
+    digest = _sha256(database)
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "lifecycle": {
             "policy": "immutable_evidence",
             "live_harvest": "fresh_path_only",
             "admission": (
-                "explicit_task_with_captured_wire_evidence_and_operator_review"
+                "append_only_chained_records_with_wire_evidence_and_"
+                "operator_approval"
             ),
         },
         "artifacts": [
             {
                 "path": database.name,
-                "sha256": _sha256(database),
+                "sha256": digest,
                 "bytes": database.stat().st_size,
                 "purpose": "failure-capable test evidence",
                 "provenance": "created inside one disposable pytest directory",
+                "admission": {
+                    "records": [
+                        {
+                            "task_id": "test/original",
+                            "date": "2026-07-25",
+                            "sha256": digest,
+                            "prior_sha256": None,
+                            "wire_evidence": [
+                                {
+                                    "command": "create disposable evidence DB",
+                                    "output_ref": (
+                                        "sha256:"
+                                        "11111111111111111111111111111111"
+                                        "11111111111111111111111111111111"
+                                    ),
+                                }
+                            ],
+                            "operator_approval": {
+                                "approved_by": "pytest",
+                                "approval_ref": "disposable test fixture",
+                            },
+                            "retroactive": False,
+                        }
+                    ]
+                },
                 "expected": {
                     "documents": 1,
                     "integrity_check": "ok",
@@ -77,6 +104,48 @@ def _manifest(database: Path) -> dict[str, Any]:
             }
         ],
     }
+
+
+def _append_admission(
+    artifact: dict[str, Any],
+    digest: str,
+    *,
+    wire_evidence: list[dict[str, str]] | None = None,
+    operator_approval: dict[str, str] | None = None,
+) -> None:
+    previous = artifact["admission"]["records"][-1]["sha256"]
+    artifact["sha256"] = digest
+    artifact["admission"]["records"].append(
+        {
+            "task_id": "test/change",
+            "date": "2026-07-25",
+            "sha256": digest,
+            "prior_sha256": previous,
+            "wire_evidence": (
+                wire_evidence
+                if wire_evidence is not None
+                else [
+                    {
+                        "command": "mutate disposable evidence DB",
+                        "output_ref": (
+                            "sha256:"
+                            "22222222222222222222222222222222"
+                            "22222222222222222222222222222222"
+                        ),
+                    }
+                ]
+            ),
+            "operator_approval": (
+                operator_approval
+                if operator_approval is not None
+                else {
+                    "approved_by": "pytest",
+                    "approval_ref": "disposable mutation control",
+                }
+            ),
+            "retroactive": False,
+        }
+    )
 
 
 def _write_manifest(path: Path, manifest: dict[str, Any]) -> None:
@@ -151,7 +220,7 @@ def test_document_count_mismatch_survives_fresh_hash(tmp_path: Path) -> None:
             "INSERT INTO documents VALUES ('source::two', 2, 'source::two')"
         )
     artifact = manifest["artifacts"][0]
-    artifact["sha256"] = _sha256(database)
+    _append_admission(artifact, _sha256(database))
     artifact["bytes"] = database.stat().st_size
     _write_manifest(manifest_path, manifest)
 
@@ -170,7 +239,7 @@ def test_cursor_mismatch_survives_fresh_hash(tmp_path: Path) -> None:
             "UPDATE cursors SET cursor = 'wrong-token' WHERE source_id = 'source'"
         )
     artifact = manifest["artifacts"][0]
-    artifact["sha256"] = _sha256(database)
+    _append_admission(artifact, _sha256(database))
     artifact["bytes"] = database.stat().st_size
     _write_manifest(manifest_path, manifest)
 
@@ -199,3 +268,73 @@ def test_protected_path_matching_resolves_aliases(tmp_path: Path) -> None:
 
     safe = _run(tmp_path, manifest_path, "protected", "fresh.db")
     assert safe.returncode == 1
+
+
+def test_expected_hash_change_requires_new_admission(tmp_path: Path) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    manifest["artifacts"][0]["sha256"] = "3" * 64
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode != 0
+    assert "artifacts[0].admission" in checked.stderr
+    assert "add a complete admission record" in checked.stderr
+
+
+def test_admission_requires_wire_evidence_and_operator_approval(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    artifact = manifest["artifacts"][0]
+    original = artifact["sha256"]
+    _append_admission(artifact, original, wire_evidence=[])
+    _write_manifest(manifest_path, manifest)
+
+    missing_wire = _run(tmp_path, manifest_path, "validate")
+
+    assert missing_wire.returncode != 0
+    assert "wire_evidence" in missing_wire.stderr
+
+    artifact["admission"]["records"].pop()
+    _append_admission(artifact, original)
+    del artifact["admission"]["records"][-1]["operator_approval"]
+    _write_manifest(manifest_path, manifest)
+
+    missing_approval = _run(tmp_path, manifest_path, "validate")
+
+    assert missing_approval.returncode != 0
+    assert "operator_approval" in missing_approval.stderr
+
+
+def test_admission_prior_hash_must_chain(tmp_path: Path) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    artifact = manifest["artifacts"][0]
+    _append_admission(artifact, artifact["sha256"])
+    artifact["admission"]["records"][-1]["prior_sha256"] = "4" * 64
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode != 0
+    assert "prior_sha256: chain break" in checked.stderr
+
+
+def test_complete_chained_admission_verifies(tmp_path: Path) -> None:
+    database, manifest_path, manifest = _fixture(tmp_path)
+    with sqlite3.connect(database) as connection:
+        connection.execute(
+            "INSERT INTO documents VALUES ('source::two', 2, 'source::two')"
+        )
+    artifact = manifest["artifacts"][0]
+    _append_admission(artifact, _sha256(database))
+    artifact["bytes"] = database.stat().st_size
+    artifact["expected"]["documents"] = 2
+    _write_manifest(manifest_path, manifest)
+
+    validated = _run(tmp_path, manifest_path, "validate")
+    verified = _run(tmp_path, manifest_path, "verify")
+
+    assert validated.returncode == 0, validated.stderr
+    assert verified.returncode == 0, verified.stderr
+    assert "protected evidence: 1/1 artifacts match" in verified.stdout

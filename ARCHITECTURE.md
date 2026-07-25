@@ -45,6 +45,7 @@ decisions below are load-bearing.
 | `config/entities.json` | core | gazetteer |
 | `config/subscriptions.json` (or `sqlite:///…`) | shell | clients, sectors, keys |
 | `config/schedule.json` | shell | per-source and per-sector cadence |
+| `config/protected-artifacts.json` | evidence control | immutable artifact facts and chained admissions |
 
 Core-owned config describes *what exists and how it may be used*; shell-owned
 config describes *who may see it and when to fetch it*. Do not cross these.
@@ -61,6 +62,17 @@ The recorded SQLite scopes are:
   atomic JSON remains the default.
 - **Core store tables:** `documents`, `embeddings`, and `signals_history`
   are archive/query state, not shell-owned configuration.
+
+**Protected-artifact admission is an executable append-only chain.** Manifest
+schema v2 requires every artifact's current SHA-256 to equal its newest
+admission record, and each new record's `prior_sha256` to equal the preceding
+record's SHA-256. Every record also names the admitting task/date, captured
+wire command and output reference, operator approval, and whether it is
+retroactive. Validate the record chain with
+`python3 tools/evidence_artifacts.py validate`; then prove the recorded bytes
+and corpus facts with `./run verify-artifacts`. The two initial v0.10/A2
+records are explicitly retroactive references to prior wire/B0 evidence, not
+new harvest claims.
 
 ## 3. Load-bearing placement decisions (do not move casually)
 

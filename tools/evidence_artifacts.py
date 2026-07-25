@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
 import json
 import re
@@ -16,6 +17,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "config" / "protected-artifacts.json"
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+GIT_OUTPUT_REF_RE = re.compile(
+    r"^git:[0-9a-f]{40}:[^:#\s]+(?:#[^\s]+)?$"
+)
+HASH_OUTPUT_REF_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 CURSOR_FIELDS = (
     "cursor",
     "high_water",
@@ -61,13 +66,147 @@ def _validate_cursor(value: Any, context: str) -> dict[str, Any]:
     return value
 
 
+def _sha256_string(value: Any, context: str) -> str:
+    digest = _non_empty_string(value, context)
+    if SHA256_RE.fullmatch(digest) is None:
+        raise ManifestError(f"{context}: expected 64 lowercase hex digits")
+    return digest
+
+
+def _iso_date(value: Any, context: str) -> str:
+    raw = _non_empty_string(value, context)
+    try:
+        parsed = dt.date.fromisoformat(raw)
+    except ValueError as error:
+        raise ManifestError(f"{context}: expected an ISO date") from error
+    if parsed.isoformat() != raw:
+        raise ManifestError(f"{context}: expected an ISO date")
+    return raw
+
+
+def _validate_wire_evidence(value: Any, context: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ManifestError(f"{context}: expected an object")
+    _exact_keys(value, {"command", "output_ref"}, context)
+    _non_empty_string(value["command"], f"{context}.command")
+    output_ref = _non_empty_string(value["output_ref"], f"{context}.output_ref")
+    if (
+        GIT_OUTPUT_REF_RE.fullmatch(output_ref) is None
+        and HASH_OUTPUT_REF_RE.fullmatch(output_ref) is None
+    ):
+        raise ManifestError(
+            f"{context}.output_ref: expected "
+            "'git:<40-hex-commit>:<path>[#anchor]' or 'sha256:<64-hex>'"
+        )
+    return value
+
+
+def _validate_admission_record(
+    value: Any,
+    context: str,
+    previous_sha256: str | None,
+) -> str:
+    if not isinstance(value, dict):
+        raise ManifestError(f"{context}: expected an object")
+    _exact_keys(
+        value,
+        {
+            "task_id",
+            "date",
+            "sha256",
+            "prior_sha256",
+            "wire_evidence",
+            "operator_approval",
+            "retroactive",
+        },
+        context,
+    )
+    _non_empty_string(value["task_id"], f"{context}.task_id")
+    _iso_date(value["date"], f"{context}.date")
+    digest = _sha256_string(value["sha256"], f"{context}.sha256")
+    prior = value["prior_sha256"]
+    if prior is not None:
+        _sha256_string(prior, f"{context}.prior_sha256")
+    if prior != previous_sha256:
+        raise ManifestError(
+            f"{context}.prior_sha256: chain break; "
+            f"expected {previous_sha256!r}, found {prior!r}"
+        )
+
+    wire_evidence = value["wire_evidence"]
+    if not isinstance(wire_evidence, list) or not wire_evidence:
+        raise ManifestError(
+            f"{context}.wire_evidence: expected a non-empty array"
+        )
+    for index, evidence in enumerate(wire_evidence):
+        _validate_wire_evidence(
+            evidence,
+            f"{context}.wire_evidence[{index}]",
+        )
+
+    approval = value["operator_approval"]
+    if not isinstance(approval, dict):
+        raise ManifestError(f"{context}.operator_approval: expected an object")
+    _exact_keys(
+        approval,
+        {"approved_by", "approval_ref"},
+        f"{context}.operator_approval",
+    )
+    _non_empty_string(
+        approval["approved_by"],
+        f"{context}.operator_approval.approved_by",
+    )
+    _non_empty_string(
+        approval["approval_ref"],
+        f"{context}.operator_approval.approval_ref",
+    )
+    if type(value["retroactive"]) is not bool:
+        raise ManifestError(f"{context}.retroactive: expected a boolean")
+    return digest
+
+
+def _validate_admission(
+    value: Any,
+    context: str,
+    artifact_sha256: str,
+) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ManifestError(f"{context}: expected an object")
+    _exact_keys(value, {"records"}, context)
+    records = value["records"]
+    if not isinstance(records, list) or not records:
+        raise ManifestError(f"{context}.records: expected a non-empty array")
+    previous: str | None = None
+    for index, record in enumerate(records):
+        previous = _validate_admission_record(
+            record,
+            f"{context}.records[{index}]",
+            previous,
+        )
+    if previous != artifact_sha256:
+        raise ManifestError(
+            f"{context}: newest admission sha256 {previous!r} does not match "
+            f"artifact sha256 {artifact_sha256!r}; add a complete admission "
+            "record for the new expected hash"
+        )
+    return value
+
+
 def _validate_artifact(value: Any, index: int) -> dict[str, Any]:
     context = f"artifacts[{index}]"
     if not isinstance(value, dict):
         raise ManifestError(f"{context}: expected an object")
     _exact_keys(
         value,
-        {"path", "sha256", "bytes", "purpose", "provenance", "expected"},
+        {
+            "path",
+            "sha256",
+            "bytes",
+            "purpose",
+            "provenance",
+            "admission",
+            "expected",
+        },
         context,
     )
     raw_path = _non_empty_string(value["path"], f"{context}.path")
@@ -81,12 +220,15 @@ def _validate_artifact(value: Any, index: int) -> dict[str, Any]:
         raise ManifestError(
             f"{context}.path: expected a safe repository-relative path"
         )
-    digest = _non_empty_string(value["sha256"], f"{context}.sha256")
-    if SHA256_RE.fullmatch(digest) is None:
-        raise ManifestError(f"{context}.sha256: expected 64 lowercase hex digits")
+    digest = _sha256_string(value["sha256"], f"{context}.sha256")
     _non_negative_int(value["bytes"], f"{context}.bytes")
     _non_empty_string(value["purpose"], f"{context}.purpose")
     _non_empty_string(value["provenance"], f"{context}.provenance")
+    _validate_admission(
+        value["admission"],
+        f"{context}.admission",
+        digest,
+    )
 
     expected = value["expected"]
     if not isinstance(expected, dict):
@@ -136,8 +278,8 @@ def load_manifest(path: Path) -> dict[str, Any]:
     if not isinstance(raw, dict):
         raise ManifestError(f"{path}: top level must be an object")
     _exact_keys(raw, {"schema_version", "lifecycle", "artifacts"}, str(path))
-    if raw["schema_version"] != 1:
-        raise ManifestError(f"{path}: schema_version must be 1")
+    if raw["schema_version"] != 2:
+        raise ManifestError(f"{path}: schema_version must be 2")
 
     lifecycle = raw["lifecycle"]
     if not isinstance(lifecycle, dict):
@@ -153,7 +295,7 @@ def load_manifest(path: Path) -> dict[str, Any]:
         raise ManifestError(f"{path}: lifecycle.live_harvest must be fresh_path_only")
     if (
         lifecycle["admission"]
-        != "explicit_task_with_captured_wire_evidence_and_operator_review"
+        != "append_only_chained_records_with_wire_evidence_and_operator_approval"
     ):
         raise ManifestError(f"{path}: lifecycle.admission has an unknown policy")
 
@@ -403,7 +545,7 @@ def main() -> int:
     if args.command == "validate":
         print(
             f"evidence-manifest: PASS "
-            f"(schema=1, artifacts={len(manifest['artifacts'])})"
+            f"(schema=2, artifacts={len(manifest['artifacts'])})"
         )
         return 0
     if args.command == "protected":

@@ -716,7 +716,7 @@ evidence record without interpreting the cycle name.
 - [x] **D0** — active cycle declared once and enforced by `./run cycle-check`
 - [x] **A1** — every checked box resolves to a progress entry and a real commit
 - [x] **D1** — v0.9 provenance closed; v0.6/v0.7 retired to historical status
-- [ ] **A2** — protected-artifact admission is failure-capable
+- [x] **A2** — protected-artifact admission is failure-capable
 - [ ] **C1** — both Python lanes pinned by constraints and reproduced exactly
 - [ ] **V2** — `/view` cold path decomposed; restart-safe design proven against
   every mutation class; nothing materialized

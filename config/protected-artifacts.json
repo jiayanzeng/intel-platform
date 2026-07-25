@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "lifecycle": {
     "policy": "immutable_evidence",
     "live_harvest": "fresh_path_only",
-    "admission": "explicit_task_with_captured_wire_evidence_and_operator_review"
+    "admission": "append_only_chained_records_with_wire_evidence_and_operator_approval"
   },
   "artifacts": [
     {
@@ -12,6 +12,31 @@
       "bytes": 6729728,
       "purpose": "Protected live arXiv archive used for corpus migration and HC1 attestation evidence.",
       "provenance": "Live arXiv OAI-PMH archive with 1,764 documents; a later zero-document operator harvest advanced only the recorded cursor timestamp before these immutable bytes were admitted.",
+      "admission": {
+        "records": [
+          {
+            "task_id": "v0.10/A2",
+            "date": "2026-07-25",
+            "sha256": "db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0",
+            "prior_sha256": null,
+            "wire_evidence": [
+              {
+                "command": "./run harvest-arxiv",
+                "output_ref": "git:6005a19878d72518e2f982b5859d68520a4a9503:PROGRESS-v0.8.md#2026-07-20-T2-partial"
+              },
+              {
+                "command": "shasum -a 256 data/core.db",
+                "output_ref": "git:e616957680a280a13aa275f0759f4cabd82dfa58:PROGRESS-v0.8.md#2026-07-24-B0.1"
+              }
+            ],
+            "operator_approval": {
+              "approved_by": "repository operator",
+              "approval_ref": "operator instruction to execute TASKS-v0.10-EXECUTION.md, including retroactive A2 records, on 2026-07-25"
+            },
+            "retroactive": true
+          }
+        ]
+      },
       "expected": {
         "documents": 1764,
         "integrity_check": "ok",
@@ -34,6 +59,31 @@
       "bytes": 9490432,
       "purpose": "Protected two-page live arXiv interruption-resume wire evidence.",
       "provenance": "Two capped live OAI-PMH runs fetched 1,300 documents each; the second run resumed from the first run's token and durably advanced to the recorded continuation state.",
+      "admission": {
+        "records": [
+          {
+            "task_id": "v0.10/A2",
+            "date": "2026-07-25",
+            "sha256": "94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a",
+            "prior_sha256": null,
+            "wire_evidence": [
+              {
+                "command": "HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv",
+                "output_ref": "git:059738677e375c24cc312d59b7d45e7bf6327e6c:PROGRESS-v0.8.md#2026-07-23-T2"
+              },
+              {
+                "command": "shasum -a 256 data/live-smoke.db",
+                "output_ref": "git:e616957680a280a13aa275f0759f4cabd82dfa58:PROGRESS-v0.8.md#2026-07-24-B0.1"
+              }
+            ],
+            "operator_approval": {
+              "approved_by": "repository operator",
+              "approval_ref": "operator instruction to execute TASKS-v0.10-EXECUTION.md, including retroactive A2 records, on 2026-07-25"
+            },
+            "retroactive": true
+          }
+        ]
+      },
       "expected": {
         "documents": 2600,
         "integrity_check": "ok",

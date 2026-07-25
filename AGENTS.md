@@ -260,7 +260,24 @@ Before any live harvest, run `./run verify-artifacts`. A bare
 `config/protected-artifacts.json` is the single provenance authority for
 `data/core.db` and `data/live-smoke.db`; the harness must refuse both as
 live-harvest targets. Protected artifacts are immutable evidence. Do not bypass
-that refusal—choose the fresh path it prints. Admit a new protected artifact
-only through an explicit task with captured wire evidence and operator review.
+that refusal—choose the fresh path it prints.
+
+Protected-artifact admission is executable under manifest schema v2. A new
+artifact or expected hash requires a newly appended admission record whose
+`prior_sha256` chains to the preceding record and whose fields name the task,
+date, captured wire command/output reference, operator approval, and
+retroactive status. Never edit or replace an earlier admission record. Run both
+commands before proposing the manifest change:
+
+```
+python3 tools/evidence_artifacts.py validate
+./run verify-artifacts
+```
+
+The first command rejects incomplete or broken admission chains; the second
+also measures the actual artifact bytes and corpus facts. CI runs the schema
+validation independently. The two existing v0.10/A2 records are explicitly
+retroactive and cite the already-recorded wire and B0 evidence; they are not
+fresh admissions or fresh wire runs.
 
 Record every block precisely. A block is a non-result, never a pass.
