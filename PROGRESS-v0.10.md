@@ -4,3 +4,106 @@ This file records v0.10 tasks after their implementation commits exist. Each
 entry names the measured result, every acceptance criterion, the golden delta,
 and the real implementation commit. Entries are append-only; corrections are
 new dated entries.
+
+### 2026-07-25 · B0 — v0.10 entering state rebuilt and defect table confirmed
+
+- owner: Codex
+- commit: 86039925e519eee63814861c48e46370544085b5
+- result: PASS. One entering hypothesis was false and was corrected before the
+  cycle advanced: the operator-supplied `TASKS-v0.10-EXECUTION.md` made the
+  worktree non-clean. Git/tag identity, versions, test counts, protected
+  artifacts, golden behavior, local-CI count, lack of a remote, and all nine
+  drafted defects were measured directly.
+- gate: CORRECTED, then PASS. `git status --porcelain=v1` reported only
+  `?? TASKS-v0.10-EXECUTION.md`; no unknown protected bytes or other worktree
+  change was present.
+- Git/version acceptance: PASS. Entering HEAD
+  `280f6abfec0044104b830731c952883aa64b9703` was exactly one audit commit past
+  release `4c59db2727eda1c81beae3ff38be883a26a92ae8`; annotated tag object
+  `548ffdfec4e414570ddecf813aa2f2d616662487` dereferenced to that release.
+  `./run version-check` passed at 0.9.0 with the expected ahead-of-tag warning,
+  the newest changelog release matched, and `git remote -v` was empty.
+- Rust acceptance: PASS. A clean target produced 98 warning-denied workspace
+  tests and 20 warning-denied net tests on Rust/Cargo 1.91.1; clippy and fmt
+  passed. Locked warning-denied Rust/Cargo 1.78.0 check and the same 98 tests
+  passed.
+- Python acceptance: PASS. Python 3.11.4 and 3.12.13 each passed 105 shell
+  tests with one existing third-party Starlette warning. Python 3.11
+  byte-compilation, ShellCheck 0.11.0, and Bash syntax passed. The initial
+  sandboxed 98-pass/7-bind-failure attempts were non-results; permitted
+  loopback reruns produced the counted 105/105 passes.
+- artifact acceptance: PASS. `data/core.db` remained
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`,
+  6,729,728 bytes, 1,764 documents, 0/0 NULL fingerprint/canonical rows,
+  integrity `ok`, with its one complete cursor. `data/live-smoke.db` remained
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`,
+  9,490,432 bytes, 2,600 documents, 0/0 NULL rows, integrity `ok`, with its
+  one complete cursor. `./run verify-artifacts` passed 2/2.
+- failure-capable control: PASS. A copy of `data/core.db` under
+  `/private/tmp/intel-v010-b0-artifact.4WgqoY` initially matched the recorded
+  hash. Adding a table only to that copy changed its hash to
+  `f9f4c31f54c24ca57551870122a6a2f87b0bb84f24480e48e7ba95338ecb5e3e`;
+  verification against the disposable manifest exited 1, printed expected and
+  actual hashes, and named `core.db field=sha256`.
+- defect acceptance: PASS. Direct line-numbered source reads confirmed all
+  nine: hard-coded v0.9 progress target; v0.8/v0.9-only deferred-audit inputs;
+  stale v0.9 authority in `AGENTS.md`; incomplete v0.9 provenance correction;
+  present-tense v0.6/v0.7 authority plus the false 1.75 floor; no
+  box-to-entry-to-commit auditor; floor-only Python requirements; prose-only
+  protected admission; and one prompt against `gated[0]`.
+- local CI acceptance: PASS. `./run ci-local` passed all entering 16/16 jobs.
+  Its progress job still validated the closed v0.9 log, as defect 1 predicts.
+- golden-E2E delta: none. `./run golden` passed 11/11 with the exact 13 → 12
+  corpus, hamming-12 pair, DeepSeek z=10.0, +0 rerun, one quant document, and
+  four-citation public answer anchors.
+- protected artifact delta: none. Both expected hashes matched again after the
+  controls and complete matrix; ports 8787/8788/8899 were clear.
+- exact commands:
+
+  ```bash
+  git status --porcelain=v1
+  git describe --tags --always --dirty
+  git rev-parse HEAD
+  git log --oneline -5
+  git remote -v
+  git cat-file -t v0.9.0
+  git cat-file tag v0.9.0
+  git rev-parse 'v0.9.0^{}'
+  ./run version-check
+  rustc --version
+  cargo --version
+  rustc +1.78.0 --version
+  cargo +1.78.0 --version
+  python3.11 --version
+  python3.12 --version
+  shellcheck --version
+  cargo clean
+  RUSTFLAGS='-D warnings' cargo check --workspace --locked --all-targets
+  RUSTFLAGS='-D warnings' cargo test --workspace --locked
+  RUSTFLAGS='-D warnings' cargo check -p cored --features net --locked --all-targets
+  RUSTFLAGS='-D warnings' cargo test -p intel-ingest --features net --locked
+  cargo clippy --workspace --locked --all-targets -- -D warnings
+  cargo fmt --all -- --check
+  RUSTFLAGS='-D warnings' cargo +1.78.0 check --workspace --locked --all-targets
+  RUSTFLAGS='-D warnings' cargo +1.78.0 test --workspace --locked
+  find tools shell -name '*.py' -type f -print0 |
+    xargs -0 python3.11 -m py_compile
+  shellcheck ./run
+  bash -n ./run
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  ./run down
+  lsof -nP -iTCP:8787 -sTCP:LISTEN
+  lsof -nP -iTCP:8788 -sTCP:LISTEN
+  lsof -nP -iTCP:8899 -sTCP:LISTEN
+  ./run verify-artifacts
+  shasum -a 256 data/core.db data/live-smoke.db
+  sqlite3 -readonly data/core.db '<read-only census and complete cursors>'
+  sqlite3 -readonly data/live-smoke.db '<read-only census and complete cursors>'
+  ./run golden
+  ./run ci-local
+  rg -n '<each cited defect pattern>' '<each cited defect file>'
+  ./run verify-artifacts --manifest \
+    /private/tmp/intel-v010-b0-artifact.4WgqoY/manifest.json \
+    --root /private/tmp/intel-v010-b0-artifact.4WgqoY
+  ```
