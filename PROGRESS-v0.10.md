@@ -511,3 +511,85 @@ new dated entries.
   ./run checklist-audit
   ./run progress-check
   ```
+
+### 2026-07-25 · V2 — `/view` cold path decomposed and future key proven
+
+- owner: Codex
+- commit: a8ff3714a6c333d64d5e78ff680ff97291765a88
+- result: PASS as a measured design. Internal diagnostic headers and the V2
+  benchmark decompose startup/open/backfill/load/analysis/build/serialization/
+  transfer without changing the JSON body. No materialization shipped.
+- gate: PASS. The implementation adds no table, migration, persisted derived
+  response, dependency, or lockfile change. The stale-result and stage-delay
+  controls existed and passed before the future representation was selected
+  in `docs/V2-VIEW-DESIGN.md`.
+- decomposition acceptance: PASS. Two runs × two protected archives × ten
+  cold processes produced four tracked reports. Every stage has
+  min/median/p95/max and p95 share. Normal cells put analysis at
+  85.267–87.950% of cold p95; store open is 0.568–0.685%, and the explicit
+  missing-fingerprint backfill check is 0.447–0.581% with zero rows repaired.
+- outlier acceptance: PASS. V2 reproduced V1's 1,693.423417 ms sample at
+  1,696.948500 ms. Spawn-to-health readiness contributed 1,344.248750 ms,
+  while core main-to-listener was 4.430 ms and store open 2.845 ms. The stage
+  explains the magnitude and rules out core/store/backfill work; the host
+  scheduling/process-observation cause remains explicitly unexplained.
+- body acceptance: PASS. All 20 responses per archive match pre-V2 body hashes
+  `43af73a081eca3d0e57f646b54129df2a27550b129a56729683fd7c0c413784f`
+  and
+  `5685e69aafe006ef2cfaf33836a99d36310b9a314594edbd9163ee25bbc8af81`.
+- key acceptance: PASS 9/9. The restart-safe logical key detects archive
+  identity, sector set, algorithm/schema version, append, update, delete,
+  canonical-id rematerialization, fingerprint refresh, and embedding write.
+  Omitting embeddings exits non-zero with
+  `embedding-write: STALE-RESULT RISK`.
+- decomposition control: PASS. A 100 ms injected analysis delay moved analysis
+  median by 111.553 ms while sector load moved 0.096 ms; the control exited
+  non-zero after proving the intended benchmark failure.
+- architecture acceptance: PASS. The future design retains HC1-gated DTOs,
+  core-SQL sector enforcement, HC3, global dedup/fingerprint identity, and HC9
+  core archive/query ownership. Its implementation gate remains the original
+  two-run/two-archive cold ≤162.640 ms and warm ≤32.528 ms thresholds.
+- test acceptance: PASS. The exact tree passed 99 warning-denied workspace
+  tests, 20 net tests, 114 shell tests under Python 3.11.4 and 3.12.13,
+  clippy/fmt, Python byte-compilation, ShellCheck, and locked Rust 1.78.
+- local-CI acceptance: PASS 18/18.
+- checklist acceptance: PASS. After this audit append supplied V2's real
+  implementation hash, `./run checklist-audit` reported 48/48/48 with zero
+  exemptions.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. Every before/after benchmark check, local CI,
+  and final direct verification passed 2/2 with the exact protected hashes.
+- exact commands:
+
+  ```bash
+  ./run benchmark-view \
+    --anchor-ms 16.264 --anchor-source 'v0.9/A3 fixture anchor' \
+    --cold-factor 10 \
+    --cold-reason 'new process plus archive open and first view' \
+    --warm-factor 2 --warm-reason 'memoized response transfer' \
+    --cold-slo-ms 162.640 --warm-slo-ms 32.528 \
+    --physically-plausible yes --sector science \
+    --decomposition-control
+  python3 tools/view_invalidation.py control
+  python3 tools/view_invalidation.py control --omit-component embeddings
+  ./run benchmark-view \
+    --anchor-ms 16.264 --anchor-source 'v0.9/A3 fixture anchor' \
+    --cold-factor 10 \
+    --cold-reason 'new process plus archive open and first view' \
+    --warm-factor 2 --warm-reason 'memoized response transfer' \
+    --cold-slo-ms 162.640 --warm-slo-ms 32.528 \
+    --physically-plausible yes --sector science --cold-iterations 10 \
+    --decompose --output-dir evidence/v0.10/view-decomposition
+  RUSTFLAGS='-D warnings' cargo test -p cored --locked
+  RUSTFLAGS='-D warnings' cargo test -p intel-store \
+    migration_backfills_pre_fingerprint_archive_without_changing_identity \
+    --locked
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ./run checklist-audit
+  ./run progress-check
+  ```
