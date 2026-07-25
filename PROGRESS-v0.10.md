@@ -107,3 +107,48 @@ new dated entries.
     /private/tmp/intel-v010-b0-artifact.4WgqoY/manifest.json \
     --root /private/tmp/intel-v010-b0-artifact.4WgqoY
   ```
+
+### 2026-07-25 · D0-GATE — runbook ordering cycle blocks a conforming auditor
+
+- owner: Codex
+- commit: acbbae4dcfe4d68152f07827c9fb585cf9ffc627
+- result: BLOCKED before implementation. Single-source target derivation is
+  feasible, but D0 cannot both enforce its stated closed-runbook rule and pass
+  as the seventeenth blocking local-CI job against the current historical
+  corpus.
+- measurement: the four inactive execution runbooks contain respectively
+  12, 10, 11, and 7 checked boxes, zero unchecked boxes, and zero dated closing
+  records naming a release or explicit no-release disposition.
+- additional findings: `TASKS-v0.6.md:3` and `TASKS-v0.7.md:3` retain
+  present-tense authority claims. `TASKS-v0.9-EXECUTION.md:514-520` retains the
+  unexecuted-cycle claim and a correction covering only B0/A1.
+- dependency cycle: D0 requires those facts repaired before `cycle-check` can
+  be blocking; D1 owns those repairs; D1 is ordered after A1; A1 requires D0's
+  completed 17-job baseline.
+- prohibited alternatives: no auditor exemption or relaxed rule was added, D1
+  work was not silently folded into D0, and the ordered runbook was not changed
+  without operator direction. D0 remains unchecked.
+- golden-E2E delta: none. The documentation-only gate record was followed by a
+  fresh `./run golden` pass at 11/11.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 before
+  the fresh golden run.
+- exact commands:
+
+  ```bash
+  for f in TASKS-v0.8-EXECUTION.md \
+           TASKS-v0.8.1-EXECUTION.md \
+           TASKS-v0.8.2-EXECUTION.md \
+           TASKS-v0.9-EXECUTION.md; do
+    rg -c '^- \[x\]' "$f"
+    rg -c '^- \[ \]' "$f"
+    rg -c '^\*\*(Closing record|Cycle closed|Closed cycle|Release identity|No-release disposition).*20[0-9]{2}-[0-9]{2}-[0-9]{2}' "$f"
+  done
+  rg -n 'This document is the authoritative task list' \
+    TASKS-v0.6.md TASKS-v0.7.md
+  rg -n 'tasks themselves have not been executed|Execution correction' \
+    TASKS-v0.9-EXECUTION.md
+  nl -ba TASKS-v0.10-EXECUTION.md | sed -n '181,270p'
+  ./run version-check
+  ./run verify-artifacts
+  ./run golden
+  ```
