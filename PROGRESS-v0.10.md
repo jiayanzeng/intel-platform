@@ -593,3 +593,71 @@ new dated entries.
   ./run checklist-audit
   ./run progress-check
   ```
+
+### 2026-07-25 · D5 — all seven deferred triggers re-audited
+
+- owner: Codex
+- commit: 0adc739233d69a90e4d6141e17f75acd771873e8
+- result: PASS. The executable registry now measures seven triggers from
+  repository, process, Git, deployment, benchmark, V1, and V2 evidence. The
+  production result is six deferred and one promoted, with zero deferred
+  subsystems implemented.
+- gate: PASS. Only the already-fired `/view` trigger is promoted, and only to
+  the future implementation constrained by `docs/V2-VIEW-DESIGN.md`. D5
+  shipped no receipt seam, public-response boundary, cache table, migration,
+  concurrent scheduler, second writer, database engine, vector engine, remote,
+  runner workflow, dependency, or lockfile change.
+- registry acceptance: PASS 7/7. T7 deferred at one supported simultaneous
+  harvester; Postgres deferred at one archive writer and zero shell archive
+  writers; pgvector deferred at 2,600 documents and 6.431667 ms exact-cosine
+  p95 versus the 16.264 ms A3 request anchor; multi-host deferred at zero
+  recorded cross-host requests and loopback bind/config; A4 deferred with one
+  public path lacking a core-owned response boundary, one shell public egress,
+  zero untrusted shells, and zero invariance claims; CI-runner evidence
+  deferred with zero remote entries and zero runner executions; `/view`
+  promoted from the V1 fired gate and four V2 decomposition reports without
+  materialization.
+- evidence-input acceptance: PASS. The production command printed the exact
+  derived progress list `PROGRESS-v0.10.md`, `PROGRESS-v0.8.md`, and
+  `PROGRESS-v0.9.md`. The schema-2 report is tracked at
+  `evidence/v0.10/deferred-audit/report.json` and records every unchanged
+  trigger, measurement, disposition, measured-source hash, and the explicit
+  rule that workflow configuration is not runner execution.
+- failure-capable control: PASS. Synthetic measurements supplied two
+  harvesters, two archive writers, an over-budget exact-cosine result, a
+  remote core hit, an untrusted shell bypass, a Git remote/runner observation,
+  and a fired `/view` gate. All seven printed `PROMOTE`; the command exited 1
+  with `CONTROL FIRED`.
+- regression acceptance: PASS. Four targeted registry tests include a
+  production-corpus guard proving the required A4 trigger text is not
+  misclassified as an affirmative HC1 invariance claim. Both complete Python
+  lanes passed 115 tests with one third-party Starlette warning.
+- full acceptance: PASS. The exact implementation tree passed 99
+  warning-denied Rust workspace tests, 20 net tests, clippy/fmt, Python 3.11
+  byte-compilation, ShellCheck, locked Rust 1.78 check/tests, and
+  `./run ci-local` 18/18.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. The production audit verified both
+  artifacts before and after its disposable-copy benchmark; local CI and the
+  final direct `./run verify-artifacts` also passed 2/2 at the exact protected
+  hashes.
+- exact commands:
+
+  ```bash
+  python3 tools/audit_deferred.py --control all-seven
+  PYTHONPATH=shell .venv/bin/python -m pytest \
+    shell/tests/test_deferred_audit.py -q
+  ./run audit-deferred \
+    --output evidence/v0.10/deferred-audit/report.json
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  python3 -m py_compile \
+    tools/audit_deferred.py shell/tests/test_deferred_audit.py
+  shellcheck run
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ./run checklist-audit
+  ./run progress-check
+  ```
