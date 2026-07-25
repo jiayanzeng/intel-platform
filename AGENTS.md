@@ -10,11 +10,14 @@ anything, and re-read the two documents it points at:
 - **`STATE.md`** — authoritative for *current status* (what is true right now).
   You update this after every task; see §5.
 
-Task work for this cycle is ordered in **`TASKS-v0.9-EXECUTION.md`**. Every
-completed step is logged in **`PROGRESS-v0.9.md`**. The closed v0.8.2 execution
-checklist remains in **`TASKS-v0.8.2-EXECUTION.md`**, its contiguous correction
-trail remains in **`PROGRESS-v0.8.md`**, and the full original v0.8 per-task
-rationale lives in **`TASKS-v0.8.md`**.
+**Active cycle:** v0.10
+
+Task work for this cycle is ordered in **`TASKS-v0.10-EXECUTION.md`**. Every
+completed step is logged in **`PROGRESS-v0.10.md`**. The finished v0.8,
+v0.8.1, v0.8.2, and v0.9 execution runbooks append their dated closing records;
+their progress logs and the full original task documents remain preserved as
+historical rationale. `./run cycle-check` enforces this declaration and those
+closed-cycle records.
 
 ## 0. The one rule the others serve
 
@@ -49,7 +52,7 @@ not obstacles to route around; they are the mechanism that has correctly kept
 built or evaluated and measured. When a gate trips:
 
 1. Do **not** implement a workaround that defeats the gate's purpose.
-2. Record the measurement that tripped it in `STATE.md` and `PROGRESS-v0.9.md`.
+2. Record the measurement that tripped it in `STATE.md` and `PROGRESS-v0.10.md`.
 3. Mark the task blocked/deferred with the gate cited, and move on.
 
 A gate you silence is worse than a task you skip.
@@ -198,7 +201,7 @@ You do **not** batch status updates. After each task, in order, before starting
 the next:
 
 1. **Read** the task's objective and decision gate in
-   `TASKS-v0.9-EXECUTION.md`.
+   `TASKS-v0.10-EXECUTION.md`.
 2. **Check the gate first.** If it trips, record and stop (§1).
 3. **Implement** the change.
 4. **Run every acceptance criterion** listed for the task and **capture the
@@ -210,11 +213,11 @@ the next:
 6. **Update `STATE.md`**: the header line (test counts, warning status, golden
    E2E status) and the relevant section, with what you **measured**, not what you
    hoped. Correct any prior claim you found to be false.
-7. **Check the box** for the task in `TASKS-v0.9-EXECUTION.md`.
+7. **Check the box** for the task in `TASKS-v0.10-EXECUTION.md`.
 8. **Commit the task implementation** — one task per implementation commit.
    Never combine a lint gate with a lint fix, or a formatting diff with a
    behavior change; that is how a real change hides inside noise.
-9. **Append the `PROGRESS-v0.9.md` entry after that commit exists**: date, task
+9. **Append the `PROGRESS-v0.10.md` entry after that commit exists**: date, task
    id, owner, measured result, each acceptance criterion pass/fail, golden-E2E
    delta, and the real 7–40 character implementation commit hash. Run
    `./run progress-check`, then commit that append-only entry in a separate
@@ -224,7 +227,7 @@ the next:
 
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
-The golden pipeline is the regression anchor. **`./run golden` is the
+The v0.10 golden pipeline is the regression anchor. **`./run golden` is the
 authoritative, executable definition; the prose below is a human summary. If
 they ever disagree, the command's named assertion failure is the finding — do
 not edit the assertion to bless the drift.** Its current eleven-check expected

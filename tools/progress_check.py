@@ -9,17 +9,20 @@ import subprocess
 import sys
 from pathlib import Path
 
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.cycle_identity import CycleIdentityError, resolve_cycle
 
 ROOT = Path(__file__).resolve().parents[1]
-CURRENT_PROGRESS = ROOT / "PROGRESS-v0.9.md"
-PREVIOUS_PROGRESS = ROOT / "PROGRESS-v0.8.md"
-DEFAULT_PROGRESS = (
-    CURRENT_PROGRESS if CURRENT_PROGRESS.exists() else PREVIOUS_PROGRESS
-)
 HEADER_RE = re.compile(
     r"^### ([0-9]{4}-[0-9]{2}-[0-9]{2}) · ([^·\n]+?) — (.+)$"
 )
 COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
+
+
+def default_progress_path(root: Path = ROOT) -> Path:
+    return resolve_cycle(root).progress
 
 
 def fail(path: Path, line: int, message: str) -> int:
@@ -156,7 +159,15 @@ def main() -> int:
     if len(sys.argv) > 2:
         print("usage: progress_check.py [progress-file]", file=sys.stderr)
         return 2
-    path = Path(sys.argv[1]).resolve() if len(sys.argv) == 2 else DEFAULT_PROGRESS
+    try:
+        path = (
+            Path(sys.argv[1]).resolve()
+            if len(sys.argv) == 2
+            else default_progress_path()
+        )
+    except CycleIdentityError as error:
+        print(f"progress-check: ERROR: {error}", file=sys.stderr)
+        return 1
     return check(path)
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Executable audit for the five v0.9 deferred-design triggers."""
+"""Executable audit for the five deferred-design triggers."""
 
 from __future__ import annotations
 
@@ -37,6 +37,11 @@ RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
 SCHEMA_VERSION = 1
+
+
+def progress_paths(root: Path = ROOT) -> list[Path]:
+    """Return every progress record; the active cycle must never be omitted."""
+    return sorted(root.resolve().glob("PROGRESS-v*.md"))
 
 
 class AuditFailure(RuntimeError):
@@ -345,12 +350,7 @@ def multi_host_measurement() -> dict[str, Any]:
     )
     require_text(SERVICE, ["CORE_URL=http://127.0.0.1:8788"])
     remote_core_url_hits: list[str] = []
-    for path in (
-        ROOT / "PROGRESS-v0.8.md",
-        ROOT / "PROGRESS-v0.9.md",
-        SERVICE,
-        CORE_CONFIG,
-    ):
+    for path in (*progress_paths(), SERVICE, CORE_CONFIG):
         for number, line in enumerate(path.read_text().splitlines(), 1):
             if re.search(r"CORE_URL=https?://(?!127\.0\.0\.1|localhost)", line):
                 remote_core_url_hits.append(

@@ -257,7 +257,11 @@ cmd_version_check() {
 }
 
 cmd_progress_check() {
-  python3 tools/progress_check.py
+  python3 -m tools.progress_check
+}
+
+cmd_cycle_check() {
+  python3 -m tools.cycle_check
 }
 
 cmd_verify_fingerprints() {
@@ -384,6 +388,7 @@ cmd_ci_local() {
   CI_LOCAL_RESULTS=()
 
   ci_local_job "release version consistency" cmd_version_check || return $?
+  ci_local_job "active cycle consistency" cmd_cycle_check || return $?
   ci_local_job "Python 3.11 floor byte-compile" ci_floor_compile || return $?
   ci_local_job "ShellCheck presence and harness lint" ci_shellcheck || return $?
   ci_local_job "workspace check (-D warnings)" ci_workspace_check || return $?
@@ -864,6 +869,7 @@ intel-platform — ./run <command>
     test           verify protected artifacts, then run all Rust/Python tests
     ci-local       execute the configured CI matrix locally, stopping on failure
     version-check  reconcile release files and an exact HEAD release tag
+    cycle-check    enforce active/open and historical/closed cycle identity
     progress-check validate the newest append-only progress entry
     verify-fingerprints <db> [reference-db]
                    report missing/stale fingerprints without repairing them
@@ -912,6 +918,7 @@ case "$cmd" in
   test)          cmd_test "$@" ;;
   ci-local)      cmd_ci_local "$@" ;;
   version-check) cmd_version_check "$@" ;;
+  cycle-check)   cmd_cycle_check "$@" ;;
   progress-check) cmd_progress_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
