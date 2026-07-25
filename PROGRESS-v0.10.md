@@ -434,3 +434,80 @@ new dated entries.
   ./run checklist-audit
   ./run progress-check
   ```
+
+### 2026-07-25 · C1 — Python resolutions pinned and reproduced
+
+- owner: Codex
+- commit: 4bb80fff16c53b99e1e1c121d20fa4d5b6fc5f67
+- result: PASS. One shared `shell/constraints.txt` pins the exact 21-package
+  application/test resolution for Python 3.11 and 3.12 while
+  `shell/requirements.txt` retains its four unchanged floors.
+- gate: PASS. Clean unconstrained Python 3.11.4 and 3.12.13 rebuilds produced
+  byte-identical application/test `pip freeze` output, passed `pip check`, and
+  each passed the 109-test pre-C1 shell suite. No pin is unavailable on 3.11.
+  The dated FastAPI 0.139.2 measurement had moved upstream to 0.140.0 before
+  the implementation diff; both gate lanes selected and passed with 0.140.0,
+  which is the version now pinned.
+- install acceptance: PASS. The `./run` venv bootstrap, both CI Python matrix
+  lanes, `AGENTS.md`, and the README's current raw install command all supply
+  `-c shell/constraints.txt`. The requirement floors remain byte-identical.
+- verifier acceptance: PASS. `./run python-env-check` compares the active
+  interpreter's complete non-bootstrap distribution set to exact pins. Local
+  CI executes it inside the existing shell-test job; CI has a dedicated step
+  in each existing Python matrix lane.
+- reproducibility acceptance: PASS. Additional fresh constrained Python 3.11.4
+  and 3.12.13 environments each reproduced 21/21 exact pins, emitted
+  byte-identical application/test freezes, and passed `pip check`.
+- failure-capable controls: PASS 2/2. Pip rejected disposable
+  `fastapi==0.109.0` against declared `fastapi>=0.110`, naming both sides of
+  the conflict. The exact-set verifier rejected a disposable one-patch drift
+  and named `fastapi: expected 0.140.1, found 0.140.0`.
+- shell acceptance: PASS. Three new verifier tests bring the measured total
+  to 112/112 under Python 3.11.4 and 112/112 under Python 3.12.13; both report
+  the same one third-party Starlette warning.
+- local-CI acceptance: PASS. The exact implementation tree passed all 18/18
+  jobs, including exact Python environment verification, 98 workspace tests,
+  20 net tests, clippy/fmt, and locked Rust 1.78 checks/tests.
+- checklist acceptance: PASS. Before this required audit append, C1 was the
+  sole expected two-commit gap. After the real implementation hash above was
+  recorded, `./run checklist-audit` reported 47/47/47 with zero exemptions.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. Local CI and final direct verification each
+  passed 2/2 with both exact protected hashes.
+- exact commands:
+
+  ```bash
+  python3 -m venv --clear .venv
+  .venv/bin/python -m pip install -r shell/requirements.txt
+  python3.12 -m venv --clear .venv/py312
+  .venv/py312/bin/python -m pip install -r shell/requirements.txt
+  .venv/bin/python -m pip freeze
+  .venv/py312/bin/python -m pip freeze
+  .venv/bin/python -m pip check
+  .venv/py312/bin/python -m pip check
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  python3 -m venv --clear .venv/repro311
+  .venv/repro311/bin/python -m pip install \
+    -c shell/constraints.txt -r shell/requirements.txt
+  python3.12 -m venv --clear .venv/repro312
+  .venv/repro312/bin/python -m pip install \
+    -c shell/constraints.txt -r shell/requirements.txt
+  .venv/repro311/bin/python tools/python_constraints.py \
+    shell/constraints.txt
+  .venv/repro312/bin/python tools/python_constraints.py \
+    shell/constraints.txt
+  .venv/repro311/bin/python -m pip check
+  .venv/repro312/bin/python -m pip check
+  .venv/repro311/bin/python -m pip install --dry-run \
+    -c /private/tmp/intel-c1-conflict.txt -r shell/requirements.txt
+  .venv/repro311/bin/python tools/python_constraints.py \
+    /private/tmp/intel-c1-drift.txt
+  ./run python-env-check
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ./run checklist-audit
+  ./run progress-check
+  ```
