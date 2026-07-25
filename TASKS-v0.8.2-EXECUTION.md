@@ -698,3 +698,26 @@ relied on:
 
 Treat this document the way `AGENTS.md §0` says to treat `STATE.md`: as a claim
 until something executes it.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-24
+- **Release disposition:** no-release
+**Intentionally unreleased implementation commits:**
+
+- B0.2 — `5dd11ded5a3d55582c1333e3c82fc8b43218758d`
+- D0 — `116c3500b42cbf443031afa1c3d8fd83336dd931`
+- A1 — `2f2e82e5acdc754dc93a6908516e9f6293dd17dd`
+- A2 — `51a1464a54c83bb0d8770956e0ab9b7a717ed809`
+- A3 — `040f89d14721b86e4823e877a2f0e406431e9b88`
+- A4 — `3228479a6c4a0cfc40e634ba8289c49b1cd7b74c`
+- A5 — `008d50f956b1566a0c6bfc8ae816069db2504bf9`
+- A6 — `604709fc6d7a22b75e4e73f3e370ca62ddc24f38`
+- D1 — `e15dd5d4a5c270aa047dc5e5db8c57ca89dbdfc6`
+- D2 — `5a3f3f8b1b9042e901785c81e4d74baa13a79c18`
+- C2 — `1939505cd611c3465aaad7a828465bdb8d8de26f`
+
+The conformance cycle intentionally created no separate artifact release.
+These 11 commits remained ahead of annotated `v0.8.0` at cycle close and were
+later included in `v0.9.0`; that later inclusion does not rewrite this
+no-release disposition or the original rationale.

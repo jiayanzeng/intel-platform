@@ -1,6 +1,10 @@
 # TASKS.md — intel-platform v0.6 work order
 
-**Audience:** an autonomous coding agent (Claude Opus 4.8 / Claude Code, or equivalent) with a shell, a Rust toolchain, and network access. **Read `STATE.md` and `README.md` in full before writing any code.** This document is the authoritative task list; STATE.md §4 is its source.
+> **Superseded-cycle status — 2026-07-25.** This file is preserved historical
+> rationale only. It has no execution checklist and carries no present-tense
+> authority; the active cycle is declared in `AGENTS.md`.
+
+**Audience:** an autonomous coding agent (Claude Opus 4.8 / Claude Code, or equivalent) with a shell, a Rust toolchain, and network access. **Read `STATE.md` and `README.md` in full before writing any code.** ~~This document is the authoritative task list; STATE.md §4 is its source.~~
 
 **Starting point:** v0.5. 11 Rust tests + 31 shell tests green. Core untouched since v0.4. v0.5 added (shell-only): hashed API keys (`security.py`), billing webhook (`billing.py`, `POST /v1/billing/webhook`, `SubscriptionStore`), scheduler (`scheduler.py`, `deploy/`).
 

@@ -178,6 +178,57 @@ artifacts 2/2 exact.
 
 ---
 
+## Authorized execution-order correction — 2026-07-25
+
+B0 confirmed the drafted provenance defects, and the first D0 attempt exposed
+an ordering cycle: D0's blocking checker must reject the same unfinished
+historical closure records assigned to D1, while D1 was ordered after A1 and A1
+requires completed D0. On 2026-07-25 the operator explicitly approved moving
+the provenance-bootstrap portion of D1 before D0.
+
+The corrected order is **B0 → D1A → D0 → A1 → D1**. D1A adds only the dated
+historical closure/supersession records required for a strict D0 checker to
+evaluate the real corpus. The original D1 remains in place as the post-auditor
+validation step driven by D0 and A1. No auditor exemption or relaxed rule is
+authorized. The checklist therefore contains twelve tasks rather than the
+drafted eleven.
+
+## Step 1A · D1A — Bootstrap historical cycle closure 🤖
+
+**Objective.** Break the D0/A1/D1 dependency cycle without weakening the
+auditor: give every finished execution runbook the dated release/no-release
+record D0 requires, and retire the two historical task lists that still claim
+present authority.
+
+**Gate.** Preserve all closed rationale. Use dated appends and correction
+banners; do not rewrite historical measurements or fabricate a release or
+commit. Every release/tag/commit value must resolve from Git before it is
+recorded.
+
+**Steps.**
+1. Append a dated closing record to all four finished execution runbooks.
+   v0.8 and v0.8.1 name annotated `v0.8.0`; v0.8.2 records its explicit
+   no-separate-release disposition and all intentionally unreleased
+   implementation commits; v0.9 names all seven task commits, annotated
+   `v0.9.0`, and every carried non-result required by the original D1 scope.
+2. Add dated superseded banners to `TASKS-v0.6.md` and `TASKS-v0.7.md`, strike
+   their present-tense authority claims, and correct v0.7's false Rust 1.75
+   offline floor to the measured 1.78 floor.
+3. Verify every recorded commit and tag object with Git, confirm all historical
+   checklists remain unchanged, and run the normal output-preservation gates.
+
+**Acceptance criteria.** Four finished execution runbooks carry dated,
+resolvable closing records · v0.8.2's no-release record names all 11
+implementation commits · v0.9 names all seven task commits and carried
+non-results · v0.6/v0.7 are historical-only and the 1.75 claim is corrected ·
+no closed checklist or rationale changed · golden 11/11 · protected artifacts
+2/2.
+
+**Done when** D0 can enforce its strict rule against the production corpus
+without an exemption or out-of-order repair.
+
+---
+
 ## Step 2 · D0 — Make the active cycle executable, not declarative 🤖
 
 **Objective.** A cycle pointer that only exists in prose can rot silently, and
@@ -661,6 +712,7 @@ evidence record without interpreting the cycle name.
 ## Cycle checklist
 
 - [x] **B0** — entering state re-measured; all nine defects confirmed or refuted
+- [x] **D1A** — historical cycle closure bootstrapped before the strict auditor
 - [ ] **D0** — active cycle declared once and enforced by `./run cycle-check`
 - [ ] **A1** — every checked box resolves to a progress entry and a real commit
 - [ ] **D1** — v0.9 provenance closed; v0.6/v0.7 retired to historical status
@@ -709,3 +761,9 @@ above were read from the packaged tree by path and line and are hypotheses, not
 findings, until B0 runs the commands that confirm or refute each one. Step 1
 deliberately re-verifies every entering claim before any implementation, and a
 refuted defect is deleted from this cycle rather than worked around.
+
+**Execution correction — 2026-07-25.** B0 executed in implementation commit
+`8603992` with separate audit commit `15437f9`. Its first D0 attempt then
+recorded the D0/A1/D1 dependency cycle in `acbbae4` and audit `890676b`; no D0
+implementation shipped. The operator approved the dated D1A bootstrap above
+before D0 resumes.

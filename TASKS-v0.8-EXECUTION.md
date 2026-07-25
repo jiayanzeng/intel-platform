@@ -581,3 +581,16 @@ still proves HC1, T4 remains honestly deferred, and the task is committed alone.
 - [x] **T4C** — secret-safe split model configuration and self-contained verifier
 - [x] **T4W** — split-provider 503 plus partial real HC1 evidence recorded
 - [x] **T4H** — verifier fails fast on prerequisites and bounds provider waits
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-24
+- **Release disposition:** release
+- **Release:** `v0.8.0`
+- **Release commit:** `bfc8c5af85734583f966ee70d2ec521155432205`
+- **Annotated tag object:** `314c1dd914a3d8e9193445874a419ed762581e6e`
+
+The v0.8 implementation sequence and its v0.8.1 close were released together
+in that exact artifact. This dated record supersedes any draft/present-tense
+language above without rewriting the executed rationale or its 12 checked
+dispositions.

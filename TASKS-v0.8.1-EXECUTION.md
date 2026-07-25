@@ -538,3 +538,15 @@ network call was made while writing it. Every claim about the source above is a
 
 Treat this document the way `AGENTS.md §0` says to treat `STATE.md`: as a claim
 until something executes it.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-24
+- **Release disposition:** release
+- **Release:** `v0.8.0`
+- **Release commit:** `bfc8c5af85734583f966ee70d2ec521155432205`
+- **Annotated tag object:** `314c1dd914a3d8e9193445874a419ed762581e6e`
+
+R1 selected and cut that release after the real-model and conformance work in
+this repair-and-close cycle. This dated record supersedes the draft provenance
+above without rewriting it or any of the cycle's ten checked dispositions.

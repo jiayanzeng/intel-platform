@@ -1,6 +1,11 @@
 # TASKS.md — intel-platform v0.7 work order
 
-**Audience:** an autonomous coding agent (Claude Opus 4.8 / Claude Code, or equivalent) with a shell, a Rust toolchain, and network access. **Read `STATE.md` and `README.md` in full before writing any code.** This document is the authoritative task list; STATE.md §4 is its source.
+> **Superseded-cycle status — 2026-07-25.** This file is preserved historical
+> rationale only. It has no execution checklist and carries no present-tense
+> authority; the active cycle is declared in `AGENTS.md`. The Rust floor
+> correction below supersedes the original 1.75 claim without erasing it.
+
+**Audience:** an autonomous coding agent (Claude Opus 4.8 / Claude Code, or equivalent) with a shell, a Rust toolchain, and network access. **Read `STATE.md` and `README.md` in full before writing any code.** ~~This document is the authoritative task list; STATE.md §4 is its source.~~
 
 **Starting point:** v0.6.2. 49 Rust tests + 69 shell tests green, 0 warnings. `TASKS-v0.6.md` is fully worked (T1–T9: done, or skipped/deferred with a recorded gate). v0.6.2 moved the toolchain to **Rust 1.91.1**, committed `Cargo.lock`, and — for the first time in the project's life — **`cargo build -p cored --features net` compiles.**
 
@@ -10,7 +15,7 @@
 
 ## 0. Environment prerequisites (verify before T1)
 
-- **Rust ≥ 1.86** for `--features net`; ≥ 1.75 still suffices for the offline build. The repo pins **1.91** in `rust-toolchain.toml`. Ubuntu 24.04 packages it directly — `apt-get install rustc-1.91 cargo-1.91`, then `export PATH=/usr/lib/rust-1.91/bin:$PATH`. No rustup, no mirror.
+- **Rust ≥ 1.86** for `--features net`; ~~≥ 1.75 still suffices for the offline build.~~ **Correction — 2026-07-25:** the committed format-v4 lock requires **Rust/Cargo ≥ 1.78** for the offline locked build, as measured and recorded in `STATE.md §5`. The repo pins **1.91** in `rust-toolchain.toml`. Ubuntu 24.04 packages it directly — `apt-get install rustc-1.91 cargo-1.91`, then `export PATH=/usr/lib/rust-1.91/bin:$PATH`. No rustup, no mirror.
 - Python **3.12**, venv, `pip install -r shell/requirements.txt`.
 - **Network egress to `export.arxiv.org`** — this is the gating prerequisite for T1, and it is exactly what the v0.6 sandbox lacked (`403 host_not_allowed` at the proxy). *Check it first*: `curl -sI "https://export.arxiv.org/oai2?verb=Identify"` must return 200. If it doesn't, T1 defers and the cycle starts at T2.
 - Optional for T3: an OpenAI-compatible endpoint (vLLM box or DeepSeek API) reachable from the machine.

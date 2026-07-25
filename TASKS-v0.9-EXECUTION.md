@@ -518,3 +518,32 @@ implementation.
 **Execution correction — 2026-07-24.** B0 and A1 were executed on
 2026-07-24 and are recorded by implementation commits `1054994` and
 `2adf486` plus their separate audit commits.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-25
+- **Release disposition:** release
+- **Release:** `v0.9.0`
+- **Release commit:** `4c59db2727eda1c81beae3ff38be883a26a92ae8`
+- **Annotated tag object:** `548ffdfec4e414570ddecf813aa2f2d616662487`
+
+The seven executed task records resolve to these implementation commits:
+
+- B0 — `10549947ddc23d433bd65e63d7e4a574a70bccb9`
+- A1 — `2adf4860c362c6a8ec59cb55c5888e0020d43471`
+- D3 — `d8d7551421242a9d32eb47077628607e0b06f565`
+- P2 — `18887f7113c27bb2f0b91d5a0b37fb396961ac64`
+  (the live rerun completed in `3187f1eeba7c370bd5e546d756655500862ccf6f`)
+- V1 — `be3124787b5b3ee53caf9ea618c54bb86c79e35b`
+- D4 — `d692aefc6038f332bf7022ac6929dde0a41ef202`
+- R2/release — `4c59db2727eda1c81beae3ff38be883a26a92ae8`
+
+Carried dispositions are explicit. The real-model adversarial outcome remained
+`NOT EXERCISED`, never a guard pass. T7 robots single-flight, Postgres,
+pgvector, and multi-host seam hardening remained deferred under their measured
+triggers. V1 promoted `/view` cold-path work to design task V2 without
+materialization. Protected-artifact admission and Python constraints remained
+v0.10 candidates. The checkout had no Git remote and no observed CI-runner
+execution; workflow configuration was not represented as execution. This
+dated record supersedes the incomplete execution correction above without
+rewriting it or any of the seven checked dispositions.
