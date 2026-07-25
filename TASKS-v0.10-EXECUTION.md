@@ -720,7 +720,7 @@ evidence record without interpreting the cycle name.
 - [x] **C1** — both Python lanes pinned by constraints and reproduced exactly
 - [x] **V2** — `/view` cold path decomposed; restart-safe design proven against
   every mutation class; nothing materialized
-- [ ] **D5** — seven deferral triggers re-audited from measurement
+- [x] **D5** — seven deferral triggers re-audited from measurement
 - [ ] **X1** — real-model adversarial battery executed and honestly classified
 - [ ] **G2** — one observed CI-runner execution, or a dated decline
 - [ ] **R3** — release disposition recorded and, if applicable, tagged

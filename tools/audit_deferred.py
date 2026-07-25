@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Executable audit for the five deferred-design triggers."""
+"""Executable audit for the seven deferred-design triggers."""
 
 from __future__ import annotations
 
@@ -26,6 +26,7 @@ SCHEDULE = ROOT / "config" / "schedule.json"
 SCHEDULER = ROOT / "shell" / "intel_shell" / "scheduler.py"
 CORE_CONFIG = ROOT / "shell" / "intel_shell" / "config.py"
 CORE_MAIN = ROOT / "apps" / "cored" / "src" / "main.rs"
+PUBLIC_APP = ROOT / "shell" / "intel_shell" / "app.py"
 STORE = ROOT / "crates" / "store" / "src" / "sqlite.rs"
 SUBSCRIPTIONS = ROOT / "shell" / "intel_shell" / "config.py"
 SERVICE = ROOT / "deploy" / "intel-pipeline.service"
@@ -33,10 +34,14 @@ TIMER = ROOT / "deploy" / "intel-pipeline.timer"
 DEPLOY_README = ROOT / "deploy" / "README.md"
 SCALE_NOTE = ROOT / "docs" / "T8-scale-design-note.md"
 VIEW_SUMMARY = ROOT / "evidence" / "v0.9" / "view-benchmark" / "summary.json"
+V2_VIEW_SUMMARY = (
+    ROOT / "evidence" / "v0.10" / "view-decomposition" / "summary.json"
+)
+V2_VIEW_DESIGN = ROOT / "docs" / "V2-VIEW-DESIGN.md"
 RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def progress_paths(root: Path = ROOT) -> list[Path]:
@@ -105,6 +110,11 @@ def git_subject() -> dict[str, Any]:
             "deploy/intel-pipeline.timer": sha256(TIMER),
             "docs/T8-scale-design-note.md": sha256(SCALE_NOTE),
             "evidence/v0.9/view-benchmark/summary.json": sha256(VIEW_SUMMARY),
+            "evidence/v0.10/view-decomposition/summary.json": sha256(
+                V2_VIEW_SUMMARY
+            ),
+            "docs/V2-VIEW-DESIGN.md": sha256(V2_VIEW_DESIGN),
+            "shell/intel_shell/app.py": sha256(PUBLIC_APP),
         },
     }
 
@@ -227,7 +237,7 @@ def writer_measurement() -> dict[str, Any]:
     require_text(
         CORE_MAIN,
         [
-            "SqliteStore::open(",
+            "SqliteStore::open_with_timings(",
             ".commit_harvest_page(",
             ".append_new(",
             ".assign_canonical_ids(",
@@ -247,7 +257,7 @@ def writer_measurement() -> dict[str, Any]:
     production_core = CORE_MAIN.read_text().split(
         "\n#[cfg(test)]\nmod tests", 1
     )[0]
-    if production_core.count("SqliteStore::open(") != 1:
+    if production_core.count("SqliteStore::open_with_timings(") != 1:
         raise AuditFailure(
             "production cored must construct exactly one SqliteStore"
         )
@@ -271,9 +281,12 @@ def writer_measurement() -> dict[str, Any]:
         "archive_write_inventory": [
             {
                 "owner": "cored startup",
-                "path": "SqliteStore::open",
+                "path": "SqliteStore::open_with_timings",
                 "writes": "schema/FTS triggers, cursor migration, missing-fingerprint backfill",
-                "source": source_ref(CORE_MAIN, "SqliteStore::open("),
+                "source": source_ref(
+                    CORE_MAIN,
+                    "SqliteStore::open_with_timings(",
+                ),
             },
             {
                 "owner": "cored /ingest",
@@ -349,8 +362,9 @@ def multi_host_measurement() -> dict[str, Any]:
         ['CORE_URL = os.environ.get("CORE_URL", "http://127.0.0.1:8788")'],
     )
     require_text(SERVICE, ["CORE_URL=http://127.0.0.1:8788"])
+    progress = progress_paths()
     remote_core_url_hits: list[str] = []
-    for path in (*progress_paths(), SERVICE, CORE_CONFIG):
+    for path in (*progress, SERVICE, CORE_CONFIG):
         for number, line in enumerate(path.read_text().splitlines(), 1):
             if re.search(r"CORE_URL=https?://(?!127\.0\.0\.1|localhost)", line):
                 remote_core_url_hits.append(
@@ -363,6 +377,9 @@ def multi_host_measurement() -> dict[str, Any]:
         "deployment_core_and_shell_host": "same host",
         "recorded_remote_core_url_hits": remote_core_url_hits,
         "recorded_cross_host_core_shell_requests": len(remote_core_url_hits),
+        "progress_files_scanned": [
+            str(path.relative_to(ROOT)) for path in progress
+        ],
         "source_evidence": [
             source_ref(
                 CORE_MAIN, 'unwrap_or_else(|_| "127.0.0.1:8788".into())'
@@ -487,20 +504,143 @@ def exact_cosine_measurement() -> dict[str, Any]:
     }
 
 
+def attestation_boundary_measurement() -> dict[str, Any]:
+    text = require_text(
+        PUBLIC_APP,
+        [
+            '@app.get("/v1/ask")',
+            "core.attest,",
+            'answer = attestation["clean_answer"]',
+        ],
+    )
+    lines = text.splitlines()
+    ask_start = next(
+        index
+        for index, line in enumerate(lines)
+        if '@app.get("/v1/ask")' in line
+    )
+    ask_end = next(
+        index
+        for index, line in enumerate(lines[ask_start + 1 :], ask_start + 1)
+        if '@app.post("/v1/billing/webhook")' in line
+    )
+    ask_lines = lines[ask_start:ask_end]
+    shell_egress = [
+        f"{PUBLIC_APP.relative_to(ROOT)}:{ask_start + offset + 1}"
+        for offset, line in enumerate(ask_lines)
+        if line.strip() == "return {"
+    ]
+    if len(shell_egress) != 1:
+        raise AuditFailure(
+            f"{PUBLIC_APP}: expected one /v1/ask public egress, "
+            f"observed {shell_egress}"
+        )
+    if sum("core.attest," in line for line in ask_lines) != 1:
+        raise AuditFailure(
+            f"{PUBLIC_APP}: /v1/ask must call core.attest exactly once"
+        )
+
+    authority_files = [ROOT / name for name in (
+        "AGENTS.md",
+        "ARCHITECTURE.md",
+        "README.md",
+        "STATE.md",
+    )]
+    invariant_claims: list[str] = []
+    pattern = re.compile(
+        r"(?<!not )HC1 is invariant under shell replacement",
+        re.IGNORECASE,
+    )
+    for path in authority_files:
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            match = pattern.search(line)
+            if match is None:
+                continue
+            prefix = line[: match.start()].lower()
+            if prefix.rstrip().endswith("or any claim that"):
+                # D5's registry must quote the unchanged trigger. A quoted
+                # condition is not itself an affirmative architecture claim.
+                continue
+            if match:
+                invariant_claims.append(
+                    f"{path.relative_to(ROOT)}:{number}:{line.strip()}"
+                )
+    return {
+        "public_answer_paths": 1,
+        "public_answer_paths_without_core_owned_response_boundary": 1,
+        "shell_owned_public_egress_points": len(shell_egress),
+        "shell_owned_public_egress_sources": shell_egress,
+        "core_attest_inspection_calls": 1,
+        "core_owned_public_response_boundaries": 0,
+        "shipped_shell_trust": "repository-owned and operator-controlled",
+        "third_party_or_untrusted_shells": 0,
+        "hc1_invariant_under_shell_replacement_claims": invariant_claims,
+        "risk": (
+            "the shipped shell calls /attest, but public egress remains "
+            "shell-owned and HC1 is not invariant under shell replacement"
+        ),
+    }
+
+
+def ci_runner_measurement() -> dict[str, Any]:
+    remote = subprocess.run(
+        ["git", "remote", "-v"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    remote_entries = [
+        line for line in remote.stdout.splitlines() if line.strip()
+    ]
+    receipts = sorted((ROOT / "evidence" / "ci-runs").glob("*.json"))
+    current_runner = os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
+    return {
+        "git_remote_entries": remote_entries,
+        "git_remote_entry_count": len(remote_entries),
+        "runner_receipts": [
+            str(path.relative_to(ROOT)) for path in receipts
+        ],
+        "observed_runner_executions": len(receipts)
+        + (1 if current_runner else 0),
+        "current_process_is_github_actions": current_runner,
+        "configured_workflows": [
+            str(path.relative_to(ROOT))
+            for path in sorted((ROOT / ".github" / "workflows").glob("*.yml"))
+        ],
+        "workflow_configuration_counts_as_execution": False,
+    }
+
+
 def view_measurement() -> dict[str, Any]:
     summary = json.loads(VIEW_SUMMARY.read_text())
+    decomposition = json.loads(V2_VIEW_SUMMARY.read_text())
     reports = summary.get("reports")
     gate = summary.get("gate")
     if not isinstance(reports, list) or len(reports) != 4:
         raise AuditFailure(f"{VIEW_SUMMARY}: expected four reports")
     if not isinstance(gate, dict):
         raise AuditFailure(f"{VIEW_SUMMARY}: missing gate")
+    decomposed_reports = decomposition.get("reports")
+    if not isinstance(decomposed_reports, list) or len(decomposed_reports) != 4:
+        raise AuditFailure(f"{V2_VIEW_SUMMARY}: expected four reports")
+    require_text(
+        V2_VIEW_DESIGN,
+        [
+            "Status: design only",
+            "Future implementation acceptance",
+            "cold p95 ≤ **162.640 ms**",
+        ],
+    )
     return {
         "slo": summary["slo"],
         "reports": reports,
         "cross_corpus_slopes": summary["cross_corpus_slopes"],
         "gate": gate,
-        "promoted_task": "V2",
+        "v2_decomposition_reports": decomposed_reports,
+        "v2_design": str(V2_VIEW_DESIGN.relative_to(ROOT)),
+        "v2_materialization_implemented": False,
+        "promoted_task": "future /view materialization implementation",
     }
 
 
@@ -509,6 +649,8 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
     writers = measurements["writers"]
     cosine = measurements["pgvector"]
     multi_host = measurements["multi_host"]
+    attestation = measurements["attestation_boundary"]
+    ci_runner = measurements["ci_runner"]
     view = measurements["view"]
     rows = [
         {
@@ -573,12 +715,55 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
             ),
         },
         {
+            "id": "A4 untrusted-shell attestation boundary",
+            "unchanged_trigger": (
+                "a third-party or untrusted shell, or any claim that HC1 is "
+                "invariant under shell replacement"
+            ),
+            "measurement": (
+                "public answer paths without a core-owned response boundary="
+                f"{attestation['public_answer_paths_without_core_owned_response_boundary']}; "
+                "shell-owned public egress points="
+                f"{attestation['shell_owned_public_egress_points']}; "
+                "third-party/untrusted shells="
+                f"{attestation['third_party_or_untrusted_shells']}; "
+                "invariance claims="
+                f"{len(attestation['hc1_invariant_under_shell_replacement_claims'])}"
+            ),
+            "disposition": (
+                "promote"
+                if attestation["third_party_or_untrusted_shells"] > 0
+                or attestation[
+                    "hc1_invariant_under_shell_replacement_claims"
+                ]
+                else "defer"
+            ),
+        },
+        {
+            "id": "CI-runner evidence",
+            "unchanged_trigger": "a Git remote exists",
+            "measurement": (
+                f"git remote -v entries={ci_runner['git_remote_entry_count']}; "
+                "observed runner executions="
+                f"{ci_runner['observed_runner_executions']}; workflow config "
+                "is not an execution"
+            ),
+            "disposition": (
+                "promote"
+                if ci_runner["git_remote_entry_count"] > 0
+                else "defer"
+            ),
+        },
+        {
             "id": "/view materialization",
             "unchanged_trigger": (
                 "cold or warm p95 crosses the predeclared V1 SLO in both runs"
             ),
             "measurement": (
-                f"V1 gate={view['gate']['overall']}; "
+                f"V1 gate={view['gate']['overall']}; V2 reports="
+                f"{len(view['v2_decomposition_reports'])}; "
+                "V2 materialization implemented="
+                f"{view['v2_materialization_implemented']}; "
                 f"promoted task={view['promoted_task']}"
             ),
             "disposition": (
@@ -590,7 +775,7 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
     ]
     for row in rows:
         row["future_task"] = (
-            "V2"
+            "future /view materialization implementation"
             if row["id"] == "/view materialization"
             and row["disposition"] == "promote"
             else None
@@ -604,6 +789,8 @@ def production_measurements() -> dict[str, Any]:
         "writers": writer_measurement(),
         "pgvector": exact_cosine_measurement(),
         "multi_host": multi_host_measurement(),
+        "attestation_boundary": attestation_boundary_measurement(),
+        "ci_runner": ci_runner_measurement(),
         "view": view_measurement(),
     }
 
@@ -620,18 +807,30 @@ def control_measurements() -> dict[str, Any]:
         },
         "pgvector": {
             "largest_evidenced_corpus": 2600,
-            "largest_p95_ms": 8.0,
+            "largest_p95_ms": 20.0,
             "a3_retrieve_anchor_ms": RETRIEVE_ANCHOR_MS,
-            "largest_p95_below_a3_anchor": True,
+            "largest_p95_below_a3_anchor": False,
         },
         "multi_host": {
-            "recorded_cross_host_core_shell_requests": 0,
+            "recorded_cross_host_core_shell_requests": 1,
             "cored_default_bind": "127.0.0.1:8788",
-            "deployment_core_url": "http://127.0.0.1:8788",
+            "deployment_core_url": "http://core.example:8788",
+        },
+        "attestation_boundary": {
+            "public_answer_paths_without_core_owned_response_boundary": 1,
+            "shell_owned_public_egress_points": 1,
+            "third_party_or_untrusted_shells": 1,
+            "hc1_invariant_under_shell_replacement_claims": [],
+        },
+        "ci_runner": {
+            "git_remote_entry_count": 1,
+            "observed_runner_executions": 1,
         },
         "view": {
-            "gate": {"overall": "materialization-deferred"},
-            "promoted_task": None,
+            "gate": {"overall": "materialization-trigger-fired"},
+            "v2_decomposition_reports": [{}, {}, {}, {}],
+            "v2_materialization_implemented": False,
+            "promoted_task": "future /view materialization implementation",
         },
     }
 
@@ -652,12 +851,24 @@ def run_control() -> int:
         for row in rows
         if row["disposition"] == "promote"
     }
-    required = {"T7 robots single-flight", "Postgres"}
-    if not required.issubset(fired):
+    required = {
+        "T7 robots single-flight",
+        "Postgres",
+        "pgvector",
+        "Multi-host seam hardening",
+        "A4 untrusted-shell attestation boundary",
+        "CI-runner evidence",
+        "/view materialization",
+    }
+    if fired != required:
         raise AuditFailure(
-            "synthetic two-harvester/two-writer input did not fire both triggers"
+            "synthetic input did not fire all seven triggers; "
+            f"fired={sorted(fired)}"
         )
-    print("CONTROL FIRED: two harvesters and two archive writers were promoted")
+    print(
+        "CONTROL FIRED: all seven deferred triggers were promoted by "
+        "synthetic measurements"
+    )
     return 1
 
 
@@ -668,7 +879,7 @@ def run_production(output: Path) -> int:
     rows = evaluate(measurements)
     report = {
         "schema_version": SCHEMA_VERSION,
-        "task": "v0.9 D4",
+        "task": "v0.10 D5",
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "subject": git_subject(),
         "host": {
@@ -691,6 +902,10 @@ def run_production(output: Path) -> int:
     }
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(
+        "progress files scanned: "
+        + ", ".join(measurements["multi_host"]["progress_files_scanned"])
+    )
     print_rows(rows)
     print(
         "AUDIT COMPLETE: "
@@ -704,13 +919,13 @@ def run_production(output: Path) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Audit all five deferred v0.9 design triggers"
+        description="Audit all seven deferred v0.10 design triggers"
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--output", type=Path)
     group.add_argument(
         "--control",
-        choices=("two-harvesters-two-writers",),
+        choices=("all-seven",),
     )
     args = parser.parse_args()
     if args.control:

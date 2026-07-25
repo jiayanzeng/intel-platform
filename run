@@ -904,7 +904,7 @@ intel-platform — ./run <command>
                    print deterministic measured evidence facts without writes
     benchmark-view measure cold/warm /view p95 or V2 cold-stage decomposition
                    over disposable protected archives; thresholds required
-    audit-deferred audit all five deferred-design triggers; exact cosine is
+    audit-deferred audit all seven deferred-design triggers; exact cosine is
                    measured over disposable protected-archive copies
     config         show resolved model endpoints and safe harvest DB (no keys)
     api            run the public shell with model configuration from .env
@@ -931,7 +931,7 @@ intel-platform — ./run <command>
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
     LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
     ./run benchmark-view --help
-    ./run audit-deferred --output evidence/v0.9/deferred-audit/report.json
+    ./run audit-deferred --output evidence/v0.10/deferred-audit/report.json
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }
