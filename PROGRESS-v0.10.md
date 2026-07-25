@@ -201,3 +201,65 @@ new dated entries.
   ./run verify-artifacts
   ./run golden
   ```
+
+### 2026-07-25 · D0 — active cycle identity made executable
+
+- owner: Codex
+- commit: 8b7cbacde7f4d4f77cc74a68f46c7f559ef9dcb2
+- result: PASS. One fixed-shape `**Active cycle:** v0.10` declaration in
+  `AGENTS.md` now drives the active runbook, progress log, lifecycle checker,
+  default progress validation, and deferred-audit progress inputs.
+- gate: PASS. Every affected tool derives its target without a cycle-specific
+  filename fallback. No task/progress cycle filename literal remains under
+  `tools/`.
+- lifecycle acceptance: PASS. `./run cycle-check` validates the active v0.10
+  runbook as open, four inactive execution runbooks as closed with real
+  release/no-release identities, and three non-execution task files as dated
+  historical rationale without effective present-tense authority claims.
+- target acceptance: PASS. Default `./run progress-check` validated
+  `PROGRESS-v0.10.md` at D1A commit
+  `9e53d325ff6fe00d5d5a470076fd9e8f4f825ce3`; direct script and module
+  invocations produced the same result. `audit_deferred.progress_paths()`
+  returns the complete `PROGRESS-v*.md` glob, including the declared active
+  log.
+- failure-capable controls: PASS 4/4. In disposable copies under
+  `/private/tmp/intel-cycle-controls.e25wL3`, `./run cycle-check` exited
+  non-zero and named: nonexistent `TASKS-v99.99-EXECUTION.md`; fully checked
+  active `TASKS-v0.10-EXECUTION.md`; a present-authority mutation in
+  `TASKS-v0.9-EXECUTION.md`; and a mismatched `tools/progress_check.py`
+  resolver with both its v0.9 result and the declared v0.10 target.
+- local-CI acceptance: PASS. `./run ci-local` passed 17/17 jobs after adding
+  active cycle consistency as a blocking job. The run included 98
+  warning-denied workspace tests, 20 net tests, clippy/fmt, locked Rust 1.78
+  check/tests, and 105 Python 3.11 shell tests with one existing third-party
+  warning.
+- golden-E2E delta: none. The local-CI golden job and a final direct
+  `./run golden` each passed all 11/11 anchors.
+- protected artifact delta: none. The local-CI artifact job and a final direct
+  `./run verify-artifacts` each passed 2/2 with the exact protected hashes.
+- exact commands:
+
+  ```bash
+  ./run cycle-check
+  python3 tools/cycle_check.py
+  ./run progress-check
+  python3 tools/progress_check.py PROGRESS-v0.10.md
+  rg -n \
+    'TASKS-v0\.[0-9]+(?:\.[0-9]+)*-EXECUTION\.md|PROGRESS-v0\.[0-9]+\.md' \
+    tools
+  python3.11 -m py_compile tools/cycle_identity.py \
+    tools/cycle_check.py tools/progress_check.py tools/audit_deferred.py
+  shellcheck ./run
+  bash -n ./run
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-cycle-controls.e25wL3/final-missing/run cycle-check
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-cycle-controls.e25wL3/final-closed-active/run cycle-check
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-cycle-controls.e25wL3/final-closed-authority/run cycle-check
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-cycle-controls.e25wL3/final-progress-target/run cycle-check
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ```
