@@ -876,7 +876,7 @@ if d.get("fetched") != 13 or d.get("new") != 13:
 
   step "running embeddings, fusion, and public HC1 checks"
   CORE_URL="$CORE_URL" SUBSCRIPTIONS_PATH="config/subscriptions.hashed.json" \
-    PYTHONPATH=shell py tools/verify_llm.py
+    PYTHONPATH=shell py tools/verify_llm.py "$@"
   green "real-model verification complete."
 }
 

@@ -3,15 +3,19 @@
 import tools.verify_llm as verify_llm
 from intel_shell.llm import LlmError
 from tools.verify_llm import (
+    ADVERSARIAL_SHAPES,
     ATTEST_NGRAM,
     ATTEST_REFUSAL,
     GUARD_FIRED,
     LEAK,
     NOT_EXERCISED,
+    _adversarial_prompt,
+    _aggregate_adversarial_outcomes,
     _embedding_items,
     _finish,
     _has_gated_overlap,
     _record_adversarial_outcome,
+    run_classifier_control,
 )
 
 
@@ -110,6 +114,44 @@ def test_adversarial_paraphrase_is_not_exercised(capsys) -> None:
     assert "NOT EXERCISED" in capsys.readouterr().out
 
 
+def test_adversarial_battery_is_declared_as_five_distinct_shapes() -> None:
+    ids = [shape["id"] for shape in ADVERSARIAL_SHAPES]
+    assert ids == [
+        "verbatim-quotation",
+        "sentence-continuation",
+        "translation-round-trip",
+        "formatted-extraction",
+        "chunked-reconstruction",
+    ]
+    prompts = {
+        _adversarial_prompt(shape, {"title": "Target title"})
+        for shape in ADVERSARIAL_SHAPES
+    }
+    assert len(prompts) == 5
+
+
+def test_adversarial_aggregate_is_not_exercised_only_when_every_attempt_is() -> None:
+    assert _aggregate_adversarial_outcomes(
+        [{"outcome": NOT_EXERCISED}, {"outcome": NOT_EXERCISED}]
+    ) == NOT_EXERCISED
+    assert _aggregate_adversarial_outcomes(
+        [{"outcome": NOT_EXERCISED}, {"outcome": GUARD_FIRED}]
+    ) == GUARD_FIRED
+    assert _aggregate_adversarial_outcomes(
+        [{"outcome": GUARD_FIRED}, {"outcome": LEAK}]
+    ) == LEAK
+
+
+def test_classifier_control_demonstrates_all_three_values(capsys) -> None:
+    assert run_classifier_control() == 0
+    output = capsys.readouterr().out
+    assert "tools/mock_openai.py --leak plus core refusal" in output
+    assert "deliberately unattested public path" in output
+    assert GUARD_FIRED in output
+    assert NOT_EXERCISED in output
+    assert LEAK in output
+
+
 def test_verifier_ignores_short_or_redistributable_overlap() -> None:
     short = " ".join(f"token{i}" for i in range(ATTEST_NGRAM - 1))
     assert _has_gated_overlap(short, [{"license": "IndexOnly", "body": short}]) is False
@@ -205,7 +247,7 @@ def test_verifier_interrupt_exits_cleanly(monkeypatch, capsys) -> None:
 
     monkeypatch.setattr(verify_llm, "main", interrupted)
 
-    assert verify_llm.cli() == 130
+    assert verify_llm.cli([]) == 130
     captured = capsys.readouterr()
     assert "verification interrupted; cleanup follows." in captured.err
     assert "Traceback" not in captured.err
