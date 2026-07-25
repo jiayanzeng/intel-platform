@@ -1,6 +1,87 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.9 R2 is complete: the operator selected v0.9.0, release commit `4c59db2` is annotated by exact tag `v0.9.0`, and the separate append-only audit record closes the cycle without moving that tag.** The release tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **105 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11 and both protected evidence databases remain exact. `.github/workflows/ci.yml` configures corresponding blocking jobs, but this checkout has no remote and no CI runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.10 B0 is complete: the entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook.** The measured tree passes **98 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **105 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes its entering **16/16** jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; HEAD entered one append-only audit commit ahead at `280f6ab`, this checkout has no remote, and no CI-runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** an SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; `.env` now resolves both direct LAN roles explicitly. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+
+**v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
+entering claim before any tracked edit: `git status --porcelain=v1` reported
+`?? TASKS-v0.10-EXECUTION.md`, the operator-supplied runbook named in the task,
+rather than a clean worktree. No other entering worktree item existed. HEAD was
+`280f6abfec0044104b830731c952883aa64b9703`
+(`v0.9.0-1-g280f6ab`), exactly one append-only audit commit after release commit
+`4c59db2727eda1c81beae3ff38be883a26a92ae8`. Annotated tag object
+`548ffdfec4e414570ddecf813aa2f2d616662487` has type `tag`, annotation
+`intel-platform v0.9.0`, and dereferences exactly to that release commit.
+`git remote -v` produced no output.
+
+`./run version-check` read 0.9.0 independently from the Rust package, Python
+package, FastAPI literal, this header, and newest changelog release. It passed
+with the expected ahead-of-tag warning, and `CHANGELOG.md` names
+`v0.9.0 — 2026-07-25`. Tool versions were pinned Rust/Cargo **1.91.1**, floor
+Rust/Cargo **1.78.0**, Python **3.11.4** and **3.12.13**, and ShellCheck
+**0.11.0**.
+
+After `cargo clean` removed 3.1 GiB, warning-denied locked workspace check and
+**98 tests** passed on Rust 1.91.1; warning-denied net check and **20 net
+tests**, clippy, and fmt passed. Warning-denied locked workspace check and the
+same **98 tests** passed on Rust 1.78.0. Python 3.11 byte-compilation,
+ShellCheck, and Bash syntax passed. The isolated Python lanes each passed
+**105 tests** with one third-party Starlette warning. Initial sandboxed Python
+attempts reached **98 passes / 7 local-bind failures** in each lane because the
+environment refused loopback sockets; they are non-results. Permitted reruns
+executed those HTTP doubles and produced the counted 105/105 passes.
+
+`./run down` completed and independent `lsof` checks proved ports 8787, 8788,
+and 8899 clear. `./run verify-artifacts` passed **2/2**, followed by independent
+read-only measurements:
+
+- `data/core.db`: SHA-256
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`,
+  **6,729,728 bytes**, **1,764 documents**, 0 NULL `simhash`, 0 NULL
+  `canonical_id`, integrity `ok`; cursor `arxiv-cs | NULL | 2026-07-20 | NULL
+  | 2026-07-23 12:08:13`.
+- `data/live-smoke.db`: SHA-256
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`,
+  **9,490,432 bytes**, **2,600 documents**, 0 NULL `simhash`, 0 NULL
+  `canonical_id`, integrity `ok`; cursor `arxiv-cs |
+  verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-22%26until%3D2026-07-22%26set%3Dcs%26skip%3D88
+  | NULL | 2026-07-22 | 2026-07-22 23:45:38`.
+
+The failure-capable control copied `data/core.db` to
+`/private/tmp/intel-v010-b0-artifact.4WgqoY/core.db` and wrote a disposable
+one-artifact manifest containing its real expected hash. Adding only a
+`b0_control_failure` table changed the copy's hash to
+`f9f4c31f54c24ca57551870122a6a2f87b0bb84f24480e48e7ba95338ecb5e3e`;
+`./run verify-artifacts --manifest ... --root ...` exited **1**, printed both
+hashes, named `core.db field=sha256`, and reported 0/1 match. Nothing under
+`data/` was changed.
+
+All nine drafted defects were **CONFIRMED**:
+
+1. `tools/progress_check.py:14-18` hard-codes v0.9 with a v0.8 fallback.
+2. `tools/audit_deferred.py:348-350` lists only the v0.8 and v0.9 progress
+   files.
+3. `AGENTS.md:13-17` still declares the closed v0.9 cycle active.
+4. `TASKS-v0.9-EXECUTION.md:513-520` says the tasks were unexecuted and
+   corrects only B0/A1 despite seven checked boxes.
+5. `TASKS-v0.6.md:3` and `TASKS-v0.7.md:3` both claim present authority, while
+   `TASKS-v0.7.md:13` repeats the false Rust 1.75 offline floor.
+6. No tool maps checked execution boxes to matching progress entries and
+   commit objects; the existing progress checker validates only the newest
+   entry in one log.
+7. `shell/requirements.txt` contains four floors and no constraints file.
+8. Protected-artifact admission is one schema-v1 lifecycle string whose
+   validator checks only literal equality.
+9. `tools/verify_llm.py:292-306` constructs one adversarial prompt against only
+   `gated[0]`.
+
+`./run golden` passed all **11/11** named assertions on disposable database
+`/var/folders/cl/4zcmgrj928n_y07msdz5pjj00000gn/T/tmp.buJodyCGBW/golden.db`.
+`./run ci-local` then passed all entering **16/16** jobs, including a separate
+11/11 golden lifecycle, protected artifacts 2/2, and the still-stale v0.9
+progress target confirmed above. The four closed execution runbooks contained
+**40 checked / 0 unchecked** boxes; the supplied v0.10 runbook entered with
+0 checked / 11 unchecked. No runtime, dependency, lockfile, architecture, or
+protected-corpus change was made.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
