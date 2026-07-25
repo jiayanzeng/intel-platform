@@ -152,3 +152,52 @@ new dated entries.
   ./run verify-artifacts
   ./run golden
   ```
+
+### 2026-07-25 · D1A — historical cycle closure bootstrapped
+
+- owner: Codex
+- commit: 9e53d325ff6fe00d5d5a470076fd9e8f4f825ce3
+- result: PASS. The operator-approved ordering correction is recorded as
+  B0 → D1A → D0 → A1 → D1, and the strict D0 auditor can now evaluate the
+  production corpus without an exemption.
+- gate: PASS. All release, tag-object, and implementation-commit identities
+  were resolved from Git before being recorded. Historical rationale was
+  preserved through dated appends and strikethrough corrections.
+- closing-record acceptance: PASS. The v0.8 and v0.8.1 runbooks record
+  annotated `v0.8.0`; v0.8.2 records an explicit no-separate-release
+  disposition plus all 11 implementation commits; v0.9 records annotated
+  `v0.9.0`, all seven task commits, the P2 live-completion commit, and every
+  carried non-result required by D1.
+- historical-authority acceptance: PASS. `TASKS-v0.6.md` and
+  `TASKS-v0.7.md` carry dated superseded-cycle banners, their present-tense
+  authority claims are struck, and v0.7's false 1.75 offline floor is struck
+  in favor of the measured format-v4 lock floor of 1.78.
+- checklist/rationale acceptance: PASS. The closed execution checklists remain
+  12/12, 10/10, 11/11, and 7/7, each with zero unchecked boxes and exactly one
+  cycle-closing record. No existing checklist disposition or historical
+  measurement changed.
+- version acceptance: PASS. `./run version-check` passed at 0.9.0 with the
+  expected ahead-of-tag warning.
+- golden-E2E delta: none. `./run golden` passed all 11/11 anchors.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 with
+  `data/core.db` at
+  `db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+  and `data/live-smoke.db` at
+  `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`.
+- exact commands:
+
+  ```bash
+  git diff --check
+  rg -c '^- \[x\]' TASKS-v0.{8,8.1,8.2,9}-EXECUTION.md
+  rg -c '^- \[ \]' TASKS-v0.{8,8.1,8.2,9}-EXECUTION.md
+  rg -c '^## Cycle closing record$' \
+    TASKS-v0.{8,8.1,8.2,9}-EXECUTION.md
+  git rev-parse v0.8.0
+  git rev-parse 'v0.8.0^{}'
+  git rev-parse v0.9.0
+  git rev-parse 'v0.9.0^{}'
+  git cat-file -t '<each recorded implementation commit>'
+  ./run version-check
+  ./run verify-artifacts
+  ./run golden
+  ```
