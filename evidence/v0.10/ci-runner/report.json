@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "task": "G2",
+  "captured_at": "2026-07-25",
+  "repository": "jiayanzeng/intel-platform",
+  "remote": {
+    "name": "origin",
+    "transport": "ssh",
+    "default_branch": "main",
+    "release_tag": {
+      "name": "v0.9.0",
+      "tag_object": "548ffdfec4e414570ddecf813aa2f2d616662487",
+      "release_commit": "4c59db2727eda1c81beae3ff38be883a26a92ae8"
+    }
+  },
+  "first_observed_run": {
+    "id": 30142540466,
+    "run_number": 1,
+    "url": "https://github.com/jiayanzeng/intel-platform/actions/runs/30142540466",
+    "event": "push",
+    "head_branch": "main",
+    "head_sha": "85c78ea0cdf3eb35774c87e4f5c95ccd93dc7adc",
+    "created_at": "2026-07-25T03:35:51Z",
+    "started_at": "2026-07-25T03:35:51Z",
+    "completed_at": "2026-07-25T03:37:10Z",
+    "duration_seconds": 79,
+    "status": "completed",
+    "conclusion": "failure",
+    "jobs": [
+      {
+        "id": 89638436489,
+        "name": "core (pinned toolchain)",
+        "runner_name": "GitHub Actions 1000001372",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:53Z",
+        "completed_at": "2026-07-25T03:36:47Z",
+        "duration_seconds": 54,
+        "conclusion": "success"
+      },
+      {
+        "id": 89638436497,
+        "name": "clippy + fmt (blocking)",
+        "runner_name": "GitHub Actions 1000001375",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:53Z",
+        "completed_at": "2026-07-25T03:36:37Z",
+        "duration_seconds": 44,
+        "conclusion": "success"
+      },
+      {
+        "id": 89638436487,
+        "name": "live-fetch path (--features net)",
+        "runner_name": "GitHub Actions 1000001371",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:53Z",
+        "completed_at": "2026-07-25T03:36:47Z",
+        "duration_seconds": 54,
+        "conclusion": "success"
+      },
+      {
+        "id": 89638436491,
+        "name": "MSRV floor (offline builds on 1.78)",
+        "runner_name": "GitHub Actions 1000001373",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:54Z",
+        "completed_at": "2026-07-25T03:36:55Z",
+        "duration_seconds": 61,
+        "conclusion": "success"
+      },
+      {
+        "id": 89638436508,
+        "name": "shell (Python 3.11)",
+        "runner_name": "GitHub Actions 1000001374",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:53Z",
+        "completed_at": "2026-07-25T03:35:58Z",
+        "duration_seconds": 5,
+        "conclusion": "failure",
+        "failed_step": "shellcheck run harness"
+      },
+      {
+        "id": 89638436510,
+        "name": "shell (Python 3.12)",
+        "runner_name": "GitHub Actions 1000001377",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:53Z",
+        "completed_at": "2026-07-25T03:36:16Z",
+        "duration_seconds": 23,
+        "conclusion": "success"
+      },
+      {
+        "id": 89638436517,
+        "name": "golden E2E (blocking)",
+        "runner_name": "GitHub Actions 1000001376",
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:53Z",
+        "completed_at": "2026-07-25T03:37:09Z",
+        "duration_seconds": 76,
+        "conclusion": "success"
+      },
+      {
+        "id": 89638436851,
+        "name": "dependency drift (report only)",
+        "runner_name": null,
+        "runner_label": "ubuntu-latest",
+        "started_at": "2026-07-25T03:35:52Z",
+        "completed_at": "2026-07-25T03:35:51Z",
+        "duration_seconds": 0,
+        "conclusion": "skipped",
+        "reason": "push event; job is scheduled-only"
+      }
+    ],
+    "toolchains": {
+      "rust_pinned": {
+        "rustc": "1.91.1",
+        "host": "x86_64-unknown-linux-gnu",
+        "llvm": "21.1.2"
+      },
+      "rust_msrv": {
+        "rustc": "1.78.0",
+        "host": "x86_64-unknown-linux-gnu"
+      },
+      "python_3_11_lane": "3.11.15",
+      "python_3_12_lane": "3.12.13",
+      "shellcheck": "0.9.0",
+      "actions_node_runtime": "24"
+    },
+    "unexpected_failure": {
+      "local_result": "ShellCheck 0.11.0 passed ./run",
+      "runner_result": "ShellCheck 0.9.0 exited 1",
+      "diagnostics": [
+        {
+          "line": 171,
+          "code": "SC2120",
+          "severity": "warning",
+          "message": "refuse_foreign_port references arguments, but none are ever passed"
+        },
+        {
+          "line": 193,
+          "code": "SC2119",
+          "severity": "info",
+          "message": "Use refuse_foreign_port \"$@\" if function's $1 should mean script's $1"
+        },
+        {
+          "line": 246,
+          "code": "SC2015",
+          "severity": "info",
+          "message": "A && B || C is not if-then-else"
+        }
+      ],
+      "other_runner_warning": "actions/checkout@v4 and actions/setup-python@v5 declare Node.js 20 and were forced onto Node.js 24"
+    }
+  },
+  "job_set_comparison": {
+    "local_ci_command": "./run ci-local",
+    "local_check_count": 18,
+    "runner_job_node_count": 8,
+    "runner_executed_job_node_count": 7,
+    "granularity_note": "GitHub groups multiple local checks into matrix and platform jobs; job-node counts are not equivalent.",
+    "local_checks": [
+      "release version consistency",
+      "active cycle consistency",
+      "checked-task evidence",
+      "Python 3.11 floor byte-compile",
+      "ShellCheck presence and harness lint",
+      "workspace check (-D warnings)",
+      "workspace test (-D warnings)",
+      "net check (-D warnings)",
+      "net test (-D warnings)",
+      "clippy",
+      "rustfmt",
+      "Rust 1.78 locked check",
+      "Rust 1.78 locked test",
+      "shell pytest",
+      "golden E2E",
+      "protected artifacts",
+      "persisted fingerprints",
+      "append-only progress record"
+    ],
+    "runner_job_nodes": [
+      "core (pinned toolchain)",
+      "clippy + fmt (blocking)",
+      "live-fetch path (--features net)",
+      "MSRV floor (offline builds on 1.78)",
+      "shell (Python 3.11)",
+      "shell (Python 3.12)",
+      "golden E2E (blocking)",
+      "dependency drift (report only)"
+    ],
+    "local_only_checks": [
+      "active cycle consistency",
+      "checked-task evidence",
+      "exact protected-artifact byte and corpus verification",
+      "append-only progress record"
+    ],
+    "runner_only_checks": [
+      "Python 3.12 shell matrix lane",
+      "scheduled dependency drift report",
+      "protected-evidence manifest schema validation without protected database bytes"
+    ],
+    "shared_checks_are_grouped_under": {
+      "core (pinned toolchain)": [
+        "workspace check (-D warnings)",
+        "workspace test (-D warnings)",
+        "persisted fingerprints"
+      ],
+      "clippy + fmt (blocking)": [
+        "clippy",
+        "rustfmt"
+      ],
+      "live-fetch path (--features net)": [
+        "net check (-D warnings)",
+        "net test (-D warnings)"
+      ],
+      "MSRV floor (offline builds on 1.78)": [
+        "Rust 1.78 locked check",
+        "Rust 1.78 locked test"
+      ],
+      "shell (Python 3.11)": [
+        "release version consistency",
+        "Python 3.11 floor byte-compile",
+        "ShellCheck presence and harness lint",
+        "shell pytest"
+      ],
+      "golden E2E (blocking)": [
+        "golden E2E"
+      ]
+    }
+  },
+  "failure_control": {
+    "pull_request": {
+      "number": 1,
+      "url": "https://github.com/jiayanzeng/intel-platform/pull/1",
+      "state": "closed",
+      "merged": false,
+      "closed_at": "2026-07-25T03:43:43Z"
+    },
+    "branch": "codex/g2-version-mismatch-control",
+    "commit": "b7ed500dc123bdbfd4d7a392bdcb558d508ea85c",
+    "planted_change": {
+      "path": "shell/intel_shell/__init__.py",
+      "from": "0.9.0",
+      "to": "9.9.9"
+    },
+    "run": {
+      "id": 30142678150,
+      "run_number": 2,
+      "url": "https://github.com/jiayanzeng/intel-platform/actions/runs/30142678150",
+      "event": "pull_request",
+      "created_at": "2026-07-25T03:40:26Z",
+      "started_at": "2026-07-25T03:40:26Z",
+      "completed_at": "2026-07-25T03:41:04Z",
+      "duration_seconds": 38,
+      "status": "completed",
+      "conclusion": "failure",
+      "expected_failures": [
+        {
+          "job": "shell (Python 3.11)",
+          "step": "release version consistency",
+          "diagnostic": "expected 0.9.0 from apps/cored/Cargo.toml; shell/intel_shell/__init__.py: 9.9.9"
+        },
+        {
+          "job": "shell (Python 3.12)",
+          "step": "release version consistency",
+          "diagnostic": "expected 0.9.0 from apps/cored/Cargo.toml; shell/intel_shell/__init__.py: 9.9.9"
+        }
+      ],
+      "successful_jobs": [
+        "core (pinned toolchain)",
+        "clippy + fmt (blocking)",
+        "live-fetch path (--features net)",
+        "MSRV floor (offline builds on 1.78)",
+        "golden E2E (blocking)"
+      ],
+      "skipped_job": "dependency drift (report only)"
+    },
+    "cleanup": {
+      "pull_request_closed_unmerged": true,
+      "remote_branch_deleted": true,
+      "local_branch_deleted": true,
+      "main_unchanged_by_control": true,
+      "release_tag_unchanged": true
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.10 B0, the operator-approved D1A provenance bootstrap, D0, A1, D1, A2, C1, V2, D5, and X1 are complete; X1's full real-model battery is honestly classified `NOT EXERCISED`, not passed, and execution awaits the G2 operator decision.** All seven deferred-design triggers remain executable measurements: six are deferred and `/view` alone is promoted to its scoped future implementation without materialization. The entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook. Every finished execution runbook now carries a dated release/no-release record; v0.6/v0.7 are explicitly historical, and the false Rust 1.75 floor is struck in favor of measured 1.78. The measured tree passes **99 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **120 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes **18/18** jobs with blocking cycle-consistency and checked-task-evidence jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; HEAD entered one append-only audit commit ahead at `280f6ab`, this checkout has no remote, and no CI-runner execution has been observed. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the workflow configures it as blocking, while the observed execution is local and not a CI runner. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** a prior SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; X1 later exercised both roles through operator-established loopback forwards without recording their aliases. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
+**As of:** 2026-07-25 · **Version:** v0.9.0 (core-shell) · **Status:** **v0.10 B0, the operator-approved D1A provenance bootstrap, D0, A1, D1, A2, C1, V2, D5, and X1 are complete; G2 is in progress after the first observed GitHub Actions run exposed a real ShellCheck version divergence, and its failure-capable version-mismatch control has fired and been removed.** All seven deferred-design triggers remain executable measurements: five remain deferred, CI-runner evidence and `/view` are promoted, and `/view` still has no materialization. The entering state was rebuilt from commands, all nine drafted defects were confirmed, and the false clean-worktree hypothesis was corrected to the operator-supplied untracked v0.10 runbook. Every finished execution runbook now carries a dated release/no-release record; v0.6/v0.7 are explicitly historical, and the false Rust 1.75 floor is struck in favor of measured 1.78. The measured local tree passes **99 Rust workspace tests with 0 _rustc_ warnings**, **20 net-path ingest tests**, and **120 shell tests under both Python 3.11.4 and 3.12.13** (each with 1 Starlette deprecation warning). Warning-denied offline/net checks, clippy, fmt, Python 3.11 byte-compilation, local ShellCheck 0.11.0, and warning-denied locked Rust 1.78 check/tests are green. Golden remains 11/11, both protected evidence databases remain exact, and `./run ci-local` passes **18/18** jobs with blocking cycle-consistency and checked-task-evidence jobs. Release commit `4c59db2` remains annotated by exact tag `v0.9.0`; operator-approved `origin` now holds `main` and the unchanged tag. GitHub Actions run **30142540466** is the first observed runner execution: six executable job nodes passed, Python 3.11 failed because runner ShellCheck 0.9.0 emitted SC2120/SC2119/SC2015 that local 0.11.0 did not, and the scheduled drift job was skipped on the push event. **G1 is complete:** `./run golden` owns a disposable cross-language lifecycle, asserts all eleven regression anchors, and fails demonstrably on fixture drift; the same golden job passed on runner execution 30142540466 in 76 seconds. **P1 is complete:** bare live harvests resolve to unique timestamp/PID databases, both evidence databases are refused as targets, and their complete evidence records are verified by `./run verify-artifacts` and `./run test`. **E1 is complete:** one embedding model key has exactly one stored dimension, mismatched legacy rows are visible in retrieval diagnostics, and a fresh verifier run cannot pass without a real embedding request whose dimension matches stored statistics. The shipped `/v1/ask` path calls core `/attest` before return, but A4 proved that this enforcement is not invariant under a rewritten shell; that trust-boundary risk is explicitly accepted below. Cross-origin redirects are manually re-gated before the next request; `/view` consumes persisted SimHash fingerprints with a verified legacy backfill. **T2 is complete:** two capped live arXiv runs proved durable interruption-resume. **T4C/T4H are complete:** split provider profiles are secret-safe, loopback core calls ignore ambient proxies, real-model verification owns an isolated fixture DB, required stages fail fast, and provider waits are explicitly bounded. **T4L is complete:** a prior SSH-forwarded live probe confirmed the chat server's exact 501 `--embeddings` diagnosis and measured the dedicated `embeddinggemma-300M-Q8_0.gguf` server at 768 dimensions; X1 later exercised both roles through operator-established loopback forwards without recording their aliases. **T4P is complete:** a real-model run passed 6/6 required checks; the adversarial Gemma leg reported `NOT EXERCISED` with no violations, so core HC1 has still not been tripped by a real model, while failure-capable controls prove `GUARD FIRED` and `LEAK` for the shipped path. **T4 is complete:** a separate uninterrupted real-model run passed 6/6 with 13→0 embeddings, clean hybrid retrieval, four IndexOnly citations, no public overlap, and adversarial `NOT EXERCISED`; all stage latencies and model identities are recorded below. T7 single-flight remains deferred because the shipped scheduler is one synchronous writer.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported
@@ -394,7 +394,7 @@ registry from repository, process, Git, deployment, and benchmark evidence:
 | pgvector | exact cosine over the archive stops fitting the measured request budget | largest evidenced corpus 2,600; exact-cosine p95 6.431667 ms; A3 full-request anchor 16.264 ms | **defer** |
 | multi-host seam hardening | an actual core/shell host split | zero recorded cross-host core/shell requests; bind `127.0.0.1:8788`; `CORE_URL=http://127.0.0.1:8788` | **defer** |
 | A4 untrusted-shell attestation boundary | a third-party or untrusted shell, or any claim that HC1 is invariant under shell replacement | one public answer path without a core-owned response boundary; one shell-owned public-egress point; zero third-party/untrusted shells; zero invariance claims | **defer; risk recorded** |
-| CI-runner evidence | a Git remote exists | zero `git remote -v` entries; zero observed runner executions; workflow configuration explicitly excluded as execution evidence | **defer** |
+| CI-runner evidence | a Git remote exists | operator-approved `origin`; first push run 30142540466 observed on seven executable job nodes plus one scheduled-only skipped node | **promote → G2 runner evidence and compatibility correction** |
 | `/view` materialization | cold or warm p95 crosses the predeclared V1 SLO in both runs | V1 gate `materialization-trigger-fired`; four V2 decomposition reports; no materialization implemented | **promote → future `/view` materialization implementation** |
 
 The audit's progress evidence is no longer a fixed list. Its derived glob
@@ -402,9 +402,10 @@ printed all three files it actually scanned:
 `PROGRESS-v0.10.md`, `PROGRESS-v0.8.md`, and `PROGRESS-v0.9.md`. The V2 row
 imports the measured V1 trigger and V2 disposition, including
 `docs/V2-VIEW-DESIGN.md`; promotion authorizes only that future scoped task.
-D5 added no receipt seam, response boundary, cache table, migration, scheduler,
-database, vector engine, remote, runner workflow, dependency, or lockfile
-change.
+At D5's dated measurement there was no remote and no observed runner; G2 later
+tripped that row's unchanged trigger. D5 itself added no receipt seam, response
+boundary, cache table, migration, scheduler, database, vector engine, remote,
+runner workflow, dependency, or lockfile change.
 
 The failure-capable `python3 tools/audit_deferred.py --control all-seven`
 control supplied two harvesters, two archive writers, an exact-cosine budget
@@ -511,6 +512,62 @@ third-party Starlette warning. The exact tree passed `./run ci-local`
 clippy/fmt, both shell lanes, and Rust 1.78 lane were green. The final direct
 `./run golden` remained **11/11**, and protected-artifact verification remained
 **2/2** at the exact recorded hashes.
+
+**v0.10 G2 has its first real runner measurement and remains in progress
+(measured 2026-07-25); workflow configuration is no longer standing in for
+execution.** With explicit operator approval, SSH remote `origin` was added,
+`main` at `85c78ea0cdf3eb35774c87e4f5c95ccd93dc7adc` was pushed, and the
+existing annotated `v0.9.0` tag was pushed without moving it. Remote tag object
+`548ffdfec4e414570ddecf813aa2f2d616662487` still dereferences to release
+commit `4c59db2727eda1c81beae3ff38be883a26a92ae8`.
+
+GitHub Actions run
+[30142540466](https://github.com/jiayanzeng/intel-platform/actions/runs/30142540466)
+is the first observed runner execution. It ran at
+`85c78ea0cdf3eb35774c87e4f5c95ccd93dc7adc` for 79 seconds and concluded
+**failure**. Core passed in 54s; clippy+fmt passed in 44s; net passed in 54s;
+Rust 1.78 passed in 61s; Python 3.12 passed in 23s; and golden passed in 76s.
+Python 3.11 failed after 5s at `shellcheck ./run`; the scheduled-only drift job
+was skipped on the push event.
+
+The runner measured Rust 1.91.1 on `x86_64-unknown-linux-gnu` with LLVM 21.1.2,
+Rust 1.78.0 on the same host, Python 3.11.15, Python 3.12.13, and ShellCheck
+0.9.0. The platform forced actions declaring Node.js 20 onto Node.js 24 and
+emitted seven deprecation warnings. The ShellCheck failure is a real local/CI
+divergence: local 0.11.0 passed, while runner 0.9.0 emitted SC2120 at `run:171`,
+SC2119 at `run:193`, and SC2015 at `run:246`. The gate measurement and its
+evidence are being committed separately from the eventual lint fix, as
+required.
+
+The job-set comparison is not described as equivalence. `./run ci-local` has
+18 ordered check units; the workflow has seven executable push/PR job nodes
+plus one scheduled-only drift node. Core groups workspace check/test and
+fingerprints; lint groups clippy/fmt; net and MSRV each group check/test; the
+Python 3.11 node groups version, byte-compilation, ShellCheck, constraints,
+evidence controls, and pytest; golden is one job. The workflow additionally
+has a Python 3.12 matrix lane, a manifest-only protected-evidence check, and the
+scheduled drift reporter. Local-only gates are active-cycle consistency,
+checked-task evidence, exact protected database bytes/corpus, and append-only
+progress. The manifest-only runner check is not evidence that the uncommitted
+protected databases were verified.
+
+The required failure-capable control also fired. Temporary commit
+`b7ed500dc123bdbfd4d7a392bdcb558d508ea85c` changed only
+`shell/intel_shell/__init__.py` from 0.9.0 to 9.9.9 on
+`codex/g2-version-mismatch-control`. Pull request
+[1](https://github.com/jiayanzeng/intel-platform/pull/1) triggered run
+[30142678150](https://github.com/jiayanzeng/intel-platform/actions/runs/30142678150);
+both Python lanes failed at `release version consistency`, naming the file and
+9.9.9 value, while core, lint, net, MSRV, and golden passed. The PR is closed
+unmerged and the temporary branch is deleted locally and remotely. `main` and
+the release tag were not changed by the control.
+
+The complete per-job, toolchain, comparison, failure, and cleanup record is
+`evidence/v0.10/ci-runner/report.json`, SHA-256
+`9cb1a74339313f7e36c33f61f0dd20654e31d5c1aa7103878763a31050d3c4b5`.
+G2 remains unchecked until the ShellCheck compatibility finding is corrected
+in a separate commit and a subsequent main-branch runner execution is
+captured.
 
 **v0.9 B0 is complete (measured 2026-07-24).** The draft's entering Git
 description was stale: `git status --porcelain` was empty at
@@ -619,9 +676,10 @@ and passed 98 workspace, 20 net, and 93 Python 3.11 tests. The isolated Python
 all 16 configured jobs, including warning-denied offline/net builds, clippy,
 fmt, ShellCheck, Python floor compilation, locked Rust 1.78 check/tests, the
 11/11 golden E2E, and final evidence verification. CI now validates the
-committed manifest schema and executes the disposable verifier controls; no CI
-runner execution is claimed. Final hashes remained exact, and `Cargo.lock`
-was untouched.
+committed manifest schema and executes the disposable verifier controls. At A2
+this remained configuration rather than runner evidence; v0.10/G2 later
+observed the first execution. Final hashes remained exact, and `Cargo.lock` was
+untouched.
 
 Exact A1 verification commands included:
 
@@ -1053,9 +1111,10 @@ The carried non-result inventory is explicit:
 - `shell/requirements.txt` still declares floors rather than pins. A
   constraints/pinning decision remains a v0.10 candidate; the recorded Python
   3.12 command is repeatable, not guaranteed reproducible.
-- This checkout still has no Git remote and no observed CI-runner execution.
-  The release evidence is the measured local matrix; workflow configuration is
-  not represented as a runner result.
+- At the v0.9 close this checkout had no Git remote and no observed CI-runner
+  execution. That release evidence is the measured local matrix; workflow
+  configuration was not represented as a runner result. v0.10/G2 later added
+  `origin` and captured the first actual runner execution.
 
 The R2 failure control changed only
 `shell/intel_shell/__init__.py` from 0.8.0 to 0.8.1.
@@ -1122,8 +1181,9 @@ still present. A stale body edit also exited 1 and named the id; a clean
 fixture printed `null_fingerprints=0`, `null_canonical_ids=0`, and
 `fingerprint_mismatches=0`. `./run verify-fingerprints` is executed immediately
 after protected-artifact verification in `./run test`, and the configured core
-workflow job has the same check over a deterministic scratch fixture (no CI
-runner execution is recorded). The runbook's claim that
+workflow job has the same check over a deterministic scratch fixture (no
+runner had executed it at A1; v0.10/G2 later observed that step pass). The
+runbook's claim that
 core CI could reuse the golden E2E database was stale: `./run golden` owns and
 deletes that database inside its process, so A1 added a one-document
 failure-capable fixture builder rather than copying a protected archive.
@@ -1207,7 +1267,9 @@ Python package, FastAPI literal, and `STATE.md` header. It also reads
 `git describe --tags --abbrev=0`: an exact HEAD tag must match the package,
 while the normal ahead-of-tag development state is an explicit warning rather
 than a failure. The configured CI shell checkout uses full history so a future
-runner will receive tags; no runner execution is recorded. A changelog-only
+runner would receive tags; no runner execution had occurred at that release
+measurement. v0.10/G2 later pushed the unchanged tag and observed the first
+runner execution. A changelog-only
 `v0.8.1` plant exited 1 and named
 `CHANGELOG.md`; a disposable scratch branch with exact tag `v0.8.1` exited 1
 and named the tag/package mismatch. After restoration, the current mid-cycle
@@ -1254,8 +1316,9 @@ the checker. The integrated test run passed 98 workspace, 20 net, and 88 shell
 tests; golden remained 11/11 and both protected hashes remained exact.
 
 **C2 is complete on the operator-selected local-only path (measured
-2026-07-24).** `git remote -v` produced no output, and no CI runner execution
-has been observed. `./run ci-local` now stops at the first failure and prints a
+2026-07-24).** At that measurement, `git remote -v` produced no output and no
+CI runner execution had been observed; v0.10/G2 later superseded that absence.
+`./run ci-local` now stops at the first failure and prints a
 per-job summary. Its observed clean run passed all **16/16** ordered jobs:
 release version consistency; Python 3.11 floor byte-compilation; ShellCheck
 presence/version/lint; warning-denied workspace check/test; warning-denied net
@@ -1283,8 +1346,9 @@ FastAPI surface, and this header therefore advance together and are checked by
 **R1 is complete (measured 2026-07-24).** `./run version-check` reports
 v0.8.0 from `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`, the
 FastAPI `version=` literal, and this header; it is blocking in `./run test` and
-configured as blocking in `.github/workflows/ci.yml`, which has not been
-executed by a CI runner. Its failure-capable control changed only the Python `__version__` to
+configured as blocking in `.github/workflows/ci.yml`, which had not been
+executed by a CI runner at R1; v0.10/G2 later captured the first execution. Its
+failure-capable control changed only the Python `__version__` to
 0.8.1: the command exited 1 and named
 `shell/intel_shell/__init__.py: 0.8.1` as disagreeing with the Rust package,
 then passed again after byte-for-byte restoration. `Cargo.lock` changed only
@@ -1298,7 +1362,8 @@ checks. Both protected artifact hashes remained exact.
 
 **C1 is complete (measured 2026-07-24).** Python **3.11.4** is now the
 documented shell/harness floor. `.github/workflows/ci.yml` configures a blocking
-3.11/3.12 shell matrix, but no CI runner execution has been observed. Its floor
+3.11/3.12 shell matrix; none had run at C1, and v0.10/G2 later observed both
+lanes on the first real runner execution. Its floor
 lane is configured to byte-compile every Python file under `tools/` and
 `shell/` with `python3.11 -m py_compile` and runs ShellCheck over `run`. The
 failure-capable control planted a PEP 701 f-string in
@@ -1339,7 +1404,7 @@ both protected hashes remained exact.
 - **Harness bug 3 — `down` can't reach the orphan.** A pidfile only tracks servers we started. **Fixed:** `cmd_down` now reports a still-held port after cleanup, with the PID and kill command. (Also: `_start_mock_llm` still used `setsid`; switched to `nohup` — another latent macOS break.)
 - **Test-isolation bug — parallel temp-DB collision.** `tmp_db()` named the per-test SQLite file from `SystemTime` nanos only; two parallel test threads in the same tick got the same path and clobbered each other (seen as a "fresh" DB already holding another test's rows — `new=4, fetched=7`). **Fixed:** a process-global atomic counter + pid in the name guarantees a distinct path per call. `cargo test` is now deterministic under default parallelism (verified across repeated runs).
 
-**On the "0 warnings" claim — B0 correction and T6 resolution, measured 2026-07-20.** "0 warnings" originally meant *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. B0 proved the prior claim that the test module had been moved last was **false**: clippy exited 101 on `clippy::items_after_test_module`, and fmt found diffs in 13 Rust files. T6 moved the SQLite vector layer before the test module and applied rustfmt in the separate lint-fix commit `097b017`. After that fix, `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check` both exit 0. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. The unexecuted workflow configures lint as blocking (`continue-on-error: false`).
+**On the "0 warnings" claim — B0 correction and T6 resolution, measured 2026-07-20.** "0 warnings" originally meant *rustc* warnings (`-D warnings` on `cargo check`), and that remains true. B0 proved the prior claim that the test module had been moved last was **false**: clippy exited 101 on `clippy::items_after_test_module`, and fmt found diffs in 13 Rust files. T6 moved the SQLite vector layer before the test module and applied rustfmt in the separate lint-fix commit `097b017`. After that fix, `cargo clippy --workspace --locked --all-targets -- -D warnings` and `cargo fmt --all -- --check` both exit 0. The two `clippy::unnecessary_map_or` crate-level allows remain deliberate in `intel-compliance` and `arxiv_oai`: the suggested `Option::is_none_or` is Rust 1.82+, above the offline 1.78 floor. The workflow configures lint as blocking (`continue-on-error: false`); v0.10/G2 first observed that runner job pass.
 
 **T2 interruption-resume is complete on the live wire (2026-07-23).** The original 2026-07-20 capped run cleared its token because `complete()` ran after the cap. A strengthened fake reproduced that failure before the repair; injected commit and SQLite-trigger failures then proved the atomic page guard can fail and rolls documents and cursor back together. On 2026-07-23, live run 1 fetched 1,300 real arXiv records and durably stored token `verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-21%26until%3D2026-07-22%26set%3Dcs%26skip%3D522`. After stopping and restarting `cored`, live run 2's first request carried that exact token and added the next 1,300 records; its next token advanced to `from%3D2026-07-22...skip%3D88`. Both runs reported `ok=true`, 0 parse errors, and a real `Unavailable(allow)` robots disposition with 0.500s effective crawl delay. No 503/Retry-After was observed. `data/core.db` remained byte-identical.
 
@@ -1363,11 +1428,11 @@ both protected hashes remained exact.
 
 1. **`robots.txt` had never been read.** The gate did correct RFC-9309 path matching against **policy we configured, not policy we fetched** — so "robots-compliant" meant "compliant with a policy we wrote ourselves," which is not a claim worth making. **T2 closes this** (§2.11).
 2. **"Rust 1.75 + `--locked` still builds the offline path" (v0.6.2, §5) was FALSE from the moment it was written — and the obvious fix is a trap.** v0.6.2 committed `Cargo.lock` at **format v4**, which cargo *cannot parse* before **1.78**; `cargo +1.75 check --locked` dies at the lockfile, long before it reaches any dependency's MSRV. The claim had simply never been run. T4's MSRV job is what caught it.
-   The tempting fix — re-encode the lock as v3 — **does work** (measured: 1.75 builds, 75 tests green, resolution byte-identical). **It is also not stable:** cargo 1.91 rewrites the lock back to v4 the moment it has to modify it, so v3 is a hand-edit that the next `cargo add` silently undoes. *A floor that holds only until someone touches the lock is not a floor.* **So v0.7 declares the floor that is true AND sustainable: offline ≥ 1.78** (measured on 1.75/1.76/1.78/1.91); the workflow configures that floor, and equivalent local commands have passed, but no CI runner execution is recorded. The lesson generalizes twice over: *the lockfile format is part of the MSRV surface, not just the dependency graph* — and *a claimed property that nothing executes is not a property.* This is the **third** time this project has been bitten by that exact failure (`--features net` unbuilt for two cycles; robots policy never fetched; this).
+   The tempting fix — re-encode the lock as v3 — **does work** (measured: 1.75 builds, 75 tests green, resolution byte-identical). **It is also not stable:** cargo 1.91 rewrites the lock back to v4 the moment it has to modify it, so v3 is a hand-edit that the next `cargo add` silently undoes. *A floor that holds only until someone touches the lock is not a floor.* **So v0.7 declares the floor that is true AND sustainable: offline ≥ 1.78** (measured on 1.75/1.76/1.78/1.91). At v0.7 this was workflow configuration plus local evidence only; v0.10/G2 later observed the Rust 1.78 runner job pass. The lesson generalizes twice over: *the lockfile format is part of the MSRV surface, not just the dependency graph* — and *a claimed property that nothing executes is not a property.* This is the **third** time this project has been bitten by that exact failure (`--features net` unbuilt for two cycles; robots policy never fetched; this).
 
 **What changed in v0.7:**
 - **T2 — real `robots.txt` discovery (§2.11).** `RobotsGate::parse()` (a zero-dependency RFC-9309 parser: UA-group selection, `Allow`/`Disallow`, wildcards, `$`, `Crawl-delay`), plus `RobotsCache` — per-origin, TTL'd, bounded, **fail-closed**. `texting_robots` was evaluated and **skipped** (§6b); the hand-rolled parser was then proven equivalent to it across **368 verdicts on 16 robots.txt bodies, 0 divergences**.
-- **T4 — CI configuration (`.github/workflows/ci.yml`; no runner evidence).** Five jobs are configured: `core` (locked, `-D warnings`), **`net`** (the path that sat broken for two cycles precisely because nothing built it), **`msrv`** (the 1.78 floor; equivalent local execution caught the false claim above), `shell`, and a scheduled **`drift`** reporter that would run `cargo update --dry-run` and dump every declared `rust-version` in the resolved graph. None has been observed on a CI runner.
+- **T4 — CI configuration (`.github/workflows/ci.yml`; no runner evidence at v0.7).** Five jobs were configured: `core` (locked, `-D warnings`), **`net`** (the path that sat broken for two cycles precisely because nothing built it), **`msrv`** (the 1.78 floor; equivalent local execution caught the false claim above), `shell`, and a scheduled **`drift`** reporter. v0.10/G2 later observed the first push run: core, net, MSRV, Python 3.12, and golden passed; Python 3.11 exposed the ShellCheck-version divergence; scheduled drift was skipped.
 - **T5 — LSH banding: SKIPPED, and the design note it came from is now corrected (§6c).** Built, measured, rejected. It is 246× *slower* than the scan it replaces.
 
 ## 1. Architecture
@@ -1436,7 +1501,7 @@ So the disposition now lives on the **source**, threaded `SourceCfg.robots_on_mi
 | **1.91.1 (pinned)** | **0 warnings, 75 green** | ✅ **clean, `--locked`, `-D warnings`** |
 
 - **The v0.6.2 lockfile bug, measured.** Against the committed **v4** lock, cargo **1.75 and 1.76 cannot even parse it** — v4 needs cargo ≥ 1.78. v0.6.2's "verified green on 1.75" was therefore impossible; it had never been run.
-- **And the fix that looked obvious is a trap, which is worth more than the fix.** Re-encoding the lock to **v3** genuinely restores 1.75 (verified: **75 green**, and the package set diffed **byte-identical** — same names, versions, checksums, so it is a format change and not a resolution change). But **cargo 1.91 rewrites the lock back to v4 as soon as it modifies it** — confirmed here by bumping `cored`'s version and watching a plain `cargo check` silently re-emit v4. v3 is a hand-edit with a half-life. **We therefore ship the sustainable floor (1.78) rather than the flattering one (1.75)**; local commands enforce it today, and the unexecuted workflow is configured to do the same.
+- **And the fix that looked obvious is a trap, which is worth more than the fix.** Re-encoding the lock to **v3** genuinely restores 1.75 (verified: **75 green**, and the package set diffed **byte-identical** — same names, versions, checksums, so it is a format change and not a resolution change). But **cargo 1.91 rewrites the lock back to v4 as soon as it modifies it** — confirmed here by bumping `cored`'s version and watching a plain `cargo check` silently re-emit v4. v3 is a hand-edit with a half-life. **We therefore ship the sustainable floor (1.78) rather than the flattering one (1.75)**; local commands enforce it, and v0.10/G2 observed the configured runner job pass.
 - `cargo check --workspace --locked --all-targets` with `RUSTFLAGS=-D warnings`: **0 warnings**. Same for `-p cored --features net --locked --all-targets`.
 - `cargo test`: **75 green** — compliance **26** (was 7), ingest **14** (was 7), core 7, cored 7, registry 4, retrieve 3, extract 3, enrich 2, store 9. `cargo test -p intel-ingest --features net --locked`: 14 green.
 - `pytest shell/tests`: **69 green**, unchanged — T2 is entirely below the seam, and the shell suite still needs no Rust toolchain.
@@ -1462,12 +1527,12 @@ verified locally; no CI runner evidence** · **T5 built, measured, and rejected*
 
 1. **The live arXiv harvest** (T1 above), the moment a box with egress exists. Everything is ready; nothing else can falsify the paging.
 2. ~~**Persist the SimHash fingerprint.**~~ **COMPLETED in v0.8/T3.** The column and ingest write already existed when the step began, but `/view` still recomputed every fingerprint and no pre-column migration existed. Dedup now accepts persisted fingerprints, document updates refresh them, and the backfill was verified over a disposable pre-column copy of all 1,764 live rows with zero fingerprint or canonical-id mismatches. The golden result did not move.
-3. ~~**Turn on `clippy` + `rustfmt` in CI.**~~ **CONFIGURED in v0.8/T6; no runner evidence.** The job was not commented out; it was report-only, and B0 measured one clippy diagnostic plus 13 files of fmt drift. T6 fixed those findings in `097b017`, verified both commands clean locally, then configured the job as blocking in the separate gate commit. No CI runner execution is recorded.
+3. ~~**Turn on `clippy` + `rustfmt` in CI.**~~ **CONFIGURED in v0.8/T6; first observed in v0.10/G2.** The job was not commented out; it was report-only, and B0 measured one clippy diagnostic plus 13 files of fmt drift. T6 fixed those findings in `097b017`, verified both commands clean locally, then configured the job as blocking in the separate gate commit. G2's first real runner execution observed the blocking job pass in 44 seconds.
 
 ## 5. Known limitations (documented, not hidden)
 
 - ~~**Robots policy is configured, not discovered.**~~ **RESOLVED in v0.7 (T2)** — see §2.11 and §6b.
-- ~~**"Rust 1.75 + `--locked` still builds the offline path."**~~ **FALSE, and it is the most important correction in this document.** The committed `Cargo.lock` is format **v4**, unparseable by cargo before **1.78**, so the claim could never have held — it had simply never been run. **The offline floor is now declared as 1.78**, measured locally across 1.75/1.76/1.78/1.91; the unexecuted workflow configures an `msrv` job for the same floor. Re-encoding the lock to v3 *does* buy back 1.75 (75 tests green, resolution byte-identical) but cargo ≥ 1.78 rewrites it to v4 on the next lock modification, so that floor cannot be held. **The general lesson: a claimed property that nothing executes is not a property, it is a wish** — the same failure that let `--features net` sit broken for two cycles and that let "robots-compliant" mean "compliant with a policy we wrote ourselves."
+- ~~**"Rust 1.75 + `--locked` still builds the offline path."**~~ **FALSE, and it is the most important correction in this document.** The committed `Cargo.lock` is format **v4**, unparseable by cargo before **1.78**, so the claim could never have held — it had simply never been run. **The offline floor is now declared as 1.78**, measured locally across 1.75/1.76/1.78/1.91 and observed on the v0.10/G2 runner as Rust 1.78.0. Re-encoding the lock to v3 *does* buy back 1.75 (75 tests green, resolution byte-identical) but cargo ≥ 1.78 rewrites it to v4 on the next lock modification, so that floor cannot be held. **The general lesson: a claimed property that nothing executes is not a property, it is a wish** — the same failure that let `--features net` sit broken for two cycles and that let "robots-compliant" mean "compliant with a policy we wrote ourselves."
 - **The `--features net` floor is 1.86, and the error lies about why.** `icu_* 2.2.0` (via `idna_adapter`) declare `rust-version = 1.86`; edition2024 stabilizing in 1.85 is necessary but **not** sufficient. Worse, the failure surfaces at *dependency-download* time as `error: failed to download replaced source registry 'crates-io'`, which sends you looking at the registry instead of at MSRVs. Reproduced again this cycle on 1.75.
 - **Correction to a v0.5 note** (unchanged from v0.6): `/v1/ask`'s `context_suppressed` names `techwire::tw-004`, not `osdaily::osd-004`, for the question actually tested. Suppression at context assembly is **rank-aware by design**, so which copy of a syndicated story is dropped depends on which one the query ranked higher. Treat *"one of the pair is suppressed"* as the golden, not a specific id.
 - **`Day` values changed scale (T9.3).** `published_day` is days-since-1970. Pre-v0.6 archives spanning a month boundary would need a rebuild — **checked in v0.7: no such archive exists**, so no tool was built (T8.3).
@@ -1810,7 +1875,7 @@ handoff.
 - `cargo fmt --all -- --check`: exit 0. `.github/workflows/ci.yml` was changed
   to configure the lint job as blocking with `continue-on-error: false`; the
   prior report-only and "commented out" descriptions have been corrected. No
-  CI runner execution is recorded.
+  runner had executed it at T6; v0.10/G2 later observed the job pass.
 - Full regression matrix after the lint fix: warning-denied workspace check
   exit 0; **80 workspace tests passed**; warning-denied net check exit 0; **17
   net ingest tests passed**; shell **69 passed** with the existing single
@@ -2295,8 +2360,8 @@ handoff.
 - `AGENTS.md §5.5` now requires the command rather than a hand-reimplemented
   ritual, and §6 names its assertions as authoritative over the human summary.
   `.github/workflows/ci.yml` configures a separate `golden E2E (blocking)`
-  push/PR job with `continue-on-error: false`; no CI runner execution is
-  recorded.
+  push/PR job with `continue-on-error: false`; no runner had executed it at G1,
+  and v0.10/G2 later observed it pass in 76 seconds.
 - Final matrix: warning-denied offline and net checks passed; **90 workspace
   tests**, **20 net ingest tests**, and **84 shell tests** passed (the existing
   one Starlette warning remains); clippy, fmt, `bash -n run`, Python bytecode
