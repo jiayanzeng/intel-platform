@@ -180,7 +180,7 @@ refuse_foreign_port() {
     red "  Find it:  lsof -iTCP:$CORE_PORT -sTCP:LISTEN -n -P"
     red "  Stop it:  kill \$(lsof -tiTCP:$CORE_PORT -sTCP:LISTEN)"
   fi
-  red "  Or use another port:  CORE_PORT=8790 ./run ${1:-harvest-arxiv}"
+  red "  Or use another port:  CORE_PORT=8790 ./run harvest-arxiv"
 }
 
 # --------------------------------------------------------------------------
@@ -243,7 +243,9 @@ cmd_down() {
   for svc in cored llm api; do
     if [ -f "$RUNDIR/$svc.pid" ]; then
       p=$(cat "$RUNDIR/$svc.pid" 2>/dev/null || true)
-      [ -n "${p:-}" ] && kill "$p" 2>/dev/null || true
+      if [ -n "${p:-}" ]; then
+        kill "$p" 2>/dev/null || true
+      fi
       rm -f "$RUNDIR/$svc.pid"
     fi
   done
