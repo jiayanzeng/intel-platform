@@ -820,3 +820,65 @@ new dated entries.
   ./run golden
   ./run verify-artifacts
   ```
+
+### 2026-07-25 · G2-RUNNER — first observed runner exposed lint divergence
+
+- owner: Codex
+- commit: 4244a187683c0f078548c1d2e1727d1d0a8f1114
+- result: IN PROGRESS. The operator-approved remote, first main push, complete
+  per-job observation, job-set comparison, and failure-capable version
+  mismatch control are recorded. G2 remains unchecked until the runner
+  ShellCheck finding is corrected separately and a subsequent main run is
+  observed.
+- first runner: GitHub Actions run
+  `30142540466` executed main commit
+  `85c78ea0cdf3eb35774c87e4f5c95ccd93dc7adc` for 79 seconds and concluded
+  failure. Core, clippy/fmt, net, Rust 1.78, Python 3.12, and golden passed;
+  Python 3.11 failed in 5 seconds at `shellcheck ./run`; scheduled drift was
+  skipped on the push event.
+- measured divergence: runner ShellCheck 0.9.0 emitted SC2120 at `run:171`,
+  SC2119 at `run:193`, and SC2015 at `run:246`; local ShellCheck 0.11.0 passed
+  the same file. The runner also measured Rust 1.91.1, Rust 1.78.0, Python
+  3.11.15, Python 3.12.13, and the Node.js 24 forced action runtime. This
+  measurement commit deliberately contains no lint fix.
+- job-set comparison: PASS as a finding, not equivalence. Local CI has 18
+  ordered checks; GitHub has seven executable push/PR job nodes plus one
+  scheduled-only drift node. The report records every grouping and names the
+  four local-only gates and three runner-only checks.
+- failure-capable control: PASS. Temporary commit
+  `b7ed500dc123bdbfd4d7a392bdcb558d508ea85c` changed only the Python version
+  source to 9.9.9. PR #1 triggered run `30142678150`; both shell matrix lanes
+  failed `release version consistency` and named the planted file/value, while
+  core, lint, net, MSRV, and golden passed.
+- cleanup: PASS. PR #1 is closed unmerged. The exact temporary branch was
+  deleted locally and remotely. Remote `main` remained at `85c78ea`; annotated
+  `v0.9.0` tag object `548ffdf` still dereferences to release commit `4c59db2`.
+- evidence: `evidence/v0.10/ci-runner/report.json`, SHA-256
+  `9cb1a74339313f7e36c33f61f0dd20654e31d5c1aa7103878763a31050d3c4b5`.
+- golden-E2E delta: none. The first sandboxed local attempt could not bind
+  loopback and made no assertions; the permitted rerun passed 11/11. The first
+  real runner's golden job also passed in 76 seconds.
+- protected artifact delta: none. Direct verification passed 2/2 at the exact
+  recorded hashes.
+- exact commands and external observations:
+
+  ```bash
+  git remote add origin git@github.com:jiayanzeng/intel-platform.git
+  git ls-remote --symref origin HEAD
+  git push -u origin main
+  git push origin v0.9.0
+  ./run version-check
+  git push -u origin codex/g2-version-mismatch-control
+  git push origin --delete codex/g2-version-mismatch-control
+  git branch -D codex/g2-version-mismatch-control
+  git ls-remote origin refs/heads/main \
+    refs/heads/codex/g2-version-mismatch-control \
+    refs/tags/v0.9.0 'refs/tags/v0.9.0^{}'
+  ./run golden
+  ./run verify-artifacts
+  ```
+
+  GitHub public Actions API and authenticated job pages supplied run ids,
+  terminal conclusions, per-job timestamps, exact toolchain versions, and the
+  ShellCheck/version-check diagnostics. The authenticated GitHub page created
+  and closed PR #1 under the operator's explicit approval.
