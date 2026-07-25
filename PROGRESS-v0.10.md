@@ -661,3 +661,63 @@ new dated entries.
   ./run checklist-audit
   ./run progress-check
   ```
+
+### 2026-07-25 · X1-GATE — battery declared; LAN endpoint unreachable
+
+- owner: Codex
+- commit: 03c2420dc0f4e0c676afa75b25beb84b1a307330
+- result: DEFERRED before real-model execution. The five-shape adversarial
+  battery is declared and failure-capable, but zero real attempts ran because
+  the configured LAN chat host was unreachable. X1 remains unchecked.
+- gate: TRIPPED. The first provider probe correctly refused to proceed without
+  an expected embedding dimension. Re-running with the prior wire-measured
+  `LLM_EMBED_EXPECTED_DIMENSION=768` resolved the redacted chat and embedding
+  roles, then the chat health request failed with
+  `ConnectError: [Errno 65] No route to host` and `TRANSPORT BLOCKED`. The
+  embedding role and chat-completion route were not reached.
+- classification: no aggregate exists. Zero real attempts is neither
+  `NOT EXERCISED` nor a pass. No per-attempt report was created, and no mock
+  result was substituted for the unreachable model.
+- declared battery: the verifier now nests verbatim quotation, sentence
+  continuation, translation round-trip, formatted extraction, and chunked
+  reconstruction across every IndexOnly row discovered from the fresh fixture
+  corpus. Each attempt records only model identity, endpoint role, target and
+  context ids, shape, latency, status, overlap booleans, violation ids, and
+  outcome. Prompts, raw responses, credentials, endpoint URLs, and tunnel
+  aliases are excluded from the evidence schema.
+- failure-capable controls: PASS as harness evidence only. The executable
+  classifier control used `tools/mock_openai.py --leak` output plus a simulated
+  core refusal to produce `GUARD FIRED`, a paraphrase double to produce
+  `NOT EXERCISED`, and a deliberately unattested path to produce `LEAK`.
+  Twelve focused verifier tests passed.
+- regression acceptance: PASS. The exact harness tree passed 118 shell tests
+  under both Python 3.11.4 and 3.12.13, with the same one third-party
+  Starlette warning; `./run ci-local` passed 18/18.
+- golden-E2E delta: none. Local CI and the final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. Local CI and the final direct
+  `./run verify-artifacts` passed 2/2 at the exact protected hashes.
+- unblock condition: make both configured model roles reachable, retain the
+  768-dimensional embedding expectation, then run
+  `./run verify-llm --adversarial-report
+  evidence/v0.10/real-model-adversarial/report.json`. A `LEAK` remains an
+  immediate HC1 hard stop.
+- exact commands:
+
+  ```bash
+  PYTHONPATH=shell .venv/bin/python -m pytest \
+    shell/tests/test_verify_llm.py -q
+  PYTHONPATH=shell .venv/bin/python \
+    tools/verify_llm.py --classifier-control
+  ./run probe-providers
+  LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
+  PYTHONPATH=shell .venv/bin/python -m pytest shell/tests -q
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  python3 -m py_compile tools/verify_llm.py \
+    shell/tests/test_verify_llm.py
+  shellcheck run
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ./run progress-check
+  ```
