@@ -263,3 +263,60 @@ new dated entries.
   ./run golden
   ./run verify-artifacts
   ```
+
+### 2026-07-25 · A1 — every checked task resolves to a real commit
+
+- owner: Codex
+- commit: ce9d8932f3d0e74bcc254fa83cc7a102722aad00
+- result: PASS. `./run checklist-audit` now provides a blocking
+  box-to-progress-to-Git proof for every checked execution task.
+- gate: PASS. All 31 legacy narrative commit values were recoverable from Git;
+  no exemption was needed, guessed, or fabricated.
+- historical acceptance: PASS. `PROGRESS-v0.8.md` retains every original entry
+  and appends 31 runbook-qualified, hash-only corrections: 12 for v0.8, 10 for
+  v0.8.1, and nine for v0.8.2. The nine already-valid closed-cycle entries
+  remain unchanged.
+- audit acceptance: PASS. Before A1's required two-commit close, the production
+  audit reported 43 checked, 43 matched, 43 resolved, zero exemptions. After
+  this append supplied A1's real implementation hash, it reported **44/44/44**
+  with zero exemptions.
+- reporting acceptance: PASS. Every execution runbook reports its checked,
+  matched, resolved, and exemption counts plus its derived progress log.
+- exemption acceptance: PASS. The dated exemption registry is empty. The
+  parser validates its schema and rejects malformed, duplicate, orphan, and
+  provably false exemptions.
+- failure-capable controls: PASS 3/3. Disposable copies under
+  `/private/tmp/intel-checklist-controls.i7Fc47` rejected and named a checked
+  D1 box without progress, a well-formed 40-zero nonexistent commit, and a
+  false exemption for resolvable v0.9 B0.
+- local-CI acceptance: PASS. `./run ci-local` passed all 18/18 jobs, including
+  checked-task evidence as the new blocking job, 98 workspace tests, 20 net
+  tests, and 105 Python 3.11 shell tests.
+- golden-E2E delta: none. The local-CI run and final direct `./run golden` each
+  passed all 11/11 anchors.
+- protected artifact delta: none. The local-CI run and final direct
+  `./run verify-artifacts` each passed 2/2 with exact hashes.
+- exact commands:
+
+  ```bash
+  git log --all --format='%H%x09%s' -G \
+    '^- \[x\] \*\*<task-id>(\*\*| —)' -- \
+    TASKS-v0.8-EXECUTION.md
+  ./run checklist-audit
+  python3 tools/progress_check.py PROGRESS-v0.8.md
+  python3.11 -m py_compile tools/checklist_audit.py
+  shellcheck ./run
+  bash -n ./run
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-checklist-controls.i7Fc47/missing-entry/run \
+    checklist-audit
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-checklist-controls.i7Fc47/nonexistent-hash/run \
+    checklist-audit
+  GIT_DIR=/Users/yzjia/intel-platform/.git \
+    /private/tmp/intel-checklist-controls.i7Fc47/false-exemption/run \
+    checklist-audit
+  ./run ci-local
+  ./run golden
+  ./run verify-artifacts
+  ```
