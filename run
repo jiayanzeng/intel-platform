@@ -264,6 +264,10 @@ cmd_cycle_check() {
   python3 -m tools.cycle_check
 }
 
+cmd_checklist_audit() {
+  python3 tools/checklist_audit.py
+}
+
 cmd_verify_fingerprints() {
   need_cargo
   if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
@@ -389,6 +393,7 @@ cmd_ci_local() {
 
   ci_local_job "release version consistency" cmd_version_check || return $?
   ci_local_job "active cycle consistency" cmd_cycle_check || return $?
+  ci_local_job "checked-task evidence" cmd_checklist_audit || return $?
   ci_local_job "Python 3.11 floor byte-compile" ci_floor_compile || return $?
   ci_local_job "ShellCheck presence and harness lint" ci_shellcheck || return $?
   ci_local_job "workspace check (-D warnings)" ci_workspace_check || return $?
@@ -870,6 +875,8 @@ intel-platform — ./run <command>
     ci-local       execute the configured CI matrix locally, stopping on failure
     version-check  reconcile release files and an exact HEAD release tag
     cycle-check    enforce active/open and historical/closed cycle identity
+    checklist-audit
+                   resolve every checked task to progress and a real commit
     progress-check validate the newest append-only progress entry
     verify-fingerprints <db> [reference-db]
                    report missing/stale fingerprints without repairing them
@@ -919,6 +926,7 @@ case "$cmd" in
   ci-local)      cmd_ci_local "$@" ;;
   version-check) cmd_version_check "$@" ;;
   cycle-check)   cmd_cycle_check "$@" ;;
+  checklist-audit) cmd_checklist_audit "$@" ;;
   progress-check) cmd_progress_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;

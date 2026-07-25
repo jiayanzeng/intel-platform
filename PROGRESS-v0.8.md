@@ -1116,3 +1116,227 @@ correct them with a new dated entry.
 - notes / gate: C2 is complete on the local-only branch. The workflow remains
   configured but unobserved on a CI runner; `./run ci-local` is the execution
   evidence.
+
+## v0.10 A1 legacy commit corrections — 2026-07-25
+
+The 31 entries below append hash-only identities for checked tasks whose
+original `- commit:` values were narrative. No original progress entry was
+edited. Each hash was recovered from Git as the commit that introduced the
+checked disposition in the named runbook.
+
+### 2026-07-25 · B0 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: b5b3179eab4aad297dc4984d6625acf56796dfe6
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T2 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 059738677e375c24cc312d59b7d45e7bf6327e6c
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · H1 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 755ca787be001690b509b31afde6e60a1cc65b49
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T6 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 2d7439ef6f9045063108c87aebf0b2a1fdafdea5
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T1 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: f61c01a80ad1cde914907dc6ed646f99bfc2195a
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T5 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: ca4c0b7cc991de69419de5a709435b7ec6a620fc
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T3 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 3db29d3523509d368117ed7279d5101e9e907ce1
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 3f88b8577fde8d6d9706030371cbca5ffa877f3a
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T7 — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 08c1e2c2f2065a10f3b45a7dd3f3dce9f37fc4cc
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4C — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 1302c7b413a6040e2a64f929ba46b16d9ba3161c
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4W — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 29457e5a32511dd346be3f9d5ebd4946e55b8daf
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4H — commit correction for v0.8
+
+- owner: Codex
+- runbook: `TASKS-v0.8-EXECUTION.md`
+- commit: 6d42a757cc7d8a58ec8f8cc6a7bbc617de2f3209
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · B0.1 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: e616957680a280a13aa275f0759f4cabd82dfa58
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · G1 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 12aecdbb765066839d87aea8d49526ccefffdf77
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · P1 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 13205b75fb5862d0b48a2b29d0304342d59d5d7e
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · E1 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 47bbf0f73077537142fbfef7c6e58e90877ee10b
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4L — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 39bc59e837e1597723186f48cbdc262d2a3e5639
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4P — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 38305d34d19602535daab19832c7868f9f5a9457
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · T4 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 6cf2e618dec69a5b293337efd5d8b024e9e5b5fd
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · R1 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: bfc8c5af85734583f966ee70d2ec521155432205
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · C1 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: 091a20310b6b2a8da65056c5308ff59fd750cc2c
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · v0.9 — commit correction for v0.8.1
+
+- owner: Codex
+- runbook: `TASKS-v0.8.1-EXECUTION.md`
+- commit: e212a7cdf269c171e1db4fb06002090a0939a95a
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · B0.2 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 5dd11ded5a3d55582c1333e3c82fc8b43218758d
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · D0 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 116c3500b42cbf443031afa1c3d8fd83336dd931
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · A1 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 2f2e82e5acdc754dc93a6908516e9f6293dd17dd
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · A2 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 51a1464a54c83bb0d8770956e0ab9b7a717ed809
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · A3 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 040f89d14721b86e4823e877a2f0e406431e9b88
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · A4 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 3228479a6c4a0cfc40e634ba8289c49b1cd7b74c
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · A5 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 008d50f956b1566a0c6bfc8ae816069db2504bf9
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · A6 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: 604709fc6d7a22b75e4e73f3e370ca62ddc24f38
+- correction: supersedes the original narrative commit field for audit.
+
+### 2026-07-25 · D1 — commit correction for v0.8.2
+
+- owner: Codex
+- runbook: `TASKS-v0.8.2-EXECUTION.md`
+- commit: e15dd5d4a5c270aa047dc5e5db8c57ca89dbdfc6
+- correction: supersedes the original narrative commit field for audit.

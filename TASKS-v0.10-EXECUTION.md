@@ -714,7 +714,7 @@ evidence record without interpreting the cycle name.
 - [x] **B0** — entering state re-measured; all nine defects confirmed or refuted
 - [x] **D1A** — historical cycle closure bootstrapped before the strict auditor
 - [x] **D0** — active cycle declared once and enforced by `./run cycle-check`
-- [ ] **A1** — every checked box resolves to a progress entry and a real commit
+- [x] **A1** — every checked box resolves to a progress entry and a real commit
 - [ ] **D1** — v0.9 provenance closed; v0.6/v0.7 retired to historical status
 - [ ] **A2** — protected-artifact admission is failure-capable
 - [ ] **C1** — both Python lanes pinned by constraints and reproduced exactly
