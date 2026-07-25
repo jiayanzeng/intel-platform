@@ -722,7 +722,7 @@ evidence record without interpreting the cycle name.
   every mutation class; nothing materialized
 - [x] **D5** — seven deferral triggers re-audited from measurement
 - [x] **X1** — real-model adversarial battery executed and honestly classified
-- [ ] **G2** — one observed CI-runner execution, or a dated decline
+- [x] **G2** — one observed CI-runner execution, or a dated decline
 - [ ] **R3** — release disposition recorded and, if applicable, tagged
 
 ## Standing prohibitions

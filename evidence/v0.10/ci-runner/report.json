@@ -227,6 +227,124 @@
       ]
     }
   },
+  "compatibility_correction": {
+    "commit": "3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0",
+    "changes": [
+      {
+        "path": "run",
+        "finding": "ShellCheck 0.9.0 SC2120/SC2119",
+        "correction": "remove the unused refuse_foreign_port argument interface and print the fixed harvest-arxiv alternative"
+      },
+      {
+        "path": "run",
+        "finding": "ShellCheck 0.9.0 SC2015",
+        "correction": "replace the A && B || C process cleanup expression with an explicit if"
+      }
+    ],
+    "local_verification": {
+      "shellcheck_version": "0.11.0",
+      "shellcheck": "success",
+      "bash_n": "success",
+      "down": "success",
+      "ci_local": "18/18"
+    },
+    "post_fix_run": {
+      "id": 30143171409,
+      "run_number": 3,
+      "url": "https://github.com/jiayanzeng/intel-platform/actions/runs/30143171409",
+      "event": "push",
+      "head_branch": "main",
+      "head_sha": "3648918b8ddcbab04f2a2057d8cc0f0552c3a6d0",
+      "created_at": "2026-07-25T03:57:43Z",
+      "started_at": "2026-07-25T03:57:43Z",
+      "completed_at": "2026-07-25T03:58:26Z",
+      "duration_seconds": 43,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 89640110151,
+          "name": "clippy + fmt (blocking)",
+          "runner_name": "GitHub Actions 1000001385",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:46Z",
+          "completed_at": "2026-07-25T03:58:06Z",
+          "duration_seconds": 20,
+          "conclusion": "success"
+        },
+        {
+          "id": 89640110154,
+          "name": "golden E2E (blocking)",
+          "runner_name": "GitHub Actions 1000001386",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:47Z",
+          "completed_at": "2026-07-25T03:58:23Z",
+          "duration_seconds": 36,
+          "conclusion": "success"
+        },
+        {
+          "id": 89640110167,
+          "name": "live-fetch path (--features net)",
+          "runner_name": "GitHub Actions 1000001387",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:46Z",
+          "completed_at": "2026-07-25T03:58:11Z",
+          "duration_seconds": 25,
+          "conclusion": "success"
+        },
+        {
+          "id": 89640110174,
+          "name": "MSRV floor (offline builds on 1.78)",
+          "runner_name": "GitHub Actions 1000001389",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:47Z",
+          "completed_at": "2026-07-25T03:58:26Z",
+          "duration_seconds": 39,
+          "conclusion": "success"
+        },
+        {
+          "id": 89640110176,
+          "name": "core (pinned toolchain)",
+          "runner_name": "GitHub Actions 1000001388",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:46Z",
+          "completed_at": "2026-07-25T03:58:13Z",
+          "duration_seconds": 27,
+          "conclusion": "success"
+        },
+        {
+          "id": 89640110180,
+          "name": "shell (Python 3.11)",
+          "runner_name": "GitHub Actions 1000001391",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:46Z",
+          "completed_at": "2026-07-25T03:58:10Z",
+          "duration_seconds": 24,
+          "conclusion": "success",
+          "verified_step": "shellcheck run harness"
+        },
+        {
+          "id": 89640110190,
+          "name": "shell (Python 3.12)",
+          "runner_name": "GitHub Actions 1000001390",
+          "runner_label": "ubuntu-latest",
+          "started_at": "2026-07-25T03:57:47Z",
+          "completed_at": "2026-07-25T03:58:14Z",
+          "duration_seconds": 27,
+          "conclusion": "success"
+        },
+        {
+          "id": 89640110336,
+          "name": "dependency drift (report only)",
+          "runner_name": null,
+          "runner_label": "ubuntu-latest",
+          "duration_seconds": 0,
+          "conclusion": "skipped",
+          "reason": "push event; job is scheduled-only"
+        }
+      ]
+    }
+  },
   "failure_control": {
     "pull_request": {
       "number": 1,
