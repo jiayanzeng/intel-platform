@@ -164,3 +164,41 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. Standalone `./run golden` passed 11/11.
 - protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
   exact recorded hashes.
+
+### 2026-07-26 · G-RUN — released-commit runner receipts captured
+
+- owner: Codex
+- commit: d5c2935ca8d20395728bb686b5e25f015eb59c0d
+- result: PASS with explicit operator approval. `main` was fast-forwarded,
+  the new workflow definition was manually dispatched against release commit
+  `45fa3d49860643fdb2595d82340e364d33566e7d`, and runner run
+  `30187058897` concluded success.
+- runner acceptance: PASS. Core 27s, lint 18s, net 20s, MSRV 35s, Python 3.11
+  24s, Python 3.12 22s, and golden 38s all passed; scheduled drift skipped as
+  designed. The run measured Ubuntu 24.04.4, Rust 1.91.1/1.78.0, Python
+  3.11.15/3.12.13, and ShellCheck 0.9.0.
+- receipt acceptance: PASS. Seven uploaded artifacts were downloaded to the
+  auditor's unchanged `evidence/ci-runs/*.json` input. Every receipt is
+  strict-field JSON with run id 30187058897, attempt 1, Linux, success, and
+  exact SHA `45fa3d49…`. The ancestry filter accepted 7/7, rejected zero, and
+  promoted the CI-runner row for the restated released-commit receipt trigger.
+- job-set comparison: PASS with explicit divergence. The runner executed seven
+  grouped nodes plus one skipped scheduled-only node; `./run ci-local` passed
+  eighteen finer-grained units. Cycle/checklist/progress and exact protected
+  database verification are local-only; Python 3.12, manifest-only checks, and
+  scheduled drift are runner-specific or separately grouped.
+- failure-capable control: PASS. Temporary commit
+  `8cceae90debaf7e730bebd7bd6c15183e32a6263` changed only the shell version
+  literal to 9.9.9. Runner run `30187207654` failed version consistency in
+  both Python lanes and named that exact value; both failure receipts still
+  uploaded and every non-shell executable job passed. The throwaway branch was
+  then deleted locally and remotely.
+- identity/cleanup acceptance: PASS. Local and remote main were equal at
+  `5bcabcb870a906b0b830bf3c8c391bbe3ced71b0` before this evidence commit.
+  Local and remote tag object `f70fd84ca0995088d2890096f3429bb878409979`
+  still dereferenced to release commit `45fa3d49…`; the control moved neither.
+  The prerequisite automatic main-push run `30187051942` also passed.
+- golden-E2E delta: none. The final `./run ci-local` passed 18/18 and included
+  golden 11/11.
+- protected artifact delta: none. The same local matrix verified both protected
+  databases 2/2 at their exact recorded hashes.
