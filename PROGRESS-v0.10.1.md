@@ -127,3 +127,40 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. Standalone `./run golden` passed 11/11.
 - protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
   exact recorded hashes.
+
+### 2026-07-26 · CIR — runner-produced, ancestry-checked CI receipts
+
+- owner: Codex
+- commit: 40778a4aae72e87d03f1370db5169092c989769b
+- result: PASS. Every configured workflow job now emits an `if: always()`
+  receipt and persists it as an uploaded artifact. The auditor counts only
+  well-formed receipts whose SHA is an ancestor of the audited HEAD, records
+  rejected candidates, and promotes the CI-runner row only for a nonzero
+  accepted count.
+- failure-capable controls: PASS. Before implementation, the targeted module
+  failed 3/7: no receipt-filter function existed for ancestor or foreign
+  history, and two Git-remote entries promoted a zero-receipt row. After
+  implementation the expanded module passed 8/8.
+- workflow acceptance: PASS as configuration, not execution. Static checks
+  counted seven receipt emit steps, seven upload persistence steps, seven
+  explicit checkout refs, and seven upload actions. The Python matrix has
+  distinct filenames/artifacts. Ruby parsed the YAML. `workflow_dispatch`
+  accepts an explicit audited SHA while receipts record actual checked-out
+  `git rev-parse HEAD`; no workflow was pushed or run.
+- auditor acceptance: PASS. The original direct
+  `evidence/ci-runs/*.json` glob is unchanged. Synthetic Git history accepted
+  an ancestor receipt and promoted, visibly rejected a sibling-branch receipt
+  and deferred, and kept
+  `workflow_configuration_counts_as_execution:false`.
+- trigger acceptance: PASS. The row now reads
+  `a runner execution receipt exists for the released commit`, ignores Git
+  remote/current-runner presence for disposition, and keys only on filtered
+  receipt count.
+- production local state: zero candidates, zero accepted, zero rejected, and
+  deferred under the restated trigger despite two remote entries. This is an
+  absence measurement, not a runner-execution claim.
+- shell acceptance: PASS. Python 3.11.4 and 3.12.13 each passed 129 tests with
+  one third-party Starlette warning. `py_compile` passed.
+- golden-E2E delta: none. Standalone `./run golden` passed 11/11.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
+  exact recorded hashes.
