@@ -65,3 +65,37 @@ Entries are append-only; corrections are new dated entries.
   exact anchor unchanged.
 - protected artifact delta: none. Both protected databases matched 2/2 and
   both v0.10.1 evidence reports printed `PIN MATCH`.
+
+### 2026-07-26 · RCPT-AUTH — CI-runner receipt contract authenticated
+
+- owner: Codex
+- commit: 2863d42ff31d5c964478bee1420df221d0dbab18
+- result: PASS. The structural guard retains ancestry and now requires the
+  exact released commit, case-insensitive `success`, and one
+  `run_id`/`run_attempt` with job counts `core=1`, `golden=1`, `lint=1`,
+  `msrv=1`, `net=1`, and `shell=2`.
+- failure-capable controls: PASS. The fail-before run produced the expected
+  seven failures / eight passes against the old guard and unattested
+  workflow. Pass-after synthetic tests reject a hand-authored non-release
+  ancestor, a failed conclusion, a partial matrix, and a two-run matrix; the
+  complete seven-receipt release matrix promotes.
+- authenticated tier: PASS as a wired, deliberately inert path. All seven
+  workflow jobs emit workflow/repository/event/checkout identity; explicit
+  `publish_evidence=true` signs each exact receipt and persists its bundle.
+  Authenticated mode verifies subject bytes, expected repository and workflow
+  signer, hosted-runner provenance, and exact released checkout. Missing and
+  invalid bundle controls each reject all seven receipts. No hosted bundle
+  was generated or accepted, so producer provenance remains unclaimed until
+  PUBLISH.
+- Python acceptance: PASS. The focused suite passed 18/18 with required
+  process/loopback permission; its corpus-free subset passed 17/17 under both
+  Python 3.11.4 and 3.12.13. Both full shell lanes passed 145/145 with the
+  pre-existing single Starlette deprecation warning.
+- workflow acceptance: PASS. The workflow parsed as YAML, contains seven
+  receipt emit/upload paths and seven conditional build-provenance actions,
+  and `git diff --check` passed.
+- golden-E2E delta: none. `./run golden` passed 11/11 with every named corpus,
+  duplicate, signal, rerun, entitlement, citation, snippet, and auth anchor
+  unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2 and
+  both v0.10.1 evidence reports printed `PIN MATCH`.
