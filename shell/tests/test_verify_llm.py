@@ -3,6 +3,7 @@
 import json
 
 import tools.verify_llm as verify_llm
+from intel_shell.config import Subscription
 from intel_shell.llm import LlmError
 from tools.verify_llm import (
     ADVERSARIAL_SHAPES,
@@ -145,6 +146,105 @@ def test_adversarial_aggregate_is_not_exercised_only_when_every_attempt_is() -> 
     assert _aggregate_adversarial_outcomes(
         [{"outcome": GUARD_FIRED}, {"outcome": LEAK}]
     ) == LEAK
+    assert verify_llm._adversarial_aggregate_status(
+        NOT_EXERCISED,
+        {
+            "outcome": GUARD_FIRED,
+            "valid_attempt": True,
+            "raw_overlap": True,
+            "public_overlap": False,
+            "violation_doc_ids": ["source::gated"],
+        },
+    ) == verify_llm.WARN
+
+
+def test_adversarial_aggregate_missing_positive_control_is_failure() -> None:
+    assert verify_llm._adversarial_aggregate_status(
+        NOT_EXERCISED,
+        None,
+    ) == verify_llm.FAIL
+    assert verify_llm._adversarial_aggregate_status(
+        NOT_EXERCISED,
+        {"outcome": NOT_EXERCISED},
+    ) == verify_llm.FAIL
+
+
+def test_gated_match_telemetry_reports_graduated_near_misses() -> None:
+    gated = " ".join(f"token{index}" for index in range(24))
+    answer = " ".join(f"token{index}" for index in range(5, 20))
+    telemetry = verify_llm._gated_match_telemetry(
+        answer,
+        [{"license": "IndexOnly", "body": gated}],
+    )
+
+    assert telemetry == {
+        "longest_common_gated_token_run": 15,
+        "matching_ngram_counts": {"8": 8, "12": 4, "16": 0},
+    }
+
+
+def test_real_path_positive_control_fires_the_deployed_handler() -> None:
+    gated = " ".join(f"gated{index}" for index in range(24)) + "."
+    target = {
+        "doc_id": "source::gated",
+        "sector": "science",
+        "title": "Gated source",
+        "body": gated,
+        "url": "https://example.test/gated",
+        "source_id": "source",
+        "day": "2026-07-26",
+        "license": "IndexOnly",
+        "authors": [],
+        "tags": [],
+    }
+
+    class CoreDouble:
+        def retrieve(self, *args, **kwargs) -> dict:
+            return {
+                "bm25": [target["doc_id"]],
+                "vector": [target["doc_id"]],
+                "fused": [target["doc_id"]],
+                "notes": [],
+                "context": [target],
+                "suppressed": [],
+            }
+
+        def docs(self, ids: list[str]) -> list[dict]:
+            return [target] if target["doc_id"] in ids else []
+
+        def attest(self, answer: str, ids: list[str]) -> dict:
+            assert ids == [target["doc_id"]]
+            assert gated.rstrip(".") in answer
+            return {
+                "clean_answer": ATTEST_REFUSAL,
+                "violations": [{"doc_id": target["doc_id"]}],
+            }
+
+    class EmbedDouble:
+        model = "embed-model"
+
+        def embed(self, texts: list[str]) -> list[list[float]]:
+            return [[0.0, 1.0] for _ in texts]
+
+    control = verify_llm._run_real_path_positive_control(
+        core=CoreDouble(),
+        subscriptions=[
+            Subscription(
+                client="acme-research",
+                sectors=("science", "technology"),
+                api_key="ak_acme_7f3d9c",
+            )
+        ],
+        embed=EmbedDouble(),
+        gated_docs=[target],
+    )
+
+    assert control["outcome"] == GUARD_FIRED
+    assert control["model_completed"] is True
+    assert control["target_in_context"] is True
+    assert control["raw_overlap"] is True
+    assert control["public_overlap"] is False
+    assert control["gated_match_telemetry"]["matching_ngram_counts"]["16"] > 0
 
 
 def test_classifier_control_demonstrates_all_three_values(capsys) -> None:

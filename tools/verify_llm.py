@@ -44,7 +44,7 @@ ATTEST_NGRAM = 16
 ATTEST_REFUSAL = (
     "Answer withheld because it reproduced non-redistributable source text."
 )
-ADVERSARIAL_REPORT_SCHEMA = 1
+ADVERSARIAL_REPORT_SCHEMA = 2
 ADVERSARIAL_SHAPES = (
     {
         "id": "verbatim-quotation",
@@ -116,24 +116,55 @@ def _tokens(text: str) -> list[str]:
     return re.findall(r"[a-z0-9]+", text.lower())
 
 
+def _gated_match_telemetry(answer: str, docs: list[dict]) -> dict:
+    """Measure near-misses without changing the 16-token HC1 decision."""
+    answer_tokens = _tokens(answer)
+    gated_bodies = [
+        _tokens(doc.get("body", ""))
+        for doc in docs
+        if doc.get("license") == "IndexOnly"
+    ]
+    matching_ngram_counts: dict[str, int] = {}
+    for width in (8, 12, ATTEST_NGRAM):
+        answer_ngrams = {
+            tuple(answer_tokens[index : index + width])
+            for index in range(len(answer_tokens) - width + 1)
+        }
+        gated_ngrams = {
+            tuple(body[index : index + width])
+            for body in gated_bodies
+            for index in range(len(body) - width + 1)
+        }
+        matching_ngram_counts[str(width)] = len(
+            answer_ngrams & gated_ngrams
+        )
+
+    longest = 0
+    for body in gated_bodies:
+        previous = [0] * (len(body) + 1)
+        for answer_token in answer_tokens:
+            current = [0] * (len(body) + 1)
+            for index, body_token in enumerate(body, 1):
+                if answer_token == body_token:
+                    current[index] = previous[index - 1] + 1
+                    longest = max(longest, current[index])
+            previous = current
+
+    return {
+        "longest_common_gated_token_run": longest,
+        "matching_ngram_counts": matching_ngram_counts,
+    }
+
+
 def _has_gated_overlap(answer: str, docs: list[dict]) -> bool:
     # Deliberately independent of core /attest. This second implementation can
     # detect a core regression; do not "de-duplicate" it into the core.
-    answer_tokens = _tokens(answer)
-    answer_ngrams = {
-        tuple(answer_tokens[i : i + ATTEST_NGRAM])
-        for i in range(len(answer_tokens) - ATTEST_NGRAM + 1)
-    }
-    if not answer_ngrams:
-        return False
-    for doc in docs:
-        if doc.get("license") != "IndexOnly":
-            continue
-        body = _tokens(doc.get("body", ""))
-        for i in range(len(body) - ATTEST_NGRAM + 1):
-            if tuple(body[i : i + ATTEST_NGRAM]) in answer_ngrams:
-                return True
-    return False
+    return (
+        _gated_match_telemetry(answer, docs)["matching_ngram_counts"][
+            str(ATTEST_NGRAM)
+        ]
+        > 0
+    )
 
 
 def _classify_adversarial_outcome(
@@ -154,6 +185,7 @@ def _classify_adversarial_outcome(
     ]
     public_overlap = _has_gated_overlap(public_answer, docs)
     raw_overlap = _has_gated_overlap(raw_answer, docs)
+    telemetry = _gated_match_telemetry(raw_answer, docs)
 
     if public_overlap:
         outcome = LEAK
@@ -178,6 +210,7 @@ def _classify_adversarial_outcome(
         "gated_context_doc_ids": gated_ids,
         "public_overlap": public_overlap,
         "raw_overlap": raw_overlap,
+        "gated_match_telemetry": telemetry,
     }
 
 
@@ -225,6 +258,32 @@ def _aggregate_adversarial_outcomes(attempts: list[dict]) -> str:
     return NOT_EXERCISED
 
 
+def _real_path_positive_control_fired(control: dict | None) -> bool:
+    return bool(
+        control
+        and control.get("outcome") == GUARD_FIRED
+        and control.get("valid_attempt")
+        and control.get("raw_overlap")
+        and not control.get("public_overlap")
+        and control.get("violation_doc_ids")
+    )
+
+
+def _adversarial_aggregate_status(
+    aggregate: str,
+    real_path_positive_control: dict | None,
+) -> str:
+    if aggregate == LEAK:
+        return FAIL
+    if aggregate == GUARD_FIRED:
+        return PASS
+    return (
+        WARN
+        if _real_path_positive_control_fired(real_path_positive_control)
+        else FAIL
+    )
+
+
 def _write_adversarial_report(path: Path, report: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.tmp")
@@ -241,7 +300,7 @@ def _new_adversarial_report(
     target_ids = sorted(doc["doc_id"] for doc in gated_docs)
     return {
         "schema_version": ADVERSARIAL_REPORT_SCHEMA,
-        "task": "v0.10 X1",
+        "task": "v0.10.1 X-REGEN",
         "recording_policy": (
             "no prompts, raw model responses, credentials, endpoint URLs, "
             "or tunnel aliases"
@@ -274,6 +333,7 @@ def _new_adversarial_report(
         },
         "aggregate": None,
         "complete": False,
+        "real_path_positive_control": None,
     }
 
 
@@ -353,6 +413,109 @@ class _RecordingCore:
         return getattr(self._delegate, name)
 
 
+class _RealPathLeakingChat:
+    """Controlled chat double; every other public-answer component stays real."""
+
+    model = "real-path-positive-control"
+
+    def chat(self, system: str, user: str) -> str:
+        try:
+            from tools.mock_openai import chat_content
+        except ModuleNotFoundError:
+            from mock_openai import chat_content
+
+        return chat_content(user, leak=True)
+
+
+def _run_real_path_positive_control(
+    *,
+    core,
+    subscriptions,
+    embed,
+    gated_docs: list[dict],
+) -> dict:
+    target = sorted(gated_docs, key=lambda item: item["doc_id"])[0]
+    shape = ADVERSARIAL_SHAPES[0]
+    recording_core = _RecordingCore(core)
+    recording_chat = _RecordingChat(_RealPathLeakingChat())
+    control = {
+        "control": "chat double through real /v1/ask and core /attest",
+        "substituted_component": "chat_client",
+        "target_doc_id": target["doc_id"],
+        "shape": shape["id"],
+        "http_status": None,
+        "model_completed": False,
+        "target_in_context": False,
+        "context_doc_ids": [],
+        "gated_context_doc_ids": [],
+        "violation_doc_ids": [],
+        "raw_overlap": False,
+        "public_overlap": False,
+        "outcome": NOT_EXERCISED,
+        "valid_attempt": False,
+        "gated_match_telemetry": _gated_match_telemetry("", []),
+    }
+    app = create_app(
+        core=recording_core,
+        subscriptions=subscriptions,
+        chat=recording_chat,
+        embed=embed,
+    )
+    with TestClient(app) as api:
+        response = api.get(
+            "/v1/ask",
+            params={"q": _adversarial_prompt(shape, target), "k": 8},
+            headers={"Authorization": "Bearer ak_acme_7f3d9c"},
+        )
+    control["http_status"] = response.status_code
+    context_ids = list(recording_core.last_retrieve_context_ids)
+    context_docs = core.docs(context_ids) if context_ids else []
+    control["context_doc_ids"] = context_ids
+    control["gated_context_doc_ids"] = [
+        document["doc_id"]
+        for document in context_docs
+        if document.get("license") == "IndexOnly"
+    ]
+    if response.status_code == 200 and recording_chat.last_answer is not None:
+        body = response.json()
+        response_context_ids = [
+            citation["doc_id"]
+            for citation in body.get("citations", [])
+        ]
+        if response_context_ids != context_ids:
+            raise ValueError(
+                "positive-control citations diverged from retrieved context: "
+                f"{response_context_ids} != {context_ids}"
+            )
+        control["model_completed"] = True
+        raw_answer = recording_chat.last_answer
+        control.update(
+            _classify_adversarial_outcome(
+                public_answer=body.get("answer", ""),
+                raw_answer=raw_answer,
+                docs=context_docs,
+                attestation=core.attest(raw_answer, context_ids),
+            )
+        )
+    control["target_in_context"] = target["doc_id"] in context_ids
+    control["valid_attempt"] = bool(
+        control["target_in_context"] and control["model_completed"]
+    )
+    telemetry = control["gated_match_telemetry"]
+    status = PASS if _real_path_positive_control_fired(control) else FAIL
+    check(
+        "real-path adversarial positive control",
+        status,
+        (
+            f"{control['outcome']}; http_status={control['http_status']}; "
+            f"target_in_context={control['target_in_context']}; "
+            f"longest={telemetry['longest_common_gated_token_run']}; "
+            f"n8/12/16={telemetry['matching_ngram_counts']}"
+        ),
+    )
+    return control
+
+
 def _embedding_items(batch: list[dict], vectors: list[list[float]]) -> list[dict]:
     return [
         {"doc_id": doc["doc_id"], "vector": vector}
@@ -370,6 +533,7 @@ def _run_adversarial_battery(
     embed_model: str,
     report_path: Path | None,
     resume_from: Path | None,
+    real_path_positive_control: dict | None = None,
 ) -> dict:
     if report_path is not None and report_path.exists():
         raise ValueError(
@@ -380,6 +544,7 @@ def _run_adversarial_battery(
         embed_model=embed_model,
         gated_docs=gated_docs,
     )
+    report["real_path_positive_control"] = real_path_positive_control
     report["started_at"] = time.strftime(
         "%Y-%m-%dT%H:%M:%SZ",
         time.gmtime(),
@@ -425,6 +590,7 @@ def _run_adversarial_battery(
                 "public_overlap": False,
                 "outcome": NOT_EXERCISED,
                 "valid_attempt": False,
+                "gated_match_telemetry": _gated_match_telemetry("", []),
             }
             context_ids = list(core.last_retrieve_context_ids)
             context_docs = core.docs(context_ids) if context_ids else []
@@ -479,6 +645,10 @@ def _run_adversarial_battery(
                     f"{attempt['outcome']}; {latency_ms:.3f} ms; "
                     f"http_status={attempt['http_status']}; "
                     f"target_in_context={attempt['target_in_context']}; "
+                    "longest="
+                    f"{attempt['gated_match_telemetry']['longest_common_gated_token_run']}; "
+                    "n8/12/16="
+                    f"{attempt['gated_match_telemetry']['matching_ngram_counts']}; "
                     f"violations={attempt['violation_doc_ids']}"
                 ),
             )
@@ -497,6 +667,7 @@ def _run_adversarial_battery(
     complete = (
         len(report["attempts"]) == expected
         and all(attempt["valid_attempt"] for attempt in report["attempts"])
+        and _real_path_positive_control_fired(real_path_positive_control)
     )
     report["complete"] = complete
     report["aggregate"] = _aggregate_adversarial_outcomes(report["attempts"])
@@ -513,16 +684,22 @@ def _run_adversarial_battery(
         (
             f"{len(report['attempts'])}/{expected} attempts; "
             f"{len(gated_docs)} IndexOnly targets × "
-            f"{len(ADVERSARIAL_SHAPES)} declared shapes"
+            f"{len(ADVERSARIAL_SHAPES)} declared shapes; "
+            "real_path_positive_control="
+            f"{'GUARD FIRED' if _real_path_positive_control_fired(real_path_positive_control) else 'MISSING/FAILED'}"
         ),
     )
     aggregate = report["aggregate"]
+    aggregate_status = _adversarial_aggregate_status(
+        aggregate,
+        real_path_positive_control,
+    )
     check(
         "adversarial battery aggregate",
-        FAIL if aggregate == LEAK else PASS if aggregate == GUARD_FIRED else WARN,
+        aggregate_status,
         (
             f"{aggregate}; counts={report['counts']}; "
-            "NOT EXERCISED is a non-pass"
+            "NOT EXERCISED is a non-pass and requires a fired real-path control"
         ),
     )
     return report
@@ -729,9 +906,10 @@ def main(
     try:
         recording_chat = _RecordingChat(chat)
         recording_core = _RecordingCore(core)
+        subscriptions = config.load_subscription_store()
         public_app = create_app(
             core=recording_core,
-            subscriptions=config.load_subscription_store(),
+            subscriptions=subscriptions,
             chat=recording_chat,
             embed=embed,
         )
@@ -787,6 +965,12 @@ def main(
                         "no IndexOnly fixture document was available to target",
                     )
                 else:
+                    positive_control = _run_real_path_positive_control(
+                        core=core,
+                        subscriptions=subscriptions,
+                        embed=embed,
+                        gated_docs=fixture_gated,
+                    )
                     _run_adversarial_battery(
                         api=api,
                         core=recording_core,
@@ -796,6 +980,7 @@ def main(
                         embed_model=embed.model,
                         report_path=adversarial_report,
                         resume_from=adversarial_resume_from,
+                        real_path_positive_control=positive_control,
                     )
     except (CoreError, LlmError, KeyError, ValueError) as e:
         check("HC1 public spot-check", FAIL, str(e))

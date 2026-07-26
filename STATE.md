@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0 and X-VALID are complete.** The clean entering matrix passed **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, and **20** net-path tests. X-VALID now passes **122** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane; its two new failure-capable controls failed before the fix and pass after it. An adversarial attempt is reusable/countable only when both `target_in_context` and `model_completed` are true, and per-attempt console output includes HTTP status. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, and X-CTRL are complete.** The clean entering matrix passed **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, and **20** net-path tests. X-CTRL passes **125** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Its real-path positive control traverses FastAPI `/v1/ask` and core HTTP `/attest`, fires `GUARD FIRED`, and gates an all-`NOT EXERCISED` aggregate; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -112,6 +112,49 @@ The targeted post-fix resume/timeout set passed 3/3. Full Python 3.11.4 and
 `py_compile`, standalone golden **11/11**, and protected artifacts **2/2**
 passed. X-VALID changed only the verifier harness and its tests: no public path,
 threshold, dependency, lockfile, architecture, or protected bytes changed.
+
+**v0.10.1 X-CTRL is complete (measured 2026-07-26).** Four controls were
+installed before implementation: the extended all-`NOT EXERCISED` aggregate,
+the missing-positive-control rejection, graduated 15-token near-miss
+telemetry, and a positive control routed through the deployed FastAPI handler.
+All four failed against the pre-Step tree because the aggregate gate,
+telemetry, and real-path control did not exist. They pass after implementation;
+the full verifier test module passed 19/19.
+
+The control substitutes only the chat client with a deterministic gated-span
+response. It keeps the real `/v1/ask` handler and sends its raw answer to core
+`/attest`; a strict fired result requires a valid completed attempt, raw gated
+overlap, no public overlap, and at least one attestation violation. The report
+schema is now 2 and records the control separately. Completeness requires this
+control, and an all-`NOT EXERCISED` matrix is **WARN** only when it fired;
+without it the aggregate is **FAIL**. `GUARD FIRED` remains PASS and `LEAK`
+remains FAIL.
+
+An isolated real-core HTTP run against the normal deterministic chat mock
+ingested the 13-document fixture and filled 13 embeddings. The positive
+control returned HTTP 200, placed its target in context, produced
+`GUARD FIRED`, and measured a longest gated-token run of 29 with match counts
+`n=8:22`, `n=12:18`, and `n=16:14`. The ordinary matrix then completed all
+45/45 target/shape cells with target context and model completion; all 45 were
+honestly `NOT EXERCISED`, with no `n=8/12/16` matches and a maximum short
+near-match only. Coverage passed because the control fired, while the aggregate
+remained WARN. The verifier's eight required checks passed and emitted 49
+warnings. This used a normal local mock for the 45 cells and therefore makes no
+real-provider behavioral claim.
+
+Independent classifier controls demonstrated all three values: paraphrase
+`NOT EXERCISED`; a leaking chat answer refused by attest `GUARD FIRED`; and the
+same overlap on a deliberately unattested path `LEAK`. The telemetry control
+measured an exact 15-token near miss as longest 15 with counts
+`{n=8:8,n=12:4,n=16:0}`. `ATTEST_NGRAM` is unchanged at 16. The temporary
+schema-2 report contained no authorization, raw/public answers, prompts,
+credentials, endpoint URLs, or tunnel aliases and was not admitted as evidence.
+
+Full Python 3.11.4 and 3.12.13 suites each passed **125/125** with one
+third-party Starlette warning. `py_compile`, standalone golden **11/11**, and
+protected artifacts **2/2** passed. X-CTRL changed only the verifier harness
+and tests: no product path, dependency, lockfile, architecture, or protected
+bytes changed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported
