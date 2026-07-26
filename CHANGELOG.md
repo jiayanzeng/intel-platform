@@ -2,6 +2,55 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.10.2 — 2026-07-26
+
+### Added
+
+- Authenticated GitHub build-provenance bundles for the complete seven-job
+  released-commit matrix, plus a pinned production audit that accepts only
+  exact, successful, single-run receipts.
+- Cycle-contract regression coverage that rejects stale concrete task or
+  progress paths in `AGENTS.md`.
+
+### Changed
+
+- Production deferred audits require an explicit expected HEAD, a clean
+  worktree, exact receipt subjects, and the complete hosted job matrix before
+  runner execution can be promoted.
+- Adversarial-report resume accepts only internally consistent HTTP 200
+  completions with the full current schema and stops immediately on any reused
+  `LEAK`.
+- The operating contract now derives active task and progress paths from its
+  declared cycle instead of embedding stale cycle literals in the workflow.
+
+### Fixed
+
+- Receipt ancestry can no longer substitute for exact released-commit
+  identity, and failed, partial, hand-authored, or unauthenticated receipt sets
+  cannot promote execution evidence.
+- Dirty or wrong-subject production measurements now abort before corpus work,
+  and malformed or leaking resumed attempts cannot be silently trusted.
+- Sigstore bundles persisted with a neutral extension are presented to the
+  GitHub verifier through an ephemeral compatible filename without changing
+  their authenticated bytes.
+
+### Publication and carried dispositions
+
+- v0.10.1 was published unchanged: remote `main` reached the reviewed Step 5
+  audit record, the immutable v0.10.1 tag stayed on its release commit, and
+  hosted CI produced seven authenticated successful receipts.
+- The fresh v0.10.2 deferred audit records two promoted and five deferred rows,
+  accepts all seven authenticated receipts with zero rejection, and measures
+  exact-cosine p95 at 8.962542 ms for 2,600 documents.
+- The fresh real-model matrix remains 45/45 valid cells as `NOT EXERCISED`,
+  with zero `LEAK` and an independent `GUARD FIRED` positive control. T7
+  single-flight, Postgres, pgvector, multi-host seam hardening, and the A4
+  untrusted-shell boundary remain deferred.
+- This patch release changes workflow, evidence integrity, lifecycle controls,
+  tests, and release metadata only. Public and internal API behavior, runtime
+  behavior, storage paths, database schema, cache representation, licensing
+  outcomes, dependencies, and retrieval outputs are unchanged.
+
 ## v0.10.1 — 2026-07-26
 
 ### Added

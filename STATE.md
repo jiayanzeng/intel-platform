@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 PUBLISH is complete: v0.10.1 is published unchanged, hosted CI is green against its checkout, and seven authenticated receipts are pinned in a fresh audit.** Remote `main` is the reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. Remote annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No v0.10.2 release decision has been made.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **R-CLOSE release candidate approved; final release verification and tag creation are in progress.** The operator selected v0.10.2 after PUBLISH completed: v0.10.1 is published unchanged, hosted CI is green against its exact checkout, and seven authenticated receipts are pinned in a fresh audit. Remote `main` is the reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; remote annotated v0.10.1 tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. The five release authorities now agree at 0.10.2; the annotated tag will be placed only after the verified release commit exists. No v0.10.2 push is authorized.
 
 **v0.10.2 PUBLISH is complete (measured 2026-07-26).** The operator
 explicitly authorized publication. Remote `main` advanced from
@@ -61,6 +61,71 @@ remained byte-identical at **11/11**. Protected databases matched **2/2**, and
 all three report pins printed `PIN MATCH`. No product runtime, dependency,
 lockfile, protected byte, provider configuration, tunnel value, release
 commit, or tag object changed.
+
+**v0.10.2 R-CLOSE selected a patch release and the release candidate is in
+progress (measured 2026-07-26).** The operator explicitly approved release
+`v0.10.2`. The release gate is open: the fresh real-model report contains
+**45/45** target-valid, model-completed cells with zero `LEAK`, and no resumed
+attempt was accepted under the old permissive schema. The independent
+real-handler positive control remains `GUARD FIRED`. This is observed
+resistance evidence, not a universal no-leak claim.
+
+The patch disposition follows `ARCHITECTURE.md §8`. This cycle hardens
+workflow provenance, evidence subject/authentication checks, adversarial
+resume validation, and cycle-lifecycle enforcement. It adds a pinned audit
+report and tests, but it does not change public or internal API behavior,
+runtime behavior, storage paths, database schema, cache representation,
+licensing outcomes, dependencies, or retrieval outputs.
+
+The complete `v0.10.1..release-candidate` diff contains **21 paths**, each
+classified exactly once:
+
+- **public/release metadata (5):** `CHANGELOG.md`, `Cargo.lock`,
+  `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`, and
+  `shell/intel_shell/app.py`.
+- **operations and workflow (2):** `.github/workflows/ci.yml` and `run`.
+- **executable evidence and controls (8):**
+  `config/protected-artifacts.json`;
+  `evidence/v0.10.2/deferred-audit/report.json`;
+  `shell/tests/test_cycle_check.py`, `shell/tests/test_deferred_audit.py`, and
+  `shell/tests/test_verify_llm.py`;
+  `tools/audit_deferred.py`, `tools/cycle_check.py`, and
+  `tools/verify_llm.py`.
+- **documentation and task metadata (6):** `AGENTS.md`,
+  `PROGRESS-v0.10.1.md`, `PROGRESS-v0.10.2.md`, `STATE.md`,
+  `TASKS-v0.10.1-EXECUTION.md`, and `TASKS-v0.10.2-EXECUTION.md`.
+- **runtime, storage, or internal API (0):** none.
+
+All five version authorities — the Rust package, Python package, FastAPI
+literal, `STATE.md` header, and newest `CHANGELOG.md` heading — now read
+0.10.2. Cargo mechanically regenerated `Cargo.lock` and changed only the
+`cored` package version from 0.10.1 to 0.10.2; no dependency resolution moved.
+The changelog records exact-subject and authenticated receipt enforcement, the
+hosted publication outcome, strict resume semantics, the cycle-neutral
+operating contract, the pinned v0.10.2 audit, and every carried disposition.
+The exact release commit and annotated tag object will be recorded after the
+full candidate verification succeeds; the separate closing record will not
+move the tag.
+
+PUBLISH advanced remote `main` only through reviewed Step 5 audit commit
+`817e7f3e7c1878c18f474532df4d50c2b17fcbdc` and published the existing
+immutable v0.10.1 tag. Hosted run 30194678764 passed its complete seven-job
+matrix against the exact released checkout, and the production audit
+authenticated **7/7** bundles with zero rejection. The resulting pinned report
+records **2 promoted / 5 deferred** and exact-cosine p95 **8.962542 ms** at
+2,600 documents. No v0.10.2 commit or tag will be pushed without separate
+operator authorization.
+
+The release candidate passed the complete local definition of done.
+`./run ci-local` passed all **19/19** jobs with **99** Rust workspace tests,
+**20** net tests, warning-denied builds, clippy/fmt, locked Rust 1.78
+check/tests, **156/156** Python 3.11 shell tests, golden **11/11**, protected
+artifacts **2/2**, three evidence pins, persisted fingerprints, and all
+lifecycle auditors. The independent Python 3.12.13 lane passed **156/156** and
+verified **21/21** exact packages with the same single third-party Starlette
+warning. Standalone manifest validation, protected verification, golden,
+version consistency, and `git diff --check` all passed. The 21-path inventory
+matches the Git diff exactly.
 
 **v0.10.2 AGENTS-NEUTRAL is complete (measured 2026-07-26).** The four stale
 v0.10 task/progress paths in `AGENTS.md` were replaced with references to the
