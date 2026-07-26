@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-25 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10 is complete: all twelve task records resolve, the runbook carries one validated closing record, and annotated tag `v0.10.0` object `f70fd84ca0995088d2890096f3429bb878409979` dereferences exactly to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.** The final closed-state definition of done passes **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, **20** net-path tests, and **120** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Warning-denied offline/net builds, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and locked Rust 1.78 check/tests are green. Golden is **11/11**, both protected evidence databases are exact **2/2**, `cycle-check` reports the declared v0.10 runbook **closed**, and `checklist-audit` resolves **52/52** checked tasks across every execution cycle. The five release authorities agree at 0.10.0 and the planted 9.9.9 mismatch control failed before byte-identical restoration. X1 remains honestly `NOT EXERCISED`, never a no-leak claim; G2 captured the first real CI-runner failure and subsequent compatible green runs; and D5 leaves five measured subsystems deferred while `/view` materialization remains designed but unimplemented. The `/view` JSON body, public API, database schema, and cache representation did not change; v0.10.0 was selected because its internal timing headers and measured store-open phases are shipped runtime/internal-API behavior.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 is active, but E0's first clean-tree gate tripped before baseline execution.** The entering checkout was `v0.10.0-1-g6c53d85-dirty`: the operator-supplied `TASKS-v0.10.1-EXECUTION.md`, three modified tracked `.DS_Store` files, and one untracked `evidence/.DS_Store` were present. These are named inputs rather than a clean baseline, so no v0.10.1 test result is claimed yet. The last completed measurement remains v0.10.0: **18/18** local CI jobs, **99** Rust workspace tests, **20** net-path tests, **120** shell tests in each Python lane, golden **11/11**, protected artifacts **2/2**, and checklist evidence **52/52**. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
+
+**v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
+2026-07-26).** The session opener ran before any edit. HEAD was
+`6c53d8585d43d46723a83ba1635012b7ab00671f`
+(`v0.10.0-1-g6c53d85`), exactly the v0.10 append-only closing audit after
+release commit `45fa3d49860643fdb2595d82340e364d33566e7d`. Annotated tag object
+`f70fd84ca0995088d2890096f3429bb878409979` has type `tag` and dereferences
+exactly to that release. `origin` resolves to the GitHub SSH remote.
+
+`git status --porcelain=v1` was not clean: it reported modified tracked
+`.DS_Store`, `crates/.DS_Store`, and `shell/.DS_Store`; the supplied untracked
+`TASKS-v0.10.1-EXECUTION.md`; and untracked `evidence/.DS_Store`. E0 therefore
+did not run `ci-local` or claim any downstream acceptance result. The
+operator's explicit request to exclude `*.DS_Store` authorizes a separate,
+pre-E0 hygiene change: add that pattern, remove the three existing Finder
+metadata files from Git tracking without deleting the local files, commit the
+supplied runbook, and declare the new cycle. E0 will restart only after that
+known-input correction and its audit record leave the worktree clean.
+
+Runbook feasibility review also found two execution details that must be made
+explicit when their tasks begin. A workflow added after v0.10.0 cannot emit a
+receipt by merely dispatching the old workflow definition at the v0.10.0 ref;
+CIR must run the new workflow definition while explicitly checking out and
+recording the audited release commit. Likewise, the corrected auditor cannot
+be executed from the old release tree itself; RECEIPT needs the new auditor to
+measure an explicit clean release worktree and an explicit runner-receipt
+input. The Step 6 decline example also has an arithmetic typo: with seven rows,
+view promoted and CI-runner deferred means `{promoted: 1, deferred: 6}`, not
+`{promoted: 1, deferred: 5}`. Historical 18-job records remain true historical
+measurements and will not be rewritten when PIN raises the current matrix to
+19.
+
+Activating v0.10.1 also made `cycle-check` inspect the now-inactive v0.10
+runbook for present-tense authority. Its defect table quoted the exact phrase
+the checker rejects while describing the already-corrected v0.6/v0.7 defect.
+The historical meaning is preserved with past-tense wording, but the inactive
+file no longer contains a lexical false positive that looks like current
+authority.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

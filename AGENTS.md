@@ -10,15 +10,15 @@ anything, and re-read the two documents it points at:
 - **`STATE.md`** — authoritative for *current status* (what is true right now).
   You update this after every task; see §5.
 
-**Active cycle:** v0.10
+**Active cycle:** v0.10.1
 
 Task work for this declared cycle is ordered in
-**`TASKS-v0.10-EXECUTION.md`**. Every completed step is logged in
-**`PROGRESS-v0.10.md`**. The declaration points at the open cycle while work
+**`TASKS-v0.10.1-EXECUTION.md`**. Every completed step is logged in
+**`PROGRESS-v0.10.1.md`**. The declaration points at the open cycle while work
 remains and at the latest closed cycle after its release record is appended,
 until the operator supplies the next runbook. The finished v0.8, v0.8.1,
-v0.8.2, and v0.9 execution runbooks append their dated closing records; their
-progress logs and the full original task documents remain preserved as
+v0.8.2, v0.9, and v0.10 execution runbooks append their dated closing records;
+their progress logs and the full original task documents remain preserved as
 historical rationale. `./run cycle-check` enforces that the declared runbook is
 either open with an unchecked task or closed with one valid release record,
 and that every older runbook is closed.
