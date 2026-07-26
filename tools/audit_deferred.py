@@ -706,25 +706,33 @@ def verify_attestation_bundle(
         raise AuditFailure(
             "authenticated receipt verification requires the GitHub CLI"
         )
-    verified = subprocess.run(
-        [
-            gh,
-            "attestation",
-            "verify",
-            str(receipt),
-            "--bundle",
-            str(bundle),
-            "--repo",
-            repository,
-            "--signer-workflow",
-            signer_workflow,
-            "--deny-self-hosted-runners",
-        ],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    with tempfile.TemporaryDirectory(
+        prefix="intel-attestation-verify-"
+    ) as directory:
+        # `gh attestation verify` selects its bundle decoder by extension.
+        # Persisted artifacts use `.sigstore`; preserve those bytes and expose
+        # an ephemeral supported name to the verifier.
+        verifier_bundle = Path(directory) / f"{receipt.name}.bundle.jsonl"
+        shutil.copyfile(bundle, verifier_bundle)
+        verified = subprocess.run(
+            [
+                gh,
+                "attestation",
+                "verify",
+                str(receipt),
+                "--bundle",
+                str(verifier_bundle),
+                "--repo",
+                repository,
+                "--signer-workflow",
+                signer_workflow,
+                "--deny-self-hosted-runners",
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
     if verified.returncode != 0:
         detail = verified.stderr.strip() or verified.stdout.strip()
         raise AuditFailure(

@@ -115,6 +115,13 @@
       "bytes": 62978,
       "purpose": "Fresh v0.10.1 real-model HC1 adversarial battery.",
       "provenance": "No-resume 45-cell battery against the operator-confirmed LAN chat and embedding roles on 2026-07-26; secret-bearing transport details are excluded from the report."
+    },
+    {
+      "path": "evidence/v0.10.2/deferred-audit/report.json",
+      "sha256": "4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b",
+      "bytes": 28968,
+      "purpose": "Authenticated hosted-runner deferred-design audit for the immutable v0.10.1 release.",
+      "provenance": "The v0.10.2 auditor measured clean release commit e5af6bc5df8261cc004bd4d3247b70f8cbe930bb and accepted seven successful GitHub-hosted receipts from run 30194678764 attempt 1 only after each persisted Sigstore bundle verified its subject bytes, repository, workflow signer, and hosted-runner identity."
     }
   ]
 }

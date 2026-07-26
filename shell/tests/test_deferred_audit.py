@@ -419,6 +419,37 @@ def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
     )
 
 
+def test_sigstore_bundle_uses_supported_ephemeral_extension(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    receipt = tmp_path / "receipt.json"
+    receipt.write_text('{"receipt": true}\n')
+    bundle = tmp_path / "receipt.json.sigstore"
+    bundle.write_text('{"bundle": true}\n')
+    verified_bundle: Path | None = None
+
+    def verify(args: list[str], **_: object) -> subprocess.CompletedProcess:
+        nonlocal verified_bundle
+        verified_bundle = Path(args[args.index("--bundle") + 1])
+        assert verified_bundle.name.endswith(".jsonl")
+        assert verified_bundle.read_bytes() == bundle.read_bytes()
+        return subprocess.CompletedProcess(args, 0, "verified\n", "")
+
+    monkeypatch.setattr(audit_deferred.shutil, "which", lambda _: "/usr/bin/gh")
+    monkeypatch.setattr(audit_deferred.subprocess, "run", verify)
+
+    audit_deferred.verify_attestation_bundle(
+        receipt,
+        bundle,
+        "example/repo",
+        "github.com/example/repo/.github/workflows/ci.yml",
+    )
+
+    assert verified_bundle is not None
+    assert not verified_bundle.exists()
+
+
 def test_production_rejects_wrong_head_before_measurement(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

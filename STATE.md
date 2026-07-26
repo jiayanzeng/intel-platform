@@ -1,6 +1,66 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 AGENTS-NEUTRAL is complete; task/progress workflow instructions resolve through the single active-cycle declaration and `cycle-check` blocks stale paths.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **155/155** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 PUBLISH is complete: v0.10.1 is published unchanged, hosted CI is green against its checkout, and seven authenticated receipts are pinned in a fresh audit.** Remote `main` is the reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. Remote annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No v0.10.2 release decision has been made.
+
+**v0.10.2 PUBLISH is complete (measured 2026-07-26).** The operator
+explicitly authorized publication. Remote `main` advanced from
+`5bcabcb870a906b0b830bf3c8c391bbe3ced71b0` to the reviewed Step 5 audit
+record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. The existing annotated
+`v0.10.1` tag was pushed without replacement: remote tag object
+`8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferences to
+`e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`, which is an ancestor of remote
+`main`.
+
+The hosted failure-capable control used temporary commit
+`7c41fca18aa2845f8f7e1b2cb196ff706975e6c7` on
+`codex/v0.10.2-version-failure-control`. Local `version-check` rejected only
+the planted shell version `9.9.9`. Hosted
+[run 30194605219](https://github.com/jiayanzeng/intel-platform/actions/runs/30194605219)
+then failed the Python 3.11 and 3.12 version-consistency steps while core,
+golden, lint, MSRV, and net passed. All seven receipt uploads succeeded; the
+two shell receipts recorded `conclusion:"failure"`. RCPT-AUTH rejected both,
+reported an incomplete shell matrix, and accepted zero executions. The remote
+and local throwaway branches and the temporary worktree were deleted; final
+remote-ref census finds no control branch.
+
+The published workflow definition on `main` dispatched
+`audit_sha=e5af6bc5df8261cc004bd4d3247b70f8cbe930bb` with
+`publish_evidence=true`. Hosted
+[run 30194678764](https://github.com/jiayanzeng/intel-platform/actions/runs/30194678764)
+completed successfully: core, golden, lint, MSRV, net, and both shell matrix
+legs passed; the scheduled-only drift job skipped. Every receipt named the
+exact release checkout, `run_id=30194678764`, `run_attempt=1`, repository
+`jiayanzeng/intel-platform`, workflow `CI`, and event/workflow SHA
+`817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. Seven receipt, attestation,
+bundle-persistence, and artifact-upload paths passed.
+
+The first sandboxed Sigstore check could not initialize trust and accepted
+nothing. The permitted rerun exposed that GitHub CLI selects its bundle
+decoder by `.json`/`.jsonl` extension while the persisted valid bytes use
+`.sigstore`; it again accepted nothing. The verifier now presents an
+ephemeral `.jsonl` copy of the unchanged bundle bytes to GitHub CLI. The
+executed correction verified **7/7** subject digests, repository identity,
+workflow signer, and hosted-runner provenance with zero rejection; an offline
+test asserts the adapter's bytes and cleanup.
+
+The guarded production audit measured a clean detached
+`e5af6bc5df8261cc004bd4d3247b70f8cbe930bb` subject with the exact protected
+database copies and authenticated hosted set. It recorded five deferred / two
+promoted, seven accepted receipts, zero rejected, complete single-run matrix,
+and exact-cosine p95 **8.962542 ms** at 2,600 documents versus the
+16.264 ms anchor. Fresh
+`evidence/v0.10.2/deferred-audit/report.json` is pinned at SHA-256
+`4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b`,
+**28,968 bytes**. Manifest validation passes with three pinned files; no host
+path appears in the report. The detached worktree and its recoverable database
+copies were removed after measurement.
+
+Both full shell lanes passed **156/156** under Python 3.11.4 and 3.12.13 with
+the existing single Starlette deprecation warning. Final `./run golden`
+remained byte-identical at **11/11**. Protected databases matched **2/2**, and
+all three report pins printed `PIN MATCH`. No product runtime, dependency,
+lockfile, protected byte, provider configuration, tunnel value, release
+commit, or tag object changed.
 
 **v0.10.2 AGENTS-NEUTRAL is complete (measured 2026-07-26).** The four stale
 v0.10 task/progress paths in `AGENTS.md` were replaced with references to the

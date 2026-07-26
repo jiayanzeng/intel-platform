@@ -497,7 +497,7 @@ tag on one commit · publication outcome recorded · golden 11/11 · protected 2
 - [x] **SUBJ-ENFORCE** — `--expected-head` required; dirty worktree and HEAD mismatch abort before measurement; both controls demonstrated
 - [x] **RESUME-STRICT** — reuse requires HTTP 200 + full schema; resumed `LEAK` halts; four tests fail-before/pass-after
 - [x] **AGENTS-NEUTRAL** — `AGENTS.md` cycle-neutral; `cycle-check` fails on any stale cycle path
-- [ ] **PUBLISH** — v0.10.1 published and hosted evidence authenticated/re-measured, or a dated decline
+- [x] **PUBLISH** — v0.10.1 published and hosted evidence authenticated/re-measured, or a dated decline
 - [ ] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.2` tagged
 
 ---
