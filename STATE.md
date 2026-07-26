@@ -1,6 +1,58 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 EVIDENCE-DURABLE is complete on the locally released v0.10.2 baseline.** Hosted run 30194678764 attempt 1 now has all seven receipts and all seven Sigstore bundles durably stored, hash-pinned, and independently verified against its repository, CI workflow, source revision, branch ref, and GitHub-hosted runner identity. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **178/178** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Manifest schema 2 matches all **24/24** file pins. Golden is **11/11** and protected database evidence is exact **2/2**. No push or hosted dispatch is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 LITERAL-NEUTRAL is complete on the locally released v0.10.2 baseline.** Concrete cycle literals are absent from `tools/`, `run`, and workflow source; historical evidence paths are registered once by semantic name, new report labels derive from the active declaration, and `cycle-check` now refuses both stale literals and undisclosed runbook contract edits. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **183/183** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Manifest schema 2 matches all **24/24** file pins. Golden is **11/11** and protected database evidence is exact **2/2**. No push or hosted dispatch is authorized.
+
+**v0.10.3 LITERAL-NEUTRAL is complete (measured 2026-07-26).**
+New deferred-audit and adversarial report labels now derive from
+`tools/cycle_identity.py`'s one active-cycle declaration. View benchmark labels
+are cycle-independent. The three intentionally historical evidence inputs live
+once in the validated semantic registry `config/cycle-history.json`; tools,
+the harness, and the hosted workflow resolve those keys rather than embedding
+their versioned paths. The harness's usage examples are cycle-neutral.
+
+`cycle-check` now scans every Python file in `tools/`, `run`, and both YAML
+workflow extensions for concrete `TASKS-…` / `PROGRESS-…` filenames and bare
+`v<major>.<minor>[.<patch>]` literals. The active declaration remains the only
+live cycle authority; the history registry is validated for schema, relative
+repository-contained paths, existence, regular files, and uniqueness. A direct
+repository scan returned zero concrete cycle literals in all three guarded
+source locations. The hosted Python 3.11 shell job now runs `./run cycle-check`
+itself, using its existing full-history checkout.
+
+The amendment assertion is executable. For the active runbook, `cycle-check`
+loads the blob from the commit that first added the file and compares each
+Step's exact **Objective**, **Acceptance criteria**, and **Done when** block.
+Any changed field requires that Step to appear under one dated
+`## Runbook amendments` entry. Missing fields and removed Steps are changes,
+and malformed dates or duplicate amendment headings are refused. Normal
+checkbox progress is outside the compared contract fields.
+
+The three permanent controls failed **3/3** before the guard changed: a planted
+tool label, a stale harness evidence path, and an undisclosed acceptance edit
+all incorrectly passed `cycle-check`. Afterward, the complete lifecycle module
+passed **7/7**: those controls and a planted workflow literal were refused,
+the clean tree passed, and a correctly dated disclosed edit passed. The focused
+report/benchmark/lifecycle/audit set passed **76/76**.
+
+The closed-cycle record was corrected without touching evidence bytes.
+`PROGRESS-v0.10.2.md` and this file now carry dated
+`Closed-cycle status correction` banners explaining that the immutable
+v0.10.2 deferred report's `v0.10.1 RECEIPT` task label is wrong, while the
+artifact remains correctly pinned at
+`4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b`.
+Direct SHA-256 and manifest verification confirmed the report is still exactly
+28,968 bytes at that hash; the pin did not move.
+
+Both full shell lanes passed **183/183** with the existing single Starlette
+deprecation warning. Python compilation, `bash -n run`, ShellCheck,
+`git diff --check`, the semantic historical re-derivation, and direct
+`cycle-check` passed. The final `./run ci-local` passed **19/19** with 99
+workspace tests, 20 net tests, warning-denied builds, clippy/fmt, locked Rust
+1.78, evidence re-derivation, persisted fingerprints, protected databases
+**2/2**, and all **24/24** pins. The required final standalone `./run golden`
+remained byte-identical at **11/11**. No product runtime, dependency, lockfile,
+architecture, protected byte, pinned evidence byte, provider configuration,
+remote ref, or tag changed.
 
 **v0.10.3 EVIDENCE-DURABLE is complete (measured 2026-07-26).**
 The production verifier now threads the installed GitHub CLI's
@@ -3930,3 +3982,11 @@ handoff.
   and
   `94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
   ports 8787/8788/8899 were clear after teardown.
+
+> **Closed-cycle status correction — 2026-07-26.** The immutable
+> `evidence/v0.10.2/deferred-audit/report.json` carries the task field
+> `v0.10.1 RECEIPT`. That label is wrong: the artifact records the v0.10.2
+> deferred audit. Its bytes remain immutable and correctly pinned at SHA-256
+> `4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b`;
+> this annotation does not move the pin. The v0.10.3 auditor derives new task
+> labels from the active-cycle declaration.

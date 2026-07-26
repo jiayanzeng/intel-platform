@@ -299,3 +299,11 @@ Entries are append-only; corrections are new dated entries.
   ./run checklist-audit
   ./run progress-check
   ```
+
+> **Closed-cycle status correction — 2026-07-26.** The immutable
+> `evidence/v0.10.2/deferred-audit/report.json` carries the task field
+> `v0.10.1 RECEIPT`. That label is wrong: the artifact records the v0.10.2
+> deferred audit. Its bytes remain immutable and correctly pinned at SHA-256
+> `4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b`;
+> this annotation does not move the pin. The v0.10.3 auditor derives new task
+> labels from the active-cycle declaration.

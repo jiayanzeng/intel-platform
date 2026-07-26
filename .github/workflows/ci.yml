@@ -195,7 +195,7 @@ jobs:
   # ---------------------------------------------------------------------------
   # The live path. This job is the whole reason this file exists: `--features
   # net` is not in the default build graph, so a plain `cargo check` compiles
-  # none of it, which is how it stayed broken from v0.4 to v0.6.2 without
+  # none of it, which is how it stayed broken across multiple releases without
   # anyone noticing.
   #
   # It is a SEPARATE job, not a step in `core`, so that its failure is legible
@@ -262,8 +262,9 @@ jobs:
   # The MSRV floor for the OFFLINE build is **1.78**, and getting to that number
   # was the most instructive hour of this cycle.
   #
-  #   v0.6.2 claimed "Rust 1.75 + --locked still builds the offline path." That
-  #   was FALSE and had never been run: v0.6.2 also committed `Cargo.lock` at
+  #   An earlier release claimed "Rust 1.75 + --locked still builds the offline
+  #   path." That was FALSE and had never been run; it also committed
+  #   `Cargo.lock` at
   #   **format v4**, which cargo cannot even *parse* before 1.78. `cargo +1.75
   #   check --locked` died at the lockfile, long before it reached any
   #   dependency's MSRV.
@@ -372,6 +373,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: release version consistency
         run: ./run version-check
+      - name: active cycle and amendment consistency
+        if: matrix.python-version == '3.11'
+        run: ./run cycle-check
       - name: byte-compile all Python at the 3.11 floor
         if: matrix.python-version == '3.11'
         run: find tools shell -type f -name '*.py' -print0 | xargs -0 python3.11 -m py_compile
@@ -392,9 +396,13 @@ jobs:
       - name: re-derive pinned deferred evidence
         if: matrix.python-version == '3.11'
         run: |
+          baseline="$(
+            python3 tools/cycle_identity.py \
+              historical-artifact deferred-audit-baseline
+          )"
           python3 tools/evidence_artifacts.py validate
           python3 tools/audit_deferred.py \
-            --rederive evidence/v0.10.1/deferred-audit/report.json
+            --rederive "$baseline"
       - name: pytest
         run: PYTHONPATH=shell python3 -m pytest shell/tests -q
       - name: emit CI-runner receipt

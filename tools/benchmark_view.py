@@ -880,7 +880,7 @@ def run_decomposition(args: argparse.Namespace) -> int:
                     )
                 report = {
                     "schema_version": 1,
-                    "task": "v0.10 V2",
+                    "task": "VIEW V2",
                     "run": run_number,
                     "measured_at": time.strftime(
                         "%Y-%m-%dT%H:%M:%SZ",
@@ -914,7 +914,7 @@ def run_decomposition(args: argparse.Namespace) -> int:
 
     summary = {
         "schema_version": 1,
-        "task": "v0.10 V2",
+        "task": "VIEW V2",
         "measured_at": time.strftime(
             "%Y-%m-%dT%H:%M:%SZ",
             time.gmtime(),
@@ -1117,7 +1117,7 @@ def benchmark_archive(
     )
     return {
         "schema_version": REPORT_SCHEMA,
-        "task": "v0.9 V1",
+        "task": "VIEW V1",
         "run": run_number,
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "subject": subject,
@@ -1304,7 +1304,7 @@ def run_actual(args: argparse.Namespace) -> int:
         decision = gate(reports)
         summary = {
             "schema_version": REPORT_SCHEMA,
-            "task": "v0.9 V1",
+            "task": "VIEW V1",
             "measured_at": time.strftime(
                 "%Y-%m-%dT%H:%M:%SZ", time.gmtime()
             ),
@@ -1404,7 +1404,7 @@ def parser() -> argparse.ArgumentParser:
     value.add_argument(
         "--decompose",
         action="store_true",
-        help="run the v0.10 V2 cold-stage decomposition",
+        help="run the V2 cold-stage decomposition",
     )
     value.add_argument(
         "--decomposition-control",

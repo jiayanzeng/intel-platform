@@ -615,7 +615,7 @@ green · all pins match · golden 11/11.
 - [x] **AUTH-REQUIRED** — `--evidence-grade` required; `release` implies authenticated verification; posture read by both `--rederive` and `validate`; structural mode still token-free
 - [x] **RESUME-INVARIANT** — five one-way invariants + telemetry cross-check enforced; attempt bound to declaration; contradictions halt; all controls fail-before/pass-after
 - [x] **EVIDENCE-DURABLE** — signer revision pinned (or gap recorded); raw receipts and bundles committed and hash-pinned; no recorded path implies an untracked file
-- [ ] **LITERAL-NEUTRAL** — zero cycle literals in `tools/` and `run`; guard widened; v0.10.2's mislabeled artifact corrected by annotation with its pin unmoved; amendment-disclosure assertion executable or gap recorded
+- [x] **LITERAL-NEUTRAL** — zero cycle literals in `tools/` and `run`; guard widened; v0.10.2's mislabeled artifact corrected by annotation with its pin unmoved; amendment-disclosure assertion executable or gap recorded
 - [ ] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
 - [ ] **R-CLOSE** — release disposition recorded with its trigger and, if applicable, `v0.10.3` tagged
 

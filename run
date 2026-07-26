@@ -44,8 +44,8 @@ SUBSCRIPTIONS_PATH="${SUBSCRIPTIONS_PATH:-config/subscriptions.hashed.json}"
 RUNDIR=".run"                           # pidfiles + logs live here
 EVIDENCE_MANIFEST="config/protected-artifacts.json"
 PYTHON_CONSTRAINTS="shell/constraints.txt"
-# RECEIPT measures the immutable v0.10.1 release even though the current
-# auditor and workflow live on the later v0.10.2 pre-release line.
+# The deferred baseline remains an immutable published subject even when the
+# current auditor and workflow live on a later release line.
 DEFERRED_AUDIT_RELEASE_COMMIT="e5af6bc5df8261cc004bd4d3247b70f8cbe930bb"
 
 CORE_URL="http://127.0.0.1:${CORE_PORT}"
@@ -406,9 +406,11 @@ ci_pytest() {
 }
 
 ci_deferred_evidence() {
+  local baseline
+  baseline="$(python3 tools/cycle_identity.py historical-artifact deferred-audit-baseline)"
   python3 tools/evidence_artifacts.py validate
   python3 tools/audit_deferred.py \
-    --rederive evidence/v0.10.1/deferred-audit/report.json
+    --rederive "$baseline"
 }
 
 cmd_ci_local() {
@@ -959,8 +961,8 @@ intel-platform — ./run <command>
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
     LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
     ./run benchmark-view --help
-    ./run audit-deferred --output evidence/v0.10/deferred-audit/report.json
-    ./run audit-deferred --rederive evidence/v0.10.1/deferred-audit/report.json
+    ./run audit-deferred --output evidence/<cycle>/deferred-audit/report.json
+    ./run audit-deferred --rederive path/to/committed-report.json
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }

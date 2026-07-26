@@ -13,7 +13,11 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.audit_deferred import progress_paths as deferred_progress_paths
-from tools.cycle_identity import CycleIdentityError, resolve_cycle
+from tools.cycle_identity import (
+    CycleIdentityError,
+    historical_artifacts,
+    resolve_cycle,
+)
 from tools.progress_check import default_progress_path
 
 
@@ -51,6 +55,26 @@ CONTRACT_CYCLE_PATH_RE = re.compile(
     r"\b(?:TASKS-v[0-9]+(?:\.[0-9]+)*-EXECUTION\.md"
     r"|PROGRESS-v[0-9]+(?:\.[0-9]+)*\.md)\b"
 )
+CYCLE_LITERAL_RE = re.compile(
+    r"(?<![A-Za-z0-9_.-])v[0-9]+\.[0-9]+(?:\.[0-9]+)?"
+    r"(?![A-Za-z0-9_.-])"
+)
+STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+)\b[^\n]*$", re.MULTILINE)
+BOLD_BLOCK_RE = re.compile(
+    r"^\*\*([^*\n]+)\*\*(.*?)"
+    r"(?=^\*\*[^*\n]+\*\*|^## |\Z)",
+    re.MULTILINE | re.DOTALL,
+)
+AMENDMENTS_HEADING = "## Runbook amendments"
+AMENDMENT_ENTRY_RE = re.compile(
+    r"^Step ([0-9]+) — .+ — ([0-9]{4}-[0-9]{2}-[0-9]{2})$",
+    re.MULTILINE,
+)
+CONTRACT_FIELD_LABELS = {
+    "Objective": "Objective",
+    "Acceptance criteria": "Acceptance criteria",
+    "Done when": "Done when",
+}
 
 
 def shown(path: Path, root: Path) -> str:
@@ -256,6 +280,138 @@ def check_contract_cycle_paths(
             )
 
 
+def source_cycle_scan_paths(root: Path) -> list[Path]:
+    paths = sorted((root / "tools").glob("*.py"))
+    harness = root / "run"
+    if harness.is_file():
+        paths.append(harness)
+    workflows = root / ".github" / "workflows"
+    if workflows.is_dir():
+        paths.extend(sorted(workflows.glob("*.yml")))
+        paths.extend(sorted(workflows.glob("*.yaml")))
+    return paths
+
+
+def check_source_cycle_literals(root: Path, errors: list[str]) -> None:
+    try:
+        historical_artifacts(root)
+    except CycleIdentityError as error:
+        errors.append(str(error))
+    for path in source_cycle_scan_paths(root):
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            matches = {
+                match.group(0)
+                for pattern in (CONTRACT_CYCLE_PATH_RE, CYCLE_LITERAL_RE)
+                for match in pattern.finditer(line)
+            }
+            for literal in sorted(matches):
+                errors.append(
+                    f"{shown(path, root)}:{number}: cycle-specific literal "
+                    f"{literal!r} must be derived from the active declaration "
+                    "or historical registry"
+                )
+
+
+def runbook_contract_fields(text: str) -> dict[tuple[str, str], str]:
+    headings = list(STEP_HEADING_RE.finditer(text))
+    fields: dict[tuple[str, str], str] = {}
+    for index, heading in enumerate(headings):
+        step = heading.group(1)
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
+        section = text[heading.end():end]
+        for block in BOLD_BLOCK_RE.finditer(section):
+            raw_label = block.group(1).strip().removesuffix(".")
+            label = CONTRACT_FIELD_LABELS.get(raw_label)
+            if label is not None:
+                fields[(step, label)] = block.group(2).strip()
+    return fields
+
+
+def first_committed_runbook_text(root: Path, path: Path) -> str | None:
+    relative = shown(path, root)
+    additions = git_output(
+        root,
+        "log",
+        "--diff-filter=A",
+        "--format=%H",
+        "--",
+        relative,
+    )
+    if not additions:
+        return None
+    first_commit = additions.splitlines()[-1]
+    return git_output(root, "show", f"{first_commit}:{relative}")
+
+
+def disclosed_amendment_steps(
+    text: str,
+    path: Path,
+    root: Path,
+    errors: list[str],
+) -> set[str]:
+    heading_matches = list(
+        re.finditer(
+            rf"^{re.escape(AMENDMENTS_HEADING)}$",
+            text,
+            re.MULTILINE,
+        )
+    )
+    count = len(heading_matches)
+    if count == 0:
+        return set()
+    if count != 1:
+        errors.append(
+            f"{shown(path, root)}: expected at most one "
+            f"{AMENDMENTS_HEADING!r}; found {count}"
+        )
+        return set()
+    section = text[heading_matches[0].end():]
+    next_heading = re.search(r"^## ", section, re.MULTILINE)
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+    disclosed: set[str] = set()
+    for match in AMENDMENT_ENTRY_RE.finditer(section):
+        step, date = match.groups()
+        if not valid_iso_date(date):
+            errors.append(
+                f"{shown(path, root)}: invalid runbook amendment date "
+                f"{date!r}"
+            )
+            continue
+        disclosed.add(step)
+    return disclosed
+
+
+def check_runbook_amendments(
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> None:
+    original = first_committed_runbook_text(root, path)
+    if original is None:
+        if (root / ".git").exists():
+            errors.append(
+                f"{shown(path, root)}: cannot locate the runbook's first "
+                "committed version for amendment disclosure"
+            )
+        return
+    original_fields = runbook_contract_fields(original)
+    current_fields = runbook_contract_fields(text)
+    changed = {
+        field
+        for field in set(original_fields) | set(current_fields)
+        if original_fields.get(field) != current_fields.get(field)
+    }
+    disclosed = disclosed_amendment_steps(text, path, root, errors)
+    for step, label in sorted(changed, key=lambda item: (int(item[0]), item[1])):
+        if step not in disclosed:
+            errors.append(
+                f"{shown(path, root)}: undisclosed runbook amendment: "
+                f"Step {step} {label} differs from its first committed text"
+            )
+
+
 def run(root: Path = ROOT) -> int:
     root = root.resolve()
     errors: list[str] = []
@@ -265,6 +421,7 @@ def run(root: Path = ROOT) -> int:
         print(f"cycle-check: ERROR: {error}", file=sys.stderr)
         return 1
     check_contract_cycle_paths(identity, root, errors)
+    check_source_cycle_literals(root, errors)
 
     for required in (identity.runbook, identity.progress):
         if not required.is_file():
@@ -277,6 +434,12 @@ def run(root: Path = ROOT) -> int:
     active_state = "missing"
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
+        check_runbook_amendments(
+            identity.runbook,
+            active_text,
+            root,
+            errors,
+        )
         unchecked = len(UNCHECKED_RE.findall(active_text))
         closing = active_text.count(CLOSING_HEADING)
         if unchecked >= 1 and closing == 0:

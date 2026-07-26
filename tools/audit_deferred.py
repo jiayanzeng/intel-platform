@@ -19,6 +19,11 @@ import time
 from pathlib import Path
 from typing import Any, Callable
 
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.cycle_identity import historical_artifact_path, resolve_cycle
+
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "config" / "protected-artifacts.json"
@@ -33,9 +38,13 @@ SERVICE = ROOT / "deploy" / "intel-pipeline.service"
 TIMER = ROOT / "deploy" / "intel-pipeline.timer"
 DEPLOY_README = ROOT / "deploy" / "README.md"
 SCALE_NOTE = ROOT / "docs" / "T8-scale-design-note.md"
-VIEW_SUMMARY = ROOT / "evidence" / "v0.9" / "view-benchmark" / "summary.json"
-V2_VIEW_SUMMARY = (
-    ROOT / "evidence" / "v0.10" / "view-decomposition" / "summary.json"
+VIEW_SUMMARY = historical_artifact_path(
+    ROOT,
+    "view-performance-summary",
+)
+V2_VIEW_SUMMARY = historical_artifact_path(
+    ROOT,
+    "view-decomposition-summary",
 )
 V2_VIEW_DESIGN = ROOT / "docs" / "V2-VIEW-DESIGN.md"
 RETRIEVE_ANCHOR_MS = 16.264
@@ -98,11 +107,13 @@ def configure_subject_root(root: Path) -> None:
     TIMER = ROOT / "deploy" / "intel-pipeline.timer"
     DEPLOY_README = ROOT / "deploy" / "README.md"
     SCALE_NOTE = ROOT / "docs" / "T8-scale-design-note.md"
-    VIEW_SUMMARY = (
-        ROOT / "evidence" / "v0.9" / "view-benchmark" / "summary.json"
+    VIEW_SUMMARY = historical_artifact_path(
+        ROOT,
+        "view-performance-summary",
     )
-    V2_VIEW_SUMMARY = (
-        ROOT / "evidence" / "v0.10" / "view-decomposition" / "summary.json"
+    V2_VIEW_SUMMARY = historical_artifact_path(
+        ROOT,
+        "view-decomposition-summary",
     )
     V2_VIEW_DESIGN = ROOT / "docs" / "V2-VIEW-DESIGN.md"
 
@@ -173,10 +184,8 @@ def git_subject() -> dict[str, Any]:
             "deploy/intel-pipeline.service": sha256(SERVICE),
             "deploy/intel-pipeline.timer": sha256(TIMER),
             "docs/T8-scale-design-note.md": sha256(SCALE_NOTE),
-            "evidence/v0.9/view-benchmark/summary.json": sha256(VIEW_SUMMARY),
-            "evidence/v0.10/view-decomposition/summary.json": sha256(
-                V2_VIEW_SUMMARY
-            ),
+            str(VIEW_SUMMARY.relative_to(ROOT)): sha256(VIEW_SUMMARY),
+            str(V2_VIEW_SUMMARY.relative_to(ROOT)): sha256(V2_VIEW_SUMMARY),
             "docs/V2-VIEW-DESIGN.md": sha256(V2_VIEW_DESIGN),
             "shell/intel_shell/app.py": sha256(PUBLIC_APP),
         },
@@ -1949,7 +1958,7 @@ def run_production(
     rows = evaluate(measurements)
     report = {
         "schema_version": SCHEMA_VERSION,
-        "task": "v0.10.1 RECEIPT",
+        "task": f"{resolve_cycle(ROOT).name} RECEIPT",
         "evidence_grade": evidence_grade,
         "attestations_required": require_attestations,
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -1991,7 +2000,7 @@ def run_production(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Audit all seven deferred v0.10 design triggers"
+        description="Audit all seven deferred design triggers"
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--output", type=Path)

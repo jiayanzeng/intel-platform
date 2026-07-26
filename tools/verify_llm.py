@@ -30,13 +30,18 @@ import sys
 import time
 from pathlib import Path
 
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from fastapi.testclient import TestClient
 
 from intel_shell import config
 from intel_shell.app import create_app
 from intel_shell.core_client import CoreClient, CoreError
 from intel_shell.llm import LlmError, chat_from_env, embed_from_env
+from tools.cycle_identity import resolve_cycle
 
+ROOT = Path(__file__).resolve().parents[1]
 PASS, FAIL, WARN = "PASS", "FAIL", "WARN"
 GUARD_FIRED, NOT_EXERCISED, LEAK = "GUARD FIRED", "NOT EXERCISED", "LEAK"
 results: list[tuple[str, str, str]] = []
@@ -307,7 +312,7 @@ def _new_adversarial_report(
     target_ids = sorted(doc["doc_id"] for doc in gated_docs)
     return {
         "schema_version": ADVERSARIAL_REPORT_SCHEMA,
-        "task": "v0.10.1 X-REGEN",
+        "task": f"{resolve_cycle(ROOT).name} X-REGEN",
         "recording_policy": (
             "no prompts, raw model responses, credentials, endpoint URLs, "
             "or tunnel aliases"

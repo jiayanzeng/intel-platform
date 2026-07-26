@@ -85,9 +85,10 @@ def _synthetic_repository(tmp_path: Path) -> tuple[Path, str, str, str]:
     _git(repo, "init", "-b", "main")
     _git(repo, "config", "user.name", "CI Receipt Test")
     _git(repo, "config", "user.email", "ci-receipt@example.test")
+    (repo / "AGENTS.md").write_text("**Active cycle:** v1.2.3\n")
     tracked = repo / "tracked.txt"
     tracked.write_text("base\n")
-    _git(repo, "add", "tracked.txt")
+    _git(repo, "add", "AGENTS.md", "tracked.txt")
     _git(repo, "commit", "-m", "base")
     base = _git(repo, "rev-parse", "HEAD")
 
@@ -868,6 +869,7 @@ def test_production_clean_matching_subject_writes_report(
     )
 
     report = json.loads(output.read_text())
+    assert report["task"] == "v1.2.3 RECEIPT"
     assert report["evidence_grade"] == "structural"
     assert report["attestations_required"] is False
     assert report["subject"]["head_commit"] == head
@@ -1056,11 +1058,10 @@ def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
     assert "publish_evidence:" in workflow
     assert "id-token: write" in workflow
     assert "attestations: write" in workflow
+    assert workflow.count("run: ./run cycle-check") == 1
     assert workflow.count("- name: re-derive pinned deferred evidence") == 1
-    assert (
-        "--rederive evidence/v0.10.1/deferred-audit/report.json"
-        in workflow
-    )
+    assert "historical-artifact deferred-audit-baseline" in workflow
+    assert '--rederive "$baseline"' in workflow
     assert (
         'receipts = sorted((ROOT / "evidence" / "ci-runs").glob("*.json"))'
         in source

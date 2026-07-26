@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "artifacts": {
+    "deferred-audit-baseline": "evidence/v0.10.1/deferred-audit/report.json",
+    "view-decomposition-summary": "evidence/v0.10/view-decomposition/summary.json",
+    "view-performance-summary": "evidence/v0.9/view-benchmark/summary.json"
+  }
+}
