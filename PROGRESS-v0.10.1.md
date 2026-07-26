@@ -241,3 +241,52 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. Standalone `./run golden` passed 11/11.
 - protected artifact delta: none. `./run verify-artifacts` passed 2/2 before
   and after the production audit and again at final acceptance.
+
+### 2026-07-26 · X-REGEN — conformant fresh real-model adversarial battery
+
+- owner: Codex
+- commit: 2613f5c05cf579273965467984d847ff2efb68fb
+- result: PASS. A fresh no-resume run against the operator-confirmed chat and
+  embedding roles completed 45/45 target-valid, model-completed cells. All 45
+  real-model outcomes were `NOT EXERCISED`, none was `LEAK`, and the separate
+  deployed-path positive control fired `GUARD FIRED`.
+- order disposition: the runbook's PIN/X-REGEN numbering is dependency
+  inverted: PIN requires the X1 pin “after Step 8,” while X-REGEN requires its
+  report added to that pin. The explicit dependency was followed, so X-REGEN
+  and its own pin completed before the remainder of PIN.
+- provider gate: PASS. The bounded probe resolved completion-only chat model
+  `gemma-4-26B-A4B-it-UD-IQ4_XS.gguf` and independent embedding model
+  `embeddinggemma-300M-Q8_0.gguf`; the embedding capability returned exactly
+  768 dimensions. Keys remained redacted.
+- live failure-capable control: PASS. The first fresh run recorded two
+  30-second HTTP-502/model-incomplete cells and failed coverage. The harness
+  now records invalid invocations separately, never counts them as attempts,
+  and retries within an explicit three-invocation budget. Transient/permanent
+  502 tests prove completion and exhaustion paths. A second fresh run
+  exercised that retry path but showed the 30-second ceiling was shorter than
+  repeatable cell latency; it was interrupted after exhaustion and is a
+  non-result.
+- final matrix acceptance: PASS. The operator's `.env` was untouched; a
+  mode-600 temporary copy raised only the chat timeout to 60 seconds and was
+  deleted after use. The final no-resume matrix needed zero transport retries,
+  had maximum latency 32,599.289 ms, maximum real-model gated run four tokens,
+  and zero nonzero `n=8/12/16` matches. The positive control measured longest
+  22 and `{n=8:15,n=12:11,n=16:7}`. `ATTEST_NGRAM` remains 16.
+- artifact acceptance: PASS. The fresh report at
+  `evidence/v0.10.1/real-model-adversarial/report.json` is 62,978 bytes with
+  SHA-256
+  `beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7`.
+  Its invariant/secret scan found no credential-shaped value, endpoint, LAN
+  address, loopback tunnel port, SSH command, prompt, or raw model answer. The
+  v0.10 report stayed exact at
+  `98fb3a3a1acac844aeccd0da0be2457ff9327ee0733f8570d7edc34b1870f13c`.
+- pin acceptance: PASS. Manifest schema 2 now validates corpus-free pinned
+  files by exact bytes and SHA-256; X1 is pinned, and a disposable byte
+  mutation makes `validate` fail. Protected database verification remains a
+  separate exact 2/2 result.
+- shell acceptance: PASS. Python 3.11.4 and 3.12.13 each passed 132/132 with
+  one third-party Starlette warning. The sandboxed seven-bind-denial run is a
+  non-result; the permitted rerun is counted.
+- golden-E2E delta: none. Standalone `./run golden` passed 11/11.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
+  exact recorded hashes.
