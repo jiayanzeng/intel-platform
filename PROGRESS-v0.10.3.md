@@ -254,3 +254,60 @@ Entries are append-only; corrections are new dated entries.
   deliberately from **3** to **24** by admitting the raw CI evidence; no
   product runtime, dependency, lockfile, architecture, provider configuration,
   remote ref, or tag changed.
+
+### 2026-07-26 · LITERAL-NEUTRAL — stale literals and silent amendments refused
+
+- owner: Codex
+- commit: a01c47d67bcbbac47cc70772b8f9edcac5fc851e
+- result: PASS. New deferred/adversarial report labels derive from the active
+  cycle declaration; benchmark labels are cycle-independent. Historical
+  evidence paths live once under semantic keys in the validated
+  `config/cycle-history.json` registry.
+- literal acceptance: PASS. `cycle-check` scans all Python source in `tools/`,
+  `run`, and `.github/workflows/*.{yml,yaml}` for concrete
+  `TASKS-…` / `PROGRESS-…` names and bare semantic-version cycle literals.
+  Direct `rg` found zero concrete cycle literals in those guarded sources.
+  Harness help uses cycle-neutral examples, and local/hosted historical
+  re-derivation resolves the semantic baseline key.
+- runner acceptance: PASS. The hosted Python 3.11 shell job now executes
+  `./run cycle-check` on its existing full-history checkout; no new CI job was
+  added, so the configured count remains **19**.
+- amendment acceptance: PASS. The active runbook's Objective, Acceptance
+  criteria, and Done-when blocks are compared with the blob in the commit that
+  first added the runbook. A changed, added, or removed field must name its Step
+  in one validly dated `## Runbook amendments` entry. Checkbox progress does
+  not alter the compared contract.
+- failure-capable controls: PASS. Before implementation, a planted tool label,
+  a stale harness evidence path, and an undisclosed Acceptance-criteria edit all
+  incorrectly passed: **3/3 selected controls failed**. After implementation,
+  the lifecycle module passed **7/7**: those three were refused, a planted
+  workflow literal was refused, the clean tree passed, and a disclosed dated
+  edit passed.
+- label acceptance: PASS. The clean production-report test created
+  `v1.2.3 RECEIPT` from a synthetic active declaration rather than a source
+  literal. The focused report/benchmark/lifecycle/audit suite passed **76/76**.
+- closed-cycle annotation: PASS without evidence mutation.
+  `PROGRESS-v0.10.2.md` and `STATE.md` gained dated
+  `Closed-cycle status correction` banners naming the wrong immutable
+  `v0.10.1 RECEIPT` field, its correct v0.10.2 meaning, and the derived fix.
+  Direct SHA-256 remained
+  `4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b`
+  at 28,968 bytes; the report and its pin were not edited.
+- compatibility acceptance: PASS. The semantic baseline path resolved to the
+  immutable deferred report and `./run audit-deferred --rederive` passed with
+  seven rows, five source dispositions, seven triggers, legacy grade, and
+  attestations false.
+- Python acceptance: PASS. Both complete shell lanes passed **183/183** under
+  Python 3.11.4 and 3.12.13, with the existing single Starlette deprecation
+  warning. Python compilation, `bash -n run`, ShellCheck, and
+  `git diff --check` passed.
+- repository acceptance: PASS. The final `./run ci-local` passed **19/19**:
+  99 workspace tests, 20 net tests, warning-denied builds, clippy/fmt, locked
+  Rust 1.78, 183 shell tests, lifecycle checks, evidence re-derivation,
+  persisted fingerprints, protected artifacts, and append-only progress.
+- golden-E2E delta: none. The required final standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. Both protected databases matched **2/2** and
+  all **24/24** file pins matched. No product runtime, dependency, lockfile,
+  architecture, protected byte, pinned evidence byte, provider configuration,
+  remote ref, or tag changed.
