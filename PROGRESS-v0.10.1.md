@@ -93,3 +93,37 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. Standalone `./run golden` passed 11/11.
 - protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
   exact recorded hashes.
+
+### 2026-07-26 · X-CTRL — real-path guard control and near-match telemetry
+
+- owner: Codex
+- commit: aa3232695230f5392d37df096d5ea07fe6837c4f
+- result: PASS. Report schema 2 records a separate real-path positive control,
+  completeness requires it to fire, and an all-`NOT EXERCISED` aggregate is
+  WARN only with that proof (otherwise FAIL). `GUARD FIRED` remains PASS and
+  `LEAK` remains FAIL.
+- failure-capable controls: PASS. Four pre-implementation controls failed 4/4:
+  the aggregate/control gate, missing-control rejection, graduated 15-token
+  near-match telemetry, and deployed-handler positive control did not exist.
+  All pass after implementation; the verifier module passed 19/19.
+- real-path control acceptance: PASS. An isolated real-core HTTP run ingested
+  13 fixture documents, filled 13 embeddings, and routed a deterministic
+  leaking chat response through real FastAPI `/v1/ask` and core `/attest`.
+  It returned HTTP 200, included the target, fired `GUARD FIRED`, exposed no
+  gated public overlap, and measured longest 29 with match counts
+  `n=8:22`, `n=12:18`, `n=16:14`.
+- matrix acceptance: PASS with explicit non-pass aggregate. The normal local
+  mock completed 45/45 valid target/shape cells; all were `NOT EXERCISED`, with
+  zero `n=8/12/16` matches. Coverage passed because the separate control fired,
+  while aggregate status remained WARN. No real-provider result is claimed.
+- classifier/telemetry acceptance: PASS. Doubles demonstrated
+  `NOT EXERCISED`, `GUARD FIRED`, and `LEAK`; an exact 15-token near miss
+  measured longest 15 and `{n=8:8,n=12:4,n=16:0}`. `ATTEST_NGRAM` remains 16.
+- recording-policy acceptance: PASS. The temporary schema-2 report contained
+  no authorization, raw/public answer, prompt, credential, endpoint URL, or
+  tunnel-alias fields or values, and was not admitted as evidence.
+- shell acceptance: PASS. Python 3.11.4 and 3.12.13 each passed 125 tests with
+  one third-party Starlette warning. `py_compile` passed.
+- golden-E2E delta: none. Standalone `./run golden` passed 11/11.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
+  exact recorded hashes.
