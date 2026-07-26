@@ -179,3 +179,49 @@ Entries are append-only; corrections are new dated entries.
   unchanged.
 - protected artifact delta: none. Both protected databases matched 2/2 and
   both v0.10.1 evidence reports printed `PIN MATCH`.
+
+### 2026-07-26 · PUBLISH — v0.10.1 published and hosted evidence authenticated
+
+- owner: Codex
+- commit: 1f04094f490386f655362523aaab7eb6fdd2ed9d
+- authorization/result: PASS. The operator explicitly authorized publication.
+  Remote `main` is reviewed Step 5 audit record
+  `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; remote annotated tag object
+  `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` remains unchanged and
+  dereferences to v0.10.1 release
+  `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`.
+- failure-capable control: PASS. Temporary commit
+  `7c41fca18aa2845f8f7e1b2cb196ff706975e6c7` planted only shell version
+  `9.9.9`. Hosted run 30194605219 failed both shell version checks while the
+  other five executed nodes passed. Seven receipts persisted; RCPT-AUTH
+  rejected the two `conclusion:"failure"` shell receipts and accepted zero
+  executions. The remote/local branch and temporary worktree were deleted.
+- hosted acceptance: PASS. Workflow-dispatch run 30194678764 used definition
+  head `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`, checked out exact release
+  `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`, and passed core, golden, lint,
+  MSRV, net, and both Python shell legs. All seven receipt, attestation,
+  bundle-persistence, and upload steps passed under run attempt 1.
+- authentication acceptance: PASS after one measured integration correction.
+  The sandbox trust-initialization attempt and the first permitted
+  extension-incompatible attempt both accepted zero. Presenting unchanged
+  persisted `.sigstore` bytes under an ephemeral `.jsonl` verifier name then
+  authenticated 7/7 subject digests, repository, workflow signer, and
+  hosted-runner identity with zero rejection. The adapter has an offline
+  byte/cleanup regression test.
+- receipt acceptance: PASS. A clean detached v0.10.1 worktree produced five
+  deferred / two promoted, exact-cosine p95 8.962542 ms at 2,600 documents,
+  seven accepted authenticated receipts, zero rejected, and one complete
+  run-id/attempt matrix.
+- pin acceptance: PASS.
+  `evidence/v0.10.2/deferred-audit/report.json` is 28,968 bytes at SHA-256
+  `4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b`.
+  Manifest validation reports schema 2, two protected artifacts, and three
+  pinned files; no host path or secret pattern appears in the report.
+- Python acceptance: PASS. Both current shell lanes passed 156/156 under
+  Python 3.11.4 and 3.12.13 with the pre-existing single Starlette
+  deprecation warning.
+- golden-E2E delta: none. Final `./run golden` passed 11/11 with every named
+  anchor unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2 and all
+  three evidence reports printed `PIN MATCH`. Temporary protected-database
+  copies were removed with the detached worktree; originals did not change.
