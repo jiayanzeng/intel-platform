@@ -290,3 +290,51 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. Standalone `./run golden` passed 11/11.
 - protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
   exact recorded hashes.
+
+### 2026-07-26 · PIN — pinned and source-rederived evidence receipts
+
+- owner: Codex
+- commit: edd77a4835057fb0a0836b39600cbe54a88b5092
+- result: PASS. Manifest schema 2 now pins both v0.10.1 JSON evidence files by
+  exact bytes/SHA-256, and a new corpus-free command re-derives the receipt's
+  source/config/Git fields. The tracked local CI count is now 19.
+- pin acceptance: PASS. Deferred audit
+  `00cf14ae931b864616e19c437168d9ef8723791ddee6dc7866794f6850319362`
+  (27,786 bytes) and X1
+  `beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7`
+  (62,978 bytes) both matched. `validate` needs no corpus; local `verify`
+  checks these pins before its independent protected-database measurements.
+- re-derivation acceptance: PASS.
+  `tools/audit_deferred.py --rederive` recomputed the scheduler, writer,
+  multi-host, attestation-boundary, and CI-runner source measurements and
+  matched five dispositions, seven unchanged trigger strings, row count seven,
+  and `v2_materialization_implemented=false`. It excludes host/time, remote
+  text, receipt execution detail, source hashes, and numeric pgvector/view
+  measurements; whole-file pins cover the corpus-dependent rows.
+- runnerless acceptance: PASS as configuration. The same manifest/re-derive
+  commands are one blocking Python 3.11 `ci.yml` step with full Git history;
+  YAML parsed and a static test requires the step. No post-PIN hosted execution
+  is claimed. The on-site production pytest is guarded on both protected DBs
+  and a built `cored`, so a corpus-less runner skips it.
+- on-site production acceptance: PASS. The guarded test invoked full
+  `production_measurements()`/`evaluate()` and matched the committed
+  environment-independent snapshot; its focused run passed in 2.64s.
+- failure-capable controls: PASS. A scratch receipt flipping the T7 disposition
+  failed with `REDERIVATION MISMATCH source_dispositions`. A disposable copy of
+  the pinned deferred receipt with one appended byte failed manifest
+  validation on SHA-256. Neither committed receipt was altered.
+- count/documentation acceptance: PASS. `run` help names the 19-job matrix;
+  current STATE and acceptance records say 19. Historical 18-job results remain
+  explicitly historical; the v0.10 and v0.10.1 runner-comparison records now
+  state when the change occurred.
+- full local-CI acceptance: PASS. `./run ci-local` passed 19/19, including 99
+  workspace tests, 20 net tests, warning-denied builds, clippy/fmt, Rust 1.78,
+  136 Python 3.11 shell tests, the new re-derivation, golden, pins/protected
+  evidence, fingerprints, and lifecycle records. Python 3.12.13 independently
+  passed 136/136. Targeted PIN lanes passed 23/23 on both interpreters;
+  ShellCheck, Bash syntax, and workflow YAML parsing passed.
+- golden-E2E delta: none. Both the 19-job matrix and final standalone permitted
+  lifecycle passed 11/11. The first standalone attempt's denied loopback bind
+  is an environment non-result.
+- protected artifact delta: none. `./run verify-artifacts` passed exact 2/2;
+  both pinned JSON files also matched.
