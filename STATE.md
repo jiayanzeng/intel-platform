@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 is active, but E0's first clean-tree gate tripped before baseline execution.** The entering checkout was `v0.10.0-1-g6c53d85-dirty`: the operator-supplied `TASKS-v0.10.1-EXECUTION.md`, three modified tracked `.DS_Store` files, and one untracked `evidence/.DS_Store` were present. These are named inputs rather than a clean baseline, so no v0.10.1 test result is claimed yet. The last completed measurement remains v0.10.0: **18/18** local CI jobs, **99** Rust workspace tests, **20** net-path tests, **120** shell tests in each Python lane, golden **11/11**, protected artifacts **2/2**, and checklist evidence **52/52**. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0 is complete after its first clean-tree checkpoint stopped and the known inputs were corrected in separate commits.** The re-run from clean `v0.10.0-3-g3f81e31` passes **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, **20** net-path tests, and **120** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Warning-denied offline/net builds, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and locked Rust 1.78 check/tests are green. Golden is **11/11**, protected evidence is exact **2/2**, `cycle-check` reports v0.10.1 open, and `checklist-audit` resolves the entering **52/52** checked tasks. All six drafted defects D1–D6 reproduce; the shipped v0.10 X1 report is non-conformant with **0/45** attempts carrying `model_completed:true`. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; the runtime 99/20 counts remain authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -39,6 +39,51 @@ the checker rejects while describing the already-corrected v0.6/v0.7 defect.
 The historical meaning is preserved with past-tense wording, but the inactive
 file no longer contains a lexical false positive that looks like current
 authority.
+
+**v0.10.1 E0 is complete (measured 2026-07-26).** After the separately
+recorded gate correction, `git status --porcelain=v1` produced no output.
+HEAD was `3f81e31f324e9624cbbacb3be8ec6b817561b2aa`, described as
+`v0.10.0-3-g3f81e31`; release identity and `origin` remained exact.
+
+The first sandboxed `./run ci-local` reached 113 shell passes and seven
+loopback-bind `PermissionError` failures, then stopped at job 14. That is an
+environment non-result. The permitted rerun executed the doubles and passed
+all **18/18** jobs: 99 workspace tests, 20 net tests, warning-denied checks,
+clippy/fmt, locked Rust 1.78 check/tests, 120 Python 3.11 tests, golden 11/11,
+protected artifacts 2/2, persisted fingerprints, and the active progress
+record. The separate Python 3.12.13 lane passed **120/120** with the same one
+third-party Starlette warning. A standalone golden lifecycle also passed
+11/11.
+
+All six drafted defects were **CONFIRMED**:
+
+1. **D4:** classify-time validity is only `target_in_context`, and completion
+   trusts every stored `valid_attempt`. The shipped report says
+   `complete:true`, reused 44 prior attempts, has **0** attempts with
+   `model_completed:true`, omits that key from **44**, and marks the sole
+   HTTP-502 / `model_completed:false` attempt valid.
+2. **D2:** the shipped deferred receipt is `{promoted:1,deferred:6}`, leaves
+   CI-runner evidence deferred under `"a Git remote exists"`, describes
+   commit `d9cab128eed014ca1b1702c8794ba5a0ea1c85be` rather than the release,
+   and records a dirty five-path worktree.
+3. **D1:** the only `evidence/ci-runs` reference is the reader glob.
+   `cmd_ci_local` and `.github/workflows/ci.yml` do not run the audit, and the
+   CI row promotes from remote presence rather than a runner receipt.
+4. **D3:** deferred-audit tests call only `control_measurements`; none calls
+   `production_measurements`. The evidence manifest names only the two
+   protected SQLite databases and pins no evidence JSON.
+5. **D5:** `ATTEST_NGRAM` remains 16 and all 45 shipped real-model cells are
+   `NOT EXERCISED`, with 0 `GUARD FIRED` and 0 `LEAK`.
+6. **D6:** `installed_versions()` raises on the first duplicate distribution
+   before `compare()`, while the drift test invokes the ambient interpreter and
+   asserts only that the FastAPI mismatch appears. An ambient duplicate can
+   therefore mask the reason the test names.
+
+Static source recount found **58** `#[test]`, **42** `#[tokio::test]`, and
+**4** `cfg(feature = "net")` gates. `./run verify-artifacts`,
+`version-check`, `cycle-check`, and `checklist-audit` independently passed;
+the latter remained 52/52 before E0's box was checked. No runtime, dependency,
+lockfile, architecture, provider configuration, or protected bytes changed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

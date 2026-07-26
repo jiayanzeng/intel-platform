@@ -671,7 +671,7 @@ tag on one commit · golden 11/11 · protected 2/2 · `ci-local` 19/19.
 
 ## Cycle checklist
 
-- [ ] **E0** — entering state re-measured at v0.10.0; all six defects confirmed or refuted; corrected static Rust counts recorded
+- [x] **E0** — entering state re-measured at v0.10.0; all six defects confirmed or refuted; corrected static Rust counts recorded
 - [ ] **X-VALID** — `valid_attempt` requires `model_completed` at classify time and on resume; both new tests fail-before/pass-after; shipped X1 non-conformance recorded
 - [ ] **X-CTRL** — real-path positive control fires `GUARD FIRED`; aggregate `NOT EXERCISED` gated on it; `n=8/12/16` telemetry; threshold unchanged
 - [ ] **CIR** — runners emit ancestor-checked receipts; glob unchanged; CI-runner trigger restated to the falsifiable form; disposition keyed on receipts
