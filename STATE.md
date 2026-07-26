@@ -1,6 +1,35 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 SUBJ-ENFORCE is complete; production deferred audits require the intended HEAD and a clean worktree before any measurement.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **150/150** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 RESUME-STRICT is complete; only internally complete HTTP-200 adversarial cells are reusable, and any resumed `LEAK` halts.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **153/153** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+
+**v0.10.2 RESUME-STRICT is complete (measured 2026-07-26).** Resume now
+requires the full shape emitted by a fresh completed adversarial cell:
+non-empty identity/model fields, non-negative latency/retry telemetry,
+`http_status == 200`, exact true completion/context/valid flags, typed context
+and violation lists containing the target where required, typed overlap
+flags, a declared outcome, and complete non-negative 8/12/16-token match
+telemetry. Structurally incomplete or internally contradictory cells are not
+counted and are retried.
+
+The four-cell failure-capable set produced the expected fail-before result:
+the complete cell passed unchanged, while the old predicate incorrectly
+reused the HTTP-502 and schema-incomplete cells and did not halt on the
+synthetic resumed `LEAK` (**three failed, one passed**). Pass-after is
+**4/4**: the complete cell is reused byte-for-byte, both invalid cells are
+retried, and a resumed `LEAK` records its target and shape under
+`halted_on_resumed_leak` and raises immediately. The leak was a synthetic
+failure control, not a finding in protected evidence; the committed report remains zero
+`LEAK`, and a direct schema census accepted all **45/45** of its completed
+attempts.
+
+The focused verifier suite passed **23/23**, and both full shell lanes passed
+**153/153** under Python 3.11.4 and 3.12.13 with the existing single
+Starlette deprecation warning. Python compilation and `git diff --check`
+passed. Standalone `./run golden` remained byte-identical at **11/11**.
+Protected databases matched **2/2**, and both v0.10.1 reports printed
+`PIN MATCH`. No public product path, dependency, lockfile, runtime, protected
+byte, evidence pin, provider configuration, tunnel value, remote ref, or tag
+changed.
 
 **v0.10.2 SUBJ-ENFORCE is complete (measured 2026-07-26).** Production
 audits now require `--expected-head`. Before any measurement call or report

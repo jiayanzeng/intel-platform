@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 import tools.verify_llm as verify_llm
 from intel_shell.config import Subscription
 from intel_shell.llm import LlmError
@@ -257,6 +259,36 @@ def test_classifier_control_demonstrates_all_three_values(capsys) -> None:
     assert LEAK in output
 
 
+def _completed_resume_attempt(
+    *,
+    shape: str = "verbatim-quotation",
+    outcome: str = NOT_EXERCISED,
+    http_status: int = 200,
+) -> dict:
+    return {
+        "target_doc_id": "source::gated",
+        "shape": shape,
+        "endpoint_role": "chat",
+        "model": "chat-model",
+        "latency_ms": 12.5,
+        "http_status": http_status,
+        "model_completed": True,
+        "target_in_context": True,
+        "context_doc_ids": ["source::gated"],
+        "gated_context_doc_ids": ["source::gated"],
+        "violation_doc_ids": [],
+        "raw_overlap": False,
+        "public_overlap": outcome == LEAK,
+        "outcome": outcome,
+        "valid_attempt": True,
+        "gated_match_telemetry": {
+            "longest_common_gated_token_run": 0,
+            "matching_ngram_counts": {"8": 0, "12": 0, "16": 0},
+        },
+        "transport_retry_count": 0,
+    }
+
+
 def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
     docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
     prior = _new_adversarial_report(
@@ -265,14 +297,7 @@ def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
         gated_docs=docs,
     )
     prior["attempts"] = [
-        {
-            "target_doc_id": "source::gated",
-            "shape": "verbatim-quotation",
-            "target_in_context": True,
-            "model_completed": True,
-            "valid_attempt": True,
-            "outcome": NOT_EXERCISED,
-        },
+        _completed_resume_attempt(),
         {
             "target_doc_id": "source::gated",
             "shape": "chunked-reconstruction",
@@ -294,9 +319,89 @@ def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
 
     assert keys == {("source::gated", "verbatim-quotation")}
     assert len(resumed["attempts"]) == 1
+    assert resumed["attempts"] == [prior["attempts"][0]]
     assert resumed["counts"][NOT_EXERCISED] == 1
     assert resumed["resume"]["reused_valid_attempts"] == 1
     assert resumed["resume"]["retried_invalid_attempts"] == 1
+
+
+def test_resume_retries_completed_attempt_with_http_502(tmp_path) -> None:
+    docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
+    prior = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+    prior["attempts"] = [
+        _completed_resume_attempt(http_status=502),
+    ]
+    path = tmp_path / "contradictory-prior.json"
+    path.write_text(json.dumps(prior))
+    resumed = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+
+    keys = _resume_valid_attempts(path, resumed)
+
+    assert keys == set()
+    assert resumed["attempts"] == []
+    assert resumed["resume"]["reused_valid_attempts"] == 0
+    assert resumed["resume"]["retried_invalid_attempts"] == 1
+
+
+def test_resume_retries_schema_incomplete_attempt(tmp_path) -> None:
+    docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
+    prior = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+    incomplete = _completed_resume_attempt()
+    del incomplete["gated_match_telemetry"]
+    prior["attempts"] = [incomplete]
+    path = tmp_path / "schema-incomplete-prior.json"
+    path.write_text(json.dumps(prior))
+    resumed = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+
+    keys = _resume_valid_attempts(path, resumed)
+
+    assert keys == set()
+    assert resumed["attempts"] == []
+    assert resumed["resume"]["reused_valid_attempts"] == 0
+    assert resumed["resume"]["retried_invalid_attempts"] == 1
+
+
+def test_resume_halts_and_records_resumed_leak(tmp_path) -> None:
+    docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
+    prior = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+    prior["attempts"] = [
+        _completed_resume_attempt(outcome=LEAK),
+    ]
+    path = tmp_path / "leaking-prior.json"
+    path.write_text(json.dumps(prior))
+    resumed = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+
+    with pytest.raises(ValueError, match="resumed LEAK"):
+        _resume_valid_attempts(path, resumed)
+
+    assert resumed["resume"]["halted_on_resumed_leak"] == {
+        "target_doc_id": "source::gated",
+        "shape": "verbatim-quotation",
+    }
 
 
 def test_resume_retries_a_completed_flag_it_cannot_verify(tmp_path) -> None:

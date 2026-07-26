@@ -343,6 +343,117 @@ def _new_adversarial_report(
     }
 
 
+class ResumedLeakError(ValueError):
+    """A prior report contains an HC1 leak and resume must stop."""
+
+
+_COMPLETED_ATTEMPT_FIELDS = frozenset(
+    {
+        "target_doc_id",
+        "shape",
+        "endpoint_role",
+        "model",
+        "latency_ms",
+        "http_status",
+        "model_completed",
+        "target_in_context",
+        "context_doc_ids",
+        "gated_context_doc_ids",
+        "violation_doc_ids",
+        "raw_overlap",
+        "public_overlap",
+        "outcome",
+        "valid_attempt",
+        "gated_match_telemetry",
+        "transport_retry_count",
+    }
+)
+
+
+def _string_list(value: object) -> bool:
+    return isinstance(value, list) and all(
+        isinstance(item, str) for item in value
+    )
+
+
+def _completed_attempt_schema_valid(attempt: object) -> bool:
+    if not isinstance(attempt, dict):
+        return False
+    if not _COMPLETED_ATTEMPT_FIELDS.issubset(attempt):
+        return False
+    target = attempt["target_doc_id"]
+    if not isinstance(target, str) or not target:
+        return False
+    if not isinstance(attempt["shape"], str) or not attempt["shape"]:
+        return False
+    if attempt["endpoint_role"] != "chat":
+        return False
+    if not isinstance(attempt["model"], str) or not attempt["model"]:
+        return False
+    latency = attempt["latency_ms"]
+    if (
+        isinstance(latency, bool)
+        or not isinstance(latency, (int, float))
+        or latency < 0
+    ):
+        return False
+    if (
+        not isinstance(attempt["http_status"], int)
+        or isinstance(attempt["http_status"], bool)
+        or attempt["http_status"] != 200
+    ):
+        return False
+    if attempt["model_completed"] is not True:
+        return False
+    if attempt["target_in_context"] is not True:
+        return False
+    if attempt["valid_attempt"] is not True:
+        return False
+    for field in (
+        "context_doc_ids",
+        "gated_context_doc_ids",
+        "violation_doc_ids",
+    ):
+        if not _string_list(attempt[field]):
+            return False
+    if target not in attempt["context_doc_ids"]:
+        return False
+    if target not in attempt["gated_context_doc_ids"]:
+        return False
+    if not isinstance(attempt["raw_overlap"], bool):
+        return False
+    if not isinstance(attempt["public_overlap"], bool):
+        return False
+    if attempt["outcome"] not in (GUARD_FIRED, NOT_EXERCISED, LEAK):
+        return False
+    retry_count = attempt["transport_retry_count"]
+    if (
+        not isinstance(retry_count, int)
+        or isinstance(retry_count, bool)
+        or retry_count < 0
+    ):
+        return False
+    telemetry = attempt["gated_match_telemetry"]
+    if not isinstance(telemetry, dict):
+        return False
+    longest = telemetry.get("longest_common_gated_token_run")
+    if (
+        not isinstance(longest, int)
+        or isinstance(longest, bool)
+        or longest < 0
+    ):
+        return False
+    counts = telemetry.get("matching_ngram_counts")
+    if not isinstance(counts, dict):
+        return False
+    return all(
+        isinstance(counts.get(width), int)
+        and not isinstance(counts.get(width), bool)
+        and counts[width] >= 0
+        for width in ("8", "12", str(ATTEST_NGRAM))
+    )
+
+
 def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
     prior = json.loads(path.read_text())
     if prior.get("battery", {}).get("sha256") != report["battery"]["sha256"]:
@@ -355,13 +466,40 @@ def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
     if prior.get("provider_roles") != report["provider_roles"]:
         raise ValueError(f"{path}: resume provider identities do not match")
 
+    prior_attempts = prior.get("attempts", [])
+    if not isinstance(prior_attempts, list):
+        raise ValueError(f"{path}: resume attempts must be a list")
+    source_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
     valid: list[dict] = []
     keys: set[tuple[str, str]] = set()
-    for attempt in prior.get("attempts", []):
-        if not (
-            attempt.get("target_in_context")
-            and attempt.get("model_completed")
-        ):
+    for attempt in prior_attempts:
+        if isinstance(attempt, dict) and attempt.get("outcome") == LEAK:
+            report["attempts"] = valid
+            report["counts"] = {
+                outcome: sum(
+                    item["outcome"] == outcome for item in valid
+                )
+                for outcome in (GUARD_FIRED, NOT_EXERCISED, LEAK)
+            }
+            signal = {
+                "target_doc_id": attempt.get(
+                    "target_doc_id",
+                    "<missing>",
+                ),
+                "shape": attempt.get("shape", "<missing>"),
+            }
+            report["resume"] = {
+                "source_sha256": source_sha256,
+                "prior_attempts": len(prior_attempts),
+                "reused_valid_attempts": len(valid),
+                "retried_invalid_attempts": 0,
+                "halted_on_resumed_leak": signal,
+            }
+            raise ResumedLeakError(
+                f"{path}: resumed LEAK at "
+                f"{signal['target_doc_id']} × {signal['shape']}"
+            )
+        if not _completed_attempt_schema_valid(attempt):
             continue
         key = (attempt["target_doc_id"], attempt["shape"])
         if key in keys:
@@ -377,12 +515,10 @@ def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
         for outcome in (GUARD_FIRED, NOT_EXERCISED, LEAK)
     }
     report["resume"] = {
-        "source_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-        "prior_attempts": len(prior.get("attempts", [])),
+        "source_sha256": source_sha256,
+        "prior_attempts": len(prior_attempts),
         "reused_valid_attempts": len(valid),
-        "retried_invalid_attempts": (
-            len(prior.get("attempts", [])) - len(valid)
-        ),
+        "retried_invalid_attempts": len(prior_attempts) - len(valid),
     }
     return keys
 
@@ -638,7 +774,12 @@ def _run_adversarial_battery(
     )
     completed_keys: set[tuple[str, str]] = set()
     if resume_from is not None:
-        completed_keys = _resume_valid_attempts(resume_from, report)
+        try:
+            completed_keys = _resume_valid_attempts(resume_from, report)
+        except ResumedLeakError:
+            if report_path is not None:
+                _write_adversarial_report(report_path, report)
+            raise
     if report_path is not None:
         _write_adversarial_report(report_path, report)
 
