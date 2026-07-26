@@ -1,9 +1,9 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.3 (core-shell) · **Status:** **R-CLOSE patch release approved and candidate-verified; release commit and tag creation are in progress.** The operator selected v0.10.3 after authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Remote `main` is the completed RE-MEASURE audit record `3299c1b47cc3a6ac561bf01c85db4013ac0f7136`. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle does not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. The five release authorities agree at 0.10.3; no v0.10.3 tag exists until the verified release commit is created.
+**As of:** 2026-07-26 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.10.3 is published and the v0.10.3 execution cycle is closed.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
-**v0.10.3 R-CLOSE selected a patch release and the release candidate is in
-progress (measured 2026-07-26).** The operator explicitly approved release
+**v0.10.3 R-CLOSE selected and published the patch release (measured
+2026-07-26).** The operator explicitly approved release
 `v0.10.3`. The publication gate is open: RE-MEASURE authenticated seven
 distinct successful identities with zero rejection, both hosted negative
 controls accepted zero executions, and neither EVIDENCE-DURABLE nor
@@ -56,11 +56,14 @@ closed runbook without a stale enumerated cycle list. Its active declaration
 remains v0.10.3 after closure until the operator supplies the next runbook.
 
 Publication disposition is explicit. v0.10.2 remains local and unpublished at
-its original annotated tag object, and v0.10.3 does not change that. v0.10.3
-will be published because the operator selected release after RE-MEASURE
-satisfied the real success and failure controls. The exact release commit and
-annotated tag object will be recorded after candidate verification; the
-separate append-only closing record will not move the tag.
+its original annotated tag object, and v0.10.3 did not change that. v0.10.3
+was published because the operator selected release after RE-MEASURE satisfied
+the real success and failure controls. Annotated tag object
+`215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release
+commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`. The atomic remote push advanced
+`main` to that commit and created the tag; read-only remote verification
+returned the same tag object and dereferenced commit. The separate append-only
+closing record does not move the tag.
 
 The release candidate passed the complete local definition of done.
 `./run ci-local` passed all **19/19** jobs with **99** Rust workspace tests,

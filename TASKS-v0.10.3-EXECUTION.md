@@ -617,7 +617,7 @@ green · all pins match · golden 11/11.
 - [x] **EVIDENCE-DURABLE** — signer revision pinned (or gap recorded); raw receipts and bundles committed and hash-pinned; no recorded path implies an untracked file
 - [x] **LITERAL-NEUTRAL** — zero cycle literals in `tools/` and `run`; guard widened; v0.10.2's mislabeled artifact corrected by annotation with its pin unmoved; amendment-disclosure assertion executable or gap recorded
 - [x] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
-- [ ] **R-CLOSE** — release disposition recorded with its trigger and, if applicable, `v0.10.3` tagged
+- [x] **R-CLOSE** — release disposition recorded with its trigger and, if applicable, `v0.10.3` tagged
 
 ---
 
@@ -726,3 +726,54 @@ committed bytes; G5 is a guard installed one directory away from the defect; G6
 is a contract that can be edited to fit its outcome. Each is the same failure at
 a different altitude: **a property is only real where something refuses to
 proceed without it.**
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-26
+- **Release disposition:** release
+- **Release:** `v0.10.3`
+- **Release commit:** `d86ba26e38ff41efbae997a1f909d124a6d6e969`
+- **Annotated tag object:** `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3`
+
+The eight executed task records resolve to these implementation commits:
+
+- E0 — `ac9bf73a41fe62c35b8891253232bf45230a22cf`
+- MATRIX-ID — `da401507bd64ac9a2f07f37fc68b0d5b42fc7291`
+- AUTH-REQUIRED — `919d304ad8f1cac13a373eb55c8952210b30eb11`
+- RESUME-INVARIANT — `db3f892720d991c893a0adee0b95df9d96df790b`
+- EVIDENCE-DURABLE — `382d4b1537b0ae03f06e51fa0561b3ef9d3a03d0`
+- LITERAL-NEUTRAL — `a01c47d67bcbbac47cc70772b8f9edcac5fc851e`
+- RE-MEASURE — `58f02b1f837c81e556ba1d54f9fed9728947f746`
+- R-CLOSE/release — `d86ba26e38ff41efbae997a1f909d124a6d6e969`
+
+RE-MEASURE also contains the gate-driven HOSTED-CYCLE-GATE correction at
+`8b17b5e00d245ffb964a9bfb2a404bb390fc237f` and
+EVIDENCE-PATH-ADMISSION correction at
+`17cc2b7615b1ea7861319035f6e89bf43d92085a`; their separate progress records
+preserve the hosted findings that required them.
+
+The operator selected v0.10.3 because the complete 69-path cycle diff hardens
+matrix identity, mandatory release authentication, resumed-evidence
+invariants, durable evidence paths, lifecycle enforcement, and cycle-neutral
+labeling. It adds tests and immutable receipt, bundle, and report evidence but
+does not change public or internal API behavior, runtime behavior, storage
+paths, database schema, cache representation, licensing outcomes, dependency
+resolution, or retrieval outputs. A patch release accurately describes the
+shipped delta. `STATE.md` classifies all 69 paths exactly once. The five
+version authorities agree at 0.10.3, README and the changelog record the
+release, and Cargo mechanically changed only the `cored` package version in
+the lockfile.
+
+Publication and carried dispositions are explicit. The local v0.10.2 annotated
+tag remains object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, dereferencing
+to `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains absent from the
+remote, and this cycle did not move or publish it. v0.10.3 was published after
+the full candidate definition of done passed and both Step 7 negative controls
+fired. The atomic push published release commit
+`d86ba26e38ff41efbae997a1f909d124a6d6e969` and annotated tag object
+`215cfcdbb78e1274a845fdd08a0f17e3d87c94e3`; remote verification returned
+that exact mapping. Hosted run 30202019640 authenticated 7/7 distinct
+identities with zero rejection, promoted two rows, and deferred five. The
+release commit contains the classified diff, agreeing authorities, changelog,
+and mechanically updated lockfile; this later append-only closing record does
+not move the tag.

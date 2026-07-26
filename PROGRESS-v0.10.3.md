@@ -443,3 +443,61 @@ Entries are append-only; corrections are new dated entries.
   architecture, protected byte, prior pinned evidence byte, provider
   configuration, or tag changed. `v0.10.1` remains published unchanged and
   `v0.10.2` remains local-only at its original annotated tag object.
+
+### 2026-07-26 · R-CLOSE — v0.10.3 release published
+
+- owner: Codex
+- commit: d86ba26e38ff41efbae997a1f909d124a6d6e969
+- result: PASS. The operator explicitly selected and authorized release
+  v0.10.3 after RE-MEASURE authenticated seven distinct successful identities
+  with zero rejection and both real hosted negative controls accepted zero
+  executions. No Step 5 or Step 6 residual gap was publication-blocking.
+- release identity: PASS. `v0.10.3` is annotated tag object
+  `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3`, which dereferences exactly to
+  release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`. Its annotation is
+  `intel-platform v0.10.3`; the separate closing audit does not move the tag.
+- publication outcome: PASS. One atomic push advanced remote `main` to the
+  release commit and created the v0.10.3 tag. Read-only remote verification
+  returned the exact tag object and dereferenced commit above. It also returned
+  the unchanged published v0.10.1 mapping and no remote v0.10.2 ref.
+- carried v0.10.2 disposition: PASS. Local annotated tag object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences to
+  `7d127abac0b993c9e98294ee1c03ff01153de9d0`; v0.10.2 remains local,
+  unpublished, and unmoved.
+- diff inventory: PASS. All **69** paths in `v0.10.2..v0.10.3` are classified
+  exactly once in `STATE.md`: six release/public-documentation paths, four
+  workflow/harness/evidence-configuration paths, ten executable audit/test
+  paths, 43 durable-evidence paths, six operating/state/task records, and zero
+  architecture, runtime, storage, dependency-resolution, public-API, or
+  internal-API behavior paths.
+- document reconciliation: PASS. README names v0.10.3, all twelve core
+  endpoints including `/attest`, and the measured test counts. CHANGELOG
+  records the release and carried dispositions. STATE records the exact release
+  identity and inventory. ARCHITECTURE remains authoritative without a diff.
+  AGENTS uses cycle-neutral closed-runbook wording and retains v0.10.3 as the
+  declared latest closed cycle until a new runbook arrives.
+- version authorities: PASS. Rust package, Python package, FastAPI literal,
+  `STATE.md`, and newest changelog heading all read 0.10.3. Cargo mechanically
+  changed only the `cored` package version in `Cargo.lock`; no dependency
+  resolution moved. `./run version-check` matched the exact HEAD tag.
+- candidate acceptance: PASS. Before the release commit, `./run ci-local`
+  passed **19/19** with 99 workspace tests, 20 net tests, warning-denied
+  builds, clippy/fmt, locked Rust 1.78, 187 Python 3.11 shell tests, golden
+  **11/11**, protected databases **2/2**, all **39/39** pins, persisted
+  fingerprints, and lifecycle auditors. The independent Python 3.12.13 lane
+  passed **187/187**; both interpreters verified **21/21** exact packages.
+- golden-E2E delta: none. The required final standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. All **39/39** file pins matched and both
+  protected databases remained exact **2/2** with unchanged corpus facts.
+- final closure audit: PASS. A first `cycle-check` correctly refused the
+  non-schema disposition phrase `release and publish`; the field was narrowed
+  to exact disposition `release` while publication remained a separately
+  measured fact. Against the corrected checked runbook, exact closing record,
+  tag, and this progress entry, `./run ci-local` passed **19/19**.
+  `cycle-check` reported v0.10.3 closed with eight closed execution runbooks;
+  `checklist-audit` resolved **77/77** checked tasks with zero exemptions;
+  `progress-check` resolved R-CLOSE to the release commit; `version-check`
+  matched the exact HEAD tag; all **39/39** pins and protected databases
+  **2/2** matched; the independent Python 3.12.13 lane passed **187/187** and
+  **21/21** packages; and the final standalone golden remained **11/11**.
