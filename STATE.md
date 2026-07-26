@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, and X-CTRL are complete.** The clean entering matrix passed **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, and **20** net-path tests. X-CTRL passes **125** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Its real-path positive control traverses FastAPI `/v1/ask` and core HTTP `/attest`, fires `GUARD FIRED`, and gates an all-`NOT EXERCISED` aggregate; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, and CIR are complete.** CIR passes **129** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. All seven configured `ci.yml` jobs now emit an `if: always()` receipt and persist it with `actions/upload-artifact`; the Python matrix uses distinct artifacts. The auditor keeps the original `evidence/ci-runs/*.json` glob, counts only well-formed receipts whose SHA is an ancestor of the audited HEAD, records every rejection, and no longer treats workflow configuration, the current runner environment, or Git-remote presence as execution. The local measured state remains zero receipts and the CI-runner row honestly defers under the restated trigger; no runner execution is claimed before G-RUN. X-CTRL's real-path positive control traverses FastAPI `/v1/ask` and core HTTP `/attest`, fires `GUARD FIRED`, and gates an all-`NOT EXERCISED` aggregate; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. The clean entering matrix passed **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, and **20** net-path tests. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -155,6 +155,48 @@ third-party Starlette warning. `py_compile`, standalone golden **11/11**, and
 protected artifacts **2/2** passed. X-CTRL changed only the verifier harness
 and tests: no product path, dependency, lockfile, architecture, or protected
 bytes changed.
+
+**v0.10.1 CIR is complete (measured 2026-07-26).** The three new
+failure-capable controls failed against the pre-Step tree: two receipt tests
+could not call a nonexistent ancestry filter, and a zero-receipt measurement
+still promoted solely because a Git remote existed. After implementation, the
+expanded deferred-audit module passes 8/8.
+
+Every one of the seven configured `ci.yml` job definitions now checks out the
+explicit audit input or event SHA, emits a receipt under `evidence/ci-runs/`
+with `if: always()`, and persists it with `actions/upload-artifact@v4`. The
+Python 3.11/3.12 matrix uses distinct receipt filenames and artifact names. A
+new optional `workflow_dispatch.audit_sha` input allows the new workflow
+definition to execute against an explicitly audited older commit; each receipt
+records `git rev-parse HEAD`, so a failed checkout cannot claim the requested
+SHA. Static controls counted seven emit steps, seven persistence steps, seven
+explicit checkout refs, and seven upload actions. Ruby parsed the workflow
+YAML successfully. This configuration has not been pushed or run and is not
+described as execution.
+
+The auditor's original
+`(ROOT / "evidence" / "ci-runs").glob("*.json")` remains unchanged. Each
+candidate receipt must contain the seven runner fields and a hexadecimal object
+id, then pass `git merge-base --is-ancestor <sha> <audited-head>`. Accepted and
+rejected receipts are recorded separately with reasons; only accepted receipts
+contribute to `observed_runner_executions`. `GITHUB_ACTIONS=true` and Git
+remote presence remain measured context but contribute zero. The CI row now
+promotes only when the filtered count is nonzero and uses the restated trigger
+`a runner execution receipt exists for the released commit`.
+
+Synthetic Git history proved both directions: a base-commit receipt promoted
+an audited descendant; a receipt from a sibling foreign branch was rejected
+with its SHA and audited-head reason and left the row deferred. The production
+local measurement found zero candidate, accepted, and rejected receipts,
+`workflow_configuration_counts_as_execution:false`, and correctly deferred
+despite two `git remote -v` entries.
+
+Full Python 3.11.4 and 3.12.13 suites each passed **129/129** with one
+third-party Starlette warning. `py_compile`, standalone golden **11/11**, and
+protected artifacts **2/2** passed. CIR changed only workflow configuration,
+the deferred-audit harness, and its tests: no runtime product path, dependency,
+lockfile, architecture, or protected bytes changed. G-RUN remains an explicit
+operator decision; no push or remote workflow mutation has occurred.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

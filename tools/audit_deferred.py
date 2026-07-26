@@ -582,6 +582,114 @@ def attestation_boundary_measurement() -> dict[str, Any]:
     }
 
 
+def _display_receipt_path(path: Path, repository: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(repository.resolve()))
+    except ValueError:
+        return str(path.resolve())
+
+
+def runner_receipt_measurement(
+    receipts: list[Path],
+    *,
+    repository: Path,
+    audited_head: str,
+) -> dict[str, Any]:
+    """Accept only well-formed receipts whose SHA belongs to the audited line."""
+    accepted: list[dict[str, Any]] = []
+    rejected: list[dict[str, Any]] = []
+    required = (
+        "run_id",
+        "run_attempt",
+        "job",
+        "sha",
+        "conclusion",
+        "runner_os",
+        "completed_at",
+    )
+    for path in receipts:
+        shown = _display_receipt_path(path, repository)
+        try:
+            receipt = json.loads(path.read_text())
+        except (OSError, json.JSONDecodeError) as error:
+            rejected.append(
+                {
+                    "path": shown,
+                    "sha": None,
+                    "reason": f"receipt is not readable JSON: {error}",
+                }
+            )
+            continue
+        if not isinstance(receipt, dict):
+            rejected.append(
+                {
+                    "path": shown,
+                    "sha": None,
+                    "reason": "receipt root is not an object",
+                }
+            )
+            continue
+        missing = [
+            field
+            for field in required
+            if not isinstance(receipt.get(field), (str, int))
+            or str(receipt[field]).strip() == ""
+        ]
+        sha = str(receipt.get("sha", "")).lower()
+        if missing:
+            rejected.append(
+                {
+                    "path": shown,
+                    "sha": sha or None,
+                    "reason": "missing/invalid fields: " + ", ".join(missing),
+                }
+            )
+            continue
+        if re.fullmatch(r"[0-9a-f]{40,64}", sha) is None:
+            rejected.append(
+                {
+                    "path": shown,
+                    "sha": sha,
+                    "reason": "sha is not a 40-64 character hexadecimal object id",
+                }
+            )
+            continue
+        ancestry = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", sha, audited_head],
+            cwd=repository,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if ancestry.returncode != 0:
+            reason = (
+                f"sha is not an ancestor of audited head {audited_head}"
+                if ancestry.returncode == 1
+                else (
+                    "git ancestry check failed: "
+                    + (ancestry.stderr.strip() or f"exit {ancestry.returncode}")
+                )
+            )
+            rejected.append({"path": shown, "sha": sha, "reason": reason})
+            continue
+        accepted.append(
+            {
+                "path": shown,
+                **{field: receipt[field] for field in required},
+            }
+        )
+    return {
+        "audited_head_commit": audited_head,
+        "runner_receipts": [
+            _display_receipt_path(path, repository) for path in receipts
+        ],
+        "accepted_runner_receipts": accepted,
+        "rejected_runner_receipts": rejected,
+        "observed_runner_executions": len(accepted),
+        "workflow_configuration_counts_as_execution": False,
+    }
+
+
 def ci_runner_measurement() -> dict[str, Any]:
     remote = subprocess.run(
         ["git", "remote", "-v"],
@@ -594,21 +702,27 @@ def ci_runner_measurement() -> dict[str, Any]:
         line for line in remote.stdout.splitlines() if line.strip()
     ]
     receipts = sorted((ROOT / "evidence" / "ci-runs").glob("*.json"))
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
     current_runner = os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
     return {
         "git_remote_entries": remote_entries,
         "git_remote_entry_count": len(remote_entries),
-        "runner_receipts": [
-            str(path.relative_to(ROOT)) for path in receipts
-        ],
-        "observed_runner_executions": len(receipts)
-        + (1 if current_runner else 0),
         "current_process_is_github_actions": current_runner,
         "configured_workflows": [
             str(path.relative_to(ROOT))
             for path in sorted((ROOT / ".github" / "workflows").glob("*.yml"))
         ],
-        "workflow_configuration_counts_as_execution": False,
+        **runner_receipt_measurement(
+            receipts,
+            repository=ROOT,
+            audited_head=head,
+        ),
     }
 
 
@@ -741,16 +855,18 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
         },
         {
             "id": "CI-runner evidence",
-            "unchanged_trigger": "a Git remote exists",
+            "unchanged_trigger": (
+                "a runner execution receipt exists for the released commit"
+            ),
             "measurement": (
-                f"git remote -v entries={ci_runner['git_remote_entry_count']}; "
-                "observed runner executions="
-                f"{ci_runner['observed_runner_executions']}; workflow config "
-                "is not an execution"
+                "ancestor-valid runner receipts="
+                f"{ci_runner['observed_runner_executions']}; rejected receipts="
+                f"{len(ci_runner.get('rejected_runner_receipts', []))}; "
+                "workflow config is not an execution"
             ),
             "disposition": (
                 "promote"
-                if ci_runner["git_remote_entry_count"] > 0
+                if ci_runner["observed_runner_executions"] > 0
                 else "defer"
             ),
         },

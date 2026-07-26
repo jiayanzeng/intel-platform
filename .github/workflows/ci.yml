@@ -19,6 +19,12 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      audit_sha:
+        description: Commit whose tree the new workflow definition must audit
+        required: false
+        type: string
   schedule:
     # Mondays 06:00 UTC — the drift report, see the `drift` job.
     - cron: "0 6 * * 1"
@@ -37,6 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.audit_sha || github.sha }}
 
       # rust-toolchain.toml pins the channel; this action honors it, so the
       # version lives in exactly one place.
@@ -67,6 +75,29 @@ jobs:
           ./run verify-fingerprints "$fixture_db"
 
       # fmt/clippy are their own blocking job (`lint`) below.
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # Lint: clippy + rustfmt, blocking on every push and pull request.
@@ -86,6 +117,8 @@ jobs:
     continue-on-error: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.audit_sha || github.sha }}
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.91"
@@ -95,6 +128,29 @@ jobs:
         run: cargo fmt --all -- --check
       - name: cargo clippy
         run: cargo clippy --workspace --locked --all-targets -- -D warnings
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # The live path. This job is the whole reason this file exists: `--features
@@ -111,6 +167,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.audit_sha || github.sha }}
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.91"
@@ -121,6 +179,29 @@ jobs:
 
       - name: cargo test -p intel-ingest --features net --locked
         run: cargo test -p intel-ingest --features net --locked
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # The MSRV floor for the OFFLINE build is **1.78**, and getting to that number
@@ -156,6 +237,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.audit_sha || github.sha }}
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.78"
@@ -172,6 +255,29 @@ jobs:
         env:
           RUSTFLAGS: ""
         run: cargo test --workspace --locked
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # The shell. Free, and it holds the entitlement/licensing invariants that the
@@ -187,6 +293,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.audit_sha || github.sha }}
           # version-check compares the nearest release tag. A depth-1 checkout
           # ahead of that tag would reduce the check to an avoidable warning.
           fetch-depth: 0
@@ -214,6 +321,30 @@ jobs:
         run: PYTHONPATH=shell python3 -m pytest shell/tests/test_evidence_artifacts.py -q
       - name: pytest
         run: PYTHONPATH=shell python3 -m pytest shell/tests -q
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-py${{ matrix.python-version }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "matrix": "python=${{ matrix.python-version }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-py${{ matrix.python-version }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # The cross-language regression anchor. Unit tests cannot stand in for this:
@@ -227,6 +358,8 @@ jobs:
     continue-on-error: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.audit_sha || github.sha }}
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.91"
@@ -236,6 +369,29 @@ jobs:
           python-version: "3.12"
       - name: assert the golden end-to-end
         run: ./run golden
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # Drift report. Runs on a schedule, NEVER on a PR, and never commits anything.
@@ -256,6 +412,8 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.audit_sha || github.sha }}
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.91"
@@ -278,3 +436,26 @@ jobs:
             | python3 -c "import json,sys; [print(f\"{p['rust_version']:>8}  {p['name']} {p['version']}\") for p in sorted(json.load(sys.stdin)['packages'], key=lambda p: p.get('rust_version') or '') if p.get('rust_version')]" \
             | tee -a "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: emit CI-runner receipt
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runs
+          checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "job": "${{ github.job }}",
+            "sha": "$checked_out_sha",
+            "conclusion": "${{ job.status }}",
+            "runner_os": "${{ runner.os }}",
+            "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+      - name: persist CI-runner receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          path: evidence/ci-runs/*.json
+          if-no-files-found: error
