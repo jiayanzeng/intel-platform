@@ -44,6 +44,9 @@ SUBSCRIPTIONS_PATH="${SUBSCRIPTIONS_PATH:-config/subscriptions.hashed.json}"
 RUNDIR=".run"                           # pidfiles + logs live here
 EVIDENCE_MANIFEST="config/protected-artifacts.json"
 PYTHON_CONSTRAINTS="shell/constraints.txt"
+# RECEIPT measures the immutable v0.10.1 release even though the current
+# auditor and workflow live on the later v0.10.2 pre-release line.
+DEFERRED_AUDIT_RELEASE_COMMIT="e5af6bc5df8261cc004bd4d3247b70f8cbe930bb"
 
 CORE_URL="http://127.0.0.1:${CORE_PORT}"
 API_URL="http://127.0.0.1:${API_PORT}"
@@ -468,8 +471,20 @@ cmd_audit_deferred() {
   step "protected artifacts before deferred-trigger audit"
   cmd_verify_artifacts
   step "executable deferred-trigger audit"
-  local status
-  if python3 tools/audit_deferred.py "$@"; then
+  local status production=0 expected_head=0 argument
+  local audit_args=("$@")
+  for argument in "$@"; do
+    case "$argument" in
+      --output|--output=*) production=1 ;;
+      --expected-head|--expected-head=*) expected_head=1 ;;
+    esac
+  done
+  if [ "$production" = "1" ] && [ "$expected_head" = "0" ]; then
+    audit_args+=(
+      --expected-head "$DEFERRED_AUDIT_RELEASE_COMMIT"
+    )
+  fi
+  if python3 tools/audit_deferred.py "${audit_args[@]}"; then
     status=0
   else
     status=$?

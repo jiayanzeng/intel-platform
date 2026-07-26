@@ -1,6 +1,35 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 RCPT-AUTH is complete; structural receipts now require the exact release, success, and one complete run, while hosted authentication remains deliberately unclaimed until PUBLISH.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **145/145** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 SUBJ-ENFORCE is complete; production deferred audits require the intended HEAD and a clean worktree before any measurement.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **150/150** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+
+**v0.10.2 SUBJ-ENFORCE is complete (measured 2026-07-26).** Production
+audits now require `--expected-head`. Before any measurement call or report
+write, the auditor resolves the subject worktree's HEAD, requires exact
+equality, and then requires `git status --porcelain=v1` to be empty. The same
+validated SHA is passed to RCPT-AUTH as its released commit; `git_subject()`
+records the necessarily clean status afterward. Rederivation and synthetic
+control modes remain outside this production-only precondition.
+
+The three-test failure-before control failed **3/3** because the old
+`run_production` had no `expected_head` contract. Pass-after tests instrument
+the measurement function: a wrong HEAD and a dirty tracked path each raise
+before that function is called and leave no output file, while a clean
+matching synthetic repository writes a report and passes its HEAD into the
+receipt guard. A separate CLI control rejects `--output` without
+`--expected-head`. The `./run audit-deferred` production wrapper defaults the
+expected subject to immutable v0.10.1 release
+`e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; an actual wrapper control from
+current pre-release HEAD `170f471cab6c0b198a7254cc495b95efe0c71d2a` rejected the
+mismatch, wrote no report, and reverified protected evidence before and after.
+
+The corpus-free deferred-audit subset passed **22/22** on Python 3.11.4 and
+3.12.13. Both full shell lanes passed **150/150** with the existing single
+Starlette deprecation warning. Python compilation, `bash -n run`, and
+`git diff --check` passed. Standalone `./run golden` remained **11/11** at
+every named anchor; protected databases matched **2/2**, and both v0.10.1
+reports printed `PIN MATCH`. No measurement content, dependency, lockfile,
+runtime, protected byte, evidence pin, provider configuration, tunnel value,
+remote ref, or tag changed.
 
 **v0.10.2 RCPT-AUTH is complete (measured 2026-07-26).** The failure-before
 control produced the expected seven failures and eight passes: the old

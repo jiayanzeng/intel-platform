@@ -141,7 +141,7 @@ def git_subject() -> dict[str, Any]:
         capture_output=True,
     ).stdout.strip()
     status = subprocess.run(
-        ["git", "status", "--porcelain"],
+        ["git", "status", "--porcelain=v1"],
         cwd=ROOT,
         check=True,
         text=True,
@@ -169,6 +169,38 @@ def git_subject() -> dict[str, Any]:
             "shell/intel_shell/app.py": sha256(PUBLIC_APP),
         },
     }
+
+
+def require_production_subject(expected_head: str) -> str:
+    """Require the exact clean Git subject before any measurement executes."""
+    expected = expected_head.strip().lower()
+    if re.fullmatch(r"[0-9a-f]{40,64}", expected) is None:
+        raise AuditFailure(
+            "expected HEAD must be a 40-64 character hexadecimal object id"
+        )
+    actual = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip().lower()
+    if actual != expected:
+        raise AuditFailure(
+            f"subject HEAD mismatch: expected {expected}, actual {actual}"
+        )
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1"],
+        cwd=ROOT,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.splitlines()
+    if status:
+        raise AuditFailure(
+            "subject worktree is dirty: " + "; ".join(status)
+        )
+    return actual
 
 
 def expanded_schedule_jobs() -> int:
@@ -1178,20 +1210,12 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
 def production_measurements(
     runner_receipts_dir: Path | None = None,
     *,
-    released_commit: str | None = None,
+    released_commit: str,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
 ) -> dict[str, Any]:
-    if released_commit is None:
-        released_commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=ROOT,
-            text=True,
-            capture_output=True,
-            check=True,
-        ).stdout.strip()
     return {
         "scheduler": scheduler_measurement(),
         "writers": writer_measurement(),
@@ -1441,8 +1465,8 @@ def run_control() -> int:
 def run_production(
     output: Path,
     *,
+    expected_head: str,
     runner_receipts_dir: Path | None = None,
-    released_commit: str | None = None,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
     expected_repository: str | None = None,
@@ -1450,6 +1474,7 @@ def run_production(
 ) -> int:
     if output.exists():
         raise AuditFailure(f"refusing to overwrite existing evidence: {output}")
+    released_commit = require_production_subject(expected_head)
     measurements = production_measurements(
         runner_receipts_dir,
         released_commit=released_commit,
@@ -1534,10 +1559,10 @@ def main() -> int:
         ),
     )
     parser.add_argument(
-        "--released-commit",
+        "--expected-head",
         help=(
-            "exact released commit required in every accepted runner receipt; "
-            "defaults to the measured subject HEAD until SUBJ-ENFORCE"
+            "exact clean subject commit required before a production audit; "
+            "also required in every accepted runner receipt"
         ),
     )
     parser.add_argument(
@@ -1563,7 +1588,7 @@ def main() -> int:
         if (
             args.subject_root
             or args.runner_receipts_dir
-            or args.released_commit
+            or args.expected_head
             or args.attestation_bundles_dir
             or args.require_attestations
             or args.expected_repository
@@ -1598,7 +1623,7 @@ def main() -> int:
         )
     if receipt is not None:
         if (
-            args.released_commit
+            args.expected_head
             or attestation_bundles_dir is not None
             or args.require_attestations
             or args.expected_repository
@@ -1612,10 +1637,14 @@ def main() -> int:
             receipt,
             runner_receipts_dir=runner_receipts_dir,
         )
+    if not args.expected_head:
+        raise AuditFailure(
+            "--expected-head is required for production audits"
+        )
     return run_production(
         args.output.resolve(),
+        expected_head=args.expected_head,
         runner_receipts_dir=runner_receipts_dir,
-        released_commit=args.released_commit,
         attestation_bundles_dir=attestation_bundles_dir,
         require_attestations=args.require_attestations,
         expected_repository=args.expected_repository,

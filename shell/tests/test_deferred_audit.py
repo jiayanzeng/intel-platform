@@ -17,6 +17,7 @@ from tools.audit_deferred import (
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = ROOT / "tools" / "audit_deferred.py"
+RUN = ROOT / "run"
 COMMITTED_RECEIPT = (
     ROOT / "evidence" / "v0.10.1" / "deferred-audit" / "report.json"
 )
@@ -416,6 +417,129 @@ def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
         == "GitHub attestation verification failed: invalid bundle"
         for item in measurement["rejected_runner_receipts"]
     )
+
+
+def test_production_rejects_wrong_head_before_measurement(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo, ancestor, _, head = _synthetic_repository(tmp_path)
+    output = tmp_path / "wrong-head.json"
+    measured = False
+
+    def fail_if_measured(*_: object, **__: object) -> dict[str, object]:
+        nonlocal measured
+        measured = True
+        raise AssertionError("measurement ran before subject validation")
+
+    monkeypatch.setattr(audit_deferred, "ROOT", repo)
+    monkeypatch.setattr(
+        audit_deferred,
+        "production_measurements",
+        fail_if_measured,
+    )
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match=rf"subject HEAD mismatch: expected {ancestor}, actual {head}",
+    ):
+        audit_deferred.run_production(output, expected_head=ancestor)
+
+    assert measured is False
+    assert not output.exists()
+
+
+def test_production_rejects_dirty_tree_before_measurement(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    (repo / "tracked.txt").write_text("dirty\n")
+    output = tmp_path / "dirty.json"
+    measured = False
+
+    def fail_if_measured(*_: object, **__: object) -> dict[str, object]:
+        nonlocal measured
+        measured = True
+        raise AssertionError("measurement ran before subject validation")
+
+    monkeypatch.setattr(audit_deferred, "ROOT", repo)
+    monkeypatch.setattr(
+        audit_deferred,
+        "production_measurements",
+        fail_if_measured,
+    )
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match="subject worktree is dirty.*tracked.txt",
+    ):
+        audit_deferred.run_production(output, expected_head=head)
+
+    assert measured is False
+    assert not output.exists()
+
+
+def test_production_clean_matching_subject_writes_report(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    output = tmp_path / "clean.json"
+    measurements = control_measurements()
+    measurements["multi_host"]["progress_files_scanned"] = []
+    measured_with: dict[str, object] = {}
+
+    def measure(*_: object, **kwargs: object) -> dict[str, object]:
+        measured_with.update(kwargs)
+        return measurements
+
+    monkeypatch.setattr(audit_deferred, "ROOT", repo)
+    monkeypatch.setattr(audit_deferred, "production_measurements", measure)
+    monkeypatch.setattr(
+        audit_deferred,
+        "git_subject",
+        lambda: {
+            "head_commit": head,
+            "worktree_dirty": False,
+            "worktree_status": [],
+        },
+    )
+
+    assert audit_deferred.run_production(output, expected_head=head) == 0
+
+    report = json.loads(output.read_text())
+    assert report["subject"]["head_commit"] == head
+    assert report["subject"]["worktree_dirty"] is False
+    assert measured_with["released_commit"] == head
+
+
+def test_production_cli_requires_expected_head(tmp_path: Path) -> None:
+    output = tmp_path / "unguarded.json"
+    result = subprocess.run(
+        [sys.executable, str(TOOL), "--output", str(output)],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 2
+    assert (
+        "audit-deferred: FAIL: --expected-head is required "
+        "for production audits"
+    ) in result.stderr
+    assert not output.exists()
+
+
+def test_run_wrapper_defaults_to_released_commit() -> None:
+    source = RUN.read_text()
+
+    assert (
+        'DEFERRED_AUDIT_RELEASE_COMMIT="'
+        'e5af6bc5df8261cc004bd4d3247b70f8cbe930bb"'
+    ) in source
+    assert '--expected-head "$DEFERRED_AUDIT_RELEASE_COMMIT"' in source
 
 
 def test_zero_runner_receipts_defer_under_restated_trigger() -> None:
