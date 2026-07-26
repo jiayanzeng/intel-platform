@@ -610,7 +610,7 @@ green · all pins match · golden 11/11.
 
 ## Cycle checklist
 
-- [ ] **E0** — entering state re-measured at v0.10.2; G1–G6 confirmed or refuted; `gh attestation verify --help` captured
+- [x] **E0** — entering state re-measured at v0.10.2; G1–G6 confirmed or refuted; `gh attestation verify --help` captured
 - [ ] **MATRIX-ID** — completeness is an exact `(job, matrix)` identity set; duplicate subjects and digests rejected; duplicated-leg control fail-before/pass-after; identity fields preserved
 - [ ] **AUTH-REQUIRED** — `--evidence-grade` required; `release` implies authenticated verification; posture read by both `--rederive` and `validate`; structural mode still token-free
 - [ ] **RESUME-INVARIANT** — five one-way invariants + telemetry cross-check enforced; attempt bound to declaration; contradictions halt; all controls fail-before/pass-after

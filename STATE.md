@@ -1,6 +1,69 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.2 is released locally and its append-only cycle closing record is complete.** Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; the later audit record does not move it. v0.10.1 is published unchanged, hosted CI is green against its exact checkout, and seven authenticated receipts are pinned in a fresh audit. Remote `main` remains reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; remote annotated v0.10.1 tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. Closed-state local CI passed **19/19** with **99** Rust workspace / **20** net tests; shell passed **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verified **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No v0.10.2 push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 E0 is complete on the locally released v0.10.2 baseline; G1–G6 are confirmed, with G2's drafted grep expectation corrected by measurement.** Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; the later audit and v0.10.3 activation records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+
+**v0.10.3 E0 is complete (measured 2026-07-26).** The restarted opener
+produced no `git status --porcelain=v1` output. HEAD was
+`4c70da5760a25fe5781ce7d09d6350cda69187d9`, described as
+`v0.10.2-3-g4c70da5`; the preparatory implementation/audit pair explains local
+`main` being six commits ahead / zero behind `origin/main` at
+`817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. The local annotated v0.10.2
+tag remained object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`
+dereferencing exactly to release commit
+`7d127abac0b993c9e98294ee1c03ff01153de9d0`; the authenticated remote tag
+census still contained v0.10.0 and v0.10.1 only.
+
+The first sandboxed `./run ci-local` attempt is an environment non-result:
+Rust, MSRV, lint, lifecycle, and evidence re-derivation passed, while eight
+shell controls failed because the environment denied loopback binds and
+`ps`. The permitted identical rerun passed all **19/19** jobs with **99**
+workspace tests, **20** net tests, warning-denied builds, clippy/fmt, locked
+Rust 1.78 check/tests, and **156/156** Python 3.11.4 shell tests. The
+independent Python 3.12.13 lane passed **156/156** and both interpreters
+verified the exact **21/21** constrained packages.
+
+Standalone `./run golden` passed **11/11** with every exact corpus, duplicate,
+signal, rerun, entitlement, citation, snippet, and auth anchor unchanged.
+`./run verify-artifacts` matched both protected databases **2/2**.
+Manifest validation and an independent `hashlib.sha256` witness each matched
+all three pinned reports exactly: 27,786 bytes / `00cf14ae…`, 62,978 bytes /
+`beec8bfa…`, and 28,968 bytes / `4e11a8b3…`. `version-check`,
+`cycle-check`, `checklist-audit`, and `progress-check` passed; the checklist
+entered at **69/69** checked historical tasks with zero exemptions.
+
+All six defect classes were confirmed:
+
+1. **G1:** the receipt guard declares job counts, computes them with
+   `sum(receipt["job"] == job)`, omits `matrix` from both required and accepted
+   fields, and its positive fixture emits two indistinguishable `shell`
+   receipts.
+2. **G2:** `--require-attestations` is optional, and neither `run` nor
+   `ci.yml` requires it. The drafted claim that a broad grep would match only
+   tests was refuted: the option and writer necessarily also appear in
+   `tools/audit_deferred.py`. The substantive finding holds: no release-path
+   invocation requires it, and `attestations_required` /
+   `attestation_verified` have no reader outside the measurement writer.
+3. **G3:** the in-process substitution control changed a committed valid cell
+   to `NOT EXERCISED` with both overlap flags true and a violation id;
+   `_completed_attempt_schema_valid` returned `True`. Resume binds neither
+   target, shape, nor model to the report declaration.
+4. **G4:** `gh` 2.96.0 exposes `--signer-digest`, `--source-digest`, and
+   `--source-ref`, while the current verifier passes none of them. All seven
+   accepted `30194678764-1-*` logical receipt paths are absent from the
+   repository; no `.sigstore` bundle exists under `evidence/`.
+5. **G5:** `tools/audit_deferred.py` hard-codes
+   `"task": "v0.10.1 RECEIPT"` and the immutable pinned v0.10.2 report carries
+   that wrong label. `cycle_check` scans only `AGENTS.md` for task/progress
+   paths, while `run` still contains stale v0.10/v0.10.1 evidence paths.
+6. **G6:** Git's unreachable blob
+   `0eaef2570b1a435e6165f64a8fe3b377360e06f6` preserves the supplied
+   v0.10.2 runbook at SHA-256 `247d7185…`; the first committed runbook is
+   `2fc0eb19…`. Their diff proves Step 2's Objective, Acceptance criteria, and
+   Done-when were rewritten before admission, while the dated correction named
+   only activation and the publication dependency.
+
+No runtime, dependency, lockfile, architecture, protected byte, evidence pin,
+provider configuration, remote ref, or tag changed during E0.
 
 **v0.10.3 cycle activation is complete; E0 has not yet run (measured
 2026-07-26).** The read-only opener found only the operator-supplied untracked
