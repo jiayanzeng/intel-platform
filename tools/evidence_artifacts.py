@@ -270,6 +270,37 @@ def _validate_artifact(value: Any, index: int) -> dict[str, Any]:
     return value
 
 
+def _validate_pinned_file(value: Any, index: int) -> dict[str, Any]:
+    context = f"pinned_files[{index}]"
+    if not isinstance(value, dict):
+        raise ManifestError(f"{context}: expected an object")
+    _exact_keys(
+        value,
+        {"path", "sha256", "bytes", "purpose", "provenance"},
+        context,
+    )
+    raw_path = _non_empty_string(value["path"], f"{context}.path")
+    path = PurePosixPath(raw_path)
+    if (
+        path.is_absolute()
+        or ".." in path.parts
+        or "|" in raw_path
+        or "\t" in raw_path
+    ):
+        raise ManifestError(
+            f"{context}.path: expected a safe repository-relative path"
+        )
+    if not path.parts or path.parts[0] != "evidence":
+        raise ManifestError(
+            f"{context}.path: pinned files must live beneath evidence/"
+        )
+    _sha256_string(value["sha256"], f"{context}.sha256")
+    _non_negative_int(value["bytes"], f"{context}.bytes")
+    _non_empty_string(value["purpose"], f"{context}.purpose")
+    _non_empty_string(value["provenance"], f"{context}.provenance")
+    return value
+
+
 def load_manifest(path: Path) -> dict[str, Any]:
     try:
         raw = json.loads(path.read_text())
@@ -277,7 +308,11 @@ def load_manifest(path: Path) -> dict[str, Any]:
         raise ManifestError(f"{path}: {error}") from error
     if not isinstance(raw, dict):
         raise ManifestError(f"{path}: top level must be an object")
-    _exact_keys(raw, {"schema_version", "lifecycle", "artifacts"}, str(path))
+    _exact_keys(
+        raw,
+        {"schema_version", "lifecycle", "artifacts", "pinned_files"},
+        str(path),
+    )
     if raw["schema_version"] != 2:
         raise ManifestError(f"{path}: schema_version must be 2")
 
@@ -309,6 +344,21 @@ def load_manifest(path: Path) -> dict[str, Any]:
     paths = [artifact["path"] for artifact in checked]
     if len(paths) != len(set(paths)):
         raise ManifestError(f"{path}: artifact paths must be unique")
+    pinned_files = raw["pinned_files"]
+    if not isinstance(pinned_files, list):
+        raise ManifestError(f"{path}: pinned_files must be an array")
+    checked_pins = [
+        _validate_pinned_file(pinned_file, index)
+        for index, pinned_file in enumerate(pinned_files)
+    ]
+    pinned_paths = [pinned_file["path"] for pinned_file in checked_pins]
+    if len(pinned_paths) != len(set(pinned_paths)):
+        raise ManifestError(f"{path}: pinned file paths must be unique")
+    overlap = sorted(set(paths) & set(pinned_paths))
+    if overlap:
+        raise ManifestError(
+            f"{path}: paths cannot be both artifacts and pinned files: {overlap}"
+        )
     return raw
 
 
@@ -318,6 +368,50 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def validate_pinned_files(manifest: dict[str, Any], root: Path) -> int:
+    failures = 0
+    for pinned_file in manifest["pinned_files"]:
+        relative = pinned_file["path"]
+        path = root / relative
+        try:
+            resolved = path.resolve(strict=True)
+            resolved.relative_to(root)
+            if not resolved.is_file():
+                raise OSError("not a regular file")
+            actual_bytes = resolved.stat().st_size
+            actual_sha256 = _sha256(resolved)
+        except (OSError, ValueError) as error:
+            print(
+                f"PIN MISMATCH {relative} field=readable: {error}",
+                file=sys.stderr,
+            )
+            failures += 1
+            continue
+        file_ok = True
+        file_ok &= _compare(
+            relative,
+            "sha256",
+            pinned_file["sha256"],
+            actual_sha256,
+        )
+        file_ok &= _compare(
+            relative,
+            "bytes",
+            pinned_file["bytes"],
+            actual_bytes,
+        )
+        if file_ok:
+            print(
+                f"PIN MATCH {relative} "
+                f"sha256={actual_sha256} bytes={actual_bytes}"
+            )
+        else:
+            failures += 1
+    if failures:
+        return 1
+    return 0
 
 
 def _database_measurements(path: Path) -> dict[str, Any]:
@@ -539,13 +633,20 @@ def main() -> int:
     root = args.root.resolve()
 
     if args.command == "verify":
+        pinned_status = validate_pinned_files(manifest, root)
+        if pinned_status:
+            return pinned_status
         return verify(manifest, root)
     if args.command == "report":
         return report(manifest, root)
     if args.command == "validate":
+        pinned_status = validate_pinned_files(manifest, root)
+        if pinned_status:
+            return pinned_status
         print(
             f"evidence-manifest: PASS "
-            f"(schema=2, artifacts={len(manifest['artifacts'])})"
+            f"(schema=2, artifacts={len(manifest['artifacts'])}, "
+            f"pinned_files={len(manifest['pinned_files'])})"
         )
         return 0
     if args.command == "protected":

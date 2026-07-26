@@ -45,6 +45,7 @@ ATTEST_REFUSAL = (
     "Answer withheld because it reproduced non-redistributable source text."
 )
 ADVERSARIAL_REPORT_SCHEMA = 2
+ADVERSARIAL_MAX_ATTEMPTS_PER_CELL = 3
 ADVERSARIAL_SHAPES = (
     {
         "id": "verbatim-quotation",
@@ -331,6 +332,11 @@ def _new_adversarial_report(
             NOT_EXERCISED: 0,
             LEAK: 0,
         },
+        "retry_policy": {
+            "max_attempts_per_cell": ADVERSARIAL_MAX_ATTEMPTS_PER_CELL,
+            "counted_attempts_require_model_completed": True,
+        },
+        "transport_retries": [],
         "aggregate": None,
         "complete": False,
         "real_path_positive_control": None,
@@ -523,6 +529,83 @@ def _embedding_items(batch: list[dict], vectors: list[list[float]]) -> list[dict
     ]
 
 
+def _run_adversarial_cell(
+    *,
+    api,
+    core: _RecordingCore,
+    recording_chat: _RecordingChat,
+    target: dict,
+    shape: dict,
+    chat_model: str,
+) -> dict:
+    prompt = _adversarial_prompt(shape, target)
+    recording_chat.last_answer = None
+    core.last_retrieve_context_ids = []
+    started = time.perf_counter()
+    response = api.get(
+        "/v1/ask",
+        params={"q": prompt, "k": 8},
+        headers={"Authorization": "Bearer ak_acme_7f3d9c"},
+    )
+    latency_ms = round(
+        (time.perf_counter() - started) * 1000,
+        3,
+    )
+    attempt = {
+        "target_doc_id": target["doc_id"],
+        "shape": shape["id"],
+        "endpoint_role": "chat",
+        "model": chat_model,
+        "latency_ms": latency_ms,
+        "http_status": response.status_code,
+        "model_completed": False,
+        "target_in_context": False,
+        "context_doc_ids": [],
+        "gated_context_doc_ids": [],
+        "violation_doc_ids": [],
+        "raw_overlap": False,
+        "public_overlap": False,
+        "outcome": NOT_EXERCISED,
+        "valid_attempt": False,
+        "gated_match_telemetry": _gated_match_telemetry("", []),
+    }
+    context_ids = list(core.last_retrieve_context_ids)
+    context_docs = core.docs(context_ids) if context_ids else []
+    attempt["gated_context_doc_ids"] = [
+        document["doc_id"]
+        for document in context_docs
+        if document.get("license") == "IndexOnly"
+    ]
+    if response.status_code == 200:
+        body = response.json()
+        response_context_ids = [
+            citation["doc_id"]
+            for citation in body.get("citations", [])
+        ]
+        if response_context_ids != context_ids:
+            raise ValueError(
+                "public citations diverged from retrieved context: "
+                f"{response_context_ids} != {context_ids}"
+            )
+        if recording_chat.last_answer is not None:
+            attempt["model_completed"] = True
+            raw_answer = recording_chat.last_answer
+            attestation = core.attest(raw_answer, context_ids)
+            classification = _classify_adversarial_outcome(
+                public_answer=body.get("answer", ""),
+                raw_answer=raw_answer,
+                docs=context_docs,
+                attestation=attestation,
+            )
+            attempt.update(classification)
+    attempt["context_doc_ids"] = context_ids
+    attempt["target_in_context"] = target["doc_id"] in context_ids
+    attempt["valid_attempt"] = bool(
+        attempt["target_in_context"] and attempt["model_completed"]
+    )
+    return attempt
+
+
 def _run_adversarial_battery(
     *,
     api,
@@ -534,7 +617,10 @@ def _run_adversarial_battery(
     report_path: Path | None,
     resume_from: Path | None,
     real_path_positive_control: dict | None = None,
+    max_attempts_per_cell: int = ADVERSARIAL_MAX_ATTEMPTS_PER_CELL,
 ) -> dict:
+    if max_attempts_per_cell < 1:
+        raise ValueError("max_attempts_per_cell must be positive")
     if report_path is not None and report_path.exists():
         raise ValueError(
             f"refusing to overwrite existing adversarial evidence: {report_path}"
@@ -544,6 +630,7 @@ def _run_adversarial_battery(
         embed_model=embed_model,
         gated_docs=gated_docs,
     )
+    report["retry_policy"]["max_attempts_per_cell"] = max_attempts_per_cell
     report["real_path_positive_control"] = real_path_positive_control
     report["started_at"] = time.strftime(
         "%Y-%m-%dT%H:%M:%SZ",
@@ -561,71 +648,53 @@ def _run_adversarial_battery(
             attempt_key = (target["doc_id"], shape["id"])
             if attempt_key in completed_keys:
                 continue
-            prompt = _adversarial_prompt(shape, target)
-            recording_chat.last_answer = None
-            core.last_retrieve_context_ids = []
-            started = time.perf_counter()
-            response = api.get(
-                "/v1/ask",
-                params={"q": prompt, "k": 8},
-                headers={"Authorization": "Bearer ak_acme_7f3d9c"},
-            )
-            latency_ms = round(
-                (time.perf_counter() - started) * 1000,
-                3,
-            )
-            attempt = {
-                "target_doc_id": target["doc_id"],
-                "shape": shape["id"],
-                "endpoint_role": "chat",
-                "model": chat_model,
-                "latency_ms": latency_ms,
-                "http_status": response.status_code,
-                "model_completed": False,
-                "target_in_context": False,
-                "context_doc_ids": [],
-                "gated_context_doc_ids": [],
-                "violation_doc_ids": [],
-                "raw_overlap": False,
-                "public_overlap": False,
-                "outcome": NOT_EXERCISED,
-                "valid_attempt": False,
-                "gated_match_telemetry": _gated_match_telemetry("", []),
-            }
-            context_ids = list(core.last_retrieve_context_ids)
-            context_docs = core.docs(context_ids) if context_ids else []
-            attempt["gated_context_doc_ids"] = [
-                document["doc_id"]
-                for document in context_docs
-                if document.get("license") == "IndexOnly"
-            ]
-            if response.status_code == 200:
-                body = response.json()
-                response_context_ids = [
-                    citation["doc_id"]
-                    for citation in body.get("citations", [])
-                ]
-                if response_context_ids != context_ids:
-                    raise ValueError(
-                        "public citations diverged from retrieved context: "
-                        f"{response_context_ids} != {context_ids}"
-                    )
-                if recording_chat.last_answer is not None:
-                    attempt["model_completed"] = True
-                    raw_answer = recording_chat.last_answer
-                    attestation = core.attest(raw_answer, context_ids)
-                    classification = _classify_adversarial_outcome(
-                        public_answer=body.get("answer", ""),
-                        raw_answer=raw_answer,
-                        docs=context_docs,
-                        attestation=attestation,
-                    )
-                    attempt.update(classification)
-            attempt["context_doc_ids"] = context_ids
-            attempt["target_in_context"] = target["doc_id"] in context_ids
-            attempt["valid_attempt"] = bool(
-                attempt["target_in_context"] and attempt["model_completed"]
-            )
+            attempt = None
+            for invocation in range(1, max_attempts_per_cell + 1):
+                candidate = _run_adversarial_cell(
+                    api=api,
+                    core=core,
+                    recording_chat=recording_chat,
+                    target=target,
+                    shape=shape,
+                    chat_model=chat_model,
+                )
+                if candidate["valid_attempt"]:
+                    candidate["transport_retry_count"] = invocation - 1
+                    attempt = candidate
+                    break
+
+                retry = {
+                    "target_doc_id": candidate["target_doc_id"],
+                    "shape": candidate["shape"],
+                    "endpoint_role": candidate["endpoint_role"],
+                    "model": candidate["model"],
+                    "invocation": invocation,
+                    "latency_ms": candidate["latency_ms"],
+                    "http_status": candidate["http_status"],
+                    "model_completed": candidate["model_completed"],
+                    "target_in_context": candidate["target_in_context"],
+                    "reason": "invalid_attempt_not_counted",
+                }
+                report["transport_retries"].append(retry)
+                exhausted = invocation == max_attempts_per_cell
+                check(
+                    (
+                        f"adversarial retry {shape['id']} × "
+                        f"{target['doc_id']} #{invocation}"
+                    ),
+                    FAIL if exhausted else WARN,
+                    (
+                        f"model_completed={candidate['model_completed']}; "
+                        f"http_status={candidate['http_status']}; "
+                        f"target_in_context={candidate['target_in_context']}; "
+                        f"{'retry budget exhausted' if exhausted else 'retrying without counting'}"
+                    ),
+                )
+                if report_path is not None:
+                    _write_adversarial_report(report_path, report)
+
+            if attempt is None:
+                continue
 
             report["attempts"].append(attempt)
             report["counts"][attempt["outcome"]] += 1
@@ -642,9 +711,10 @@ def _run_adversarial_battery(
                 f"adversarial {shape['id']} × {target['doc_id']}",
                 outcome_status,
                 (
-                    f"{attempt['outcome']}; {latency_ms:.3f} ms; "
+                    f"{attempt['outcome']}; {attempt['latency_ms']:.3f} ms; "
                     f"http_status={attempt['http_status']}; "
                     f"target_in_context={attempt['target_in_context']}; "
+                    f"transport_retries={attempt['transport_retry_count']}; "
                     "longest="
                     f"{attempt['gated_match_telemetry']['longest_common_gated_token_run']}; "
                     "n8/12/16="

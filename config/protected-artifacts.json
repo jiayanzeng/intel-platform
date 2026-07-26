@@ -100,5 +100,14 @@
         ]
       }
     }
+  ],
+  "pinned_files": [
+    {
+      "path": "evidence/v0.10.1/real-model-adversarial/report.json",
+      "sha256": "beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7",
+      "bytes": 62978,
+      "purpose": "Fresh v0.10.1 real-model HC1 adversarial battery.",
+      "provenance": "No-resume 45-cell battery against the operator-confirmed LAN chat and embedding roles on 2026-07-26; secret-bearing transport details are excluded from the report."
+    }
   ]
 }

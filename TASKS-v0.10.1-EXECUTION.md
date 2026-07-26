@@ -678,7 +678,7 @@ tag on one commit · golden 11/11 · protected 2/2 · `ci-local` 19/19.
 - [x] **G-RUN** — one real receipt-producing run for the released commit, or a dated decline under the restated trigger
 - [x] **RECEIPT** — fresh receipt at `evidence/v0.10.1/deferred-audit/` describing `45fa3d49…` on a clean worktree; report prose corrected
 - [ ] **PIN** — receipt (and X1) hash-pinned; source-deterministic re-derivation job green in ci-local and ci.yml; count 18→19; `production_measurements()` exercised on-site
-- [ ] **X-REGEN** — fresh no-resume battery, every counted attempt model-completed, positive control fired; fresh versioned evidence path
+- [x] **X-REGEN** — fresh no-resume battery, every counted attempt model-completed, positive control fired; fresh versioned evidence path
 - [ ] **HERM** — constraints drift test hermetic; hermeticity regression fail-before/pass-after
 - [ ] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.1` tagged
 

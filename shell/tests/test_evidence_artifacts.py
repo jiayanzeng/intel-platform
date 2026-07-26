@@ -103,6 +103,7 @@ def _manifest(database: Path) -> dict[str, Any]:
                 },
             }
         ],
+        "pinned_files": [],
     }
 
 
@@ -338,3 +339,50 @@ def test_complete_chained_admission_verifies(tmp_path: Path) -> None:
     assert validated.returncode == 0, validated.stderr
     assert verified.returncode == 0, verified.stderr
     assert "protected evidence: 1/1 artifacts match" in verified.stdout
+
+
+def test_pinned_evidence_file_is_checked_by_validate(tmp_path: Path) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    evidence_dir = tmp_path / "evidence"
+    evidence_dir.mkdir()
+    report = evidence_dir / "report.json"
+    report.write_text('{"complete":true}\n', encoding="utf-8")
+    manifest["pinned_files"].append(
+        {
+            "path": "evidence/report.json",
+            "sha256": _sha256(report),
+            "bytes": report.stat().st_size,
+            "purpose": "corpus-free evidence hash-pin control",
+            "provenance": "created inside one disposable pytest directory",
+        }
+    )
+    _write_manifest(manifest_path, manifest)
+
+    clean = _run(tmp_path, manifest_path, "validate")
+    assert clean.returncode == 0, clean.stderr
+    assert "PIN MATCH evidence/report.json" in clean.stdout
+
+    report.write_text('{"complete":false}\n', encoding="utf-8")
+    changed = _run(tmp_path, manifest_path, "validate")
+    assert changed.returncode == 1
+    assert "MISMATCH evidence/report.json field=sha256" in changed.stderr
+
+
+def test_pinned_evidence_file_must_stay_beneath_evidence(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    manifest["pinned_files"].append(
+        {
+            "path": "outside.json",
+            "sha256": "1" * 64,
+            "bytes": 1,
+            "purpose": "unsafe path control",
+            "provenance": "disposable malformed fixture",
+        }
+    )
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+    assert checked.returncode == 2
+    assert "must live beneath evidence/" in checked.stderr

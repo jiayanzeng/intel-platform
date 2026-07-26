@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, G-RUN, and RECEIPT are complete.** The fresh deferred-audit receipt at `evidence/v0.10.1/deferred-audit/report.json` measures a separate clean detached worktree at released commit `45fa3d49860643fdb2595d82340e364d33566e7d`, with byte-exact protected databases and the corrected auditor/explicit seven-receipt input. It records `worktree_dirty:false`, accepts 7/7 runner receipts, rejects none, promotes CI-runner evidence for the released-commit receipt trigger, and yields **2 promoted / 5 deferred**. The immutable v0.10 receipt remains at SHA-256 `ea23f7f2…` and still honestly records its dirty non-release subject; the contradictory release narrative is corrected below. Runner run **30187058897** passed all seven executable job instances against the release commit, and failure-control run **30187207654** failed both version lanes on the planted `9.9.9` while other lanes passed. The throwaway branch is gone locally/remotely; remote main remains at the approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Local CI passes **18/18** with **99** Rust workspace and **20** net-path tests; the shell suite passes **129/129** under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-CTRL's real-path positive control fires `GUARD FIRED`; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, G-RUN, RECEIPT, and X-REGEN are complete.** X-REGEN ran a fresh no-resume real-provider battery through the operator-established forwards: **45/45** counted cells are target-valid and model-completed, all 45 are `NOT EXERCISED`, none is `LEAK`, and the deployed-path positive control is `GUARD FIRED`. The report is pinned at `evidence/v0.10.1/real-model-adversarial/report.json`, SHA-256 `beec8bfa…`; the v0.10 artifact remains byte-exact and non-conformant. A live fail-before exposed two 30-second 502 timeouts, so the harness now records bounded transport retries separately and never counts them as attempts; the conformant run used a temporary 60-second timeout profile and needed zero retries. The fresh deferred-audit receipt measures a clean detached released tree, accepts 7/7 runner receipts, and yields **2 promoted / 5 deferred**. Local CI remains **18/18** until PIN adds its nineteenth job; Rust runtime counts remain **99** workspace / **20** net, and the shell suite passes **132/132** under Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Golden is **11/11** and protected evidence is exact **2/2**. The evidence manifest now corpus-freely validates one pinned JSON while protected database verification remains 2/2. Remote main remains at the approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Static Rust source counts are 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -336,6 +336,64 @@ because a Git remote exists. Full Python 3.11.4 and 3.12.13 suites each passed
 **11/11**, and protected artifacts **2/2** passed. No runtime path, dependency,
 lockfile, architecture, provider configuration, protected bytes, or v0.10
 evidence bytes changed.
+
+**v0.10.1 X-REGEN is complete (measured 2026-07-26).** The runbook's PIN/X-REGEN
+numbering is dependency-inverted: PIN says to pin the X1 artifact “after Step
+8,” while X-REGEN requires its own report to be added to that pin. The explicit
+artifact dependency was followed, so X-REGEN generated and pinned its report
+before the remaining PIN work.
+
+The bounded live provider probe passed through the operator-established
+loopback transports. The configured chat role identified
+`gemma-4-26B-A4B-it-UD-IQ4_XS.gguf`, supported completion and correctly
+rejected embeddings; the independent embedding role identified
+`embeddinggemma-300M-Q8_0.gguf`, completed the embedding capability request,
+and returned the required **768** dimensions. No key was printed.
+
+The first no-resume run was an honest non-result: 45 cells were recorded, but
+two chunked-reconstruction calls timed out at 30 seconds with HTTP 502 and
+`model_completed:false`, so coverage failed despite zero leaks. That live
+failure exposed the missing “timeout retried rather than counted” behavior.
+The verifier now records failed invocations only in a separate
+`transport_retries` audit array, admits a cell to `attempts` only after target
+context and model completion are both true, records a retry count on the valid
+cell, and fails visibly after an explicit three-invocation budget. Synthetic
+transient and permanent-502 controls pass on both interpreters. A second fresh
+run exercised the retry path but proved that the 30-second ceiling was shorter
+than repeatable model latency: the same cell exhausted all three invocations.
+It was interrupted as a non-result.
+
+The operator's `.env` was not edited. A mode-600 temporary copy outside the
+repository changed only the chat timeout to 60 seconds; redacted configuration
+confirmed that effective value, and the file was deleted immediately after the
+run. The final no-resume battery completed **45/45** target-valid,
+model-completed cells with zero transport retries. All 45 real-model outcomes
+were `NOT EXERCISED`; there were **0 `GUARD FIRED`**, **0 `LEAK`**, and no
+nonzero `n=8/12/16` matches. The maximum real-model contiguous gated run was
+four tokens and maximum cell latency was **32,599.289 ms**. The separate
+positive control traversed real FastAPI `/v1/ask` and core `/attest`, returned
+HTTP 200, and fired `GUARD FIRED` with longest 22 and
+`{n=8:15,n=12:11,n=16:7}`. `ATTEST_NGRAM` remains 16.
+
+The fresh schema-2 report is
+`evidence/v0.10.1/real-model-adversarial/report.json`, measured at
+SHA-256
+`beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7`
+and **62,978 bytes**. Its invariant/secret scan found no credential-shaped
+value, endpoint, LAN address, loopback tunnel port, SSH command, prompt, or raw
+model answer. The v0.10 report remains byte-exact at
+`98fb3a3a1acac844aeccd0da0be2457ff9327ee0733f8570d7edc34b1870f13c`.
+
+Manifest schema 2 now has a corpus-free `pinned_files` collection. Both
+`validate` and local `verify` compare exact report bytes and SHA-256; a
+disposable byte-mutation test proves validation fails. X1 is its first pin;
+PIN will add the deferred receipt and the source-deterministic re-derivation
+job. Full Python 3.11.4 and 3.12.13 suites each passed **132/132** with one
+third-party Starlette warning. The first sandboxed full suite's seven
+loopback-bind denials were an environment non-result; the permitted rerun is
+the counted result. Golden passed **11/11**, and protected database evidence
+remained exact **2/2**. No product runtime path, dependency, lockfile,
+architecture, threshold, protected bytes, or v0.10 evidence bytes changed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

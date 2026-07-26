@@ -339,7 +339,7 @@ def test_resume_retries_a_completed_flag_it_cannot_verify(tmp_path) -> None:
     assert resumed["resume"]["retried_invalid_attempts"] == 2
 
 
-def test_gateway_timeout_is_not_a_valid_attempt() -> None:
+def test_gateway_timeout_is_retried_and_not_counted_as_an_attempt() -> None:
     target = {
         "doc_id": "source::gated",
         "title": "Gated source",
@@ -372,15 +372,97 @@ def test_gateway_timeout_is_not_a_valid_attempt() -> None:
         embed_model="embed-model",
         report_path=None,
         resume_from=None,
+        max_attempts_per_cell=2,
     )
 
-    assert all(attempt["model_completed"] is False for attempt in report["attempts"])
-    assert all(attempt["target_in_context"] is True for attempt in report["attempts"])
-    assert all(attempt["valid_attempt"] is False for attempt in report["attempts"])
+    assert report["attempts"] == []
+    assert len(report["transport_retries"]) == len(ADVERSARIAL_SHAPES) * 2
+    assert all(
+        retry["model_completed"] is False
+        for retry in report["transport_retries"]
+    )
+    assert all(
+        retry["target_in_context"] is True
+        for retry in report["transport_retries"]
+    )
     assert (
         "adversarial battery coverage",
         verify_llm.FAIL,
     ) in {(name, status) for name, status, _ in verify_llm.results}
+
+
+def test_transient_gateway_timeout_is_retried_until_model_completion() -> None:
+    target = {
+        "doc_id": "source::gated",
+        "title": "Gated source",
+        "license": "IndexOnly",
+        "body": " ".join(f"gated{index}" for index in range(24)),
+    }
+
+    class RecordingCoreDouble:
+        last_retrieve_context_ids: list[str] = []
+
+        def docs(self, ids: list[str]) -> list[dict]:
+            return [target] if ids else []
+
+        def attest(self, answer: str, ids: list[str]) -> dict:
+            return {"clean_answer": answer, "violations": []}
+
+    core = RecordingCoreDouble()
+    recording_chat = type("RecordingChat", (), {"last_answer": None})()
+
+    class TransientGatewayTimeoutApi:
+        calls = 0
+
+        def get(self, *args, **kwargs):
+            self.calls += 1
+            core.last_retrieve_context_ids = [target["doc_id"]]
+            if self.calls % 2:
+                return type("Response", (), {"status_code": 502})()
+            recording_chat.last_answer = "A safe independent summary."
+            return type(
+                "Response",
+                (),
+                {
+                    "status_code": 200,
+                    "json": lambda self: {
+                        "answer": "A safe independent summary.",
+                        "citations": [{"doc_id": target["doc_id"]}],
+                    },
+                },
+            )()
+
+    positive_control = {
+        "outcome": GUARD_FIRED,
+        "valid_attempt": True,
+        "raw_overlap": True,
+        "public_overlap": False,
+        "violation_doc_ids": [target["doc_id"]],
+    }
+    verify_llm.results.clear()
+
+    report = verify_llm._run_adversarial_battery(
+        api=TransientGatewayTimeoutApi(),
+        core=core,
+        recording_chat=recording_chat,
+        gated_docs=[target],
+        chat_model="chat-model",
+        embed_model="embed-model",
+        report_path=None,
+        resume_from=None,
+        real_path_positive_control=positive_control,
+        max_attempts_per_cell=2,
+    )
+
+    assert report["complete"] is True
+    assert len(report["attempts"]) == len(ADVERSARIAL_SHAPES)
+    assert len(report["transport_retries"]) == len(ADVERSARIAL_SHAPES)
+    assert all(attempt["model_completed"] for attempt in report["attempts"])
+    assert all(attempt["valid_attempt"] for attempt in report["attempts"])
+    assert all(
+        attempt["transport_retry_count"] == 1
+        for attempt in report["attempts"]
+    )
 
 
 def test_recording_core_retains_context_when_downstream_work_fails() -> None:
