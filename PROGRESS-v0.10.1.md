@@ -72,3 +72,24 @@ Entries are append-only; corrections are new dated entries.
   document, and four-citation public answer anchors.
 - protected artifact delta: none. Both databases matched their exact hashes
   and corpus facts at 2/2.
+
+### 2026-07-26 · X-VALID — adversarial validity requires model completion
+
+- owner: Codex
+- commit: 22c8c93c319fa5bd19f78bf34c25621bd03c398e
+- result: PASS. Classify-time and resume-time validity now independently
+  require both target context and a completed model call. Stored
+  `valid_attempt` is no longer trusted, and console detail includes HTTP status.
+- failure-capable controls: PASS. Before the fix, the stale-resume test reused
+  two attempts with no verifiable completion and the HTTP-502 control marked
+  all five synthetic timeouts valid; the targeted run failed 2/2. After the
+  fix, the expanded resume/timeout target passed 3/3 and timeout coverage was
+  visibly FAIL.
+- shipped-artifact disposition: the immutable v0.10 report is non-conformant:
+  0/45 attempts carry `model_completed:true`, 44 omit the key, and one 502
+  attempt records false. X-REGEN will run fresh with no resume.
+- shell acceptance: PASS. Python 3.11.4 and 3.12.13 each passed 122 tests with
+  one third-party Starlette warning. `py_compile` passed.
+- golden-E2E delta: none. Standalone `./run golden` passed 11/11.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 at the
+  exact recorded hashes.
