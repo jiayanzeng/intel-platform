@@ -202,3 +202,42 @@ Entries are append-only; corrections are new dated entries.
   golden 11/11.
 - protected artifact delta: none. The same local matrix verified both protected
   databases 2/2 at their exact recorded hashes.
+
+### 2026-07-26 · RECEIPT — clean released-commit deferred audit
+
+- owner: Codex
+- commit: 6ad0dbd771d11e980af65258003990a528f00852
+- result: PASS. The current auditor measured a separate clean detached
+  worktree at release commit `45fa3d49860643fdb2595d82340e364d33566e7d`
+  with explicit runner-receipt input and byte-exact protected database copies.
+  The fresh report is
+  `evidence/v0.10.1/deferred-audit/report.json`.
+- pre-check control: PASS. The immutable v0.10 receipt reports dirty non-release
+  subject `d9cab128…`, CI-runner defer under remote presence, and
+  1 promoted / 6 deferred. The fresh receipt is byte-different and reports
+  clean release subject `45fa3d49…`, CI-runner promote under the
+  released-commit receipt trigger, and 2 promoted / 5 deferred.
+- subject acceptance: PASS. The detached worktree status stayed empty before
+  and after measurement. Its copied core/live-smoke databases matched SHA-256
+  `db2f186e…` and `94f03e9e…`. After final verification, the temporary
+  worktree and only its copied databases were removed.
+- receipt acceptance: PASS. Seven candidates were accepted, zero rejected,
+  and every stable logical path is under `evidence/ci-runs/`. The report's
+  pgvector p95 was 7.431750 ms at 2,600 documents, below the 16.264 ms anchor.
+  T7, Postgres, pgvector, multi-host, and A4 deferred; CI-runner and future
+  `/view` materialization promoted.
+- artifact acceptance: PASS. The fresh schema-2 report SHA-256 is
+  `00cf14ae931b864616e19c437168d9ef8723791ddee6dc7866794f6850319362`.
+  It contains no local absolute path, credential, endpoint, authorization, or
+  tunnel alias. The old artifact remained byte-exact at
+  `ea23f7f2077155b4f4614edeb0afef02bf43252a7733bbc0f25b0b03db742a76`.
+- prose acceptance: PASS. The v0.10 release narrative now records the measured
+  correction: runner evidence promotes because released-commit receipts exist,
+  not because a Git remote exists.
+- shell acceptance: PASS. Python 3.11.4 and 3.12.13 each passed 129 tests with
+  one third-party Starlette warning; `py_compile` passed. The first sandboxed
+  production attempt was a `ps` permission non-result; the permitted rerun is
+  the counted report.
+- golden-E2E delta: none. Standalone `./run golden` passed 11/11.
+- protected artifact delta: none. `./run verify-artifacts` passed 2/2 before
+  and after the production audit and again at final acceptance.
