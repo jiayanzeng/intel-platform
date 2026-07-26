@@ -402,6 +402,12 @@ ci_pytest() {
   PYTHONPATH=shell py -m pytest shell/tests -q
 }
 
+ci_deferred_evidence() {
+  python3 tools/evidence_artifacts.py validate
+  python3 tools/audit_deferred.py \
+    --rederive evidence/v0.10.1/deferred-audit/report.json
+}
+
 cmd_ci_local() {
   need_cargo
   ensure_venv
@@ -410,6 +416,7 @@ cmd_ci_local() {
   ci_local_job "release version consistency" cmd_version_check || return $?
   ci_local_job "active cycle consistency" cmd_cycle_check || return $?
   ci_local_job "checked-task evidence" cmd_checklist_audit || return $?
+  ci_local_job "deferred evidence re-derivation" ci_deferred_evidence || return $?
   ci_local_job "Python 3.11 floor byte-compile" ci_floor_compile || return $?
   ci_local_job "ShellCheck presence and harness lint" ci_shellcheck || return $?
   ci_local_job "workspace check (-D warnings)" ci_workspace_check || return $?
@@ -888,7 +895,7 @@ intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
-    ci-local       execute the configured CI matrix locally, stopping on failure
+    ci-local       execute the configured 19-job CI matrix, stopping on failure
     version-check  reconcile release files and an exact HEAD release tag
     cycle-check    enforce active/open and historical/closed cycle identity
     checklist-audit
@@ -934,6 +941,7 @@ intel-platform — ./run <command>
     LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
     ./run benchmark-view --help
     ./run audit-deferred --output evidence/v0.10/deferred-audit/report.json
+    ./run audit-deferred --rederive evidence/v0.10.1/deferred-audit/report.json
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }

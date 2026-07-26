@@ -386,3 +386,38 @@ def test_pinned_evidence_file_must_stay_beneath_evidence(
     checked = _run(tmp_path, manifest_path, "validate")
     assert checked.returncode == 2
     assert "must live beneath evidence/" in checked.stderr
+
+
+def test_committed_deferred_receipt_pin_rejects_one_byte_mutation(
+    tmp_path: Path,
+) -> None:
+    manifest = json.loads(
+        (ROOT / "config" / "protected-artifacts.json").read_text()
+    )
+    for pinned_file in manifest["pinned_files"]:
+        source = ROOT / pinned_file["path"]
+        destination = tmp_path / pinned_file["path"]
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(source.read_bytes())
+    manifest_path = tmp_path / "config" / "protected-artifacts.json"
+    manifest_path.parent.mkdir(parents=True)
+    _write_manifest(manifest_path, manifest)
+
+    clean = _run(tmp_path, manifest_path, "validate")
+    assert clean.returncode == 0, clean.stderr
+
+    receipt = (
+        tmp_path
+        / "evidence"
+        / "v0.10.1"
+        / "deferred-audit"
+        / "report.json"
+    )
+    receipt.write_bytes(receipt.read_bytes() + b"\n")
+    changed = _run(tmp_path, manifest_path, "validate")
+
+    assert changed.returncode == 1
+    assert (
+        "MISMATCH evidence/v0.10.1/deferred-audit/report.json field=sha256"
+        in changed.stderr
+    )

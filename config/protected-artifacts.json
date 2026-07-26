@@ -103,6 +103,13 @@
   ],
   "pinned_files": [
     {
+      "path": "evidence/v0.10.1/deferred-audit/report.json",
+      "sha256": "00cf14ae931b864616e19c437168d9ef8723791ddee6dc7866794f6850319362",
+      "bytes": 27786,
+      "purpose": "Clean released-commit v0.10.1 deferred-design audit receipt.",
+      "provenance": "Current auditor measured the clean detached v0.10.0 release tree with byte-exact protected databases and seven accepted runner receipts on 2026-07-26."
+    },
+    {
       "path": "evidence/v0.10.1/real-model-adversarial/report.json",
       "sha256": "beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7",
       "bytes": 62978,

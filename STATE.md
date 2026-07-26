@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, G-RUN, RECEIPT, and X-REGEN are complete.** X-REGEN ran a fresh no-resume real-provider battery through the operator-established forwards: **45/45** counted cells are target-valid and model-completed, all 45 are `NOT EXERCISED`, none is `LEAK`, and the deployed-path positive control is `GUARD FIRED`. The report is pinned at `evidence/v0.10.1/real-model-adversarial/report.json`, SHA-256 `beec8bfa…`; the v0.10 artifact remains byte-exact and non-conformant. A live fail-before exposed two 30-second 502 timeouts, so the harness now records bounded transport retries separately and never counts them as attempts; the conformant run used a temporary 60-second timeout profile and needed zero retries. The fresh deferred-audit receipt measures a clean detached released tree, accepts 7/7 runner receipts, and yields **2 promoted / 5 deferred**. Local CI remains **18/18** until PIN adds its nineteenth job; Rust runtime counts remain **99** workspace / **20** net, and the shell suite passes **132/132** under Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Golden is **11/11** and protected evidence is exact **2/2**. The evidence manifest now corpus-freely validates one pinned JSON while protected database verification remains 2/2. Remote main remains at the approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Static Rust source counts are 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, G-RUN, RECEIPT, X-REGEN, and PIN are complete.** The evidence manifest corpus-freely pins both v0.10.1 JSON reports by exact bytes/SHA-256. A new source/config/Git re-derivation reproduces five deterministic row dispositions, all seven trigger texts, row count seven, and `v2_materialization_implemented=false`; it is the nineteenth local CI job and is mirrored in the blocking Python 3.11 workflow lane. The guarded on-site test now executes full `production_measurements()` and compares only those stable fields; corpus-less runners skip it. Planted disposition and one-byte receipt mutations both fail. Local CI passes **19/19** with **99** Rust workspace / **20** net-path tests; shell passes **136/136** under Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-REGEN's fresh no-resume real-provider matrix is **45/45** target-valid/model-completed, all `NOT EXERCISED`, zero `LEAK`, with the deployed-path positive control `GUARD FIRED`; its report is pinned at SHA-256 `beec8bfa…`. The clean released-tree deferred receipt accepts 7/7 runner receipts, yields **2 promoted / 5 deferred**, and is pinned at `00cf14ae…`. Golden is **11/11** and protected database evidence remains exact **2/2**. Remote main remains at the approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Static Rust source counts remain 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 is authoritative.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -386,14 +386,65 @@ model answer. The v0.10 report remains byte-exact at
 
 Manifest schema 2 now has a corpus-free `pinned_files` collection. Both
 `validate` and local `verify` compare exact report bytes and SHA-256; a
-disposable byte-mutation test proves validation fails. X1 is its first pin;
-PIN will add the deferred receipt and the source-deterministic re-derivation
-job. Full Python 3.11.4 and 3.12.13 suites each passed **132/132** with one
+disposable byte-mutation test proves validation fails. X1 was its first pin;
+PIN subsequently added the deferred receipt and source-deterministic
+re-derivation job. Full Python 3.11.4 and 3.12.13 suites each passed **132/132** with one
 third-party Starlette warning. The first sandboxed full suite's seven
 loopback-bind denials were an environment non-result; the permitted rerun is
 the counted result. Golden passed **11/11**, and protected database evidence
 remained exact **2/2**. No product runtime path, dependency, lockfile,
 architecture, threshold, protected bytes, or v0.10 evidence bytes changed.
+
+**v0.10.1 PIN is complete (measured 2026-07-26).** Manifest schema 2 now pins
+both fresh JSON records: deferred audit
+`00cf14ae931b864616e19c437168d9ef8723791ddee6dc7866794f6850319362`
+at **27,786 bytes** and real-model X1
+`beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7`
+at **62,978 bytes**. `tools/evidence_artifacts.py validate` reads and hashes
+only those committed evidence files, so it remains corpus-free on hosted
+runners. Local `verify` checks the pins before independently verifying the two
+protected databases. A disposable control appended exactly one byte to a copy
+of the pinned deferred receipt; validation named its SHA-256 mismatch.
+
+`tools/audit_deferred.py --rederive` loads the committed receipt, recomputes
+`scheduler_measurement`, `writer_measurement`, `multi_host_measurement`,
+`attestation_boundary_measurement`, and `ci_runner_measurement` from source,
+configuration, and Git, and compares exactly the five corresponding row
+dispositions, all seven unchanged trigger strings, row count seven, and the
+source-declared `v2_materialization_implemented` flag. Scheduler runtime
+process/socket observations are carried from the receipt because they are
+explicitly outside the deterministic comparison. Host/timestamp fields,
+remote text, observed/accepted/rejected receipt details, source hashes, and
+numeric pgvector/view measurements are not compared. The production-dependent
+pgvector and view dispositions remain protected by the whole-file hash pin.
+
+The clean receipt re-derived exactly:
+`rows=7`, `source_dispositions=5`, `triggers=7`, and
+`v2_materialization_implemented=false`. A scratch receipt changing T7 from
+defer to promote failed with
+`REDERIVATION MISMATCH source_dispositions`. The new local CI unit invokes
+manifest validation and re-derivation; it raises the tracked count from
+**18 to 19**. The identical commands are a blocking step in the Python 3.11
+workflow lane, whose full-history checkout already makes the released receipt
+SHAs available for ancestry checks. Static workflow structure and YAML parsing
+passed; no post-PIN hosted runner execution is claimed.
+
+The guarded pytest requires `data/core.db`, `data/live-smoke.db`, and a built
+`target/debug/cored`. On site it invoked the complete
+`production_measurements()`/`evaluate()` path and matched the committed
+environment-independent snapshot; the focused test passed in **2.64s**. A
+runner without either protected corpus cannot enter that test and reports a
+skip instead.
+
+The permitted `./run ci-local` passed all **19/19** units: the new
+re-derivation gate, warning-denied Rust checks/tests, clippy/fmt, Rust 1.78,
+**136** Python 3.11 tests, golden 11/11, exact pinned/protected evidence,
+fingerprints, and lifecycle records. The independent Python 3.12.13 lane also
+passed **136/136**. Targeted PIN suites passed 23/23 on both interpreters;
+ShellCheck 0.11.0, Bash syntax, and workflow YAML parsing passed. Protected
+databases remained exact **2/2** and golden remained **11/11**. All pre-PIN
+18-job measurements in closed task/progress records remain true historical
+measurements; current help, status, and acceptance records now state 19.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

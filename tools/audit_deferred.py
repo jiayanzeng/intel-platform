@@ -42,6 +42,20 @@ RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
 SCHEMA_VERSION = 2
+SOURCE_DETERMINISTIC_ROW_IDS = (
+    "T7 robots single-flight",
+    "Postgres",
+    "Multi-host seam hardening",
+    "A4 untrusted-shell attestation boundary",
+    "CI-runner evidence",
+)
+SCHEDULER_RUNTIME_FIELDS = (
+    "active_scheduler_processes",
+    "scheduler_processes",
+    "active_cored_processes",
+    "cored_processes",
+    "loopback_8788_accepting",
+)
 
 
 def configure_subject_root(root: Path) -> None:
@@ -200,7 +214,9 @@ def process_topology() -> dict[str, Any]:
     }
 
 
-def scheduler_measurement() -> dict[str, Any]:
+def scheduler_measurement(
+    topology: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     require_text(
         SCHEDULER,
         [
@@ -227,7 +243,16 @@ def scheduler_measurement() -> dict[str, Any]:
             "## Option B — in-process loop",
         ],
     )
-    topology = process_topology()
+    if topology is None:
+        topology = process_topology()
+    missing_topology = [
+        field for field in SCHEDULER_RUNTIME_FIELDS if field not in topology
+    ]
+    if missing_topology:
+        raise AuditFailure(
+            "scheduler topology is missing fields: "
+            + ", ".join(missing_topology)
+        )
     return {
         "configured_jobs": len(json.loads(SCHEDULE.read_text())["jobs"]),
         "expanded_jobs": expanded_schedule_jobs(),
@@ -963,6 +988,154 @@ def production_measurements(
     }
 
 
+def committed_rederivation_snapshot(report: dict[str, Any]) -> dict[str, Any]:
+    try:
+        rows = report["triggers"]
+        measurements = report["measurements"]
+        view = measurements["view"]
+    except (KeyError, TypeError) as error:
+        raise AuditFailure(
+            "committed receipt is missing measurements/triggers"
+        ) from error
+    if not isinstance(rows, list):
+        raise AuditFailure("committed receipt triggers must be an array")
+    by_id = {
+        row.get("id"): row
+        for row in rows
+        if isinstance(row, dict) and isinstance(row.get("id"), str)
+    }
+    if len(by_id) != len(rows):
+        raise AuditFailure("committed receipt has duplicate or invalid row ids")
+    missing = sorted(set(SOURCE_DETERMINISTIC_ROW_IDS) - set(by_id))
+    if missing:
+        raise AuditFailure(
+            "committed receipt is missing source-deterministic rows: "
+            + ", ".join(missing)
+        )
+    try:
+        return {
+            "row_count": len(rows),
+            "source_dispositions": {
+                row_id: by_id[row_id]["disposition"]
+                for row_id in SOURCE_DETERMINISTIC_ROW_IDS
+            },
+            "trigger_texts": {
+                row_id: by_id[row_id]["unchanged_trigger"]
+                for row_id in sorted(by_id)
+            },
+            "v2_materialization_implemented": view[
+                "v2_materialization_implemented"
+            ],
+        }
+    except (KeyError, TypeError) as error:
+        raise AuditFailure(
+            "committed receipt is missing a re-derived field"
+        ) from error
+
+
+def measurements_rederivation_snapshot(
+    measurements: dict[str, Any],
+) -> dict[str, Any]:
+    rows = evaluate(measurements)
+    by_id = {row["id"]: row for row in rows}
+    return {
+        "row_count": len(rows),
+        "source_dispositions": {
+            row_id: by_id[row_id]["disposition"]
+            for row_id in SOURCE_DETERMINISTIC_ROW_IDS
+        },
+        "trigger_texts": {
+            row_id: by_id[row_id]["unchanged_trigger"]
+            for row_id in sorted(by_id)
+        },
+        "v2_materialization_implemented": measurements["view"][
+            "v2_materialization_implemented"
+        ],
+    }
+
+
+def source_deterministic_measurements(
+    report: dict[str, Any],
+    runner_receipts_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Recompute only rows whose inputs are source, config, and Git."""
+    try:
+        committed = report["measurements"]
+        scheduler_runtime = {
+            field: committed["scheduler"][field]
+            for field in SCHEDULER_RUNTIME_FIELDS
+        }
+        view = dict(committed["view"])
+        measurements = {
+            "scheduler": scheduler_measurement(scheduler_runtime),
+            "writers": writer_measurement(),
+            "pgvector": committed["pgvector"],
+            "multi_host": multi_host_measurement(),
+            "attestation_boundary": attestation_boundary_measurement(),
+            "ci_runner": ci_runner_measurement(runner_receipts_dir),
+            "view": view,
+        }
+    except (KeyError, TypeError) as error:
+        raise AuditFailure(
+            "committed receipt is missing a measurement needed for "
+            "source-deterministic re-derivation"
+        ) from error
+    measurements["view"]["v2_materialization_implemented"] = (
+        view_measurement()["v2_materialization_implemented"]
+    )
+    return measurements
+
+
+def rederivation_mismatches(
+    expected: dict[str, Any],
+    actual: dict[str, Any],
+) -> list[str]:
+    mismatches: list[str] = []
+    for field in (
+        "row_count",
+        "source_dispositions",
+        "trigger_texts",
+        "v2_materialization_implemented",
+    ):
+        if expected[field] != actual[field]:
+            mismatches.append(
+                f"{field}: expected={json.dumps(expected[field], sort_keys=True)} "
+                f"actual={json.dumps(actual[field], sort_keys=True)}"
+            )
+    return mismatches
+
+
+def run_rederivation(
+    receipt: Path,
+    *,
+    runner_receipts_dir: Path | None = None,
+) -> int:
+    try:
+        report = json.loads(receipt.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        raise AuditFailure(f"{receipt}: {error}") from error
+    if not isinstance(report, dict):
+        raise AuditFailure(f"{receipt}: receipt root must be an object")
+    expected = committed_rederivation_snapshot(report)
+    actual = measurements_rederivation_snapshot(
+        source_deterministic_measurements(report, runner_receipts_dir)
+    )
+    mismatches = rederivation_mismatches(expected, actual)
+    if mismatches:
+        for mismatch in mismatches:
+            print(f"REDERIVATION MISMATCH {mismatch}", file=sys.stderr)
+        return 1
+    print(
+        "deferred-evidence re-derivation: PASS "
+        f"(rows={actual['row_count']}, "
+        f"source_dispositions={len(actual['source_dispositions'])}, "
+        f"triggers={len(actual['trigger_texts'])}, "
+        "v2_materialization_implemented="
+        f"{str(actual['v2_materialization_implemented']).lower()})"
+    )
+    return 0
+
+
 def control_measurements() -> dict[str, Any]:
     return {
         "scheduler": {
@@ -1099,6 +1272,14 @@ def main() -> int:
         "--control",
         choices=("all-seven",),
     )
+    group.add_argument(
+        "--rederive",
+        type=Path,
+        help=(
+            "recompute corpus-free source/config/Git fields and compare them "
+            "with a committed deferred-audit receipt"
+        ),
+    )
     parser.add_argument(
         "--subject-root",
         type=Path,
@@ -1122,15 +1303,22 @@ def main() -> int:
                 "subject/receipt overrides apply only to production audits"
             )
         return run_control()
+    receipt = args.rederive.resolve() if args.rederive is not None else None
     if args.subject_root is not None:
         configure_subject_root(args.subject_root)
+    runner_receipts_dir = (
+        args.runner_receipts_dir.resolve()
+        if args.runner_receipts_dir is not None
+        else None
+    )
+    if receipt is not None:
+        return run_rederivation(
+            receipt,
+            runner_receipts_dir=runner_receipts_dir,
+        )
     return run_production(
         args.output.resolve(),
-        runner_receipts_dir=(
-            args.runner_receipts_dir.resolve()
-            if args.runner_receipts_dir is not None
-            else None
-        ),
+        runner_receipts_dir=runner_receipts_dir,
     )
 
 

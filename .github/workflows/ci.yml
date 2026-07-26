@@ -319,6 +319,12 @@ jobs:
         run: python3 tools/python_constraints.py shell/constraints.txt
       - name: evidence verifier controls
         run: PYTHONPATH=shell python3 -m pytest shell/tests/test_evidence_artifacts.py -q
+      - name: re-derive pinned deferred evidence
+        if: matrix.python-version == '3.11'
+        run: |
+          python3 tools/evidence_artifacts.py validate
+          python3 tools/audit_deferred.py \
+            --rederive evidence/v0.10.1/deferred-audit/report.json
       - name: pytest
         run: PYTHONPATH=shell python3 -m pytest shell/tests -q
       - name: emit CI-runner receipt

@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 import tools.audit_deferred as audit_deferred
 from tools.audit_deferred import (
     attestation_boundary_measurement,
@@ -15,6 +17,9 @@ from tools.audit_deferred import (
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = ROOT / "tools" / "audit_deferred.py"
+COMMITTED_RECEIPT = (
+    ROOT / "evidence" / "v0.10.1" / "deferred-audit" / "report.json"
+)
 
 
 def test_synthetic_measurements_promote_all_seven() -> None:
@@ -206,7 +211,82 @@ def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
     assert workflow.count("uses: actions/upload-artifact@v4") == 7
     assert workflow.count("ref: ${{ inputs.audit_sha || github.sha }}") == 7
     assert workflow.count("if: always()") >= 14
+    assert workflow.count("- name: re-derive pinned deferred evidence") == 1
+    assert (
+        "--rederive evidence/v0.10.1/deferred-audit/report.json"
+        in workflow
+    )
     assert (
         'receipts = sorted((ROOT / "evidence" / "ci-runs").glob("*.json"))'
         in source
     )
+
+
+def test_source_deterministic_receipt_rederivation_passes() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TOOL),
+            "--rederive",
+            str(COMMITTED_RECEIPT),
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "re-derivation: PASS" in result.stdout
+    assert "rows=7" in result.stdout
+    assert "source_dispositions=5" in result.stdout
+    assert "triggers=7" in result.stdout
+
+
+def test_source_rederivation_rejects_planted_disposition(
+    tmp_path: Path,
+) -> None:
+    report = json.loads(COMMITTED_RECEIPT.read_text())
+    row = next(
+        row
+        for row in report["triggers"]
+        if row["id"] == "T7 robots single-flight"
+    )
+    row["disposition"] = "promote"
+    changed = tmp_path / "changed-receipt.json"
+    changed.write_text(json.dumps(report) + "\n")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TOOL),
+            "--rederive",
+            str(changed),
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "REDERIVATION MISMATCH source_dispositions" in result.stderr
+    assert '"T7 robots single-flight": "promote"' in result.stderr
+
+
+@pytest.mark.skipif(
+    not (
+        (ROOT / "data" / "core.db").is_file()
+        and (ROOT / "data" / "live-smoke.db").is_file()
+        and (ROOT / "target" / "debug" / "cored").is_file()
+    ),
+    reason="on-site production audit requires protected corpora and built cored",
+)
+def test_on_site_production_measurements_match_committed_receipt() -> None:
+    report = json.loads(COMMITTED_RECEIPT.read_text())
+    expected = audit_deferred.committed_rederivation_snapshot(report)
+
+    measured = audit_deferred.production_measurements()
+    actual = audit_deferred.measurements_rederivation_snapshot(measured)
+
+    assert audit_deferred.rederivation_mismatches(expected, actual) == []

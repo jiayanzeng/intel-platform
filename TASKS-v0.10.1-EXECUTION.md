@@ -415,8 +415,8 @@ for the released commit exists) — not a failure and not a silent omission.
    `45fa3d49…`. Capture the run id, per-job results, durations, runner OS, and
    toolchain/interpreter versions. Confirm the emitted receipts land where the
    audit reads them and that each receipt's `sha` equals the release commit.
-2. Compare the runner's job set against `./run ci-local`'s job list (now 18,
-   becoming 19 after Step 7). **Any divergence is the finding** — record which
+2. Compare the runner's job set against `./run ci-local`'s job list (18 at
+   G-RUN; 19 after Step 7). **Any divergence is the finding** — record which
    jobs exist in one and not the other rather than assuming equivalence.
 3. If declined: record the decision, the date, and the unchanged (restated)
    trigger in `STATE.md` and the D5 registry. Leave the CI-runner row deferring.
@@ -677,7 +677,7 @@ tag on one commit · golden 11/11 · protected 2/2 · `ci-local` 19/19.
 - [x] **CIR** — runners emit ancestor-checked receipts; glob unchanged; CI-runner trigger restated to the falsifiable form; disposition keyed on receipts
 - [x] **G-RUN** — one real receipt-producing run for the released commit, or a dated decline under the restated trigger
 - [x] **RECEIPT** — fresh receipt at `evidence/v0.10.1/deferred-audit/` describing `45fa3d49…` on a clean worktree; report prose corrected
-- [ ] **PIN** — receipt (and X1) hash-pinned; source-deterministic re-derivation job green in ci-local and ci.yml; count 18→19; `production_measurements()` exercised on-site
+- [x] **PIN** — receipt (and X1) hash-pinned; source-deterministic re-derivation job green in ci-local and ci.yml; count 18→19; `production_measurements()` exercised on-site
 - [x] **X-REGEN** — fresh no-resume battery, every counted attempt model-completed, positive control fired; fresh versioned evidence path
 - [ ] **HERM** — constraints drift test hermetic; hermeticity regression fail-before/pass-after
 - [ ] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.1` tagged

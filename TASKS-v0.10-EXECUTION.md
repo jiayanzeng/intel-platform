@@ -634,7 +634,8 @@ anything anywhere the operator has not explicitly approved.
 1. If the operator approves: add the remote, push the release commit and tag,
    and trigger the workflow once. Capture the run identifier, per-job results,
    durations, and the runner's toolchain and interpreter versions.
-2. Compare the runner's job set against `./run ci-local`'s 18 jobs. **Any
+2. Compare the runner's job set against the then-current `./run ci-local`
+   matrix (**18 jobs in v0.10; raised to 19 by v0.10.1 PIN**). **Any
    divergence is the finding** — record which jobs exist in one and not the
    other rather than assuming equivalence.
 3. Record in `STATE.md` the first observed runner execution, replacing every
