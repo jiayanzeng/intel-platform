@@ -155,3 +155,27 @@ Entries are append-only; corrections are new dated entries.
   unchanged.
 - protected artifact delta: none. Both protected databases matched 2/2 and
   both v0.10.1 evidence reports printed `PIN MATCH`.
+
+### 2026-07-26 · AGENTS-NEUTRAL — cycle-specific workflow paths eliminated
+
+- owner: Codex
+- commit: 110b2b4099052347ff04ed9367aa4352fd3eb0d3
+- result: PASS. The four stale v0.10 task/progress literals now resolve through
+  the single active-cycle declaration. The only concrete literals left are the
+  declared active `TASKS-v0.10.2-EXECUTION.md` and
+  `PROGRESS-v0.10.2.md`, both before §0; §§0–4 retain their meanings.
+- failure-capable control: PASS. Fail-before was one pass / one failure because
+  the old checker accepted a clean scratch contract and also accepted a
+  planted stale `PROGRESS-v1.2.md`. Pass-after was 2/2: the clean scratch root
+  passes, while the stale path returns failure and names its `AGENTS.md` line.
+- lifecycle acceptance: PASS. Actual `./run cycle-check` reports v0.10.2 open,
+  six closed execution runbooks, and three historical task documents.
+- Python acceptance: PASS. Both full shell lanes passed 155/155 under Python
+  3.11.4 and 3.12.13 with the pre-existing single Starlette deprecation
+  warning.
+- source acceptance: PASS. Python compilation, literal census, and
+  `git diff --check` passed. No product path or invariant changed.
+- golden-E2E delta: none. `./run golden` passed 11/11 with every named anchor
+  unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2 and
+  both v0.10.1 evidence reports printed `PIN MATCH`.
