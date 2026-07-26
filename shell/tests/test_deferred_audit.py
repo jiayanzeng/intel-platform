@@ -122,6 +122,7 @@ def test_ancestor_runner_receipt_promotes_ci_row(tmp_path: Path) -> None:
         [receipt],
         repository=repo,
         audited_head=head,
+        logical_receipt_root=tmp_path,
     )
     measurements = control_measurements()
     measurements["ci_runner"] = measurement
@@ -133,6 +134,12 @@ def test_ancestor_runner_receipt_promotes_ci_row(tmp_path: Path) -> None:
 
     assert measurement["observed_runner_executions"] == 1
     assert measurement["rejected_runner_receipts"] == []
+    assert measurement["runner_receipts"] == [
+        "evidence/ci-runs/ancestor.json"
+    ]
+    assert measurement["accepted_runner_receipts"][0]["path"] == (
+        "evidence/ci-runs/ancestor.json"
+    )
     assert measurement["workflow_configuration_counts_as_execution"] is False
     assert row["disposition"] == "promote"
     assert (

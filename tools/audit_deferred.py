@@ -44,9 +44,38 @@ COSINE_SAMPLES = 30
 SCHEMA_VERSION = 2
 
 
-def progress_paths(root: Path = ROOT) -> list[Path]:
+def configure_subject_root(root: Path) -> None:
+    """Point every subject-side measurement at one explicit worktree."""
+    global ROOT, MANIFEST, SCHEDULE, SCHEDULER, CORE_CONFIG, CORE_MAIN
+    global PUBLIC_APP, STORE, SUBSCRIPTIONS, SERVICE, TIMER, DEPLOY_README
+    global SCALE_NOTE, VIEW_SUMMARY, V2_VIEW_SUMMARY, V2_VIEW_DESIGN
+
+    ROOT = root.resolve()
+    MANIFEST = ROOT / "config" / "protected-artifacts.json"
+    SCHEDULE = ROOT / "config" / "schedule.json"
+    SCHEDULER = ROOT / "shell" / "intel_shell" / "scheduler.py"
+    CORE_CONFIG = ROOT / "shell" / "intel_shell" / "config.py"
+    CORE_MAIN = ROOT / "apps" / "cored" / "src" / "main.rs"
+    PUBLIC_APP = ROOT / "shell" / "intel_shell" / "app.py"
+    STORE = ROOT / "crates" / "store" / "src" / "sqlite.rs"
+    SUBSCRIPTIONS = ROOT / "shell" / "intel_shell" / "config.py"
+    SERVICE = ROOT / "deploy" / "intel-pipeline.service"
+    TIMER = ROOT / "deploy" / "intel-pipeline.timer"
+    DEPLOY_README = ROOT / "deploy" / "README.md"
+    SCALE_NOTE = ROOT / "docs" / "T8-scale-design-note.md"
+    VIEW_SUMMARY = (
+        ROOT / "evidence" / "v0.9" / "view-benchmark" / "summary.json"
+    )
+    V2_VIEW_SUMMARY = (
+        ROOT / "evidence" / "v0.10" / "view-decomposition" / "summary.json"
+    )
+    V2_VIEW_DESIGN = ROOT / "docs" / "V2-VIEW-DESIGN.md"
+
+
+def progress_paths(root: Path | None = None) -> list[Path]:
     """Return every progress record; the active cycle must never be omitted."""
-    return sorted(root.resolve().glob("PROGRESS-v*.md"))
+    selected = ROOT if root is None else root
+    return sorted(selected.resolve().glob("PROGRESS-v*.md"))
 
 
 class AuditFailure(RuntimeError):
@@ -582,7 +611,17 @@ def attestation_boundary_measurement() -> dict[str, Any]:
     }
 
 
-def _display_receipt_path(path: Path, repository: Path) -> str:
+def _display_receipt_path(
+    path: Path,
+    repository: Path,
+    logical_receipt_root: Path | None,
+) -> str:
+    if logical_receipt_root is not None:
+        try:
+            relative = path.resolve().relative_to(logical_receipt_root.resolve())
+            return str(Path("evidence") / "ci-runs" / relative)
+        except ValueError:
+            pass
     try:
         return str(path.resolve().relative_to(repository.resolve()))
     except ValueError:
@@ -594,6 +633,7 @@ def runner_receipt_measurement(
     *,
     repository: Path,
     audited_head: str,
+    logical_receipt_root: Path | None = None,
 ) -> dict[str, Any]:
     """Accept only well-formed receipts whose SHA belongs to the audited line."""
     accepted: list[dict[str, Any]] = []
@@ -608,7 +648,11 @@ def runner_receipt_measurement(
         "completed_at",
     )
     for path in receipts:
-        shown = _display_receipt_path(path, repository)
+        shown = _display_receipt_path(
+            path,
+            repository,
+            logical_receipt_root,
+        )
         try:
             receipt = json.loads(path.read_text())
         except (OSError, json.JSONDecodeError) as error:
@@ -681,7 +725,8 @@ def runner_receipt_measurement(
     return {
         "audited_head_commit": audited_head,
         "runner_receipts": [
-            _display_receipt_path(path, repository) for path in receipts
+            _display_receipt_path(path, repository, logical_receipt_root)
+            for path in receipts
         ],
         "accepted_runner_receipts": accepted,
         "rejected_runner_receipts": rejected,
@@ -690,7 +735,9 @@ def runner_receipt_measurement(
     }
 
 
-def ci_runner_measurement() -> dict[str, Any]:
+def ci_runner_measurement(
+    runner_receipts_dir: Path | None = None,
+) -> dict[str, Any]:
     remote = subprocess.run(
         ["git", "remote", "-v"],
         cwd=ROOT,
@@ -702,6 +749,8 @@ def ci_runner_measurement() -> dict[str, Any]:
         line for line in remote.stdout.splitlines() if line.strip()
     ]
     receipts = sorted((ROOT / "evidence" / "ci-runs").glob("*.json"))
+    if runner_receipts_dir is not None:
+        receipts = sorted(runner_receipts_dir.resolve().glob("*.json"))
     head = subprocess.run(
         ["git", "rev-parse", "HEAD"],
         cwd=ROOT,
@@ -722,6 +771,7 @@ def ci_runner_measurement() -> dict[str, Any]:
             receipts,
             repository=ROOT,
             audited_head=head,
+            logical_receipt_root=runner_receipts_dir,
         ),
     }
 
@@ -899,14 +949,16 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
-def production_measurements() -> dict[str, Any]:
+def production_measurements(
+    runner_receipts_dir: Path | None = None,
+) -> dict[str, Any]:
     return {
         "scheduler": scheduler_measurement(),
         "writers": writer_measurement(),
         "pgvector": exact_cosine_measurement(),
         "multi_host": multi_host_measurement(),
         "attestation_boundary": attestation_boundary_measurement(),
-        "ci_runner": ci_runner_measurement(),
+        "ci_runner": ci_runner_measurement(runner_receipts_dir),
         "view": view_measurement(),
     }
 
@@ -988,14 +1040,18 @@ def run_control() -> int:
     return 1
 
 
-def run_production(output: Path) -> int:
+def run_production(
+    output: Path,
+    *,
+    runner_receipts_dir: Path | None = None,
+) -> int:
     if output.exists():
         raise AuditFailure(f"refusing to overwrite existing evidence: {output}")
-    measurements = production_measurements()
+    measurements = production_measurements(runner_receipts_dir)
     rows = evaluate(measurements)
     report = {
         "schema_version": SCHEMA_VERSION,
-        "task": "v0.10 D5",
+        "task": "v0.10.1 RECEIPT",
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "subject": git_subject(),
         "host": {
@@ -1043,10 +1099,39 @@ def main() -> int:
         "--control",
         choices=("all-seven",),
     )
+    parser.add_argument(
+        "--subject-root",
+        type=Path,
+        help=(
+            "explicit clean worktree whose commit, source, config, and "
+            "protected artifacts are measured"
+        ),
+    )
+    parser.add_argument(
+        "--runner-receipts-dir",
+        type=Path,
+        help=(
+            "explicit directory containing downloaded runner-produced "
+            "receipt JSON"
+        ),
+    )
     args = parser.parse_args()
     if args.control:
+        if args.subject_root or args.runner_receipts_dir:
+            raise AuditFailure(
+                "subject/receipt overrides apply only to production audits"
+            )
         return run_control()
-    return run_production(args.output.resolve())
+    if args.subject_root is not None:
+        configure_subject_root(args.subject_root)
+    return run_production(
+        args.output.resolve(),
+        runner_receipts_dir=(
+            args.runner_receipts_dir.resolve()
+            if args.runner_receipts_dir is not None
+            else None
+        ),
+    )
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, and G-RUN are complete.** With explicit operator approval, current `main` was fast-forwarded to GitHub and the new workflow definition audited release commit `45fa3d49860643fdb2595d82340e364d33566e7d` in runner run **30187058897**. All seven executable job instances passed, scheduled drift was skipped, and 7/7 uploaded receipts record the release SHA, Linux, and success. The auditor accepts all seven, rejects none, and promotes the CI-runner row for the restated falsifiable trigger. The planted `9.9.9` mismatch at temporary commit `8cceae90debaf7e730bebd7bd6c15183e32a6263` made both runner version-check lanes fail in run **30187207654** while their always-run receipts still uploaded; every other executable lane passed. The throwaway branch is deleted locally and remotely, `main == origin/main == 5bcabcb870a906b0b830bf3c8c391bbe3ced71b0`, and annotated `v0.10.0` still dereferences to `45fa3d49…`. Local CI passes **18/18** with **99** Rust workspace and **20** net-path tests; the shell suite remains **129/129** under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-CTRL's real-path positive control fires `GUARD FIRED`; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, G-RUN, and RECEIPT are complete.** The fresh deferred-audit receipt at `evidence/v0.10.1/deferred-audit/report.json` measures a separate clean detached worktree at released commit `45fa3d49860643fdb2595d82340e364d33566e7d`, with byte-exact protected databases and the corrected auditor/explicit seven-receipt input. It records `worktree_dirty:false`, accepts 7/7 runner receipts, rejects none, promotes CI-runner evidence for the released-commit receipt trigger, and yields **2 promoted / 5 deferred**. The immutable v0.10 receipt remains at SHA-256 `ea23f7f2…` and still honestly records its dirty non-release subject; the contradictory release narrative is corrected below. Runner run **30187058897** passed all seven executable job instances against the release commit, and failure-control run **30187207654** failed both version lanes on the planted `9.9.9` while other lanes passed. The throwaway branch is gone locally/remotely; remote main remains at the approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Local CI passes **18/18** with **99** Rust workspace and **20** net-path tests; the shell suite passes **129/129** under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-CTRL's real-path positive control fires `GUARD FIRED`; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -279,6 +279,63 @@ tests, warning-denied Rust builds, golden **11/11**, and protected artifacts
 **2/2**. No runtime product path, dependency, lockfile, architecture, provider
 configuration, or protected bytes changed. The runner-produced receipt files
 are the only new evidence bytes.
+
+**v0.10.1 RECEIPT is complete (measured 2026-07-26).** The current auditor now
+accepts two explicit production inputs: `--subject-root` points every
+repository/config/corpus/Git measurement at one selected worktree, and
+`--runner-receipts-dir` supplies runner-produced JSON from outside that clean
+subject. Default behavior and the original direct
+`evidence/ci-runs/*.json` glob remain unchanged. Explicit receipt paths are
+normalized back to stable `evidence/ci-runs/<name>` labels rather than leaking
+host paths. The executed current auditor SHA-256 was
+`703daa3a6494857e995828a72c3454d471230b857730b06ff61cb7eab1b36224`.
+
+A detached temporary Git worktree was created at exact release commit
+`45fa3d49860643fdb2595d82340e364d33566e7d`. Byte-for-byte copies of the two
+protected databases were placed only in its already-ignored `data/` directory.
+They reverified as core
+`db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+and live-smoke
+`94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`;
+`git status --porcelain=v1` remained empty. The first sandboxed audit stopped
+at `ps` with `PermissionError: Operation not permitted` before producing a
+report and is a non-result. The permitted rerun performed the actual process
+census and release-mode exact-cosine measurements and completed.
+
+The falsifiable pre-check measured the required disagreement:
+
+| field | immutable v0.10 receipt | fresh v0.10.1 receipt |
+|---|---|---|
+| subject HEAD | `d9cab128eed014ca1b1702c8794ba5a0ea1c85be` | `45fa3d49860643fdb2595d82340e364d33566e7d` |
+| worktree dirty | true | false |
+| CI-runner trigger | `a Git remote exists` | `a runner execution receipt exists for the released commit` |
+| CI-runner disposition | defer | promote |
+| accepted runner receipts | 0 | 7 |
+| summary | 1 promoted / 6 deferred | 2 promoted / 5 deferred |
+
+The new pgvector measurement remained below its gate at **7.431750 ms p95**
+for 2,600 documents versus the 16.264 ms anchor. T7, Postgres, pgvector,
+multi-host seam hardening, and A4 remain deferred; CI-runner evidence and
+future `/view` materialization are the two promoted rows. No deferred subsystem
+was implemented.
+
+The fresh schema-2 artifact is
+`evidence/v0.10.1/deferred-audit/report.json`, measured at
+2026-07-26T04:13:24Z, SHA-256
+`00cf14ae931b864616e19c437168d9ef8723791ddee6dc7866794f6850319362`.
+It contains no local absolute path, credential, endpoint, authorization, or
+tunnel alias. The v0.10 receipt was not overwritten and remains byte-exact at
+`ea23f7f2077155b4f4614edeb0afef02bf43252a7733bbc0f25b0b03db742a76`.
+After the report copy was compared byte-for-byte, the release worktree again
+proved clean with both copied hashes exact and was removed.
+
+The corrected production record is therefore: CI-runner evidence promotes
+because seven runner-produced receipts for the released commit exist, not
+because a Git remote exists. Full Python 3.11.4 and 3.12.13 suites each passed
+**129/129** with one third-party Starlette warning. `py_compile`, golden
+**11/11**, and protected artifacts **2/2** passed. No runtime path, dependency,
+lockfile, architecture, provider configuration, protected bytes, or v0.10
+evidence bytes changed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported
@@ -672,7 +729,7 @@ registry from repository, process, Git, deployment, and benchmark evidence:
 | pgvector | exact cosine over the archive stops fitting the measured request budget | largest evidenced corpus 2,600; exact-cosine p95 6.431667 ms; A3 full-request anchor 16.264 ms | **defer** |
 | multi-host seam hardening | an actual core/shell host split | zero recorded cross-host core/shell requests; bind `127.0.0.1:8788`; `CORE_URL=http://127.0.0.1:8788` | **defer** |
 | A4 untrusted-shell attestation boundary | a third-party or untrusted shell, or any claim that HC1 is invariant under shell replacement | one public answer path without a core-owned response boundary; one shell-owned public-egress point; zero third-party/untrusted shells; zero invariance claims | **defer; risk recorded** |
-| CI-runner evidence | a Git remote exists | operator-approved `origin`; first push run 30142540466 observed on seven executable job nodes plus one scheduled-only skipped node | **promote → G2 runner evidence and compatibility correction** |
+| CI-runner evidence | a runner execution receipt exists for the released commit | v0.10.1 run 30187058897 emitted seven accepted receipts, each naming release commit `45fa3d49…`; zero rejected | **promote — released-commit runner evidence exists** |
 | `/view` materialization | cold or warm p95 crosses the predeclared V1 SLO in both runs | V1 gate `materialization-trigger-fired`; four V2 decomposition reports; no materialization implemented | **promote → future `/view` materialization implementation** |
 
 The audit's progress evidence is no longer a fixed list. Its derived glob
@@ -680,10 +737,13 @@ printed all three files it actually scanned:
 `PROGRESS-v0.10.md`, `PROGRESS-v0.8.md`, and `PROGRESS-v0.9.md`. The V2 row
 imports the measured V1 trigger and V2 disposition, including
 `docs/V2-VIEW-DESIGN.md`; promotion authorizes only that future scoped task.
-At D5's dated measurement there was no remote and no observed runner; G2 later
-tripped that row's unchanged trigger. D5 itself added no receipt seam, response
-boundary, cache table, migration, scheduler, database, vector engine, remote,
-runner workflow, dependency, or lockfile change.
+At D5's dated measurement there was no remote and no observed runner. The
+immutable v0.10 receipt therefore deferred CI-runner evidence, while this
+release narrative previously contradicted it by promoting on remote presence.
+v0.10.1 corrects the row above from measured runner receipts: the trigger is
+now falsifiable and fired for release commit `45fa3d49…`. D5 itself added no
+receipt seam, response boundary, cache table, migration, scheduler, database,
+vector engine, remote, runner workflow, dependency, or lockfile change.
 
 The failure-capable `python3 tools/audit_deferred.py --control all-seven`
 control supplied two harvesters, two archive writers, an exact-cosine budget
