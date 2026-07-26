@@ -72,3 +72,39 @@ Entries are append-only; corrections are new dated entries.
   with every exact anchor unchanged.
 - protected artifact delta: none. Both protected databases and all three
   pinned JSON reports remained byte-exact.
+
+### 2026-07-26 · MATRIX-ID — CI matrix identified instead of counted
+
+- owner: Codex
+- commit: da401507bd64ac9a2f07f37fc68b0d5b42fc7291
+- result: PASS. Production receipt completeness is the exact seven-member
+  `(job, matrix)` identity set: five single-leg jobs plus shell
+  `python=3.11` and `python=3.12`. Accepted rows preserve matrix, workflow,
+  repository, and event SHA.
+- matrix-shape acceptance: PASS. Shell requires exactly one declared matrix
+  value; single-leg jobs must omit the field. Missing shell matrix, unknown
+  `python=3.13`, and a matrix on `core` each produce a distinct rejection.
+- duplicate acceptance: PASS. Duplicate `(job, matrix)` subjects and duplicate
+  receipt content digests produce separate findings; either empties the
+  accepted set and records zero observed executions.
+- failure-capable control: PASS. The selected fail-before set failed **5/5**
+  under the old guard: two authenticated copies of the Python 3.11 bytes were
+  counted as both shell legs, three malformed matrix shapes promoted, and
+  accepted rows lost identity. Pass-after was **5/5**; the duplicated set
+  records both duplicate findings, misses Python 3.12, and defers.
+- legacy compatibility: PASS without inferred identity. Immutable reports and
+  old runner bytes are unchanged. Rederivation explicitly recognizes the old
+  count-contract report shape; the production report-creation path cannot
+  select it and emits `expected_job_identities`. The pinned v0.10.1 report
+  still re-derived with seven rows, five source dispositions, and seven
+  triggers.
+- workflow acceptance: PASS. The executable source assertion confirms exactly
+  one workflow `matrix` field, on the shell job; all single-leg emitters omit
+  it.
+- Python acceptance: PASS. The focused module passed 28/28 and the full shell
+  suite passed 160/160 under both Python 3.11.4 and 3.12.13, with the existing
+  single Starlette warning. Python compilation and `git diff --check` passed.
+- golden-E2E delta: none. `./run golden` passed 11/11 with every exact anchor
+  unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2, all
+  three JSON pins matched, and manifest validation passed.
