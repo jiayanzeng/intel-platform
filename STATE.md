@@ -1,6 +1,71 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 RESUME-INVARIANT is complete on the locally released v0.10.2 baseline.** Resumed adversarial attempts now halt on outcome/evidence contradictions and must match the declared target corpus, shape set, and chat model. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **175/175** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 EVIDENCE-DURABLE is complete on the locally released v0.10.2 baseline.** Hosted run 30194678764 attempt 1 now has all seven receipts and all seven Sigstore bundles durably stored, hash-pinned, and independently verified against its repository, CI workflow, source revision, branch ref, and GitHub-hosted runner identity. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **178/178** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Manifest schema 2 matches all **24/24** file pins. Golden is **11/11** and protected database evidence is exact **2/2**. No push or hosted dispatch is authorized.
+
+**v0.10.3 EVIDENCE-DURABLE is complete (measured 2026-07-26).**
+The production verifier now threads the installed GitHub CLI's
+`--signer-digest`, `--source-digest`, and `--source-ref` policy flags from
+required release-grade `--expected-source-digest` and
+`--expected-source-ref` arguments. It retains the existing repository,
+workflow, and `--deny-self-hosted-runners` constraints, requests JSON output,
+and independently checks that the returned certificate has one non-empty
+identity and exactly the expected source digest, signer digest, and ref.
+Every accepted receipt row persists that certificate identity and the three
+source-revision fields.
+
+The operator-authorized authenticated download recovered all seven receipts
+and all seven `.sigstore` bundles from successful hosted workflow run
+**30194678764**, attempt **1**, before its 2026-10-24 retention expiry.
+All seven receipts name subject commit
+`e5af6bc5df8261cc004bd4d3247b70f8cbe930bb` and event/source commit
+`817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. Real `gh attestation verify`
+accepted every pair with repository `jiayanzeng/intel-platform`, signer
+workflow `jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest
+`817e7f3e7c1878c18f474532df4d50c2b17fcbdc`, source ref
+`refs/heads/main`, GitHub-hosted runner policy, and certificate identity
+`https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main`.
+The direct seven-file measurement returned complete `true`, observed **7**,
+and rejected **0**. A real wrong-source-digest control substituted forty
+zeroes; `gh` rejected it with exit **1** and named the expected/actual
+`SourceRepositoryDigest`.
+
+The durable convention is now
+`evidence/ci-runs/<run_id>-<attempt>/`. The seven legacy run
+30187058897 receipts were moved into that layout; tracked compatibility
+symlinks keep the immutable v0.10.1 report's original flat paths resolving to
+the one stored copy. Run 30194678764 contributes its seven receipt/bundle
+pairs under the same convention. The manifest now pins the three immutable
+reports, seven legacy receipts, seven authenticated receipts, and seven
+authenticated bundles: **24/24** pins matched exact bytes and SHA-256 values.
+
+Path recording no longer rewrites a temporary measurement path into a
+fictional repository path: it records the true absolute path and an explicit
+`logical_path` while external, and the true repository-relative path once
+committed. Release-grade manifest validation now requires every recorded
+receipt and bundle path to be pinned, resolve inside the repository, and name
+a regular file; it also requires each row's certificate and source fields to
+match the report's pinned revision. The immutable v0.10.1 report still
+re-derived successfully through the compatibility paths.
+
+Three selected controls failed **3/3** against the old implementation: the
+runner guard could not accept source policy, the verifier did not return
+source/certificate identity, and release-pin validation accepted unresolved
+recorded paths. After implementation the expanded selected set passed
+**4/4**. The focused deferred-audit/artifact suites passed **50/50** under
+both supported interpreters. Both complete shell lanes passed **178/178**
+with the existing single Starlette deprecation warning.
+
+The first sandboxed `./run ci-local` attempt passed every non-shell stage but
+was an environment non-result because `ps` and loopback binds were denied.
+The permitted identical run passed all **19/19** jobs: 99 workspace tests,
+20 net tests, warning-denied builds, clippy/fmt, locked Rust 1.78,
+178 Python tests, structural re-derivation, persisted fingerprints, protected
+databases **2/2**, and **24/24** pins. Standalone manifest validation and
+`./run verify-artifacts` passed, Python compilation and `git diff --check`
+passed, and the required standalone `./run golden` remained byte-identical at
+**11/11**. No product runtime, dependency, lockfile, architecture, protected
+database byte, existing pinned report byte, provider configuration, remote
+ref, or tag changed.
 
 **v0.10.3 RESUME-INVARIANT is complete (measured 2026-07-26).** One
 shared executable consistency checker now guards both the fresh adversarial

@@ -376,7 +376,13 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _validate_release_grade_report(relative: str, path: Path) -> bool:
+def _validate_release_grade_report(
+    relative: str,
+    path: Path,
+    *,
+    root: Path,
+    pinned_paths: set[str],
+) -> bool:
     try:
         report = json.loads(path.read_text())
     except (OSError, json.JSONDecodeError) as error:
@@ -408,10 +414,10 @@ def _validate_release_grade_report(relative: str, path: Path) -> bool:
         )
         return False
     try:
-        accepted = report["measurements"]["ci_runner"][
-            "accepted_runner_receipts"
-        ]
+        ci_runner = report["measurements"]["ci_runner"]
+        accepted = ci_runner["accepted_runner_receipts"]
     except (KeyError, TypeError):
+        ci_runner = None
         accepted = None
     if (
         not isinstance(accepted, list)
@@ -430,11 +436,73 @@ def _validate_release_grade_report(relative: str, path: Path) -> bool:
             file=sys.stderr,
         )
         return False
+    expected_source_digest = ci_runner.get("expected_source_digest")
+    expected_source_ref = ci_runner.get("expected_source_ref")
+    if (
+        not isinstance(expected_source_digest, str)
+        or not expected_source_digest
+        or not isinstance(expected_source_ref, str)
+        or not expected_source_ref
+        or any(
+            not isinstance(receipt.get("certificate_identity"), str)
+            or not receipt["certificate_identity"]
+            or receipt.get("signer_digest") != expected_source_digest
+            or receipt.get("source_digest") != expected_source_digest
+            or receipt.get("source_ref") != expected_source_ref
+            for receipt in accepted
+        )
+    ):
+        print(
+            f"PIN MISMATCH {relative} "
+            "field=accepted_runner_receipts: release grade requires "
+            "certificate identity and one pinned source revision",
+            file=sys.stderr,
+        )
+        return False
+    for receipt in accepted:
+        for field, label in (
+            ("path", "receipt"),
+            ("attestation_bundle", "attestation bundle"),
+        ):
+            recorded = receipt.get(field)
+            if not isinstance(recorded, str) or not recorded:
+                print(
+                    f"PIN MISMATCH {relative} "
+                    "field=accepted_runner_receipts: "
+                    f"recorded {label} path is missing",
+                    file=sys.stderr,
+                )
+                return False
+            if recorded not in pinned_paths:
+                print(
+                    f"PIN MISMATCH {relative} "
+                    "field=accepted_runner_receipts: "
+                    f"recorded {label} path is not pinned: {recorded}",
+                    file=sys.stderr,
+                )
+                return False
+            try:
+                resolved = (root / recorded).resolve(strict=True)
+                resolved.relative_to(root)
+                if not resolved.is_file():
+                    raise OSError("not a regular file")
+            except (OSError, ValueError) as error:
+                print(
+                    f"PIN MISMATCH {relative} "
+                    "field=accepted_runner_receipts: "
+                    f"recorded {label} path does not resolve: "
+                    f"{recorded}: {error}",
+                    file=sys.stderr,
+                )
+                return False
     return True
 
 
 def validate_pinned_files(manifest: dict[str, Any], root: Path) -> int:
     failures = 0
+    pinned_paths = {
+        pinned_file["path"] for pinned_file in manifest["pinned_files"]
+    }
     for pinned_file in manifest["pinned_files"]:
         relative = pinned_file["path"]
         path = root / relative
@@ -466,7 +534,12 @@ def validate_pinned_files(manifest: dict[str, Any], root: Path) -> int:
             actual_bytes,
         )
         if file_ok and pinned_file["grade"] == "release":
-            file_ok &= _validate_release_grade_report(relative, resolved)
+            file_ok &= _validate_release_grade_report(
+                relative,
+                resolved,
+                root=root,
+                pinned_paths=pinned_paths,
+            )
         if file_ok:
             print(
                 f"PIN MATCH {relative} "

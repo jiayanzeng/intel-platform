@@ -190,7 +190,10 @@ def test_non_release_ancestor_receipt_is_rejected(tmp_path: Path) -> None:
 
     assert measurement["observed_runner_executions"] == 0
     assert measurement["runner_receipts"] == [
-        "evidence/ci-runs/ancestor.json"
+        {
+            "path": str(receipt),
+            "logical_path": "evidence/ci-runs/ancestor.json",
+        }
     ]
     assert measurement["accepted_runner_receipts"] == []
     assert measurement["rejected_runner_receipts"][0]["reason"] == (
@@ -368,7 +371,14 @@ def test_authenticated_duplicated_shell_leg_does_not_promote(
         expected_workflow=(
             "github.com/example/repo/.github/workflows/ci.yml"
         ),
-        attestation_verifier=lambda *_: None,
+        expected_source_digest=head,
+        expected_source_ref="refs/heads/main",
+        attestation_verifier=lambda *_: {
+            "certificate_identity": "https://example.test/workflow",
+            "signer_digest": head,
+            "source_digest": head,
+            "source_ref": "refs/heads/main",
+        },
     )
     measurements = control_measurements()
     measurements["ci_runner"] = measurement
@@ -454,7 +464,14 @@ def test_authenticated_matrix_requires_every_bundle(tmp_path: Path) -> None:
         expected_workflow=(
             "github.com/example/repo/.github/workflows/ci.yml"
         ),
-        attestation_verifier=lambda *_: None,
+        expected_source_digest=head,
+        expected_source_ref="refs/heads/main",
+        attestation_verifier=lambda *_: {
+            "certificate_identity": "https://example.test/workflow",
+            "signer_digest": head,
+            "source_digest": head,
+            "source_ref": "refs/heads/main",
+        },
     )
 
     assert measurement["observed_runner_executions"] == 0
@@ -473,15 +490,32 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
         receipt.with_name(f"{receipt.name}.sigstore").write_text(
             "synthetic signed bundle\n"
         )
-    verified: list[tuple[Path, Path, str, str]] = []
+    verified: list[tuple[Path, Path, str, str, str, str]] = []
 
     def verifier(
         receipt: Path,
         bundle: Path,
         repository: str,
         workflow: str,
-    ) -> None:
-        verified.append((receipt, bundle, repository, workflow))
+        source_digest: str,
+        source_ref: str,
+    ) -> dict[str, str]:
+        verified.append(
+            (
+                receipt,
+                bundle,
+                repository,
+                workflow,
+                source_digest,
+                source_ref,
+            )
+        )
+        return {
+            "certificate_identity": "https://example.test/workflow",
+            "signer_digest": source_digest,
+            "source_digest": source_digest,
+            "source_ref": source_ref,
+        }
 
     measurement = audit_deferred.runner_receipt_measurement(
         receipts,
@@ -494,6 +528,8 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
         expected_workflow=(
             "github.com/example/repo/.github/workflows/ci.yml"
         ),
+        expected_source_digest=head,
+        expected_source_ref="refs/heads/main",
         attestation_verifier=verifier,
     )
 
@@ -508,6 +544,17 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
     assert {call[3] for call in verified} == {
         "github.com/example/repo/.github/workflows/ci.yml"
     }
+    assert {call[4] for call in verified} == {head}
+    assert {call[5] for call in verified} == {"refs/heads/main"}
+    assert all(
+        {
+            "certificate_identity",
+            "signer_digest",
+            "source_digest",
+            "source_ref",
+        }.issubset(receipt)
+        for receipt in measurement["accepted_runner_receipts"]
+    )
 
 
 def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
@@ -534,6 +581,8 @@ def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
         expected_workflow=(
             "github.com/example/repo/.github/workflows/ci.yml"
         ),
+        expected_source_digest=head,
+        expected_source_ref="refs/heads/main",
         attestation_verifier=reject_bundle,
     )
 
@@ -542,6 +591,61 @@ def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
     assert all(
         item["reason"]
         == "GitHub attestation verification failed: invalid bundle"
+        for item in measurement["rejected_runner_receipts"]
+    )
+
+
+def test_authenticated_matrix_rejects_mismatched_source_digest(
+    tmp_path: Path,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipts = _receipt_matrix(tmp_path, head)
+    for receipt in receipts:
+        receipt.with_name(f"{receipt.name}.sigstore").write_text(
+            "synthetic signed bundle\n"
+        )
+
+    def reject_source_digest(
+        _: Path,
+        __: Path,
+        ___: str,
+        ____: str,
+        source_digest: str,
+        source_ref: str,
+    ) -> dict[str, str]:
+        assert source_ref == "refs/heads/main"
+        if source_digest != head:
+            raise audit_deferred.AuditFailure(
+                "GitHub attestation verification failed: "
+                "source digest mismatch"
+            )
+        return {
+            "certificate_identity": "https://example.test/workflow",
+            "signer_digest": source_digest,
+            "source_digest": source_digest,
+            "source_ref": source_ref,
+        }
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        receipts,
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+        attestation_bundles_dir=tmp_path,
+        require_attestations=True,
+        expected_repository="example/repo",
+        expected_workflow=(
+            "github.com/example/repo/.github/workflows/ci.yml"
+        ),
+        expected_source_digest="0" * 40,
+        expected_source_ref="refs/heads/main",
+        attestation_verifier=reject_source_digest,
+    )
+
+    assert measurement["observed_runner_executions"] == 0
+    assert len(measurement["rejected_runner_receipts"]) == 7
+    assert all(
+        item["reason"].endswith("source digest mismatch")
         for item in measurement["rejected_runner_receipts"]
     )
 
@@ -561,7 +665,28 @@ def test_sigstore_bundle_uses_supported_ephemeral_extension(
         verified_bundle = Path(args[args.index("--bundle") + 1])
         assert verified_bundle.name.endswith(".jsonl")
         assert verified_bundle.read_bytes() == bundle.read_bytes()
-        return subprocess.CompletedProcess(args, 0, "verified\n", "")
+        output = [
+            {
+                "verificationResult": {
+                    "signature": {
+                        "certificate": {
+                            "subjectAlternativeName": (
+                                "https://example.test/workflow"
+                            ),
+                            "sourceRepositoryDigest": "a" * 40,
+                            "sourceRepositoryRef": "refs/heads/main",
+                            "buildSignerDigest": "a" * 40,
+                        }
+                    }
+                }
+            }
+        ]
+        return subprocess.CompletedProcess(
+            args,
+            0,
+            json.dumps(output),
+            "",
+        )
 
     monkeypatch.setattr(audit_deferred.shutil, "which", lambda _: "/usr/bin/gh")
     monkeypatch.setattr(audit_deferred.subprocess, "run", verify)
@@ -571,10 +696,71 @@ def test_sigstore_bundle_uses_supported_ephemeral_extension(
         bundle,
         "example/repo",
         "github.com/example/repo/.github/workflows/ci.yml",
+        "a" * 40,
+        "refs/heads/main",
     )
 
     assert verified_bundle is not None
     assert not verified_bundle.exists()
+
+
+def test_sigstore_verifier_pins_source_revision_and_returns_identity(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    receipt = tmp_path / "receipt.json"
+    receipt.write_text('{"receipt": true}\n')
+    bundle = tmp_path / "receipt.json.sigstore"
+    bundle.write_text('{"bundle": true}\n')
+    certificate_identity = (
+        "https://github.com/example/repo/.github/workflows/"
+        "ci.yml@refs/heads/main"
+    )
+
+    def verify(args: list[str], **_: object) -> subprocess.CompletedProcess:
+        assert args[args.index("--source-digest") + 1] == "a" * 40
+        assert args[args.index("--source-ref") + 1] == "refs/heads/main"
+        assert args[args.index("--signer-digest") + 1] == "a" * 40
+        assert args[args.index("--format") + 1] == "json"
+        output = [
+            {
+                "verificationResult": {
+                    "signature": {
+                        "certificate": {
+                            "subjectAlternativeName": certificate_identity,
+                            "sourceRepositoryDigest": "a" * 40,
+                            "sourceRepositoryRef": "refs/heads/main",
+                            "buildSignerDigest": "a" * 40,
+                        }
+                    }
+                }
+            }
+        ]
+        return subprocess.CompletedProcess(
+            args,
+            0,
+            json.dumps(output),
+            "",
+        )
+
+    monkeypatch.setattr(audit_deferred.shutil, "which", lambda _: "/usr/bin/gh")
+    monkeypatch.setattr(audit_deferred.subprocess, "run", verify)
+
+    identity = audit_deferred.verify_attestation_bundle(
+        receipt,
+        bundle,
+        "example/repo",
+        "github.com/example/repo/.github/workflows/ci.yml",
+        "a" * 40,
+        "refs/heads/main",
+    )
+
+    assert identity == {
+        "certificate_identity": certificate_identity,
+        "signer_digest": "a" * 40,
+        "source_digest": "a" * 40,
+        "source_ref": "refs/heads/main",
+    }
 
 
 def test_production_rejects_wrong_head_before_measurement(

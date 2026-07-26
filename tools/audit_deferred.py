@@ -692,18 +692,36 @@ def attestation_boundary_measurement() -> dict[str, Any]:
 def _display_receipt_path(
     path: Path,
     repository: Path,
-    logical_receipt_root: Path | None,
 ) -> str:
-    if logical_receipt_root is not None:
-        try:
-            relative = path.resolve().relative_to(logical_receipt_root.resolve())
-            return str(Path("evidence") / "ci-runs" / relative)
-        except ValueError:
-            pass
     try:
         return str(path.resolve().relative_to(repository.resolve()))
     except ValueError:
         return str(path.resolve())
+
+
+def _receipt_path_fields(
+    path: Path,
+    repository: Path,
+    logical_receipt_root: Path | None,
+) -> dict[str, str]:
+    fields = {
+        "path": _display_receipt_path(
+            path,
+            repository,
+        )
+    }
+    if logical_receipt_root is not None and Path(fields["path"]).is_absolute():
+        try:
+            relative = path.resolve().relative_to(
+                logical_receipt_root.resolve()
+            )
+        except ValueError:
+            pass
+        else:
+            fields["logical_path"] = str(
+                Path("evidence") / "ci-runs" / relative
+            )
+    return fields
 
 
 def verify_attestation_bundle(
@@ -711,7 +729,9 @@ def verify_attestation_bundle(
     bundle: Path,
     repository: str,
     signer_workflow: str,
-) -> None:
+    source_digest: str,
+    source_ref: str,
+) -> dict[str, str]:
     """Verify one persisted GitHub provenance bundle against its receipt."""
     gh = shutil.which("gh")
     if gh is None:
@@ -738,7 +758,15 @@ def verify_attestation_bundle(
                 repository,
                 "--signer-workflow",
                 signer_workflow,
+                "--signer-digest",
+                source_digest,
                 "--deny-self-hosted-runners",
+                "--source-digest",
+                source_digest,
+                "--source-ref",
+                source_ref,
+                "--format",
+                "json",
             ],
             cwd=ROOT,
             text=True,
@@ -751,6 +779,53 @@ def verify_attestation_bundle(
             "GitHub attestation verification failed"
             + (f": {detail}" if detail else "")
         )
+    try:
+        results = json.loads(verified.stdout)
+        certificates = [
+            result["verificationResult"]["signature"]["certificate"]
+            for result in results
+        ]
+        identities = {
+            certificate["subjectAlternativeName"]
+            for certificate in certificates
+        }
+        source_digests = {
+            certificate["sourceRepositoryDigest"]
+            for certificate in certificates
+        }
+        source_refs = {
+            certificate["sourceRepositoryRef"]
+            for certificate in certificates
+        }
+        signer_digests = {
+            certificate["buildSignerDigest"]
+            for certificate in certificates
+        }
+    except (json.JSONDecodeError, KeyError, TypeError) as error:
+        raise AuditFailure(
+            "GitHub attestation verification returned invalid JSON identity"
+        ) from error
+    if (
+        not certificates
+        or len(identities) != 1
+        or not all(
+            isinstance(identity, str) and identity
+            for identity in identities
+        )
+        or source_digests != {source_digest}
+        or source_refs != {source_ref}
+        or signer_digests != {source_digest}
+    ):
+        raise AuditFailure(
+            "GitHub attestation verification returned an inconsistent "
+            "certificate identity or source revision"
+        )
+    return {
+        "certificate_identity": next(iter(identities)),
+        "signer_digest": source_digest,
+        "source_digest": source_digest,
+        "source_ref": source_ref,
+    }
 
 
 def runner_receipt_measurement(
@@ -764,7 +839,15 @@ def runner_receipt_measurement(
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
-    attestation_verifier: Callable[[Path, Path, str, str], None] | None = None,
+    expected_source_digest: str | None = None,
+    expected_source_ref: str | None = None,
+    attestation_verifier: (
+        Callable[
+            [Path, Path, str, str, str, str],
+            dict[str, str],
+        ]
+        | None
+    ) = None,
     legacy_job_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     """Accept exactly one successful receipt per declared runner identity."""
@@ -781,10 +864,13 @@ def runner_receipt_measurement(
         attestation_bundles_dir is None
         or not expected_repository
         or not expected_workflow
+        or not expected_source_digest
+        or not expected_source_ref
     ):
         raise AuditFailure(
             "authenticated receipt verification requires bundle directory, "
-            "expected repository, and expected workflow"
+            "expected repository, expected workflow, source digest, and "
+            "source ref"
         )
     verifier = attestation_verifier or verify_attestation_bundle
     required = (
@@ -799,17 +885,18 @@ def runner_receipt_measurement(
     if legacy_job_counts is None:
         required += ("workflow", "repository", "event_sha")
     for path in receipts:
-        shown = _display_receipt_path(
+        path_fields = _receipt_path_fields(
             path,
             repository,
             logical_receipt_root,
         )
+        shown = path_fields["path"]
         try:
             receipt = json.loads(path.read_text())
         except (OSError, json.JSONDecodeError) as error:
             rejected.append(
                 {
-                    "path": shown,
+                    **path_fields,
                     "sha": None,
                     "reason": f"receipt is not readable JSON: {error}",
                 }
@@ -818,7 +905,7 @@ def runner_receipt_measurement(
         if not isinstance(receipt, dict):
             rejected.append(
                 {
-                    "path": shown,
+                    **path_fields,
                     "sha": None,
                     "reason": "receipt root is not an object",
                 }
@@ -834,7 +921,7 @@ def runner_receipt_measurement(
         if missing:
             rejected.append(
                 {
-                    "path": shown,
+                    **path_fields,
                     "sha": sha or None,
                     "reason": "missing/invalid fields: " + ", ".join(missing),
                 }
@@ -856,7 +943,7 @@ def runner_receipt_measurement(
             ):
                 rejected.append(
                     {
-                        "path": shown,
+                        **path_fields,
                         "sha": sha,
                         "reason": f"unknown runner job: {job}",
                     }
@@ -867,7 +954,7 @@ def runner_receipt_measurement(
                 if not isinstance(matrix, str) or not matrix.strip():
                     rejected.append(
                         {
-                            "path": shown,
+                            **path_fields,
                             "sha": sha,
                             "reason": (
                                 f"matrix job {job} is missing required matrix"
@@ -878,7 +965,7 @@ def runner_receipt_measurement(
                 if matrix not in declared_matrices:
                     rejected.append(
                         {
-                            "path": shown,
+                            **path_fields,
                             "sha": sha,
                             "reason": (
                                 f"matrix job {job} has unknown matrix value: "
@@ -892,7 +979,7 @@ def runner_receipt_measurement(
                 if "matrix" in receipt:
                     rejected.append(
                         {
-                            "path": shown,
+                            **path_fields,
                             "sha": sha,
                             "reason": (
                                 f"single-leg job {job} must not carry matrix"
@@ -903,7 +990,7 @@ def runner_receipt_measurement(
         if re.fullmatch(r"[0-9a-f]{40,64}", sha) is None:
             rejected.append(
                 {
-                    "path": shown,
+                    **path_fields,
                     "sha": sha,
                     "reason": "sha is not a 40-64 character hexadecimal object id",
                 }
@@ -925,12 +1012,12 @@ def runner_receipt_measurement(
                     + (ancestry.stderr.strip() or f"exit {ancestry.returncode}")
                 )
             )
-            rejected.append({"path": shown, "sha": sha, "reason": reason})
+            rejected.append({**path_fields, "sha": sha, "reason": reason})
             continue
         if sha != released_commit:
             rejected.append(
                 {
-                    "path": shown,
+                    **path_fields,
                     "sha": sha,
                     "reason": (
                         f"sha does not equal released commit {released_commit}"
@@ -942,14 +1029,14 @@ def runner_receipt_measurement(
         if conclusion.lower() != "success":
             rejected.append(
                 {
-                    "path": shown,
+                    **path_fields,
                     "sha": sha,
                     "reason": f"conclusion is not success: {conclusion}",
                 }
             )
             continue
         accepted = {
-            "path": shown,
+            **path_fields,
             **{field: receipt[field] for field in required},
             "matrix": matrix,
         }
@@ -957,10 +1044,12 @@ def runner_receipt_measurement(
             assert attestation_bundles_dir is not None
             assert expected_repository is not None
             assert expected_workflow is not None
+            assert expected_source_digest is not None
+            assert expected_source_ref is not None
             if receipt.get("repository") != expected_repository:
                 rejected.append(
                     {
-                        "path": shown,
+                        **path_fields,
                         "sha": sha,
                         "reason": (
                             "receipt repository does not match expected "
@@ -972,7 +1061,7 @@ def runner_receipt_measurement(
             if receipt.get("workflow") != EXPECTED_RUNNER_WORKFLOW:
                 rejected.append(
                     {
-                        "path": shown,
+                        **path_fields,
                         "sha": sha,
                         "reason": (
                             "receipt workflow does not match expected "
@@ -988,7 +1077,7 @@ def runner_receipt_measurement(
             if not bundle.is_file():
                 rejected.append(
                     {
-                        "path": shown,
+                        **path_fields,
                         "sha": sha,
                         "reason": (
                             "required attestation bundle is missing: "
@@ -998,23 +1087,65 @@ def runner_receipt_measurement(
                 )
                 continue
             try:
-                verifier(
+                identity = verifier(
                     path.resolve(),
                     bundle,
                     expected_repository,
                     expected_workflow,
+                    expected_source_digest,
+                    expected_source_ref,
                 )
             except AuditFailure as error:
                 rejected.append(
                     {
-                        "path": shown,
+                        **path_fields,
                         "sha": sha,
                         "reason": str(error),
                     }
                 )
                 continue
-            accepted["attestation_bundle"] = bundle.name
+            expected_identity = {
+                "certificate_identity": (
+                    identity.get("certificate_identity")
+                    if isinstance(identity, dict)
+                    else None
+                ),
+                "signer_digest": expected_source_digest,
+                "source_digest": expected_source_digest,
+                "source_ref": expected_source_ref,
+            }
+            if (
+                not isinstance(identity, dict)
+                or identity != expected_identity
+                or not isinstance(
+                    identity.get("certificate_identity"),
+                    str,
+                )
+                or not identity["certificate_identity"]
+            ):
+                rejected.append(
+                    {
+                        **path_fields,
+                        "sha": sha,
+                        "reason": (
+                            "GitHub attestation verifier returned incomplete "
+                            "or mismatched signer identity"
+                        ),
+                    }
+                )
+                continue
+            bundle_fields = _receipt_path_fields(
+                bundle,
+                repository,
+                attestation_bundles_dir,
+            )
+            accepted["attestation_bundle"] = bundle_fields["path"]
+            if "logical_path" in bundle_fields:
+                accepted["attestation_bundle_logical_path"] = bundle_fields[
+                    "logical_path"
+                ]
             accepted["attestation_verified"] = True
+            accepted.update(identity)
         candidates.append(accepted)
         candidate_digests.append(sha256(path))
 
@@ -1103,7 +1234,7 @@ def runner_receipt_measurement(
         "released_commit": released_commit,
         **matrix_contract,
         "runner_receipts": [
-            _display_receipt_path(path, repository, logical_receipt_root)
+            _receipt_path_fields(path, repository, logical_receipt_root)
             for path in receipts
         ],
         "accepted_runner_receipts": accepted,
@@ -1111,6 +1242,10 @@ def runner_receipt_measurement(
         "matrix_findings": matrix_findings,
         "single_run_matrix_complete": matrix_complete,
         "attestations_required": require_attestations,
+        "expected_repository": expected_repository,
+        "expected_workflow": expected_workflow,
+        "expected_source_digest": expected_source_digest,
+        "expected_source_ref": expected_source_ref,
         "observed_runner_executions": len(accepted),
         "workflow_configuration_counts_as_execution": False,
     }
@@ -1124,6 +1259,8 @@ def ci_runner_measurement(
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
+    expected_source_digest: str | None = None,
+    expected_source_ref: str | None = None,
     legacy_job_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     remote = subprocess.run(
@@ -1165,6 +1302,8 @@ def ci_runner_measurement(
             require_attestations=require_attestations,
             expected_repository=expected_repository,
             expected_workflow=expected_workflow,
+            expected_source_digest=expected_source_digest,
+            expected_source_ref=expected_source_ref,
             legacy_job_counts=legacy_job_counts,
         ),
     }
@@ -1351,6 +1490,8 @@ def production_measurements(
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
+    expected_source_digest: str | None = None,
+    expected_source_ref: str | None = None,
     legacy_job_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     return {
@@ -1366,6 +1507,8 @@ def production_measurements(
             require_attestations=require_attestations,
             expected_repository=expected_repository,
             expected_workflow=expected_workflow,
+            expected_source_digest=expected_source_digest,
+            expected_source_ref=expected_source_ref,
             legacy_job_counts=legacy_job_counts,
         ),
         "view": view_measurement(),
@@ -1531,11 +1674,42 @@ def source_deterministic_measurements(
     """Recompute only rows whose inputs are source, config, and Git."""
     try:
         committed = report["measurements"]
+        ci_runner = committed["ci_runner"]
         scheduler_runtime = {
             field: committed["scheduler"][field]
             for field in SCHEDULER_RUNTIME_FIELDS
         }
         view = dict(committed["view"])
+        attestation_inputs: dict[str, Any] = {}
+        if report.get("evidence_grade") == "release":
+            accepted = ci_runner["accepted_runner_receipts"]
+            receipt_paths = [
+                (ROOT / receipt["path"]).resolve(strict=True)
+                for receipt in accepted
+            ]
+            bundle_paths = [
+                (ROOT / receipt["attestation_bundle"]).resolve(strict=True)
+                for receipt in accepted
+            ]
+            receipt_parents = {path.parent for path in receipt_paths}
+            bundle_parents = {path.parent for path in bundle_paths}
+            if len(receipt_parents) != 1 or bundle_parents != receipt_parents:
+                raise AuditFailure(
+                    "release receipt and bundle paths must share one "
+                    "committed run directory"
+                )
+            if runner_receipts_dir is None:
+                runner_receipts_dir = next(iter(receipt_parents))
+            attestation_inputs = {
+                "attestation_bundles_dir": next(iter(bundle_parents)),
+                "require_attestations": True,
+                "expected_repository": ci_runner["expected_repository"],
+                "expected_workflow": ci_runner["expected_workflow"],
+                "expected_source_digest": ci_runner[
+                    "expected_source_digest"
+                ],
+                "expected_source_ref": ci_runner["expected_source_ref"],
+            }
         measurements = {
             "scheduler": scheduler_measurement(scheduler_runtime),
             "writers": writer_measurement(),
@@ -1547,14 +1721,14 @@ def source_deterministic_measurements(
                 runner_receipts_dir,
                 legacy_job_counts=(
                     LEGACY_RUNNER_JOB_COUNTS
-                    if "expected_job_identities"
-                    not in committed["ci_runner"]
+                    if "expected_job_identities" not in ci_runner
                     else None
                 ),
+                **attestation_inputs,
             ),
             "view": view,
         }
-    except (KeyError, TypeError) as error:
+    except (KeyError, TypeError, OSError) as error:
         raise AuditFailure(
             "committed receipt is missing a measurement needed for "
             "source-deterministic re-derivation"
@@ -1599,6 +1773,24 @@ def run_rederivation(
     if not isinstance(report, dict):
         raise AuditFailure(f"{receipt}: receipt root must be an object")
     expected = committed_rederivation_snapshot(report)
+    rederived_posture = rederived_evidence_posture_snapshot(report)
+    posture_mismatches = [
+        (
+            f"{field}: expected={json.dumps(expected[field], sort_keys=True)} "
+            "actual="
+            f"{json.dumps(rederived_posture[field], sort_keys=True)}"
+        )
+        for field in (
+            "evidence_grade",
+            "attestations_required",
+            "receipt_attestation_verified",
+        )
+        if expected[field] != rederived_posture[field]
+    ]
+    if posture_mismatches:
+        for mismatch in posture_mismatches:
+            print(f"REDERIVATION MISMATCH {mismatch}", file=sys.stderr)
+        return 1
     actual = measurements_rederivation_snapshot(
         source_deterministic_measurements(report, runner_receipts_dir),
         report=report,
@@ -1709,6 +1901,8 @@ def run_production(
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
+    expected_source_digest: str | None = None,
+    expected_source_ref: str | None = None,
 ) -> int:
     if output.exists():
         raise AuditFailure(f"refusing to overwrite existing evidence: {output}")
@@ -1722,16 +1916,21 @@ def run_production(
             attestation_bundles_dir is None
             or not expected_repository
             or not expected_workflow
+            or not expected_source_digest
+            or not expected_source_ref
         ):
             raise AuditFailure(
                 "release evidence requires --attestation-bundles-dir, "
-                "--expected-repository, and --expected-workflow"
+                "--expected-repository, --expected-workflow, "
+                "--expected-source-digest, and --expected-source-ref"
             )
     elif (
         require_attestations
         or attestation_bundles_dir is not None
         or expected_repository
         or expected_workflow
+        or expected_source_digest
+        or expected_source_ref
     ):
         raise AuditFailure(
             "structural evidence cannot carry authentication arguments"
@@ -1744,6 +1943,8 @@ def run_production(
         require_attestations=require_attestations,
         expected_repository=expected_repository,
         expected_workflow=expected_workflow,
+        expected_source_digest=expected_source_digest,
+        expected_source_ref=expected_source_ref,
     )
     rows = evaluate(measurements)
     report = {
@@ -1855,6 +2056,14 @@ def main() -> int:
         "--expected-workflow",
         help="GitHub signer workflow identity required in authenticated mode",
     )
+    parser.add_argument(
+        "--expected-source-digest",
+        help="GitHub source repository digest required in authenticated mode",
+    )
+    parser.add_argument(
+        "--expected-source-ref",
+        help="GitHub source repository ref required in authenticated mode",
+    )
     args = parser.parse_args()
     if args.control:
         if (
@@ -1866,6 +2075,8 @@ def main() -> int:
             or args.require_attestations
             or args.expected_repository
             or args.expected_workflow
+            or args.expected_source_digest
+            or args.expected_source_ref
         ):
             raise AuditFailure(
                 "subject/receipt overrides apply only to production audits"
@@ -1888,11 +2099,14 @@ def main() -> int:
         attestation_bundles_dir is None
         or not args.expected_repository
         or not args.expected_workflow
+        or not args.expected_source_digest
+        or not args.expected_source_ref
     ):
         raise AuditFailure(
             "--require-attestations also requires "
             "--attestation-bundles-dir, --expected-repository, and "
-            "--expected-workflow"
+            "--expected-workflow, --expected-source-digest, and "
+            "--expected-source-ref"
         )
     if receipt is not None:
         if (
@@ -1902,6 +2116,8 @@ def main() -> int:
             or args.require_attestations
             or args.expected_repository
             or args.expected_workflow
+            or args.expected_source_digest
+            or args.expected_source_ref
         ):
             raise AuditFailure(
                 "authentication/release arguments apply only to production "
@@ -1934,6 +2150,8 @@ def main() -> int:
         require_attestations=require_attestations,
         expected_repository=args.expected_repository,
         expected_workflow=args.expected_workflow,
+        expected_source_digest=args.expected_source_digest,
+        expected_source_ref=args.expected_source_ref,
     )
 
 

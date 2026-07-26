@@ -125,6 +125,174 @@
       "bytes": 28968,
       "purpose": "Authenticated hosted-runner deferred-design audit for the immutable v0.10.1 release.",
       "provenance": "The v0.10.2 auditor measured clean release commit e5af6bc5df8261cc004bd4d3247b70f8cbe930bb and accepted seven successful GitHub-hosted receipts from run 30194678764 attempt 1 only after each persisted Sigstore bundle verified its subject bytes, repository, workflow signer, and hosted-runner identity."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-core.json",
+      "grade": "supporting",
+      "sha256": "9158f881eb8d0a8b6102b55df8399256f3df1528e40b63505cca214a1f5e6fbf",
+      "bytes": 215,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-golden.json",
+      "grade": "supporting",
+      "sha256": "ab0b968b0d86287c9c200f86c663be1321c18963e61cae8056ed291ac2992511",
+      "bytes": 217,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-lint.json",
+      "grade": "supporting",
+      "sha256": "c3de9df82d796350d359a2458380626d92a6704474250b369c86fbf5a5197368",
+      "bytes": 215,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-msrv.json",
+      "grade": "supporting",
+      "sha256": "0e4b33c633e10d089eb87a8d61e42f1ae3411fe38a325548d72d6bb5075e089b",
+      "bytes": 215,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-net.json",
+      "grade": "supporting",
+      "sha256": "09a1c05775f6b19cdaf1ba5ef1c1b21626c8c273b883765a0ab129fe04c44789",
+      "bytes": 214,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-shell-py3.11.json",
+      "grade": "supporting",
+      "sha256": "81741887442241d26379f421ea9a416369084606feb39e49c95fde286f3500d8",
+      "bytes": 243,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30187058897-1/30187058897-1-shell-py3.12.json",
+      "grade": "supporting",
+      "sha256": "bcad9bfc2dbd9dfe64b47adec11af2a434aec4301900a2a8a12834023409296c",
+      "bytes": 243,
+      "purpose": "Legacy CI-runner receipt for run 30187058897 attempt 1.",
+      "provenance": "Moved from the original flat evidence/ci-runs path into the run-scoped layout during v0.10.3 EVIDENCE-DURABLE; a tracked compatibility symlink preserves the immutable v0.10.1 report path."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-core.json",
+      "grade": "supporting",
+      "sha256": "d6ad87d50e4be6c1f9a929810ecb76605419c4d16589545e6fa8aa871e6cb013",
+      "bytes": 339,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-core.json.sigstore",
+      "grade": "supporting",
+      "sha256": "e2bab8901851233007dbc67d8e19ddff834ea561f484a550b594e6a9f8a407db",
+      "bytes": 10933,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-golden.json",
+      "grade": "supporting",
+      "sha256": "6616bc177e0a0f36ddfad9c87bc6340126b32556908213defe2cfb1cb15a7c83",
+      "bytes": 341,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-golden.json.sigstore",
+      "grade": "supporting",
+      "sha256": "b2f07593f6905af2551ff3695938025a1d42dbf36f86b8fc165215ab1d9bd2ea",
+      "bytes": 11031,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-lint.json",
+      "grade": "supporting",
+      "sha256": "3819b2c44791df2b7499165268d11aa360e65cfbccd3bd32d46456cb8f214d6f",
+      "bytes": 339,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-lint.json.sigstore",
+      "grade": "supporting",
+      "sha256": "bad5656ea2ae95aae2aab72284c0806b905033b420a883c179c04f7b72329f3f",
+      "bytes": 10988,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-msrv.json",
+      "grade": "supporting",
+      "sha256": "5bd52b973d82f41128ea490098badbcb51b06799462595483a49def496799012",
+      "bytes": 339,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-msrv.json.sigstore",
+      "grade": "supporting",
+      "sha256": "356b593c9ef358ef93e115faee712fe292e07cb95e1396be141119f5f46148c3",
+      "bytes": 10933,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-net.json",
+      "grade": "supporting",
+      "sha256": "ceb37f617f2dcc7532c236ce0de9017a65a2bdf622e09b62d453a511b73449cf",
+      "bytes": 338,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-net.json.sigstore",
+      "grade": "supporting",
+      "sha256": "ee93bd91b33f3b3f0799dd1f55bbfbe4ecaaf2658a21aff7e8a3af10d0f628ba",
+      "bytes": 10945,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-shell-py3.11.json",
+      "grade": "supporting",
+      "sha256": "bd94dd7e2aee09cb44c3bdd86358f8689ad21746c5ae1281f0453574fa966adf",
+      "bytes": 367,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-shell-py3.11.json.sigstore",
+      "grade": "supporting",
+      "sha256": "a5a4c0914d8d457358536672f639d31ead4b9e244975dc11998583b35d53d1b7",
+      "bytes": 11000,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-shell-py3.12.json",
+      "grade": "supporting",
+      "sha256": "ab9e60311522347f5d43c5b3cefba8db33e380e3471e1433f28924f34691bbe2",
+      "bytes": 367,
+      "purpose": "Authenticated CI-runner receipt for run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; subject bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30194678764-1/30194678764-1-shell-py3.12.json.sigstore",
+      "grade": "supporting",
+      "sha256": "246bad12264ad6856771d5e468bf68fa6fb2094af7e1213bd769338f351f5391",
+      "bytes": 10898,
+      "purpose": "Sigstore bundle for authenticated CI-runner receipt from run 30194678764 attempt 1.",
+      "provenance": "Operator-authorized authenticated gh download on 2026-07-26; verified against source digest 817e7f3e7c1878c18f474532df4d50c2b17fcbdc, source ref refs/heads/main, the CI workflow identity, and GitHub-hosted runner policy."
     }
   ]
 }

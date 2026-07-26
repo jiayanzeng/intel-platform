@@ -478,6 +478,10 @@ def test_genuine_release_grade_report_pin_validates(tmp_path: Path) -> None:
     _, manifest_path, manifest = _fixture(tmp_path)
     evidence_dir = tmp_path / "evidence"
     evidence_dir.mkdir()
+    receipt = evidence_dir / "receipt.json"
+    receipt.write_text('{"receipt":true}\n')
+    bundle = evidence_dir / "receipt.json.sigstore"
+    bundle.write_text('{"bundle":true}\n')
     report = evidence_dir / "report.json"
     report.write_text(
         json.dumps(
@@ -486,10 +490,69 @@ def test_genuine_release_grade_report_pin_validates(tmp_path: Path) -> None:
                 "attestations_required": True,
                 "measurements": {
                     "ci_runner": {
+                        "expected_source_digest": "a" * 40,
+                        "expected_source_ref": "refs/heads/main",
                         "accepted_runner_receipts": [
                             {
-                                "attestation_bundle": "receipt.sigstore",
+                                "path": "evidence/receipt.json",
+                                "attestation_bundle": (
+                                    "evidence/receipt.json.sigstore"
+                                ),
                                 "attestation_verified": True,
+                                "certificate_identity": (
+                                    "https://example.test/workflow"
+                                ),
+                                "signer_digest": "a" * 40,
+                                "source_digest": "a" * 40,
+                                "source_ref": "refs/heads/main",
+                            }
+                        ]
+                    }
+                },
+            }
+        )
+        + "\n"
+    )
+    _append_report_pin(manifest, report, grade="release")
+    _append_report_pin(manifest, receipt, grade="supporting")
+    _append_report_pin(manifest, bundle, grade="supporting")
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode == 0, checked.stderr
+    assert "PIN MATCH evidence/report.json" in checked.stdout
+
+
+def test_release_grade_report_rejects_unresolved_recorded_paths(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    evidence_dir = tmp_path / "evidence"
+    evidence_dir.mkdir()
+    report = evidence_dir / "report.json"
+    report.write_text(
+        json.dumps(
+            {
+                "evidence_grade": "release",
+                "attestations_required": True,
+                "measurements": {
+                    "ci_runner": {
+                        "expected_source_digest": "a" * 40,
+                        "expected_source_ref": "refs/heads/main",
+                        "accepted_runner_receipts": [
+                            {
+                                "path": "evidence/missing-receipt.json",
+                                "attestation_bundle": (
+                                    "evidence/missing-receipt.json.sigstore"
+                                ),
+                                "attestation_verified": True,
+                                "certificate_identity": (
+                                    "https://example.test/workflow"
+                                ),
+                                "signer_digest": "a" * 40,
+                                "source_digest": "a" * 40,
+                                "source_ref": "refs/heads/main",
                             }
                         ]
                     }
@@ -503,5 +566,8 @@ def test_genuine_release_grade_report_pin_validates(tmp_path: Path) -> None:
 
     checked = _run(tmp_path, manifest_path, "validate")
 
-    assert checked.returncode == 0, checked.stderr
-    assert "PIN MATCH evidence/report.json" in checked.stdout
+    assert checked.returncode == 1
+    assert (
+        "field=accepted_runner_receipts: recorded receipt path is not pinned"
+        in checked.stderr
+    )
