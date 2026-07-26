@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **All v0.10.1 implementation/evidence tasks through HERM are complete; only R-CLOSE remains.** Python-constraint drift tests now inject a synthetic inventory, so the FastAPI mismatch is independent of ambient duplicate distributions while the product command still rejects duplicates and verifies **21/21** exact packages. The evidence manifest corpus-freely pins both v0.10.1 JSON reports, and source/config/Git re-derivation reproduces five deterministic dispositions, seven triggers, row count seven, and `v2_materialization_implemented=false`; guarded on-site coverage executes full production measurement. Local CI passes **19/19** with **99** Rust workspace / **20** net tests; shell passes **138/138** under Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-REGEN's fresh no-resume real-provider matrix is **45/45** target-valid/model-completed, all `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; its report is pinned at `beec8bfa…`. The clean released-tree deferred receipt accepts 7/7 runner receipts, yields **2 promoted / 5 deferred**, and is pinned at `00cf14ae…`. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Static Rust source counts remain 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 is authoritative.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **R-CLOSE release candidate approved; final release verification and tag creation are in progress.** All implementation/evidence tasks through HERM are complete. The candidate changes operations, executable evidence, and test hermeticity only; public/runtime behavior, database schema, cache representation, licensing boundaries, and golden outputs are unchanged. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN completed **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports are hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. The five release authorities are being advanced together to 0.10.1; the annotated tag will be placed only after the release commit exists. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no current release push is authorized.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -478,6 +478,76 @@ re-derivation, golden, and artifact checks. The independent Python 3.12.13
 suite passed **138/138**. Golden remained **11/11** and protected databases
 remained exact **2/2**. No pin, declared dependency, runtime behavior, public
 surface, architecture, protected byte, or evidence report changed.
+
+**v0.10.1 R-CLOSE selected a patch release and the release candidate is in
+progress (measured 2026-07-26).** The operator explicitly approved release
+`v0.10.1`. The gate permits release because X-REGEN completed all **45/45**
+target-valid, model-completed cells with zero `LEAK`, while the real-handler
+positive control independently emitted `GUARD FIRED`. The patch disposition
+follows `ARCHITECTURE.md §8`: this cycle changes operations, executable
+evidence, and test hermeticity, but does not change public or internal API
+behavior, runtime behavior, storage paths, database schema, cache
+representation, licensing outcomes, or retrieval outputs.
+
+The complete `v0.10.0..release-candidate` diff contains **35 paths**, each
+classified exactly once:
+
+- **public/release metadata (5):** `CHANGELOG.md`, `Cargo.lock`,
+  `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`, and
+  `shell/intel_shell/app.py`.
+- **operations and repository hygiene (6):** `.github/workflows/ci.yml`,
+  `.gitignore`, `run`, and the deleted `.DS_Store`, `crates/.DS_Store`, and
+  `shell/.DS_Store`.
+- **executable evidence and controls (18):**
+  `config/protected-artifacts.json`;
+  `evidence/ci-runs/30187058897-1-core.json`,
+  `evidence/ci-runs/30187058897-1-golden.json`,
+  `evidence/ci-runs/30187058897-1-lint.json`,
+  `evidence/ci-runs/30187058897-1-msrv.json`,
+  `evidence/ci-runs/30187058897-1-net.json`,
+  `evidence/ci-runs/30187058897-1-shell-py3.11.json`, and
+  `evidence/ci-runs/30187058897-1-shell-py3.12.json`;
+  `evidence/v0.10.1/deferred-audit/report.json` and
+  `evidence/v0.10.1/real-model-adversarial/report.json`;
+  `shell/tests/test_deferred_audit.py`,
+  `shell/tests/test_evidence_artifacts.py`,
+  `shell/tests/test_python_constraints.py`, and
+  `shell/tests/test_verify_llm.py`;
+  `tools/audit_deferred.py`, `tools/evidence_artifacts.py`,
+  `tools/python_constraints.py`, and `tools/verify_llm.py`.
+- **documentation and task metadata (6):** `AGENTS.md`,
+  `PROGRESS-v0.10.1.md`, `PROGRESS-v0.10.md`, `STATE.md`,
+  `TASKS-v0.10-EXECUTION.md`, and `TASKS-v0.10.1-EXECUTION.md`.
+- **runtime, storage, or internal API (0):** none.
+
+All five version authorities — the Rust package, Python package, FastAPI
+literal, `STATE.md` header, and newest `CHANGELOG.md` heading — now read
+0.10.1. Cargo mechanically regenerated `Cargo.lock` and changed only the
+`cored` package version from 0.10.0 to 0.10.1; no dependency resolution moved.
+The changelog records the runner receipts, evidence pins/re-derivation,
+adversarial validity and control hardening, hermetic Python inventory, Finder
+hygiene, and every carried disposition. The exact release commit and annotated
+tag object will be recorded after the full candidate verification succeeds;
+the separate closing record will not move the tag.
+
+The release failure control changed only
+`shell/intel_shell/__init__.py` from 0.10.1 to 9.9.9.
+`./run version-check` exited **1** and named that exact file and disagreeing
+value. Restoring it returned SHA-256
+`4e365b85f228cbbd61311413e9fc828253203187578153a067293fa46ada0090`,
+identical to the pre-control hash; the five-authority check then passed at
+0.10.1 with the expected ahead-of-v0.10.0 warning.
+
+The release candidate then passed the complete local definition of done:
+`./run ci-local` **19/19**, including **99** Rust workspace tests, **20** net
+tests, warning-denied builds, clippy/fmt, Rust 1.78 locked check/tests,
+**138/138** Python 3.11 shell tests, golden **11/11**, protected artifacts
+**2/2**, pinned-evidence validation, persisted fingerprints, and lifecycle
+auditors. The independent Python 3.12.13 lane passed **138/138** with the same
+single third-party Starlette warning. Standalone
+`evidence_artifacts.py validate` passed schema 2 with two artifacts and two
+pinned files, `./run verify-artifacts` again measured exact **2/2**, and
+`git diff --check` passed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

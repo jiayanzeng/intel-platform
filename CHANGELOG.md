@@ -2,6 +2,53 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.10.1 — 2026-07-26
+
+### Added
+
+- Runner-produced, persisted CI receipts whose commit ancestry is checked
+  before they can promote the released-commit execution trigger.
+- Corpus-free SHA-256 pins for the corrected deferred-audit receipt and fresh
+  real-model adversarial report, plus a blocking source/config/Git
+  re-derivation job.
+- A guarded on-site test that executes the complete deferred-design production
+  audit without requiring protected corpora on hosted runners.
+
+### Changed
+
+- Adversarial evidence counts only target-valid, model-completed attempts,
+  retries transport failures without counting them, records graduated
+  `n=8/12/16` telemetry, and requires a real-handler positive control.
+- The local CI matrix has 19 tracked jobs; the workflow mirrors its new
+  evidence re-derivation gate.
+- Python constraint drift tests use an explicit synthetic distribution
+  inventory while the product verifier continues to inspect the real
+  interpreter and reject duplicates.
+
+### Fixed
+
+- The v0.10.1 deferred receipt now measures a clean detached v0.10.0 release
+  tree and accepts seven real runner receipts instead of inferring execution
+  from Git-remote presence.
+- Finder `.DS_Store` files are ignored and the previously tracked copies were
+  removed from version control.
+- The real-model battery can no longer call a timeout a completed adversarial
+  attempt, and the FastAPI pin-drift test cannot be masked by an unrelated
+  ambient duplicate distribution.
+
+### Carried dispositions
+
+- The fresh real-model matrix completed 45/45 valid cells as
+  `NOT EXERCISED`, with zero `LEAK`; the deployed-path positive control fired
+  `GUARD FIRED`. This is an observed resistance result, not a proof that no
+  model can reproduce gated text.
+- T7 single-flight, Postgres, pgvector, multi-host seam hardening, and the A4
+  untrusted-shell boundary remain deferred. CI-runner evidence and future
+  `/view` materialization remain the two promoted deferred-audit rows.
+- This patch release changes operations, evidence, and tests only. The public
+  API, runtime behavior, database schema, cache representation, licensing
+  boundary, and retrieval outputs are unchanged.
+
 ## v0.10.0 — 2026-07-25
 
 ### Added
