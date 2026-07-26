@@ -30,3 +30,38 @@ Entries are append-only; corrections are new dated entries.
   restarts from the clean post-audit tree.
 - golden-E2E delta: NOT MEASURED; no claim.
 - protected artifact delta: NOT MEASURED; no protected file was touched.
+
+### 2026-07-26 · E0 — entering state rebuilt and F1–F4 confirmed
+
+- owner: Codex
+- commit: c3be9465b87c3e3a74e2c740b0e430d377a332fb
+- result: PASS after the separately recorded cycle-activation correction.
+  Clean HEAD `9d5b08ece5447648c09073987b520dccb17d8fcf` was
+  `v0.10.1-3-g9d5b08e`; annotated v0.10.1 still dereferenced to release
+  commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. The approved
+  activation pair explains local `main` being 14 ahead / 0 behind
+  `origin/main` at `5bcabcb870a906b0b830bf3c8c391bbe3ced71b0`.
+- baseline acceptance: PASS. The permitted `./run ci-local` rerun passed
+  19/19 with 99 workspace tests, 20 net tests, warning-denied builds,
+  clippy/fmt, Rust 1.78 check/tests, 138 Python 3.11 shell tests, golden 11/11,
+  protected artifacts 2/2, both evidence pins, fingerprints, and lifecycle
+  auditors. The sandboxed eight-control permission failure is an environment
+  non-result.
+- Python acceptance: PASS. The independent Python 3.12.13 lane passed
+  138/138, and both interpreter lanes matched 21/21 exact packages.
+- defect acceptance: PASS. F1 accepts on field format plus ancestry and does
+  not enforce exact release SHA, success, complete single-run matrix, or
+  provenance. F2 has no dirty/expected-HEAD precondition. F3 trusts
+  completion flags without HTTP/schema validation and does not halt on resumed
+  `LEAK`. F4 has four stale v0.10 task/progress literals in `AGENTS.md`.
+- receipt census: seven committed accepted rows, all at
+  `45fa3d49860643fdb2595d82340e364d33566e7d`, all `success`, all
+  `run_id=30187058897`; E0 confirmed these happen to agree but are not
+  enforced.
+- lifecycle acceptance: PASS. Standalone `version-check`, `cycle-check`, and
+  `checklist-audit` passed; the latter resolved the entering 62/62 checked
+  tasks with zero exemptions.
+- golden-E2E delta: none. Standalone `./run golden` passed 11/11 with every
+  exact anchor unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2 and
+  both v0.10.1 evidence reports printed `PIN MATCH`.
