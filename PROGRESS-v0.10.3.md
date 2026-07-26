@@ -349,3 +349,47 @@ Entries are append-only; corrections are new dated entries.
   architecture, protected byte, pinned evidence byte, provider configuration,
   or tag changed. Remote `main` still named the failed candidate audit commit
   at this measurement.
+
+### 2026-07-26 · EVIDENCE-PATH-ADMISSION — indexed durable paths
+
+- owner: Codex
+- commit: 17cc2b7615b1ea7861319035f6e89bf43d92085a
+- result: PASS. Authenticated hosted run **30201306837**, attempt **1**, passed
+  all seven expected jobs at exact candidate
+  `725b8820c29fd4e6dac8be1c32b69f59f2a6fc35`. Its seven downloaded receipts
+  had seven distinct identities, exact subject/event SHA, and successful
+  conclusions. Real source-pinned attestation verification accepted all seven.
+- gate measurement: PASS. The clean release-grade preview accepted **7**,
+  rejected **0**, and measured **5 deferred / 2 promoted**, but correctly
+  recorded its external inputs at absolute temporary paths. The compatibility
+  `logical_path` dropped the nested run directory, so the preview was not
+  admitted or hand-edited; it could not satisfy release-pin validation.
+- path correction: PASS. New `--evidence-repository` keeps subject measurement
+  on the explicit clean `--subject-root` while recording receipt and bundle
+  paths only when they resolve inside the named Git worktree root, are already
+  indexed, and are byte-identical to their index entries. The resulting path is
+  the true repository-relative nested path. Untracked and changed-after-stage
+  controls are refused.
+- real failing-job control: PASS. Hosted run **30201489016** failed only the
+  planted core step and still persisted seven signed receipt/bundle pairs. The
+  authenticated guard rejected the core `conclusion:"failure"` receipt, named
+  the missing core identity, and accepted **0** executions.
+- real duplicate-subject control: PASS. Mixed-control attempt **30201602108**
+  was canceled before acceptance. Isolated hosted run **30201653302** passed all
+  seven jobs and attestations, but both shell receipts claimed `python=3.11`.
+  The guard named that duplicate and the missing `python=3.12` identity, then
+  accepted **0** executions. Remote/local control refs and the temporary
+  worktree were deleted.
+- Python acceptance: PASS. Both complete shell lanes passed **187/187** under
+  Python 3.11.4 and 3.12.13 with the existing single Starlette deprecation
+  warning. Python compilation and `git diff --check` passed.
+- repository acceptance: PASS. `./run ci-local` passed **19/19**: 99 workspace
+  tests, 20 net tests, warning-denied builds, clippy/fmt, locked Rust 1.78,
+  187 shell tests, strict lifecycle checking, evidence re-derivation,
+  persisted fingerprints, and append-only progress.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. Both protected databases matched **2/2** and
+  all **24/24** file pins matched. No product runtime, dependency, lockfile,
+  architecture, protected byte, pinned evidence byte, provider configuration,
+  or tag changed.
