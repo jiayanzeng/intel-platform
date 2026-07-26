@@ -2,6 +2,23 @@
 
 **As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.2 is released locally and its append-only cycle closing record is complete.** Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; the later audit record does not move it. v0.10.1 is published unchanged, hosted CI is green against its exact checkout, and seven authenticated receipts are pinned in a fresh audit. Remote `main` remains reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; remote annotated v0.10.1 tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. Closed-state local CI passed **19/19** with **99** Rust workspace / **20** net tests; shell passed **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verified **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No v0.10.2 push is authorized.
 
+**v0.10.3 cycle activation is complete; E0 has not yet run (measured
+2026-07-26).** The read-only opener found only the operator-supplied untracked
+`TASKS-v0.10.3-EXECUTION.md`; `AGENTS.md` correctly still declared the latest
+closed cycle, v0.10.2. Entering HEAD was
+`6a7070b97bd4bef08345311644fa8815a58cd282`, described as
+`v0.10.2-1-g6a7070b`, with local `main` four commits ahead of remote
+`origin/main` at `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`. The remote tag
+census contained v0.10.0 and v0.10.1 only; no remote v0.10.2 tag existed.
+
+Implementation commit `f220e695dc93189d9fe919d80e373d96edd55851`
+admitted the reviewed runbook unchanged, declared v0.10.3 active, and created
+its append-only progress log. `./run cycle-check` passed with v0.10.3 open and
+seven closed execution runbooks; `./run checklist-audit` resolved the entering
+69/69 checked tasks with zero exemptions; `git diff --check` passed. No test,
+golden, artifact, hosted-runner, publication, or release claim is made by this
+preparatory correction. E0 restarts from the clean post-audit tree.
+
 **v0.10.2 PUBLISH is complete (measured 2026-07-26).** The operator
 explicitly authorized publication. Remote `main` advanced from
 `5bcabcb870a906b0b830bf3c8c391bbe3ced71b0` to the reviewed Step 5 audit
