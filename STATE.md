@@ -1,6 +1,55 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.1 is released locally and its cycle closing record is complete.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit record does not move it. The release changes operations, executable evidence, and test hermeticity only; public/runtime behavior, database schema, cache representation, licensing boundaries, and golden outputs are unchanged. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN completed **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports are hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no v0.10.1 push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 E0 is complete on the locally released v0.10.1 baseline; F1–F4 are confirmed.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+
+**v0.10.2 E0 is complete (measured 2026-07-26).** The restarted opener
+produced no `git status --porcelain=v1` output. HEAD was
+`9d5b08ece5447648c09073987b520dccb17d8fcf`, described as
+`v0.10.1-3-g9d5b08e`; the two approved cycle-activation commits explain the
+corrected 14 ahead / 0 behind count relative to `origin/main` at
+`5bcabcb870a906b0b830bf3c8c391bbe3ced71b0`. Annotated `v0.10.1`
+remained exact at tag object
+`8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` and release commit
+`e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`.
+
+The first sandboxed `./run ci-local` attempt is an environment non-result:
+all Rust, MSRV, lint, and lifecycle units passed, but eight shell controls
+could not execute because the environment denied `ps` and loopback binds. The
+permitted identical rerun passed all **19/19** units with **99** workspace
+tests, **20** net tests, warnings denied, clippy/fmt, Rust 1.78 locked
+check/tests, and **138/138** Python 3.11.4 shell tests. The independent Python
+3.12.13 lane passed **138/138**, and both interpreters verified the exact
+**21/21** constrained packages.
+
+Standalone `./run golden` passed **11/11** with the exact 13 → 12 corpus,
+hamming-12 duplicate, DeepSeek z=10.0, +0 rerun, one quant document, and
+four-citation answer anchors. `./run verify-artifacts` matched both protected
+databases **2/2** and both v0.10.1 report pins; `version-check`, `cycle-check`,
+and `checklist-audit` passed, the latter at the entering **62/62** checked
+tasks.
+
+All four findings were confirmed:
+
+1. **F1:** `runner_receipt_measurement` validates field presence, SHA format,
+   and ancestry only. It does not require the exact release commit, a
+   successful conclusion, a complete matrix, one run id, or provenance. The
+   committed receipt happens to contain seven accepted rows, all at
+   `45fa3d49860643fdb2595d82340e364d33566e7d`, all `success`, all run
+   `30187058897`; those facts are not enforced.
+2. **F2:** `run_production` calls measurements immediately and writes the
+   report without a dirty-worktree or expected-HEAD precondition. Source search
+   found zero `expected_head` / `expected-head` references under `tools/`.
+3. **F3:** `_resume_valid_attempts` requires only stored
+   `target_in_context` and `model_completed`; it checks neither HTTP 200 nor
+   the completed-attempt schema and does not halt on resumed `LEAK`. The fresh
+   path sets `model_completed=True` only inside its HTTP-200 branch, confirming
+   the contradictory 502 state is hand-edited/cross-contaminated evidence.
+4. **F4:** outside the active declaration, `AGENTS.md` still contains the four
+   stale v0.10 literals at lines 59, 214, 226, and 230. No finding was refuted
+   or struck.
+
+No runtime, dependency, lockfile, architecture, protected byte, evidence pin,
+provider configuration, or tunnel value changed during E0.
 
 **v0.10.2 cycle activation is complete; E0 has not yet run (measured
 2026-07-26).** The first read-only session opener stopped at E0's clean-tree
