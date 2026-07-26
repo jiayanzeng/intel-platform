@@ -311,3 +311,41 @@ Entries are append-only; corrections are new dated entries.
   all **24/24** file pins matched. No product runtime, dependency, lockfile,
   architecture, protected byte, pinned evidence byte, provider configuration,
   remote ref, or tag changed.
+
+### 2026-07-26 · HOSTED-CYCLE-GATE — separate local tag verification
+
+- owner: Codex
+- commit: 8b17b5e00d245ffb964a9bfb2a404bb390fc237f
+- result: PASS. Operator-authorized hosted run **30201012362**, attempt **1**,
+  audited exact checkout `87fa115bb5279694fb21fcb140545583ba29471a`.
+  Six expected jobs passed; the Python 3.11 shell job failed at the newly added
+  lifecycle step because the remote clone cannot resolve recorded local-only
+  annotated refs. The run is recorded as failed evidence and is not a
+  release-grade success.
+- gate measurement: PASS. `git ls-remote --tags origin` returned only
+  `v0.9.0`, `v0.10.0`, and `v0.10.1`; it confirmed the failing `v0.8.0` and
+  `v0.10.2` refs are absent remotely while their release commits are ancestors
+  of `origin/main`. Neither local tag moved.
+- correction acceptance: PASS. Plain `./run cycle-check` still resolves every
+  local annotated-tag object and dereferenced release commit. Hosted CI invokes
+  the explicit `--skip-local-tag-verification` mode, which omits only those
+  unavailable refs while retaining release-record structure, recorded
+  commit-object, lifecycle, source-literal, and amendment checks.
+- failure-capable controls: PASS. The lifecycle suite passed **9/9**. Strict
+  mode refused a planted unavailable historical tag, hosted mode accepted its
+  present release commit, and hosted mode independently refused a nonexistent
+  recorded release commit.
+- Python acceptance: PASS. Both complete shell lanes passed **185/185** under
+  Python 3.11.4 and 3.12.13, with the existing single Starlette deprecation
+  warning. `bash -n run` and `git diff --check` passed.
+- repository acceptance: PASS. `./run ci-local` passed **19/19**: 99 workspace
+  tests, 20 net tests, warning-denied builds, clippy/fmt, locked Rust 1.78,
+  185 shell tests, strict lifecycle checking, evidence re-derivation,
+  persisted fingerprints, and append-only progress.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. Both protected databases matched **2/2** and
+  all **24/24** file pins matched. No product runtime, dependency, lockfile,
+  architecture, protected byte, pinned evidence byte, provider configuration,
+  or tag changed. Remote `main` still named the failed candidate audit commit
+  at this measurement.
