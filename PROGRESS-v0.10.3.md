@@ -188,3 +188,69 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: none. Both protected databases matched 2/2,
   manifest validation passed, and all three pins—including the 62,978-byte
   X-REGEN report—remained exact.
+
+### 2026-07-26 · EVIDENCE-DURABLE — signer revision and raw CI evidence pinned
+
+- owner: Codex
+- commit: 382d4b1537b0ae03f06e51fa0561b3ef9d3a03d0
+- result: PASS. Authenticated GitHub run **30194678764**, attempt **1**, was
+  still retained. Its seven receipts and seven Sigstore bundles were downloaded
+  once with the operator's authenticated `gh`, committed under
+  `evidence/ci-runs/30194678764-1/`, and hash-pinned.
+- source-revision acceptance: PASS. The installed gh 2.96.0 flags captured at
+  E0 are now used exactly: `--signer-digest`, `--source-digest`, and
+  `--source-ref`, together with repository, signer workflow, and
+  `--deny-self-hosted-runners`. Verification also parses the JSON certificate
+  and requires one non-empty identity plus exact signer/source digest and ref.
+- real bundle acceptance: PASS. All **7/7** persisted pairs verified for
+  repository `jiayanzeng/intel-platform`, workflow
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml`, source/signer digest
+  `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`, source ref
+  `refs/heads/main`, and certificate identity
+  `https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main`.
+  The direct complete-matrix measurement returned observed **7**, rejected
+  **0**. The receipts' checked-out subject is
+  `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; their event/source commit is
+  `817e7f3e…`.
+- real negative control: PASS. Verification with the expected source digest
+  replaced by forty zeroes exited **1** and reported expected
+  `SourceRepositoryDigest` zero versus actual `817e7f3e…`.
+- identity/path acceptance: PASS. Accepted rows persist certificate identity,
+  signer digest, source digest, and source ref. External measurements retain
+  their true absolute `path` plus an explicit `logical_path`; committed rows
+  use paths that actually exist in the repository.
+- durable-layout acceptance: PASS. The seven legacy run 30187058897 receipts
+  moved into `evidence/ci-runs/30187058897-1/`. Seven tracked compatibility
+  symlinks preserve the immutable v0.10.1 report's flat recorded paths while
+  leaving one stored byte copy. `git ls-tree` found all **21** raw files under
+  the two run directories and mode 120000 for all seven aliases.
+- pin acceptance: PASS. Manifest schema 2 now reports **24/24** matching file
+  pins: three immutable reports, seven legacy receipts, seven authenticated
+  receipts, and seven authenticated bundles. Release-grade validation requires
+  every recorded receipt/bundle path to be pinned, repository-contained, and
+  resolvable, and requires the accepted certificate/source fields to match the
+  report policy. `python3 tools/evidence_artifacts.py validate` and
+  `./run verify-artifacts` both passed; protected databases remained **2/2**.
+- failure-capable controls: PASS. Before implementation, the selected three
+  controls failed **3/3**: the runner API lacked source policy, the verifier
+  lacked source/certificate output, and release validation accepted unresolved
+  paths. After implementation the expanded set passed **4/4**. The focused
+  deferred-audit/artifact suites passed **50/50** on both Python 3.11.4 and
+  3.12.13.
+- compatibility acceptance: PASS. The immutable v0.10.1 deferred report
+  re-derived successfully after the layout move, proving its recorded aliases
+  resolve without rewriting the pinned report.
+- runner acceptance: PASS. A sandboxed `ci-local` attempt was an environment
+  non-result because `ps` and loopback binds were denied. The permitted
+  identical rerun passed **19/19**: 99 workspace tests, 20 net tests,
+  warning-denied builds, clippy/fmt, locked Rust 1.78, shell **178/178**,
+  structural re-derivation, persisted fingerprints, protected artifacts, and
+  lifecycle checks. The independent Python 3.12 shell lane also passed
+  **178/178**. Python compilation and `git diff --check` passed.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. Both protected databases and all three
+  previously pinned report bytes remained exact. The manifest pin count changed
+  deliberately from **3** to **24** by admitting the raw CI evidence; no
+  product runtime, dependency, lockfile, architecture, provider configuration,
+  remote ref, or tag changed.
