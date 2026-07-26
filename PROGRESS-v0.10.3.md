@@ -393,3 +393,53 @@ Entries are append-only; corrections are new dated entries.
   all **24/24** file pins matched. No product runtime, dependency, lockfile,
   architecture, protected byte, pinned evidence byte, provider configuration,
   or tag changed.
+
+### 2026-07-26 · RE-MEASURE — authenticated v0.10.3 receipt
+
+- owner: Codex
+- commit: 58f02b1f837c81e556ba1d54f9fed9728947f746
+- result: PASS. Operator-authorized hosted run **30202019640**, attempt **1**,
+  passed all seven expected jobs against exact candidate
+  `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The downloaded receipts carried
+  seven distinct expected `(job, matrix)` identities, exact subject/event SHA,
+  repository, workflow, and successful conclusions.
+- authentication acceptance: PASS. Real source-pinned Sigstore verification
+  accepted all seven persisted bundles with the CI workflow certificate
+  identity, source/signer digest `a1d8c958…`, source ref `refs/heads/main`,
+  and GitHub-hosted runner policy. The clean detached production audit accepted
+  **7**, rejected **0**, found a complete matrix with no findings, and measured
+  **5 deferred / 2 promoted**. Exact-cosine p95 was **8.390958 ms**.
+- negative controls: PASS. Run **30201489016** persisted signed artifacts after
+  its planted core failure; the guard named the failed conclusion and missing
+  core identity, then accepted **0** executions. Mixed-control run
+  **30201602108** was canceled rather than conflated with the duplicate test.
+  Isolated run **30201653302** passed all seven jobs and attestations but made
+  both shell receipts claim `python=3.11`; the guard named the duplicate and
+  missing `python=3.12` identity, then accepted **0** executions. The
+  throwaway remote/local branch and worktree were deleted.
+- durability acceptance: PASS. The seven receipts and seven bundles are
+  committed under `evidence/ci-runs/30202019640-1/`. The release-grade report
+  is committed at `evidence/v0.10.3/deferred-audit/report.json`, 33,754 bytes
+  at SHA-256
+  `272487af426675c3b5f3be25f5521f5a03bc5f148cd8d50c5651a692c5993c51`.
+  Manifest schema 2 validation and protected-artifact verification passed all
+  **39/39** file pins and both protected databases **2/2**.
+- re-derivation acceptance: PASS. The network-enabled exact command passed
+  with seven rows, five source dispositions, seven triggers, release evidence
+  grade, attestations required, and view materialization false. A first
+  restricted-sandbox invocation could not initialize a Sigstore verifier and
+  rejected all seven rows; no assertion or evidence byte changed before the
+  exact network-enabled rerun passed.
+- Python acceptance: PASS. Both complete shell lanes passed **187/187** under
+  Python 3.11.4 and 3.12.13, with the existing single Starlette deprecation
+  warning.
+- repository acceptance: PASS. `./run ci-local` passed **19/19**: 99 workspace
+  tests, 20 net tests, warning-denied builds, clippy/fmt, locked Rust 1.78,
+  lifecycle and evidence checks, persisted fingerprints, protected databases
+  **2/2**, and all **39/39** pins.
+- golden-E2E delta: none. The required final standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected/tag delta: none. No product runtime, dependency, lockfile,
+  architecture, protected byte, prior pinned evidence byte, provider
+  configuration, or tag changed. `v0.10.1` remains published unchanged and
+  `v0.10.2` remains local-only at its original annotated tag object.
