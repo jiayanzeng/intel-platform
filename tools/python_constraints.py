@@ -7,6 +7,7 @@ import argparse
 import importlib.metadata
 import re
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 PIN_RE = re.compile(r"^([A-Za-z0-9][A-Za-z0-9._-]*)==([^\s;]+)$")
@@ -46,9 +47,16 @@ def load_constraints(path: Path) -> dict[str, str]:
     return pins
 
 
-def installed_versions() -> dict[str, str]:
+def installed_versions(
+    distributions: Iterable[importlib.metadata.Distribution] | None = None,
+) -> dict[str, str]:
     installed: dict[str, str] = {}
-    for distribution in importlib.metadata.distributions():
+    inventory = (
+        importlib.metadata.distributions()
+        if distributions is None
+        else distributions
+    )
+    for distribution in inventory:
         raw_name = distribution.metadata.get("Name")
         if not raw_name:
             raise ConstraintError(

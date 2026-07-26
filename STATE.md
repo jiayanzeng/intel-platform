@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, G-RUN, RECEIPT, X-REGEN, and PIN are complete.** The evidence manifest corpus-freely pins both v0.10.1 JSON reports by exact bytes/SHA-256. A new source/config/Git re-derivation reproduces five deterministic row dispositions, all seven trigger texts, row count seven, and `v2_materialization_implemented=false`; it is the nineteenth local CI job and is mirrored in the blocking Python 3.11 workflow lane. The guarded on-site test now executes full `production_measurements()` and compares only those stable fields; corpus-less runners skip it. Planted disposition and one-byte receipt mutations both fail. Local CI passes **19/19** with **99** Rust workspace / **20** net-path tests; shell passes **136/136** under Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-REGEN's fresh no-resume real-provider matrix is **45/45** target-valid/model-completed, all `NOT EXERCISED`, zero `LEAK`, with the deployed-path positive control `GUARD FIRED`; its report is pinned at SHA-256 `beec8bfa…`. The clean released-tree deferred receipt accepts 7/7 runner receipts, yields **2 promoted / 5 deferred**, and is pinned at `00cf14ae…`. Golden is **11/11** and protected database evidence remains exact **2/2**. Remote main remains at the approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Static Rust source counts remain 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 is authoritative.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **All v0.10.1 implementation/evidence tasks through HERM are complete; only R-CLOSE remains.** Python-constraint drift tests now inject a synthetic inventory, so the FastAPI mismatch is independent of ambient duplicate distributions while the product command still rejects duplicates and verifies **21/21** exact packages. The evidence manifest corpus-freely pins both v0.10.1 JSON reports, and source/config/Git re-derivation reproduces five deterministic dispositions, seven triggers, row count seven, and `v2_materialization_implemented=false`; guarded on-site coverage executes full production measurement. Local CI passes **19/19** with **99** Rust workspace / **20** net tests; shell passes **138/138** under Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-REGEN's fresh no-resume real-provider matrix is **45/45** target-valid/model-completed, all `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; its report is pinned at `beec8bfa…`. The clean released-tree deferred receipt accepts 7/7 runner receipts, yields **2 promoted / 5 deferred**, and is pinned at `00cf14ae…`. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; annotated `v0.10.0` still dereferences to `45fa3d49…`. Static Rust source counts remain 58 `#[test]` + 42 `#[tokio::test]` = 100 functions and 4 `cfg(feature = "net")` gates; runtime 99/20 is authoritative.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -445,6 +445,39 @@ ShellCheck 0.11.0, Bash syntax, and workflow YAML parsing passed. Protected
 databases remained exact **2/2** and golden remained **11/11**. All pre-PIN
 18-job measurements in closed task/progress records remain true historical
 measurements; current help, status, and acceptance records now state 19.
+
+**v0.10.1 HERM is complete (measured 2026-07-26).** The failure-before
+regression installed three tests before the seam existed. The targeted module
+failed 3/5 because `installed_versions()` accepted no inventory argument; in
+particular, an ambient duplicate could still prevent the named FastAPI drift
+from being evaluated.
+
+`installed_versions(distributions=None)` now uses
+`importlib.metadata.distributions()` only when no explicit iterable is
+provided. The CLI/product path is unchanged and therefore still discovers the
+active interpreter, ignores only the bootstrap package set, fails on missing
+Name metadata, and rejects a second canonicalized distribution name before
+comparison. Tests can pass a complete synthetic inventory without consulting
+ambient `site-packages`.
+
+The drift test now derives a 21-package synthetic inventory from the committed
+constraints, changes only expected FastAPI from 0.140.0 to 0.140.1, and asserts
+the sole problem is
+`fastapi: expected 0.140.1, found 0.140.0`. The hermeticity control monkeypatches
+ambient discovery to contain duplicate `colorama` distributions, proves the
+explicit inventory still surfaces that exact FastAPI drift, and independently
+proves the unchanged ambient/product path raises
+`installed distribution is duplicated: colorama`. A direct injected duplicate
+with case-varied FastAPI names also proves canonical duplicate rejection.
+
+The targeted post-fix module passed **5/5** under Python 3.11.4 and 3.12.13.
+Both real interpreters independently passed the product verifier at
+**21/21 packages**. The full permitted local matrix passed **19/19**, including
+**138** Python 3.11 shell tests, warning-denied Rust lanes, the evidence
+re-derivation, golden, and artifact checks. The independent Python 3.12.13
+suite passed **138/138**. Golden remained **11/11** and protected databases
+remained exact **2/2**. No pin, declared dependency, runtime behavior, public
+surface, architecture, protected byte, or evidence report changed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

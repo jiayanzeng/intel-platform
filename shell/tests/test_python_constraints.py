@@ -3,6 +3,17 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+import tools.python_constraints as python_constraints
+from tools.python_constraints import (
+    ConstraintError,
+    compare,
+    installed_versions,
+    load_constraints,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = ROOT / "tools" / "python_constraints.py"
@@ -28,21 +39,60 @@ def test_active_environment_exactly_matches_constraints() -> None:
 
 
 def test_patch_drift_names_expected_and_installed_versions(
-    tmp_path: Path,
 ) -> None:
-    changed = tmp_path / "constraints.txt"
-    changed.write_text(
-        CONSTRAINTS.read_text(encoding="utf-8").replace(
-            "fastapi==0.140.0",
-            "fastapi==0.140.1",
-        ),
-        encoding="utf-8",
+    expected = load_constraints(CONSTRAINTS)
+    expected["fastapi"] = "0.140.1"
+    distributions = [
+        SimpleNamespace(metadata={"Name": name}, version=version)
+        for name, version in load_constraints(CONSTRAINTS).items()
+    ]
+
+    problems = compare(expected, installed_versions(distributions))
+
+    assert problems == ["fastapi: expected 0.140.1, found 0.140.0"]
+
+
+def test_patch_drift_ignores_an_ambient_duplicate_inventory(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    expected = load_constraints(CONSTRAINTS)
+    expected["fastapi"] = "0.140.1"
+    constrained = [
+        SimpleNamespace(metadata={"Name": name}, version=version)
+        for name, version in load_constraints(CONSTRAINTS).items()
+    ]
+    ambient = [
+        *constrained,
+        SimpleNamespace(metadata={"Name": "colorama"}, version="0.4.6"),
+        SimpleNamespace(metadata={"Name": "colorama"}, version="0.4.6"),
+    ]
+    monkeypatch.setattr(
+        python_constraints.importlib.metadata,
+        "distributions",
+        lambda: ambient,
     )
 
-    result = _run(changed)
+    problems = compare(expected, installed_versions(constrained))
 
-    assert result.returncode != 0
-    assert "fastapi: expected 0.140.1, found 0.140.0" in result.stderr
+    assert problems == ["fastapi: expected 0.140.1, found 0.140.0"]
+    with pytest.raises(
+        ConstraintError,
+        match="installed distribution is duplicated: colorama",
+    ):
+        installed_versions()
+
+
+def test_duplicate_injected_distribution_is_rejected() -> None:
+    duplicate = [
+        SimpleNamespace(metadata={"Name": "fastapi"}, version="0.140.0"),
+        SimpleNamespace(metadata={"Name": "FastAPI"}, version="0.140.0"),
+    ]
+
+    with pytest.raises(
+        ConstraintError,
+        match="installed distribution is duplicated: fastapi",
+    ):
+        installed_versions(duplicate)
 
 
 def test_non_exact_constraint_is_rejected(tmp_path: Path) -> None:

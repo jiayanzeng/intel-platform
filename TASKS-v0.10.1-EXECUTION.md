@@ -679,7 +679,7 @@ tag on one commit · golden 11/11 · protected 2/2 · `ci-local` 19/19.
 - [x] **RECEIPT** — fresh receipt at `evidence/v0.10.1/deferred-audit/` describing `45fa3d49…` on a clean worktree; report prose corrected
 - [x] **PIN** — receipt (and X1) hash-pinned; source-deterministic re-derivation job green in ci-local and ci.yml; count 18→19; `production_measurements()` exercised on-site
 - [x] **X-REGEN** — fresh no-resume battery, every counted attempt model-completed, positive control fired; fresh versioned evidence path
-- [ ] **HERM** — constraints drift test hermetic; hermeticity regression fail-before/pass-after
+- [x] **HERM** — constraints drift test hermetic; hermeticity regression fail-before/pass-after
 - [ ] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.1` tagged
 
 ---
