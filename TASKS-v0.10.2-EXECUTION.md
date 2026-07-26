@@ -498,7 +498,7 @@ tag on one commit · publication outcome recorded · golden 11/11 · protected 2
 - [x] **RESUME-STRICT** — reuse requires HTTP 200 + full schema; resumed `LEAK` halts; four tests fail-before/pass-after
 - [x] **AGENTS-NEUTRAL** — `AGENTS.md` cycle-neutral; `cycle-check` fails on any stale cycle path
 - [x] **PUBLISH** — v0.10.1 published and hosted evidence authenticated/re-measured, or a dated decline
-- [ ] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.2` tagged
+- [x] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.2` tagged
 
 ---
 
@@ -565,3 +565,47 @@ inside the `http 200` branch), so it is a defense against hand-edited resume
 evidence — the same defect class as F1 — and correctly P2. All four findings, and
 this draft, rest on one root cause: **evidence no unforgeable producer stands
 behind, and no gate refused to accept, is not evidence.**
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-26
+- **Release disposition:** release
+- **Release:** `v0.10.2`
+- **Release commit:** `7d127abac0b993c9e98294ee1c03ff01153de9d0`
+- **Annotated tag object:** `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`
+
+The seven executed task records resolve to these implementation commits:
+
+- E0 — `c3be9465b87c3e3a74e2c740b0e430d377a332fb`
+- RCPT-AUTH — `2863d42ff31d5c964478bee1420df221d0dbab18`
+- SUBJ-ENFORCE — `1c91c645750f102dc93af33722c0cdaf0ee4ee7f`
+- RESUME-STRICT — `fc8f3fb1d2d9ceb5b4735cb44e3e4721f0bb1b9a`
+- AGENTS-NEUTRAL — `110b2b4099052347ff04ed9367aa4352fd3eb0d3`
+- PUBLISH — `1f04094f490386f655362523aaab7eb6fdd2ed9d`
+- R-CLOSE/release — `7d127abac0b993c9e98294ee1c03ff01153de9d0`
+
+The operator selected v0.10.2 because the complete 21-path cycle diff hardens
+workflow provenance, evidence authentication and subject checks, adversarial
+resume validation, and cycle-lifecycle enforcement. It adds tests and a pinned
+audit report but does not change public or internal API behavior, runtime
+behavior, storage paths, database schema, cache representation, licensing
+outcomes, dependencies, or retrieval outputs, so a patch release accurately
+describes the shipped delta. `STATE.md` classifies all 21 paths exactly once.
+The five version authorities agree at 0.10.2, the changelog records the cycle,
+and Cargo mechanically changed only the `cored` package version in the
+lockfile.
+
+Publication and carried dispositions are explicit. PUBLISH advanced remote
+`main` through reviewed Step 5 audit commit
+`817e7f3e7c1878c18f474532df4d50c2b17fcbdc` and published the unchanged
+immutable v0.10.1 tag. Hosted run 30194678764 passed its seven-job matrix, and
+the fresh v0.10.2 production audit authenticated 7/7 receipts with zero
+rejection, promoted two rows, and deferred five. The fresh real-model matrix
+remains 45/45 target-valid/model-completed cells as `NOT EXERCISED`, with zero
+`LEAK` and an independent `GUARD FIRED` positive control; this is observed
+resistance, not a universal no-leak claim. T7 single-flight, Postgres,
+pgvector, multi-host seam hardening, and the A4 untrusted-shell boundary remain
+deferred. The release commit contains the classified diff, agreeing
+authorities, changelog, and mechanically updated lockfile; this later
+append-only closing record does not move the tag. No v0.10.2 push is
+authorized.

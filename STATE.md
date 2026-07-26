@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **R-CLOSE release candidate approved; final release verification and tag creation are in progress.** The operator selected v0.10.2 after PUBLISH completed: v0.10.1 is published unchanged, hosted CI is green against its exact checkout, and seven authenticated receipts are pinned in a fresh audit. Remote `main` is the reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; remote annotated v0.10.1 tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. The five release authorities now agree at 0.10.2; the annotated tag will be placed only after the verified release commit exists. No v0.10.2 push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.2 is released locally and its append-only cycle closing record is complete.** Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; the later audit record does not move it. v0.10.1 is published unchanged, hosted CI is green against its exact checkout, and seven authenticated receipts are pinned in a fresh audit. Remote `main` remains reviewed Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; remote annotated v0.10.1 tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. Closed-state local CI passed **19/19** with **99** Rust workspace / **20** net tests; shell passed **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verified **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No v0.10.2 push is authorized.
 
 **v0.10.2 PUBLISH is complete (measured 2026-07-26).** The operator
 explicitly authorized publication. Remote `main` advanced from
@@ -62,8 +62,8 @@ all three report pins printed `PIN MATCH`. No product runtime, dependency,
 lockfile, protected byte, provider configuration, tunnel value, release
 commit, or tag object changed.
 
-**v0.10.2 R-CLOSE selected a patch release and the release candidate is in
-progress (measured 2026-07-26).** The operator explicitly approved release
+**v0.10.2 R-CLOSE selected and created the patch release (measured
+2026-07-26).** The operator explicitly approved release
 `v0.10.2`. The release gate is open: the fresh real-model report contains
 **45/45** target-valid, model-completed cells with zero `LEAK`, and no resumed
 attempt was accepted under the old permissive schema. The independent
@@ -77,7 +77,7 @@ report and tests, but it does not change public or internal API behavior,
 runtime behavior, storage paths, database schema, cache representation,
 licensing outcomes, dependencies, or retrieval outputs.
 
-The complete `v0.10.1..release-candidate` diff contains **21 paths**, each
+The complete `v0.10.1..v0.10.2` diff contains **21 paths**, each
 classified exactly once:
 
 - **public/release metadata (5):** `CHANGELOG.md`, `Cargo.lock`,
@@ -103,9 +103,11 @@ literal, `STATE.md` header, and newest `CHANGELOG.md` heading — now read
 The changelog records exact-subject and authenticated receipt enforcement, the
 hosted publication outcome, strict resume semantics, the cycle-neutral
 operating contract, the pinned v0.10.2 audit, and every carried disposition.
-The exact release commit and annotated tag object will be recorded after the
-full candidate verification succeeds; the separate closing record will not
-move the tag.
+The exact release commit and annotated tag object are
+`7d127abac0b993c9e98294ee1c03ff01153de9d0` and
+`d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, respectively. The annotation is
+`intel-platform v0.10.2`, the tag object dereferences exactly to that release
+commit, and the separate closing record does not move it.
 
 PUBLISH advanced remote `main` only through reviewed Step 5 audit commit
 `817e7f3e7c1878c18f474532df4d50c2b17fcbdc` and published the existing
@@ -126,6 +128,17 @@ verified **21/21** exact packages with the same single third-party Starlette
 warning. Standalone manifest validation, protected verification, golden,
 version consistency, and `git diff --check` all passed. The 21-path inventory
 matches the Git diff exactly.
+
+With the R-CLOSE box checked, the exact closing record appended, and the
+R-CLOSE progress entry present, the closed-state `./run ci-local` again passed
+all **19/19** jobs. `cycle-check` reported v0.10.2 closed with seven closed
+execution runbooks; `checklist-audit` resolved **69/69** checked tasks with
+zero exemptions; `progress-check` resolved R-CLOSE to the release commit;
+version-check matched the exact release tag; golden remained **11/11**; and
+protected artifacts remained **2/2** with all three pins matching. The
+independent closed-state Python 3.12.13 lane also passed **156/156** and
+verified **21/21** exact packages. The audit commit that records these
+measurements intentionally follows the release tag and does not move it.
 
 **v0.10.2 AGENTS-NEUTRAL is complete (measured 2026-07-26).** The four stale
 v0.10 task/progress paths in `AGENTS.md` were replaced with references to the

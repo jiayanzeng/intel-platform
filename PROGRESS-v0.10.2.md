@@ -225,3 +225,77 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: none. Both protected databases matched 2/2 and all
   three evidence reports printed `PIN MATCH`. Temporary protected-database
   copies were removed with the detached worktree; originals did not change.
+
+### 2026-07-26 · R-CLOSE — v0.10.2 release identity created
+
+- owner: Codex
+- commit: 7d127abac0b993c9e98294ee1c03ff01153de9d0
+- result: PASS. The operator approved v0.10.2 because the cycle hardens
+  workflow provenance, evidence authentication and subject checks,
+  adversarial resume validation, and cycle-lifecycle enforcement. It changes
+  no public or internal API behavior, runtime behavior, storage path, database
+  schema, cache representation, licensing outcome, dependency, or retrieval
+  output, so the patch disposition accurately describes the delta.
+- release identity: PASS. `v0.10.2` is annotated tag object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, which dereferences exactly to
+  release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`. The annotation is
+  `intel-platform v0.10.2`; this later audit record does not move the tag.
+- release gate: PASS. The committed fresh real-model report contains 45/45
+  target-valid/model-completed cells, `NOT EXERCISED` 45, and `LEAK` 0. The
+  separate deployed-handler positive control is `GUARD FIRED`. Resume now
+  revalidates the complete HTTP-200 schema and halts on a reused `LEAK`.
+- diff inventory: PASS. All 21 paths in `v0.10.1..v0.10.2` are classified
+  exactly once in `STATE.md`: five public/release metadata, two operations and
+  workflow, eight executable evidence/controls, six documentation/task
+  metadata, and zero runtime/storage/internal-API paths.
+- version authorities: PASS. Rust package, Python package, FastAPI literal,
+  `STATE.md`, and newest changelog heading all read 0.10.2. Cargo mechanically
+  changed only the `cored` package version in `Cargo.lock`; no dependency
+  resolution moved.
+- publication outcome: PASS. PUBLISH advanced remote `main` only through
+  reviewed Step 5 audit `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`
+  and published the unchanged immutable v0.10.1 tag. Hosted run 30194678764
+  passed the complete seven-job matrix; the pinned production audit
+  authenticated 7/7 receipts with zero rejection and recorded two promoted /
+  five deferred rows. No v0.10.2 push is authorized.
+- candidate acceptance: PASS. Before the release commit, `./run ci-local`
+  passed 19/19 with 99 workspace tests, 20 net tests, warning-denied builds,
+  clippy/fmt, Rust 1.78 locked check/tests, 156 Python 3.11 shell tests, golden
+  11/11, protected artifacts 2/2, three matching pins, and lifecycle auditors.
+  The independent Python 3.12.13 lane passed 156/156 and verified 21/21 exact
+  packages. Standalone manifest validation, protected verification, golden,
+  version-check, and `git diff --check` passed.
+- golden-E2E delta: none. Both candidate golden runs passed 11/11 with the
+  exact 13 → 12 corpus, hamming-12 near-duplicate pair, DeepSeek z=10.0, +0
+  rerun, one quant document, and four-citation public answer anchors.
+- protected artifact delta: none. All three pinned reports matched and both
+  protected databases remained exact 2/2 with unchanged corpus facts.
+- final closure audit: PASS. Against the checked runbook, exact closing record,
+  and this R-CLOSE entry, `./run ci-local` passed 19/19; `cycle-check` reported
+  v0.10.2 closed with seven closed execution runbooks; `checklist-audit`
+  resolved 69/69 checked tasks with zero exemptions; `progress-check` resolved
+  R-CLOSE to the release commit; version-check matched the exact HEAD tag;
+  golden remained 11/11; protected artifacts remained 2/2 with all three pins
+  matching; and the separate Python 3.12.13 lane passed 156/156 and verified
+  21/21 exact packages.
+- exact commands:
+
+  ```bash
+  cargo check -p cored
+  ./run version-check
+  jq '{aggregate, counts, attempts: (.attempts | length)}' evidence/v0.10.1/real-model-adversarial/report.json
+  git diff --name-status e5af6bc5df8261cc004bd4d3247b70f8cbe930bb
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  .venv/py312/bin/python tools/python_constraints.py shell/constraints.txt
+  python3 tools/evidence_artifacts.py validate
+  ./run verify-artifacts
+  ./run golden
+  git tag -a v0.10.2 -m 'intel-platform v0.10.2'
+  git rev-parse 'v0.10.2^{tag}'
+  git rev-parse 'v0.10.2^{commit}'
+  git cat-file -t v0.10.2
+  ./run cycle-check
+  ./run checklist-audit
+  ./run progress-check
+  ```
