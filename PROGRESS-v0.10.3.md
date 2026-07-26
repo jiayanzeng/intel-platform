@@ -108,3 +108,44 @@ Entries are append-only; corrections are new dated entries.
   unchanged.
 - protected artifact delta: none. Both protected databases matched 2/2, all
   three JSON pins matched, and manifest validation passed.
+
+### 2026-07-26 · AUTH-REQUIRED — release evidence made authenticated by construction
+
+- owner: Codex
+- commit: 919d304ad8f1cac13a373eb55c8952210b30eb11
+- result: PASS. Production audits require an explicit `structural` or
+  `release` evidence grade. Release grade forces attestation verification and
+  requires the bundle directory, expected repository, and expected workflow;
+  structural grade refuses authentication arguments and remains the
+  token-free wrapper default.
+- report-posture acceptance: PASS. New reports stamp top-level
+  `evidence_grade` and `attestations_required`. Re-derivation compares both
+  fields plus every accepted receipt's verification flag. Existing immutable
+  reports retain their bytes and use explicit legacy posture derivation.
+- pin-gate acceptance: PASS. Every pinned file now carries a manifest grade.
+  A release-grade pin must resolve to a JSON report that declares release,
+  requires attestations, and contains non-empty accepted bundle records marked
+  verified. All three existing pins retained their exact hashes and sizes.
+- failure-capable control: PASS. The selected controls produced **5 failures /
+  1 pass** before implementation: the CLI did not require a grade, false
+  release and tampered legacy posture re-derived, and the manifest could not
+  express or enforce release grade. After implementation all **7/7** selected
+  controls passed, including genuine release-grade re-derivation and pin
+  validation.
+- Python acceptance: PASS. The combined focused suites passed **47/47** and
+  the full shell suite passed **167/167** under both Python 3.11.4 and 3.12.13,
+  with the existing single Starlette deprecation warning. Python compilation,
+  `bash -n run`, and `git diff --check` passed.
+- runner acceptance: PASS. The permitted complete `./run ci-local` passed
+  **19/19**, including the token-free structural re-derivation, 99 workspace
+  tests, 20 net tests, warning-denied builds, clippy/fmt, locked Rust 1.78,
+  shell 167/167, persisted fingerprints, and lifecycle checks.
+- re-derivation boundary: the immutable v0.10.1 structural receipt passed
+  source re-derivation. The v0.10.2 authenticated receipt's direct source
+  re-derivation still defers its CI row because its seven raw receipts and
+  bundles are absent from the repository; this is the measured G4b input gap
+  assigned to EVIDENCE-DURABLE, not an AUTH-REQUIRED pass claim.
+- golden-E2E delta: none. Standalone and `ci-local` golden runs passed 11/11
+  with every exact anchor unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2,
+  manifest validation passed, and all three existing JSON pins remained exact.
