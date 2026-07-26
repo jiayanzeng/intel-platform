@@ -493,7 +493,7 @@ tag on one commit · publication outcome recorded · golden 11/11 · protected 2
 ## Cycle checklist
 
 - [x] **E0** — entering state re-measured at v0.10.1; F1–F4 confirmed or refuted
-- [ ] **RCPT-AUTH** — receipts require exact release commit, `success`, and the complete single-run job matrix; hand-authored/failed/partial receipts rejected in tests; attestation path wired
+- [x] **RCPT-AUTH** — receipts require exact release commit, `success`, and the complete single-run job matrix; hand-authored/failed/partial receipts rejected in tests; attestation path wired
 - [ ] **SUBJ-ENFORCE** — `--expected-head` required; dirty worktree and HEAD mismatch abort before measurement; both controls demonstrated
 - [ ] **RESUME-STRICT** — reuse requires HTTP 200 + full schema; resumed `LEAK` halts; four tests fail-before/pass-after
 - [ ] **AGENTS-NEUTRAL** — `AGENTS.md` cycle-neutral; `cycle-check` fails on any stale cycle path

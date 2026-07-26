@@ -25,6 +25,11 @@ on:
         description: Commit whose tree the new workflow definition must audit
         required: false
         type: string
+      publish_evidence:
+        description: Sign and persist provenance for each CI-runner receipt
+        required: true
+        default: false
+        type: boolean
   schedule:
     # Mondays 06:00 UTC — the drift report, see the `drift` job.
     - cron: "0 6 * * 1"
@@ -33,6 +38,11 @@ env:
   CARGO_TERM_COLOR: always
   # Fail the build on any warning. `cargo check` does not do this by itself.
   RUSTFLAGS: "-D warnings"
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -85,18 +95,33 @@ jobs:
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -138,18 +163,33 @@ jobs:
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -189,18 +229,33 @@ jobs:
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -265,18 +320,33 @@ jobs:
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -338,18 +408,33 @@ jobs:
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
             "matrix": "python=${{ matrix.python-version }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-py${{ matrix.python-version }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-py${{ matrix.python-version }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -385,18 +470,33 @@ jobs:
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -452,16 +552,31 @@ jobs:
             "run_id": "${{ github.run_id }}",
             "run_attempt": "${{ github.run_attempt }}",
             "job": "${{ github.job }}",
+            "workflow": "${{ github.workflow }}",
+            "repository": "${{ github.repository }}",
+            "event_sha": "${{ github.sha }}",
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
+          echo "CI_RECEIPT_PATH=evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" >> "$GITHUB_ENV"
+      - name: attest CI-runner receipt
+        id: attest
+        if: always() && inputs.publish_evidence == true
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ${{ env.CI_RECEIPT_PATH }}
+      - name: persist CI-runner attestation bundle
+        if: always() && inputs.publish_evidence == true
+        run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          path: evidence/ci-runs/*.json
+          path: |
+            ${{ env.CI_RECEIPT_PATH }}
+            ${{ env.CI_RECEIPT_PATH }}.sigstore
           if-no-files-found: error

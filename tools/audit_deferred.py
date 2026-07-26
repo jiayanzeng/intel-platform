@@ -17,7 +17,7 @@ import sys
 import tempfile
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +42,15 @@ RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
 SCHEMA_VERSION = 2
+EXPECTED_RUNNER_JOB_COUNTS = {
+    "core": 1,
+    "golden": 1,
+    "lint": 1,
+    "msrv": 1,
+    "net": 1,
+    "shell": 2,
+}
+EXPECTED_RUNNER_WORKFLOW = "CI"
 SOURCE_DETERMINISTIC_ROW_IDS = (
     "T7 robots single-flight",
     "Postgres",
@@ -653,16 +662,77 @@ def _display_receipt_path(
         return str(path.resolve())
 
 
+def verify_attestation_bundle(
+    receipt: Path,
+    bundle: Path,
+    repository: str,
+    signer_workflow: str,
+) -> None:
+    """Verify one persisted GitHub provenance bundle against its receipt."""
+    gh = shutil.which("gh")
+    if gh is None:
+        raise AuditFailure(
+            "authenticated receipt verification requires the GitHub CLI"
+        )
+    verified = subprocess.run(
+        [
+            gh,
+            "attestation",
+            "verify",
+            str(receipt),
+            "--bundle",
+            str(bundle),
+            "--repo",
+            repository,
+            "--signer-workflow",
+            signer_workflow,
+            "--deny-self-hosted-runners",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if verified.returncode != 0:
+        detail = verified.stderr.strip() or verified.stdout.strip()
+        raise AuditFailure(
+            "GitHub attestation verification failed"
+            + (f": {detail}" if detail else "")
+        )
+
+
 def runner_receipt_measurement(
     receipts: list[Path],
     *,
     repository: Path,
     audited_head: str,
+    released_commit: str,
     logical_receipt_root: Path | None = None,
+    attestation_bundles_dir: Path | None = None,
+    require_attestations: bool = False,
+    expected_repository: str | None = None,
+    expected_workflow: str | None = None,
+    attestation_verifier: Callable[[Path, Path, str, str], None] | None = None,
 ) -> dict[str, Any]:
-    """Accept only well-formed receipts whose SHA belongs to the audited line."""
-    accepted: list[dict[str, Any]] = []
+    """Accept only one complete successful matrix for the released commit."""
+    candidates: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
+    matrix_findings: list[str] = []
+    released_commit = released_commit.lower()
+    if re.fullmatch(r"[0-9a-f]{40,64}", released_commit) is None:
+        raise AuditFailure(
+            "released commit must be a 40-64 character hexadecimal object id"
+        )
+    if require_attestations and (
+        attestation_bundles_dir is None
+        or not expected_repository
+        or not expected_workflow
+    ):
+        raise AuditFailure(
+            "authenticated receipt verification requires bundle directory, "
+            "expected repository, and expected workflow"
+        )
+    verifier = attestation_verifier or verify_attestation_bundle
     required = (
         "run_id",
         "run_attempt",
@@ -741,27 +811,153 @@ def runner_receipt_measurement(
             )
             rejected.append({"path": shown, "sha": sha, "reason": reason})
             continue
-        accepted.append(
-            {
-                "path": shown,
-                **{field: receipt[field] for field in required},
-            }
+        if sha != released_commit:
+            rejected.append(
+                {
+                    "path": shown,
+                    "sha": sha,
+                    "reason": (
+                        f"sha does not equal released commit {released_commit}"
+                    ),
+                }
+            )
+            continue
+        conclusion = str(receipt["conclusion"])
+        if conclusion.lower() != "success":
+            rejected.append(
+                {
+                    "path": shown,
+                    "sha": sha,
+                    "reason": f"conclusion is not success: {conclusion}",
+                }
+            )
+            continue
+        accepted = {
+            "path": shown,
+            **{field: receipt[field] for field in required},
+        }
+        if require_attestations:
+            assert attestation_bundles_dir is not None
+            assert expected_repository is not None
+            assert expected_workflow is not None
+            if receipt.get("repository") != expected_repository:
+                rejected.append(
+                    {
+                        "path": shown,
+                        "sha": sha,
+                        "reason": (
+                            "receipt repository does not match expected "
+                            f"{expected_repository}"
+                        ),
+                    }
+                )
+                continue
+            if receipt.get("workflow") != EXPECTED_RUNNER_WORKFLOW:
+                rejected.append(
+                    {
+                        "path": shown,
+                        "sha": sha,
+                        "reason": (
+                            "receipt workflow does not match expected "
+                            f"{EXPECTED_RUNNER_WORKFLOW}"
+                        ),
+                    }
+                )
+                continue
+            bundle = (
+                attestation_bundles_dir.resolve()
+                / f"{path.name}.sigstore"
+            )
+            if not bundle.is_file():
+                rejected.append(
+                    {
+                        "path": shown,
+                        "sha": sha,
+                        "reason": (
+                            "required attestation bundle is missing: "
+                            f"{bundle.name}"
+                        ),
+                    }
+                )
+                continue
+            try:
+                verifier(
+                    path.resolve(),
+                    bundle,
+                    expected_repository,
+                    expected_workflow,
+                )
+            except AuditFailure as error:
+                rejected.append(
+                    {
+                        "path": shown,
+                        "sha": sha,
+                        "reason": str(error),
+                    }
+                )
+                continue
+            accepted["attestation_bundle"] = bundle.name
+            accepted["attestation_verified"] = True
+        candidates.append(accepted)
+
+    run_keys = {
+        (str(receipt["run_id"]), str(receipt["run_attempt"]))
+        for receipt in candidates
+    }
+    if candidates and len(run_keys) != 1:
+        matrix_findings.append(
+            "structurally valid receipts do not share a single "
+            "run_id/run_attempt"
         )
+    actual_counts = {
+        job: sum(str(receipt["job"]) == job for receipt in candidates)
+        for job in EXPECTED_RUNNER_JOB_COUNTS
+    }
+    unknown_jobs = sorted(
+        {
+            str(receipt["job"])
+            for receipt in candidates
+            if str(receipt["job"]) not in EXPECTED_RUNNER_JOB_COUNTS
+        }
+    )
+    if candidates and (
+        actual_counts != EXPECTED_RUNNER_JOB_COUNTS or unknown_jobs
+    ):
+        matrix_findings.append(
+            "runner receipt job counts do not match expected matrix: "
+            f"expected={EXPECTED_RUNNER_JOB_COUNTS}, "
+            f"actual={actual_counts}, unknown={unknown_jobs}"
+        )
+    if not candidates and receipts:
+        matrix_findings.append("no valid receipts remain for matrix validation")
+    matrix_complete = bool(candidates) and not matrix_findings
+    accepted = candidates if matrix_complete else []
     return {
         "audited_head_commit": audited_head,
+        "released_commit": released_commit,
+        "expected_job_counts": EXPECTED_RUNNER_JOB_COUNTS,
         "runner_receipts": [
             _display_receipt_path(path, repository, logical_receipt_root)
             for path in receipts
         ],
         "accepted_runner_receipts": accepted,
         "rejected_runner_receipts": rejected,
+        "matrix_findings": matrix_findings,
+        "single_run_matrix_complete": matrix_complete,
+        "attestations_required": require_attestations,
         "observed_runner_executions": len(accepted),
         "workflow_configuration_counts_as_execution": False,
     }
 
 
 def ci_runner_measurement(
+    released_commit: str,
     runner_receipts_dir: Path | None = None,
+    *,
+    attestation_bundles_dir: Path | None = None,
+    require_attestations: bool = False,
+    expected_repository: str | None = None,
+    expected_workflow: str | None = None,
 ) -> dict[str, Any]:
     remote = subprocess.run(
         ["git", "remote", "-v"],
@@ -796,7 +992,12 @@ def ci_runner_measurement(
             receipts,
             repository=ROOT,
             audited_head=head,
+            released_commit=released_commit,
             logical_receipt_root=runner_receipts_dir,
+            attestation_bundles_dir=attestation_bundles_dir,
+            require_attestations=require_attestations,
+            expected_repository=expected_repository,
+            expected_workflow=expected_workflow,
         ),
     }
 
@@ -934,7 +1135,7 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
                 "a runner execution receipt exists for the released commit"
             ),
             "measurement": (
-                "ancestor-valid runner receipts="
+                "complete release-matrix runner receipts="
                 f"{ci_runner['observed_runner_executions']}; rejected receipts="
                 f"{len(ci_runner.get('rejected_runner_receipts', []))}; "
                 "workflow config is not an execution"
@@ -976,14 +1177,35 @@ def evaluate(measurements: dict[str, Any]) -> list[dict[str, Any]]:
 
 def production_measurements(
     runner_receipts_dir: Path | None = None,
+    *,
+    released_commit: str | None = None,
+    attestation_bundles_dir: Path | None = None,
+    require_attestations: bool = False,
+    expected_repository: str | None = None,
+    expected_workflow: str | None = None,
 ) -> dict[str, Any]:
+    if released_commit is None:
+        released_commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.strip()
     return {
         "scheduler": scheduler_measurement(),
         "writers": writer_measurement(),
         "pgvector": exact_cosine_measurement(),
         "multi_host": multi_host_measurement(),
         "attestation_boundary": attestation_boundary_measurement(),
-        "ci_runner": ci_runner_measurement(runner_receipts_dir),
+        "ci_runner": ci_runner_measurement(
+            released_commit,
+            runner_receipts_dir,
+            attestation_bundles_dir=attestation_bundles_dir,
+            require_attestations=require_attestations,
+            expected_repository=expected_repository,
+            expected_workflow=expected_workflow,
+        ),
         "view": view_measurement(),
     }
 
@@ -1072,7 +1294,10 @@ def source_deterministic_measurements(
             "pgvector": committed["pgvector"],
             "multi_host": multi_host_measurement(),
             "attestation_boundary": attestation_boundary_measurement(),
-            "ci_runner": ci_runner_measurement(runner_receipts_dir),
+            "ci_runner": ci_runner_measurement(
+                report["subject"]["head_commit"],
+                runner_receipts_dir,
+            ),
             "view": view,
         }
     except (KeyError, TypeError) as error:
@@ -1217,10 +1442,22 @@ def run_production(
     output: Path,
     *,
     runner_receipts_dir: Path | None = None,
+    released_commit: str | None = None,
+    attestation_bundles_dir: Path | None = None,
+    require_attestations: bool = False,
+    expected_repository: str | None = None,
+    expected_workflow: str | None = None,
 ) -> int:
     if output.exists():
         raise AuditFailure(f"refusing to overwrite existing evidence: {output}")
-    measurements = production_measurements(runner_receipts_dir)
+    measurements = production_measurements(
+        runner_receipts_dir,
+        released_commit=released_commit,
+        attestation_bundles_dir=attestation_bundles_dir,
+        require_attestations=require_attestations,
+        expected_repository=expected_repository,
+        expected_workflow=expected_workflow,
+    )
     rows = evaluate(measurements)
     report = {
         "schema_version": SCHEMA_VERSION,
@@ -1296,9 +1533,42 @@ def main() -> int:
             "receipt JSON"
         ),
     )
+    parser.add_argument(
+        "--released-commit",
+        help=(
+            "exact released commit required in every accepted runner receipt; "
+            "defaults to the measured subject HEAD until SUBJ-ENFORCE"
+        ),
+    )
+    parser.add_argument(
+        "--attestation-bundles-dir",
+        type=Path,
+        help="directory containing <receipt-name>.sigstore bundles",
+    )
+    parser.add_argument(
+        "--require-attestations",
+        action="store_true",
+        help="require and verify one GitHub provenance bundle per receipt",
+    )
+    parser.add_argument(
+        "--expected-repository",
+        help="GitHub owner/repository identity required in authenticated mode",
+    )
+    parser.add_argument(
+        "--expected-workflow",
+        help="GitHub signer workflow identity required in authenticated mode",
+    )
     args = parser.parse_args()
     if args.control:
-        if args.subject_root or args.runner_receipts_dir:
+        if (
+            args.subject_root
+            or args.runner_receipts_dir
+            or args.released_commit
+            or args.attestation_bundles_dir
+            or args.require_attestations
+            or args.expected_repository
+            or args.expected_workflow
+        ):
             raise AuditFailure(
                 "subject/receipt overrides apply only to production audits"
             )
@@ -1311,7 +1581,33 @@ def main() -> int:
         if args.runner_receipts_dir is not None
         else None
     )
+    attestation_bundles_dir = (
+        args.attestation_bundles_dir.resolve()
+        if args.attestation_bundles_dir is not None
+        else None
+    )
+    if args.require_attestations and (
+        attestation_bundles_dir is None
+        or not args.expected_repository
+        or not args.expected_workflow
+    ):
+        raise AuditFailure(
+            "--require-attestations also requires "
+            "--attestation-bundles-dir, --expected-repository, and "
+            "--expected-workflow"
+        )
     if receipt is not None:
+        if (
+            args.released_commit
+            or attestation_bundles_dir is not None
+            or args.require_attestations
+            or args.expected_repository
+            or args.expected_workflow
+        ):
+            raise AuditFailure(
+                "authentication/release arguments apply only to production "
+                "audits"
+            )
         return run_rederivation(
             receipt,
             runner_receipts_dir=runner_receipts_dir,
@@ -1319,6 +1615,11 @@ def main() -> int:
     return run_production(
         args.output.resolve(),
         runner_receipts_dir=runner_receipts_dir,
+        released_commit=args.released_commit,
+        attestation_bundles_dir=attestation_bundles_dir,
+        require_attestations=args.require_attestations,
+        expected_repository=args.expected_repository,
+        expected_workflow=args.expected_workflow,
     )
 
 

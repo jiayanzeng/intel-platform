@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 E0 is complete on the locally released v0.10.1 baseline; F1–F4 are confirmed.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 RCPT-AUTH is complete; structural receipts now require the exact release, success, and one complete run, while hosted authentication remains deliberately unclaimed until PUBLISH.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **145/145** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+
+**v0.10.2 RCPT-AUTH is complete (measured 2026-07-26).** The failure-before
+control produced the expected seven failures and eight passes: the old
+receipt guard did not accept a required `released_commit`, and the workflow
+had no attestation steps. The pass-after guard retains the Git ancestry check
+and additionally requires every receipt SHA to equal the released commit,
+every conclusion to equal `success` case-insensitively, and exactly one
+`run_id`/`run_attempt` containing `core=1`, `golden=1`, `lint=1`, `msrv=1`,
+`net=1`, and `shell=2`. Synthetic controls reject a non-release ancestor, a
+failed receipt, a partial matrix, and a multi-run matrix; the complete
+seven-receipt release matrix promotes.
+
+All seven `ci.yml` jobs now record workflow, repository, event SHA, and the
+independently resolved checkout SHA. A required `publish_evidence` dispatch
+input defaults false. When true, each job signs its exact receipt with hosted
+GitHub build provenance and uploads that receipt plus its Sigstore bundle.
+Authenticated audit mode requires one bundle per receipt and invokes GitHub
+attestation verification with the expected repository, workflow signer,
+hosted-runner restriction, and receipt subject bytes; the signed receipt's
+checkout SHA is then subject to the exact-release guard. Missing-bundle and
+invalid-bundle controls both reject all seven rows. This verification path is
+wired but inert: no hosted attestation was generated or accepted in this
+Step, so no runner-producer claim is made before PUBLISH.
+
+The focused deferred-audit suite passed **18/18** with process/loopback
+permission. Its corpus-free subset passed **17/17** on both Python 3.11.4 and
+3.12.13, and the full shell suite passed **145/145** on both interpreters
+(with the existing single Starlette deprecation warning). The workflow parsed
+as YAML and `git diff --check` passed. Standalone `./run golden` remained
+**11/11** byte-for-byte at every named anchor. `./run verify-artifacts`
+matched protected databases **2/2** and printed `PIN MATCH` for both v0.10.1
+reports. No dependency, lockfile, runtime, protected byte, evidence pin,
+provider configuration, tunnel value, remote ref, or tag changed.
 
 **v0.10.2 E0 is complete (measured 2026-07-26).** The restarted opener
 produced no `git status --porcelain=v1` output. HEAD was
