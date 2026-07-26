@@ -1,6 +1,52 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 RE-MEASURE is in progress after two real hosted findings were corrected locally.** Authenticated run **30201306837** accepted all seven exact identities for candidate `725b8820c29fd4e6dac8be1c32b69f59f2a6fc35`, and both required throwaway-branch controls fired, but the production preview proved the existing external-path compatibility mode cannot produce a pinnable nested durable path without fiction. The new evidence-repository gate records a path only when its exact bytes are already indexed and unchanged in a named Git worktree; a final hosted dispatch is still required for the resulting replacement candidate. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; v0.10.1 remains published unchanged, v0.10.2 remains local-only, and neither tag moved. Remote `main` is audit record `725b8820c29fd4e6dac8be1c32b69f59f2a6fc35`; the evidence-path replacement candidate has not yet been committed, pushed, or dispatched. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Manifest schema 2 matches all **24/24** file pins. Golden is **11/11** and protected database evidence is exact **2/2**.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 RE-MEASURE is complete; R-CLOSE awaits an explicit release/no-release disposition.** Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; v0.10.1 remains published unchanged, v0.10.2 remains local-only, and neither tag moved. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**.
+
+**v0.10.3 RE-MEASURE is complete (measured 2026-07-26).**
+Operator-authorized hosted run **30202019640**, attempt **1**, passed all seven
+expected jobs against exact candidate
+`a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. Every receipt carried
+`conclusion:"success"`, the exact subject/event SHA, repository, workflow, and
+one of the seven distinct expected `(job, matrix)` identities. Real
+source-pinned Sigstore verification accepted all seven persisted bundles with
+the CI workflow certificate identity, source/signer digest `a1d8c958…`,
+source ref `refs/heads/main`, and GitHub-hosted runner policy.
+
+The clean detached production audit accepted **7**, rejected **0**, found a
+complete matrix with no findings, and measured **5 deferred / 2 promoted**.
+The exact-cosine p95 was **8.390958 ms**. The release-grade report is 33,754
+bytes at SHA-256
+`272487af426675c3b5f3be25f5521f5a03bc5f148cd8d50c5651a692c5993c51`.
+Its seven receipts, seven attestation bundles, and report are committed under
+run-scoped repository paths and pinned as 14 supporting artifacts plus one
+release artifact. Manifest validation and protected-artifact verification
+passed all **39/39** file pins and both protected databases **2/2**.
+
+Network-enabled release re-derivation passed with seven rows, five
+source-deterministic dispositions, seven trigger texts, release evidence grade,
+attestations required, and view materialization false. An initial restricted
+sandbox invocation could not initialize any Sigstore verifier and therefore
+rejected all seven rows; no assertion or evidence byte changed, and the exact
+command passed when allowed to reach the trust services.
+
+Both required real negative controls remain measured. Run **30201489016**
+persisted its signed artifacts after the planted core failure; the guard named
+the failed conclusion and missing core identity, then accepted zero
+executions. Mixed-control run **30201602108** was canceled rather than conflated
+with the duplicate test. Isolated run **30201653302** passed all seven hosted
+jobs and attestations but made both shell receipts claim `python=3.11`; the
+guard named the duplicate and missing `python=3.12` identity, then accepted
+zero executions. The throwaway remote and local branch and worktree were
+deleted.
+
+Both complete shell lanes passed **187/187** under Python 3.11.4 and 3.12.13,
+with the existing single Starlette deprecation warning. `./run ci-local`
+passed **19/19** with 99 workspace tests, 20 net tests, warning-denied builds,
+clippy/fmt, locked Rust 1.78, lifecycle and evidence checks, persisted
+fingerprints, protected databases **2/2**, and all **39/39** pins. The required
+standalone `./run golden` remained byte-identical at **11/11**. No product
+runtime, dependency, lockfile, architecture, protected byte, prior pinned
+evidence byte, provider configuration, or tag changed.
 
 **v0.10.3 EVIDENCE-PATH-ADMISSION correction is complete locally (measured
 2026-07-26).** Authenticated hosted run **30201306837**, attempt **1**, passed
