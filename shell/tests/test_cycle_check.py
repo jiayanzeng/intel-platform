@@ -159,3 +159,54 @@ def test_cycle_check_accepts_disclosed_acceptance_edit(
     )
 
     assert cycle_check.run(root) == 0
+
+
+def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    (root / "TASKS-v1.1.0-EXECUTION.md").write_text(
+        "# Closed cycle\n\n"
+        "- [x] completed task\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-26\n"
+        "- **Release disposition:** release\n"
+        "- **Release:** `v1.1.0`\n"
+        f"- **Release commit:** `{commit}`\n"
+        f"- **Annotated tag object:** `{'0' * 40}`\n"
+    )
+
+    assert cycle_check.run(root) == 1
+    assert "annotated tag 'v1.1.0' does not resolve" in capsys.readouterr().err
+
+    assert cycle_check.run(root, verify_local_tag_refs=False) == 0
+
+
+def test_cycle_check_portable_mode_still_rejects_missing_release_commit(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    (root / "TASKS-v1.1.0-EXECUTION.md").write_text(
+        "# Closed cycle\n\n"
+        "- [x] completed task\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-26\n"
+        "- **Release disposition:** release\n"
+        "- **Release:** `v1.1.0`\n"
+        f"- **Release commit:** `{'1' * 40}`\n"
+        f"- **Annotated tag object:** `{'0' * 40}`\n"
+    )
+
+    assert cycle_check.run(root, verify_local_tag_refs=False) == 1
+    assert "recorded release commit" in capsys.readouterr().err

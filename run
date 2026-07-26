@@ -277,7 +277,7 @@ cmd_progress_check() {
 }
 
 cmd_cycle_check() {
-  python3 -m tools.cycle_check
+  python3 -m tools.cycle_check "$@"
 }
 
 cmd_checklist_audit() {
@@ -918,7 +918,8 @@ intel-platform — ./run <command>
     test           verify protected artifacts, then run all Rust/Python tests
     ci-local       execute the configured 19-job CI matrix, stopping on failure
     version-check  reconcile release files and an exact HEAD release tag
-    cycle-check    enforce active/open and historical/closed cycle identity
+    cycle-check [--skip-local-tag-verification]
+                   enforce active/open and historical/closed cycle identity
     checklist-audit
                    resolve every checked task to progress and a real commit
     progress-check validate the newest append-only progress entry

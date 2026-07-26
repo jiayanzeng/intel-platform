@@ -1058,7 +1058,12 @@ def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
     assert "publish_evidence:" in workflow
     assert "id-token: write" in workflow
     assert "attestations: write" in workflow
-    assert workflow.count("run: ./run cycle-check") == 1
+    assert (
+        workflow.count(
+            "run: ./run cycle-check --skip-local-tag-verification"
+        )
+        == 1
+    )
     assert workflow.count("- name: re-derive pinned deferred evidence") == 1
     assert "historical-artifact deferred-audit-baseline" in workflow
     assert '--rederive "$baseline"' in workflow

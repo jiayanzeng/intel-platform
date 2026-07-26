@@ -1,6 +1,40 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 LITERAL-NEUTRAL is complete on the locally released v0.10.2 baseline.** Concrete cycle literals are absent from `tools/`, `run`, and workflow source; historical evidence paths are registered once by semantic name, new report labels derive from the active declaration, and `cycle-check` now refuses both stale literals and undisclosed runbook contract edits. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **183/183** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Manifest schema 2 matches all **24/24** file pins. Golden is **11/11** and protected database evidence is exact **2/2**. No push or hosted dispatch is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 RE-MEASURE is in progress after a real hosted gate failure.** Operator-authorized hosted run **30201012362**, attempt **1**, audited candidate `87fa115bb5279694fb21fcb140545583ba29471a` and failed only the Python 3.11 cycle-consistency step because the remote checkout cannot contain three intentionally unpublished historical annotated-tag refs. The correction keeps strict tag-object verification local and makes the hosted omission explicit while retaining every release-record, commit-object, source-literal, and amendment check. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; v0.10.1 remains published unchanged, v0.10.2 remains local-only, and neither tag moved. Remote `main` is candidate audit record `87fa115bb5279694fb21fcb140545583ba29471a`; the corrected replacement candidate has not yet been pushed or dispatched. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **185/185** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Manifest schema 2 matches all **24/24** file pins. Golden is **11/11** and protected database evidence is exact **2/2**.
+
+**v0.10.3 HOSTED-CYCLE-GATE correction is complete locally (measured
+2026-07-26).** The first operator-authorized RE-MEASURE dispatch was hosted run
+**30201012362**, attempt **1**, against exact checkout
+`87fa115bb5279694fb21fcb140545583ba29471a`. Six expected jobs passed. The
+Python 3.11 shell job failed at `./run cycle-check` before its remaining checks:
+the full local lifecycle guard could not resolve recorded annotated-tag objects
+for local-only `v0.8.0` and `v0.10.2` refs. This was a real hosted failure and is
+not counted as successful release evidence.
+
+`git ls-remote --tags origin` measured only the published annotated releases
+`v0.9.0`, `v0.10.0`, and `v0.10.1`; it confirmed that the two failing tag refs
+are absent from the remote. Their recorded release commits are nevertheless
+ancestors of remote `main`. The correction therefore adds the explicit
+`--skip-local-tag-verification` mode for remote clones. It skips only resolution
+of local annotated-tag refs and their tag objects. It still validates every
+closing record, requires each recorded release commit to be a present commit
+object, enforces active/open and historical/closed lifecycle rules, rejects
+stale source literals, and checks runbook amendment disclosure. Plain
+`./run cycle-check` remains strict and still verifies every local tag object and
+dereferenced release commit.
+
+The failure-capable lifecycle suite passed **9/9**. One new control proves the
+strict command refuses an unavailable historical tag while hosted mode accepts
+the same present release commit; a second proves hosted mode still refuses a
+nonexistent recorded release commit. Both complete shell lanes passed
+**185/185**, with the existing single Starlette deprecation warning.
+`./run ci-local` passed **19/19** with 99 workspace tests, 20 net tests,
+warning-denied builds, clippy/fmt, locked Rust 1.78, strict local lifecycle
+checking, evidence re-derivation, persisted fingerprints, protected databases
+**2/2**, and all **24/24** pins. The required standalone `./run golden` remained
+byte-identical at **11/11**. No product runtime, dependency, lockfile,
+architecture, protected byte, pinned evidence byte, provider configuration,
+or tag changed.
 
 **v0.10.3 LITERAL-NEUTRAL is complete (measured 2026-07-26).**
 New deferred-audit and adversarial report labels now derive from
@@ -17,7 +51,9 @@ live cycle authority; the history registry is validated for schema, relative
 repository-contained paths, existence, regular files, and uniqueness. A direct
 repository scan returned zero concrete cycle literals in all three guarded
 source locations. The hosted Python 3.11 shell job now runs `./run cycle-check`
-itself, using its existing full-history checkout.
+with its explicit local-tag-ref omission, using its existing full-history
+checkout; the correction above records why the strict local form cannot run
+against the repository's intentionally smaller remote tag topology.
 
 The amendment assertion is executable. For the active runbook, `cycle-check`
 loads the blob from the commit that first added the file and compares each

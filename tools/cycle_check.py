@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import re
 import subprocess
@@ -137,6 +138,7 @@ def check_release_record(
     root: Path,
     checked: int,
     errors: list[str],
+    verify_local_tag_refs: bool = True,
 ) -> None:
     date_match = exactly_one(
         DATE_RE, section, path, root, "cycle-close date", errors
@@ -179,20 +181,26 @@ def check_release_record(
         release = release_match.group(2)
         commit = commit_match.group(1)
         tag_object = tag_match.group(1)
-        resolved_tag = git_output(root, "rev-parse", release)
-        resolved_commit = git_output(root, "rev-parse", f"{release}^{{}}")
-        object_type = git_output(root, "cat-file", "-t", tag_object)
         commit_type = git_output(root, "cat-file", "-t", commit)
-        if resolved_tag != tag_object or object_type != "tag":
+        if commit_type != "commit":
             errors.append(
-                f"{shown(path, root)}: annotated tag {release!r} does not "
-                f"resolve to recorded tag object {tag_object}"
+                f"{shown(path, root)}: recorded release commit {commit} "
+                "is not a commit object"
             )
-        if resolved_commit != commit or commit_type != "commit":
-            errors.append(
-                f"{shown(path, root)}: release {release!r} does not "
-                f"dereference to recorded commit {commit}"
-            )
+        if verify_local_tag_refs:
+            resolved_tag = git_output(root, "rev-parse", release)
+            resolved_commit = git_output(root, "rev-parse", f"{release}^{{}}")
+            object_type = git_output(root, "cat-file", "-t", tag_object)
+            if resolved_tag != tag_object or object_type != "tag":
+                errors.append(
+                    f"{shown(path, root)}: annotated tag {release!r} does not "
+                    f"resolve to recorded tag object {tag_object}"
+                )
+            if resolved_commit != commit:
+                errors.append(
+                    f"{shown(path, root)}: release {release!r} does not "
+                    f"dereference to recorded commit {commit}"
+                )
         return
 
     if "Intentionally unreleased implementation commits:" not in section:
@@ -215,7 +223,11 @@ def check_release_record(
 
 
 def check_closed_execution(
-    path: Path, text: str, root: Path, errors: list[str]
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+    verify_local_tag_refs: bool = True,
 ) -> None:
     checked = len(CHECKED_RE.findall(text))
     unchecked = len(UNCHECKED_RE.findall(text))
@@ -231,7 +243,14 @@ def check_closed_execution(
         )
         return
     section = text.split(CLOSING_HEADING, 1)[1]
-    check_release_record(path, section, root, checked, errors)
+    check_release_record(
+        path,
+        section,
+        root,
+        checked,
+        errors,
+        verify_local_tag_refs,
+    )
 
 
 def check_authority(
@@ -412,7 +431,11 @@ def check_runbook_amendments(
             )
 
 
-def run(root: Path = ROOT) -> int:
+def run(
+    root: Path = ROOT,
+    *,
+    verify_local_tag_refs: bool = True,
+) -> int:
     root = root.resolve()
     errors: list[str] = []
     try:
@@ -446,7 +469,13 @@ def run(root: Path = ROOT) -> int:
             active_state = "open"
         elif unchecked == 0 and closing == 1:
             active_state = "closed"
-            check_closed_execution(identity.runbook, active_text, root, errors)
+            check_closed_execution(
+                identity.runbook,
+                active_text,
+                root,
+                errors,
+                verify_local_tag_refs,
+            )
         elif unchecked < 1:
             errors.append(
                 f"{shown(identity.runbook, root)}: declared runbook must be "
@@ -463,7 +492,13 @@ def run(root: Path = ROOT) -> int:
         if path == identity.runbook:
             continue
         text = path.read_text()
-        check_closed_execution(path, text, root, errors)
+        check_closed_execution(
+            path,
+            text,
+            root,
+            errors,
+            verify_local_tag_refs,
+        )
         check_authority(path, text, root, errors)
 
     plain_task_files = sorted(
@@ -513,6 +548,7 @@ def run(root: Path = ROOT) -> int:
     print(
         f"cycle-check: PASS (active={identity.name}, "
         f"state={active_state}, "
+        f"local_tag_refs={'verified' if verify_local_tag_refs else 'not-requested'}, "
         f"runbook={shown(identity.runbook, root)}, "
         f"progress={shown(identity.progress, root)}, "
         f"closed_execution={closed}, historical={len(plain_task_files)})"
@@ -521,10 +557,23 @@ def run(root: Path = ROOT) -> int:
 
 
 def main() -> int:
-    if len(sys.argv) != 1:
-        print("usage: python3 -m tools.cycle_check", file=sys.stderr)
-        return 2
-    return run()
+    parser = argparse.ArgumentParser(
+        description=(
+            "Verify active-cycle identity, runbook lifecycle, and tool targets."
+        )
+    )
+    parser.add_argument(
+        "--skip-local-tag-verification",
+        action="store_true",
+        help=(
+            "skip resolution of local annotated-tag refs while retaining "
+            "release-record structure and commit-object checks"
+        ),
+    )
+    args = parser.parse_args()
+    return run(
+        verify_local_tag_refs=not args.skip_local_tag_verification,
+    )
 
 
 if __name__ == "__main__":
