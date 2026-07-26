@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 AUTH-REQUIRED is complete on the locally released v0.10.2 baseline.** Production deferred audits now require an explicit evidence grade; release grade forces authenticated receipt verification, while structural grade remains token-free. Re-derivation and pin validation enforce the recorded posture. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **167/167** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 RESUME-INVARIANT is complete on the locally released v0.10.2 baseline.** Resumed adversarial attempts now halt on outcome/evidence contradictions and must match the declared target corpus, shape set, and chat model. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **175/175** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+
+**v0.10.3 RESUME-INVARIANT is complete (measured 2026-07-26).** One
+shared executable consistency checker now guards both the fresh adversarial
+classifier and every schema-complete resumed attempt. It enforces all five
+one-way implications: public overlap requires `LEAK`; raw overlap requires
+`GUARD FIRED` or `LEAK`; `GUARD FIRED` requires raw overlap, no public
+overlap, and at least one violation id; `NOT EXERCISED` forbids both overlap
+flags; and `LEAK` requires at least one overlap flag. It also refuses
+`raw_overlap: false` when the recorded longest gated token run reaches the
+16-token attestation threshold.
+
+Resume now binds each completed attempt to the report declaration. The target
+must be in `battery.target_doc_ids`, the shape must be one of the five
+`ADVERSARIAL_SHAPES`, and the model must equal the declared chat model.
+Schema-incomplete and transport-incomplete attempts remain retryable. A
+schema-complete contradiction is instead recorded under
+`halted_on_resumed_invariant` with target, shape, and reason, then raises the
+distinct `ResumedAttemptInvariantError`; it is treated as tampering and is
+never silently discarded. A consistent resumed `LEAK` retains the existing
+`ResumedLeakError` emergency halt.
+
+The seven contradiction/declaration controls failed **7/7** against the old
+validator while the positive committed-evidence control passed **1/1**. After
+the change all **8/8** selected controls passed: the audit substitution,
+empty-violation guard result, overlap-free leak, telemetry contradiction,
+out-of-battery target, unknown shape, and mismatched model all halted; the
+immutable X-REGEN report reused all **45/45** attempts with counts unchanged
+at 45 `NOT EXERCISED`, zero `GUARD FIRED`, and zero `LEAK`.
+
+The complete verifier module passed **31/31** and both full shell lanes passed
+**175/175** under Python 3.11.4 and 3.12.13, with the existing single
+Starlette deprecation warning. Python compilation and `git diff --check`
+passed. `./run golden` remained byte-identical at **11/11**. Both protected
+databases matched **2/2**, manifest validation passed, and all three pinned
+JSON reports—including the unchanged 62,978-byte X-REGEN report—matched.
+Only the verifier harness and its tests changed; no product runtime,
+dependency, lockfile, architecture, protected byte, evidence byte, provider
+configuration, remote ref, or tag changed.
 
 **v0.10.3 AUTH-REQUIRED is complete (measured 2026-07-26).**
 Production deferred audits require

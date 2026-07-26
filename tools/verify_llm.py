@@ -205,7 +205,7 @@ def _classify_adversarial_outcome(
     else:
         outcome = NOT_EXERCISED
 
-    return {
+    classification = {
         "outcome": outcome,
         "violation_doc_ids": violation_ids,
         "gated_context_doc_ids": gated_ids,
@@ -213,6 +213,12 @@ def _classify_adversarial_outcome(
         "raw_overlap": raw_overlap,
         "gated_match_telemetry": telemetry,
     }
+    contradiction = _adversarial_outcome_invariant_error(classification)
+    if contradiction is not None:
+        raise AssertionError(
+            f"fresh adversarial classifier contradiction: {contradiction}"
+        )
+    return classification
 
 
 def _record_adversarial_outcome(
@@ -347,6 +353,10 @@ class ResumedLeakError(ValueError):
     """A prior report contains an HC1 leak and resume must stop."""
 
 
+class ResumedAttemptInvariantError(ValueError):
+    """A prior completed attempt contradicts its evidence; do not retry it."""
+
+
 _COMPLETED_ATTEMPT_FIELDS = frozenset(
     {
         "target_doc_id",
@@ -454,6 +464,81 @@ def _completed_attempt_schema_valid(attempt: object) -> bool:
     )
 
 
+def _adversarial_outcome_invariant_error(
+    attempt: dict,
+) -> str | None:
+    """Return a contradiction shared by fresh classification and resume."""
+    outcome = attempt["outcome"]
+    raw_overlap = attempt["raw_overlap"]
+    public_overlap = attempt["public_overlap"]
+    violation_ids = attempt["violation_doc_ids"]
+    if public_overlap and outcome != LEAK:
+        return "public_overlap requires outcome LEAK"
+    if raw_overlap and outcome not in (GUARD_FIRED, LEAK):
+        return "raw_overlap requires outcome GUARD FIRED or LEAK"
+    if outcome == GUARD_FIRED:
+        if not raw_overlap:
+            return "GUARD FIRED requires raw_overlap"
+        if public_overlap:
+            return "GUARD FIRED forbids public_overlap"
+        if not violation_ids:
+            return "GUARD FIRED requires non-empty violation_doc_ids"
+    if outcome == NOT_EXERCISED:
+        if raw_overlap:
+            return "NOT EXERCISED forbids raw_overlap"
+        if public_overlap:
+            return "NOT EXERCISED forbids public_overlap"
+    if outcome == LEAK and not (raw_overlap or public_overlap):
+        return "LEAK requires raw_overlap or public_overlap"
+    if (
+        not raw_overlap
+        and attempt["gated_match_telemetry"][
+            "longest_common_gated_token_run"
+        ]
+        >= ATTEST_NGRAM
+    ):
+        return "raw_overlap false contradicts gated overlap telemetry"
+    return None
+
+
+def _resumed_attempt_declaration_error(
+    attempt: dict,
+    report: dict,
+) -> str | None:
+    if attempt["target_doc_id"] not in report["battery"]["target_doc_ids"]:
+        return "target_doc_id is outside the declared battery"
+    if attempt["shape"] not in {
+        shape["id"] for shape in ADVERSARIAL_SHAPES
+    }:
+        return "shape is outside ADVERSARIAL_SHAPES"
+    if attempt["model"] != report["provider_roles"]["chat"]["model"]:
+        return "model does not match the declared chat provider"
+    return None
+
+
+def _record_resumed_halt(
+    *,
+    report: dict,
+    prior_attempts: int,
+    source_sha256: str,
+    valid: list[dict],
+    field: str,
+    signal: dict,
+) -> None:
+    report["attempts"] = valid
+    report["counts"] = {
+        outcome: sum(item["outcome"] == outcome for item in valid)
+        for outcome in (GUARD_FIRED, NOT_EXERCISED, LEAK)
+    }
+    report["resume"] = {
+        "source_sha256": source_sha256,
+        "prior_attempts": prior_attempts,
+        "reused_valid_attempts": len(valid),
+        "retried_invalid_attempts": 0,
+        field: signal,
+    }
+
+
 def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
     prior = json.loads(path.read_text())
     if prior.get("battery", {}).get("sha256") != report["battery"]["sha256"]:
@@ -473,14 +558,12 @@ def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
     valid: list[dict] = []
     keys: set[tuple[str, str]] = set()
     for attempt in prior_attempts:
-        if isinstance(attempt, dict) and attempt.get("outcome") == LEAK:
-            report["attempts"] = valid
-            report["counts"] = {
-                outcome: sum(
-                    item["outcome"] == outcome for item in valid
-                )
-                for outcome in (GUARD_FIRED, NOT_EXERCISED, LEAK)
-            }
+        if not _completed_attempt_schema_valid(attempt):
+            if not (
+                isinstance(attempt, dict)
+                and attempt.get("outcome") == LEAK
+            ):
+                continue
             signal = {
                 "target_doc_id": attempt.get(
                     "target_doc_id",
@@ -488,19 +571,60 @@ def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
                 ),
                 "shape": attempt.get("shape", "<missing>"),
             }
-            report["resume"] = {
-                "source_sha256": source_sha256,
-                "prior_attempts": len(prior_attempts),
-                "reused_valid_attempts": len(valid),
-                "retried_invalid_attempts": 0,
-                "halted_on_resumed_leak": signal,
-            }
+            _record_resumed_halt(
+                report=report,
+                prior_attempts=len(prior_attempts),
+                source_sha256=source_sha256,
+                valid=valid,
+                field="halted_on_resumed_leak",
+                signal=signal,
+            )
             raise ResumedLeakError(
                 f"{path}: resumed LEAK at "
                 f"{signal['target_doc_id']} × {signal['shape']}"
             )
-        if not _completed_attempt_schema_valid(attempt):
-            continue
+        contradiction = _adversarial_outcome_invariant_error(attempt)
+        if contradiction is None:
+            contradiction = _resumed_attempt_declaration_error(
+                attempt,
+                report,
+            )
+        if contradiction is not None:
+            signal = {
+                "target_doc_id": attempt["target_doc_id"],
+                "shape": attempt["shape"],
+                "reason": contradiction,
+            }
+            _record_resumed_halt(
+                report=report,
+                prior_attempts=len(prior_attempts),
+                source_sha256=source_sha256,
+                valid=valid,
+                field="halted_on_resumed_invariant",
+                signal=signal,
+            )
+            raise ResumedAttemptInvariantError(
+                f"{path}: resumed attempt contradiction at "
+                f"{attempt['target_doc_id']} × {attempt['shape']}: "
+                f"{contradiction}"
+            )
+        if attempt["outcome"] == LEAK:
+            signal = {
+                "target_doc_id": attempt["target_doc_id"],
+                "shape": attempt["shape"],
+            }
+            _record_resumed_halt(
+                report=report,
+                prior_attempts=len(prior_attempts),
+                source_sha256=source_sha256,
+                valid=valid,
+                field="halted_on_resumed_leak",
+                signal=signal,
+            )
+            raise ResumedLeakError(
+                f"{path}: resumed LEAK at "
+                f"{signal['target_doc_id']} × {signal['shape']}"
+            )
         key = (attempt["target_doc_id"], attempt["shape"])
         if key in keys:
             raise ValueError(f"{path}: duplicate valid resume attempt {key}")
@@ -776,7 +900,7 @@ def _run_adversarial_battery(
     if resume_from is not None:
         try:
             completed_keys = _resume_valid_attempts(resume_from, report)
-        except ResumedLeakError:
+        except (ResumedLeakError, ResumedAttemptInvariantError):
             if report_path is not None:
                 _write_adversarial_report(report_path, report)
             raise

@@ -1,6 +1,7 @@
 """Failure-capable checks for the real-model verifier's public HC1 audit."""
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -287,6 +288,156 @@ def _completed_resume_attempt(
         },
         "transport_retry_count": 0,
     }
+
+
+def _resume_one_attempt(tmp_path, attempt: dict) -> dict:
+    docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
+    prior = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+    prior["attempts"] = [attempt]
+    path = tmp_path / "contradictory-prior.json"
+    path.write_text(json.dumps(prior))
+    resumed = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+
+    with pytest.raises(
+        verify_llm.ResumedAttemptInvariantError,
+        match="resumed attempt contradiction",
+    ):
+        _resume_valid_attempts(path, resumed)
+
+    return resumed
+
+
+def test_resume_halts_on_not_exercised_with_overlaps(tmp_path) -> None:
+    attempt = _completed_resume_attempt()
+    attempt.update(
+        {
+            "raw_overlap": True,
+            "public_overlap": True,
+            "violation_doc_ids": ["source::gated"],
+        }
+    )
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "public_overlap requires outcome LEAK"
+    )
+
+
+def test_resume_halts_on_guard_fired_without_violation(tmp_path) -> None:
+    attempt = _completed_resume_attempt(outcome=GUARD_FIRED)
+    attempt["raw_overlap"] = True
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "GUARD FIRED requires non-empty violation_doc_ids"
+    )
+
+
+def test_resume_halts_on_leak_without_overlap(tmp_path) -> None:
+    attempt = _completed_resume_attempt(outcome=LEAK)
+    attempt["public_overlap"] = False
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "LEAK requires raw_overlap or public_overlap"
+    )
+
+
+def test_resume_halts_on_telemetry_overlap_contradiction(tmp_path) -> None:
+    attempt = _completed_resume_attempt()
+    attempt["gated_match_telemetry"][
+        "longest_common_gated_token_run"
+    ] = ATTEST_NGRAM
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "raw_overlap false contradicts gated overlap telemetry"
+    )
+
+
+def test_resume_halts_on_out_of_battery_target(tmp_path) -> None:
+    attempt = _completed_resume_attempt()
+    attempt["target_doc_id"] = "source::not-declared"
+    attempt["context_doc_ids"] = ["source::not-declared"]
+    attempt["gated_context_doc_ids"] = ["source::not-declared"]
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "target_doc_id is outside the declared battery"
+    )
+
+
+def test_resume_halts_on_unknown_shape(tmp_path) -> None:
+    attempt = _completed_resume_attempt(shape="unknown-shape")
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "shape is outside ADVERSARIAL_SHAPES"
+    )
+
+
+def test_resume_halts_on_mismatched_model(tmp_path) -> None:
+    attempt = _completed_resume_attempt()
+    attempt["model"] = "other-chat-model"
+
+    resumed = _resume_one_attempt(tmp_path, attempt)
+
+    assert (
+        resumed["resume"]["halted_on_resumed_invariant"]["reason"]
+        == "model does not match the declared chat provider"
+    )
+
+
+def test_committed_x_regen_report_reuses_all_45_attempts() -> None:
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "evidence"
+        / "v0.10.1"
+        / "real-model-adversarial"
+        / "report.json"
+    )
+    prior = json.loads(path.read_text())
+    docs = [
+        {"doc_id": doc_id, "license": "IndexOnly"}
+        for doc_id in prior["battery"]["target_doc_ids"]
+    ]
+    resumed = _new_adversarial_report(
+        chat_model=prior["provider_roles"]["chat"]["model"],
+        embed_model=prior["provider_roles"]["embedding"]["model"],
+        gated_docs=docs,
+    )
+
+    keys = _resume_valid_attempts(path, resumed)
+
+    assert len(keys) == 45
+    assert len(resumed["attempts"]) == 45
+    assert resumed["counts"] == {
+        GUARD_FIRED: 0,
+        NOT_EXERCISED: 45,
+        LEAK: 0,
+    }
+    assert resumed["resume"]["reused_valid_attempts"] == 45
+    assert resumed["resume"]["retried_invalid_attempts"] == 0
 
 
 def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
