@@ -168,12 +168,16 @@ def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
         {
             "target_doc_id": "source::gated",
             "shape": "verbatim-quotation",
+            "target_in_context": True,
+            "model_completed": True,
             "valid_attempt": True,
             "outcome": NOT_EXERCISED,
         },
         {
             "target_doc_id": "source::gated",
             "shape": "chunked-reconstruction",
+            "target_in_context": True,
+            "model_completed": False,
             "valid_attempt": False,
             "outcome": NOT_EXERCISED,
         },
@@ -193,6 +197,90 @@ def test_resume_reuses_only_valid_attempts(tmp_path) -> None:
     assert resumed["counts"][NOT_EXERCISED] == 1
     assert resumed["resume"]["reused_valid_attempts"] == 1
     assert resumed["resume"]["retried_invalid_attempts"] == 1
+
+
+def test_resume_retries_a_completed_flag_it_cannot_verify(tmp_path) -> None:
+    docs = [{"doc_id": "source::gated", "license": "IndexOnly"}]
+    prior = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+    prior["attempts"] = [
+        {
+            "target_doc_id": "source::gated",
+            "shape": "verbatim-quotation",
+            "target_in_context": True,
+            "model_completed": False,
+            "valid_attempt": True,
+            "outcome": NOT_EXERCISED,
+        },
+        {
+            "target_doc_id": "source::gated",
+            "shape": "chunked-reconstruction",
+            "target_in_context": True,
+            "valid_attempt": True,
+            "outcome": NOT_EXERCISED,
+        },
+    ]
+    path = tmp_path / "stale-prior.json"
+    path.write_text(json.dumps(prior))
+    resumed = _new_adversarial_report(
+        chat_model="chat-model",
+        embed_model="embed-model",
+        gated_docs=docs,
+    )
+
+    keys = _resume_valid_attempts(path, resumed)
+
+    assert keys == set()
+    assert resumed["attempts"] == []
+    assert resumed["resume"]["reused_valid_attempts"] == 0
+    assert resumed["resume"]["retried_invalid_attempts"] == 2
+
+
+def test_gateway_timeout_is_not_a_valid_attempt() -> None:
+    target = {
+        "doc_id": "source::gated",
+        "title": "Gated source",
+        "license": "IndexOnly",
+        "body": " ".join(f"gated{index}" for index in range(24)),
+    }
+
+    class RecordingCoreDouble:
+        last_retrieve_context_ids: list[str] = []
+
+        def docs(self, ids: list[str]) -> list[dict]:
+            return [target] if ids else []
+
+    core = RecordingCoreDouble()
+
+    class GatewayTimeoutApi:
+        def get(self, *args, **kwargs):
+            core.last_retrieve_context_ids = [target["doc_id"]]
+            return type("Response", (), {"status_code": 502})()
+
+    recording_chat = type("RecordingChat", (), {"last_answer": None})()
+    verify_llm.results.clear()
+
+    report = verify_llm._run_adversarial_battery(
+        api=GatewayTimeoutApi(),
+        core=core,
+        recording_chat=recording_chat,
+        gated_docs=[target],
+        chat_model="chat-model",
+        embed_model="embed-model",
+        report_path=None,
+        resume_from=None,
+    )
+
+    assert all(attempt["model_completed"] is False for attempt in report["attempts"])
+    assert all(attempt["target_in_context"] is True for attempt in report["attempts"])
+    assert all(attempt["valid_attempt"] is False for attempt in report["attempts"])
+    assert (
+        "adversarial battery coverage",
+        verify_llm.FAIL,
+    ) in {(name, status) for name, status, _ in verify_llm.results}
 
 
 def test_recording_core_retains_context_when_downstream_work_fails() -> None:

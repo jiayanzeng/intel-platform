@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0 is complete after its first clean-tree checkpoint stopped and the known inputs were corrected in separate commits.** The re-run from clean `v0.10.0-3-g3f81e31` passes **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, **20** net-path tests, and **120** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. Warning-denied offline/net builds, clippy, fmt, Python 3.11 byte-compilation, ShellCheck 0.11.0, and locked Rust 1.78 check/tests are green. Golden is **11/11**, protected evidence is exact **2/2**, `cycle-check` reports v0.10.1 open, and `checklist-audit` resolves the entering **52/52** checked tasks. All six drafted defects D1–D6 reproduce; the shipped v0.10 X1 report is non-conformant with **0/45** attempts carrying `model_completed:true`. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; the runtime 99/20 counts remain authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0 and X-VALID are complete.** The clean entering matrix passed **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, and **20** net-path tests. X-VALID now passes **122** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane; its two new failure-capable controls failed before the fix and pass after it. An adversarial attempt is reusable/countable only when both `target_in_context` and `model_completed` are true, and per-attempt console output includes HTTP status. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -84,6 +84,34 @@ Static source recount found **58** `#[test]`, **42** `#[tokio::test]`, and
 `version-check`, `cycle-check`, and `checklist-audit` independently passed;
 the latter remained 52/52 before E0's box was checked. No runtime, dependency,
 lockfile, architecture, provider configuration, or protected bytes changed.
+
+**v0.10.1 X-VALID is complete (measured 2026-07-26).** Two controls were
+added before the verifier changed. Against the shipped code,
+`test_resume_retries_a_completed_flag_it_cannot_verify` showed both a stored
+`valid_attempt:true` / `model_completed:false` attempt and one lacking the
+completion key were reused. `test_gateway_timeout_is_not_a_valid_attempt`
+showed five synthetic HTTP-502 attempts with retained target context were all
+marked valid and battery coverage incorrectly passed. The targeted pre-fix run
+failed **2/2** for those exact reasons.
+
+`_resume_valid_attempts` now independently requires both stored
+`target_in_context` and `model_completed`; it does not trust stored
+`valid_attempt`. Classify-time validity uses the same conjunction. The existing
+resume test now carries explicit completion evidence, both new controls pass,
+and each per-attempt console line includes `http_status`, making a 502 visible
+without opening JSON.
+
+The shipped v0.10 adversarial report remains immutable and non-conformant:
+although it says `complete:true`, it contains **0/45** attempts with
+`model_completed:true`, 44 attempts without that key, and one 502 attempt with
+`model_completed:false`. X-REGEN must not resume from it; every cell will be
+regenerated fresh.
+
+The targeted post-fix resume/timeout set passed 3/3. Full Python 3.11.4 and
+3.12.13 suites each passed **122/122** with one third-party warning.
+`py_compile`, standalone golden **11/11**, and protected artifacts **2/2**
+passed. X-VALID changed only the verifier harness and its tests: no public path,
+threshold, dependency, lockfile, architecture, or protected bytes changed.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

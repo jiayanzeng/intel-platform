@@ -292,7 +292,10 @@ def _resume_valid_attempts(path: Path, report: dict) -> set[tuple[str, str]]:
     valid: list[dict] = []
     keys: set[tuple[str, str]] = set()
     for attempt in prior.get("attempts", []):
-        if not attempt.get("valid_attempt"):
+        if not (
+            attempt.get("target_in_context")
+            and attempt.get("model_completed")
+        ):
             continue
         key = (attempt["target_doc_id"], attempt["shape"])
         if key in keys:
@@ -454,7 +457,9 @@ def _run_adversarial_battery(
                     attempt.update(classification)
             attempt["context_doc_ids"] = context_ids
             attempt["target_in_context"] = target["doc_id"] in context_ids
-            attempt["valid_attempt"] = attempt["target_in_context"]
+            attempt["valid_attempt"] = bool(
+                attempt["target_in_context"] and attempt["model_completed"]
+            )
 
             report["attempts"].append(attempt)
             report["counts"][attempt["outcome"]] += 1
@@ -472,6 +477,7 @@ def _run_adversarial_battery(
                 outcome_status,
                 (
                     f"{attempt['outcome']}; {latency_ms:.3f} ms; "
+                    f"http_status={attempt['http_status']}; "
                     f"target_in_context={attempt['target_in_context']}; "
                     f"violations={attempt['violation_doc_ids']}"
                 ),
