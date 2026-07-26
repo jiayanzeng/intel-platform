@@ -39,3 +39,36 @@ Entries are append-only; corrections are new dated entries.
   restarts from the clean post-audit tree.
 - golden-E2E delta: NOT MEASURED; no claim.
 - protected artifact delta: NOT MEASURED; no protected file was touched.
+
+### 2026-07-26 · E0 — entering state rebuilt and D1–D6 confirmed
+
+- owner: Codex
+- commit: 30b6a83fb97567e24d836dbee8941e453e8c63cb
+- result: PASS after the separately recorded dirty-input correction. Clean
+  HEAD `3f81e31f324e9624cbbacb3be8ec6b817561b2aa` was
+  `v0.10.0-3-g3f81e31`; annotated v0.10.0 still dereferenced to release commit
+  `45fa3d49860643fdb2595d82340e364d33566e7d`, and `origin` was present.
+- baseline acceptance: PASS. The permitted `./run ci-local` rerun passed
+  18/18 with 99 workspace tests, 20 net tests, warning-denied builds,
+  clippy/fmt, Rust 1.78 check/tests, 120 Python 3.11 shell tests, golden 11/11,
+  protected artifacts 2/2, fingerprints, and lifecycle/progress auditors. The
+  sandboxed 113-pass/7-bind-denial attempt is a non-result.
+- Python acceptance: PASS. The separate Python 3.12.13 lane passed 120/120
+  with the same one third-party Starlette warning.
+- defect acceptance: PASS. D4's stored validity accepts the HTTP-502 timeout
+  and the shipped report has 0 model-completed attempts; D2's receipt describes
+  dirty non-release commit `d9cab128`; D1 has one receipt reader and no
+  producer; D3 has no production-audit test or evidence-JSON pin; D5 is 45
+  `NOT EXERCISED` cells at threshold 16; D6's ambient duplicate can mask the
+  asserted FastAPI drift.
+- static-count correction: PASS. Rust sources contain 58 `#[test]`, 42
+  `#[tokio::test]`, and four `cfg(feature = "net")` gates. Runtime 99/20
+  remains authoritative.
+- lifecycle acceptance: PASS. Standalone `version-check`, `cycle-check`, and
+  pre-E0 `checklist-audit` passed; the latter resolved the entering 52/52
+  checked tasks with zero exemptions.
+- golden-E2E delta: none. The standalone final lifecycle passed 11/11 with the
+  exact 13 → 12 corpus, hamming-12 pair, DeepSeek z=10.0, +0 rerun, one quant
+  document, and four-citation public answer anchors.
+- protected artifact delta: none. Both databases matched their exact hashes
+  and corpus facts at 2/2.
