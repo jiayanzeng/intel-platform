@@ -204,6 +204,70 @@ def test_non_release_ancestor_receipt_is_rejected(tmp_path: Path) -> None:
     assert row["disposition"] == "defer"
 
 
+def test_indexed_evidence_repository_records_real_relative_path(
+    tmp_path: Path,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipt = (
+        repo
+        / "evidence"
+        / "ci-runs"
+        / "123-1"
+        / "123-1-core.json"
+    )
+    receipt.parent.mkdir(parents=True)
+    _receipt(receipt, head)
+    _git(repo, "add", str(receipt.relative_to(repo)))
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        [receipt],
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+        evidence_repository=repo,
+    )
+
+    assert measurement["runner_receipts"] == [
+        {"path": "evidence/ci-runs/123-1/123-1-core.json"}
+    ]
+    assert "logical_path" not in measurement["runner_receipts"][0]
+
+
+def test_indexed_evidence_repository_rejects_untracked_or_changed_path(
+    tmp_path: Path,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipt = repo / "evidence" / "ci-runs" / "untracked.json"
+    receipt.parent.mkdir(parents=True)
+    _receipt(receipt, head)
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match="recorded evidence path is not indexed by Git",
+    ):
+        audit_deferred.runner_receipt_measurement(
+            [receipt],
+            repository=repo,
+            audited_head=head,
+            released_commit=head,
+            evidence_repository=repo,
+        )
+
+    _git(repo, "add", str(receipt.relative_to(repo)))
+    receipt.write_text(receipt.read_text() + "changed after staging\n")
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match="recorded evidence path differs from its Git index entry",
+    ):
+        audit_deferred.runner_receipt_measurement(
+            [receipt],
+            repository=repo,
+            audited_head=head,
+            released_commit=head,
+            evidence_repository=repo,
+        )
+
+
 def test_foreign_runner_receipt_is_visibly_rejected(tmp_path: Path) -> None:
     repo, _, foreign, head = _synthetic_repository(tmp_path)
     receipt = tmp_path / "foreign.json"

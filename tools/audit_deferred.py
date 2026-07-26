@@ -708,11 +708,71 @@ def _display_receipt_path(
         return str(path.resolve())
 
 
+def _indexed_evidence_path(path: Path, repository: Path) -> str:
+    repository = repository.resolve()
+    top_level = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=repository,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if (
+        top_level.returncode != 0
+        or Path(top_level.stdout.strip()).resolve() != repository
+    ):
+        raise AuditFailure(
+            f"evidence repository is not a Git worktree root: {repository}"
+        )
+    try:
+        resolved = path.resolve(strict=True)
+        relative = resolved.relative_to(repository)
+    except (OSError, ValueError) as error:
+        raise AuditFailure(
+            f"recorded evidence path must resolve inside {repository}: "
+            f"{path}: {error}"
+        ) from error
+    if not resolved.is_file():
+        raise AuditFailure(
+            f"recorded evidence path is not a regular file: {relative}"
+        )
+    tracked = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", "--", str(relative)],
+        cwd=repository,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if tracked.returncode != 0:
+        raise AuditFailure(
+            f"recorded evidence path is not indexed by Git: {relative}"
+        )
+    unchanged = subprocess.run(
+        ["git", "diff", "--quiet", "--", str(relative)],
+        cwd=repository,
+        check=False,
+    )
+    if unchanged.returncode != 0:
+        raise AuditFailure(
+            f"recorded evidence path differs from its Git index entry: "
+            f"{relative}"
+        )
+    return str(relative)
+
+
 def _receipt_path_fields(
     path: Path,
     repository: Path,
     logical_receipt_root: Path | None,
+    evidence_repository: Path | None = None,
 ) -> dict[str, str]:
+    if evidence_repository is not None:
+        return {
+            "path": _indexed_evidence_path(
+                path,
+                evidence_repository,
+            )
+        }
     fields = {
         "path": _display_receipt_path(
             path,
@@ -844,6 +904,7 @@ def runner_receipt_measurement(
     audited_head: str,
     released_commit: str,
     logical_receipt_root: Path | None = None,
+    evidence_repository: Path | None = None,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
     expected_repository: str | None = None,
@@ -898,6 +959,7 @@ def runner_receipt_measurement(
             path,
             repository,
             logical_receipt_root,
+            evidence_repository,
         )
         shown = path_fields["path"]
         try:
@@ -1147,6 +1209,7 @@ def runner_receipt_measurement(
                 bundle,
                 repository,
                 attestation_bundles_dir,
+                evidence_repository,
             )
             accepted["attestation_bundle"] = bundle_fields["path"]
             if "logical_path" in bundle_fields:
@@ -1243,7 +1306,12 @@ def runner_receipt_measurement(
         "released_commit": released_commit,
         **matrix_contract,
         "runner_receipts": [
-            _receipt_path_fields(path, repository, logical_receipt_root)
+            _receipt_path_fields(
+                path,
+                repository,
+                logical_receipt_root,
+                evidence_repository,
+            )
             for path in receipts
         ],
         "accepted_runner_receipts": accepted,
@@ -1264,6 +1332,7 @@ def ci_runner_measurement(
     released_commit: str,
     runner_receipts_dir: Path | None = None,
     *,
+    evidence_repository: Path | None = None,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
     expected_repository: str | None = None,
@@ -1307,6 +1376,7 @@ def ci_runner_measurement(
             audited_head=head,
             released_commit=released_commit,
             logical_receipt_root=runner_receipts_dir,
+            evidence_repository=evidence_repository,
             attestation_bundles_dir=attestation_bundles_dir,
             require_attestations=require_attestations,
             expected_repository=expected_repository,
@@ -1495,6 +1565,7 @@ def production_measurements(
     runner_receipts_dir: Path | None = None,
     *,
     released_commit: str,
+    evidence_repository: Path | None = None,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
     expected_repository: str | None = None,
@@ -1512,6 +1583,7 @@ def production_measurements(
         "ci_runner": ci_runner_measurement(
             released_commit,
             runner_receipts_dir,
+            evidence_repository=evidence_repository,
             attestation_bundles_dir=attestation_bundles_dir,
             require_attestations=require_attestations,
             expected_repository=expected_repository,
@@ -1906,6 +1978,7 @@ def run_production(
     expected_head: str,
     evidence_grade: str,
     runner_receipts_dir: Path | None = None,
+    evidence_repository: Path | None = None,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
     expected_repository: str | None = None,
@@ -1944,10 +2017,15 @@ def run_production(
         raise AuditFailure(
             "structural evidence cannot carry authentication arguments"
         )
+    if evidence_repository is not None and runner_receipts_dir is None:
+        raise AuditFailure(
+            "--evidence-repository requires --runner-receipts-dir"
+        )
     released_commit = require_production_subject(expected_head)
     measurements = production_measurements(
         runner_receipts_dir,
         released_commit=released_commit,
+        evidence_repository=evidence_repository,
         attestation_bundles_dir=attestation_bundles_dir,
         require_attestations=require_attestations,
         expected_repository=expected_repository,
@@ -2033,6 +2111,15 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--evidence-repository",
+        type=Path,
+        help=(
+            "Git worktree containing the indexed, byte-unchanged receipt and "
+            "bundle paths to persist in the report; subject measurements "
+            "still use --subject-root"
+        ),
+    )
+    parser.add_argument(
         "--expected-head",
         help=(
             "exact clean subject commit required before a production audit; "
@@ -2078,6 +2165,7 @@ def main() -> int:
         if (
             args.subject_root
             or args.runner_receipts_dir
+            or args.evidence_repository
             or args.expected_head
             or args.evidence_grade
             or args.attestation_bundles_dir
@@ -2097,6 +2185,11 @@ def main() -> int:
     runner_receipts_dir = (
         args.runner_receipts_dir.resolve()
         if args.runner_receipts_dir is not None
+        else None
+    )
+    evidence_repository = (
+        args.evidence_repository.resolve()
+        if args.evidence_repository is not None
         else None
     )
     attestation_bundles_dir = (
@@ -2121,6 +2214,7 @@ def main() -> int:
         if (
             args.expected_head
             or args.evidence_grade
+            or evidence_repository is not None
             or attestation_bundles_dir is not None
             or args.require_attestations
             or args.expected_repository
@@ -2155,6 +2249,7 @@ def main() -> int:
         expected_head=args.expected_head,
         evidence_grade=args.evidence_grade,
         runner_receipts_dir=runner_receipts_dir,
+        evidence_repository=evidence_repository,
         attestation_bundles_dir=attestation_bundles_dir,
         require_attestations=require_attestations,
         expected_repository=args.expected_repository,
