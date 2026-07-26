@@ -42,6 +42,7 @@ RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
 SCHEMA_VERSION = 2
+EVIDENCE_GRADES = ("structural", "release")
 EXPECTED_RUNNER_JOB_IDENTITIES = frozenset(
     {
         ("core", None),
@@ -1371,6 +1372,86 @@ def production_measurements(
     }
 
 
+def committed_evidence_posture_snapshot(
+    report: dict[str, Any],
+) -> dict[str, Any]:
+    try:
+        ci_runner = report["measurements"]["ci_runner"]
+        accepted = ci_runner["accepted_runner_receipts"]
+    except (KeyError, TypeError) as error:
+        raise AuditFailure(
+            "committed receipt is missing CI-runner authentication posture"
+        ) from error
+    if not isinstance(accepted, list):
+        raise AuditFailure(
+            "committed receipt accepted_runner_receipts must be an array"
+        )
+    if "evidence_grade" in report:
+        evidence_grade = report["evidence_grade"]
+        attestations_required = report.get("attestations_required")
+        if evidence_grade not in EVIDENCE_GRADES:
+            raise AuditFailure(
+                "committed receipt has invalid evidence_grade"
+            )
+    else:
+        evidence_grade = "legacy"
+        attestations_required = ci_runner.get("attestations_required")
+        if attestations_required is None:
+            attestations_required = any(
+                isinstance(receipt, dict)
+                and receipt.get("attestation_verified") is True
+                for receipt in accepted
+            )
+    if not isinstance(attestations_required, bool):
+        raise AuditFailure(
+            "committed receipt attestations_required must be boolean"
+        )
+    receipt_flags: dict[str, bool] = {}
+    for index, receipt in enumerate(accepted):
+        if not isinstance(receipt, dict):
+            raise AuditFailure(
+                f"accepted runner receipt {index} must be an object"
+            )
+        path = receipt.get("path")
+        if not isinstance(path, str) or not path or path in receipt_flags:
+            raise AuditFailure(
+                "accepted runner receipts require unique non-empty paths"
+            )
+        verified = receipt.get("attestation_verified", False)
+        if not isinstance(verified, bool):
+            raise AuditFailure(
+                f"accepted runner receipt {path} has invalid "
+                "attestation_verified"
+            )
+        receipt_flags[path] = verified
+    return {
+        "evidence_grade": evidence_grade,
+        "attestations_required": attestations_required,
+        "receipt_attestation_verified": receipt_flags,
+    }
+
+
+def rederived_evidence_posture_snapshot(
+    report: dict[str, Any],
+) -> dict[str, Any]:
+    committed = committed_evidence_posture_snapshot(report)
+    grade = committed["evidence_grade"]
+    flags = committed["receipt_attestation_verified"]
+    if grade == "release":
+        required = True
+    elif grade == "structural":
+        required = False
+    else:
+        required = bool(flags) and all(flags.values())
+    return {
+        "evidence_grade": grade,
+        "attestations_required": required,
+        "receipt_attestation_verified": {
+            path: required for path in flags
+        },
+    }
+
+
 def committed_rederivation_snapshot(report: dict[str, Any]) -> dict[str, Any]:
     try:
         rows = report["triggers"]
@@ -1396,7 +1477,7 @@ def committed_rederivation_snapshot(report: dict[str, Any]) -> dict[str, Any]:
             + ", ".join(missing)
         )
     try:
-        return {
+        snapshot = {
             "row_count": len(rows),
             "source_dispositions": {
                 row_id: by_id[row_id]["disposition"]
@@ -1410,6 +1491,8 @@ def committed_rederivation_snapshot(report: dict[str, Any]) -> dict[str, Any]:
                 "v2_materialization_implemented"
             ],
         }
+        snapshot.update(committed_evidence_posture_snapshot(report))
+        return snapshot
     except (KeyError, TypeError) as error:
         raise AuditFailure(
             "committed receipt is missing a re-derived field"
@@ -1418,10 +1501,12 @@ def committed_rederivation_snapshot(report: dict[str, Any]) -> dict[str, Any]:
 
 def measurements_rederivation_snapshot(
     measurements: dict[str, Any],
+    *,
+    report: dict[str, Any],
 ) -> dict[str, Any]:
     rows = evaluate(measurements)
     by_id = {row["id"]: row for row in rows}
-    return {
+    snapshot = {
         "row_count": len(rows),
         "source_dispositions": {
             row_id: by_id[row_id]["disposition"]
@@ -1435,6 +1520,8 @@ def measurements_rederivation_snapshot(
             "v2_materialization_implemented"
         ],
     }
+    snapshot.update(rederived_evidence_posture_snapshot(report))
+    return snapshot
 
 
 def source_deterministic_measurements(
@@ -1488,6 +1575,9 @@ def rederivation_mismatches(
         "source_dispositions",
         "trigger_texts",
         "v2_materialization_implemented",
+        "evidence_grade",
+        "attestations_required",
+        "receipt_attestation_verified",
     ):
         if expected[field] != actual[field]:
             mismatches.append(
@@ -1510,7 +1600,8 @@ def run_rederivation(
         raise AuditFailure(f"{receipt}: receipt root must be an object")
     expected = committed_rederivation_snapshot(report)
     actual = measurements_rederivation_snapshot(
-        source_deterministic_measurements(report, runner_receipts_dir)
+        source_deterministic_measurements(report, runner_receipts_dir),
+        report=report,
     )
     mismatches = rederivation_mismatches(expected, actual)
     if mismatches:
@@ -1522,6 +1613,9 @@ def run_rederivation(
         f"(rows={actual['row_count']}, "
         f"source_dispositions={len(actual['source_dispositions'])}, "
         f"triggers={len(actual['trigger_texts'])}, "
+        f"evidence_grade={actual['evidence_grade']}, "
+        "attestations_required="
+        f"{str(actual['attestations_required']).lower()}, "
         "v2_materialization_implemented="
         f"{str(actual['v2_materialization_implemented']).lower()})"
     )
@@ -1609,6 +1703,7 @@ def run_production(
     output: Path,
     *,
     expected_head: str,
+    evidence_grade: str,
     runner_receipts_dir: Path | None = None,
     attestation_bundles_dir: Path | None = None,
     require_attestations: bool = False,
@@ -1617,6 +1712,30 @@ def run_production(
 ) -> int:
     if output.exists():
         raise AuditFailure(f"refusing to overwrite existing evidence: {output}")
+    if evidence_grade not in EVIDENCE_GRADES:
+        raise AuditFailure(
+            "evidence_grade must be structural or release"
+        )
+    if evidence_grade == "release":
+        require_attestations = True
+        if (
+            attestation_bundles_dir is None
+            or not expected_repository
+            or not expected_workflow
+        ):
+            raise AuditFailure(
+                "release evidence requires --attestation-bundles-dir, "
+                "--expected-repository, and --expected-workflow"
+            )
+    elif (
+        require_attestations
+        or attestation_bundles_dir is not None
+        or expected_repository
+        or expected_workflow
+    ):
+        raise AuditFailure(
+            "structural evidence cannot carry authentication arguments"
+        )
     released_commit = require_production_subject(expected_head)
     measurements = production_measurements(
         runner_receipts_dir,
@@ -1630,6 +1749,8 @@ def run_production(
     report = {
         "schema_version": SCHEMA_VERSION,
         "task": "v0.10.1 RECEIPT",
+        "evidence_grade": evidence_grade,
+        "attestations_required": require_attestations,
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "subject": git_subject(),
         "host": {
@@ -1709,6 +1830,14 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--evidence-grade",
+        choices=EVIDENCE_GRADES,
+        help=(
+            "required production evidence posture; release implies "
+            "authenticated receipt verification"
+        ),
+    )
+    parser.add_argument(
         "--attestation-bundles-dir",
         type=Path,
         help="directory containing <receipt-name>.sigstore bundles",
@@ -1732,6 +1861,7 @@ def main() -> int:
             args.subject_root
             or args.runner_receipts_dir
             or args.expected_head
+            or args.evidence_grade
             or args.attestation_bundles_dir
             or args.require_attestations
             or args.expected_repository
@@ -1767,6 +1897,7 @@ def main() -> int:
     if receipt is not None:
         if (
             args.expected_head
+            or args.evidence_grade
             or attestation_bundles_dir is not None
             or args.require_attestations
             or args.expected_repository
@@ -1784,12 +1915,23 @@ def main() -> int:
         raise AuditFailure(
             "--expected-head is required for production audits"
         )
+    if not args.evidence_grade:
+        raise AuditFailure(
+            "--evidence-grade is required for production audits"
+        )
+    require_attestations = args.evidence_grade == "release"
+    if args.require_attestations and args.evidence_grade != "release":
+        raise AuditFailure(
+            "--require-attestations is valid only with "
+            "--evidence-grade release"
+        )
     return run_production(
         args.output.resolve(),
         expected_head=args.expected_head,
+        evidence_grade=args.evidence_grade,
         runner_receipts_dir=runner_receipts_dir,
         attestation_bundles_dir=attestation_bundles_dir,
-        require_attestations=args.require_attestations,
+        require_attestations=require_attestations,
         expected_repository=args.expected_repository,
         expected_workflow=args.expected_workflow,
     )

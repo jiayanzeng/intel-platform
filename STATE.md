@@ -1,6 +1,52 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 MATRIX-ID is complete on the locally released v0.10.2 baseline.** Runner completeness is now an exact seven-identity set, duplicate subjects and content digests are refused, and the accepted record preserves matrix/workflow/repository/event identity. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. The entering local CI result is **19/19** with **99** Rust workspace / **20** net tests; current shell is **160/160** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 AUTH-REQUIRED is complete on the locally released v0.10.2 baseline.** Production deferred audits now require an explicit evidence grade; release grade forces authenticated receipt verification, while structural grade remains token-free. Re-derivation and pin validation enforce the recorded posture. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **167/167** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+
+**v0.10.3 AUTH-REQUIRED is complete (measured 2026-07-26).**
+Production deferred audits require
+`--evidence-grade {structural,release}`. Release grade derives mandatory
+attestation verification and refuses to measure without a bundle directory,
+expected repository, and expected workflow. Structural grade rejects
+authentication arguments, stamps the report explicitly, and remains the
+token-free default selected by the local `./run audit-deferred --output …`
+wrapper.
+
+New reports record `evidence_grade` and `attestations_required` at top level.
+Re-derivation compares both values and every accepted receipt's
+`attestation_verified` flag. Legacy immutable receipts remain byte-exact:
+v0.10.1's unauthenticated posture is derived from its false/missing flags,
+while v0.10.2's authenticated posture is derived from its seven verified
+accepted rows. No legacy report can silently acquire release grade.
+
+Every pinned file now has a manifest grade. The immutable v0.10.1 deferred
+report is `structural`, its real-model report is `supporting`, and the
+immutable v0.10.2 deferred report is `legacy`. A new pin labeled `release`
+must contain a JSON deferred report declaring release grade, requiring
+attestations, and carrying at least one accepted receipt whose bundle name is
+non-empty and whose verification flag is true.
+
+The selected failure-before controls produced **5 failures / 1 pass** under
+the old tooling: production did not require a grade, release posture was not
+re-derived, a tampered legacy authentication declaration was accepted, and
+the pin schema could neither express nor enforce release grade. The genuine
+release re-derivation control already passed its unrelated legacy checks.
+After implementation, all **7/7** selected controls passed. The focused
+deferred-audit and artifact suites passed **47/47** on both Python 3.11.4 and
+3.12.13; both full shell lanes passed **167/167** with the existing single
+Starlette deprecation warning.
+
+The complete permitted `./run ci-local` passed **19/19**: 99 workspace tests,
+20 net tests, warning-denied Rust builds, clippy/fmt, locked Rust 1.78,
+167 Python 3.11 tests, token-free structural re-derivation, golden **11/11**,
+protected evidence **2/2**, and all three pins. Python compilation,
+`bash -n run`, `git diff --check`, and direct manifest validation also passed.
+The immutable v0.10.1 structural report re-derived successfully. Direct
+source re-derivation of the v0.10.2 authenticated report still cannot promote
+its CI row because its seven recorded raw receipts and bundles are absent;
+that is the already-confirmed G4b input gap assigned to EVIDENCE-DURABLE, not
+an inferred pass. No product runtime, dependency, lockfile, architecture,
+protected byte, pinned evidence byte, provider configuration, remote ref, or
+tag changed.
 
 **v0.10.3 MATRIX-ID is complete (measured 2026-07-26).** The count map was
 replaced on the production path by the exact identity set `core`, `golden`,

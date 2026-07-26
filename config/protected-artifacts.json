@@ -104,6 +104,7 @@
   "pinned_files": [
     {
       "path": "evidence/v0.10.1/deferred-audit/report.json",
+      "grade": "structural",
       "sha256": "00cf14ae931b864616e19c437168d9ef8723791ddee6dc7866794f6850319362",
       "bytes": 27786,
       "purpose": "Clean released-commit v0.10.1 deferred-design audit receipt.",
@@ -111,6 +112,7 @@
     },
     {
       "path": "evidence/v0.10.1/real-model-adversarial/report.json",
+      "grade": "supporting",
       "sha256": "beec8bfa87b17c6b0552544fcfc810b517a8a8dd10067e2460dbce7342dda3f7",
       "bytes": 62978,
       "purpose": "Fresh v0.10.1 real-model HC1 adversarial battery.",
@@ -118,6 +120,7 @@
     },
     {
       "path": "evidence/v0.10.2/deferred-audit/report.json",
+      "grade": "legacy",
       "sha256": "4e11a8b3a3a64b5519469289f5cdf246bf13a0045954aa22c38703bbe6d29d9b",
       "bytes": 28968,
       "purpose": "Authenticated hosted-runner deferred-design audit for the immutable v0.10.1 release.",

@@ -601,7 +601,11 @@ def test_production_rejects_wrong_head_before_measurement(
         audit_deferred.AuditFailure,
         match=rf"subject HEAD mismatch: expected {ancestor}, actual {head}",
     ):
-        audit_deferred.run_production(output, expected_head=ancestor)
+        audit_deferred.run_production(
+            output,
+            expected_head=ancestor,
+            evidence_grade="structural",
+        )
 
     assert measured is False
     assert not output.exists()
@@ -632,7 +636,11 @@ def test_production_rejects_dirty_tree_before_measurement(
         audit_deferred.AuditFailure,
         match="subject worktree is dirty.*tracked.txt",
     ):
-        audit_deferred.run_production(output, expected_head=head)
+        audit_deferred.run_production(
+            output,
+            expected_head=head,
+            evidence_grade="structural",
+        )
 
     assert measured is False
     assert not output.exists()
@@ -664,9 +672,18 @@ def test_production_clean_matching_subject_writes_report(
         },
     )
 
-    assert audit_deferred.run_production(output, expected_head=head) == 0
+    assert (
+        audit_deferred.run_production(
+            output,
+            expected_head=head,
+            evidence_grade="structural",
+        )
+        == 0
+    )
 
     report = json.loads(output.read_text())
+    assert report["evidence_grade"] == "structural"
+    assert report["attestations_required"] is False
     assert report["subject"]["head_commit"] == head
     assert report["subject"]["worktree_dirty"] is False
     assert measured_with["released_commit"] == head
@@ -690,6 +707,124 @@ def test_production_cli_requires_expected_head(tmp_path: Path) -> None:
     assert not output.exists()
 
 
+def test_production_cli_requires_evidence_grade(tmp_path: Path) -> None:
+    output = tmp_path / "ungraded.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TOOL),
+            "--output",
+            str(output),
+            "--expected-head",
+            "0" * 40,
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 2
+    assert (
+        "audit-deferred: FAIL: --evidence-grade is required "
+        "for production audits"
+    ) in result.stderr
+    assert not output.exists()
+
+
+def test_release_grade_requires_authentication_inputs(
+    tmp_path: Path,
+) -> None:
+    output = tmp_path / "release.json"
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match="release evidence requires",
+    ):
+        audit_deferred.run_production(
+            output,
+            expected_head="0" * 40,
+            evidence_grade="release",
+        )
+
+    assert not output.exists()
+
+
+def test_rederivation_rejects_release_grade_without_attestations(
+    tmp_path: Path,
+) -> None:
+    report = json.loads(COMMITTED_RECEIPT.read_text())
+    report["evidence_grade"] = "release"
+    report["attestations_required"] = False
+    changed = tmp_path / "false-release-posture.json"
+    changed.write_text(json.dumps(report) + "\n")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TOOL),
+            "--rederive",
+            str(changed),
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "REDERIVATION MISMATCH attestations_required" in result.stderr
+
+
+def test_rederivation_rejects_tampered_legacy_authentication_posture(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report = json.loads(
+        (
+            ROOT
+            / "evidence"
+            / "v0.10.2"
+            / "deferred-audit"
+            / "report.json"
+        ).read_text()
+    )
+    report["measurements"]["ci_runner"]["attestations_required"] = False
+    changed = tmp_path / "tampered-legacy-posture.json"
+    changed.write_text(json.dumps(report) + "\n")
+    monkeypatch.setattr(
+        audit_deferred,
+        "source_deterministic_measurements",
+        lambda current, _: current["measurements"],
+    )
+
+    assert audit_deferred.run_rederivation(changed) == 1
+
+
+def test_release_grade_rederivation_passes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report = json.loads(COMMITTED_RECEIPT.read_text())
+    report["evidence_grade"] = "release"
+    report["attestations_required"] = True
+    report["measurements"]["ci_runner"]["attestations_required"] = True
+    for receipt in report["measurements"]["ci_runner"][
+        "accepted_runner_receipts"
+    ]:
+        receipt["attestation_bundle"] = f"{receipt['path']}.sigstore"
+        receipt["attestation_verified"] = True
+    release_report = tmp_path / "release.json"
+    release_report.write_text(json.dumps(report) + "\n")
+    monkeypatch.setattr(
+        audit_deferred,
+        "source_deterministic_measurements",
+        lambda current, _: current["measurements"],
+    )
+
+    assert audit_deferred.run_rederivation(release_report) == 0
+
+
 def test_run_wrapper_defaults_to_released_commit() -> None:
     source = RUN.read_text()
 
@@ -698,6 +833,7 @@ def test_run_wrapper_defaults_to_released_commit() -> None:
         'e5af6bc5df8261cc004bd4d3247b70f8cbe930bb"'
     ) in source
     assert '--expected-head "$DEFERRED_AUDIT_RELEASE_COMMIT"' in source
+    assert "--evidence-grade structural" in source
 
 
 def test_zero_runner_receipts_defer_under_restated_trigger() -> None:
@@ -813,6 +949,9 @@ def test_on_site_production_measurements_match_committed_receipt() -> None:
         released_commit=report["subject"]["head_commit"],
         legacy_job_counts=audit_deferred.LEGACY_RUNNER_JOB_COUNTS,
     )
-    actual = audit_deferred.measurements_rederivation_snapshot(measured)
+    actual = audit_deferred.measurements_rederivation_snapshot(
+        measured,
+        report=report,
+    )
 
     assert audit_deferred.rederivation_mismatches(expected, actual) == []

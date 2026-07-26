@@ -276,7 +276,7 @@ def _validate_pinned_file(value: Any, index: int) -> dict[str, Any]:
         raise ManifestError(f"{context}: expected an object")
     _exact_keys(
         value,
-        {"path", "sha256", "bytes", "purpose", "provenance"},
+        {"path", "grade", "sha256", "bytes", "purpose", "provenance"},
         context,
     )
     raw_path = _non_empty_string(value["path"], f"{context}.path")
@@ -295,6 +295,12 @@ def _validate_pinned_file(value: Any, index: int) -> dict[str, Any]:
             f"{context}.path: pinned files must live beneath evidence/"
         )
     _sha256_string(value["sha256"], f"{context}.sha256")
+    grade = _non_empty_string(value["grade"], f"{context}.grade")
+    if grade not in {"structural", "release", "supporting", "legacy"}:
+        raise ManifestError(
+            f"{context}.grade: expected structural, release, supporting, "
+            "or legacy"
+        )
     _non_negative_int(value["bytes"], f"{context}.bytes")
     _non_empty_string(value["purpose"], f"{context}.purpose")
     _non_empty_string(value["provenance"], f"{context}.provenance")
@@ -370,6 +376,63 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _validate_release_grade_report(relative: str, path: Path) -> bool:
+    try:
+        report = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        print(
+            f"PIN MISMATCH {relative} field=evidence_grade: "
+            f"release-grade report is not readable JSON: {error}",
+            file=sys.stderr,
+        )
+        return False
+    if not isinstance(report, dict):
+        print(
+            f"PIN MISMATCH {relative} field=evidence_grade: "
+            "release-grade report root is not an object",
+            file=sys.stderr,
+        )
+        return False
+    if report.get("evidence_grade") != "release":
+        print(
+            f"PIN MISMATCH {relative} field=evidence_grade "
+            f"expected='release' actual={report.get('evidence_grade')!r}",
+            file=sys.stderr,
+        )
+        return False
+    if report.get("attestations_required") is not True:
+        print(
+            f"PIN MISMATCH {relative} field=attestations_required "
+            "expected=true",
+            file=sys.stderr,
+        )
+        return False
+    try:
+        accepted = report["measurements"]["ci_runner"][
+            "accepted_runner_receipts"
+        ]
+    except (KeyError, TypeError):
+        accepted = None
+    if (
+        not isinstance(accepted, list)
+        or not accepted
+        or any(
+            not isinstance(receipt, dict)
+            or receipt.get("attestation_verified") is not True
+            or not isinstance(receipt.get("attestation_bundle"), str)
+            or not receipt["attestation_bundle"]
+            for receipt in accepted
+        )
+    ):
+        print(
+            f"PIN MISMATCH {relative} field=accepted_runner_receipts: "
+            "release grade requires non-empty, verified bundle records",
+            file=sys.stderr,
+        )
+        return False
+    return True
+
+
 def validate_pinned_files(manifest: dict[str, Any], root: Path) -> int:
     failures = 0
     for pinned_file in manifest["pinned_files"]:
@@ -402,6 +465,8 @@ def validate_pinned_files(manifest: dict[str, Any], root: Path) -> int:
             pinned_file["bytes"],
             actual_bytes,
         )
+        if file_ok and pinned_file["grade"] == "release":
+            file_ok &= _validate_release_grade_report(relative, resolved)
         if file_ok:
             print(
                 f"PIN MATCH {relative} "

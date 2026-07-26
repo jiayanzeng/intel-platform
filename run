@@ -471,18 +471,22 @@ cmd_audit_deferred() {
   step "protected artifacts before deferred-trigger audit"
   cmd_verify_artifacts
   step "executable deferred-trigger audit"
-  local status production=0 expected_head=0 argument
+  local status production=0 expected_head=0 evidence_grade=0 argument
   local audit_args=("$@")
   for argument in "$@"; do
     case "$argument" in
       --output|--output=*) production=1 ;;
       --expected-head|--expected-head=*) expected_head=1 ;;
+      --evidence-grade|--evidence-grade=*) evidence_grade=1 ;;
     esac
   done
   if [ "$production" = "1" ] && [ "$expected_head" = "0" ]; then
     audit_args+=(
       --expected-head "$DEFERRED_AUDIT_RELEASE_COMMIT"
     )
+  fi
+  if [ "$production" = "1" ] && [ "$evidence_grade" = "0" ]; then
+    audit_args+=(--evidence-grade structural)
   fi
   if python3 tools/audit_deferred.py "${audit_args[@]}"; then
     status=0

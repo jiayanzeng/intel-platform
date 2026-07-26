@@ -350,6 +350,7 @@ def test_pinned_evidence_file_is_checked_by_validate(tmp_path: Path) -> None:
     manifest["pinned_files"].append(
         {
             "path": "evidence/report.json",
+            "grade": "supporting",
             "sha256": _sha256(report),
             "bytes": report.stat().st_size,
             "purpose": "corpus-free evidence hash-pin control",
@@ -375,6 +376,7 @@ def test_pinned_evidence_file_must_stay_beneath_evidence(
     manifest["pinned_files"].append(
         {
             "path": "outside.json",
+            "grade": "supporting",
             "sha256": "1" * 64,
             "bytes": 1,
             "purpose": "unsafe path control",
@@ -421,3 +423,85 @@ def test_committed_deferred_receipt_pin_rejects_one_byte_mutation(
         "MISMATCH evidence/v0.10.1/deferred-audit/report.json field=sha256"
         in changed.stderr
     )
+
+
+def _append_report_pin(
+    manifest: dict[str, Any],
+    report: Path,
+    *,
+    grade: str,
+) -> None:
+    manifest["pinned_files"].append(
+        {
+            "path": str(report.relative_to(report.parents[1])),
+            "grade": grade,
+            "sha256": _sha256(report),
+            "bytes": report.stat().st_size,
+            "purpose": "deferred-audit evidence-grade control",
+            "provenance": "created inside one disposable pytest directory",
+        }
+    )
+
+
+def test_structural_report_cannot_be_pinned_as_release_grade(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    evidence_dir = tmp_path / "evidence"
+    evidence_dir.mkdir()
+    report = evidence_dir / "report.json"
+    report.write_text(
+        json.dumps(
+            {
+                "evidence_grade": "structural",
+                "attestations_required": False,
+                "measurements": {
+                    "ci_runner": {"accepted_runner_receipts": []}
+                },
+            }
+        )
+        + "\n"
+    )
+    _append_report_pin(manifest, report, grade="release")
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode == 1
+    assert (
+        "PIN MISMATCH evidence/report.json field=evidence_grade"
+        in checked.stderr
+    )
+
+
+def test_genuine_release_grade_report_pin_validates(tmp_path: Path) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    evidence_dir = tmp_path / "evidence"
+    evidence_dir.mkdir()
+    report = evidence_dir / "report.json"
+    report.write_text(
+        json.dumps(
+            {
+                "evidence_grade": "release",
+                "attestations_required": True,
+                "measurements": {
+                    "ci_runner": {
+                        "accepted_runner_receipts": [
+                            {
+                                "attestation_bundle": "receipt.sigstore",
+                                "attestation_verified": True,
+                            }
+                        ]
+                    }
+                },
+            }
+        )
+        + "\n"
+    )
+    _append_report_pin(manifest, report, grade="release")
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode == 0, checked.stderr
+    assert "PIN MATCH evidence/report.json" in checked.stdout
