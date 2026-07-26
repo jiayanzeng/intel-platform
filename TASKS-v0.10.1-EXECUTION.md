@@ -680,7 +680,7 @@ tag on one commit · golden 11/11 · protected 2/2 · `ci-local` 19/19.
 - [x] **PIN** — receipt (and X1) hash-pinned; source-deterministic re-derivation job green in ci-local and ci.yml; count 18→19; `production_measurements()` exercised on-site
 - [x] **X-REGEN** — fresh no-resume battery, every counted attempt model-completed, positive control fired; fresh versioned evidence path
 - [x] **HERM** — constraints drift test hermetic; hermeticity regression fail-before/pass-after
-- [ ] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.1` tagged
+- [x] **R-CLOSE** — release disposition recorded and, if applicable, `v0.10.1` tagged
 
 ---
 
@@ -759,3 +759,47 @@ records, `sha256(tools/audit_deferred.py) == 16a42090…` matching the shipped
 receipt's `measured_source_sha256`, and `#[cfg(test)] mod tests` as the last item
 in `sqlite.rs` (1073 → 1582), which closes the v0.8 `items_after_test_module`
 open item for good.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-26
+- **Release disposition:** release
+- **Release:** `v0.10.1`
+- **Release commit:** `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`
+- **Annotated tag object:** `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79`
+
+The ten executed task records resolve to these implementation commits:
+
+- E0 — `30b6a83fb97567e24d836dbee8941e453e8c63cb`
+  (after the dirty-input correction at
+  `f56d2c40ec1a7a9b3f2bbfcf4037ed151ec469f8`)
+- X-VALID — `22c8c93c319fa5bd19f78bf34c25621bd03c398e`
+- X-CTRL — `aa3232695230f5392d37df096d5ea07fe6837c4f`
+- CIR — `40778a4aae72e87d03f1370db5169092c989769b`
+- G-RUN — `d5c2935ca8d20395728bb686b5e25f015eb59c0d`
+- RECEIPT — `6ad0dbd771d11e980af65258003990a528f00852`
+- PIN — `edd77a4835057fb0a0836b39600cbe54a88b5092`
+- X-REGEN — `2613f5c05cf579273965467984d847ff2efb68fb`
+- HERM — `156a45bd729a93b900187375d36da2d9a6981282`
+- R-CLOSE/release — `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`
+
+The operator selected v0.10.1 because the complete 35-path cycle diff changes
+operations, executable evidence, and test hermeticity only. It does not change
+public or internal API behavior, runtime behavior, storage paths, database
+schema, cache representation, licensing outcomes, or retrieval outputs, so a
+patch release accurately describes the shipped delta. `STATE.md` classifies
+all 35 paths exactly once. The five version authorities agree at 0.10.1, the
+changelog records the cycle, and Cargo mechanically changed only the `cored`
+package version in the lockfile.
+
+Carried dispositions are explicit. The fresh real-model matrix completed 45/45
+target-valid, model-completed cells as `NOT EXERCISED`, with zero `LEAK`; this
+is an observed resistance result, not a universal no-leak claim. Its separate
+real-handler positive control emitted `GUARD FIRED`. The corrected deferred
+receipt promotes the CI-runner evidence and future `/view` materialization rows
+and defers the other five rows under their measured triggers. T7
+single-flight, Postgres, pgvector, multi-host seam hardening, and the A4
+untrusted-shell boundary therefore remain deferred. The release commit
+contains the classified diff, agreeing authorities, changelog, and
+mechanically updated lockfile; this later append-only closing record does not
+move the tag.

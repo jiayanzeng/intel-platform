@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **R-CLOSE release candidate approved; final release verification and tag creation are in progress.** All implementation/evidence tasks through HERM are complete. The candidate changes operations, executable evidence, and test hermeticity only; public/runtime behavior, database schema, cache representation, licensing boundaries, and golden outputs are unchanged. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN completed **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports are hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. The five release authorities are being advanced together to 0.10.1; the annotated tag will be placed only after the release commit exists. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no current release push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.1 is released locally and its cycle closing record is complete.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit record does not move it. The release changes operations, executable evidence, and test hermeticity only; public/runtime behavior, database schema, cache representation, licensing boundaries, and golden outputs are unchanged. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN completed **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports are hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no v0.10.1 push is authorized.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -479,8 +479,8 @@ suite passed **138/138**. Golden remained **11/11** and protected databases
 remained exact **2/2**. No pin, declared dependency, runtime behavior, public
 surface, architecture, protected byte, or evidence report changed.
 
-**v0.10.1 R-CLOSE selected a patch release and the release candidate is in
-progress (measured 2026-07-26).** The operator explicitly approved release
+**v0.10.1 R-CLOSE selected and created the patch release (measured
+2026-07-26).** The operator explicitly approved release
 `v0.10.1`. The gate permits release because X-REGEN completed all **45/45**
 target-valid, model-completed cells with zero `LEAK`, while the real-handler
 positive control independently emitted `GUARD FIRED`. The patch disposition
@@ -489,7 +489,7 @@ evidence, and test hermeticity, but does not change public or internal API
 behavior, runtime behavior, storage paths, database schema, cache
 representation, licensing outcomes, or retrieval outputs.
 
-The complete `v0.10.0..release-candidate` diff contains **35 paths**, each
+The complete `v0.10.0..v0.10.1` diff contains **35 paths**, each
 classified exactly once:
 
 - **public/release metadata (5):** `CHANGELOG.md`, `Cargo.lock`,
@@ -527,8 +527,11 @@ literal, `STATE.md` header, and newest `CHANGELOG.md` heading — now read
 The changelog records the runner receipts, evidence pins/re-derivation,
 adversarial validity and control hardening, hermetic Python inventory, Finder
 hygiene, and every carried disposition. The exact release commit and annotated
-tag object will be recorded after the full candidate verification succeeds;
-the separate closing record will not move the tag.
+tag object are
+`e5af6bc5df8261cc004bd4d3247b70f8cbe930bb` and
+`8ded63f79ed12b4180e8bcd0bcff4ef30a080a79`, respectively. The annotation is
+`intel-platform v0.10.1`, the tag object dereferences exactly to that release
+commit, and the separate closing record does not move it.
 
 The release failure control changed only
 `shell/intel_shell/__init__.py` from 0.10.1 to 9.9.9.
@@ -548,6 +551,16 @@ single third-party Starlette warning. Standalone
 `evidence_artifacts.py validate` passed schema 2 with two artifacts and two
 pinned files, `./run verify-artifacts` again measured exact **2/2**, and
 `git diff --check` passed.
+
+With the R-CLOSE box checked, the exact closing record appended, and the
+R-CLOSE progress entry present, the closed-state `./run ci-local` again passed
+all **19/19** jobs. `cycle-check` reported v0.10.1 closed with six closed
+execution runbooks; `checklist-audit` resolved **62/62** checked tasks with
+zero exemptions; `progress-check` resolved R-CLOSE to the release commit;
+version-check matched the exact release tag; golden remained **11/11**; and
+protected artifacts remained **2/2**. The independent closed-state Python
+3.12.13 lane also passed **138/138**. The audit commit that records these
+measurements intentionally follows the release tag and does not move it.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

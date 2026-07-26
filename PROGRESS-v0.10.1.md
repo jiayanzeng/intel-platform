@@ -370,3 +370,74 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. The full matrix passed 11/11.
 - protected artifact delta: none. Both pinned JSON files matched and
   `./run verify-artifacts` passed exact protected databases 2/2.
+
+### 2026-07-26 · R-CLOSE — v0.10.1 release identity created
+
+- owner: Codex
+- commit: e5af6bc5df8261cc004bd4d3247b70f8cbe930bb
+- result: PASS. The operator approved v0.10.1 because the cycle changes
+  operations, executable evidence, and test hermeticity only. Public and
+  internal API behavior, runtime behavior, storage paths, database schema,
+  cache representation, licensing outcomes, and retrieval outputs are
+  unchanged, so the patch disposition accurately describes the shipped delta.
+- release identity: PASS. `v0.10.1` is annotated tag object
+  `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79`, which dereferences exactly to
+  release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`. The annotation is
+  `intel-platform v0.10.1`; this later audit record does not move the tag.
+- diff inventory: PASS. All 35 paths in `v0.10.0..v0.10.1` are classified
+  exactly once in `STATE.md`: five public/release metadata, six
+  operations/repository-hygiene, 18 executable evidence/controls, six
+  documentation/task metadata, and zero runtime/storage/internal-API paths.
+- version authorities: PASS. Rust package, Python package, FastAPI literal,
+  `STATE.md`, and newest changelog heading all read 0.10.1. Cargo mechanically
+  changed only the `cored` package version in `Cargo.lock`; no dependency
+  resolution moved.
+- mismatch control: PASS. A temporary Python package value of 9.9.9 made
+  `./run version-check` exit 1 and name
+  `shell/intel_shell/__init__.py: 9.9.9`. Restoration returned SHA-256
+  `4e365b85f228cbbd61311413e9fc828253203187578153a067293fa46ada0090`,
+  identical to the pre-control hash, and the checker passed again.
+- carried dispositions: the fresh real-model matrix completed 45/45
+  target-valid, model-completed cells as `NOT EXERCISED`, with zero `LEAK`;
+  this is observed resistance rather than a universal no-leak claim. Its
+  independent real-handler positive control emitted `GUARD FIRED`. The
+  corrected deferred audit promotes the CI-runner evidence and future `/view`
+  materialization rows while leaving the other five rows deferred under their
+  measured triggers.
+- candidate acceptance: PASS. Before the release commit, `./run ci-local`
+  passed 19/19 with 99 workspace tests, 20 net tests, warning-denied builds,
+  clippy/fmt, Rust 1.78, 138 Python 3.11 shell tests, golden 11/11, protected
+  artifacts 2/2, pins/re-derivation, fingerprints, and lifecycle auditors. The
+  independent Python 3.12.13 lane passed 138/138 with the same single
+  third-party Starlette warning. Standalone manifest validation and protected
+  verification also passed.
+- golden-E2E delta: none. The release-candidate matrix passed 11/11 with the
+  exact 13 → 12 corpus, hamming-12 near-duplicate pair, DeepSeek z=10.0, +0
+  rerun, one quant document, and four-citation public answer anchors.
+- protected artifact delta: none. Both pinned JSON files matched and the two
+  protected databases remained exact 2/2 with unchanged corpus facts.
+- final closure audit: PASS. Against the checked runbook, exact closing record,
+  and this R-CLOSE entry, `./run ci-local` passed 19/19; `cycle-check` reported
+  v0.10.1 closed with six closed execution runbooks; `checklist-audit` resolved
+  62/62 checked tasks; `progress-check` resolved the release commit;
+  version-check matched the exact HEAD tag; golden remained 11/11; protected
+  artifacts remained 2/2; and the separate Python 3.12.13 lane passed 138/138.
+- exact commands:
+
+  ```bash
+  git diff --name-status v0.10.0
+  cargo check -p cored
+  shasum -a 256 shell/intel_shell/__init__.py
+  ./run version-check
+  ./run ci-local
+  PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
+  python3 tools/evidence_artifacts.py validate
+  ./run verify-artifacts
+  git tag -a v0.10.1 -m 'intel-platform v0.10.1'
+  git rev-parse 'v0.10.1^{tag}'
+  git rev-parse 'v0.10.1^{commit}'
+  git cat-file -t v0.10.1
+  ./run cycle-check
+  ./run checklist-audit
+  ./run progress-check
+  ```
