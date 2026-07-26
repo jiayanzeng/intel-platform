@@ -2,6 +2,27 @@
 
 **As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.1 is released locally and its cycle closing record is complete.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit record does not move it. The release changes operations, executable evidence, and test hermeticity only; public/runtime behavior, database schema, cache representation, licensing boundaries, and golden outputs are unchanged. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **138/138** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN completed **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Both v0.10.1 JSON reports are hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no v0.10.1 push is authorized.
 
+**v0.10.2 cycle activation is complete; E0 has not yet run (measured
+2026-07-26).** The first read-only session opener stopped at E0's clean-tree
+gate because the operator-supplied `TASKS-v0.10.2-EXECUTION.md` was untracked
+and `AGENTS.md` correctly still declared the latest closed cycle, v0.10.1.
+HEAD was `384662d673a33a6f181358304bb5daed08eac0fc`, described as
+`v0.10.1-1-g384662d`; local `main` was 12 ahead / 0 behind
+`origin/main` at `5bcabcb870a906b0b830bf3c8c391bbe3ced71b0`. Annotated tag
+object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` still dereferenced
+exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`.
+
+The operator approved the review correction. Implementation commit
+`c0b2856fea45b576c63e4b6507e4bf9e277fe145` admitted the runbook,
+declared v0.10.2 active, created its append-only progress log, distinguished
+structural receipt validation from authenticated producer evidence, and fixed
+PUBLISH so the hardened workflow is published before it audits the immutable
+v0.10.1 release checkout. `./run cycle-check` passed with v0.10.2 open and six
+closed execution runbooks; `./run checklist-audit` resolved the entering
+62/62 checked tasks with zero exemptions. No test, golden, artifact, hosted
+runner, publication, or tunnel claim is made by this preparatory correction.
+E0 restarts from the clean post-audit tree.
+
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
 `6c53d8585d43d46723a83ba1635012b7ab00671f`
