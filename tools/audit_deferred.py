@@ -42,7 +42,18 @@ RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
 SCHEMA_VERSION = 2
-EXPECTED_RUNNER_JOB_COUNTS = {
+EXPECTED_RUNNER_JOB_IDENTITIES = frozenset(
+    {
+        ("core", None),
+        ("golden", None),
+        ("lint", None),
+        ("msrv", None),
+        ("net", None),
+        ("shell", "python=3.11"),
+        ("shell", "python=3.12"),
+    }
+)
+LEGACY_RUNNER_JOB_COUNTS = {
     "core": 1,
     "golden": 1,
     "lint": 1,
@@ -753,9 +764,11 @@ def runner_receipt_measurement(
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
     attestation_verifier: Callable[[Path, Path, str, str], None] | None = None,
+    legacy_job_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
-    """Accept only one complete successful matrix for the released commit."""
+    """Accept exactly one successful receipt per declared runner identity."""
     candidates: list[dict[str, Any]] = []
+    candidate_digests: list[str] = []
     rejected: list[dict[str, Any]] = []
     matrix_findings: list[str] = []
     released_commit = released_commit.lower()
@@ -782,6 +795,8 @@ def runner_receipt_measurement(
         "runner_os",
         "completed_at",
     )
+    if legacy_job_counts is None:
+        required += ("workflow", "repository", "event_sha")
     for path in receipts:
         shown = _display_receipt_path(
             path,
@@ -824,6 +839,66 @@ def runner_receipt_measurement(
                 }
             )
             continue
+        job = str(receipt["job"])
+        if legacy_job_counts is not None:
+            matrix_value = receipt.get("matrix")
+            matrix = matrix_value if isinstance(matrix_value, str) else None
+        else:
+            declared_matrices = {
+                matrix
+                for expected_job, matrix in EXPECTED_RUNNER_JOB_IDENTITIES
+                if expected_job == job and matrix is not None
+            }
+            if not any(
+                expected_job == job
+                for expected_job, _ in EXPECTED_RUNNER_JOB_IDENTITIES
+            ):
+                rejected.append(
+                    {
+                        "path": shown,
+                        "sha": sha,
+                        "reason": f"unknown runner job: {job}",
+                    }
+                )
+                continue
+            if declared_matrices:
+                matrix = receipt.get("matrix")
+                if not isinstance(matrix, str) or not matrix.strip():
+                    rejected.append(
+                        {
+                            "path": shown,
+                            "sha": sha,
+                            "reason": (
+                                f"matrix job {job} is missing required matrix"
+                            ),
+                        }
+                    )
+                    continue
+                if matrix not in declared_matrices:
+                    rejected.append(
+                        {
+                            "path": shown,
+                            "sha": sha,
+                            "reason": (
+                                f"matrix job {job} has unknown matrix value: "
+                                f"{matrix}"
+                            ),
+                        }
+                    )
+                    continue
+            else:
+                matrix = None
+                if "matrix" in receipt:
+                    rejected.append(
+                        {
+                            "path": shown,
+                            "sha": sha,
+                            "reason": (
+                                f"single-leg job {job} must not carry matrix"
+                            ),
+                        }
+                    )
+                    continue
         if re.fullmatch(r"[0-9a-f]{40,64}", sha) is None:
             rejected.append(
                 {
@@ -875,6 +950,7 @@ def runner_receipt_measurement(
         accepted = {
             "path": shown,
             **{field: receipt[field] for field in required},
+            "matrix": matrix,
         }
         if require_attestations:
             assert attestation_bundles_dir is not None
@@ -939,6 +1015,7 @@ def runner_receipt_measurement(
             accepted["attestation_bundle"] = bundle.name
             accepted["attestation_verified"] = True
         candidates.append(accepted)
+        candidate_digests.append(sha256(path))
 
     run_keys = {
         (str(receipt["run_id"]), str(receipt["run_attempt"]))
@@ -949,25 +1026,73 @@ def runner_receipt_measurement(
             "structurally valid receipts do not share a single "
             "run_id/run_attempt"
         )
-    actual_counts = {
-        job: sum(str(receipt["job"]) == job for receipt in candidates)
-        for job in EXPECTED_RUNNER_JOB_COUNTS
-    }
-    unknown_jobs = sorted(
-        {
-            str(receipt["job"])
-            for receipt in candidates
-            if str(receipt["job"]) not in EXPECTED_RUNNER_JOB_COUNTS
+    if legacy_job_counts is not None:
+        actual_counts = {
+            job: sum(str(receipt["job"]) == job for receipt in candidates)
+            for job in legacy_job_counts
         }
-    )
-    if candidates and (
-        actual_counts != EXPECTED_RUNNER_JOB_COUNTS or unknown_jobs
-    ):
-        matrix_findings.append(
-            "runner receipt job counts do not match expected matrix: "
-            f"expected={EXPECTED_RUNNER_JOB_COUNTS}, "
-            f"actual={actual_counts}, unknown={unknown_jobs}"
+        unknown_jobs = sorted(
+            {
+                str(receipt["job"])
+                for receipt in candidates
+                if str(receipt["job"]) not in legacy_job_counts
+            }
         )
+        if candidates and (
+            actual_counts != legacy_job_counts or unknown_jobs
+        ):
+            matrix_findings.append(
+                "legacy runner receipt job counts do not match expected "
+                f"matrix: expected={legacy_job_counts}, "
+                f"actual={actual_counts}, unknown={unknown_jobs}"
+            )
+        matrix_contract = {"expected_job_counts": legacy_job_counts}
+    else:
+        identity_counts: dict[tuple[str, str | None], int] = {}
+        for receipt in candidates:
+            identity = (str(receipt["job"]), receipt["matrix"])
+            identity_counts[identity] = identity_counts.get(identity, 0) + 1
+        for (job, matrix), count in sorted(
+            identity_counts.items(),
+            key=lambda item: (item[0][0], item[0][1] or ""),
+        ):
+            if count > 1:
+                matrix_findings.append(
+                    "duplicate runner receipt subject: "
+                    f"job={job}, matrix={matrix!r}, count={count}"
+                )
+        digest_counts: dict[str, int] = {}
+        for digest in candidate_digests:
+            digest_counts[digest] = digest_counts.get(digest, 0) + 1
+        for digest, count in sorted(digest_counts.items()):
+            if count > 1:
+                matrix_findings.append(
+                    "duplicate runner receipt content digest: "
+                    f"sha256={digest}, count={count}"
+                )
+        actual_identities = set(identity_counts)
+        if actual_identities != EXPECTED_RUNNER_JOB_IDENTITIES:
+            missing = sorted(
+                EXPECTED_RUNNER_JOB_IDENTITIES - actual_identities,
+                key=lambda identity: (identity[0], identity[1] or ""),
+            )
+            unexpected = sorted(
+                actual_identities - EXPECTED_RUNNER_JOB_IDENTITIES,
+                key=lambda identity: (identity[0], identity[1] or ""),
+            )
+            matrix_findings.append(
+                "runner receipt identities do not match expected matrix: "
+                f"missing={missing}, unexpected={unexpected}"
+            )
+        matrix_contract = {
+            "expected_job_identities": [
+                {"job": job, "matrix": matrix}
+                for job, matrix in sorted(
+                    EXPECTED_RUNNER_JOB_IDENTITIES,
+                    key=lambda identity: (identity[0], identity[1] or ""),
+                )
+            ]
+        }
     if not candidates and receipts:
         matrix_findings.append("no valid receipts remain for matrix validation")
     matrix_complete = bool(candidates) and not matrix_findings
@@ -975,7 +1100,7 @@ def runner_receipt_measurement(
     return {
         "audited_head_commit": audited_head,
         "released_commit": released_commit,
-        "expected_job_counts": EXPECTED_RUNNER_JOB_COUNTS,
+        **matrix_contract,
         "runner_receipts": [
             _display_receipt_path(path, repository, logical_receipt_root)
             for path in receipts
@@ -998,6 +1123,7 @@ def ci_runner_measurement(
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
+    legacy_job_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     remote = subprocess.run(
         ["git", "remote", "-v"],
@@ -1038,6 +1164,7 @@ def ci_runner_measurement(
             require_attestations=require_attestations,
             expected_repository=expected_repository,
             expected_workflow=expected_workflow,
+            legacy_job_counts=legacy_job_counts,
         ),
     }
 
@@ -1223,6 +1350,7 @@ def production_measurements(
     require_attestations: bool = False,
     expected_repository: str | None = None,
     expected_workflow: str | None = None,
+    legacy_job_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     return {
         "scheduler": scheduler_measurement(),
@@ -1237,6 +1365,7 @@ def production_measurements(
             require_attestations=require_attestations,
             expected_repository=expected_repository,
             expected_workflow=expected_workflow,
+            legacy_job_counts=legacy_job_counts,
         ),
         "view": view_measurement(),
     }
@@ -1329,6 +1458,12 @@ def source_deterministic_measurements(
             "ci_runner": ci_runner_measurement(
                 report["subject"]["head_commit"],
                 runner_receipts_dir,
+                legacy_job_counts=(
+                    LEGACY_RUNNER_JOB_COUNTS
+                    if "expected_job_identities"
+                    not in committed["ci_runner"]
+                    else None
+                ),
             ),
             "view": view,
         }

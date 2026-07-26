@@ -1,6 +1,46 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 E0 is complete on the locally released v0.10.2 baseline; G1–G6 are confirmed, with G2's drafted grep expectation corrected by measurement.** Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; the later audit and v0.10.3 activation records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. Local CI is **19/19** with **99** Rust workspace / **20** net tests; shell is **156/156** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 MATRIX-ID is complete on the locally released v0.10.2 baseline.** Runner completeness is now an exact seven-identity set, duplicate subjects and content digests are refused, and the accepted record preserves matrix/workflow/repository/event identity. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; later audit and v0.10.3 records do not move it. v0.10.1 is published unchanged. Remote `main` remains reviewed v0.10.2 Step 5 audit record `817e7f3e7c1878c18f474532df4d50c2b17fcbdc`; no remote v0.10.2 tag exists. The entering local CI result is **19/19** with **99** Rust workspace / **20** net tests; current shell is **160/160** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. All three JSON reports are hash-pinned. Golden is **11/11** and protected evidence is exact **2/2**. No push or hosted dispatch is authorized.
+
+**v0.10.3 MATRIX-ID is complete (measured 2026-07-26).** The count map was
+replaced on the production path by the exact identity set `core`, `golden`,
+`lint`, `msrv`, `net`, `shell/python=3.11`, and `shell/python=3.12`.
+Single-leg jobs must omit `matrix`; shell must carry one of its two declared
+values. Missing, unknown, and unexpected matrix shapes have distinct rejection
+reasons. The accepted rows now retain `matrix`, `workflow`, `repository`, and
+`event_sha`.
+
+The guard rejects a repeated `(job, matrix)` subject and separately rejects
+identical receipt content digests even under different filenames. Any duplicate,
+missing identity, unexpected identity, mixed run id/attempt, rejected receipt,
+or incomplete identity set yields zero observed executions and an empty
+accepted set. The workflow already emitted `matrix` on the shell job only; an
+executable source assertion now pins that shape.
+
+The permanent authenticated duplicated-leg control copied the Python 3.11
+receipt bytes over the Python 3.12 filename while supplying all seven synthetic
+bundles. Against the old guard, the selected control set failed **5/5**: the
+duplicated set was incorrectly accepted as seven executions, all three malformed
+matrix shapes promoted, and accepted rows lost matrix identity. After the
+change the same set passed **5/5**; the duplicate produced both subject and
+content-digest findings and deferred with zero accepted executions.
+
+Immutable reports and old runner bytes are not rewritten and no matrix is
+inferred from a filename. Source re-derivation detects the absence of the new
+`expected_job_identities` report field and explicitly replays that historical
+report's count contract. The production report-creation path does not expose
+this compatibility option and always emits the exact identity contract. The
+committed v0.10.1 deferred report still re-derived with five source
+dispositions and seven triggers.
+
+The focused deferred-audit suite passed **28/28** on Python 3.11.4 and
+3.12.13. Both full shell lanes passed **160/160** with the existing single
+Starlette deprecation warning. Python compilation and `git diff --check`
+passed. Standalone `./run golden` remained byte-identical at **11/11**.
+Protected databases matched **2/2**, all three JSON pins matched, and manifest
+validation passed. No product runtime, dependency, lockfile, architecture,
+protected byte, evidence pin, provider configuration, remote ref, or tag
+changed.
 
 **v0.10.3 E0 is complete (measured 2026-07-26).** The restarted opener
 produced no `git status --porcelain=v1` output. HEAD was

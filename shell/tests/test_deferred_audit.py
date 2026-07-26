@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -112,23 +113,24 @@ def _receipt(
     run_attempt: str = "1",
     repository: str = "example/repo",
     workflow: str = "CI",
+    matrix: str | None = None,
 ) -> None:
+    receipt = {
+        "run_id": run_id,
+        "run_attempt": run_attempt,
+        "job": job,
+        "workflow": workflow,
+        "repository": repository,
+        "event_sha": sha,
+        "sha": sha,
+        "conclusion": conclusion,
+        "runner_os": "Linux",
+        "completed_at": "2026-07-26T00:00:00Z",
+    }
+    if matrix is not None:
+        receipt["matrix"] = matrix
     path.write_text(
-        json.dumps(
-            {
-                "run_id": run_id,
-                "run_attempt": run_attempt,
-                "job": job,
-                "workflow": workflow,
-                "repository": repository,
-                "event_sha": sha,
-                "sha": sha,
-                "conclusion": conclusion,
-                "runner_os": "Linux",
-                "completed_at": "2026-07-26T00:00:00Z",
-            }
-        )
-        + "\n"
+        json.dumps(receipt) + "\n"
     )
 
 
@@ -139,10 +141,18 @@ def _receipt_matrix(
     omit: str | None = None,
     split_job: str | None = None,
 ) -> list[Path]:
-    jobs = ("core", "golden", "lint", "msrv", "net", "shell", "shell")
+    identities = (
+        ("core", None),
+        ("golden", None),
+        ("lint", None),
+        ("msrv", None),
+        ("net", None),
+        ("shell", "python=3.11"),
+        ("shell", "python=3.12"),
+    )
     paths: list[Path] = []
     omitted = False
-    for index, job in enumerate(jobs):
+    for index, (job, matrix) in enumerate(identities):
         if job == omit and not omitted:
             omitted = True
             continue
@@ -152,6 +162,7 @@ def _receipt_matrix(
             sha,
             job=job,
             run_id="other-run" if job == split_job else "123",
+            matrix=matrix,
         )
         paths.append(path)
     return paths
@@ -247,7 +258,7 @@ def test_failed_receipt_is_visibly_rejected(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     ("omit", "split_job", "finding"),
     [
-        ("golden", None, "job counts"),
+        ("golden", None, "identities"),
         (None, "golden", "single run_id/run_attempt"),
     ],
 )
@@ -309,7 +320,123 @@ def test_complete_release_matrix_from_one_run_promotes(tmp_path: Path) -> None:
     assert len(measurement["accepted_runner_receipts"]) == 7
     assert measurement["rejected_runner_receipts"] == []
     assert measurement["matrix_findings"] == []
+    assert {
+        (receipt["job"], receipt["matrix"])
+        for receipt in measurement["accepted_runner_receipts"]
+    } == {
+        ("core", None),
+        ("golden", None),
+        ("lint", None),
+        ("msrv", None),
+        ("net", None),
+        ("shell", "python=3.11"),
+        ("shell", "python=3.12"),
+    }
+    assert all(
+        {
+            "matrix",
+            "workflow",
+            "repository",
+            "event_sha",
+        }.issubset(receipt)
+        for receipt in measurement["accepted_runner_receipts"]
+    )
     assert row["disposition"] == "promote"
+
+
+def test_authenticated_duplicated_shell_leg_does_not_promote(
+    tmp_path: Path,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipts = _receipt_matrix(tmp_path, head)
+    shell_311 = receipts[-2]
+    shell_312 = receipts[-1]
+    shutil.copyfile(shell_311, shell_312)
+    for receipt in receipts:
+        receipt.with_name(f"{receipt.name}.sigstore").write_text(
+            "synthetic signed bundle\n"
+        )
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        receipts,
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+        attestation_bundles_dir=tmp_path,
+        require_attestations=True,
+        expected_repository="example/repo",
+        expected_workflow=(
+            "github.com/example/repo/.github/workflows/ci.yml"
+        ),
+        attestation_verifier=lambda *_: None,
+    )
+    measurements = control_measurements()
+    measurements["ci_runner"] = measurement
+    row = next(
+        row
+        for row in evaluate(measurements)
+        if row["id"] == "CI-runner evidence"
+    )
+
+    assert measurement["observed_runner_executions"] == 0
+    assert measurement["single_run_matrix_complete"] is False
+    assert measurement["accepted_runner_receipts"] == []
+    assert any(
+        "duplicate runner receipt subject" in finding
+        for finding in measurement["matrix_findings"]
+    )
+    assert any(
+        "duplicate runner receipt content digest" in finding
+        for finding in measurement["matrix_findings"]
+    )
+    assert row["disposition"] == "defer"
+
+
+@pytest.mark.parametrize(
+    ("job", "matrix", "reason"),
+    [
+        ("shell", None, "matrix job shell is missing required matrix"),
+        (
+            "shell",
+            "python=3.13",
+            "matrix job shell has unknown matrix value: python=3.13",
+        ),
+        (
+            "core",
+            "python=3.11",
+            "single-leg job core must not carry matrix",
+        ),
+    ],
+)
+def test_matrix_shape_is_validated_with_distinct_reasons(
+    tmp_path: Path,
+    job: str,
+    matrix: str | None,
+    reason: str,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipts = _receipt_matrix(tmp_path, head)
+    target = next(
+        receipt
+        for receipt in receipts
+        if json.loads(receipt.read_text())["job"] == job
+    )
+    _receipt(target, head, job=job, matrix=matrix)
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        receipts,
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+    )
+
+    assert measurement["observed_runner_executions"] == 0
+    assert measurement["single_run_matrix_complete"] is False
+    assert measurement["accepted_runner_receipts"] == []
+    assert any(
+        rejected["reason"] == reason
+        for rejected in measurement["rejected_runner_receipts"]
+    )
 
 
 def test_authenticated_matrix_requires_every_bundle(tmp_path: Path) -> None:
@@ -603,6 +730,7 @@ def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
     assert workflow.count("if: always()") >= 14
     assert workflow.count("uses: actions/attest-build-provenance@v4") == 7
     assert workflow.count("steps.attest.outputs.bundle-path") == 7
+    assert workflow.count('"matrix": "python=${{ matrix.python-version }}"') == 1
     assert "publish_evidence:" in workflow
     assert "id-token: write" in workflow
     assert "attestations: write" in workflow
@@ -682,7 +810,8 @@ def test_on_site_production_measurements_match_committed_receipt() -> None:
     expected = audit_deferred.committed_rederivation_snapshot(report)
 
     measured = audit_deferred.production_measurements(
-        released_commit=report["subject"]["head_commit"]
+        released_commit=report["subject"]["head_commit"],
+        legacy_job_counts=audit_deferred.LEGACY_RUNNER_JOB_COUNTS,
     )
     actual = audit_deferred.measurements_rederivation_snapshot(measured)
 
