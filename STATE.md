@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, and CIR are complete.** CIR passes **129** shell tests under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. All seven configured `ci.yml` jobs now emit an `if: always()` receipt and persist it with `actions/upload-artifact`; the Python matrix uses distinct artifacts. The auditor keeps the original `evidence/ci-runs/*.json` glob, counts only well-formed receipts whose SHA is an ancestor of the audited HEAD, records every rejection, and no longer treats workflow configuration, the current runner environment, or Git-remote presence as execution. The local measured state remains zero receipts and the CI-runner row honestly defers under the restated trigger; no runner execution is claimed before G-RUN. X-CTRL's real-path positive control traverses FastAPI `/v1/ask` and core HTTP `/attest`, fires `GUARD FIRED`, and gates an all-`NOT EXERCISED` aggregate; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. The clean entering matrix passed **18/18** local CI jobs, **99** Rust workspace tests with 0 _rustc_ warnings, and **20** net-path tests. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative. Annotated tag object `f70fd84ca0995088d2890096f3429bb878409979` still dereferences to release commit `45fa3d49860643fdb2595d82340e364d33566e7d`.
+**As of:** 2026-07-26 · **Version:** v0.10.0 (core-shell) · **Status:** **v0.10.1 E0, X-VALID, X-CTRL, CIR, and G-RUN are complete.** With explicit operator approval, current `main` was fast-forwarded to GitHub and the new workflow definition audited release commit `45fa3d49860643fdb2595d82340e364d33566e7d` in runner run **30187058897**. All seven executable job instances passed, scheduled drift was skipped, and 7/7 uploaded receipts record the release SHA, Linux, and success. The auditor accepts all seven, rejects none, and promotes the CI-runner row for the restated falsifiable trigger. The planted `9.9.9` mismatch at temporary commit `8cceae90debaf7e730bebd7bd6c15183e32a6263` made both runner version-check lanes fail in run **30187207654** while their always-run receipts still uploaded; every other executable lane passed. The throwaway branch is deleted locally and remotely, `main == origin/main == 5bcabcb870a906b0b830bf3c8c391bbe3ced71b0`, and annotated `v0.10.0` still dereferences to `45fa3d49…`. Local CI passes **18/18** with **99** Rust workspace and **20** net-path tests; the shell suite remains **129/129** under both Python 3.11.4 and 3.12.13 with one third-party Starlette warning per lane. X-CTRL's real-path positive control fires `GUARD FIRED`; every attempt records longest-match and `n=8/12/16` telemetry while `ATTEST_NGRAM` remains 16. The isolated normal-mock matrix completed 45/45 cells as `NOT EXERCISED`, so its aggregate is explicitly **WARN**, not pass; no real-provider result is claimed yet. X-VALID continues to require both `target_in_context` and `model_completed` at classify and resume time. Golden is **11/11**, protected evidence is exact **2/2**, and the shipped v0.10 X1 artifact remains explicitly non-conformant at **0/45** model-completed attempts; X-REGEN must start fresh and must not resume it. Static Rust source counts are corrected to 58 `#[test]` + 42 `#[tokio::test]` = 100 test functions and 4 `cfg(feature = "net")` gates; runtime 99/20 remains authoritative.
 
 **v0.10.1 E0's first checkpoint stopped at the clean-tree gate (measured
 2026-07-26).** The session opener ran before any edit. HEAD was
@@ -197,6 +197,88 @@ protected artifacts **2/2** passed. CIR changed only workflow configuration,
 the deferred-audit harness, and its tests: no runtime product path, dependency,
 lockfile, architecture, or protected bytes changed. G-RUN remains an explicit
 operator decision; no push or remote workflow mutation has occurred.
+
+**v0.10.1 G-RUN is complete (measured 2026-07-26).** The operator explicitly
+approved the main push, the release-SHA dispatch, and the temporary planted
+failure branch. Remote `main` was a strict fast-forward from
+`6c53d8585d43fdb2595d82340e364d33566e7d` to
+`5bcabcb870a906b0b830bf3c8c391bbe3ced71b0` with no remote-side divergence.
+The automatic push run
+[30187051942](https://github.com/jiayanzeng/intel-platform/actions/runs/30187051942)
+completed successfully at that new main head.
+
+The required manual runner execution is
+[30187058897](https://github.com/jiayanzeng/intel-platform/actions/runs/30187058897).
+It used the new workflow definition from main while every checkout explicitly
+selected released commit
+`45fa3d49860643fdb2595d82340e364d33566e7d`. It was created at
+04:00:06Z, finished at 04:02:00Z, and concluded success. Per-job results and
+wall durations were:
+
+| runner job | result | duration |
+|---|---:|---:|
+| core (pinned toolchain) | pass | 27s |
+| clippy + fmt (blocking) | pass | 18s |
+| live-fetch path (`--features net`) | pass | 20s |
+| MSRV floor (offline 1.78) | pass | 35s |
+| shell (Python 3.11) | pass | 24s |
+| shell (Python 3.12) | pass | 22s |
+| golden E2E (blocking) | pass | 38s |
+| dependency drift (scheduled only) | skipped | 0s |
+
+The wire logs measured GitHub-hosted Ubuntu **24.04.4 LTS**, runner image
+`ubuntu-24.04` version `20260720.247.2`, Rust **1.91.1**, floor Rust
+**1.78.0**, Python **3.11.15** and **3.12.13**, and ShellCheck **0.9.0**.
+GitHub forced Node-20 actions onto Node 24 and emitted deprecation annotations;
+these were warnings, not job failures.
+
+The seven uploaded artifacts were downloaded into the auditor's unchanged
+`evidence/ci-runs/*.json` input. All seven parse against the strict receipt
+field allowlist, record `run_id:30187058897`, attempt 1, `runner_os:Linux`,
+`conclusion:success`, and the exact release SHA. Their SHA-256 values are:
+
+- core `9158f881eb8d0a8b6102b55df8399256f3df1528e40b63505cca214a1f5e6fbf`
+- lint `c3de9df82d796350d359a2458380626d92a6704474250b369c86fbf5a5197368`
+- net `09a1c05775f6b19cdaf1ba5ef1c1b21626c8c273b883765a0ab129fe04c44789`
+- MSRV `0e4b33c633e10d089eb87a8d61e42f1ae3411fe38a325548d72d6bb5075e089b`
+- shell 3.11 `81741887442241d26379f421ea9a416369084606feb39e49c95fde286f3500d8`
+- shell 3.12 `bcad9bfc2dbd9dfe64b47adec11af2a434aec4301900a2a8a12834023409296c`
+- golden `ab0b968b0d86287c9c200f86c663be1321c18963e61cae8056ed291ac2992511`
+
+Against current main, the ancestry filter accepted 7/7, rejected zero,
+reported `observed_runner_executions:7`,
+`workflow_configuration_counts_as_execution:false`, and promoted CI-runner
+evidence only because a released-commit receipt exists.
+
+The runner/local job sets are recorded as different granularities, not
+equivalent counts. `./run ci-local` passed all **18/18** ordered units. Its
+workspace check/test and persisted-fingerprint units map into runner `core`;
+clippy/fmt into `lint`; net check/test into `net`; floor check/test into
+`msrv`; Python constraints/tests plus version and floor/lint steps into the two
+shell matrix nodes; and golden into `golden`. Local-only blocking units are
+active-cycle consistency, checked-task evidence, exact protected database
+bytes/corpus, and append-only progress. Runner-only coverage is a separate
+Python 3.12 node, manifest-schema/evidence-control steps without protected DB
+bytes, and the scheduled drift node (skipped in this manual run). The runner
+has seven executed nodes plus one scheduled-only node; local CI has eighteen
+finer-grained units.
+
+The failure-capable control changed only
+`shell/intel_shell/__init__.py` from 0.10.0 to 9.9.9 at temporary commit
+`8cceae90debaf7e730bebd7bd6c15183e32a6263`. Local `version-check` first
+exited 1 and named that exact disagreement. Runner
+[30187207654](https://github.com/jiayanzeng/intel-platform/actions/runs/30187207654)
+then failed as required: Python 3.11 failed `release version consistency` in
+9s and Python 3.12 in 8s, each naming `9.9.9`; their receipt emit/upload steps
+still passed. Core, lint, net, MSRV, and golden all passed, proving the failure
+was scoped. The remote and local throwaway branch were deleted after the run.
+Main and the release tag did not move.
+
+The post-control local matrix passed **18/18**, including 129 Python 3.11 shell
+tests, warning-denied Rust builds, golden **11/11**, and protected artifacts
+**2/2**. No runtime product path, dependency, lockfile, architecture, provider
+configuration, or protected bytes changed. The runner-produced receipt files
+are the only new evidence bytes.
 
 **v0.10 B0 is complete (measured 2026-07-25).** The gate found one false
 entering claim before any tracked edit: `git status --porcelain=v1` reported

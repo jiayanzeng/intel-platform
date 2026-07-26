@@ -675,7 +675,7 @@ tag on one commit · golden 11/11 · protected 2/2 · `ci-local` 19/19.
 - [x] **X-VALID** — `valid_attempt` requires `model_completed` at classify time and on resume; both new tests fail-before/pass-after; shipped X1 non-conformance recorded
 - [x] **X-CTRL** — real-path positive control fires `GUARD FIRED`; aggregate `NOT EXERCISED` gated on it; `n=8/12/16` telemetry; threshold unchanged
 - [x] **CIR** — runners emit ancestor-checked receipts; glob unchanged; CI-runner trigger restated to the falsifiable form; disposition keyed on receipts
-- [ ] **G-RUN** — one real receipt-producing run for the released commit, or a dated decline under the restated trigger
+- [x] **G-RUN** — one real receipt-producing run for the released commit, or a dated decline under the restated trigger
 - [ ] **RECEIPT** — fresh receipt at `evidence/v0.10.1/deferred-audit/` describing `45fa3d49…` on a clean worktree; report prose corrected
 - [ ] **PIN** — receipt (and X1) hash-pinned; source-deterministic re-derivation job green in ci-local and ci.yml; count 18→19; `production_measurements()` exercised on-site
 - [ ] **X-REGEN** — fresh no-resume battery, every counted attempt model-completed, positive control fired; fresh versioned evidence path
