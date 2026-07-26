@@ -16,12 +16,11 @@ Task work for this declared cycle is ordered in
 **`TASKS-v0.10.3-EXECUTION.md`**. Every completed step is logged in
 **`PROGRESS-v0.10.3.md`**. The declaration points at the open cycle while work
 remains and at the latest closed cycle after its release record is appended,
-until the operator supplies the next runbook. The finished v0.8, v0.8.1,
-v0.8.2, v0.9, and v0.10 execution runbooks append their dated closing records;
-their progress logs and the full original task documents remain preserved as
-historical rationale. `./run cycle-check` enforces that the declared runbook is
-either open with an unchecked task or closed with one valid release record,
-and that every older runbook is closed.
+until the operator supplies the next runbook. Every older execution runbook
+appends its dated closing record; its progress log and full original task
+document remain preserved as historical rationale. `./run cycle-check`
+enforces that the declared runbook is either open with an unchecked task or
+closed with one valid release record, and that every older runbook is closed.
 
 ## 0. The one rule the others serve
 

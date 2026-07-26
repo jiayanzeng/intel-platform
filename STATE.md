@@ -1,6 +1,77 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.2 (core-shell) · **Status:** **v0.10.3 RE-MEASURE is complete; R-CLOSE awaits an explicit release/no-release disposition.** Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; v0.10.1 remains published unchanged, v0.10.2 remains local-only, and neither tag moved. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; current shell is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**.
+**As of:** 2026-07-26 · **Version:** v0.10.3 (core-shell) · **Status:** **R-CLOSE patch release approved and candidate-verified; release commit and tag creation are in progress.** The operator selected v0.10.3 after authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Remote `main` is the completed RE-MEASURE audit record `3299c1b47cc3a6ac561bf01c85db4013ac0f7136`. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle does not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. The five release authorities agree at 0.10.3; no v0.10.3 tag exists until the verified release commit is created.
+
+**v0.10.3 R-CLOSE selected a patch release and the release candidate is in
+progress (measured 2026-07-26).** The operator explicitly approved release
+`v0.10.3`. The publication gate is open: RE-MEASURE authenticated seven
+distinct successful identities with zero rejection, both hosted negative
+controls accepted zero executions, and neither EVIDENCE-DURABLE nor
+LITERAL-NEUTRAL records a publication-blocking residual gap.
+
+The patch disposition follows `ARCHITECTURE.md §8`. This cycle hardens matrix
+identity, mandatory release authentication, resumed-evidence invariants,
+durable evidence paths, lifecycle enforcement, and cycle-neutral labeling. It
+adds tests and immutable receipt, bundle, and report evidence. It does not
+change public or internal API behavior, runtime behavior, storage paths,
+database schema, cache representation, licensing outcomes, dependencies, or
+retrieval outputs.
+
+The complete `v0.10.2..release-candidate` diff contains **69 paths**, each
+classified exactly once:
+
+- **release and public documentation (6):** `README.md`, `CHANGELOG.md`,
+  `Cargo.lock`, `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`, and
+  `shell/intel_shell/app.py`.
+- **workflow, harness, and evidence configuration (4):**
+  `.github/workflows/ci.yml`, `run`, `config/cycle-history.json`, and
+  `config/protected-artifacts.json`.
+- **executable audit controls and tests (10):**
+  `shell/tests/test_cycle_check.py`, `shell/tests/test_deferred_audit.py`,
+  `shell/tests/test_evidence_artifacts.py`,
+  `shell/tests/test_verify_llm.py`, `tools/audit_deferred.py`,
+  `tools/benchmark_view.py`, `tools/cycle_check.py`,
+  `tools/cycle_identity.py`, `tools/evidence_artifacts.py`, and
+  `tools/verify_llm.py`.
+- **durable evidence (43):** the seven flat
+  `evidence/ci-runs/30187058897-1-*.json` compatibility paths; all seven
+  receipts in `evidence/ci-runs/30187058897-1/`; all fourteen receipt/bundle
+  files in `evidence/ci-runs/30194678764-1/`; all fourteen receipt/bundle files
+  in `evidence/ci-runs/30202019640-1/`; and
+  `evidence/v0.10.3/deferred-audit/report.json`.
+- **operating, state, and task records (6):** `AGENTS.md`,
+  `PROGRESS-v0.10.2.md`, `PROGRESS-v0.10.3.md`, `STATE.md`,
+  `TASKS-v0.10.2-EXECUTION.md`, and `TASKS-v0.10.3-EXECUTION.md`.
+- **architecture, runtime, storage, dependency-resolution, public-API, or
+  internal-API behavior paths (0):** none. `ARCHITECTURE.md` was reconciled and
+  remains authoritative without a diff.
+
+The Rust package, Python package, FastAPI literal, this header, and newest
+changelog heading now read 0.10.3. Cargo mechanically regenerated
+`Cargo.lock` and changed only the `cored` package version from 0.10.2 to
+0.10.3; no dependency resolution moved. `README.md` now names the current
+release, all twelve core endpoints including `/attest`, and the measured
+99-workspace / 187-shell test counts. `AGENTS.md` now describes every older
+closed runbook without a stale enumerated cycle list. Its active declaration
+remains v0.10.3 after closure until the operator supplies the next runbook.
+
+Publication disposition is explicit. v0.10.2 remains local and unpublished at
+its original annotated tag object, and v0.10.3 does not change that. v0.10.3
+will be published because the operator selected release after RE-MEASURE
+satisfied the real success and failure controls. The exact release commit and
+annotated tag object will be recorded after candidate verification; the
+separate append-only closing record will not move the tag.
+
+The release candidate passed the complete local definition of done.
+`./run ci-local` passed all **19/19** jobs with **99** Rust workspace tests,
+**20** net tests, warning-denied builds, clippy/fmt, locked Rust 1.78
+check/tests, **187/187** Python 3.11 shell tests, golden **11/11**, protected
+databases **2/2**, all **39/39** pins, persisted fingerprints, and every
+lifecycle auditor. The independent Python 3.12.13 lane passed **187/187** with
+the same single third-party Starlette warning, and both interpreters verified
+**21/21** exact packages. Standalone manifest validation, protected
+verification, golden, version consistency, and `git diff --check` passed. The
+69-path inventory matches the Git diff exactly.
 
 **v0.10.3 RE-MEASURE is complete (measured 2026-07-26).**
 Operator-authorized hosted run **30202019640**, attempt **1**, passed all seven

@@ -1,4 +1,4 @@
-# intel-platform (v0.6.2 — core-shell)
+# intel-platform (v0.10.3 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -27,7 +27,7 @@ The split rule: **the core owns math, throughput, and invariants that must
 be impossible to forget; the shell owns everything a product person might
 want to change this afternoon.** Editing a prompt, rewording the brief,
 changing the citation style, adding an endpoint, swapping the LLM provider,
-restructuring subscriptions — all shell-only, no recompile. The core's ten
+restructuring subscriptions — all shell-only, no recompile. The core's twelve
 endpoints are the whole contract.
 
 ## Who owns what
@@ -57,6 +57,7 @@ endpoints are the whole contract.
 | `GET /view?sectors=` | the full intelligence view: dedup drops, signals with **license-gated hydrated evidence**, named PMI edges, discovery queue, `kept_doc_ids` |
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |
+| `POST /attest {answer, context_ids}` | internal HC1 gate for model output before public return |
 | `GET /embeddings/missing?model` | backfill work queue |
 | `GET /embeddings/stats?model` | stored vector count and dimension for one model key |
 | `POST /embeddings {model, items}` | store shell-computed vectors; rejects a dimension change under an existing model key |
@@ -440,9 +441,9 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --tick 60   # long-lived loop
 ### Tests
 
 ```bash
-cargo test                                    # core: 49 tests
-PYTHONPATH=shell python3 -m pytest shell/tests # shell: 69 tests, FAKE core via
-                                              # httpx.MockTransport — no Rust needed
+cargo test --workspace --locked                # Rust workspace: 99 tests
+PYTHONPATH=shell python3 -m pytest shell/tests # shell: 187 tests; core seams use
+                                              # doubles except explicit E2E tests
 ```
 
 ## Layout
@@ -457,7 +458,7 @@ crates/analyze     bursts (z-score), corroboration, co-occurrence graph (weight 
 crates/store       SQLite archive: FTS5, embeddings BLOBs, signals_history audit
 crates/view        compute_view: the shared dedup->enrich->analyze pass
 crates/retrieve    BM25 + vector + RRF (sync; query vector supplied by the shell)
-apps/cored         the core daemon: the ten-endpoint internal API
+apps/cored         the core daemon: the twelve-endpoint internal API
 shell/intel_shell  config, core_client, auth, llm, prompts, briefing,
                    enrichment, app (FastAPI), pipeline (CLI),
                    security (key hashing + webhook sigs), billing (webhook),

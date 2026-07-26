@@ -2,6 +2,54 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.10.3 — 2026-07-26
+
+### Added
+
+- Exact `(job, matrix)` identities for the seven-job hosted evidence set,
+  including failure-capable duplicate-leg and failed-job controls.
+- Run-scoped durable storage and SHA-256 pins for every accepted receipt and
+  Sigstore bundle, plus a release-grade v0.10.3 production audit.
+- A semantic historical-evidence registry and one active-cycle identity source
+  for lifecycle, report-label, and benchmark tooling.
+
+### Changed
+
+- Release evidence now requires authenticated grade, a pinned workflow
+  revision, exact successful single-run matrix coverage, and persisted posture
+  that participates in re-derivation.
+- Resumed adversarial attempts are revalidated against five one-way classifier
+  invariants, their declared target/shape/model, and recorded overlap telemetry.
+- Lifecycle checks distinguish strict local annotated-tag verification from
+  hosted clones while retaining release-commit, contract-amendment, and stale
+  source-literal enforcement.
+
+### Fixed
+
+- Duplicate receipt subjects or digests can no longer satisfy two matrix legs,
+  and release-grade evidence cannot be produced in structural-only mode.
+- A recorded receipt or bundle path must resolve to indexed, unchanged bytes
+  in the named evidence worktree; lossy or fictional durable paths are refused.
+- New audit labels no longer embed a stale prior cycle, and the immutable
+  v0.10.2 mislabeled report is corrected by annotation without changing bytes.
+
+### Publication and carried dispositions
+
+- Hosted run 30202019640 passed all seven expected jobs at exact candidate
+  `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit authenticated
+  all seven distinct receipts with zero rejection and measured two promoted /
+  five deferred rows; exact-cosine p95 was 8.390958 ms.
+- Real negative controls rejected the persisted failed-core run and a
+  duplicated `python=3.11` shell matrix, accepting zero executions in each
+  case.
+- v0.10.2 remains local and unpublished at its original annotated tag object;
+  this release does not move or publish it.
+- This patch release changes release metadata, workflow/evidence integrity,
+  lifecycle controls, tests, tools, and durable evidence only. Public and
+  internal API behavior, runtime behavior, storage paths, database schema,
+  cache representation, licensing outcomes, dependency resolution, and golden
+  retrieval outputs are unchanged.
+
 ## v0.10.2 — 2026-07-26
 
 ### Added
