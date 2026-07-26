@@ -99,3 +99,32 @@ Entries are append-only; corrections are new dated entries.
   unchanged.
 - protected artifact delta: none. Both protected databases matched 2/2 and
   both v0.10.1 evidence reports printed `PIN MATCH`.
+
+### 2026-07-26 · SUBJ-ENFORCE — production audit subject made mandatory
+
+- owner: Codex
+- commit: 1c91c645750f102dc93af33722c0cdaf0ee4ee7f
+- result: PASS. Production audit creation requires `--expected-head`, resolves
+  the subject HEAD, requires exact equality, and requires
+  `git status --porcelain=v1` to be empty before calling any measurement. The
+  validated SHA is the released-commit input to RCPT-AUTH.
+- failure-capable controls: PASS. Three fail-before tests failed 3/3 because
+  the old `run_production` did not accept an expected-head contract.
+  Pass-after instrumentation proves wrong HEAD and dirty tracked state each
+  abort before the measurement function and leave no report, while a clean
+  matching repository proceeds and writes its receipt.
+- invocation acceptance: PASS. The direct production CLI rejects a missing
+  `--expected-head`. `./run audit-deferred --output ...` defaults to immutable
+  release `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the exercised wrapper
+  rejected current pre-release HEAD
+  `170f471cab6c0b198a7254cc495b95efe0c71d2a`, wrote no output, and checked
+  protected evidence before and after.
+- Python acceptance: PASS. The corpus-free deferred-audit subset passed 22/22
+  under Python 3.11.4 and 3.12.13. Both full shell lanes passed 150/150 with
+  the pre-existing single Starlette deprecation warning.
+- source acceptance: PASS. Python compilation, `bash -n run`, and
+  `git diff --check` passed. Measurement content did not change.
+- golden-E2E delta: none. `./run golden` passed 11/11 with every named anchor
+  unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2 and
+  both v0.10.1 evidence reports printed `PIN MATCH`.
