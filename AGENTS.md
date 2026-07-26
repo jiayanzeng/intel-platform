@@ -56,7 +56,8 @@ not obstacles to route around; they are the mechanism that has correctly kept
 built or evaluated and measured. When a gate trips:
 
 1. Do **not** implement a workaround that defeats the gate's purpose.
-2. Record the measurement that tripped it in `STATE.md` and `PROGRESS-v0.10.md`.
+2. Record the measurement that tripped it in `STATE.md` and the active cycle's
+   progress log named in the declaration above.
 3. Mark the task blocked/deferred with the gate cited, and move on.
 
 A gate you silence is worse than a task you skip.
@@ -211,7 +212,7 @@ You do **not** batch status updates. After each task, in order, before starting
 the next:
 
 1. **Read** the task's objective and decision gate in
-   `TASKS-v0.10-EXECUTION.md`.
+   the active cycle's execution runbook named in the declaration above.
 2. **Check the gate first.** If it trips, record and stop (§1).
 3. **Implement** the change.
 4. **Run every acceptance criterion** listed for the task and **capture the
@@ -223,14 +224,14 @@ the next:
 6. **Update `STATE.md`**: the header line (test counts, warning status, golden
    E2E status) and the relevant section, with what you **measured**, not what you
    hoped. Correct any prior claim you found to be false.
-7. **Check the box** for the task in `TASKS-v0.10-EXECUTION.md`.
+7. **Check the box** for the task in the active cycle's execution runbook.
 8. **Commit the task implementation** — one task per implementation commit.
    Never combine a lint gate with a lint fix, or a formatting diff with a
    behavior change; that is how a real change hides inside noise.
-9. **Append the `PROGRESS-v0.10.md` entry after that commit exists**: date, task
-   id, owner, measured result, each acceptance criterion pass/fail, golden-E2E
-   delta, and the real 7–40 character implementation commit hash. Run
-   `./run progress-check`, then commit that append-only entry in a separate
+9. **Append the active progress-log entry after that commit exists**: date,
+   task id, owner, measured result, each acceptance criterion pass/fail,
+   golden-E2E delta, and the real 7–40 character implementation commit hash.
+   Run `./run progress-check`, then commit that append-only entry in a separate
    audit-record commit before starting the next task. Do not amend an entry to
    contain its own commit hash: changing commit contents changes the hash, so
    that proposed self-reference cannot be true.

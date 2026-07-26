@@ -1,6 +1,32 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 RESUME-STRICT is complete; only internally complete HTTP-200 adversarial cells are reusable, and any resumed `LEAK` halts.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **153/153** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+**As of:** 2026-07-26 · **Version:** v0.10.1 (core-shell) · **Status:** **v0.10.2 AGENTS-NEUTRAL is complete; task/progress workflow instructions resolve through the single active-cycle declaration and `cycle-check` blocks stale paths.** Annotated tag object `8ded63f79ed12b4180e8bcd0bcff4ef30a080a79` dereferences exactly to release commit `e5af6bc5df8261cc004bd4d3247b70f8cbe930bb`; the later audit records do not move it. The most recent full local CI is **19/19** with **99** Rust workspace / **20** net tests; the current shell suite is **155/155** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`; all 45 committed attempts conform to the tightened completed-attempt schema. Both v0.10.1 JSON reports remain hash-pinned and source re-derivation is blocking. Golden is **11/11** and protected evidence is exact **2/2**. Remote main remains at approved G-RUN checkpoint `5bcabcb8…`; no publication push is authorized.
+
+**v0.10.2 AGENTS-NEUTRAL is complete (measured 2026-07-26).** The four stale
+v0.10 task/progress paths in `AGENTS.md` were replaced with references to the
+active execution runbook and progress log declared at the top. No invariant
+or decision outcome in §§0–4 changed. A literal census now finds exactly the
+active `TASKS-v0.10.2-EXECUTION.md` and `PROGRESS-v0.10.2.md`, both inside the
+introductory active-cycle declaration, and no concrete task/progress path
+below the §0 boundary.
+
+`cycle-check` now scans numeric `TASKS-v*-EXECUTION.md` and
+`PROGRESS-v*.md` literals in the operating contract. Only the declared active
+pair is allowed before §0; any current or stale concrete path later in the
+contract is an error. The scratch-root failure-before control was **one pass,
+one failure**: the old checker accepted both the clean declaration and a
+planted `PROGRESS-v1.2.md`. Pass-after is **2/2**: the clean scratch contract
+passes and the planted path fails with its `AGENTS.md` line. The actual
+`./run cycle-check` passes with v0.10.2 open, six closed execution runbooks,
+and three historical task documents.
+
+Both full shell lanes passed **155/155** under Python 3.11.4 and 3.12.13 with
+the existing single Starlette deprecation warning. Python compilation and
+`git diff --check` passed. Standalone `./run golden` remained byte-identical
+at **11/11**. Protected databases matched **2/2**, and both v0.10.1 reports
+printed `PIN MATCH`. No product path, invariant, dependency, lockfile,
+runtime, protected byte, evidence pin, provider configuration, tunnel value,
+remote ref, or tag changed.
 
 **v0.10.2 RESUME-STRICT is complete (measured 2026-07-26).** Resume now
 requires the full shape emitted by a fresh completed adversarial cell:

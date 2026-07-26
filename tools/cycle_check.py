@@ -47,6 +47,10 @@ AUTHORITY_PATTERNS = (
     "This is the active runbook",
     "Task work for this cycle is ordered",
 )
+CONTRACT_CYCLE_PATH_RE = re.compile(
+    r"\b(?:TASKS-v[0-9]+(?:\.[0-9]+)*-EXECUTION\.md"
+    r"|PROGRESS-v[0-9]+(?:\.[0-9]+)*\.md)\b"
+)
 
 
 def shown(path: Path, root: Path) -> str:
@@ -218,6 +222,40 @@ def check_authority(
                 )
 
 
+def check_contract_cycle_paths(
+    identity,
+    root: Path,
+    errors: list[str],
+) -> None:
+    path = identity.declaration
+    lines = path.read_text().splitlines()
+    section_zero = next(
+        (
+            number
+            for number, line in enumerate(lines, 1)
+            if line.startswith("## 0.")
+        ),
+        None,
+    )
+    if section_zero is None:
+        errors.append(
+            f"{shown(path, root)}: missing §0 boundary after active-cycle "
+            "declaration"
+        )
+        return
+    allowed = {identity.runbook.name, identity.progress.name}
+    for number, line in enumerate(lines, 1):
+        for match in CONTRACT_CYCLE_PATH_RE.finditer(line):
+            literal = match.group(0)
+            if number < section_zero and literal in allowed:
+                continue
+            kind = "task" if literal.startswith("TASKS-") else "progress"
+            errors.append(
+                f"{shown(path, root)}:{number}: stale/cycle-specific {kind} "
+                f"path {literal!r} appears outside the active declaration"
+            )
+
+
 def run(root: Path = ROOT) -> int:
     root = root.resolve()
     errors: list[str] = []
@@ -226,6 +264,7 @@ def run(root: Path = ROOT) -> int:
     except CycleIdentityError as error:
         print(f"cycle-check: ERROR: {error}", file=sys.stderr)
         return 1
+    check_contract_cycle_paths(identity, root, errors)
 
     for required in (identity.runbook, identity.progress):
         if not required.is_file():
