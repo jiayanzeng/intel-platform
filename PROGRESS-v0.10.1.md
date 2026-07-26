@@ -338,3 +338,35 @@ Entries are append-only; corrections are new dated entries.
   is an environment non-result.
 - protected artifact delta: none. `./run verify-artifacts` passed exact 2/2;
   both pinned JSON files also matched.
+
+### 2026-07-26 · HERM — ambient-independent constraints drift test
+
+- owner: Codex
+- commit: 156a45bd729a93b900187375d36da2d9a6981282
+- result: PASS. Tests can inject an explicit distribution inventory, so the
+  FastAPI drift assertion no longer depends on ambient `site-packages`; the
+  product command still discovers and strictly validates the real interpreter.
+- failure-capable control: PASS. The three new/rewritten inventory tests failed
+  3/5 before implementation because `installed_versions()` accepted no
+  argument. Afterward the targeted module passed 5/5 under both Python 3.11.4
+  and 3.12.13.
+- hermetic drift acceptance: PASS. A 21-package synthetic inventory matching
+  the committed constraints, with only expected FastAPI perturbed, yields
+  exactly `fastapi: expected 0.140.1, found 0.140.0`. Poisoning ambient
+  discovery with duplicate `colorama` distributions does not change that
+  explicit-inventory result.
+- product-behavior acceptance: PASS. Calling `installed_versions()` without an
+  inventory still uses `importlib.metadata.distributions()`, fails fast on the
+  poisoned duplicate with
+  `installed distribution is duplicated: colorama`, and rejects a direct
+  case-varied duplicate FastAPI inventory after canonicalization. Exact-pin,
+  missing-name, bootstrap-exclusion, and comparison behavior are unchanged.
+- real-environment acceptance: PASS. Both supported interpreters independently
+  verified all 21/21 packages from `shell/constraints.txt`.
+- full local-CI acceptance: PASS. `./run ci-local` passed 19/19 with 99
+  workspace tests, 20 net tests, warning-denied builds, Rust 1.78, 138 Python
+  3.11 tests, evidence re-derivation, golden, and artifact checks. Python
+  3.12.13 independently passed 138/138.
+- golden-E2E delta: none. The full matrix passed 11/11.
+- protected artifact delta: none. Both pinned JSON files matched and
+  `./run verify-artifacts` passed exact protected databases 2/2.
