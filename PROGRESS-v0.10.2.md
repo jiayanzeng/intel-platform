@@ -128,3 +128,30 @@ Entries are append-only; corrections are new dated entries.
   unchanged.
 - protected artifact delta: none. Both protected databases matched 2/2 and
   both v0.10.1 evidence reports printed `PIN MATCH`.
+
+### 2026-07-26 · RESUME-STRICT — resumed adversarial cells validated
+
+- owner: Codex
+- commit: fc8f3fb1d2d9ceb5b4735cb44e3e4721f0bb1b9a
+- result: PASS. Resume accepts only a full fresh-completion schema with
+  HTTP 200, true completion/context/valid flags, internally consistent target
+  context, typed outcome/overlap/list fields, and complete non-negative
+  retry/8/12/16-token telemetry.
+- failure-capable controls: PASS. Fail-before was three failures / one pass:
+  the old predicate reused the contradictory HTTP-502 cell and the
+  schema-incomplete cell and did not halt on a synthetic resumed `LEAK`; the
+  already-complete cell remained reusable. Pass-after was 4/4: invalid cells
+  retry, the valid cell is reused byte-for-byte, and the leak records
+  target/shape then raises immediately.
+- protected-report compatibility: PASS. A direct schema census accepted all
+  45/45 committed completed attempts. The synthetic leak was a control, not a
+  protected-evidence finding; the pinned report remains zero `LEAK`.
+- Python acceptance: PASS. The focused verifier suite passed 23/23. Both full
+  shell lanes passed 153/153 under Python 3.11.4 and 3.12.13 with the
+  pre-existing single Starlette deprecation warning.
+- source acceptance: PASS. Python compilation and `git diff --check` passed;
+  only the verifier harness and its tests changed outside task records.
+- golden-E2E delta: none. `./run golden` passed 11/11 with every named anchor
+  unchanged.
+- protected artifact delta: none. Both protected databases matched 2/2 and
+  both v0.10.1 evidence reports printed `PIN MATCH`.
