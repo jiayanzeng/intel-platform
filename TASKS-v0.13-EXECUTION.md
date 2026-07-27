@@ -604,7 +604,7 @@ record of v0.12's is true.
   `--self-test` in ci-local job 20 with the count still 20; a non-matching regex
   turns CI red, demonstrated; `shell/tests/test_invariant_scan.py` green on both
   interpreters; no rule logic changed
-- [ ] **THRESHOLD-BIND** — R5 is an allow-list over production call sites; the
+- [x] **THRESHOLD-BIND** — R5 is an allow-list over production call sites; the
   `INGEST_FUZZ_LIMIT` mutation FAILs; both original fail-befores still FAIL;
   clean tree PASSes; no `crates/` source changed
 - [x] **THRESHOLD-SOURCE-SEAM** — the gate-discovered production distance

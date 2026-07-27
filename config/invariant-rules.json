@@ -75,10 +75,22 @@
     },
     {
       "id": "R5",
-      "claim": "Production Rust has one private canonical-distance constant and no numeric canonical-distance call argument.",
-      "source": "TASKS-v0.12-EXECUTION.md:366-368",
-      "scope": "All production Rust; store tests may use alternate numeric distances.",
+      "claim": "Every production canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant.",
+      "source": "TASKS-v0.13-EXECUTION.md:326-333",
+      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; test-only Rust is excluded.",
       "fail_before": [
+        {
+          "file": "crates/store/src/sqlite.rs",
+          "find": "        let n = append_new_tx(&tx, docs)?;\n        if n > 0 {\n            assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;\n        }\n",
+          "replace_with": [
+            "        let n = append_new_tx(&tx, docs)?;\n",
+            "        if n > 0 {\n",
+            "            const INGEST_FUZZ_LIMIT: u32 = 17;\n",
+            "            assign_canonical_ids_tx(&tx, INGEST_FUZZ_LIMIT)?;\n",
+            "        }\n"
+          ],
+          "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found INGEST_FUZZ_LIMIT"
+        },
         {
           "file": "crates/store/src/sqlite.rs",
           "find": "const DEDUP_MAX_DISTANCE: u32 = 16;\n",
@@ -87,6 +99,17 @@
             "const SECOND_DEDUP_MAX_DISTANCE: u32 = 17;\n"
           ],
           "expected_fail": "second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
+        },
+        {
+          "file": "crates/store/src/sqlite.rs",
+          "find": "        let n = append_new_tx(&tx, docs)?;\n        if n > 0 {\n            assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;\n        }\n",
+          "replace_with": [
+            "        let n = append_new_tx(&tx, docs)?;\n",
+            "        if n > 0 {\n",
+            "            assign_canonical_ids_tx(&tx, 16)?;\n",
+            "        }\n"
+          ],
+          "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found 16"
         }
       ],
       "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"

@@ -68,11 +68,9 @@ THRESHOLD_DECL = re.compile(
     r"([A-Z0-9_]*(?:DEDUP|CANONICAL)[A-Z0-9_]*"
     r"(?:DISTANCE|THRESHOLD)[A-Z0-9_]*)\s*:\s*u32\s*=\s*(\d+)"
 )
-NUMERIC_THRESHOLD_CALL = re.compile(
-    r"\b(?:assign_canonical_ids(?:_tx)?|"
-    r"rematerialize_canonical_ids_with_distance)\s*"
-    r"\([^;]{0,300}?\b\d+(?:u32)?\b",
-    re.DOTALL,
+CANONICAL_DISTANCE_CALL = re.compile(
+    r"\b(?P<name>assign_canonical_ids(?:_tx)?|"
+    r"rematerialize_canonical_ids_with_distance)\s*\("
 )
 PRIVATE_KEY_HEADER = re.compile(
     r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----"
@@ -297,6 +295,112 @@ def r4_findings(root: Path) -> list[str]:
     return findings
 
 
+def _matching_paren(text: str, open_offset: int) -> int | None:
+    depth = 0
+    quote: str | None = None
+    escaped = False
+    for offset in range(open_offset, len(text)):
+        char = text[offset]
+        if quote is not None:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in {'"', "'"}:
+            quote = char
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                return offset
+    return None
+
+
+def _top_level_arguments(arguments: str) -> list[str]:
+    parts: list[str] = []
+    start = 0
+    depths = {"(": 0, "[": 0, "{": 0}
+    closing = {")": "(", "]": "[", "}": "{"}
+    quote: str | None = None
+    escaped = False
+    for offset, char in enumerate(arguments):
+        if quote is not None:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in {'"', "'"}:
+            quote = char
+        elif char in depths:
+            depths[char] += 1
+        elif char in closing:
+            opener = closing[char]
+            depths[opener] = max(0, depths[opener] - 1)
+        elif char == "," and all(depth == 0 for depth in depths.values()):
+            parts.append(arguments[start:offset].strip())
+            start = offset + 1
+    parts.append(arguments[start:].strip())
+    return parts
+
+
+def _cfg_test_item_ranges(text: str) -> list[tuple[int, int]]:
+    ranges: list[tuple[int, int]] = []
+    marker = re.compile(r"(?m)^[ \t]*#\[cfg\(test\)\][ \t]*\n")
+    for match in marker.finditer(text):
+        brace = text.find("{", match.end())
+        if brace == -1:
+            continue
+        depth = 0
+        for offset in range(brace, len(text)):
+            if text[offset] == "{":
+                depth += 1
+            elif text[offset] == "}":
+                depth -= 1
+                if depth == 0:
+                    ranges.append((match.start(), offset + 1))
+                    break
+    return ranges
+
+
+def _inside_ranges(offset: int, ranges: list[tuple[int, int]]) -> bool:
+    return any(start <= offset < end for start, end in ranges)
+
+
+def _canonical_distance_calls(
+    text: str,
+) -> list[tuple[re.Match[str], str]]:
+    calls: list[tuple[re.Match[str], str]] = []
+    test_ranges = _cfg_test_item_ranges(text)
+    for match in CANONICAL_DISTANCE_CALL.finditer(text):
+        if _inside_ranges(match.start(), test_ranges):
+            continue
+        prefix = text[max(0, match.start() - 32) : match.start()]
+        if re.search(r"\bfn\s*$", prefix):
+            continue
+        close = _matching_paren(text, match.end() - 1)
+        if close is None:
+            calls.append((match, "<unclosed call>"))
+            continue
+        arguments = _top_level_arguments(text[match.end() : close])
+        distance_index = (
+            1 if match.group("name") == "assign_canonical_ids_tx" else 0
+        )
+        token = (
+            arguments[distance_index]
+            if distance_index < len(arguments) and arguments[distance_index]
+            else "<missing>"
+        )
+        calls.append((match, token))
+    return calls
+
+
 def r5_findings(root: Path) -> list[str]:
     findings: list[str] = []
     declarations: list[tuple[Path, str, re.Match[str]]] = []
@@ -305,11 +409,13 @@ def r5_findings(root: Path) -> list[str]:
         declarations.extend(
             (path, text, match) for match in THRESHOLD_DECL.finditer(text)
         )
-        for match in NUMERIC_THRESHOLD_CALL.finditer(text):
-            findings.append(
-                f"{location(root, path, text, match.start())}: "
-                "numeric canonical-distance argument in production"
-            )
+        for match, token in _canonical_distance_calls(text):
+            if token != "DEDUP_MAX_DISTANCE":
+                findings.append(
+                    f"{location(root, path, text, match.start())}: "
+                    f"{match.group('name')} distance argument must be "
+                    f"DEDUP_MAX_DISTANCE; found {token}"
+                )
 
     expected = [
         item

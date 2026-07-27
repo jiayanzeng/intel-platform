@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; THRESHOLD-SOURCE-SEAM is complete and THRESHOLD-BIND may resume.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; THRESHOLD-BIND is complete and C1 remains release-blocking.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -177,6 +177,32 @@ changing the source returned `R5 PASS` and exit **0**: all five production
 `assign_canonical_ids_tx` calls pass the canonical constant, while the one
 `max_distance` call is inside the `#[cfg(test)]` seam. No tool or registry
 change is part of this task. THRESHOLD-BIND may now resume.
+
+**v0.13 THRESHOLD-BIND is complete (measured 2026-07-27).** R5 now enumerates
+every production call to `assign_canonical_ids`, `assign_canonical_ids_tx`,
+and `rematerialize_canonical_ids_with_distance`, excludes test-only Rust, and
+requires the distance argument at each call to be exactly the single token
+`DEDUP_MAX_DISTANCE`. A different constant, literal, or expression is reported
+with file, line, call name, and offending token. The independent declaration
+half still requires exactly one private
+`DEDUP_MAX_DISTANCE: u32 = 16`.
+
+The three executable controls each exited **1** with the expected real R5
+failure:
+
+```text
+R5 FAIL: crates/store/src/sqlite.rs:208: assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found INGEST_FUZZ_LIMIT
+R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17
+R5 FAIL: crates/store/src/sqlite.rs:207: assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found 16
+```
+
+Unmodified HEAD passed R5 and the full self-test passed R1–R6 with **8**
+controls. The focused invariant module passed **10/10** under both Python
+3.11.4 and 3.12.13. Full ci-local remained **20/20** with **121** workspace
+Rust tests, **21** net tests, **215/215** shell tests, warning-denied builds,
+clippy/fmt/ShellCheck, locked Rust 1.78, all **71/71** pins, protected
+databases **2/2**, and golden **11/11**. No source file under `crates/`
+changed in the THRESHOLD-BIND implementation.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
