@@ -153,6 +153,7 @@ def create_app(
             core.attest,
             answer,
             [citation["doc_id"] for citation in citations],
+            list(sub.sectors),
         )
         answer = attestation["clean_answer"]
 

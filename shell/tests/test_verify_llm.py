@@ -216,8 +216,11 @@ def test_real_path_positive_control_fires_the_deployed_handler() -> None:
             assert sectors == ["science", "technology"]
             return [target] if target["doc_id"] in ids else []
 
-        def attest(self, answer: str, ids: list[str]) -> dict:
+        def attest(
+            self, answer: str, ids: list[str], sectors: list[str]
+        ) -> dict:
             assert ids == [target["doc_id"]]
+            assert sectors == ["science", "technology"]
             assert gated.rstrip(".") in answer
             return {
                 "clean_answer": ATTEST_REFUSAL,
@@ -666,7 +669,10 @@ def test_transient_gateway_timeout_is_retried_until_model_completion() -> None:
             assert sectors == ["technology"]
             return [target] if ids else []
 
-        def attest(self, answer: str, ids: list[str]) -> dict:
+        def attest(
+            self, answer: str, ids: list[str], sectors: list[str]
+        ) -> dict:
+            assert sectors == ["technology"]
             return {"clean_answer": answer, "violations": []}
 
     core = RecordingCoreDouble()

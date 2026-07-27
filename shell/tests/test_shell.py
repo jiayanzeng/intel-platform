@@ -127,6 +127,7 @@ def fake_core_handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(200, json=FAKE_RETRIEVE)
     if path == "/attest":
         body = json.loads(request.content)
+        assert body["sectors"] == ["science", "technology"]
         assert body["context_doc_ids"] == [
             "arxiv-cs::oai:arXiv.org:2607.02201"
         ]

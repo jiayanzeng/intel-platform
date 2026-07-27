@@ -657,6 +657,7 @@ struct RetrieveResp {
 struct AttestReq {
     answer: String,
     context_doc_ids: Vec<String>,
+    sectors: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -1120,7 +1121,10 @@ async fn retrieve(
     // Canonical id is a property of the corpus; relevance is a property of the
     // query, and context assembly is a question about the query.
     let fused_ids: Vec<&str> = r.fused.iter().map(|(id, _)| id.as_str()).collect();
-    let all = st.store.documents_by_ids(&fused_ids).map_err(internal)?;
+    let all = st
+        .store
+        .documents_by_ids_in_sectors(&fused_ids, &req.sectors)
+        .map_err(internal)?;
     let by_id: HashMap<&str, &Document> = all.iter().map(|d| (d.id.as_str(), d)).collect();
     let prints = st.store.fingerprints().map_err(internal)?;
 
@@ -1166,7 +1170,7 @@ async fn attest(
     let requested_ids: Vec<&str> = req.context_doc_ids.iter().map(String::as_str).collect();
     let all = st
         .store
-        .documents_by_ids(&requested_ids)
+        .documents_by_ids_in_sectors(&requested_ids, &req.sectors)
         .map_err(internal)?;
     let by_id: HashMap<&str, &Document> = all
         .iter()
@@ -1585,6 +1589,7 @@ mod tests {
             Json(AttestReq {
                 answer,
                 context_doc_ids: vec![document.id.clone()],
+                sectors: vec!["technology".into()],
             }),
         )
         .await
@@ -1594,6 +1599,143 @@ mod tests {
         assert_eq!(response.clean_answer, intel_core::ATTEST_REFUSAL);
         assert_eq!(response.violations.len(), 1);
         assert_eq!(response.violations[0].doc_id, document.id);
+    }
+
+    #[tokio::test]
+    async fn retrieve_final_hydration_filters_cross_sector_and_empty_sectors() {
+        let st = test_state();
+        do_ingest(&st, &["technology", "finance"], None).await;
+        let technology_id = st
+            .store
+            .load_all()
+            .unwrap()
+            .into_iter()
+            .find(|document| document.sector.0 == "technology")
+            .expect("technology fixture document")
+            .id;
+        let ranked_ids = [technology_id.as_str()];
+        let finance_sectors = vec!["finance".to_string()];
+
+        // Inject a forged post-ranking id at the exact final hydration
+        // boundary. The real ranking legs already filter by sector, so an
+        // endpoint-only happy-path test cannot prove this independent guard.
+        let cross_sector = st
+            .store
+            .documents_by_ids_in_sectors(&ranked_ids, &finance_sectors)
+            .expect("retrieve final hydration");
+        assert!(
+            cross_sector.is_empty(),
+            "a finance-scoped final hydration must discard a technology id"
+        );
+
+        let empty = retrieve(
+            State(st),
+            HeaderMap::new(),
+            Json(RetrieveReq {
+                q: "DeepSeek".into(),
+                sectors: Vec::new(),
+                k: 5,
+                model: None,
+                query_vector: None,
+            }),
+        )
+        .await
+        .expect("empty sectors return an empty internal result")
+        .0;
+        assert!(empty.bm25.is_empty());
+        assert!(empty.vector.is_empty());
+        assert!(empty.fused.is_empty());
+        assert!(empty.context.is_empty());
+    }
+
+    #[tokio::test]
+    async fn attest_cross_sector_oracle_and_empty_sectors_fail_closed() {
+        let st = test_state();
+        do_ingest(&st, &["technology", "finance"], None).await;
+        let document = st
+            .store
+            .load_all()
+            .unwrap()
+            .into_iter()
+            .find(|document| {
+                document.sector.0 == "technology"
+                    && document.provenance.license == intel_core::License::IndexOnly
+            })
+            .expect("technology IndexOnly fixture document");
+        let answer = document
+            .body
+            .split_whitespace()
+            .take(16)
+            .collect::<Vec<_>>()
+            .join(" ");
+        assert_eq!(answer.split_whitespace().count(), 16);
+
+        let cross_sector = attest(
+            State(st.clone()),
+            HeaderMap::new(),
+            Json(AttestReq {
+                answer: answer.clone(),
+                context_doc_ids: vec![document.id.clone()],
+                sectors: vec!["finance".into()],
+            }),
+        )
+        .await;
+        match cross_sector {
+            Err(error) => {
+                assert_eq!(
+                    error,
+                    (
+                        StatusCode::BAD_REQUEST,
+                        "unknown context document id".to_string()
+                    )
+                );
+                assert!(
+                    !error.1.contains(&document.id),
+                    "the refusal must not name the out-of-sector document"
+                );
+            }
+            Ok(_) => panic!("out-of-sector ids must be indistinguishable from nonexistent ids"),
+        }
+
+        let nonexistent = attest(
+            State(st.clone()),
+            HeaderMap::new(),
+            Json(AttestReq {
+                answer: answer.clone(),
+                context_doc_ids: vec!["does-not-exist".into()],
+                sectors: vec!["finance".into()],
+            }),
+        )
+        .await
+        .expect_err("nonexistent ids must be refused");
+        assert_eq!(
+            nonexistent,
+            (
+                StatusCode::BAD_REQUEST,
+                "unknown context document id".to_string()
+            )
+        );
+
+        let empty = attest(
+            State(st),
+            HeaderMap::new(),
+            Json(AttestReq {
+                answer,
+                context_doc_ids: vec![document.id.clone()],
+                sectors: Vec::new(),
+            }),
+        )
+        .await;
+        match empty {
+            Err(error) => assert_eq!(
+                error,
+                (
+                    StatusCode::BAD_REQUEST,
+                    "unknown context document id".to_string()
+                )
+            ),
+            Ok(_) => panic!("an empty sector set must fail closed"),
+        }
     }
 
     #[tokio::test]

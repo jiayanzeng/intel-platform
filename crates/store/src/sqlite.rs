@@ -281,7 +281,12 @@ impl SqliteStore {
     }
 
     /// Fetch only the named documents. Every id is a bound parameter.
-    pub fn documents_by_ids(&self, ids: &[&str]) -> rusqlite::Result<Vec<Document>> {
+    ///
+    /// This unscoped seam exists only for store-level parameter-binding tests.
+    /// Production callers cannot name it; every production hydration must use
+    /// `documents_by_ids_in_sectors`.
+    #[cfg(test)]
+    fn documents_by_ids(&self, ids: &[&str]) -> rusqlite::Result<Vec<Document>> {
         if ids.is_empty() {
             return Ok(Vec::new());
         }

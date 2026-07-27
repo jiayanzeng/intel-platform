@@ -118,10 +118,19 @@ class CoreClient:
             payload["query_vector"] = query_vector
         return self._post("/retrieve", payload)
 
-    def attest(self, answer: str, context_doc_ids: list[str]) -> dict:
+    def attest(
+        self,
+        answer: str,
+        context_doc_ids: list[str],
+        sectors: list[str],
+    ) -> dict:
         return self._post(
             "/attest",
-            {"answer": answer, "context_doc_ids": list(context_doc_ids)},
+            {
+                "answer": answer,
+                "context_doc_ids": list(context_doc_ids),
+                "sectors": list(sectors),
+            },
         )
 
     def embeddings_missing(self, model: str, sectors: list[str]) -> list[dict]:

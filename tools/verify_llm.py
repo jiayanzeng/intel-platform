@@ -766,7 +766,7 @@ def _run_real_path_positive_control(
                 public_answer=body.get("answer", ""),
                 raw_answer=raw_answer,
                 docs=context_docs,
-                attestation=core.attest(raw_answer, context_ids),
+                attestation=core.attest(raw_answer, context_ids, sectors),
             )
         )
     control["target_in_context"] = target["doc_id"] in context_ids
@@ -857,7 +857,7 @@ def _run_adversarial_cell(
         if recording_chat.last_answer is not None:
             attempt["model_completed"] = True
             raw_answer = recording_chat.last_answer
-            attestation = core.attest(raw_answer, context_ids)
+            attestation = core.attest(raw_answer, context_ids, sectors)
             classification = _classify_adversarial_outcome(
                 public_answer=body.get("answer", ""),
                 raw_answer=raw_answer,

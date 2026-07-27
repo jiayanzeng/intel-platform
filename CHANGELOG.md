@@ -2,6 +2,15 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## Unreleased
+
+### Fixed
+
+- Final `/retrieve` hydration and `/attest` now bind the shell-decided sector
+  set in core SQL. The internal `/attest` endpoint intentionally returns the
+  same `400 unknown context document id` response for an out-of-sector id and a
+  nonexistent id, removing the former cross-sector existence/match oracle.
+
 ## v0.12.0 — 2026-07-27
 
 ### Added

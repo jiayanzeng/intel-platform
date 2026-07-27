@@ -442,9 +442,10 @@ predicate, and close the seam so a future caller cannot reintroduce the defect
 by choosing the wrong method.
 
 **Gate.** `crates/store/src/sqlite.rs`, `apps/cored/src/main.rs`,
-`shell/intel_shell/core_client.py`, `shell/intel_shell/app.py`, and their tests.
-**No schema change. No change to the public `/v1/*` JSON bodies.** The internal
-`/attest` request schema does change.
+`shell/intel_shell/core_client.py`, `shell/intel_shell/app.py`,
+`tools/verify_llm.py`, and their tests. `CHANGELOG.md` is included for the
+required error-semantics record. **No schema change. No change to the public
+`/v1/*` JSON bodies.** The internal `/attest` request schema does change.
 
 **Steps.**
 
@@ -614,7 +615,7 @@ record of v0.12's is true.
   placeholder form refused; product token structural and identical on the wire
   and in `RobotsCache`; advertised version derived from the crate; offline build
   unchanged and proven so
-- [ ] **BODY-BOUNDARY** — zero production callers of `documents_by_ids` and it
+- [x] **BODY-BOUNDARY** — zero production callers of `documents_by_ids` and it
   is no longer `pub`; `/retrieve` and `/attest` sector-scoped and fail closed on
   empty sectors; both regression tests fail-before/pass-after; oracle test
   passes; error-semantics change recorded twice; public bodies byte-identical
@@ -678,6 +679,10 @@ record of v0.12's is true.
 
 Step 3 — gate-triggered THRESHOLD-SOURCE-SEAM follow-up added — 2026-07-27
 
+Step 5 — CHANGELOG gate widened to contain its acceptance record — 2026-07-27
+
+Step 5 — live verification caller added to the gate — 2026-07-27
+
 The first strict allow-list measurement found a production threshold parameter
 at `crates/store/src/sqlite.rs:685`. Step 3's original Gate explicitly requires
 that finding to be recorded and acted on in a follow-up task rather than hidden
@@ -685,3 +690,18 @@ by a source edit inside THRESHOLD-BIND. The added follow-up owns only that
 source correction; Step 3's original Objective, Acceptance criteria, and Done
 when remain byte-identical and THRESHOLD-BIND remains unchecked until it can
 resume against the corrected source.
+
+Step 5 requires the out-of-sector/nonexistent indistinguishability change to be
+recorded in `CHANGELOG.md`, and its acceptance criteria require that record in
+two places, but the first committed Gate omitted `CHANGELOG.md`. The Gate is
+widened before implementation so it contains that criterion. No behavior,
+schema, public response body, Objective, Acceptance criteria, or Done-when text
+is changed by this amendment.
+
+The production caller inventory found that `tools/verify_llm.py` also invokes
+`CoreClient.attest` twice while replaying the exact pre-attestation model
+answer. A required `sectors` argument cannot be added honestly while leaving
+that live harness outside the Gate or silently sending an empty scope. The Gate
+therefore includes that caller before implementation; its existing `sectors`
+value is threaded through with no change to its test battery or public result
+schema.
