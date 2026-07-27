@@ -249,3 +249,56 @@ Entries are append-only; corrections are new dated entries.
   **71/71** pins, protected databases **2/2**, and golden **11/11**.
 - golden-E2E delta: **0**; the mandatory standalone post-task run remained
   **11/11** byte-identical.
+
+### 2026-07-27 · BODY-BOUNDARY — document hydration sector-scoped
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 59924122a45e16294b7e135fc4930401b7b5b7cc
+- result: PASS. Final `/retrieve` hydration and `/attest` both call
+  `documents_by_ids_in_sectors` with their required request sector set.
+  `CoreClient.attest`, the shipped `/v1/ask` path, and both live-verifier
+  replays pass the subscription sectors. The unscoped `documents_by_ids`
+  method is private and `#[cfg(test)]`; warning-denied production builds
+  therefore prove that no production caller can name it.
+- gate acceptance: PASS after two disclosed pre-implementation widenings.
+  `CHANGELOG.md` is in scope because the task itself requires the changed
+  error semantics there. `tools/verify_llm.py` is in scope because production
+  caller inventory found two live-harness calls that must carry the new
+  required sector argument. No schema, public `/v1/*` response field, test
+  battery, or public result schema changed.
+- fail-before/pass-after acceptance: PASS. Before the correction, the forged
+  post-ranking retrieval-id control exited **101** because unscoped final
+  hydration returned a technology row to a finance scope. The 16-token
+  attestation control separately exited **101** because the same cross-sector
+  `IndexOnly` row produced a successful violation response rather than an
+  unknown-id refusal. After the correction, both focused controls passed,
+  including empty-sector cases. The retrieval injection is deliberately at
+  the exact final hydration boundary because the already-scoped ranking legs
+  cannot make an endpoint-only happy path failure-capable.
+- oracle and error-semantics acceptance: PASS. Out-of-sector and nonexistent
+  attestation ids now both return HTTP **400** with the exact body
+  `unknown context document id`; the body does not name the hidden document
+  and no violation payload is returned. That indistinguishability is recorded
+  here and in `CHANGELOG.md`.
+- E0 wire acceptance: PASS against a rebuilt real `cored` over a fresh archive
+  containing exactly `finance::a` and `science::b`. Finance-scoped retrieval
+  for science-only `alpha` returned empty BM25, vector, fused, context, and
+  suppressed lists. The 16-token `science::b` probe, `does-not-exist`, and an
+  empty-sector probe all returned the same unknown-id refusal. A stale
+  pre-rebuild binary first reproduced the old HTTP 200
+  `violations:[{"doc_id":"science::b"}]` behavior; rebuilding the changed
+  source produced the passing pair. All temporary wire-control files,
+  databases, and processes were removed.
+- CI acceptance: PASS. `./run ci-local` remained **20/20** with **124**
+  workspace Rust tests, **22** net tests, **215/215** Python 3.11 shell tests,
+  warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78, all
+  **71/71** pins, protected databases **2/2**, and golden **11/11**. Python
+  3.12 independently passed **215/215** and verified **21/21** exact
+  packages. Initial sandboxed standalone golden and Python 3.12 runs were
+  loopback/process-denial non-results; identical permitted reruns passed.
+- public-body acceptance: PASS. The real public `/v1/ask` golden path remained
+  byte-identical, including four citations and one near-duplicate suppressed.
+- golden-E2E delta: **0**; the mandatory standalone post-task run remained
+  **11/11** byte-identical.
+- disposition: the measured C1 release blocker is cleared.
