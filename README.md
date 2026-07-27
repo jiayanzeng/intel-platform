@@ -121,6 +121,21 @@ starts `cored` and the mock model, runs an `acme-research` pipeline over the
 fixtures, prints the signal table (DeepSeek RISING, the near-duplicate drop,
 etc.), and tears everything down. No env vars, no leftover processes.
 
+The MacBook also has one-command control of the shared model server. These
+commands switch mutually exclusive intel-platform/Athenaeum profiles, manage
+their SSH tunnels, verify real health, and never recreate a container:
+
+```bash
+./run models status
+./run models intel
+./run models athenaeum
+./run models athenaeum-bulk
+./run models stop
+```
+
+See `intel-platform-OPERATIONS.md` for the measured profile matrix, first
+post-reboot Terminal.app command, standing authorization, and recovery gates.
+
 To poke at it by hand instead of the one-shot demo:
 
 ```bash
@@ -442,7 +457,7 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --tick 60   # long-lived loop
 
 ```bash
 cargo test --workspace --locked                # Rust workspace: 119 tests
-PYTHONPATH=shell python3 -m pytest shell/tests # shell: 191 tests; core seams use
+PYTHONPATH=shell python3 -m pytest shell/tests # shell: 200 tests; core seams use
                                               # doubles except explicit E2E tests
 ```
 

@@ -35,6 +35,13 @@
       "source": "TASKS-v0.12-EXECUTION.md:366-368",
       "scope": "All production Rust; store tests may use alternate numeric distances.",
       "fail_before": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
+    },
+    {
+      "id": "R6",
+      "claim": "AGENTS.md and intel-platform-OPERATIONS.md contain byte-identical model-profile authorization blocks.",
+      "source": "TASKS-v0.12-EXECUTION.md:522-525",
+      "scope": "The single MODEL_PROFILE_AUTHORITY marker-delimited block in each governed Markdown file.",
+      "fail_before": "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
     }
   ]
 }

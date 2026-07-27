@@ -722,8 +722,8 @@ of v0.11's is true.
 - [x] **INVARIANT-SCAN** — `./run invariant-scan` is ci-local job 20; every rule cites its prose sentence and has a captured fail-before; a rule without `fail_before` is refused; `checklist-audit` reports checked and retracted separately; both `AGENTS.md` amendments landed
 - [x] **RETRACT-0110** — retraction record validated; `PROGRESS-v0.11.md` appended not edited; `STATE.md` header reports released counts with worktree delta named; `v0.11.0` tag, commit, and 54 pins byte-identical
 - [x] **INFRA-POLICY** — disclosure decision recorded in three locations with reasoning; the v0.11 clause's falsity named; R4 registered; a planted credential is refused
-- [ ] **OPS-AUTHORITY** — enforcement level decided and recorded; L1 allowlist tested in both directions with ≥4 planted refusals; `run` and `model_profiles.py` hash-pinned; `OPERATIONS.md §5` and `AGENTS.md` byte-identical under R6; the "what this does not do" sentence present
-- [ ] **OPS-ADMIT** — operations work committed in one implementation commit; 200/200 now true of HEAD; live evidence recorded with provenance and HC13 limits; three C7-augment items disposed; controller ownership stated
+- [x] **OPS-AUTHORITY** — enforcement level decided and recorded; L1 allowlist tested in both directions with ≥4 planted refusals; `run` and `model_profiles.py` hash-pinned; `OPERATIONS.md §5` and `AGENTS.md` byte-identical under R6; the "what this does not do" sentence present
+- [x] **OPS-ADMIT** — operations work committed in one implementation commit; 200/200 now true of HEAD; live evidence recorded with provenance and HC13 limits; three C7-augment items disposed; controller ownership stated
 - [ ] **OPS-FAILCLOSED** — four fail-closed claims tested in both directions; managed socket reused never killed; hung and dead servers distinguishable; ask-first command set asserted absent from every emitted script
 - [ ] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; hosted identity set still exactly seven; release-grade report pinned and re-derived
 - [ ] **R-CLOSE** — version choice recorded with reasoning; v0.11.0's disposition in `CHANGELOG.md`; `ARCHITECTURE.md` matches enforced reality; A4 and the Step 7 residual both still open
@@ -777,10 +777,31 @@ of v0.11's is true.
   executable guard during its lifetime; registered credential scan R4 replaces
   it with a rule that can fail.
 - Do not batch `STATE.md` / `PROGRESS-v0.12.md` updates or combine two tasks in
-  one commit.
+  one commit, except for the operator-approved Steps 7–8 atomic implementation
+  boundary recorded in `## Runbook amendments`.
 - If any Step's Objective, Acceptance criteria, or "Done when" is amended after
   this file is first committed, name the amendment in a dated
   `## Runbook amendments` block in the same commit.
+
+---
+
+## Runbook amendments
+
+### 2026-07-27 · Steps 7–8 atomic implementation boundary
+
+The operator approved one narrow sequencing exception after the committed
+runbook's requirements proved mutually unsatisfiable in a clean tree. Step 7
+requires `tools/model_profiles.py` to be hash-pinned and executable under R6
+before completion, while Step 8 exclusively admits that untracked controller,
+manual, and test file. The pin validator correctly refuses a path absent from
+`HEAD`; therefore an independently committed Step 7 could not satisfy its own
+acceptance criteria, and an independently committed Step 8 would briefly admit
+the mutable authorization surface without Step 7's guard.
+
+Steps 7 and 8 consequently share exactly one atomic implementation commit. Both
+tasks retain their complete acceptance criteria and receive separate append-only
+progress entries and separate audit-record commits after that implementation
+exists. No other task or status update is combined by this amendment.
 
 ---
 

@@ -27,6 +27,10 @@ CURSOR_FIELDS = (
     "pending_high_water",
     "updated_at",
 )
+AUTHORIZATION_PIN_PATHS = {
+    "run",
+    "tools/model_profiles.py",
+}
 
 
 class ManifestError(ValueError):
@@ -290,16 +294,22 @@ def _validate_pinned_file(value: Any, index: int) -> dict[str, Any]:
         raise ManifestError(
             f"{context}.path: expected a safe repository-relative path"
         )
-    if not path.parts or path.parts[0] != "evidence":
-        raise ManifestError(
-            f"{context}.path: pinned files must live beneath evidence/"
-        )
     _sha256_string(value["sha256"], f"{context}.sha256")
     grade = _non_empty_string(value["grade"], f"{context}.grade")
-    if grade not in {"structural", "release", "supporting", "legacy"}:
+    beneath_evidence = bool(path.parts) and path.parts[0] == "evidence"
+    if beneath_evidence:
+        allowed_grades = {"structural", "release", "supporting", "legacy"}
+    elif raw_path in AUTHORIZATION_PIN_PATHS:
+        allowed_grades = {"authorization"}
+    else:
         raise ManifestError(
-            f"{context}.grade: expected structural, release, supporting, "
-            "or legacy"
+            f"{context}.path: pinned files must live beneath evidence/ or be "
+            "an exact registered authorization surface"
+        )
+    if grade not in allowed_grades:
+        raise ManifestError(
+            f"{context}.grade: expected one of {sorted(allowed_grades)} "
+            f"for {raw_path}"
         )
     _non_negative_int(value["bytes"], f"{context}.bytes")
     _non_empty_string(value["purpose"], f"{context}.purpose")

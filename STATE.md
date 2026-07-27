@@ -1,6 +1,47 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.11.0.
+**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published; v0.12 correction and operations admission are in progress.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **200/200** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five released version authorities remain at 0.11.0.
+
+**Post-release shared-model operations are live-verified (measured
+2026-07-27).** Tier A created persistent `intel-gen`
+(`7485ff91dc0e428b8c99f9b62fe5affee9eb76461e380fba1309c73da12b9aa9`) and
+`intel-embed`
+(`bbbcc5f637d1c50292a6f5254af5b50438a3ecabf2de4ced042bf2791006f093`)
+from the already-local `ghcr.io/ggml-org/llama.cpp:server-cuda13` image and
+the documented GGUFs, with restart policy `no`; image, commands, mounts, GPU
+requests, model readability, and contexts **32768 / 2048** were inspected.
+Server-local ports 8080 and 8081 both returned HTTP 200
+`{"status":"ok"}`. The inherited image health check hard-codes internal port
+8080, so the existing port-8081 embedding container is falsely labeled
+`unhealthy`; its explicit port-8081 HTTP check is green, and the corrected
+disaster-recovery creation command is recorded without recreating it.
+
+The Mac route was measured rather than assumed: the Codex subprocess and
+`osascript do shell script` both returned `No route to host`, while a command
+actually launched in Terminal.app reached the server and established the
+shared localhost:2222 bridge. `./run models` now provides fail-closed
+`status`, `intel`, `athenaeum`, `athenaeum-bulk`, and `stop` profiles. The
+complete live matrix passed: intel exposed healthy server 8080/8081 and Mac
+18080/18081; Athenaeum serving exposed healthy 8080/8082 and Mac 28080/28082
+with 8081 down; Athenaeum bulk exposed healthy 8081/8082 and Mac 28081/28082
+with 8080 down; all-stop stopped all five named containers and released 2222,
+18080–18081, and 28080–28082. A no-bridge Terminal.app resume then recreated
+the bridge and restored intel with both tunneled health checks HTTP 200.
+Routine switches never create, remove, pull, or alter models; missing
+containers, foreign listeners, partial/overlapping GPU state, and failed
+health refuse the switch. The final measured live state is the intel profile
+with its managed tunnel up.
+
+This is prior measured evidence from the operator-authorized 2026-07-27
+server-administration session immediately before the v0.12 runbook. Commands
+were executed in Terminal.app and then through the measured localhost:2222
+bridge, with their output observed during that session; the durable record
+retains the two newly created container IDs above and the profile/health matrix,
+not a raw server transcript. Per HC13, this one real-hardware run proves only
+what those bytes and endpoints did at that time. It cannot prove the sequences
+remain correct after a controller edit, on another host, or after server state
+changes. v0.12 performs no live server session and does not promote this prior
+wire result into a reproducible CI claim.
 
 **v0.12 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener measured entering HEAD
@@ -205,10 +246,11 @@ both correcting v0.12 tasks. Before this task's checkbox, `checklist-audit`
 resolved **92 checked, 1 retracted**, all 92 progress entries and commits, and
 zero exemptions.
 
-The header's **191/191** shell count is the suite reproduced by the released
-v0.11.0 commit. The preserved untracked operations test file adds exactly nine
-cases, so the current dirty worktree runs **200/200**; that delta is not
-attributed to the release. Annotated tag object
+At RETRACT-0110 measurement, the header's **191/191** shell count was the suite
+reproduced by the released v0.11.0 commit, while the preserved untracked
+operations test file made the dirty worktree **200/200**. OPS-ADMIT later made
+those nine cases part of HEAD without attributing them to the release. Annotated
+tag object
 `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` still peels to
 `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`. Manifest validation and protected
 artifact verification remain **54/54** pins and **2/2** databases, and
@@ -238,6 +280,74 @@ reports **R1–R5 5/5**. In a detached scratch worktree, planting a fake
 pass repeated. Full `./run ci-local` passed **20/20** with **121** workspace,
 **21** net, and **200/200** dirty-worktree shell tests, protected artifacts
 **2/2**, and **54/54** pins. Standalone golden remained **11/11**.
+
+**v0.12 OPS-AUTHORITY is complete (measured 2026-07-27).** The operator selected
+recommended **L1 now, L2 scheduled**. L1 is offline-testable and prevents the
+current controller from constructing an unapproved remote payload: every SSH
+command passes `build_remote_command`, transition data is structured tuples,
+and only the five named containers, bounded Docker inventory, loopback
+health/model probes on 8080–8082, and the exact read-only commands named in the
+policy are accepted. The existing nine-test operations file now exercises
+every emitted transition and all allowlist categories; planted `docker rm`,
+`docker run`, `rm -rf`, and sixth-container commands each raise `ProfileError`
+before SSH.
+
+The identical marker-delimited L1 policy lives in `AGENTS.md` and
+`intel-platform-OPERATIONS.md`. Registered static rule R6 reports **PASS** on the
+real tree. In a disposable Git-backed copy, changing one word in only the
+operations copy made it exit 1 with
+`model-profile authorization block differs from AGENTS.md`; the clean pass was
+then repeated. Manifest schema 2 now holds two narrowly registered
+`authorization` pins in addition to the unchanged 54 evidence pins:
+`run` is 40,980 bytes at
+`7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d`,
+and `tools/model_profiles.py` is 21,394 bytes at
+`b7b84261a6bc45706f93f338682108a31c3b88ad00ad4c91061a90f77ed74292`.
+The manifest test proves a one-byte `run` mutation is refused.
+
+The residual is explicit: L1 cannot stop an agent that edits the controller
+from changing what runs. L2 is the only server-enforced boundary. It is
+scheduled for the next operator-authorized server-administration session and
+must be installed and refusal-tested before any additional model profile is
+admitted, using an `authorized_keys` forced-command wrapper over the same
+lifecycle set. No live server session occurred in this cycle.
+
+**v0.12 OPS-ADMIT is complete (measured 2026-07-27).** Under the
+operator-approved runbook amendment, OPS-AUTHORITY and OPS-ADMIT share one
+atomic implementation commit so the previously untracked controller, tests,
+and manual never exist in committed HEAD without the L1 guard and executable
+pins. The operations body consists of `tools/model_profiles.py`,
+`shell/tests/test_model_profiles.py`, `intel-platform-OPERATIONS.md`, and the
+`run`/`AGENTS.md` changes; the same commit includes their documentation,
+registered guard, pin validation, and this measured admission record.
+
+The shell-count ambiguity is closed: both permitted interpreter runs pass
+**200/200** under Python 3.11.4 and 3.12.13, with **21/21** constrained packages
+on each. The earlier direct sandboxed run was an environment non-result with
+eight denials of loopback binds or process topology; the identical permitted
+runs passed. `./run ci-local` passes **20/20** with **121** workspace Rust tests,
+**21** net tests, warning-denied builds, clippy/fmt/ShellCheck, and locked Rust
+1.78 lanes. Standalone golden remains byte-identical **11/11**; both protected
+databases remain **2/2**, all **54/54** evidence pins match, and both
+authorization pins match.
+
+The E0 operations inventory changed only for the selected L1 policy and the
+three required C7 augment dispositions, so the task's remeasurement was the
+full offline matrix above; the runbook prohibits a new live session. Malformed
+container rows now raise `ProfileError`. Requiring all five containers is a
+deliberate cross-project coupling because this single controller must know it
+can stop every conflicting role before selecting either project's profile; a
+missing role makes the known inventory incomplete and refuses. `cmd_models`
+deliberately calls stdlib-only bare `python3` so reboot recovery works before a
+venv exists. `tools/model_profiles.py` in intel-platform is recorded as the
+single executable source of truth for both projects; Athenaeum delegates to it
+and must not carry a second copy.
+
+The prior live matrix and its two recorded container IDs retain the provenance
+and HC13 limits stated at the top of this file. It is a single
+operator-authorized 2026-07-27 real-hardware run, not a repeatable check and not
+proof about the post-edit controller. OPS-FAILCLOSED supplies offline
+failure-capable controls next; it does not turn fixtures into wire evidence.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -3886,6 +3996,26 @@ credential rule executable. The clean tree passes. In a detached scratch
 worktree, a planted fake `sk-proj-…` provider key at `README.md:1` produced
 `invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value`; the scratch
 worktree was then removed.
+
+### 6h. Why model-profile authority is L1 now and L2 scheduled (v0.12/OPS-AUTHORITY)
+
+**Decision: L1 now, L2 scheduled, selected by the operator on 2026-07-27.**
+Free-form remote transition strings were rejected because the standing
+authorization named a narrow lifecycle while the mutable controller could
+construct arbitrary shell. L1 converts transitions to structured tuples and
+routes every remote payload through one compiled allowlist before SSH. It is
+offline-testable, and planted lifecycle, creation, destructive-path, and
+unknown-container commands prove the boundary can refuse.
+
+Hash-pinning both executable surfaces and byte-comparing the policy copies make
+edits visible, but they do not make L1 invariant under an agent that edits the
+controller and its pin together. That residual is accepted temporarily and
+stated without qualification. L2 is scheduled for the next
+operator-authorized server-administration session, before any additional model
+profile is admitted. Its forced-command `authorized_keys` wrapper must be
+tested from both directions so the server, rather than the Mac controller,
+enforces the lifecycle set. This is the operations analogue of A4; it neither
+narrows nor closes A4's core-shell trust boundary.
 
 ## 7. Run reference
 

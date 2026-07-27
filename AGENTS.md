@@ -304,3 +304,50 @@ retroactive and cite the already-recorded wire and B0 evidence; they are not
 fresh admissions or fresh wire runs.
 
 Record every block precisely. A block is a non-result, never a pass.
+
+## 8. Server model profiles — standing operator authorization
+
+The marker-delimited policy below is byte-identically mirrored in
+`intel-platform-OPERATIONS.md` and enforced by invariant R6.
+
+<!-- MODEL_PROFILE_AUTHORITY:START -->
+**Server model-profile authority — L1 now, L2 scheduled.** The operator selected
+L1 on 2026-07-27 because it is offline-testable and makes the current controller
+refuse remote commands outside a compiled construction allowlist. Codex may run
+`./run models status|intel|athenaeum|athenaeum-bulk|stop` without a per-command
+authorization request, including launching that exact command in Terminal.app
+when the Mac-created port-2222 bridge is absent.
+
+Every remote command produced by `tools/model_profiles.py` passes one allowlist
+before SSH. `docker start|stop|restart` may name only `intel-gen`,
+`intel-embed`, `athenaeum-gen`, `athenaeum-embed-gpu`, and
+`athenaeum-embed-cpu`; `docker ps` and `docker ps -a` may inspect inventory;
+`curl` may query only `/health` or `/v1/models` on loopback ports 8080–8082;
+and the remaining exact read-only commands are `nvidia-smi`, `ip -br address`,
+and `git status`. Anything else raises `ProfileError` before SSH. The `run` and
+`tools/model_profiles.py` bytes are hash-pinned in
+`config/protected-artifacts.json`.
+
+The authorization also covers creating, checking, reusing, and cleanly exiting
+the documented shared SSH bridge and intel/Athenaeum model-tunnel control
+sockets, plus local `lsof` inspection of their documented forwards. Before a
+switch, Codex inspects and reports the actual named-container state. After a
+switch, it reports server-local and forwarded health. A missing named container,
+foreign listener, health failure, or partial/overlapping GPU state is a refusal;
+`models stop` is the authorized safe recovery for the last state and may stop
+all five named containers plus close only the managed tunnels and bridge.
+
+Everything else on the server remains ask-first, especially `docker run`,
+`docker rm`, `docker rmi`, `docker pull`, any image or tag change, edits under
+`/data/models`, package installation, reboots, and irreversible actions. The
+routine controller never creates, removes, or recreates a container, and never
+removes an image, model, repository, or configuration.
+
+L1 cannot prevent an agent that edits `tools/model_profiles.py` from changing
+what runs; only L2 can make the server authorization survive an edited
+controller. L2 is scheduled for the next operator-authorized
+server-administration session and must be installed and refusal-tested before
+any additional model profile is admitted: an `authorized_keys`
+forced-command wrapper will make the server reject commands outside the same
+lifecycle set.
+<!-- MODEL_PROFILE_AUTHORITY:END -->

@@ -15,6 +15,7 @@
 #   ./run probe-providers bounded identity/capability probe for both model roles
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
 #   ./run invariant-scan  execute registered static repository invariants
+#   ./run models intel    prepare the shared GPU server for intel-platform
 #
 # The offline commands need only the Rust toolchain and Python 3.11+. The live
 # commands additionally need outbound network (and the model commands need
@@ -830,6 +831,12 @@ cmd_probe_providers() {
   PYTHONPATH=shell py tools/probe_providers.py "$@"
 }
 
+cmd_models() {
+  # Deliberately bypass ensure_venv: the stdlib-only recovery controller must
+  # work after a reboot and before this repository's Python venv exists.
+  python3 tools/model_profiles.py "$@"
+}
+
 # Point the shell at REAL chat and embedding endpoints and run the full
 # checklist against an isolated fixture core. The wrapper owns the core
 # lifecycle; callers no longer need to guess whether something is listening.
@@ -960,12 +967,24 @@ intel-platform — ./run <command>
     verify-llm     load .env, start an isolated fixture core, and verify the
                    selected real chat + embedding endpoints end to end.
 
+  Mac model-server profiles (persistent named containers; never recreates):
+    models status  inspect the actual server profile and local tunnel controls
+    models intel   stop Athenaeum GPU roles; start intel generation + embedding
+    models athenaeum
+                   stop intel roles; start Athenaeum serving + query embedding
+    models athenaeum-bulk
+                   stop generation; start Athenaeum GPU + CPU embedding
+    models stop    stop every project model container and managed local tunnel
+
   Common overrides (rarely needed): CORE_DB, CORE_PORT, API_PORT, LLM_PORT.
 
   Examples:
     ./run demo
     ./run golden
     ./run config
+    ./run models intel
+    ./run models athenaeum
+    ./run models stop
     ./run harvest-arxiv                    # fresh data/live-<timestamp>-<pid>.db
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
     LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
@@ -1001,6 +1020,7 @@ case "$cmd" in
   harvest-arxiv) cmd_harvest_arxiv "$@" ;;
   probe-providers) cmd_probe_providers "$@" ;;
   verify-llm)    cmd_verify_llm "$@" ;;
+  models)        cmd_models "$@" ;;
   config)        cmd_config "$@" ;;
   api)           cmd_api ;;
   help|-h|--help) usage ;;

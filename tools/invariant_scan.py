@@ -27,6 +27,12 @@ ROOT = Path(__file__).resolve().parents[1]
 RULES_FILE = Path("config/invariant-rules.json")
 STORE = Path("crates/store/src/sqlite.rs")
 CORE_MAIN = Path("apps/cored/src/main.rs")
+AUTHORITY_FILES = (
+    Path("AGENTS.md"),
+    Path("intel-platform-OPERATIONS.md"),
+)
+AUTHORITY_START = "<!-- MODEL_PROFILE_AUTHORITY:START -->"
+AUTHORITY_END = "<!-- MODEL_PROFILE_AUTHORITY:END -->"
 ASSIGN_CALL = re.compile(r"\bassign_canonical_ids\s*\(")
 TEST_MODULE = re.compile(r"(?m)^#\[cfg\(test\)\]\s*\nmod\s+tests\s*\{")
 TCP_BIND = re.compile(r"\b(?:tokio::net::)?TcpListener::bind\s*\(")
@@ -320,12 +326,47 @@ def r5_findings(root: Path) -> list[str]:
     return findings
 
 
+def _authority_block(root: Path, relative: Path) -> tuple[str | None, list[str]]:
+    path = root / relative
+    try:
+        text = path.read_text()
+    except OSError as error:
+        return None, [f"{relative}: cannot read authorization block: {error}"]
+    if text.count(AUTHORITY_START) != 1 or text.count(AUTHORITY_END) != 1:
+        return None, [
+            f"{relative}: expected exactly one model-profile authorization block"
+        ]
+    start = text.index(AUTHORITY_START)
+    end = text.index(AUTHORITY_END, start) + len(AUTHORITY_END)
+    return text[start:end], []
+
+
+def r6_findings(root: Path) -> list[str]:
+    findings: list[str] = []
+    blocks: dict[Path, str] = {}
+    for relative in AUTHORITY_FILES:
+        block, errors = _authority_block(root, relative)
+        findings.extend(errors)
+        if block is not None:
+            blocks[relative] = block
+    if len(blocks) == len(AUTHORITY_FILES):
+        reference = blocks[AUTHORITY_FILES[0]]
+        for relative in AUTHORITY_FILES[1:]:
+            if blocks[relative] != reference:
+                findings.append(
+                    f"{relative}: model-profile authorization block differs "
+                    f"from {AUTHORITY_FILES[0]}"
+                )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
     "R3": r3_findings,
     "R4": r4_findings,
     "R5": r5_findings,
+    "R6": r6_findings,
 }
 
 

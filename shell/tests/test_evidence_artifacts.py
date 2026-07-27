@@ -369,10 +369,31 @@ def test_pinned_evidence_file_is_checked_by_validate(tmp_path: Path) -> None:
     assert "MISMATCH evidence/report.json field=sha256" in changed.stderr
 
 
-def test_pinned_evidence_file_must_stay_beneath_evidence(
+def test_only_registered_authorization_pins_may_live_outside_evidence(
     tmp_path: Path,
 ) -> None:
     _, manifest_path, manifest = _fixture(tmp_path)
+    controller = tmp_path / "tools" / "model_profiles.py"
+    controller.parent.mkdir()
+    controller.write_text("print('controller')\n")
+    runner = tmp_path / "run"
+    runner.write_text("#!/bin/sh\n")
+    for path in (runner, controller):
+        manifest["pinned_files"].append(
+            {
+                "path": str(path.relative_to(tmp_path)),
+                "grade": "authorization",
+                "sha256": _sha256(path),
+                "bytes": path.stat().st_size,
+                "purpose": "authorization-surface pin control",
+                "provenance": "created inside one disposable pytest directory",
+            }
+        )
+    _write_manifest(manifest_path, manifest)
+
+    allowed = _run(tmp_path, manifest_path, "validate")
+    assert allowed.returncode == 0, allowed.stderr
+
     manifest["pinned_files"].append(
         {
             "path": "outside.json",
@@ -407,6 +428,13 @@ def test_committed_deferred_receipt_pin_rejects_one_byte_mutation(
 
     clean = _run(tmp_path, manifest_path, "validate")
     assert clean.returncode == 0, clean.stderr
+
+    runner = tmp_path / "run"
+    runner.write_bytes(runner.read_bytes() + b"\n")
+    changed_runner = _run(tmp_path, manifest_path, "validate")
+    assert changed_runner.returncode == 1
+    assert "MISMATCH run field=sha256" in changed_runner.stderr
+    runner.write_bytes((ROOT / "run").read_bytes())
 
     receipt = (
         tmp_path

@@ -533,6 +533,22 @@
       "bytes": 33741,
       "purpose": "Authenticated release-grade v0.11.0 deferred-design audit receipt.",
       "provenance": "Clean detached measurement of candidate 17221504d0c572e2b52f8509cb720d4a7c72f47d on 2026-07-27; accepted seven distinct successful receipts from run 30236305375 attempt 1 after each persisted Sigstore bundle verified its exact bytes, source digest, repository, workflow signer, source ref, and GitHub-hosted runner identity."
+    },
+    {
+      "path": "run",
+      "grade": "authorization",
+      "sha256": "7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d",
+      "bytes": 40980,
+      "purpose": "Hash-pinned entry point for the operator-authorized model-profile command surface.",
+      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary; the pin makes later executable-surface edits visible to manifest validation."
+    },
+    {
+      "path": "tools/model_profiles.py",
+      "grade": "authorization",
+      "sha256": "b7b84261a6bc45706f93f338682108a31c3b88ad00ad4c91061a90f77ed74292",
+      "bytes": 21394,
+      "purpose": "Hash-pinned controller for the operator-authorized model-profile lifecycle.",
+      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary; the pin makes later controller edits visible to manifest validation."
     }
   ]
 }
