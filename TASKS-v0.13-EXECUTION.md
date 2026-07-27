@@ -352,6 +352,46 @@ claim is a description of what it checks.
 
 ---
 
+## Gate follow-up · THRESHOLD-SOURCE-SEAM — Remove the production distance parameter 🤖
+
+**Gate record.** The first THRESHOLD-BIND attempt applied its strict allow-list
+without changing Rust and found
+`crates/store/src/sqlite.rs:685: assign_canonical_ids_tx distance argument must
+be DEDUP_MAX_DISTANCE; found max_distance`. Step 3's declared gate therefore
+tripped. This is the follow-up task that gate requires; THRESHOLD-BIND remains
+unchecked and resumes only after this task commits.
+
+**Objective.** Remove the production parameter seam exposed by the new rule
+without removing the test-only alternate-distance control.
+
+**Gate.** `crates/store/src/sqlite.rs` and its in-file tests only. Do not change
+the threshold value, fingerprint algorithm, winner ordering, transaction
+boundary, public method signature, or any invariant-scan code/config in this
+task.
+
+**Steps.**
+
+1. Make the public no-argument maintenance path perform its transaction and
+   call `assign_canonical_ids_tx` with the single token
+   `DEDUP_MAX_DISTANCE`.
+2. Keep alternate-distance materialization reachable only through the
+   `#[cfg(test)]` seam. It must execute the same transaction/rollback path, not
+   substitute a double.
+3. Run the store boundary/differential tests and the complete Rust matrix.
+4. Re-apply the strict R5 candidate read-only and confirm unmodified post-task
+   source no longer produces a call-site finding before resuming Step 3.
+
+**Acceptance criteria.** The production
+`rematerialize_canonical_ids_with_distance(max_distance)` seam is absent ·
+every production `assign_canonical_ids_tx` call passes
+`DEDUP_MAX_DISTANCE` · alternate distances remain test-only and their real
+store tests pass · no tool/config file changes in this commit · golden 11/11.
+
+**Done when** the source itself has one production threshold binding and the
+previously red strict R5 candidate passes it without an exemption.
+
+---
+
 ## Step 4 · UA-CONTACT (C5) — A crawler identity that refuses to be a placeholder 🤖
 
 **Objective.** Make the operator contact required configuration, enforced by
@@ -567,6 +607,9 @@ record of v0.12's is true.
 - [ ] **THRESHOLD-BIND** — R5 is an allow-list over production call sites; the
   `INGEST_FUZZ_LIMIT` mutation FAILs; both original fail-befores still FAIL;
   clean tree PASSes; no `crates/` source changed
+- [ ] **THRESHOLD-SOURCE-SEAM** — the gate-discovered production distance
+  parameter is removed; alternate-distance controls remain test-only; strict
+  R5 candidate passes; golden 11/11
 - [ ] **UA-CONTACT** — net build refuses to start without a real contact; every
   placeholder form refused; product token structural and identical on the wire
   and in `RobotsCache`; advertised version derived from the crate; offline build
@@ -628,3 +671,17 @@ record of v0.12's is true.
   secret-bearing responses.
 - Do not batch `STATE.md` / `PROGRESS-v0.13.md` updates or combine two tasks in
   one commit.
+
+---
+
+## Runbook amendments
+
+Step 3 — gate-triggered THRESHOLD-SOURCE-SEAM follow-up added — 2026-07-27
+
+The first strict allow-list measurement found a production threshold parameter
+at `crates/store/src/sqlite.rs:685`. Step 3's original Gate explicitly requires
+that finding to be recorded and acted on in a follow-up task rather than hidden
+by a source edit inside THRESHOLD-BIND. The added follow-up owns only that
+source correction; Step 3's original Objective, Acceptance criteria, and Done
+when remain byte-identical and THRESHOLD-BIND remains unchecked until it can
+resume against the corrected source.
