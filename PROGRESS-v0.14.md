@@ -210,3 +210,21 @@ Entries are append-only; corrections are new dated entries.
   and all **86/86** pins exact.
 - golden-E2E delta: **0**. The matrix and mandatory standalone run both
   remained **11/11** byte-identical.
+
+### 2026-07-28 · DIAGNOSTIC-KNOB-GATE — option (b) selected
+
+- owner: Operator + Codex
+- commit: 28c5917973691642d35371b25dd82f4cd2c1f08a
+- result: GATE PASS for the required disposition only; implementation has not
+  started. The operator selected option **(b)**.
+- decision and reasoning: retain the bounded diagnostic delay used by
+  `benchmark_view.py`, but make any configured use loud at startup and document
+  it as a deliberate operator knob. This adopts the runbook's cheapest honest
+  disposition: the defect is silent activation, while feature-gating would add
+  a second build configuration and removal would require re-deriving the
+  existing view-decomposition evidence.
+- version trigger: pending implementation. Option (b) is a runtime behavior and
+  operator-surface change, so successful DIAGNOSTIC-KNOB completion fires
+  **v0.14.0**, not the documentation-only v0.13.1 path.
+- test and golden acceptance: NOT RUN for this decision-only checkpoint; no
+  implementation or runtime file changed.
