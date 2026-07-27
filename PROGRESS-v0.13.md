@@ -751,3 +751,33 @@ Entries are append-only; corrections are new dated entries.
   identity-before-bind coverage.
 - standing constraints: PASS. No source, public `/v1/*` body, SQLite schema,
   protected evidence, prior tag, live server state, or L2 state changed.
+
+### 2026-07-27 · POST-PUBLISH — verification addendum
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 1cf1e4a1dae356840ea43e740e04b48fcd3f99a6
+- publication mapping: PASS. One atomic push advanced `origin/main` to release
+  commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09` and created annotated tag
+  object `24a6a2aca52974891d120e0f2b295a93d629c1f7`. Immediate read-only
+  verification returned both `origin/main` and `v0.13.0^{}` at the release
+  commit and `v0.13.0` at the tag object.
+- prior-release immutability: PASS. v0.10.3, v0.11.0, and v0.12.0 retained
+  their exact annotated objects and peeled commits; their committed
+  receipt/report paths remained byte-identical. The 86-pin forward manifest
+  preserves every prior pin unchanged.
+- candidate cleanup: PASS. Remote `candidate/v0.13.0` was deleted only after
+  the release mapping passed; final read-only enumeration found it absent.
+- post-push CI: PASS, but **not promoted**. Push run **30281407090** executed
+  exact release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`
+  and completed **Success** in **42 seconds**. Core, lint, net, MSRV, golden,
+  shell Python 3.11, and shell Python 3.12 all passed; report-only drift was
+  skipped. Seven artifacts were produced but none was downloaded, admitted,
+  or pinned.
+- release-evidence boundary: PASS. Authenticated dispatch run **30277584129**
+  against evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`
+  remains the sole v0.13 release evidence. The protected pin count remains
+  **86**.
+- golden-E2E delta: **0**. The release-commit local matrix and standalone
+  measurement were each **11/11**, and the post-push hosted golden identity
+  passed.

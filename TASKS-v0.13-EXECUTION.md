@@ -921,6 +921,12 @@ schema.
 - **Hosted dispatch:** `30277584129`, attempt `1`
 - **Release commit:** `5ecd42bb6ca44f1588e53e493c67fee17d071b09`
 - **Annotated tag object:** `24a6a2aca52974891d120e0f2b295a93d629c1f7`
+- **Failed non-admitted run:** `30274895522`, attempt `1`; exposed D1 by
+  failing the 24-test cored net invocation at 23 passed / 1 failed with
+  `could not install crawler User-Agent`
+- **Post-publication CI:** `30281407090`; all seven execution identities
+  passed at the release commit, recorded but not promoted as release evidence
+- **Protected pins:** `86` total = `84` evidence + `2` authorization surfaces
 
 The twelve task records resolve to these implementation commits or the
 explicitly pending closing disposition:
@@ -981,3 +987,10 @@ The R-CLOSE box and canonical heading changed together in this append-only
 audit-record commit, so `cycle-check` moved directly from a valid open state to
 a valid closed state. A4 and the editable-L1 controller residual both remain
 open; L2 remains scheduled and unexecuted.
+
+One atomic publication push advanced `origin/main` to the release commit and
+created the recorded annotated tag. Immediate read-only verification returned
+the exact mapping before `candidate/v0.13.0` was deleted. Post-push run
+**30281407090** passed all seven execution identities in **42 seconds** but is
+not release evidence; the pinned release evidence remains dispatch run
+**30277584129** against the separately recorded evidence candidate.

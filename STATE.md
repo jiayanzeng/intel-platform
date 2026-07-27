@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is authorized for publication; R-CLOSE is preparing the release commit from the release-grade evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`.** Hosted workflow-dispatch run **30277584129**, attempt **1**, passed all seven identities; its release audit accepted seven authenticated receipts with zero rejection and required attestations. Failed v0.13 run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`; published v0.10.3 and v0.11.0 remain unchanged, and local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0.
+**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`, and the atomic publication push advanced `origin/main` to that same commit.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. The verified release mapping permitted deletion of `candidate/v0.13.0`. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Final release CI is **20/20** locally with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the shell suite is **216/216** under Python 3.11.4 and 3.12.13. Both interpreters verify **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -711,6 +711,28 @@ exact mapping.
    installation into `main()` fixed placement, but ordering before listener
    bind is currently guarded by statement order plus one manual binary run,
    not by a reconstructible structural rule.
+
+**v0.13.0 publication is complete (measured 2026-07-27).** One atomic push
+advanced `origin/main` from
+`466ebb3fc9736923110803e087acc798e417d084` to release commit
+`5ecd42bb6ca44f1588e53e493c67fee17d071b09` and created annotated tag object
+`24a6a2aca52974891d120e0f2b295a93d629c1f7`. Immediate read-only verification
+returned `origin/main` and `v0.13.0^{}` at the exact release commit and
+`v0.13.0` at the exact tag object. The v0.10.3, v0.11.0, and v0.12.0 objects
+and peeled commits remained byte-identical, as did their committed
+receipt/report files. Only after that mapping passed was remote
+`candidate/v0.13.0` deleted; final enumeration found it absent.
+
+Push-triggered CI run **30281407090** executed exact release commit
+`5ecd42bb6ca44f1588e53e493c67fee17d071b09` and completed **Success** in
+**42 seconds**. Its seven execution identities all passed: core
+`90028434967`, lint `90028434962`, net `90028434986`, MSRV `90028434824`,
+golden `90028434952`, shell Python 3.11 `90028434931`, and shell Python 3.12
+`90028434995`; report-only drift `90028435515` was skipped. GitHub produced
+seven artifacts, but none was downloaded, admitted, or pinned. This run is
+post-publication confirmation only. Release evidence remains authenticated
+dispatch run **30277584129** against candidate `7faaa4e1…`, and the protected
+pin count remains **86**.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
