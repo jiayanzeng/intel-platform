@@ -181,3 +181,32 @@ Entries are append-only; corrections are new dated entries.
   and all **86/86** pins exact.
 - golden-E2E delta: **0**. The matrix and mandatory standalone run both
   remained **11/11** byte-identical.
+
+### 2026-07-28 · R9-TEST-SEAM — fault injector remains dev-only
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: 9968f9f426b28e373e24907954cecea2f08bd78a
+- result: PASS as a guard gap, not a live-defect fix. E0's locked release build
+  had already verified `test_clear_fingerprint` absent from both the release
+  symbol table and binary strings. R9 now enumerates every root-declared
+  workspace manifest and permits `test-support` only as its package feature
+  declaration or on a dev-dependency edge.
+- control acceptance: PASS. Moving the existing `intel-store` feature
+  activation from `apps/cored/Cargo.toml` `[dev-dependencies]` into
+  `[dependencies]` made R9 fail at exact line 15 and name the non-dev section.
+  R9 passes on HEAD.
+- preservation acceptance: PASS. Implementation commit
+  `9968f9f426b28e373e24907954cecea2f08bd78a` changed no `Cargo.toml` and no
+  Rust source file.
+- invariant acceptance: PASS. The complete scanner passes **9/9 rules / 15
+  site-specific controls**, and the focused invariant module passes **15/15**
+  under Python 3.11.4 and 3.12.13.
+- shell acceptance: PASS. The complete shell suite passes **220/220** under
+  Python 3.11.4 and 3.12.13.
+- regression acceptance: PASS. `./run ci-local` remained **20/20** with
+  **124** workspace Rust tests, **47** net tests, zero rustc/clippy/fmt/
+  ShellCheck failures, locked Rust 1.78 green, protected databases **2/2**,
+  and all **86/86** pins exact.
+- golden-E2E delta: **0**. The matrix and mandatory standalone run both
+  remained **11/11** byte-identical.
