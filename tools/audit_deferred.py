@@ -356,7 +356,6 @@ def writer_measurement() -> dict[str, Any]:
             "SqliteStore::open_with_timings(",
             ".commit_harvest_page(",
             ".append_new(",
-            ".assign_canonical_ids(",
             ".upsert_embeddings(",
             ".record_signals(",
         ],
@@ -406,12 +405,12 @@ def writer_measurement() -> dict[str, Any]:
             },
             {
                 "owner": "cored /ingest",
-                "path": "append_new + assign_canonical_ids",
-                "writes": "documents/FTS and corpus-derived canonical_id",
-                "sources": [
-                    source_ref(CORE_MAIN, ".append_new("),
-                    source_ref(CORE_MAIN, ".assign_canonical_ids("),
-                ],
+                "path": "append_new",
+                "writes": (
+                    "documents/FTS and corpus-derived canonical_id "
+                    "in one transaction"
+                ),
+                "source": source_ref(CORE_MAIN, ".append_new("),
             },
             {
                 "owner": "cored paged /ingest",

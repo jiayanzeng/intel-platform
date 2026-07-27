@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.11.0.
+**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **121** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.11.0.
 
 **v0.12 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener measured entering HEAD
@@ -99,6 +99,33 @@ All C1-C7 findings were confirmed; none refuted:
    `_require_containers` couples every profile to all five containers; and
    `cmd_models` deliberately uses bare `python3` without documenting its
    pre-venv rationale.
+
+**v0.12 INGEST-ATOMIC is complete (measured 2026-07-27).** `append_new` now
+opens one transaction, appends documents, and—when any row is new—runs global
+canonical rematerialization before the single commit. The non-paged handler has
+no second assignment call and performs no fallible work between that commit and
+the view-generation bump. `ARCHITECTURE.md` §3 item 8 now states the enforced
+rule: every store write path that adds, changes, or removes rows rematerializes
+identity in the same SQLite transaction. The schema and `/ingest` success body
+are unchanged.
+
+The failure-capable regression was captured on both sides. Before the fix,
+`non_paged_rematerialization_failure_rolls_back_append_and_generation` failed
+with **5** rows where **1** was required; after the fix it passes while also
+asserting HTTP 500 and an unmoved generation. The independent paged-boundary
+control passed before and after: a successful first page leaves two durable
+rows with canonical ids, cursor token, and generation 1; an injected failure in
+the later page adds nothing and does not bump again.
+
+The first post-change `./run ci-local` exposed a stale executable source locator
+in `audit_deferred.py`: it required the removed handler-level assignment call.
+The audit inventory was corrected to the actual one-transaction `append_new`
+write path without changing any deferred trigger or disposition. The identical
+rerun then passed all **19/19** jobs with **121** Rust workspace / **21** net
+tests, warning-denied builds, clippy/fmt, locked Rust 1.78 check/tests, and
+**200/200** shell tests. Standalone relevant Rust/MSRV lanes also passed.
+Standalone golden remained **11/11** byte-identical; protected databases stayed
+exact **2/2** and all **54/54** pins validated.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked

@@ -3,6 +3,9 @@ name = "intel-store"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+test-support = []
+
 [dependencies]
 intel-core = { path = "../core" }
 # simhash/hamming for persisted fingerprints + canonical ids (T9.1).

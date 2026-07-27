@@ -787,11 +787,8 @@ async fn ingest(
     }
     let tail_new = st.store.append_new(&fetched).map_err(internal)?;
     if tail_new > 0 {
-        // The corpus changed: re-materialize near-dup canonical ids (T9.1) and
-        // invalidate every memoized view (T9.2). Both are functions of the
-        // corpus, so both are recomputed exactly when the corpus moves — once
-        // per ingest, not once per request.
-        st.store.assign_canonical_ids(16).map_err(internal)?;
+        // append_new committed both documents and canonical identity, so no
+        // fallible work may sit between that durability point and invalidation.
         st.bump_generation();
     }
     let new = cursor_adapter.new_count() + tail_new;
@@ -1727,6 +1724,107 @@ mod tests {
             .results
             .iter()
             .any(|r| r.source_id == "filings-digest" && !r.ok));
+    }
+
+    #[tokio::test]
+    async fn non_paged_rematerialization_failure_rolls_back_append_and_generation() {
+        let st = test_state();
+        let seeded = do_ingest(&st, &["finance"], Some(&["filings-digest"])).await;
+        assert_eq!(seeded.new, 1);
+        let before_count = st.store.count().unwrap();
+        let before_generation = st.generation.load(Ordering::SeqCst);
+        let seed_id = st.store.load_all().unwrap()[0].id.clone();
+        assert_eq!(st.store.test_clear_fingerprint(&seed_id).unwrap(), 1);
+
+        let result = ingest(
+            State(st.clone()),
+            HeaderMap::new(),
+            Json(IngestReq {
+                sectors: vec!["technology".into()],
+                sources: Some(vec!["techwire".into()]),
+            }),
+        )
+        .await;
+        let error = match result {
+            Ok(_) => panic!("injected rematerialization failure must return 500"),
+            Err(error) => error,
+        };
+
+        assert_eq!(error.0, StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(error.1.contains(&seed_id), "{error:?}");
+        assert_eq!(
+            st.store.count().unwrap(),
+            before_count,
+            "a failed non-paged rematerialization committed appended rows"
+        );
+        assert_eq!(
+            st.generation.load(Ordering::SeqCst),
+            before_generation,
+            "a failed ingest moved the view generation"
+        );
+    }
+
+    #[tokio::test]
+    async fn later_paged_failure_keeps_earlier_page_durable_and_generation_moved() {
+        let donor = test_state();
+        do_ingest(&donor, &["technology"], Some(&["techwire"])).await;
+        let docs = donor.store.load_all().unwrap();
+        assert!(docs.len() >= 4);
+
+        let st = test_state();
+        let adapter = CursorAdapter::new(st.clone());
+        let first_page = &docs[..2];
+        assert_eq!(
+            adapter
+                .commit_page(
+                    "paged-fixture",
+                    first_page,
+                    Some("page-2-token"),
+                    Some("2026-07-04"),
+                )
+                .unwrap(),
+            2
+        );
+        assert_eq!(st.store.count().unwrap(), 2);
+        assert_eq!(st.generation.load(Ordering::SeqCst), 1);
+        for document in first_page {
+            assert!(
+                st.store.canonical_id(&document.id).unwrap().is_some(),
+                "{} has no canonical identity after the first page",
+                document.id
+            );
+        }
+
+        assert_eq!(
+            st.store.test_clear_fingerprint(&first_page[0].id).unwrap(),
+            1
+        );
+        let error = adapter
+            .commit_page("paged-fixture", &docs[2..], None, Some("2026-07-05"))
+            .expect_err("the injected later-page failure must fire");
+        assert!(error.contains(&first_page[0].id), "{error}");
+
+        assert_eq!(
+            st.store.count().unwrap(),
+            2,
+            "the failed later page itself must roll back"
+        );
+        assert_eq!(
+            st.generation.load(Ordering::SeqCst),
+            1,
+            "the failed later page must not bump generation again"
+        );
+        assert_eq!(adapter.committed_for("paged-fixture"), 2);
+        assert_eq!(adapter.new_count(), 2);
+        let cursor = st.store.get_cursor("paged-fixture").unwrap().unwrap();
+        assert_eq!(cursor.cursor.as_deref(), Some("page-2-token"));
+        for document in first_page {
+            assert!(
+                st.store.canonical_id(&document.id).unwrap().is_some(),
+                "{} lost its earlier-page canonical identity",
+                document.id
+            );
+        }
     }
 
     // --- T9.2: /view caching ------------------------------------------------

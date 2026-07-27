@@ -717,7 +717,7 @@ of v0.11's is true.
 ## Cycle checklist
 
 - [x] **E0** — entering matrix captured; dirty inventory preserved and recorded; shell-count ambiguity resolved with both numbers; C1 reproduced as a failure-capable run; C2/C5 reproduced as command output; C3/C6/C7 dispositions recorded
-- [ ] **INGEST-ATOMIC** — `append_new` rematerializes in-transaction; no production path splits append from assignment; non-paged failure control fails-before/passes-after on count, generation, and status; paged-durability control unchanged; `ARCHITECTURE.md` §3 item 8 corrected
+- [x] **INGEST-ATOMIC** — `append_new` rematerializes in-transaction; no production path splits append from assignment; non-paged failure control fails-before/passes-after on count, generation, and status; paged-durability control unchanged; `ARCHITECTURE.md` §3 item 8 corrected
 - [ ] **THRESHOLD-ONE** — zero production `assign_canonical_ids` call sites outside the store crate; seam disposition recorded; `DEDUP_MAX_DISTANCE` not exported; R1 registered with captured fail-before
 - [ ] **INVARIANT-SCAN** — `./run invariant-scan` is ci-local job 20; every rule cites its prose sentence and has a captured fail-before; a rule without `fail_before` is refused; `checklist-audit` reports checked and retracted separately; both `AGENTS.md` amendments landed
 - [ ] **RETRACT-0110** — retraction record validated; `PROGRESS-v0.11.md` appended not edited; `STATE.md` header reports released counts with worktree delta named; `v0.11.0` tag, commit, and 54 pins byte-identical

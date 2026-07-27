@@ -112,14 +112,16 @@ Condensed from `STATE.md §2`.
    Billing speaks `subscription.created|updated|deleted|key_rotated`; Stripe
    enters through `adapters/stripe.py`. A second provider is a second adapter, not
    a change to the store or entitlement model.
-8. **Dedup identity is a corpus property.** `canonical_id` is re-materialized from
-   the global rule (earliest by `(published_day, id)`) on every ingest that adds
+8. **Dedup identity is a corpus property.** `canonical_id` is re-materialized
+   from the global rule (earliest by `(published_day, id)`) inside the same
+   SQLite transaction on every store write path that adds, changes, or removes
    rows. The 64-bit `simhash(title + body)` is materialized at ingest or
-   migration and refreshed on document updates; `/view` and canonical assignment
-   consume that persisted value, and a missing value is an error rather than an
-   invitation to hide a failed migration by recomputing. `/retrieve` keeps
-   whichever near-dup the *query* ranked higher — relevance is a property of the
-   question, not the corpus. Only the persisted fingerprint is reused there.
+   migration and refreshed on document updates; `/view` and canonical
+   assignment consume that persisted value, and a missing value is an error
+   rather than an invitation to hide a failed migration by recomputing.
+   `/retrieve` keeps whichever near-dup the *query* ranked higher — relevance is
+   a property of the question, not the corpus. Only the persisted fingerprint
+   is reused there.
 
 ## 4. The robots subsystem (two gates, one direction)
 

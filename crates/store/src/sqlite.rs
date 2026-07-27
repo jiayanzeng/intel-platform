@@ -198,11 +198,14 @@ impl SqliteStore {
         ))
     }
 
-    /// Idempotent append: returns how many documents were genuinely new.
+    /// Adding documents and rematerializing canonical identity are one durability unit.
     pub fn append_new(&self, docs: &[Document]) -> rusqlite::Result<usize> {
         let mut conn = self.conn.lock().unwrap();
         let tx = conn.transaction()?;
         let n = append_new_tx(&tx, docs)?;
+        if n > 0 {
+            assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;
+        }
         tx.commit()?;
         Ok(n)
     }
@@ -621,6 +624,17 @@ impl SqliteStore {
             conn.prepare("SELECT id FROM documents WHERE simhash IS NULL ORDER BY id")?;
         let rows = stmt.query_map([], |r| r.get(0))?;
         rows.collect()
+    }
+
+    /// Test-only fault injection for callers that must prove a failed global
+    /// rematerialization cannot partially commit a surrounding operation.
+    #[cfg(feature = "test-support")]
+    #[doc(hidden)]
+    pub fn test_clear_fingerprint(&self, id: &str) -> rusqlite::Result<usize> {
+        self.conn
+            .lock()
+            .unwrap()
+            .execute("UPDATE documents SET simhash = NULL WHERE id = ?1", [id])
     }
 
     /// Every document's persisted fingerprint, by id.

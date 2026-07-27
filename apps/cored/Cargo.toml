@@ -21,3 +21,6 @@ serde_json = "1"
 
 [features]
 net = ["intel-ingest/net"]
+
+[dev-dependencies]
+intel-store = { path = "../../crates/store", features = ["test-support"] }
