@@ -504,7 +504,7 @@ match · golden 11/11.
 - [x] **CONTROL-PRECISION** — every control asserts file and line; R7's two
   controls distinguishable; widened-regex meta-control fails and is reverted; no
   rule logic changed
-- [ ] **RULE-SHAPE-AUDIT** — four mutation outcomes recorded; convertible rules
+- [x] **RULE-SHAPE-AUDIT** — four mutation outcomes recorded; convertible rules
   are allow-lists with site-specific controls; non-convertible rules carry a
   stated limitation in three places; no source changed
 - [ ] **R8-IDENTITY-BEFORE-BIND** — registered with three site-specific

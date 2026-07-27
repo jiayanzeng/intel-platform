@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published and v0.14 CONTROL-PRECISION is complete. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **124** Rust workspace tests, and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); standalone shell runs are **218/218** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **7/7 rules / 11 site-specific controls**. A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published and v0.14 RULE-SHAPE-AUDIT is complete. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **124** Rust workspace tests, and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); standalone shell runs are **218/218** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **7/7 rules / 11 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -119,6 +119,38 @@ ShellCheck failures, locked Rust 1.78 green, Python 3.11.4 **218/218**, both
 protected databases exact, all **86** pins exact, and golden **11/11**.
 Python 3.12.13 independently passed **218/218** and verified **21/21**
 packages. The mandatory standalone golden repeated **11/11**.
+
+**RULE-SHAPE-AUDIT is complete (measured 2026-07-28).** R1 now expresses
+canonical identity as an allow-list over the five enumerable production store
+callers: `append_new`, `update_document`, `delete_document`,
+`rematerialize_canonical_ids`, and `commit_harvest_page`. Each must call
+`assign_canonical_ids_tx` exactly once; every other production canonical
+helper call is refused with its file, line, helper token, and enclosing caller.
+The site-specific R1 control plants the renamed
+`rebuild_identity_with_limit` seam from E0 and fails at
+`crates/store/src/sqlite.rs:672`.
+
+The four required isolated mutation outcomes were re-measured against the
+revised rules. The renamed R1 seam now **FAILs** at its planted line. An
+unknown inference-gateway call containing none of R3's recognized OpenAI,
+Anthropic, or LLM vocabulary still makes **R3 PASS**. An
+`INFERENCE_CREDENTIAL` assignment with an unknown value shape still makes
+**R4 PASS**. Renaming both governed `MODEL_PROFILE_AUTHORITY` markers still
+makes **R6 FAIL** in both enumerated files. R6 was already an exact allow-list
+over the two marker-delimited authorization surfaces. R3 and R4 cannot be
+converted honestly: both are open-bottom source deny-lists, so their registry
+scopes and `ARCHITECTURE.md` now state exactly which unknown vocabulary,
+credential names, and encodings remain outside coverage. This narrows no
+architectural prohibition; it narrows only the claims made by the scanners.
+
+The full **7/7 rules / 11 controls** self-test passed, and the focused
+invariant module passed **13/13** under Python 3.11.4 and 3.12.13. The exact
+tree passed `./run ci-local` **20/20** with **124** workspace Rust tests,
+**47** net tests, zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78
+green, both protected databases exact, all **86** pins exact, and matrix
+golden **11/11**. The mandatory standalone golden also remained **11/11**.
+All four disposable mutation worktrees were removed. No file under `crates/`
+or `apps/` changed.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked

@@ -4,12 +4,12 @@
 The scanner reads source, config, and Git worktree text only. It never loads a
 built binary, opens an archive, or touches the network.
 
-R1 deliberately scans production Rust outside ``crates/store/src/sqlite.rs``.
-The store implementation and its ``#[cfg(test)]`` module are out of scope:
-boundary/differential tests may name alternate numeric distances, while no
-production caller outside the store may call ``assign_canonical_ids`` at all.
-Rust files under a ``tests`` directory and text after the conventional
-``#[cfg(test)] mod tests`` boundary are classified as test-only.
+R1 enumerates the five production store callers that rematerialize canonical
+identity and rejects every other production call to that helper. Boundary and
+differential tests may name alternate numeric distances, so test-only Rust is
+excluded. Rust files under a ``tests`` directory, text after the conventional
+``#[cfg(test)] mod tests`` boundary, and individually ``#[cfg(test)]``-gated
+items are classified as test-only.
 """
 
 from __future__ import annotations
@@ -38,9 +38,12 @@ AUTHORITY_FILES = (
 )
 AUTHORITY_START = "<!-- MODEL_PROFILE_AUTHORITY:START -->"
 AUTHORITY_END = "<!-- MODEL_PROFILE_AUTHORITY:END -->"
-ASSIGN_CALL = re.compile(r"\bassign_canonical_ids\s*\(")
 TEST_MODULE = re.compile(r"(?m)^#\[cfg\(test\)\]\s*\nmod\s+tests\s*\{")
 TCP_BIND = re.compile(r"\b(?:tokio::net::)?TcpListener::bind\s*\(")
+RUST_FUNCTION = re.compile(
+    r"(?m)^[ \t]*(?:pub(?:\([^)]*\))?[ \t]+)?"
+    r"(?:async[ \t]+)?fn[ \t]+(?P<name>[A-Za-z_][A-Za-z0-9_]*)[ \t]*(?:<|\()"
+)
 LLM_MARKERS = (
     (
         "LLM client import",
@@ -72,6 +75,13 @@ CANONICAL_DISTANCE_CALL = re.compile(
     r"\b(?P<name>assign_canonical_ids(?:_tx)?|"
     r"rematerialize_canonical_ids_with_distance)\s*\("
 )
+CANONICAL_IDENTITY_CALLERS = {
+    "append_new",
+    "update_document",
+    "delete_document",
+    "rematerialize_canonical_ids",
+    "commit_harvest_page",
+}
 DOCUMENT_ID_HYDRATION_CALL = re.compile(
     r"(?:\.|::)\s*(?P<name>documents_by_ids(?:_in_sectors)?)\s*\("
 )
@@ -190,18 +200,61 @@ def tracked_texts(root: Path) -> list[tuple[Path, str]]:
     return tracked
 
 
+def _enclosing_function(
+    text: str,
+    offset: int,
+) -> re.Match[str] | None:
+    declarations = list(RUST_FUNCTION.finditer(text, 0, offset))
+    return declarations[-1] if declarations else None
+
+
 def r1_findings(root: Path) -> list[str]:
     findings: list[str] = []
-    store = (root / STORE).resolve()
+    expected = {
+        (STORE, caller, "assign_canonical_ids_tx")
+        for caller in CANONICAL_IDENTITY_CALLERS
+    }
+    seen = {site: 0 for site in expected}
+
     for path in rust_files(root):
-        if path.resolve() == store:
-            continue
-        text = production_text(path.relative_to(root), path.read_text())
-        for match in ASSIGN_CALL.finditer(text):
-            findings.append(
-                f"{location(root, path, text, match.start())}: "
-                "production assign_canonical_ids call outside the store"
+        relative = path.relative_to(root)
+        text = production_text(relative, path.read_text())
+        for match, _token in _canonical_distance_calls(text):
+            declaration = _enclosing_function(text, match.start())
+            caller = (
+                declaration.group("name")
+                if declaration is not None
+                else "<module>"
             )
+            site = (relative, caller, match.group("name"))
+            if site in expected and seen[site] == 0:
+                seen[site] += 1
+                continue
+            findings.append(
+                f"{location(root, path, text, match.start())}: canonical "
+                "identity helper call is outside the production caller "
+                f"allow-list; found {match.group('name')} in {caller}"
+            )
+
+    store_text = production_text(STORE, (root / STORE).read_text())
+    store_declarations = {
+        match.group("name"): match for match in RUST_FUNCTION.finditer(store_text)
+    }
+    for site, count in sorted(seen.items(), key=lambda item: item[0][1]):
+        _path, caller, helper = site
+        if count == 1:
+            continue
+        declaration = store_declarations.get(caller)
+        if declaration is None:
+            findings.append(
+                f"{STORE}:1: expected production caller {caller} is absent"
+            )
+            continue
+        findings.append(
+            f"{location(root, root / STORE, store_text, declaration.start())}: "
+            f"expected exactly one {helper} call in production caller {caller}; "
+            f"found {count}"
+        )
     return findings
 
 

@@ -193,7 +193,7 @@ in core SQL; an empty set makes every requested document unavailable.
 | HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
 | HC12 lock discipline | CI (`--locked`, MSRV job) | the lock *is* the build; its format is part of MSRV |
 | HC13 fixtures ≠ wire | tests + live-run policy | three bugs came from believing otherwise |
-| corpus identity atomicity | core store transaction + private canonical-distance constant | every durability unit that adds, changes, or removes documents rematerializes global canonical identity before the same commit; production callers cannot supply a different threshold |
+| corpus identity atomicity | core store transaction + R1 production-caller allow-list + private canonical-distance constant | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit, no other production canonicalization caller exists, and production callers cannot supply a different threshold |
 | repository absence claims | registered `invariant-scan` rules in local/hosted CI | each scoped claim has executable source coverage and a captured planted failure; prose-only absence is not accepted |
 | routine model-profile authorization | shipped L1 controller allowlist + pure fail-closed guards + repository pins | the current controller can construct only the five-container/read-only command set and refuses unsafe observed state, but an edited controller can rewrite this client-side boundary; the server-enforced L2 forced-command wrapper remains open and scheduled |
 
@@ -201,6 +201,16 @@ The last row is defense for the shipped controller, not a server-side security
 invariant. L1 and its repository pins detect or refuse the current implementation;
 they do not authorize future controller edits. Likewise, the HC1 row still
 describes the trusted shipped shell and does not close A4.
+
+The repository-absence row is deliberately scoped rather than universal. R3 is
+an open-bottom deny-list over recognized OpenAI, Anthropic, and LLM vocabulary;
+an unknown provider or inference-gateway spelling is outside its coverage, so
+R3 does not prove HC3 against arbitrary new vocabulary. R4 is likewise an
+open-bottom deny-list over registered credential names and value shapes;
+unknown names or encodings are outside its coverage, so R4 does not prove that
+every possible secret form is absent. These scanner limits do not weaken HC3 or
+the credential-disclosure prohibition; they prevent the checks from claiming
+more than their source detectors establish.
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

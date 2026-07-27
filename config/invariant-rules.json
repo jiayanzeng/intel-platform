@@ -3,20 +3,33 @@
   "rules": [
     {
       "id": "R1",
-      "claim": "No production assign_canonical_ids call exists outside the store.",
-      "source": "TASKS-v0.12-EXECUTION.md:323-330",
-      "scope": "Production Rust outside crates/store/src/sqlite.rs; test-only Rust is excluded.",
+      "claim": "The five enumerated production store callers each invoke assign_canonical_ids_tx exactly once, and no other production canonical-identity helper call exists.",
+      "source": "ARCHITECTURE.md:115-124",
+      "scope": "Production Rust; the allow-list is crates/store/src/sqlite.rs in append_new, update_document, delete_document, rematerialize_canonical_ids, and commit_harvest_page, each calling assign_canonical_ids_tx exactly once. Test-only Rust is excluded.",
       "fail_before": [
         {
-          "file": "apps/cored/src/main.rs",
-          "find": "    let n = store.count().unwrap_or(0);\n",
+          "file": "crates/store/src/sqlite.rs",
+          "find": "    pub fn rematerialize_canonical_ids(&self) -> rusqlite::Result<usize> {\n        let mut conn = self.conn.lock().unwrap();\n        let tx = conn.transaction()?;\n        let changed = assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;\n        tx.commit()?;\n        Ok(changed)\n    }\n",
           "replace_with": [
-            "    let _ = store.assign_canonical_ids(16);\n",
-            "    let n = store.count().unwrap_or(0);\n"
+            "    pub fn rematerialize_canonical_ids(&self) -> rusqlite::Result<usize> {\n",
+            "        let mut conn = self.conn.lock().unwrap();\n",
+            "        let tx = conn.transaction()?;\n",
+            "        let changed = assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;\n",
+            "        tx.commit()?;\n",
+            "        Ok(changed)\n",
+            "    }\n",
+            "\n",
+            "    fn rebuild_identity_with_limit(&self, max_distance: u32) -> rusqlite::Result<usize> {\n",
+            "        let mut conn = self.conn.lock().unwrap();\n",
+            "        let tx = conn.transaction()?;\n",
+            "        let changed = assign_canonical_ids_tx(&tx, max_distance)?;\n",
+            "        tx.commit()?;\n",
+            "        Ok(changed)\n",
+            "    }\n"
           ],
-          "expected_fail": "production assign_canonical_ids call outside the store",
-          "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1344
+          "expected_fail": "canonical identity helper call is outside the production caller allow-list; found assign_canonical_ids_tx in rebuild_identity_with_limit",
+          "expected_file": "crates/store/src/sqlite.rs",
+          "expected_line": 672
         }
       ],
       "fail_before_note": "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production assign_canonical_ids call outside the store"
@@ -45,7 +58,7 @@
       "id": "R3",
       "claim": "No recognized LLM client import, provider/base-URL constant, or provider call exists in production under crates/.",
       "source": "AGENTS.md:81-84",
-      "scope": "Production Rust below crates/; test-only modules and files are excluded.",
+      "scope": "Production Rust below crates/; test-only modules and files are excluded. This is an open-bottom deny-list over recognized OpenAI, Anthropic, and LLM vocabulary; an unknown provider or inference-gateway spelling is outside coverage, so R3 does not prove HC3 against arbitrary new vocabulary.",
       "fail_before": [
         {
           "file": "crates/core/src/lib.rs",
@@ -63,9 +76,9 @@
     },
     {
       "id": "R4",
-      "claim": "No tracked file contains a secret-bearing environment file, provider key, private key, raw token field, non-placeholder secret assignment, or concrete long Authorization bearer value.",
+      "claim": "No tracked text matches the registered secret-bearing environment-file, provider-key, private-key, raw-token-field, secret-assignment, or long Authorization bearer forms.",
       "source": "AGENTS.md:106-112",
-      "scope": "All Git-tracked text; binary files are excluded, while documented non-secret network coordinates, placeholders, and short demo fixtures are allowed.",
+      "scope": "All Git-tracked text; binary files are excluded, while documented non-secret network coordinates, placeholders, and short demo fixtures are allowed. This is an open-bottom deny-list over registered credential names and value shapes; unknown names or encodings are outside coverage, so R4 does not prove that every possible secret form is absent.",
       "fail_before": [
         {
           "file": "README.md",
@@ -132,7 +145,7 @@
       "id": "R6",
       "claim": "AGENTS.md and intel-platform-OPERATIONS.md contain byte-identical model-profile authorization blocks.",
       "source": "TASKS-v0.12-EXECUTION.md:522-525",
-      "scope": "The single MODEL_PROFILE_AUTHORITY marker-delimited block in each governed Markdown file.",
+      "scope": "Exact allow-list of AGENTS.md and intel-platform-OPERATIONS.md: each must contain exactly one MODEL_PROFILE_AUTHORITY marker-delimited block, and the two blocks must be byte-identical.",
       "fail_before": [
         {
           "file": "intel-platform-OPERATIONS.md",
