@@ -146,6 +146,10 @@ Pinned dispositions:
   floor (2 rps).
 - **Politeness is process-scoped (HC8):** `HostLimiters` and `RobotsCache` in
   `AppState`.
+- In production `cored`, the single `build_robots_cache` crawler-identity
+  construction call precedes the sole `TcpListener::bind`; with the `net`
+  feature enabled, this installs the process-scoped identity before the
+  listener can accept a request.
 
 **Redirects are re-gated before the next request (v0.8/T5).** Both
 `reqwest::Client`s in `crates/ingest/src/net.rs` use `Policy::none()`. Document

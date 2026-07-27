@@ -198,6 +198,86 @@
         }
       ],
       "fail_before_note": "invariant-scan: R7 FAIL: document hydration was unscoped or documents_by_ids was public"
+    },
+    {
+      "id": "R8",
+      "claim": "In production cored, the sole build_robots_cache crawler-identity construction call precedes the sole TcpListener::bind.",
+      "source": "ARCHITECTURE.md:149-152",
+      "scope": "The enumerated build_robots_cache and TcpListener::bind call sites in apps/cored/src/main.rs production main; exactly one of each must exist, and identity construction must be first.",
+      "fail_before": [
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "    let robots_cache = build_robots_cache(limiter.clone());\n\n    let cfg: CoreConfig =\n        serde_json::from_str(&std::fs::read_to_string(&config_path).expect(\"read core config\"))\n            .expect(\"parse core config\");\n    let gaz =\n        Gazetteer::from_json(&std::fs::read_to_string(&entities_path).expect(\"read entities\"))\n            .expect(\"parse entities\");\n    let (store, store_open_timings) =\n        SqliteStore::open_with_timings(Path::new(&db_path)).expect(\"open store\");\n\n    let n = store.count().unwrap_or(0);\n    let state = Arc::new(AppState::new_with_startup(\n        store,\n        gaz,\n        cfg,\n        token,\n        store_open_timings,\n        limiter,\n        robots_cache,\n    ));\n\n    let app = Router::new()\n        .route(\"/health\", get(health))\n        .route(\"/sectors\", get(sectors))\n        .route(\"/ingest\", post(ingest))\n        .route(\"/view\", get(view))\n        .route(\"/search\", get(search))\n        .route(\"/retrieve\", post(retrieve))\n        .route(\"/attest\", post(attest))\n        .route(\"/embeddings/missing\", get(embeddings_missing))\n        .route(\"/embeddings/stats\", get(embeddings_stats))\n        .route(\"/embeddings\", post(embeddings_upsert))\n        .route(\"/signals/record\", post(signals_record))\n        .route(\"/docs\", get(docs))\n        .with_state(state.clone());\n\n    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n        .await\n        .expect(\"bind\");\n",
+          "replace_with": [
+            "    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n",
+            "        .await\n",
+            "        .expect(\"bind\");\n",
+            "    let robots_cache = build_robots_cache(limiter.clone());\n",
+            "\n",
+            "    let cfg: CoreConfig =\n",
+            "        serde_json::from_str(&std::fs::read_to_string(&config_path).expect(\"read core config\"))\n",
+            "            .expect(\"parse core config\");\n",
+            "    let gaz =\n",
+            "        Gazetteer::from_json(&std::fs::read_to_string(&entities_path).expect(\"read entities\"))\n",
+            "            .expect(\"parse entities\");\n",
+            "    let (store, store_open_timings) =\n",
+            "        SqliteStore::open_with_timings(Path::new(&db_path)).expect(\"open store\");\n",
+            "\n",
+            "    let n = store.count().unwrap_or(0);\n",
+            "    let state = Arc::new(AppState::new_with_startup(\n",
+            "        store,\n",
+            "        gaz,\n",
+            "        cfg,\n",
+            "        token,\n",
+            "        store_open_timings,\n",
+            "        limiter,\n",
+            "        robots_cache,\n",
+            "    ));\n",
+            "\n",
+            "    let app = Router::new()\n",
+            "        .route(\"/health\", get(health))\n",
+            "        .route(\"/sectors\", get(sectors))\n",
+            "        .route(\"/ingest\", post(ingest))\n",
+            "        .route(\"/view\", get(view))\n",
+            "        .route(\"/search\", get(search))\n",
+            "        .route(\"/retrieve\", post(retrieve))\n",
+            "        .route(\"/attest\", post(attest))\n",
+            "        .route(\"/embeddings/missing\", get(embeddings_missing))\n",
+            "        .route(\"/embeddings/stats\", get(embeddings_stats))\n",
+            "        .route(\"/embeddings\", post(embeddings_upsert))\n",
+            "        .route(\"/signals/record\", post(signals_record))\n",
+            "        .route(\"/docs\", get(docs))\n",
+            "        .with_state(state.clone());\n"
+          ],
+          "expected_fail": "TcpListener::bind occurs before build_robots_cache",
+          "expected_file": "apps/cored/src/main.rs",
+          "expected_line": 1333
+        },
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "    let robots_cache = build_robots_cache(limiter.clone());\n",
+          "replace_with": [
+            "    let robots_cache = None;\n"
+          ],
+          "expected_fail": "expected exactly one build_robots_cache call in production main; found 0",
+          "expected_file": "apps/cored/src/main.rs",
+          "expected_line": 1333
+        },
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "    let token = std::env::var(\"CORE_TOKEN\").ok();\n",
+          "replace_with": [
+            "    let _early_listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n",
+            "        .await\n",
+            "        .expect(\"early bind\");\n",
+            "    let token = std::env::var(\"CORE_TOKEN\").ok();\n"
+          ],
+          "expected_fail": "production main contains 2 TcpListener::bind calls; expected exactly one",
+          "expected_file": "apps/cored/src/main.rs",
+          "expected_line": 1331
+        }
+      ],
+      "fail_before_note": "invariant-scan: R8 FAIL: crawler identity construction did not precede the listener bind"
     }
   ]
 }

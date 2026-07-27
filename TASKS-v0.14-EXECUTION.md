@@ -507,7 +507,7 @@ match · golden 11/11.
 - [x] **RULE-SHAPE-AUDIT** — four mutation outcomes recorded; convertible rules
   are allow-lists with site-specific controls; non-convertible rules carry a
   stated limitation in three places; no source changed
-- [ ] **R8-IDENTITY-BEFORE-BIND** — registered with three site-specific
+- [x] **R8-IDENTITY-BEFORE-BIND** — registered with three site-specific
   controls, all demonstrated FAIL; cited architecture sentence exists
 - [ ] **R9-TEST-SEAM** — registered with a site-specific control, demonstrated
   FAIL; release-build cleanliness recorded as pre-existing

@@ -40,6 +40,8 @@ AUTHORITY_START = "<!-- MODEL_PROFILE_AUTHORITY:START -->"
 AUTHORITY_END = "<!-- MODEL_PROFILE_AUTHORITY:END -->"
 TEST_MODULE = re.compile(r"(?m)^#\[cfg\(test\)\]\s*\nmod\s+tests\s*\{")
 TCP_BIND = re.compile(r"\b(?:tokio::net::)?TcpListener::bind\s*\(")
+CRAWLER_IDENTITY_CONSTRUCTION = re.compile(r"\bbuild_robots_cache\s*\(")
+ROBOTS_CACHE_BINDING = re.compile(r"(?m)^[ \t]*let[ \t]+robots_cache[ \t]*=")
 RUST_FUNCTION = re.compile(
     r"(?m)^[ \t]*(?:pub(?:\([^)]*\))?[ \t]+)?"
     r"(?:async[ \t]+)?fn[ \t]+(?P<name>[A-Za-z_][A-Za-z0-9_]*)[ \t]*(?:<|\()"
@@ -587,6 +589,58 @@ def r7_findings(root: Path) -> list[str]:
     return findings
 
 
+def r8_findings(root: Path) -> list[str]:
+    path = root / CORE_MAIN
+    text = production_text(CORE_MAIN, path.read_text())
+    main_declarations = [
+        match
+        for match in RUST_FUNCTION.finditer(text)
+        if match.group("name") == "main"
+    ]
+    if len(main_declarations) != 1:
+        return [
+            f"{CORE_MAIN}:1: expected exactly one production main function; "
+            f"found {len(main_declarations)}"
+        ]
+
+    main_start = main_declarations[0].start()
+    main_text = text[main_start:]
+    identity_calls = list(CRAWLER_IDENTITY_CONSTRUCTION.finditer(main_text))
+    bind_calls = list(TCP_BIND.finditer(main_text))
+    findings: list[str] = []
+
+    if len(identity_calls) != 1:
+        if len(identity_calls) == 0:
+            binding = ROBOTS_CACHE_BINDING.search(main_text)
+            offset = binding.start() if binding is not None else 0
+        else:
+            offset = identity_calls[1].start()
+        findings.append(
+            f"{location(root, path, text, main_start + offset)}: expected "
+            "exactly one build_robots_cache call in production main; "
+            f"found {len(identity_calls)}"
+        )
+
+    if len(bind_calls) != 1:
+        offset = bind_calls[0].start() if bind_calls else 0
+        findings.append(
+            f"{location(root, path, text, main_start + offset)}: production "
+            f"main contains {len(bind_calls)} TcpListener::bind calls; "
+            "expected exactly one"
+        )
+
+    if (
+        identity_calls
+        and bind_calls
+        and bind_calls[0].start() < identity_calls[0].start()
+    ):
+        findings.append(
+            f"{location(root, path, text, main_start + bind_calls[0].start())}: "
+            "TcpListener::bind occurs before build_robots_cache"
+        )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -595,6 +649,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R5": r5_findings,
     "R6": r6_findings,
     "R7": r7_findings,
+    "R8": r8_findings,
 }
 
 

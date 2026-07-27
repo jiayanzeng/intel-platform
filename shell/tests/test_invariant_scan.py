@@ -39,7 +39,7 @@ LEGACY_FAIL_BEFORE_NOTES = {
 }
 
 
-@pytest.mark.parametrize("rule_id", [f"R{number}" for number in range(1, 8)])
+@pytest.mark.parametrize("rule_id", [f"R{number}" for number in range(1, 9)])
 def test_each_registered_rule_passes_clean_and_fires_its_controls(
     rule_id: str,
 ) -> None:
