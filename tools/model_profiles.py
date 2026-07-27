@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
+from enum import Enum
 import json
 import os
 from pathlib import Path
@@ -83,6 +85,98 @@ class ProfileError(RuntimeError):
     """An operating gate refused to proceed."""
 
 
+class Action(str, Enum):
+    PROCEED = "proceed"
+    REUSE = "reuse"
+    MOVE_ASIDE = "move-aside"
+    REFUSE = "refuse"
+
+
+@dataclass(frozen=True)
+class Disposition:
+    action: Action
+    message: str
+
+
+def container_inventory_disposition(found: set[str]) -> Disposition:
+    missing = sorted(CONTAINERS - found)
+    if missing:
+        return Disposition(
+            Action.REFUSE,
+            "named containers are missing; routine switching never recreates "
+            "them: " + ", ".join(missing),
+        )
+    return Disposition(Action.PROCEED, "all five named containers are present")
+
+
+def listener_disposition(
+    occupied_ports: set[int],
+    managed_ports: set[int],
+) -> Disposition:
+    foreign = sorted(occupied_ports - managed_ports)
+    if foreign:
+        return Disposition(
+            Action.REFUSE,
+            f"foreign listeners occupy local model ports: {foreign}",
+        )
+    missing = sorted(managed_ports - occupied_ports)
+    if missing:
+        return Disposition(
+            Action.REFUSE,
+            f"managed control socket is live but listeners are missing: {missing}",
+        )
+    if managed_ports:
+        return Disposition(
+            Action.REUSE,
+            f"managed listeners are reusable on ports: {sorted(managed_ports)}",
+        )
+    return Disposition(Action.PROCEED, "local model ports are free")
+
+
+def health_disposition(
+    *,
+    status: int | None,
+    payload: object | None,
+    error: str | None,
+) -> Disposition:
+    if error == "timeout":
+        return Disposition(
+            Action.REFUSE,
+            "health probe timed out; the server is hung or still loading",
+        )
+    if error is not None:
+        return Disposition(
+            Action.REFUSE,
+            f"health probe could not connect; the server is dead or unreachable: {error}",
+        )
+    if status != 200:
+        return Disposition(
+            Action.REFUSE,
+            f"health endpoint returned HTTP {status}",
+        )
+    if payload != {"status": "ok"}:
+        return Disposition(
+            Action.REFUSE,
+            f"health endpoint returned an unexpected body: {payload!r}",
+        )
+    return Disposition(Action.PROCEED, "health endpoint returned HTTP 200 status=ok")
+
+
+def socket_disposition(
+    *,
+    exists: bool,
+    live: bool,
+    readable: bool,
+) -> Disposition:
+    if not exists:
+        return Disposition(Action.PROCEED, "control socket is absent")
+    if not readable:
+        return Disposition(Action.REFUSE, "control socket is unreadable")
+    if live:
+        return Disposition(Action.REUSE, "control socket is live and reusable")
+    return Disposition(Action.MOVE_ASIDE, "control socket is stale")
+
+
 def build_remote_command(command: Sequence[str]) -> str:
     """Validate one structured command against the L1 remote allowlist."""
     parts = tuple(command)
@@ -98,9 +192,17 @@ def build_remote_command(command: Sequence[str]) -> str:
         CONTAINER_INVENTORY,
     }
     health_query = (
-        len(parts) == 5
-        and parts[:4] == ("curl", "-fsS", "--max-time", "2")
-        and REMOTE_HEALTH_URL.fullmatch(parts[4]) is not None
+        len(parts) == 7
+        and parts[:6]
+        == (
+            "curl",
+            "-sS",
+            "--max-time",
+            "2",
+            "--write-out",
+            "\n%{http_code}",
+        )
+        and REMOTE_HEALTH_URL.fullmatch(parts[6]) is not None
     )
     exact_read_only = parts in {
         ("nvidia-smi",),
@@ -278,16 +380,56 @@ class ModelProfiles:
             return
         stamp = time.strftime("%Y%m%dT%H%M%S")
         destination = path.with_name(f"{path.name}.stale-{stamp}")
-        path.rename(destination)
+        try:
+            path.rename(destination)
+        except OSError as exc:
+            raise ProfileError(
+                f"could not move stale control socket {path}: {exc}"
+            ) from exc
         print(f"moved stale control socket to {destination}")
 
+    def _prepare_control_socket(self, path: Path, *, live: bool) -> Disposition:
+        exists = path.exists()
+        readable = (
+            not exists
+            or (
+                os.access(path, os.R_OK | os.W_OK)
+                and os.access(path.parent, os.W_OK)
+            )
+        )
+        decision = socket_disposition(
+            exists=exists,
+            live=live,
+            readable=readable,
+        )
+        if decision.action == Action.REFUSE:
+            raise ProfileError(f"{path}: {decision.message}")
+        if decision.action == Action.MOVE_ASIDE:
+            self._move_stale_socket(path)
+        return decision
+
     def ensure_bridge(self) -> None:
-        if self.bridge_alive():
+        live = self._control_alive("bridge", self.bridge_socket)
+        occupied = {self.bridge_port} if _port_open(self.bridge_port) else set()
+        listeners = listener_disposition(
+            occupied,
+            {self.bridge_port} if live else set(),
+        )
+        if listeners.action == Action.REUSE:
+            socket_state = self._prepare_control_socket(
+                self.bridge_socket,
+                live=True,
+            )
+            if socket_state.action != Action.REUSE:
+                raise ProfileError(
+                    "bridge control reported live without a reusable socket"
+                )
             print(f"shared SSH bridge: reuse localhost:{self.bridge_port}")
             return
-        if _port_open(self.bridge_port):
+        if listeners.action == Action.REFUSE:
+            detail = self._listener_detail(occupied) if occupied else ""
             raise ProfileError(
-                f"localhost:{self.bridge_port} is occupied but is not the model-server bridge"
+                listeners.message + (f"\n{detail}" if detail else "")
             )
         if not self.direct_alive():
             raise ProfileError(
@@ -295,7 +437,7 @@ class ModelProfiles:
                 "Terminal.app, which has the Mac LAN route, or create the documented "
                 f"localhost:{self.bridge_port} bridge there first"
             )
-        self._move_stale_socket(self.bridge_socket)
+        self._prepare_control_socket(self.bridge_socket, live=False)
         _run(
             [
                 "ssh",
@@ -357,47 +499,81 @@ class ModelProfiles:
 
     def _require_containers(self) -> None:
         found = {name for name, _, _ in self._container_rows()}
-        missing = sorted(CONTAINERS - found)
-        if missing:
-            raise ProfileError(
-                "named containers are missing; routine switching never recreates them: "
-                + ", ".join(missing)
-            )
+        decision = container_inventory_disposition(found)
+        if decision.action == Action.REFUSE:
+            raise ProfileError(decision.message)
 
     def _running(self) -> set[str]:
         return {name for name, running, _ in self._container_rows() if running}
 
-    def _remote_health(self, port: int) -> bool:
+    def _remote_health(self, port: int) -> Disposition:
         result = self._remote(
             (
                 "curl",
-                "-fsS",
+                "-sS",
                 "--max-time",
                 "2",
+                "--write-out",
+                "\n%{http_code}",
                 f"http://127.0.0.1:{port}/health",
             ),
             check=False,
             quiet=True,
         )
+        if result.returncode == 28:
+            return health_disposition(
+                status=None,
+                payload=None,
+                error="timeout",
+            )
         if result.returncode != 0:
-            return False
+            detail = result.stderr.strip() or f"curl exit {result.returncode}"
+            return health_disposition(
+                status=None,
+                payload=None,
+                error=detail,
+            )
         try:
-            return json.loads(result.stdout) == {"status": "ok"}
+            body, raw_status = result.stdout.rsplit("\n", 1)
+            status = int(raw_status)
+        except (ValueError, TypeError):
+            return health_disposition(
+                status=None,
+                payload=None,
+                error="malformed curl status output",
+            )
+        try:
+            payload: object = json.loads(body)
         except ValueError:
-            return False
+            payload = body
+        return health_disposition(status=status, payload=payload, error=None)
 
     def _wait_remote_health(self, port: int, role: str) -> None:
-        _wait_until(
-            lambda: self._remote_health(port),
-            timeout=120,
-            label=f"{role} health on server port {port}",
-        )
+        last = Disposition(Action.REFUSE, "health probe has not run")
+
+        def healthy() -> bool:
+            nonlocal last
+            last = self._remote_health(port)
+            return last.action == Action.PROCEED
+
+        try:
+            _wait_until(
+                healthy,
+                timeout=120,
+                label=f"{role} health on server port {port}",
+            )
+        except ProfileError as exc:
+            raise ProfileError(f"{exc}; last probe: {last.message}") from exc
         print(f"{role}: server port {port} healthy")
 
     def _expect_remote_down(self, port: int, role: str) -> None:
-        if self._remote_health(port):
+        decision = self._remote_health(port)
+        if decision.action == Action.PROCEED:
             raise ProfileError(f"{role} unexpectedly remains healthy on server port {port}")
-        print(f"{role}: server port {port} down as required")
+        print(
+            f"{role}: server port {port} down as required "
+            f"({decision.message})"
+        )
 
     def _control_commands(
         self, kind: str, socket_path: Path, operation: str
@@ -452,10 +628,11 @@ class ModelProfiles:
         return result.stdout.strip() or "listener owner unavailable"
 
     def _require_ports_free(self, ports: Sequence[int]) -> None:
-        occupied = [port for port in ports if _port_open(port)]
-        if occupied:
+        occupied = {port for port in ports if _port_open(port)}
+        decision = listener_disposition(occupied, set())
+        if decision.action == Action.REFUSE:
             raise ProfileError(
-                f"local model ports are occupied: {occupied}\n"
+                decision.message + "\n"
                 + self._listener_detail(occupied)
             )
 
@@ -471,8 +648,7 @@ class ModelProfiles:
             )
             print(f"{kind} model tunnel: stopped")
             return
-        if socket_path.exists():
-            self._move_stale_socket(socket_path)
+        self._prepare_control_socket(socket_path, live=False)
         self._require_ports_free(ports)
 
     def _start_tunnel(
@@ -484,6 +660,39 @@ class ModelProfiles:
         required_health_ports: Sequence[int],
     ) -> None:
         ports = [local for local, _ in forwards]
+        live = self._control_alive(kind, socket_path)
+        occupied = {port for port in ports if _port_open(port)}
+        listeners = listener_disposition(
+            occupied,
+            set(ports) if live else set(),
+        )
+        if listeners.action == Action.REFUSE:
+            detail = self._listener_detail(occupied) if occupied else ""
+            raise ProfileError(
+                listeners.message + (f"\n{detail}" if detail else "")
+            )
+        if listeners.action == Action.REUSE:
+            socket_state = self._prepare_control_socket(
+                socket_path,
+                live=True,
+            )
+            if socket_state.action != Action.REUSE:
+                raise ProfileError(
+                    f"{kind} control reported live without a reusable socket"
+                )
+            unhealthy = [
+                port for port in required_health_ports if not _http_health(port)
+            ]
+            if unhealthy:
+                raise ProfileError(
+                    "managed tunnel listeners are live but health failed on "
+                    f"ports: {unhealthy}"
+                )
+            print(
+                f"{kind} model tunnel: reuse managed listeners "
+                f"{sorted(occupied)}"
+            )
+            return
         self.stop_tunnel(kind, socket_path, ports)
         self.ensure_bridge()
         command = [

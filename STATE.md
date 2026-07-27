@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published; v0.12 correction and operations admission are in progress.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **200/200** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five released version authorities remain at 0.11.0.
+**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published; v0.12 correction and operations admission are in progress.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five released version authorities remain at 0.11.0.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
@@ -348,6 +348,39 @@ and HC13 limits stated at the top of this file. It is a single
 operator-authorized 2026-07-27 real-hardware run, not a repeatable check and not
 proof about the post-edit controller. OPS-FAILCLOSED supplies offline
 failure-capable controls next; it does not turn fixtures into wire evidence.
+
+**v0.12 OPS-FAILCLOSED is complete (measured 2026-07-27).** Container inventory,
+local listeners, health results, and socket observations now each flow through a
+pure function returning `proceed`, `reuse`, `move-aside`, or `refuse` before the
+I/O caller acts. Their both-direction tests are offline: complete inventory
+proceeds while a missing name refuses and is named; free ports proceed, a fully
+managed port set reuses, and any foreign port refuses; only HTTP 200 with exact
+`{"status":"ok"}` proceeds; absent/live/stale/unreadable sockets respectively
+proceed/reuse/move/refuse.
+
+The health probe now records the HTTP status separately from its body. HTTP 503
+and a 200 loading body refuse. Curl timeout exit 28 produces a “hung or still
+loading” result, while connection failure produces a distinct “dead or
+unreachable” result; tests assert those messages differ. A fifth new control
+drives `_start_tunnel` with a healthy managed socket and occupied managed
+listeners while replacing both stop and recreate calls with test failures: the
+method reuses the tunnel and invokes neither. No new test opens a socket, calls
+SSH, or calls Docker.
+
+Every rendered transition for `intel`, `athenaeum`, `athenaeum-bulk`, and
+`stop` is also asserted free of `docker run`, `docker rm`, `docker rmi`,
+`docker pull`, `/data/models`, and `kill`. The shell suite therefore moved from
+**200 to 205** and passes **205/205** under both Python 3.11.4 and 3.12.13, with
+**21/21** constrained packages on both. The deliberate controller change
+updated its authorization pin from the admitted L1 hash to 28,297 bytes at
+`1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`;
+the unchanged `run` pin and all 54 evidence pins still match.
+
+`./run ci-local` passes **20/20** with **121** workspace Rust tests, **21** net
+tests, warning-denied builds, clippy/fmt/ShellCheck, and locked Rust 1.78 lanes.
+Standalone golden remains byte-identical **11/11**, and protected databases
+remain exact **2/2**. These pure/double controls prove the refusal state machine,
+not the server wire; HC13 remains explicit.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked

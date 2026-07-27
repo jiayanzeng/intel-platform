@@ -545,10 +545,10 @@
     {
       "path": "tools/model_profiles.py",
       "grade": "authorization",
-      "sha256": "b7b84261a6bc45706f93f338682108a31c3b88ad00ad4c91061a90f77ed74292",
-      "bytes": 21394,
+      "sha256": "1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df",
+      "bytes": 28297,
       "purpose": "Hash-pinned controller for the operator-authorized model-profile lifecycle.",
-      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary; the pin makes later controller edits visible to manifest validation."
+      "provenance": "OPS-FAILCLOSED deliberately replaced the admitted 2026-07-27 L1 hash b7b84261a6bc45706f93f338682108a31c3b88ad00ad4c91061a90f77ed74292 with pure, offline-tested refusal decisions; the pin makes later controller edits visible to manifest validation."
     }
   ]
 }

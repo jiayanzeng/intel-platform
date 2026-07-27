@@ -457,7 +457,7 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --tick 60   # long-lived loop
 
 ```bash
 cargo test --workspace --locked                # Rust workspace: 119 tests
-PYTHONPATH=shell python3 -m pytest shell/tests # shell: 200 tests; core seams use
+PYTHONPATH=shell python3 -m pytest shell/tests # shell: 205 tests; core seams use
                                               # doubles except explicit E2E tests
 ```
 
