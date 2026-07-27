@@ -224,3 +224,32 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. The required standalone `./run golden` passed
   **11/11** with every exact anchor unchanged.
 - protected artifact delta: none. No protected or pinned file changed.
+
+### 2026-07-27 · BILLING-ATOMIC — rejected batches leave no entitlement mutation
+
+- owner: Codex
+- commit: d3a06a584133514fea3a2426fd5ead5eab3df2a0
+- result: PASS. Authenticated neutral events are applied to a detached
+  in-memory store and its frozen values are published to the live backend only
+  after every event validates. Routes retain publish, save, result ordering.
+- failure acceptance: PASS. A signed two-event batch with an invalid second
+  event returns HTTP 400 and leaves `acme-research` unchanged in live state.
+  The JSON-backed control observes the file unchanged as well.
+- latent-save acceptance: PASS. After that rejection, an unrelated
+  `quant-desk` mutation and save persists only the unrelated change; the
+  rejected first acme mutation does not leak from memory onto disk.
+- success acceptance: PASS. A fully valid delete/create batch publishes both
+  events and records one save. An ignored event inside another valid batch
+  retains its `ignored` result, its sibling update commits, and save is called
+  once. Authentication, event types, and response shapes did not change.
+- contract acceptance: PASS. `apply_event` remains a single-event in-memory
+  mutator with caller-owned persistence, and its docstring now also requires
+  detached staging for callers applying a batch.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **115** workspace tests, **21** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, and **191/191** Python 3.11 shell tests.
+  The independent Python 3.12 lane also passed **191/191**.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. CI matched protected databases **2/2** and
+  existing pins **39/39**; no protected or pinned file changed.
