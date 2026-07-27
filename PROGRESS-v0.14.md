@@ -74,3 +74,37 @@ Entries are append-only; corrections are new dated entries.
   **11/11** byte-identical.
 - cleanup: all seven disposable mutation worktrees were removed; the live tree
   contained only the E0 state/runbook change before its implementation commit.
+
+### 2026-07-28 · CONTROL-PRECISION — controls prove their failure site
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: 970b717f380b932e96fab6687ac09e38b6eb3413
+- result: PASS. Registry schema 3 gives every one of the **11** controls a
+  message-only `expected_fail` plus explicit `expected_file` and
+  `expected_line`. Loading refuses unsafe paths, a file other than the mutated
+  file, and non-positive line values. Self-test acceptance now requires one
+  complete finding that associates the rule, exact file, exact line, and
+  message.
+- site acceptance: PASS. R7 control 2 now reports
+  `apps/cored/src/main.rs:1135`; control 3 reports line 1182. R6's full-prefix
+  exception was normalized to a message and its unchanged mismatch result now
+  reports the first differing block line,
+  `intel-platform-OPERATIONS.md:407`.
+- negative meta-control acceptance: PASS. A deliberately mis-broad R7 matcher
+  still exited 1 and emitted the legacy message for unrelated safe scoped calls
+  at lines 1182 and 1290, but did not emit the expected mutated site at line
+  1135. The site assertion therefore rejected it. The mutation was in-memory
+  only and the real **7/7 rules / 11 controls** self-test passed immediately
+  afterward.
+- shell acceptance: PASS. The focused invariant module passed **13/13**,
+  including the explicit wrong-site and over-broad controls. The full shell
+  suite passed **218/218** under both Python 3.11.4 and 3.12.13; both
+  interpreters verified **21/21** exact packages.
+- preservation acceptance: PASS. No R1–R7 matching logic or source under
+  `crates/` or `apps/` changed; R6 gained failure-location reporting only.
+  `./run ci-local` remained **20/20** with **124** workspace Rust tests,
+  **47** net tests, warning/lint/MSRV gates green, all **86** pins exact, and
+  both protected databases exact.
+- golden-E2E delta: **0**. The matrix and mandatory standalone run both
+  remained **11/11** byte-identical.
