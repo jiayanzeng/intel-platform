@@ -776,7 +776,7 @@ record of v0.12's is true.
   proves the full cored count; invariant log proves 11 controls; seven signed
   identities committed and re-derived; new pin count recorded; `origin/main`
   and tags unchanged; golden 11/11
-- [ ] **R-CLOSE** — version choice recorded with reasoning; every diff path
+- [x] **R-CLOSE** — version choice recorded with reasoning; every diff path
   classified; `ARCHITECTURE.md` matches enforced reality; A4 and the L1 residual
   both still open
 
@@ -911,16 +911,16 @@ therefore includes that caller before implementation; its existing `sectors`
 value is threaded through with no change to its test battery or public result
 schema.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-27
-- **Release disposition:** release identity and publication authorized
+- **Cycle closed:** 2026-07-27
+- **Release disposition:** release
 - **Release:** `v0.13.0`
-- **Release commit:** pending final R-CLOSE; the superseding hosted evidence
-  candidate is `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`
-- **Annotated tag object:** created after the release implementation commit
-  passes the complete definition of done; the exact object is populated in
-  the append-only closing audit record
+- **Evidence candidate:**
+  `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`
+- **Hosted dispatch:** `30277584129`, attempt `1`
+- **Release commit:** `5ecd42bb6ca44f1588e53e493c67fee17d071b09`
+- **Annotated tag object:** `24a6a2aca52974891d120e0f2b295a93d629c1f7`
 
 The twelve task records resolve to these implementation commits or the
 explicitly pending closing disposition:
@@ -937,7 +937,7 @@ explicitly pending closing disposition:
 - NET-TEST-EXEC — `2567f48aaba879011857db9177ebd60624678cc7`
 - IDENTITY-INSTALL — `d0b409a05597fc43356aeeb55a25ec597e358a85`
 - RE-MEASURE — `394755eb00e5f0ef88f4fe01d352e06b4bb9e09f`
-- R-CLOSE/release — pending this task's release implementation commit
+- R-CLOSE/release — `5ecd42bb6ca44f1588e53e493c67fee17d071b09`
 
 Cycle activation remains preparatory history at
 `5223d783b43c250102418163ef124f4e662b727b`; it is not one of the twelve task
@@ -949,6 +949,14 @@ operator-authorization trigger to publish `v0.13.0`. The later RE-MEASURE gate
 had pushed the exact evidence candidate only to `candidate/v0.13.0`; read-only
 pre-publication verification found remote `main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084` with no v0.13.0 tag.
+
+Failed workflow-dispatch run **30274895522**, attempt **1**, is measured,
+non-admitted provenance. It executed all 24 cored net tests and failed
+**23 passed / 1 failed** when
+`attest_endpoint_refuses_an_index_only_body` hit
+`could not install crawler User-Agent`. That result exposed the D1
+check-then-set `OnceLock` race closed by IDENTITY-INSTALL. None of that run's
+receipts or bundles entered the protected manifest.
 
 RE-MEASURE authenticated the superseding candidate
 `7faaa4e1271616ff9390111c863d12fbcfa4d2fd` with workflow-dispatch run
@@ -964,8 +972,12 @@ re-derived successfully. The fourteen receipt/bundle files and the
 **34,038-byte** report are pinned at their exact bytes. The forward manifest is
 now **86 total pins**: **84 evidence** plus **2 authorization surfaces**.
 
-This remains the pending form only until the release implementation commit
-passes and the tag object exists. The append-only closing audit record changes
-the R-CLOSE box and heading together, preserving `cycle-check` validity. A4 and
-the editable-L1 controller residual both remain open; L2 remains scheduled and
-unexecuted.
+The exact release commit passed the full local definition of done before the
+annotated tag was created: ci-local **20/20**, Rust workspace **124**, net
+**47** (**23** ingest + **24** cored), Python 3.11 and 3.12 **216/216**,
+invariant scan **7/7 rules / 11 controls**, pins **86/86**, protected databases
+**2/2**, and golden **11/11** in both the matrix and mandatory standalone run.
+The R-CLOSE box and canonical heading changed together in this append-only
+audit-record commit, so `cycle-check` moved directly from a valid open state to
+a valid closed state. A4 and the editable-L1 controller residual both remain
+open; L2 remains scheduled and unexecuted.

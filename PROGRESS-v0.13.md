@@ -700,3 +700,54 @@ Entries are append-only; corrections are new dated entries.
   **110** checked tasks with **three** retractions; R-CLOSE remains the sole
   unchecked task pending the named trigger of a separate operator
   authorization to publish `v0.13.0`.
+
+### 2026-07-27 · Publication completion addendum — v0.13.0 release
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 5ecd42bb6ca44f1588e53e493c67fee17d071b09
+- result: **PASS.** UA-CONTACT landed, so the operator selected `v0.13.0`
+  rather than the correction-only `v0.12.1` alternative. Directive 5 fired the
+  separately named publication trigger.
+- release-identity acceptance: PASS. Evidence candidate
+  `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`, hosted dispatch
+  **30277584129** attempt **1**, release commit
+  `5ecd42bb6ca44f1588e53e493c67fee17d071b09`, and annotated tag object
+  `24a6a2aca52974891d120e0f2b295a93d629c1f7` are separate named fields in the
+  canonical closing record.
+- failed-run provenance acceptance: PASS. Run **30274895522**, attempt **1**,
+  is recorded as measured, non-admitted evidence. Its cored net invocation ran
+  all **24** tests and failed **23 passed / 1 failed** with `could not install
+  crawler User-Agent`, surfacing the D1 identity-install race. No receipt or
+  bundle from that run was admitted.
+- diff-accounting acceptance: PASS by execution. `git diff --name-only
+  v0.12.0` contains **44** paths, each classified exactly once in `STATE.md`;
+  no path under `data/` changed. `PROGRESS-v0.12.md` remains **93 additions /
+  0 deletions** from v0.12.0.
+- release-document acceptance: PASS. `README.md`, `CHANGELOG.md`, `STATE.md`,
+  all five release authorities, and the closing record agree on `v0.13.0`.
+  Current release state records **86/86 pins**: **84/84 evidence files** and
+  **2/2 authorization surfaces**. Historical entering-state references to 71
+  remain historical rather than current-release claims.
+- architecture acceptance: PASS by reconciliation. The invariant table still
+  states A4 is open because a rewritten shell can bypass or falsify
+  `/attest`, and the L1 residual is open because an edited controller can
+  rewrite the client-side allowlist; L2 remains scheduled.
+- definition-of-done acceptance: PASS at the exact release commit.
+  `./run ci-local` passed **20/20** with Rust workspace **124**, net **47**
+  (**23** ingest + **24** cored), Python 3.11 **216/216**, invariant scan
+  **7/7** with **11** controls, all **86/86** pins, protected databases
+  **2/2**, and golden **11/11**. Python 3.12 independently verified **21/21**
+  constraints and passed **216/216**.
+- checklist acceptance: PASS. R-CLOSE was checked in the same audit-record
+  change that replaced `Pending Cycle closing record` with the sole canonical
+  `Cycle closing record`; `checklist-audit` resolves **111** checked tasks and
+  **three** retractions, and `cycle-check` resolves v0.13 as closed.
+- golden-E2E delta: **0**. The release-commit matrix and mandatory standalone
+  run both passed **11/11** byte-identically.
+- carried-forward inputs: PASS. Four v0.14 candidates were recorded without
+  implementation: file-and-line `expected_fail` controls; allow-list audits
+  for R1/R3/R4/R6; a mandatory RE-MEASURE template step; and possible R8
+  identity-before-bind coverage.
+- standing constraints: PASS. No source, public `/v1/*` body, SQLite schema,
+  protected evidence, prior tag, live server state, or L2 state changed.
