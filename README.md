@@ -1,4 +1,4 @@
-# intel-platform (v0.11.0 — core-shell)
+# intel-platform (v0.12.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -53,7 +53,7 @@ endpoints are the whole contract.
 |---|---|
 | `GET /health` | liveness + archive size |
 | `GET /sectors` | configured sectors/sources/licenses |
-| `POST /ingest {sectors, sources?}` | fetch through the compliance gate, idempotent append; optional `sources` runs exactly those source ids (each validated against `sectors`) for true per-source cadence |
+| `POST /ingest {sectors, sources?}` | fetch through the compliance gate; append and corpus-wide canonical rematerialization commit or roll back together; optional `sources` runs exactly those source ids (each validated against `sectors`) for true per-source cadence |
 | `GET /view?sectors=` | the full intelligence view: dedup drops, signals with **license-gated hydrated evidence**, named PMI edges, discovery queue, `kept_doc_ids` |
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |
@@ -135,6 +135,10 @@ their SSH tunnels, verify real health, and never recreate a container:
 
 See `intel-platform-OPERATIONS.md` for the measured profile matrix, first
 post-reboot Terminal.app command, standing authorization, and recovery gates.
+The shipped controller constructs remote commands from a tested L1 allowlist
+and refuses missing containers, foreign listeners, failed health, and unsafe
+socket states. That client-side guard does not constrain an edited controller;
+the server-enforced L2 forced-command boundary remains scheduled and open.
 
 To poke at it by hand instead of the one-shot demo:
 
@@ -456,7 +460,7 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --tick 60   # long-lived loop
 ### Tests
 
 ```bash
-cargo test --workspace --locked                # Rust workspace: 119 tests
+cargo test --workspace --locked                # Rust workspace: 121 tests
 PYTHONPATH=shell python3 -m pytest shell/tests # shell: 205 tests; core seams use
                                               # doubles except explicit E2E tests
 ```

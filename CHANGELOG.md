@@ -2,6 +2,70 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.12.0 — 2026-07-27
+
+### Added
+
+- A registered invariant scanner with executable R1–R6 rules, captured planted
+  failures, local CI job 20, and hosted execution inside the Python 3.11 shell
+  leg. The rules cover the production canonical-threshold seam, core bind path,
+  core LLM-client absence, tracked credential boundary, single private distance
+  constant, and mirrored model-profile authorization text.
+- A guarded `./run models status|intel|athenaeum|athenaeum-bulk|stop` operator
+  surface. Its L1 controller builds commands from a structured allowlist for
+  exactly five named containers and the documented read-only probes.
+- Pure, failure-capable model-profile guards for incomplete container
+  inventories, foreign listeners, non-ready health results, and managed,
+  absent, stale, or unreadable control sockets.
+- Retraction-aware checklist auditing and a permanent forward correction for
+  the false v0.11.0 canonical-threshold criterion.
+
+### Changed
+
+- Non-paged document append and corpus-wide canonical rematerialization now
+  share one SQLite transaction, so a rematerialization failure returns HTTP 500
+  without leaving appended rows or advancing view generation.
+- Production canonical rematerialization selects its threshold only inside the
+  store; the caller-supplied threshold seam remains test-only.
+- Tracked infrastructure policy now treats credentials—not documented private
+  LAN coordinates—as the enforceable disclosure boundary.
+- Authorization-surface hashes join evidence-file hashes in protected-artifact
+  manifest schema 2.
+
+### Fixed
+
+- v0.11.0 shipped a threshold-source defect: STORE-IDENTITY claimed one shared
+  `max_distance` constant while the production ingest handler separately passed
+  literal `16`. v0.12 INGEST-ATOMIC and THRESHOLD-ONE correct that claim
+  forward; the published v0.11.0 tag and its evidence remain unchanged.
+- A failed non-paged canonical rematerialization can no longer durably append
+  documents while leaving the prior view generation in place.
+- Model-profile parsing and transition decisions now fail with structured
+  refusals instead of exposing bare parsing errors or silently routing around
+  unsafe observed state.
+
+### Publication and carried dispositions
+
+- The operator selected and authorized v0.12.0 rather than a correction-only
+  v0.11.1. The correction half alone could have been a patch, but the same
+  release adds the `./run models` operator surface and changes `/ingest` failure
+  semantics; one minor release accurately names the combined shipped change.
+- Hosted run 30253646597, attempt 1, passed all seven expected jobs at exact
+  evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`.
+  The release audit accepted seven distinct authenticated receipts with zero
+  rejection, measured five deferred / two promoted rows, and recorded
+  exact-cosine p95 at 10.324209 ms for 2,600 documents.
+- Real hosted controls rejected a persisted failed-core receipt and a duplicate
+  `python=3.11`/missing-`python=3.12` shell matrix, accepting zero executions in
+  each case. The admitted report, receipts, and Sigstore bundles bring immutable
+  evidence to 69/69 pins; both authorization-surface pins also match.
+- v0.11.0 remains published with the known threshold-source defect named above;
+  its tag, release commit, receipts, report, and 54 pins are unchanged.
+- A4 remains open because a rewritten shell can bypass or falsify the trusted
+  `/attest` handoff. Model-profile authorization is L1 client-side defense only:
+  an edited controller can rewrite it, and the L2 server forced-command wrapper
+  remains scheduled for the next authorized server session.
+
 ## v0.11.0 — 2026-07-27
 
 ### Added

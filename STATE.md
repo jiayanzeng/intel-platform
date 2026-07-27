@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and published; v0.12 correction, operations admission, and authenticated remeasurement are complete, with the release decision still pending.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 and v0.11.0 remain published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five released version authorities remain at 0.11.0.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **R-CLOSE minor release approved and candidate verification passed; no v0.12.0 tag exists until the release commit is created.** The operator selected and authorized publication of v0.12.0 after hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 with the expected pre-tag warning.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
@@ -443,6 +443,81 @@ Final remote enumeration kept `main` at the measured candidate, found no
 control branch, and returned the unchanged annotated objects and peeled commits
 for v0.9.0, v0.10.0, v0.10.1, v0.10.3, and v0.11.0. The intentionally
 local-only v0.10.2 tag remains absent remotely; no published tag moved.
+
+**v0.12 R-CLOSE selected the minor-release disposition (measured
+2026-07-27).** The operator explicitly selected and authorized publication of
+`v0.12.0`. A correction-only release could have shipped INGEST-ATOMIC and
+THRESHOLD-ONE as `v0.11.1`, but this cycle also admits the new `./run models`
+operator surface and changes `/ingest` failure semantics. Splitting those
+already-integrated halves would create two identities for one measured
+candidate; one minor release accurately describes the combined operations and
+runtime delta.
+
+The publication decision has an evidence trigger rather than a default:
+publish only after the complete local definition of done passes against the
+reconciled candidate, both Step 10 hosted negative controls have accepted zero
+executions, and the release commit exists. The hosted trigger is already
+satisfied by runs **30254382891** and **30254838500**. No `v0.12.0` tag exists
+while local candidate verification is in progress; prior published tags remain
+immutable.
+
+The complete `v0.11.0..release-candidate` diff contains **44 paths**, each
+classified exactly once:
+
+- **release authorities and public documentation (6):** `README.md`,
+  `CHANGELOG.md`, `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **architecture authority (1):** `ARCHITECTURE.md`.
+- **core runtime, store, and test plumbing (3):**
+  `apps/cored/src/main.rs`, `crates/store/Cargo.toml`, and
+  `crates/store/src/sqlite.rs`.
+- **operations and operating-contract surface (4):** `AGENTS.md`,
+  `intel-platform-OPERATIONS.md`, `run`, and `tools/model_profiles.py`.
+- **executable assurance and configuration (10):**
+  `.github/workflows/ci.yml`, `config/checklist-retractions.json`,
+  `config/invariant-rules.json`, `config/protected-artifacts.json`,
+  `shell/tests/test_evidence_artifacts.py`,
+  `shell/tests/test_model_profiles.py`, `tools/audit_deferred.py`,
+  `tools/checklist_audit.py`, `tools/evidence_artifacts.py`, and
+  `tools/invariant_scan.py`.
+- **durable evidence (15):** all fourteen receipt/bundle files under
+  `evidence/ci-runs/30253646597-1/` and
+  `evidence/v0.12.0/deferred-audit/report.json`.
+- **state, progress, and task records (5):** `PROGRESS-v0.11.md`,
+  `PROGRESS-v0.12.md`, `STATE.md`, `TASKS-v0.11-EXECUTION.md`, and
+  `TASKS-v0.12-EXECUTION.md`.
+
+`ARCHITECTURE.md §6` now maps corpus-identity atomicity to the core store
+transaction and private threshold, and maps executable absence claims to the
+registered invariant scanner. Its HC1 row still says that a rewritten shell can
+bypass or falsify `/attest`, so A4 remains open. The model-profile row names L1
+as defense for the shipped controller and states that an edited controller can
+rewrite it; the server-enforced L2 forced-command wrapper remains open and
+scheduled. `AGENTS.md` and `intel-platform-OPERATIONS.md` already carry the
+same marker-delimited authorization policy and required residual wording, so
+R-CLOSE changes neither file.
+
+The Rust package, Python package, FastAPI literal, this header, README heading,
+and newest changelog heading now read 0.12.0. Cargo mechanically changed only
+the local `cored` package version from 0.11.0 to 0.12.0 in `Cargo.lock`; no
+dependency resolution moved. `CHANGELOG.md` says explicitly that v0.11.0
+remains published with the threshold-source defect corrected forward by
+INGEST-ATOMIC and THRESHOLD-ONE. The v0.11.0 tag, release commit, receipts,
+report, and 54 evidence pins remain unchanged.
+
+The reconciled release candidate passed the complete local definition of done.
+`./run ci-local` passed **20/20** jobs with **121** Rust workspace tests,
+**21** net tests, warning-denied offline/net builds, clippy, fmt, ShellCheck,
+locked Rust 1.78 checks/tests, **205/205** Python 3.11.4 shell tests, golden
+**11/11**, persisted fingerprints, all **71/71** pins, and protected databases
+**2/2**. The independent Python 3.12.13 lane passed **205/205**, and both
+interpreters verified **21/21** exact constrained packages. The mandatory
+standalone `./run golden` then passed the same **11/11** byte-identical anchors.
+`version-check`, `cycle-check`, `checklist-audit`, `progress-check`,
+`invariant-scan`, manifest validation, protected-artifact verification,
+`git diff --check`, and the independent 44-path count all passed. Before the
+R-CLOSE checkbox, checklist auditing resolved **98/98** checked tasks with the
+one v0.11 retraction reported and zero exemptions.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
