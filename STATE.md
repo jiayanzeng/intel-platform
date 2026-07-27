@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **121** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.11.0.
+**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.11.0.
 
 **v0.12 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener measured entering HEAD
@@ -153,6 +153,40 @@ disposition. The authoritative wrapper resolved its historical baseline and
 passed. Full `./run ci-local` passed **19/19** with **121** workspace / **21**
 net tests and **200/200** shell tests; standalone golden remained **11/11**.
 Protected artifacts remained exact **2/2** with **54/54** pins.
+
+**v0.12 INVARIANT-SCAN is complete (measured 2026-07-27).** Static
+repository invariants now have a registered JSON contract and execute through
+`./run invariant-scan`, local CI job 20, and the Python 3.11 hosted shell lane.
+Each rule records an id, executable claim, prose source, scope, and captured
+failure. Missing or empty `fail_before` is a configuration error rather than an
+unproved rule. R1 preserves the Step 3 call-site boundary; R2 enforces the sole
+production TCP bind and its validated-address spelling; R3 scans production
+core crates for recognized LLM imports, provider/base-URL constants, and
+provider calls; R5 protects the single private canonical-distance constant and
+refuses numeric production call arguments. R4 is intentionally not seeded
+before Step 6: its credential policy text is an operator decision and the
+runbook requires registering it only after that text exists.
+
+The failure-capable scratch control made R2, R3, and R5 fire together. An extra
+production bind produced both an outside-validated-path failure and a two-bind
+count failure; an `async_openai::Client` import under `crates/core` produced an
+LLM-client-import failure; and a second distance constant produced both the
+second-constant and two-constant-count failures. R1's separately captured Step
+3 failure remains in the registry. The scratch worktree was removed. A
+temporary registry with an empty `fail_before` exited 2 with
+`rules[0].fail_before: must be a non-empty string`; the clean registry reports
+**4/4** rules passing.
+
+`checklist-audit` now validates a separate retraction registry, rejects
+retraction/exemption overlap and unresolved retractions, and reports checked
+and retracted totals separately. Before this task's checkbox, it measured
+**91 checked, 0 retracted**, all 91 entries and commits resolved, and zero
+exemptions. Both `AGENTS.md` amendments are live: repo-wide absence criteria
+require a registered scan, and every Gate must contain the scope of its
+criteria. Full `./run ci-local` passed **20/20** with **121** workspace,
+**21** net, and **200/200** dirty-worktree shell tests; standalone golden
+remained **11/11**. The job-count increase is exactly the new registered static
+invariant unit, not a new hosted job identity.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked

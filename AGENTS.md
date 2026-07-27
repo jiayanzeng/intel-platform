@@ -210,13 +210,19 @@ warnings; clippy is an independent blocking gate.)
 You do **not** batch status updates. After each task, in order, before starting
 the next:
 
+Before implementation, verify that the task's Gate contains the scope of every
+acceptance criterion. A Gate may not be narrower than its criteria: widen the
+Gate or move an out-of-scope criterion to a task whose Gate contains it.
+
 1. **Read** the task's objective and decision gate in
    the active cycle's execution runbook named in the declaration above.
 2. **Check the gate first.** If it trips, record and stop (§1).
 3. **Implement** the change.
 4. **Run every acceptance criterion** listed for the task and **capture the
    output** — command text and result. Self-verify; do not ask the operator to
-   run anything you can run yourself.
+   run anything you can run yourself. An acceptance criterion phrased as a
+   repo-wide absence must be discharged by a registered `invariant-scan` rule,
+   not by inspection.
 5. **Run `./run golden`** (§6). Its exit code defines whether the regression
    anchor held. If it moves by even one document / id / distance on a task meant
    to preserve it, **stop** — that is corpus corruption, not progress.

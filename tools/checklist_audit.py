@@ -15,6 +15,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 EXEMPTIONS_FILE = Path("config/checklist-exemptions.json")
+RETRACTIONS_FILE = Path("config/checklist-retractions.json")
 RUNBOOK_RE = re.compile(
     r"^TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
 )
@@ -47,6 +48,16 @@ class Exemption:
     date: str
     reason: str
     accepted_by: str
+
+
+@dataclass(frozen=True)
+class Retraction:
+    runbook: str
+    task_id: str
+    date: str
+    reason: str
+    accepted_by: str
+    corrected_by: str
 
 
 def normalize_task_id(raw: str) -> str:
@@ -228,6 +239,73 @@ def load_exemptions(root: Path, errors: list[str]) -> list[Exemption]:
     return exemptions
 
 
+def load_retractions(root: Path, errors: list[str]) -> list[Retraction]:
+    path = root / RETRACTIONS_FILE
+    try:
+        raw = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"{RETRACTIONS_FILE}: {error}")
+        return []
+    record = exact_object(
+        raw,
+        {"schema_version", "record_date", "accepted_by", "retractions"},
+        str(RETRACTIONS_FILE),
+        errors,
+    )
+    if record is None:
+        return []
+    if record["schema_version"] != 1:
+        errors.append(f"{RETRACTIONS_FILE}: schema_version must be 1")
+    if not valid_date(record["record_date"]):
+        errors.append(f"{RETRACTIONS_FILE}: record_date must be an ISO date")
+    if not isinstance(record["accepted_by"], str) or not record["accepted_by"]:
+        errors.append(f"{RETRACTIONS_FILE}: accepted_by must be non-empty")
+    raw_items = record["retractions"]
+    if not isinstance(raw_items, list):
+        errors.append(f"{RETRACTIONS_FILE}: retractions must be a list")
+        return []
+
+    retractions: list[Retraction] = []
+    seen: set[tuple[str, str]] = set()
+    expected = {
+        "runbook",
+        "task_id",
+        "date",
+        "reason",
+        "accepted_by",
+        "corrected_by",
+    }
+    for index, raw_item in enumerate(raw_items):
+        location = f"{RETRACTIONS_FILE}:retractions[{index}]"
+        item = exact_object(raw_item, expected, location, errors)
+        if item is None:
+            continue
+        if not valid_date(item["date"]):
+            errors.append(f"{location}: date must be an ISO date")
+            continue
+        if any(
+            not isinstance(item[field], str) or not item[field]
+            for field in (
+                "runbook",
+                "task_id",
+                "reason",
+                "accepted_by",
+                "corrected_by",
+            )
+        ):
+            errors.append(f"{location}: string fields must be non-empty")
+            continue
+        key = (item["runbook"], item["task_id"])
+        if key in seen:
+            errors.append(
+                f"{location}: duplicate retraction for {key[0]} {key[1]}"
+            )
+            continue
+        seen.add(key)
+        retractions.append(Retraction(**item))
+    return retractions
+
+
 def matching_commit(
     root: Path,
     runbook: Path,
@@ -273,14 +351,25 @@ def run(root: Path = ROOT) -> int:
     root = root.resolve()
     errors: list[str] = []
     exemptions = load_exemptions(root, errors)
+    retractions = load_retractions(root, errors)
     exemption_map = {
         (item.runbook, item.task_id): item for item in exemptions
     }
+    retraction_map = {
+        (item.runbook, item.task_id): item for item in retractions
+    }
+    for key in sorted(set(exemption_map) & set(retraction_map)):
+        errors.append(
+            f"{RETRACTIONS_FILE}: retraction also has an exemption: "
+            f"{key[0]} {key[1]}"
+        )
     seen_exemptions: set[tuple[str, str]] = set()
+    seen_retractions: set[tuple[str, str]] = set()
     total_checked = 0
     total_matched = 0
     total_resolved = 0
     total_exempted = 0
+    total_retracted = 0
 
     runbooks = sorted(root.glob("TASKS-v*-EXECUTION.md"))
     for runbook in runbooks:
@@ -296,6 +385,7 @@ def run(root: Path = ROOT) -> int:
         matched = 0
         resolved = 0
         exempted = 0
+        retracted = 0
         seen_ids: set[str] = set()
         for box in boxes:
             if box.task_id in seen_ids:
@@ -310,6 +400,7 @@ def run(root: Path = ROOT) -> int:
                 root, runbook, progress, entries, box
             )
             exemption = exemption_map.get(key)
+            retraction = retraction_map.get(key)
             if commit is not None:
                 matched += 1
                 resolved += 1
@@ -320,6 +411,9 @@ def run(root: Path = ROOT) -> int:
                         f"{runbook.name} {box.task_id}: commit {commit} "
                         "resolves cleanly"
                     )
+                if retraction is not None:
+                    seen_retractions.add(key)
+                    retracted += 1
                 continue
             if exemption is not None:
                 seen_exemptions.add(key)
@@ -329,10 +423,12 @@ def run(root: Path = ROOT) -> int:
         total_matched += matched
         total_resolved += resolved
         total_exempted += exempted
+        total_retracted += retracted
         print(
             f"checklist-audit: {runbook.name} checked={len(boxes)} "
             f"entries_matched={matched} commits_resolved={resolved} "
-            f"exemptions={exempted} progress={progress.name}"
+            f"exemptions={exempted} retractions={retracted} "
+            f"progress={progress.name}"
         )
 
     for key in sorted(exemption_map):
@@ -340,6 +436,12 @@ def run(root: Path = ROOT) -> int:
             errors.append(
                 f"{EXEMPTIONS_FILE}: exemption names no checked box: "
                 f"{key[0]} {key[1]}"
+            )
+    for key in sorted(retraction_map):
+        if key not in seen_retractions:
+            errors.append(
+                f"{RETRACTIONS_FILE}: retraction names no resolved checked "
+                f"box: {key[0]} {key[1]}"
             )
 
     if errors:
@@ -353,6 +455,7 @@ def run(root: Path = ROOT) -> int:
 
     print(
         f"checklist-audit: PASS (checked={total_checked}, "
+        f"retracted={total_retracted}, "
         f"entries_matched={total_matched}, commits_resolved={total_resolved}, "
         f"exemptions={total_exempted})"
     )

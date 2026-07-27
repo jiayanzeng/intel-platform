@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "R1",
+      "claim": "No production assign_canonical_ids call exists outside the store.",
+      "source": "TASKS-v0.12-EXECUTION.md:323-330",
+      "scope": "Production Rust outside crates/store/src/sqlite.rs; test-only Rust is excluded.",
+      "fail_before": "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production assign_canonical_ids call outside the store"
+    },
+    {
+      "id": "R2",
+      "claim": "The core has exactly one production TCP bind and it consumes addresses returned by loopback_only.",
+      "source": "ARCHITECTURE.md:175-177",
+      "scope": "All production Rust TcpListener binds; the sole allowed call is apps/cored/src/main.rs using bind_addresses.",
+      "fail_before": "invariant-scan: R2 FAIL: apps/cored/src/main.rs:1267: TcpListener bind outside the validated bind_addresses path"
+    },
+    {
+      "id": "R3",
+      "claim": "No recognized LLM client import, provider/base-URL constant, or provider call exists in production under crates/.",
+      "source": "AGENTS.md:78-81",
+      "scope": "Production Rust below crates/; test-only modules and files are excluded.",
+      "fail_before": "invariant-scan: R3 FAIL: crates/core/src/lib.rs:16: LLM client import"
+    },
+    {
+      "id": "R5",
+      "claim": "Production Rust has one private canonical-distance constant and no numeric canonical-distance call argument.",
+      "source": "TASKS-v0.12-EXECUTION.md:366-368",
+      "scope": "All production Rust; store tests may use alternate numeric distances.",
+      "fail_before": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
+    }
+  ]
+}

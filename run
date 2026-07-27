@@ -14,6 +14,7 @@
 #                         with real network egress can do
 #   ./run probe-providers bounded identity/capability probe for both model roles
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
+#   ./run invariant-scan  execute registered static repository invariants
 #
 # The offline commands need only the Rust toolchain and Python 3.11+. The live
 # commands additionally need outbound network (and the model commands need
@@ -413,6 +414,10 @@ ci_deferred_evidence() {
     --rederive "$baseline"
 }
 
+cmd_invariant_scan() {
+  python3 tools/invariant_scan.py "$@"
+}
+
 cmd_ci_local() {
   need_cargo
   ensure_venv
@@ -421,6 +426,7 @@ cmd_ci_local() {
   ci_local_job "release version consistency" cmd_version_check || return $?
   ci_local_job "active cycle consistency" cmd_cycle_check || return $?
   ci_local_job "checked-task evidence" cmd_checklist_audit || return $?
+  ci_local_job "registered static invariants" cmd_invariant_scan || return $?
   ci_local_job "deferred evidence re-derivation" ci_deferred_evidence || return $?
   ci_local_job "Python 3.11 floor byte-compile" ci_floor_compile || return $?
   ci_local_job "ShellCheck presence and harness lint" ci_shellcheck || return $?
@@ -923,6 +929,8 @@ intel-platform — ./run <command>
     checklist-audit
                    resolve every checked task to progress and a real commit
     progress-check validate the newest append-only progress entry
+    invariant-scan
+                   execute registered source/config/git invariants
     python-env-check
                    require the active venv to match shell/constraints.txt
     verify-fingerprints <db> [reference-db]
@@ -975,6 +983,7 @@ case "$cmd" in
   version-check) cmd_version_check "$@" ;;
   cycle-check)   cmd_cycle_check "$@" ;;
   checklist-audit) cmd_checklist_audit "$@" ;;
+  invariant-scan) cmd_invariant_scan "$@" ;;
   progress-check) cmd_progress_check "$@" ;;
   python-env-check) cmd_python_env_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
