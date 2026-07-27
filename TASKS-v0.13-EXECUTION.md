@@ -607,7 +607,7 @@ record of v0.12's is true.
 - [ ] **THRESHOLD-BIND** — R5 is an allow-list over production call sites; the
   `INGEST_FUZZ_LIMIT` mutation FAILs; both original fail-befores still FAIL;
   clean tree PASSes; no `crates/` source changed
-- [ ] **THRESHOLD-SOURCE-SEAM** — the gate-discovered production distance
+- [x] **THRESHOLD-SOURCE-SEAM** — the gate-discovered production distance
   parameter is removed; alternate-distance controls remain test-only; strict
   R5 candidate passes; golden 11/11
 - [ ] **UA-CONTACT** — net build refuses to start without a real contact; every

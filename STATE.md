@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; THRESHOLD-BIND's source gate tripped and its required follow-up is open.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; THRESHOLD-SOURCE-SEAM is complete and THRESHOLD-BIND may resume.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -160,6 +160,23 @@ the red matcher was not committed. THRESHOLD-BIND remains incomplete. The
 runbook-mandated follow-up, THRESHOLD-SOURCE-SEAM, must remove the production
 parameter seam while retaining the test-only alternate-distance control; only
 then may the R5 rewrite resume.
+
+**v0.13 THRESHOLD-SOURCE-SEAM is complete (measured 2026-07-27).** The public
+no-argument `rematerialize_canonical_ids` method now opens its transaction and
+passes `DEDUP_MAX_DISTANCE` directly to `assign_canonical_ids_tx`. The
+production `rematerialize_canonical_ids_with_distance(max_distance)` helper is
+absent. The alternate-distance path remains only in the `#[cfg(test)]`
+`assign_canonical_ids` method and still exercises the same real transaction,
+materialization, commit, and rollback behavior.
+
+The focused `intel-store` suite passed **21/21**. Warning-denied workspace
+check/test passed **121** tests; warning-denied net check and `intel-ingest`
+net tests passed **21/21**; clippy and fmt were clean; locked Rust 1.78
+check/test passed **121** tests. Re-applying the strict R5 candidate without
+changing the source returned `R5 PASS` and exit **0**: all five production
+`assign_canonical_ids_tx` calls pass the canonical constant, while the one
+`max_distance` call is inside the `#[cfg(test)]` seam. No tool or registry
+change is part of this task. THRESHOLD-BIND may now resume.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
