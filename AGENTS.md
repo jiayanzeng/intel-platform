@@ -100,6 +100,13 @@ where it does; here is what you must never do.
   is not stable (cargo rewrites it to v4 on the next modification), so do not
   hand-edit the format as a fix.
 - **HC13 — fixtures prove the state machine, not the wire.** (See §0.)
+- **Credential disclosure is forbidden; private-network documentation is
+  not.** Never commit `.env`, provider keys, tokens, private key material, or
+  raw secret-bearing responses. RFC 1918 hosts and loopback-forward ports may
+  be documented because they convey no access without the operator's network.
+  The v0.11 host/port prohibition was false when written and had no executable
+  guard during its lifetime; v0.12 replaces it with registered credential scan
+  R4.
 - **The robots gate composes one way only.** The publisher's fetched policy and
   the operator's configured deny-list both apply; the operator list can only ever
   refuse *more*. Fail-closed on unreachable (5xx / DNS / TLS / timeout ⇒ take

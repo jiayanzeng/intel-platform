@@ -214,6 +214,31 @@ attributed to the release. Annotated tag object
 artifact verification remain **54/54** pins and **2/2** databases, and
 standalone golden remains **11/11**.
 
+**v0.12 INFRA-POLICY is complete (measured 2026-07-27).** The operator
+selected recommended **Option A**. RFC 1918 addresses and loopback-forward
+ports remain documentable because they do not confer access without the LAN or
+local route; no specific threat model was identified that makes those
+coordinates secret. Credentials are the enforceable boundary: tracked `.env`
+files, provider keys, tokens, private key material, concrete long bearer
+values, non-placeholder secret assignments, and raw secret-bearing response
+fields are prohibited.
+
+The correction is recorded in the active runbook's standing prohibition,
+`AGENTS.md`, and decision-log §6g. Each names the v0.11 host/port statement as
+false when written and unexecuted for its entire life. E0's tracked scan found
+11 matching paths, ten predating the v0.12 runbook; the private coordinates
+were already deliberate documentation in `.env.example`, `README.md`, shell
+tests, and append-only history.
+
+Registered scan R4 examines every Git-tracked text file while allowing empty
+assignments, explicit placeholders, and short demo fixtures. The clean tree
+reports **R1–R5 5/5**. In a detached scratch worktree, planting a fake
+`sk-proj-…` provider key at `README.md:1` made R4 exit 1 with
+`provider-key-shaped value`; the scratch worktree was removed and the clean
+pass repeated. Full `./run ci-local` passed **20/20** with **121** workspace,
+**21** net, and **200/200** dirty-worktree shell tests, protected artifacts
+**2/2**, and **54/54** pins. Standalone golden remained **11/11**.
+
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
 `TASKS-v0.11-EXECUTION.md`; `AGENTS.md` correctly still declared the latest
@@ -3836,6 +3861,31 @@ shared point before every network fetch, has a dedicated error, and is covered
 by the inverted defect control. If new connector kinds make context construction
 harder to audit, the type-level design should be reconsidered as its own
 architectural task rather than folded into this narrow correction.
+
+### 6g. Why private-network coordinates are documentation, not credentials (v0.12/INFRA-POLICY)
+
+**Decision: Option A, selected by the operator on 2026-07-27.** The repository
+may document RFC 1918 host `192.168.0.192` and loopback-forward ports such as
+`18080`/`18081`; neither grants access without already having the operator's
+LAN or local-machine route. The enforceable prohibition is against
+secret-bearing material: tracked `.env` files, provider keys, tokens, private
+key material, concrete long bearer values, non-placeholder secret assignments,
+and raw secret-bearing response fields.
+
+The v0.11 standing clause saying that the host and forwarded ports “appear in
+no committed file” was false when written and unexecuted for its entire life.
+v0.12 E0's tracked-path scan found 11 matching paths, including the already
+committed `.env.example`, `README.md`, `shell/tests/test_llm_config.py`,
+`PROGRESS-v0.9.md`, and `STATE.md`; ten of the 11 predated the v0.12 runbook.
+No guard ever evaluated that clause. Option B was rejected because no specific
+threat model makes private coordinates confidential, while append-only
+historical records would make a host/port ban permanently incomplete.
+
+Registered invariant R4 now scans every Git-tracked text file and makes the
+credential rule executable. The clean tree passes. In a detached scratch
+worktree, a planted fake `sk-proj-…` provider key at `README.md:1` produced
+`invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value`; the scratch
+worktree was then removed.
 
 ## 7. Run reference
 

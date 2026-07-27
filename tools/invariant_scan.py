@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -62,6 +63,38 @@ NUMERIC_THRESHOLD_CALL = re.compile(
     r"\([^;]{0,300}?\b\d+(?:u32)?\b",
     re.DOTALL,
 )
+PRIVATE_KEY_HEADER = re.compile(
+    r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----"
+)
+PROVIDER_KEY = re.compile(
+    r"\b(?:"
+    r"sk-(?:proj-|ant-)?[A-Za-z0-9_-]{20,}|"
+    r"AKIA[0-9A-Z]{16}|"
+    r"gh[opsu]_[A-Za-z0-9]{20,}|"
+    r"xox[baprs]-[A-Za-z0-9-]{10,}|"
+    r"AIza[0-9A-Za-z_-]{35}"
+    r")\b"
+)
+AUTHORIZATION_VALUE = re.compile(
+    r"(?i)\bAuthorization[\"']?\s*[:=]\s*[\"']?\s*"
+    r"Bearer\s+([A-Za-z0-9._~+/\-=]{24,})"
+)
+SECRET_ASSIGNMENT = re.compile(
+    r"(?m)^\s*(?:export\s+)?"
+    r"[A-Z][A-Z0-9_]*(?:API_KEY|TOKEN|SECRET|PASSWORD)"
+    r"[ \t]*=[ \t]*([^\s#]+)"
+)
+RAW_SECRET_FIELD = re.compile(
+    r"(?i)[\"'](?:api_key|access_token|refresh_token|client_secret|password)"
+    r"[\"']\s*:\s*[\"']([^\"']{20,})[\"']"
+)
+SECRET_PLACEHOLDERS = {
+    "...",
+    "…",
+    "change-me",
+    "replace-me",
+    "replace-with-your-key",
+}
 
 
 class ConfigError(ValueError):
@@ -99,6 +132,36 @@ def rust_files(root: Path, base: Path | None = None) -> list[Path]:
 def location(root: Path, path: Path, text: str, offset: int) -> str:
     line = text.count("\n", 0, offset) + 1
     return f"{path.relative_to(root)}:{line}"
+
+
+def tracked_texts(root: Path) -> list[tuple[Path, str]]:
+    result = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "-z"],
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        message = result.stderr.decode(errors="replace").strip()
+        raise ConfigError(f"git ls-files failed for {root}: {message}")
+
+    tracked: list[tuple[Path, str]] = []
+    for raw_path in result.stdout.split(b"\0"):
+        if not raw_path:
+            continue
+        relative = Path(raw_path.decode())
+        path = root / relative
+        try:
+            payload = path.read_bytes()
+        except OSError as error:
+            raise ConfigError(f"{relative}: {error}") from error
+        if b"\0" in payload:
+            continue
+        try:
+            text = payload.decode()
+        except UnicodeDecodeError:
+            continue
+        tracked.append((path, text))
+    return tracked
 
 
 def r1_findings(root: Path) -> list[str]:
@@ -175,6 +238,45 @@ def r3_findings(root: Path) -> list[str]:
     return findings
 
 
+def r4_findings(root: Path) -> list[str]:
+    findings: list[str] = []
+    for path, text in tracked_texts(root):
+        relative = path.relative_to(root)
+        name = relative.name
+        if name == ".env" or (
+            name.startswith(".env.") and name != ".env.example"
+        ):
+            findings.append(f"{relative}: tracked secret-bearing environment file")
+
+        patterns = (
+            ("private-key header", PRIVATE_KEY_HEADER),
+            ("provider-key-shaped value", PROVIDER_KEY),
+            ("concrete Authorization bearer value", AUTHORIZATION_VALUE),
+            ("raw secret-bearing response field", RAW_SECRET_FIELD),
+        )
+        for label, pattern in patterns:
+            for match in pattern.finditer(text):
+                findings.append(
+                    f"{location(root, path, text, match.start())}: {label}"
+                )
+
+        for match in SECRET_ASSIGNMENT.finditer(text):
+            value = match.group(1).strip("\"'")
+            if (
+                not value
+                or value in SECRET_PLACEHOLDERS
+                or "…" in value
+                or "..." in value
+                or value.startswith(("$", "<", "os.environ"))
+            ):
+                continue
+            findings.append(
+                f"{location(root, path, text, match.start())}: "
+                "non-placeholder secret assignment"
+            )
+    return findings
+
+
 def r5_findings(root: Path) -> list[str]:
     findings: list[str] = []
     declarations: list[tuple[Path, str, re.Match[str]]] = []
@@ -222,6 +324,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
     "R3": r3_findings,
+    "R4": r4_findings,
     "R5": r5_findings,
 }
 

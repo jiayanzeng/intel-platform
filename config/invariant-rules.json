@@ -23,6 +23,13 @@
       "fail_before": "invariant-scan: R3 FAIL: crates/core/src/lib.rs:16: LLM client import"
     },
     {
+      "id": "R4",
+      "claim": "No tracked file contains a secret-bearing environment file, provider key, private key, raw token field, non-placeholder secret assignment, or concrete long Authorization bearer value.",
+      "source": "AGENTS.md:103-109",
+      "scope": "All Git-tracked text; binary files are excluded, while documented non-secret network coordinates, placeholders, and short demo fixtures are allowed.",
+      "fail_before": "invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value"
+    },
+    {
       "id": "R5",
       "claim": "Production Rust has one private canonical-distance constant and no numeric canonical-distance call argument.",
       "source": "TASKS-v0.12-EXECUTION.md:366-368",

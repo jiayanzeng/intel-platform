@@ -721,7 +721,7 @@ of v0.11's is true.
 - [x] **THRESHOLD-ONE** — zero production `assign_canonical_ids` call sites outside the store crate; seam disposition recorded; `DEDUP_MAX_DISTANCE` not exported; R1 registered with captured fail-before
 - [x] **INVARIANT-SCAN** — `./run invariant-scan` is ci-local job 20; every rule cites its prose sentence and has a captured fail-before; a rule without `fail_before` is refused; `checklist-audit` reports checked and retracted separately; both `AGENTS.md` amendments landed
 - [x] **RETRACT-0110** — retraction record validated; `PROGRESS-v0.11.md` appended not edited; `STATE.md` header reports released counts with worktree delta named; `v0.11.0` tag, commit, and 54 pins byte-identical
-- [ ] **INFRA-POLICY** — disclosure decision recorded in three locations with reasoning; the v0.11 clause's falsity named; R4 registered; a planted credential is refused
+- [x] **INFRA-POLICY** — disclosure decision recorded in three locations with reasoning; the v0.11 clause's falsity named; R4 registered; a planted credential is refused
 - [ ] **OPS-AUTHORITY** — enforcement level decided and recorded; L1 allowlist tested in both directions with ≥4 planted refusals; `run` and `model_profiles.py` hash-pinned; `OPERATIONS.md §5` and `AGENTS.md` byte-identical under R6; the "what this does not do" sentence present
 - [ ] **OPS-ADMIT** — operations work committed in one implementation commit; 200/200 now true of HEAD; live evidence recorded with provenance and HC13 limits; three C7-augment items disposed; controller ownership stated
 - [ ] **OPS-FAILCLOSED** — four fail-closed claims tested in both directions; managed socket reused never killed; hung and dead servers distinguishable; ask-first command set asserted absent from every emitted script
@@ -770,10 +770,12 @@ of v0.11's is true.
 - Do not hand-edit `Cargo.lock` (HC12), raise the offline Rust 1.78 floor, lower
   the Python 3.11 floor, or let core call an LLM (HC3).
 - Do not commit `.env`, provider keys, tokens, private key material, or raw
-  secret-bearing responses. **The host/port clause from
-  `TASKS-v0.11-EXECUTION.md:693-696` is suspended pending Step 6**, which
-  replaces it with a rule something executes; until Step 6 lands, apply the
-  credential half only and record that the host/port half was false as written.
+  secret-bearing responses. **Option A was selected in Step 6:** RFC 1918 hosts
+  and loopback-forward ports may remain as documentation because they confer no
+  access without the operator's network. The host/port clause in
+  `TASKS-v0.11-EXECUTION.md:693-696` was false when written and had no
+  executable guard during its lifetime; registered credential scan R4 replaces
+  it with a rule that can fail.
 - Do not batch `STATE.md` / `PROGRESS-v0.12.md` updates or combine two tasks in
   one commit.
 - If any Step's Objective, Acceptance criteria, or "Done when" is amended after
