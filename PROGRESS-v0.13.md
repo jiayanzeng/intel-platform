@@ -439,3 +439,50 @@ Entries are append-only; corrections are new dated entries.
   non-results; identical permitted reruns passed.
 - golden-E2E delta: **0**; the mandatory standalone post-task run remained
   **11/11** byte-identical.
+
+### 2026-07-27 · R-CLOSE — local release candidate recorded; publication pending
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: b18ece34424e03c531bc0e90f1a633262f252d12
+- result: PENDING PUBLICATION. The complete verified local candidate is
+  committed, but R-CLOSE remains unchecked because the separate operator
+  publication trigger has not fired.
+- version-choice acceptance: PASS. The operator authorized `v0.13.0` because
+  UA-CONTACT landed; the `v0.12.1` alternative does not apply. Cargo, Python,
+  FastAPI, STATE, README, and the newest changelog release heading read
+  0.13.0. `Cargo.lock` changed only the local cored package version.
+- release-facing correction acceptance: PASS. `CHANGELOG.md` says published
+  v0.12.0 named an out-of-sector document in an attestation violation, that
+  the live exposure was an existence-and-16-token-match oracle rather than a
+  body leak, and that v0.13.0 closes it. The HC2 retraction says the claim was
+  falsified by measurement. The out-of-sector/nonexistent
+  `400 unknown context document id` semantics are recorded in CHANGELOG and
+  this progress log.
+- diff classification acceptance: PASS. The release diff contains **29**
+  paths; the five `STATE.md` classes enumerate **29** paths with zero
+  duplicates, and a sorted mechanical comparison produced no unmatched path.
+  `PROGRESS-v0.12.md` is **93 additions / 0 deletions** relative to v0.12.0;
+  no `evidence/` or `data/` path changed.
+- architecture acceptance: PASS by source/enforcement reconciliation.
+  `ARCHITECTURE.md`'s HC2 row matches the sector-scoped SQL hydration and
+  private test-only unscoped seam. A4 explicitly remains open for a rewritten
+  shell, and the L1 controller residual explicitly remains open until the
+  scheduled server-enforced L2 wrapper lands.
+- local matrix acceptance: PASS. `./run ci-local` passed **20/20** with
+  **124** workspace tests, **46** net-job tests (**22** ingest + **24**
+  cored), Python 3.11 **216/216**, invariant scan **7/7** with all **11**
+  controls, warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78,
+  all **71/71** pins, protected databases **2/2**, and golden **11/11**.
+  Python 3.12 independently passed **216/216** and **21/21** constraints.
+- golden-E2E delta: **0**; the mandatory standalone candidate run remained
+  **11/11** byte-identical.
+- checklist acceptance: PENDING by operator directive. `checklist-audit`
+  passes at **108** checked with **three** retractions; R-CLOSE is the sole
+  unchecked v0.13 box. This is recorded as a gap, not reported as a pass.
+- publication disposition: PENDING OPERATOR DECISION. The named trigger is a
+  separate operator authorization to publish `v0.13.0`, and it has not fired.
+  `version-check` passes at 0.13.0 while HEAD is ahead of v0.12.0, so no local
+  tag was needed or created. No push or remote mutation occurred. Read-only
+  verification returned `origin/main` unchanged at
+  `466ebb3fc9736923110803e087acc798e417d084` and no v0.13.0 tag.

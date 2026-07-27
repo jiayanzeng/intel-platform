@@ -770,3 +770,44 @@ that live harness outside the Gate or silently sending an empty scope. The Gate
 therefore includes that caller before implementation; its existing `sectors`
 value is threaded through with no change to its test battery or public result
 schema.
+
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-27
+- **Release disposition:** release identity authorized; publication pending
+- **Release:** `v0.13.0`
+- **Release commit:** `b18ece34424e03c531bc0e90f1a633262f252d12`
+- **Annotated tag object:** not created; `version-check` passes without it and
+  the publication trigger has not fired
+
+The ten task records resolve to these implementation commits:
+
+- E0 — `ed7249c1cf6429c6482592551a2a6e7dc996d9d3`
+- FAIL-BEFORE-EXEC — `b398f1266324eb43b4b77519f527d09e3b1eb1c9`
+- THRESHOLD-BIND — `3928680edc05e116ef66a24e625e255b3b380fe6`
+- THRESHOLD-SOURCE-SEAM —
+  `0b266ade7e051b0cc394e7c598ef77d908b5adc8`
+- UA-CONTACT — `d5fbcb2f6d50425c1953ea4c2e41f067179d2a68`
+- BODY-BOUNDARY — `59924122a45e16294b7e135fc4930401b7b5b7cc`
+- R7-BODY-SECTOR — `c4f4d65e64229641e249c6beabe48d08f24a5425`
+- RETRACT-HC2 — `a2d41c9d822fdae4ef017dae44aefa65551e4a53`
+- NET-TEST-EXEC — `2567f48aaba879011857db9177ebd60624678cc7`
+- R-CLOSE/release candidate —
+  `b18ece34424e03c531bc0e90f1a633262f252d12`
+
+Cycle activation remains preparatory history at
+`5223d783b43c250102418163ef124f4e662b727b`; it is not one of the ten task
+records.
+
+The release identity is `v0.13.0` because UA-CONTACT landed; therefore the
+`v0.12.1` alternative did not trigger. Publication remains pending the named
+trigger of a separate operator authorization to publish `v0.13.0`. No tag was
+required for `version-check`, so none was created locally. No push occurred,
+and read-only verification found remote `main` unchanged at
+`466ebb3fc9736923110803e087acc798e417d084` with no v0.13.0 tag.
+
+This is deliberately a pending record, not the canonical closed-cycle record.
+R-CLOSE remains unchecked, `cycle-check` keeps v0.13 open, and the original
+fully-checked acceptance criterion remains pending until the publication
+decision is recorded. A4 and the editable-L1 controller residual both remain
+open; L2 remains scheduled and unexecuted.

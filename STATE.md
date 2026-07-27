@@ -479,10 +479,10 @@ validation, artifact verification, and `git diff --check` passed.
 The original R-CLOSE criterion requiring every box to be checked is
 **PENDING**, not passed: `checklist-audit` resolves **108** checked tasks and
 **three** retractions, while R-CLOSE remains unchecked under the explicit
-publication directive. The local release-candidate implementation commit and
-per-Step hashes are recorded in the subsequent append-only pending closing
-record; a canonical closed-cycle record and annotated tag require the
-publication trigger.
+publication directive. The local release-candidate implementation commit is
+`b18ece34424e03c531bc0e90f1a633262f252d12`; it and every per-Step hash are
+recorded in the append-only pending closing record. A canonical closed-cycle
+record and annotated tag require the publication trigger.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
