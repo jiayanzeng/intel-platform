@@ -108,3 +108,43 @@ Entries are append-only; corrections are new dated entries.
   both protected databases exact.
 - golden-E2E delta: **0**. The matrix and mandatory standalone run both
   remained **11/11** byte-identical.
+
+### 2026-07-28 · RULE-SHAPE-AUDIT — claims match executable rule shapes
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: e80c523553b2f0f360330e073ff19c480f75cc4f
+- result: PASS. R1 is now an allow-list over the five enumerable production
+  store callers. Each must call `assign_canonical_ids_tx` exactly once, and
+  every other production canonical-identity helper call is reported with
+  file, line, helper token, and enclosing caller. Its site-specific control
+  plants the E0 `rebuild_identity_with_limit` seam and fails at
+  `crates/store/src/sqlite.rs:672`. R6 was already an exact allow-list over the
+  two governed marker-delimited authorization blocks.
+- mutation acceptance: PASS with four isolated outcomes against the revised
+  rules. The renamed R1 seam now FAILs at its planted line; an unknown
+  inference-gateway call still makes R3 PASS; an unknown
+  `INFERENCE_CREDENTIAL` form still makes R4 PASS; and renaming both
+  `MODEL_PROFILE_AUTHORITY` markers still makes R6 FAIL in both enumerated
+  files. All four disposable worktrees were removed afterward.
+- stated-limitation acceptance: PASS. R3 is an open-bottom deny-list over
+  recognized OpenAI, Anthropic, and LLM vocabulary; an unknown provider or
+  inference-gateway spelling is outside coverage, so R3 does not prove HC3
+  against arbitrary new vocabulary. R4 is an open-bottom deny-list over
+  registered credential names and value shapes; unknown names or encodings
+  are outside coverage, so R4 does not prove that every possible secret form
+  is absent. These limits are explicit here, in each registry `scope`, and in
+  `ARCHITECTURE.md`; they narrow scanner claims, not the governing HC3 and
+  credential-disclosure prohibitions.
+- source-preservation acceptance: PASS. Implementation commit
+  `e80c523553b2f0f360330e073ff19c480f75cc4f` changed zero files under
+  `crates/` or `apps/`.
+- invariant acceptance: PASS. The focused module passed **13/13** under Python
+  3.11.4 and 3.12.13. The full self-test passed **7/7 rules / 11
+  site-specific controls**.
+- regression acceptance: PASS. The exact implementation tree passed
+  `./run ci-local` **20/20** with **124** workspace Rust tests, **47** net
+  tests, zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  protected databases **2/2**, and all **86/86** pins exact.
+- golden-E2E delta: **0**. The matrix and mandatory standalone run both
+  remained **11/11** byte-identical.
