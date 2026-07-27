@@ -555,7 +555,7 @@ record of v0.12's is true.
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix captured; C1 reproduced as a measured
+- [x] **E0** — entering matrix captured; C1 reproduced as a measured
   request/response pair with the containment source identified; C2 reproduced
   against HEAD in a scratch worktree and R5's two original fail-befores
   separately confirmed to fire; C3 reproduced as command output; C4/C5

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.12 is closed and published.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; E0 confirmed C1–C5 against the published v0.12.0 baseline.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -20,6 +20,81 @@ the one existing v0.11 retraction separately, and found zero exemptions;
 `git diff --check` passed. No test, golden, artifact, hosted-runner,
 publication, or release claim is made by this preparatory pair. E0 begins from
 the clean post-audit tree.
+
+**v0.13 E0 is complete (measured 2026-07-27).** The restarted opener produced
+no worktree entries. HEAD was
+`5e450b08a3f78bbe8a804aad95a808f42415ecd1`, described as
+`v0.12.0-3-g5e450b0`; the activation implementation/audit pair explains local
+`main` being two commits ahead / zero behind `origin/main`. The published
+`v0.12.0` tag remained object
+`94d8215bc2151fecba1280dc793d3f5953cd8055`, peeled to unchanged release
+commit `e5faf0c161a4256f33976664685653d8bd805d5d`.
+
+The first sandboxed `./run ci-local` was an environment non-result: every
+non-shell lane passed, while eight shell controls were denied loopback binds
+or process inspection after 197 tests passed. The identical permitted rerun
+passed all **20/20** jobs with **121** Rust workspace / **21** net tests, zero
+rustc/clippy/format/ShellCheck failures, locked Rust 1.78 green,
+**205/205** Python 3.11.4 shell tests, protected artifacts **2/2**, all
+**71/71** pins, and golden **11/11**. The independent Python 3.12.13 lane
+passed **205/205** and verified **21/21** exact constrained packages.
+Standalone `./run golden` repeated the byte-identical **11/11** result.
+`verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+`version-check`, and `invariant-scan` all passed; the checklist entered E0 at
+**99/99** historical checked tasks with the existing v0.11 retraction reported
+separately.
+
+All C1–C5 findings were confirmed; none refuted:
+
+1. **C1:** a disposable real `cored` on a scratch database containing exactly
+   `finance-a` and `science-b` returned HTTP 200 from `/retrieve` for a finance
+   scope querying the science-only token `alpha`, with empty BM25, vector,
+   fused, and context lists. The containment came from the upstream ranking
+   legs: a direct call to the public unscoped `documents_by_ids(["science-b"])`
+   returned the science document and its full 18-token body. `/attest` cannot
+   express a sector scope; the same finance-caller control supplied
+   `science-b` plus its first 16 normalized body tokens and received HTTP 200,
+   the constant refusal, and `violations:[{"doc_id":"science-b"}]`. Replacing
+   the id with `does-not-exist` returned HTTP 400 `unknown context document
+   id`. This confirms the cross-sector existence/match oracle. No
+   `/retrieve` body leak reproduced, but its final hydration boundary does
+   not fail closed independently.
+2. **C2:** in a detached scratch worktree, adding
+   `INGEST_FUZZ_LIMIT: u32 = 17` and routing the production
+   `assign_canonical_ids_tx` call through it exited **0** with
+   `invariant-scan: R5 PASS`. The two original controls do fire:
+   `SECOND_DEDUP_MAX_DISTANCE=17` produced
+   `R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance
+   constant SECOND_DEDUP_MAX_DISTANCE=17`, and replacing the same production
+   argument with literal `16` produced
+   `R5 FAIL: crates/store/src/sqlite.rs:207: numeric canonical-distance
+   argument in production`. R5 has a coverage defect, not total inertia.
+3. **C3:** source enumeration found 16 shell test files and no reference to or
+   test module for `tools/invariant_scan.py`. In the scratch worktree,
+   replacing R4's provider-key regex with the never-matching `(?!)` pattern
+   still exited **0** and reported all **6/6** registered rules passing. The
+   registry's prose `fail_before` values are not executed.
+4. **C4:** `ARCHITECTURE.md` records `/attest` as taking only
+   `{answer, context_doc_ids}` while claiming nine lines later that every
+   body-reading boundary takes an explicit sector set and fails closed in core
+   SQL. `/retrieve` and `/attest` both call the id-only hydration method; the
+   HC2 rationale is therefore false in the published v0.12.0 source.
+5. **C5:** the single `USER_AGENT` constant is already used byte-identically
+   by both reqwest clients and `RobotsCache`, so that part of the earlier
+   diagnosis is refuted exactly as the runbook predicts. The defect is
+   confirmed: the value contains `intel-platform/0.1` and
+   `you@example.com`, no operator contact setting exists, and
+   `build_robots_cache` performs no unset/empty/placeholder refusal. Only the
+   contact substring may become configurable; the robots group-selection
+   token remains structural.
+
+C1's measured `/attest` oracle is a release-blocking finding rather than a
+routine confirmation: no v0.13 release may close or publish until
+BODY-BOUNDARY makes the same control empty across sectors. This changes the
+cycle's release posture, not its publication authority; the version and
+publication decisions still belong to R-CLOSE. Both disposable worktrees,
+their temporary database, and the spawned core process were removed, and the
+live tree returned clean.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
