@@ -144,3 +144,32 @@ Entries are append-only; corrections are new dated entries.
   `checklist-audit`, and `git diff --check` passed.
 - golden-E2E delta: **0**; the mandatory post-gate run remained **11/11**
   byte-identical.
+
+### 2026-07-27 · THRESHOLD-SOURCE-SEAM — production parameter removed
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 0b266ade7e051b0cc394e7c598ef77d908b5adc8
+- result: PASS. The public no-argument
+  `rematerialize_canonical_ids` method now opens its transaction and calls
+  `assign_canonical_ids_tx` directly with `DEDUP_MAX_DISTANCE`. The production
+  `rematerialize_canonical_ids_with_distance(max_distance)` helper is absent.
+- test-seam acceptance: PASS. Alternate distances remain reachable only
+  through the `#[cfg(test)]` `assign_canonical_ids` method, which uses the same
+  real transaction, materialization, commit, and rollback path. The focused
+  `intel-store` suite passed **21/21**, including boundary, differential,
+  missing-fingerprint rollback, ordering, update, and deletion controls.
+- strict-rule acceptance: PASS. Re-applying the strict R5 candidate against
+  the post-task source returned `R5 PASS`, overall **1/1**, exit **0**. All
+  five production `assign_canonical_ids_tx` calls pass the single token
+  `DEDUP_MAX_DISTANCE`; the one `max_distance` call is inside the test-only
+  seam. No tool or registry file is present in the implementation diff.
+- Rust acceptance: PASS. Warning-denied workspace check/test passed **121**
+  tests; warning-denied net check and `intel-ingest` net tests passed
+  **21/21**; clippy and fmt were clean; locked Rust 1.78 check/test passed
+  **121** tests.
+- golden-E2E delta: **0**; the mandatory post-task run remained **11/11**
+  byte-identical.
+- disposition: the gate-mandated source correction is complete.
+  THRESHOLD-BIND may resume without an exemption or a source change in its
+  rule-only commit.
