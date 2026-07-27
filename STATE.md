@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`, and the atomic publication push advanced `origin/main` to that same commit.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. The verified release mapping permitted deletion of `candidate/v0.13.0`. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Final release CI is **20/20** locally with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the shell suite is **216/216** under Python 3.11.4 and 3.12.13. Both interpreters verify **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published and v0.14 E0 has rebuilt the entering state. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **124** Rust workspace tests, and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); standalone shell runs are **216/216** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **7/7 rules / 11 controls** at E0. A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -21,6 +21,77 @@ reported the three existing retractions separately, and found zero exemptions;
 `git diff --check` passed. No test, golden, artifact, hosted-runner,
 publication, or release claim is made by this preparatory pair. E0 begins from
 the clean post-audit tree.
+
+**v0.14 E0 is complete; G1–G6 are measured (2026-07-28).** The restarted
+opener found a clean tree at activation audit
+`a943b440b7d6de45ad08e857c2e6d26bfab57936`, described as
+`v0.13.0-4-ga943b44`, two commits ahead / zero behind reconciled
+`origin/main`. The published v0.13.0 tag remained object
+`24a6a2aca52974891d120e0f2b295a93d629c1f7`, peeled to unchanged release
+commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`.
+
+The first two workspace-test attempts were environment non-results: cached
+Rust test binaries embedded the deleted v0.13 scratch path
+`/private/tmp/intel-v013-close.K9cX7L`, so 18 `cored` and then 8
+`intel-ingest` tests failed fixture-root canonicalization with `ENOENT`.
+`cargo clean` removed that stale shared-worktree cache. A subsequent sandboxed
+net lane was another environment non-result because loopback bind and macOS
+system-configuration access were denied. The identical permitted, clean-cache
+rerun passed **20/20**: **124** workspace Rust tests, **47** net tests
+(**23** `intel-ingest` + **24** `cored`), zero rustc warnings, clean clippy,
+fmt, and ShellCheck, and locked Rust 1.78 check/test green. Because the clean
+matrix reaches shell tests before golden builds `target/debug/cored`, its
+deliberately on-site-only production-measurement test was skipped there:
+**215 passed / 1 skipped**. After the matrix built the binary, standalone
+Python 3.11.4 and 3.12.13 runs each passed the complete **216/216**, and both
+verified **21/21** exact packages. Standalone golden repeated **11/11**.
+`verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+`version-check`, and `invariant-scan --self-test` all passed; protected
+databases remain **2/2**, pins **86/86**, and the scanner enters at **7/7
+rules / 11 controls**.
+
+All six proposed gaps have executable dispositions:
+
+1. **G1 confirmed.** R7 control 2 produced the real finding at
+   `apps/cored/src/main.rs:1135`; control 3 produced it at line 1182. Their
+   registered `expected_fail` strings and self-test summaries are nevertheless
+   byte-identical, so the current control result cannot identify which site
+   fired. In a third scratch worktree, shortening R7's hydration regex so safe
+   scoped calls were classified as unscoped still made control 2 return status
+   1 with its expected substring; it blamed lines 1135, 1182, and 1290. The
+   control therefore proves only that the rule failed somewhere.
+2. **G2 confirmed with four mutation outcomes.** A renamed production
+   threshold seam, `rebuild_identity_with_limit(16)`, outside the store made
+   **R1 PASS**. An inference-gateway call named without `openai`, `anthropic`,
+   or `llm` made **R3 PASS**. An unknown credential form assigned through
+   `INFERENCE_CREDENTIAL` made **R4 PASS**. Renaming both authority markers
+   from `MODEL_PROFILE_AUTHORITY` to `MODEL_PROFILE_POLICY` made **R6 FAIL**
+   in both governed files. R1 is convention-bound; R3 and R4 are deny-lists
+   open at the bottom; R6's enumerated, marker-delimited equality check matches
+   its stated scope.
+3. **G3 confirmed.** `build_robots_cache` is constructed at
+   `apps/cored/src/main.rs:1333`, before the sole listener bind at line 1370.
+   R2 constrains loopback validation and the number/form of binds but has no
+   identity-order assertion. A statement reorder is detected only by the
+   proposed R8; no current check would refuse it.
+4. **G4 confirmed.** The v0.13 deferral table's CI-runner row says
+   “re-measure at the new release commit only,” while its RE-MEASURE Step 10
+   measures the distinct pre-release evidence candidate and no later task
+   re-measures the release commit. The two extra post-close audit rounds were
+   manual recovery, not a discharging runbook step.
+5. **G5 confirmed.** `diagnostic_delay` is called at the serialization,
+   sector-load, analysis, and response-build stages and sleeps up to 10,000 ms
+   when `CORE_VIEW_DIAGNOSTIC_DELAY_STAGE` and
+   `CORE_VIEW_DIAGNOSTIC_DELAY_MS` select a stage/delay. Only
+   `tools/benchmark_view.py` names the variables; `.env.example`, `README.md`,
+   `deploy/README.md`, and `ARCHITECTURE.md` do not. No startup warning or
+   health signal makes a forgotten setting visible.
+6. **G6 refuted as a live defect and confirmed as a guard gap.** A locked
+   release build completed, and both its symbol table and binary strings were
+   free of `test_clear_fingerprint`. Workspace resolver 2 and the
+   `apps/cored/Cargo.toml` dev-dependency placement keep the `test-support`
+   feature out today. No rule prevents moving that feature edge into
+   `[dependencies]`, so R9 remains required to keep the clean property true.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked

@@ -497,7 +497,7 @@ match · golden 11/11.
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix captured; G1 reproduced as indistinguishable
+- [x] **E0** — entering matrix captured; G1 reproduced as indistinguishable
   control outputs plus a passing over-broad regex; G2 reproduced as four
   mutation outcomes; G3/G4/G5 recorded; G6 recorded as guard gap with the
   release-build check captured
