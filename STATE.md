@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 DELAY-CLOCK is complete; adopting a publisher crawl delay now preserves the host clock and acquisition counter and changes only the interval.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **114** Rust workspace / **20** net tests; the shell suite is **188/188** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 GATE-CLOSED is complete; the ingest seam now refuses every network reach that has no publisher robots cache before a document request can occur.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **115** Rust workspace / **21** net tests; the shell suite is **188/188** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -226,6 +226,28 @@ throttle another.
 
 `./run ci-local` passed all **19/19** units with **114** Rust workspace tests,
 **20** net tests, zero warning/lint/format failures, locked Rust 1.78
+checks/tests, **188/188** Python 3.11.4 shell tests, protected databases
+**2/2**, and evidence pins **39/39**. Standalone `./run golden` repeated
+**11/11** with every exact anchor unchanged. No dependency, lockfile, schema,
+protected byte, evidence pin, remote ref, or tag changed.
+
+**v0.11 GATE-CLOSED is complete (measured 2026-07-27).** The shared ingest
+`gate()` now returns the dedicated `NetworkWithoutRobotsCache` error whenever
+`Reach::Network` is paired with `robots_cache: None`. The refusal precedes the
+operator gate and limiter, and every shipped net document request already
+calls this seam before its fetch. A network reach can therefore no longer omit
+publisher policy by forgetting to construct the cache.
+
+The former defect-encoding test was inverted in place: its public network path
+now requires the new error. Its pre-T2 offline guarantee was preserved in a
+sibling fixture-reach control, where a public path is still allowed and an
+operator-denied path is still refused without fetching publisher policy.
+Existing `Network` plus `Some(cache)` controls remain green for publisher
+allow, publisher deny, operator deny, unreachable policy, missing-policy
+opt-in, and redirect composition.
+
+`./run ci-local` passed all **19/19** units with **115** Rust workspace tests,
+**21** net tests, zero warning/lint/format failures, locked Rust 1.78
 checks/tests, **188/188** Python 3.11.4 shell tests, protected databases
 **2/2**, and evidence pins **39/39**. Standalone `./run golden` repeated
 **11/11** with every exact anchor unchanged. No dependency, lockfile, schema,
@@ -3364,6 +3386,23 @@ not become dependent on which subscriber runs first; the explicit full set
 keeps that intent visible while the core still refuses an empty scope. `/docs`,
 by contrast, receives the current subscriber's entitled sectors because it
 serves that subscriber's downstream enrichment path.
+
+### 6f. Why network reach and publisher policy remain runtime-checked (v0.11/GATE-CLOSED)
+
+**Decision:** reject `Reach::Network` plus `robots_cache: None` at the shared
+gate rather than redesign `SourceContext` in this patch cycle. The type-level
+alternative would make that state unrepresentable, for example by separating
+offline and network contexts or coupling reach and cache in an enum. It would
+also change the connector trait boundary and every fixture, cursor, registry,
+and builder call site even though the shipped net builder already constructs
+the cache correctly.
+
+That broader migration is deferred because its boundary cost is disproportionate
+to this dormant single-field omission seam. The runtime check sits at the last
+shared point before every network fetch, has a dedicated error, and is covered
+by the inverted defect control. If new connector kinds make context construction
+harder to audit, the type-level design should be reconsidered as its own
+architectural task rather than folded into this narrow correction.
 
 ## 7. Run reference
 

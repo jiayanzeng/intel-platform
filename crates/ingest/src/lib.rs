@@ -22,6 +22,8 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum IngestError {
+    #[error("network fetch has no publisher robots cache: {0}")]
+    NetworkWithoutRobotsCache(String),
     #[error("blocked by robots policy: {0}")]
     RobotsDisallowed(String),
     #[error("io: {0}")]
@@ -83,6 +85,7 @@ pub struct SourceContext {
     /// `None` is the offline/fixture path and means exactly what it says — no
     /// robots.txt is fetched, no network is touched, and the configured
     /// `robots` gate above governs alone, byte-for-byte as it did before T2.
+    /// A network reach with `None` is rejected by `gate()` before any request.
     /// A fixture run must never reach out to a publisher just to be told it may
     /// read a file already sitting on disk.
     ///
@@ -166,15 +169,17 @@ pub(crate) async fn gate(
     let path = robots_path_of(url);
 
     if reach == Reach::Network {
-        if let Some(cache) = &ctx.robots_cache {
-            let origin = origin_of(url);
-            if !cache.allowed(&origin, &path, on_missing).await {
-                return Err(IngestError::RobotsDisallowed(url.to_string()));
-            }
-            // If the publisher published a Crawl-delay, adopt it from here on —
-            // but only ever to slow down. See `RobotsCache::apply_crawl_delay`.
-            cache.apply_crawl_delay(&origin).await;
+        let cache = ctx
+            .robots_cache
+            .as_ref()
+            .ok_or_else(|| IngestError::NetworkWithoutRobotsCache(url.to_string()))?;
+        let origin = origin_of(url);
+        if !cache.allowed(&origin, &path, on_missing).await {
+            return Err(IngestError::RobotsDisallowed(url.to_string()));
         }
+        // If the publisher published a Crawl-delay, adopt it from here on —
+        // but only ever to slow down. See `RobotsCache::apply_crawl_delay`.
+        cache.apply_crawl_delay(&origin).await;
     }
 
     if !ctx.robots.allowed(&path) {
@@ -422,9 +427,32 @@ mod gate_tests {
     }
 
     #[tokio::test]
-    async fn with_no_cache_the_configured_policy_governs_exactly_as_before_t2() {
-        // The pre-T2 world, preserved bit for bit: no cache wired in ⇒ the
-        // configured RobotsGate is the only gate, and no fetch is attempted.
+    async fn a_live_fetch_with_no_cache_fails_closed_before_the_operator_gate() {
+        let ctx = SourceContext {
+            robots: RobotsGate::new(&["/private", "/admin"]),
+            limiter: Arc::new(HostLimiters::per_second(1000.0)),
+            cursors: None,
+            robots_cache: None,
+        };
+        let err = gate(
+            &ctx,
+            "https://example.org/public/x",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("a network fetch without publisher policy must fail closed");
+        assert!(matches!(
+            err,
+            IngestError::NetworkWithoutRobotsCache(url)
+                if url == "https://example.org/public/x"
+        ));
+    }
+
+    #[tokio::test]
+    async fn with_no_cache_the_offline_configured_policy_is_unchanged() {
+        // The pre-T2 offline world, preserved bit for bit: no cache wired in ⇒
+        // the configured RobotsGate is the only gate, and no fetch is attempted.
         let ctx = SourceContext {
             robots: RobotsGate::new(&["/private", "/admin"]),
             limiter: Arc::new(HostLimiters::per_second(1000.0)),
@@ -434,19 +462,19 @@ mod gate_tests {
         gate(
             &ctx,
             "https://example.org/public/x",
-            Reach::Network,
+            Reach::Fixture,
             MissingPolicy::Deny,
         )
         .await
-        .expect("unchanged from before T2");
+        .expect("offline public path remains allowed");
         let err = gate(
             &ctx,
             "https://example.org/private/x",
-            Reach::Network,
+            Reach::Fixture,
             MissingPolicy::Deny,
         )
         .await
-        .expect_err("unchanged from before T2");
+        .expect_err("offline configured deny-list remains enforced");
         assert!(matches!(err, IngestError::RobotsDisallowed(_)));
     }
 }

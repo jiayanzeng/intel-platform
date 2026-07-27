@@ -653,7 +653,7 @@ pins match · golden 11/11.
 - [x] **ROBOTS-MERGE** — same-specificity groups merged; `*` never merged into a specific match, with a named regression test; merged crawl-delay is the maximum
 - [x] **ROBOTS-NORMALIZE** — unreserved octets decoded, reserved preserved; metacharacters survive; idempotent; controls fail-before/pass-after
 - [x] **DELAY-CLOCK** — interval updated in place; `last` and `acquires` preserved; paused-clock elapsed-behavior test fails before and passes after
-- [ ] **GATE-CLOSED** — `Reach::Network` with no cache errors; the defect-encoding test inverted with offline coverage preserved; type-level alternative recorded
+- [x] **GATE-CLOSED** — `Reach::Network` with no cache errors; the defect-encoding test inverted with offline coverage preserved; type-level alternative recorded
 - [ ] **BILLING-ATOMIC** — failed batches leave live state and disk untouched; successful batches save once; four controls fail-before/pass-after
 - [ ] **STORE-IDENTITY** — both maintenance writes rematerialize in-transaction; one shared `max_distance`; four controls fail-before/pass-after
 - [ ] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
