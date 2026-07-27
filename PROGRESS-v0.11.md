@@ -253,3 +253,33 @@ Entries are append-only; corrections are new dated entries.
   **11/11** with every exact anchor unchanged.
 - protected artifact delta: none. CI matched protected databases **2/2** and
   existing pins **39/39**; no protected or pinned file changed.
+
+### 2026-07-27 · STORE-IDENTITY — maintenance writes preserve corpus identity
+
+- owner: Codex
+- commit: 7ac5067b6989366f75f1b2e0e57c46f9684fcfca
+- result: PASS. Successful document updates and deletes rematerialize global
+  canonical ids inside the same transaction as the maintenance mutation.
+  Missing-row operations remain clean `false` results.
+- threshold acceptance: PASS. Harvest ingest, update, and delete all call
+  `assign_canonical_ids_tx` with one store-local `DEDUP_MAX_DISTANCE = 16`
+  constant; there is no second production threshold literal.
+- failure-capable acceptance: PASS after one compile non-result. The first
+  warning-denied run stopped because the new constant was test-only dead code.
+  After routing the existing ingest call through it, the unfixed methods ran
+  **18/21** green with three expected stale-identity failures: changed body,
+  changed publication order, and deleted canonical. The no-op control passed.
+- maintenance acceptance: PASS. After the repair, all **21/21** store tests
+  passed. Content and publication-order changes select the new canonical,
+  deleting the canonical leaves zero rows naming its id and promotes the
+  survivor, and an identical update preserves exact canonical rows. The
+  doc-comments name the corpus-wide maintenance cost and absence from the
+  ingest hot path.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **119** workspace tests, **21** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, and **191/191** Python 3.11 shell tests.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. Standalone `./run verify-artifacts` matched
+  protected databases **2/2** and existing pins **39/39**; no schema,
+  protected, or pinned file changed.
