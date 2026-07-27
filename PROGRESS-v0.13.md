@@ -114,3 +114,33 @@ Entries are append-only; corrections are new dated entries.
   **11/11** byte-identical.
 - decision gate: PASS for this assurance task. The C1 body-boundary release
   blocker remains open for its ordered correction task.
+
+### 2026-07-27 · THRESHOLD-BIND-GATE — production parameter seam found
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 146feeb8fd4e205e9075b1c6c3f1428b26f8be0f
+- result: BLOCKED before implementation, with the runbook-required follow-up
+  recorded. A strict candidate R5 enumerated every production call to
+  `assign_canonical_ids`, `assign_canonical_ids_tx`, and
+  `rematerialize_canonical_ids_with_distance`, excluded the `#[cfg(test)]`
+  seam, and required each distance argument to be exactly
+  `DEDUP_MAX_DISTANCE`.
+- gate measurement: the candidate exited **1** against unmodified HEAD with
+  `invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:685:
+  assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found
+  max_distance`. The no-argument public maintenance method binds the constant
+  at line 657, but its production parameterized helper forwards
+  `max_distance` at the transaction call.
+- disposition: Step 3 expressly forbids changing `crates/` to make its rule
+  green and requires a source finding to be handled in a follow-up task. The
+  candidate matcher was therefore not committed, no Rust source changed, and
+  THRESHOLD-BIND remains unchecked. The disclosed
+  THRESHOLD-SOURCE-SEAM follow-up owns only removal of the production
+  parameter seam; the original Step 3 contract is unchanged and resumes after
+  that correction.
+- regression acceptance: PASS. The committed pre-rewrite invariant scanner
+  remains green with R1–R6 and all **6/6** executable controls. `cycle-check`,
+  `checklist-audit`, and `git diff --check` passed.
+- golden-E2E delta: **0**; the mandatory post-gate run remained **11/11**
+  byte-identical.
