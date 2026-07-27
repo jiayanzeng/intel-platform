@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **R-CLOSE minor release approved and candidate verification passed; no v0.12.0 tag exists until the release commit is created.** The operator selected and authorized publication of v0.12.0 after hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 with the expected pre-tag warning.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.12 is closed and published.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
@@ -453,13 +453,13 @@ already-integrated halves would create two identities for one measured
 candidate; one minor release accurately describes the combined operations and
 runtime delta.
 
-The publication decision has an evidence trigger rather than a default:
-publish only after the complete local definition of done passes against the
-reconciled candidate, both Step 10 hosted negative controls have accepted zero
-executions, and the release commit exists. The hosted trigger is already
-satisfied by runs **30254382891** and **30254838500**. No `v0.12.0` tag exists
-while local candidate verification is in progress; prior published tags remain
-immutable.
+The publication decision had an evidence trigger rather than a default:
+publish only after the complete local definition of done passed against the
+reconciled candidate, both Step 10 hosted negative controls accepted zero
+executions, and the release commit existed. Runs **30254382891** and
+**30254838500** satisfied the hosted trigger; the complete local candidate
+matrix and standalone golden satisfied the remaining trigger before
+publication.
 
 The complete `v0.11.0..release-candidate` diff contains **44 paths**, each
 classified exactly once:
@@ -518,6 +518,31 @@ standalone `./run golden` then passed the same **11/11** byte-identical anchors.
 `git diff --check`, and the independent 44-path count all passed. Before the
 R-CLOSE checkbox, checklist auditing resolved **98/98** checked tasks with the
 one v0.11 retraction reported and zero exemptions.
+
+Publication succeeded without replacement. Release commit
+`e5faf0c161a4256f33976664685653d8bd805d5d` contains the classified diff,
+reconciled authorities, checked R-CLOSE task, and measured candidate record.
+Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055`
+has annotation `intel-platform v0.12.0` and peels exactly to that commit. One
+atomic push advanced remote `main` from
+`d664a7d3c524a3dfab932e158d9545953844b8dd` to the release commit and created
+the tag. Read-only remote verification returned the release commit for
+`refs/heads/main` and the peeled tag, and the annotated object for the tag ref.
+This later append-only closing audit does not move the release tag.
+
+With the exact closing record and R-CLOSE progress entry present, the
+closed-state definition of done passed. `./run ci-local` again passed all
+**20/20** jobs with **121** Rust workspace tests, **21** net tests,
+warning-denied builds, clippy/fmt, locked Rust 1.78, **205/205** Python 3.11.4
+tests, all **71/71** pins, protected databases **2/2**, and golden **11/11**.
+The independent Python 3.12.13 lane passed **205/205** with **21/21** exact
+packages, and the final standalone golden remained **11/11**. `cycle-check`
+reported v0.12 closed with ten closed execution runbooks;
+`checklist-audit` resolved **99/99** checked tasks, reported the one v0.11
+retraction, and found zero exemptions; `progress-check` resolved R-CLOSE to the
+release commit; `version-check` matched the exact annotated tag; all six
+registered invariants passed. The audit commit that records these measurements
+intentionally follows the release tag and does not move it.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked

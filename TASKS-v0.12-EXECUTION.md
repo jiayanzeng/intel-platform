@@ -831,3 +831,57 @@ absence would let the same failure recur unchanged.
 
 Each C3-C7 row is written as a hypothesis for E0 to confirm or refute — not as a
 settled fact.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-27
+- **Release disposition:** release
+- **Release:** `v0.12.0`
+- **Release commit:** `e5faf0c161a4256f33976664685653d8bd805d5d`
+- **Annotated tag object:** `94d8215bc2151fecba1280dc793d3f5953cd8055`
+
+The eleven executed task records resolve to these implementation commits:
+
+- E0 — `83e7bfab5388d851f05dc9e804ec91a3aebecf70`
+- INGEST-ATOMIC — `904866e41a6848de9bde021e12e5c4d7b4fff774`
+- THRESHOLD-ONE — `086166a0618426e6ecde9da34aecca8d2cd8541a`
+- INVARIANT-SCAN — `2a613edc977cd70c14f64dfc83229591500b32f7`
+- RETRACT-0110 — `a954e2ae4e107ce59a8dabd18bdff9d695ddbb7b`
+- INFRA-POLICY — `03abc066458c06249ef28fb0d3d02dacce89895c`
+- OPS-AUTHORITY — `0ef43a56aa4a7d813932fbf3607bf3ba68e420fa`
+- OPS-ADMIT — `0ef43a56aa4a7d813932fbf3607bf3ba68e420fa`
+- OPS-FAILCLOSED — `869d8e03ea1e45ad62f9af9bbb4f2ced4cf9599a`
+- RE-MEASURE — `64b8ac39ed7e7916eebf27ebbe5f4de7d740a1b9`
+- R-CLOSE/release — `e5faf0c161a4256f33976664685653d8bd805d5d`
+
+OPS-AUTHORITY and OPS-ADMIT intentionally share one implementation commit
+under the operator-approved atomic boundary recorded in `## Runbook
+amendments`; each still has its own progress entry and audit commit. Cycle
+activation was recorded separately at
+`a81430ab8a50961d03eff019d3449405312d8280`; it is preparatory history rather
+than one of the eleven execution Steps.
+
+The operator selected v0.12.0 rather than a correction-only v0.11.1 because the
+same measured candidate adds the `./run models` operator surface and changes
+`/ingest` failure semantics. `STATE.md` classifies all 44 paths exactly once.
+The release authorities agree at 0.12.0, README and the changelog record the
+release, and Cargo mechanically changed only the local `cored` package version
+in the lockfile.
+
+Publication followed an explicit evidence trigger: the complete local
+definition of done passed, RE-MEASURE authenticated seven distinct successful
+identities with zero rejection, and both real hosted negative controls accepted
+zero executions. One atomic push advanced remote `main` to release commit
+`e5faf0c161a4256f33976664685653d8bd805d5d` and created annotated tag object
+`94d8215bc2151fecba1280dc793d3f5953cd8055`; read-only remote verification
+returned that exact mapping. The hosted receipt/bundle set and report remain
+69/69 immutable evidence pins, and both authorization pins match.
+
+v0.11.0 remains published with its threshold-source defect corrected forward by
+INGEST-ATOMIC and THRESHOLD-ONE; its tag, release commit, evidence, and 54 pins
+remain unchanged. A4 remains open because a rewritten shell can bypass or
+falsify `/attest`. The L1 model-profile guard remains bypassable by an edited
+controller until the scheduled L2 forced-command wrapper lands. The release
+commit contains the classified diff, agreeing authorities, architecture
+reconciliation, changelog, and mechanically updated lockfile; this later
+append-only closing record does not move the tag.

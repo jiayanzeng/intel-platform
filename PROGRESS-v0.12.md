@@ -472,3 +472,65 @@ Entries are append-only; corrections are new dated entries.
 - tag acceptance: PASS. Final remote enumeration returned unchanged annotated
   objects and peeled commits for v0.9.0, v0.10.0, v0.10.1, v0.10.3, and
   v0.11.0. Local-only v0.10.2 remains absent remotely; no published tag moved.
+
+### 2026-07-27 · R-CLOSE — v0.12.0 minor release published
+
+- owner: Codex
+- commit: e5faf0c161a4256f33976664685653d8bd805d5d
+- result: PASS. The operator explicitly selected and authorized release
+  v0.12.0 after RE-MEASURE authenticated seven distinct successful identities
+  with zero rejection and both real hosted negative controls accepted zero
+  executions.
+- release identity: PASS. `v0.12.0` is annotated tag object
+  `94d8215bc2151fecba1280dc793d3f5953cd8055`, which dereferences exactly to
+  release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Its annotation is
+  `intel-platform v0.12.0`; this separate closing audit does not move the tag.
+- publication outcome: PASS. One atomic push advanced remote `main` to the
+  release commit and created the v0.12.0 tag. Read-only remote verification
+  returned main and the peeled tag at the release commit and the tag ref at
+  the annotated object.
+- version disposition: PASS. The correction-only half could have been
+  v0.11.1, but the same candidate adds the `./run models` operator surface and
+  changes `/ingest` failure semantics. One v0.12.0 minor release accurately
+  names the integrated operations and runtime change.
+- v0.11.0 disposition: PASS. `CHANGELOG.md` states that v0.11.0 remains
+  published with its threshold-source defect and names INGEST-ATOMIC plus
+  THRESHOLD-ONE as the forward correction. Its tag, release commit, 14
+  receipt/bundle files, report, and 54 pins remain unchanged.
+- diff inventory: PASS. All **44** paths in `v0.11.0..v0.12.0` are classified
+  exactly once in `STATE.md`: six release-authority/public-documentation paths,
+  one architecture authority, three core runtime/store/test-plumbing paths,
+  four operations/contract paths, ten executable-assurance/configuration paths,
+  15 durable-evidence paths, and five state/progress/task records.
+- architecture reconciliation: PASS. `ARCHITECTURE.md §6` maps corpus identity
+  to the store transaction/private threshold, registers executable absence
+  claims, and describes the L1 controller boundary. A rewritten shell can
+  still bypass or falsify `/attest` (A4 open), and an edited controller can
+  rewrite L1 until the scheduled server-side L2 wrapper lands.
+- version authorities: PASS. Rust package, Python package, FastAPI literal,
+  `STATE.md`, README, and the newest changelog heading read 0.12.0. Cargo
+  mechanically changed only the local `cored` package version in `Cargo.lock`;
+  no dependency resolution moved. `./run version-check` matched the exact
+  annotated HEAD tag after creation.
+- candidate acceptance: PASS. Before the release commit, `./run ci-local`
+  passed **20/20** with 121 workspace tests, 21 net tests, warning-denied
+  builds, clippy/fmt, locked Rust 1.78, 205 Python 3.11 shell tests, golden
+  **11/11**, protected databases **2/2**, all **71/71** pins, persisted
+  fingerprints, and lifecycle auditors. The independent Python 3.12.13 lane
+  passed **205/205**; both interpreters verified **21/21** exact packages.
+- checklist/retraction acceptance: PASS before the R-CLOSE checkbox.
+  `checklist-audit` resolved **98/98** checked tasks, reported the one v0.11
+  retraction, and found zero exemptions. The final closed-state audit follows
+  this entry.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. All **69/69** evidence pins and both
+  authorization-surface pins matched, and both protected databases remained
+  exact **2/2** with unchanged corpus facts.
+- closed-state acceptance: PASS. With the R-CLOSE checkbox, exact cycle closing
+  record, and this progress entry present, `./run ci-local` passed **20/20**
+  again; `cycle-check` reported v0.12 closed, `checklist-audit` resolved
+  **99/99** checked tasks with the one v0.11 retraction and zero exemptions,
+  and `progress-check` resolved R-CLOSE to the release commit. The independent
+  Python 3.12 lane passed **205/205** with **21/21** exact packages, and the
+  final standalone golden passed **11/11**.
