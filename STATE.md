@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; R7-BODY-SECTOR is complete and RETRACT-HC2 is next.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace / **22** net tests; the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; RETRACT-HC2 is complete and R-CLOSE awaits the operator's version/publication decision.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace / **22** net tests; the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -308,6 +308,48 @@ clippy/fmt/ShellCheck, locked Rust 1.78, all **71/71** pins, protected
 databases **2/2**, invariant scan **7/7**, and golden **11/11**. Python
 3.12 independently passed **216/216** and verified **21/21** exact packages.
 The mandatory standalone golden run remained byte-identical at **11/11**.
+
+**v0.13 RETRACT-HC2 is complete (measured 2026-07-27).** The retraction
+registry now records two independent v0.12 defects. R-CLOSE falsely claimed
+that the published HC2 architecture row matched enforced reality while
+`/retrieve` and `/attest` could hydrate through the public unscoped
+`documents_by_ids` method and `/attest` had no sector field. THRESHOLD-ONE's
+own v0.12 correction was also defective: R5 rejected a second numeric
+declaration and numeric call arguments but did not bind the production
+`max_distance` forwarding seam to `DEDUP_MAX_DISTANCE`. Their corrections are
+recorded as BODY-BOUNDARY plus R7-BODY-SECTOR, and THRESHOLD-SOURCE-SEAM plus
+THRESHOLD-BIND, respectively.
+
+`ARCHITECTURE.md` now describes the enforced request shapes and boundary:
+`/retrieve` carries sectors; `/attest` carries sectors; every
+caller-directed body hydration boundary uses a core-SQL sector predicate; an
+empty set makes every requested document unavailable; and the unscoped helper
+is private and test-only. R7 continues to cite the exact
+`ARCHITECTURE.md:181-183` sentence. The HC2 table row names the
+`/retrieve`, `/docs`, `/attest`, and missing-embeddings SQL enforcement points
+without claiming that the shell is outside the trust boundary.
+
+The historical correction is append-only: `PROGRESS-v0.12.md` has **31
+additions / 0 deletions** for the erratum. The original v0.12 task records,
+checked boxes, release commit, and tag remain untouched.
+`checklist-audit` passed with v0.12 still **11/11** checked, its two new
+retractions reported separately, and **three** retractions across all cycles.
+The annotated v0.12.0 tag object remains
+`94d8215bc2151fecba1280dc793d3f5953cd8055`, peeled release commit remains
+`e5faf0c161a4256f33976664685653d8bd805d5d`, all **71/71** protected pins
+match, and both protected databases remain exact **2/2**.
+
+Neither accepted residual is narrowed. A rewritten shell can still bypass or
+falsify the `/attest` handoff, so A4 remains open. An edited controller can
+still rewrite the L1 command construction, so the server-enforced L2
+forced-command wrapper remains open and scheduled. Full `./run ci-local`
+passed **20/20** with **124** workspace Rust tests, **22** net tests,
+**216/216** Python 3.11 shell tests, warning-denied builds,
+clippy/fmt/ShellCheck, locked Rust 1.78, invariant scan **7/7** with **11**
+controls, all **71/71** pins, protected databases **2/2**, and golden
+**11/11**. Python 3.12 independently passed **216/216** and verified
+**21/21** exact packages. The mandatory standalone golden remained
+byte-identical at **11/11**.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

@@ -534,3 +534,34 @@ Entries are append-only; corrections are new dated entries.
   and `progress-check` resolved R-CLOSE to the release commit. The independent
   Python 3.12 lane passed **205/205** with **21/21** exact packages, and the
   final standalone golden passed **11/11**.
+
+### 2026-07-27 · v0.13 ERRATA — two v0.12 completion claims retracted
+
+- status: RETRACTED. The original THRESHOLD-ONE and R-CLOSE entries above,
+  their checked boxes, and the published v0.12.0 release remain unchanged.
+- HC2 claim: R-CLOSE recorded the architecture table as matching enforced
+  reality. The published `ARCHITECTURE.md:181-183` instead claimed every
+  body-returning endpoint carried an explicit core-SQL sector predicate while
+  `/retrieve` and `/attest` both used public unscoped
+  `documents_by_ids`; `/attest` had no sector field. v0.13 BODY-BOUNDARY
+  corrected the code, and R7-BODY-SECTOR registered the boundary with three
+  executable controls.
+- threshold-correction claim: THRESHOLD-ONE recorded that every production
+  path selected `DEDUP_MAX_DISTANCE` inside the store. Its v0.12 R5 rejected
+  numeric call arguments and second threshold declarations but allowed the
+  production `rematerialize_canonical_ids_with_distance(max_distance)`
+  forwarding seam, so renaming the non-numeric parameter evaded the rule.
+  v0.13 THRESHOLD-SOURCE-SEAM removed that production parameter seam and
+  THRESHOLD-BIND made R5 an allow-list over every production call argument.
+- discovery: v0.13 E0 reproduced the unscoped attestation oracle and the R5
+  renamed-parameter escape against the published source. Both are separate
+  retractions because the second defect was in v0.12's correction of an
+  already-retracted v0.11 claim.
+- residuals: A4 remains open because a rewritten shell can bypass or falsify
+  `/attest`. The L1 model-profile controller remains bypassable by an edit
+  until the scheduled server-enforced L2 forced-command wrapper lands. This
+  erratum narrows neither accepted risk.
+- release disposition: v0.12.0 remains published and immutable. Its annotated
+  tag object, release commit, 71 pinned evidence files, two authorization
+  pins, and original progress text are not changed; this append-only record
+  corrects the historical claims forward.

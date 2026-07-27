@@ -621,7 +621,7 @@ record of v0.12's is true.
   passes; error-semantics change recorded twice; public bodies byte-identical
 - [x] **R7-BODY-SECTOR** — R7 registered with three reconstructible
   fail-befores, all demonstrated FAIL; `invariant-scan` 7/7; ci-local still 20
-- [ ] **RETRACT-HC2** — both retraction records validated;
+- [x] **RETRACT-HC2** — both retraction records validated;
   `ARCHITECTURE.md` self-consistent and matching enforced reality;
   `PROGRESS-v0.12.md` additions only; `v0.12.0` tag, commit, and 71 pins
   byte-identical; A4 and the L1 residual still open

@@ -164,13 +164,13 @@ redirects fail closed rather than silently moving to another origin.
 | `/ingest` | POST | harvest `{sectors, sources?}` | internal |
 | `/view` | GET | analyzed corpus; excerpts gated by license | **excerpt gated** |
 | `/search` | GET | ranked docs; snippets nulled for IndexOnly | **snippet gated** |
-| `/retrieve` | POST | context assembly; full bodies (model context) | internal |
+| `/retrieve` | POST | `{q, sectors, k, model?, query_vector?}`; full-body model context | internal |
 | `/embeddings/missing` | GET | sector-filtered backfill work queue | internal |
 | `/embeddings/stats` | GET | stored vector count/dimension for one model key | internal |
 | `/embeddings` | POST | vectors posted back by the shell | internal |
 | `/signals/record` | POST | shell posts signals back | internal |
 | `/docs` | GET | sector-filtered full documents | internal |
-| `/attest` | POST | `{answer, context_doc_ids}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
+| `/attest` | POST | `{answer, context_doc_ids, sectors}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
 
 The public surface is the shell's `/v1/*`. The core is structurally loopback-only:
 startup resolves `CORE_BIND`, checks every resulting address, and refuses before
@@ -178,16 +178,16 @@ binding if any address is not loopback. `/retrieve` and `/docs` carry full bodie
 only for analysis, and the shipped shell sends model output through `/attest`
 before `/v1/ask` returns it. This prevents copied IndexOnly context on the shipped
 path, but does not constrain an arbitrary rewrite that omits the call or supplies
-a false scope (A4 accepted risk). Every endpoint that returns document bodies
-takes an explicit sector set whose predicate is enforced in core SQL;
-`/embeddings/missing` has no maintenance exception.
+a false scope (A4 accepted risk). Every caller-directed boundary that reads or
+returns document bodies takes an explicit sector set whose predicate is enforced
+in core SQL; an empty set makes every requested document unavailable.
 
 ## 6. Invariant map (which invariant lives where, and why)
 
 | invariant | enforced in | why there |
 |---|---|---|
 | HC1 no gated text public | core (`/search`, `/view`); core + trusted shipped shell (`/attest` for `/v1/ask`) | source gating is unconditional; answer attestation is enforced on the shipped path, but a rewritten shell can still bypass or falsify that handoff until public egress crosses a core-owned boundary (A4 remains open) |
-| HC2 sector filtering | core SQL, including `/docs` and `/embeddings/missing` | every body-returning query requires an explicit sector set and fails closed when it is empty, so a shell bug cannot bypass filtering |
+| HC2 sector filtering | core SQL at `/retrieve`, `/docs`, `/attest`, and `/embeddings/missing`; private unscoped store seam; R7 | every caller-directed body hydration requires an explicit sector set, an empty set makes requested documents unavailable, and production callers cannot select the unscoped id lookup, so a shell bug may grant wrong sectors but cannot bypass the filter mechanism |
 | HC3 no LLM in core | core (by omission) | keeps the engine deterministic and offline-testable |
 | HC8 politeness | core `AppState` | a TTL / limiter that doesn't outlive the request is theatre |
 | HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
@@ -201,6 +201,11 @@ The last row is defense for the shipped controller, not a server-side security
 invariant. L1 and its repository pins detect or refuse the current implementation;
 they do not authorize future controller edits. Likewise, the HC1 row still
 describes the trusted shipped shell and does not close A4.
+
+The v0.13 sector-boundary correction narrows neither residual: a rewritten
+shell can still bypass or falsify the `/attest` handoff, so A4 remains open;
+an edited controller can still rewrite the L1 command construction, so the
+server-enforced L2 forced-command wrapper remains open and scheduled.
 
 ## 7. The decision-log discipline
 

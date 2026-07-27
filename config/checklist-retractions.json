@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "record_date": "2026-07-27",
-  "accepted_by": "repository operator through TASKS-v0.12-EXECUTION.md",
+  "accepted_by": "repository operator through TASKS-v0.12-EXECUTION.md and TASKS-v0.13-EXECUTION.md",
   "retractions": [
     {
       "runbook": "TASKS-v0.11-EXECUTION.md",
@@ -10,6 +10,22 @@
       "reason": "The v0.11 acceptance criterion \"one shared `max_distance` constant\" was false: maintenance writes used DEDUP_MAX_DISTANCE, but the production ingest handler still passed a separate literal 16.",
       "accepted_by": "repository operator through TASKS-v0.12-EXECUTION.md Step 5",
       "corrected_by": "TASKS-v0.12-EXECUTION.md INGEST-ATOMIC and THRESHOLD-ONE"
+    },
+    {
+      "runbook": "TASKS-v0.12-EXECUTION.md",
+      "task_id": "R-CLOSE",
+      "date": "2026-07-27",
+      "reason": "ARCHITECTURE.md:181-183 claimed \"Every endpoint that returns document bodies takes an explicit sector set whose predicate is enforced in core SQL\", but released v0.12.0 hydrated /retrieve and /attest through the public unscoped documents_by_ids method, and /attest had no sector field.",
+      "accepted_by": "repository operator through TASKS-v0.13-EXECUTION.md RETRACT-HC2",
+      "corrected_by": "TASKS-v0.13-EXECUTION.md BODY-BOUNDARY and R7-BODY-SECTOR"
+    },
+    {
+      "runbook": "TASKS-v0.12-EXECUTION.md",
+      "task_id": "THRESHOLD-ONE",
+      "date": "2026-07-27",
+      "reason": "THRESHOLD-ONE recorded that every production path selected DEDUP_MAX_DISTANCE inside the store, but v0.12 R5 only rejected numeric call arguments and second threshold declarations; rematerialize_canonical_ids_with_distance still forwarded a production max_distance parameter, so a renamed non-numeric threshold could evade the claimed correction.",
+      "accepted_by": "repository operator through TASKS-v0.13-EXECUTION.md RETRACT-HC2",
+      "corrected_by": "TASKS-v0.13-EXECUTION.md THRESHOLD-SOURCE-SEAM and THRESHOLD-BIND"
     }
   ]
 }
