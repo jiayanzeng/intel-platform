@@ -71,3 +71,31 @@ Entries are append-only; corrections are new dated entries.
   exact anchor unchanged.
 - protected artifact delta: none. Both protected databases and all 39 existing
   pins remained byte-exact.
+
+### 2026-07-27 · BIND-LOOPBACK — core bind invariant made structural
+
+- owner: Codex
+- commit: 022faf9579706f5aceb0b21662098d1f81824a05
+- result: PASS. `CORE_BIND` is resolved with `ToSocketAddrs`; startup refuses
+  an empty resolution or any non-loopback result before opening the listener,
+  and the listener consumes the validated addresses without resolving twice.
+- boundary acceptance: PASS. Unit controls reject IPv4/IPv6 unspecified
+  addresses, a LAN literal, and a synthetic mixed loopback/non-loopback
+  hostname result. IPv4 loopback, IPv6 loopback, and `localhost` pass. The
+  refusal names the offending address and multi-host seam deferral.
+- runtime acceptance: PASS after one explicitly recorded stale-binary
+  non-result. A warning-denied rebuild followed by
+  `CORE_BIND=0.0.0.0:8788 target/debug/cored` exited before binding and named
+  `0.0.0.0:8788` plus the required design-task message.
+- topology acceptance: PASS. No override flag exists. `STATE.md §6d` records
+  both the rejected override alternative and the decision to retain
+  `CORE_TOKEN` as optional defense-in-depth under an enforced loopback bind.
+  The daemon contract and `ARCHITECTURE.md` name the executable enforcement.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **102** workspace tests, **20** net tests, zero warning/lint/format failures,
+  locked Rust 1.78, and **187/187** Python 3.11 shell tests. `run`, `deploy/`,
+  Cargo manifests, and `Cargo.lock` have no diff; no dependency was added.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. Standalone `./run verify-artifacts` matched
+  both protected databases **2/2** and all existing pins **39/39**.
