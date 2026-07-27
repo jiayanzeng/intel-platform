@@ -767,7 +767,7 @@ record of v0.12's is true.
   unrelated tests do not install it; concurrency and different-bytes controls
   pass; refusal semantics unchanged; varied-thread net suites green; ci-local
   20/20; golden 11/11
-- [ ] **RE-MEASURE** — hosted run pinned to the v0.13.0 candidate; net log
+- [x] **RE-MEASURE** — hosted run pinned to the v0.13.0 candidate; net log
   proves the full cored count; invariant log proves 11 controls; seven signed
   identities committed and re-derived; new pin count recorded; `origin/main`
   and tags unchanged; golden 11/11
@@ -899,11 +899,13 @@ schema.
 - **Candidate recorded:** 2026-07-27
 - **Release disposition:** release identity authorized; publication pending
 - **Release:** `v0.13.0`
-- **Release commit:** `b18ece34424e03c531bc0e90f1a633262f252d12`
+- **Release commit:** pending final R-CLOSE; the superseding hosted evidence
+  candidate is `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`
 - **Annotated tag object:** not created; `version-check` passes without it and
   the publication trigger has not fired
 
-The ten task records resolve to these implementation commits:
+The twelve task records resolve to these implementation commits or the
+explicitly pending closing disposition:
 
 - E0 — `ed7249c1cf6429c6482592551a2a6e7dc996d9d3`
 - FAIL-BEFORE-EXEC — `b398f1266324eb43b4b77519f527d09e3b1eb1c9`
@@ -915,11 +917,14 @@ The ten task records resolve to these implementation commits:
 - R7-BODY-SECTOR — `c4f4d65e64229641e249c6beabe48d08f24a5425`
 - RETRACT-HC2 — `a2d41c9d822fdae4ef017dae44aefa65551e4a53`
 - NET-TEST-EXEC — `2567f48aaba879011857db9177ebd60624678cc7`
+- IDENTITY-INSTALL — `d0b409a05597fc43356aeeb55a25ec597e358a85`
+- RE-MEASURE — pending this task's implementation commit; the append-only
+  audit record resolves it after the commit exists
 - R-CLOSE/release candidate —
-  `b18ece34424e03c531bc0e90f1a633262f252d12`
+  pending the separate publication decision
 
 Cycle activation remains preparatory history at
-`5223d783b43c250102418163ef124f4e662b727b`; it is not one of the ten task
+`5223d783b43c250102418163ef124f4e662b727b`; it is not one of the twelve task
 records.
 
 The release identity is `v0.13.0` because UA-CONTACT landed; therefore the
@@ -930,6 +935,20 @@ RE-MEASURE gate pushed the exact candidate only to
 `candidate/v0.13.0`; no publication or tag push occurred. Read-only
 verification found remote `main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084` with no v0.13.0 tag.
+
+RE-MEASURE authenticated the superseding candidate
+`7faaa4e1271616ff9390111c863d12fbcfa4d2fd` with workflow-dispatch run
+**30277584129**, attempt **1**. The hosted net log records **23/23**
+`intel-ingest` tests and **24/24** `cored` tests; the Python 3.11 log records
+invariant self-test **7/7 rules, 11 controls**. The hosted identity set remains
+exactly seven: core, golden, lint, MSRV, net, shell `python=3.11`, and shell
+`python=3.12`.
+
+The release-grade audit accepted all seven authenticated receipts with zero
+rejection, required attestations, measured **5 deferred / 2 promoted**, and
+re-derived successfully. The fourteen receipt/bundle files and the
+**34,038-byte** report are pinned at their exact bytes. The forward manifest is
+now **86 total pins**: **84 evidence** plus **2 authorization surfaces**.
 
 This is deliberately a pending record, not the canonical closed-cycle record.
 R-CLOSE remains unchecked, `cycle-check` keeps v0.13 open, and the original

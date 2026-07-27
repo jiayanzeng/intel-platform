@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized local release candidate; IDENTITY-INSTALL has closed the race exposed by failed hosted run 30274895522, and the release-grade RE-MEASURE retry is pending. Publication remains a pending operator decision; RE-MEASURE and R-CLOSE are deliberately unchecked and the cycle remains open.** Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, remains the latest published seven-job evidence; failed v0.13 run **30274895522**, attempt **1**, is measured failure evidence but is not admitted or promoted. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. The last candidate golden measurement is **11/11**, protected database evidence is exact **2/2**, and the manifest remains at **69/69** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
+**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized release candidate with release-grade hosted evidence complete at candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; publication remains a pending operator decision, R-CLOSE is deliberately unchecked, and the cycle remains open.** Hosted workflow-dispatch run **30277584129**, attempt **1**, passed all seven identities; its release audit accepted seven authenticated receipts with zero rejection and required attestations. Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`; failed v0.13 run **30274895522**, attempt **1**, remains measured failure evidence but is not admitted. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. The candidate golden measurement is **11/11**, protected database evidence is exact **2/2**, and the manifest now contains **84/84** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -508,7 +508,7 @@ sector-scoping the final `/retrieve` and `/attest` hydration in core SQL.
 Out-of-sector and nonexistent attestation ids intentionally return the same
 `400 unknown context document id` response.
 
-The complete `v0.12.0..v0.13.0-local-candidate` diff contains **29 paths**,
+The complete `v0.12.0..v0.13.0-local-candidate` diff contains **44 paths**,
 each classified exactly once:
 
 - **release authorities and public documentation (6):** `CHANGELOG.md`,
@@ -527,10 +527,27 @@ each classified exactly once:
 - **state, progress, task, and retraction records (6):**
   `PROGRESS-v0.12.md`, `PROGRESS-v0.13.md`, `STATE.md`,
   `TASKS-v0.12-EXECUTION.md`, `TASKS-v0.13-EXECUTION.md`, and
-  `config/checklist-retractions.json`.
+  `config/checklist-retractions.json`;
+- **v0.13 hosted evidence (15):**
+  `evidence/ci-runs/30277584129-1/30277584129-1-core.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-core.json.sigstore`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-golden.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-golden.json.sigstore`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-lint.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-lint.json.sigstore`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-msrv.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-msrv.json.sigstore`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-net.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-net.json.sigstore`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-shell-py3.11.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-shell-py3.11.json.sigstore`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-shell-py3.12.json`,
+  `evidence/ci-runs/30277584129-1/30277584129-1-shell-py3.12.json.sigstore`,
+  and `evidence/v0.13.0/deferred-audit/report.json`.
 
 `PROGRESS-v0.12.md` remains append-only relative to the release tag:
-**93 additions / 0 deletions**. No path under `evidence/` or `data/` changed.
+**93 additions / 0 deletions**. No path under `data/` changed; the fifteen
+`evidence/` paths classified above are forward-only v0.13 release evidence.
 The v0.12.0 annotated object and peeled commit remain
 `94d8215bc2151fecba1280dc793d3f5953cd8055` and
 `e5faf0c161a4256f33976664685653d8bd805d5d`; v0.11.0, v0.10.3, and local-only
@@ -547,10 +564,10 @@ or narrowed.
 
 The complete permitted local test-and-assurance matrix passed at the v0.13.0
 candidate. `./run ci-local` passed all **20/20** jobs with **124** Rust
-workspace tests, **46** tests in the net job (**22** ingest + **24** cored),
+workspace tests, **47** tests in the net job (**23** ingest + **24** cored),
 zero rustc/clippy/format/ShellCheck failures, locked Rust 1.78 green,
 Python 3.11.4 **216/216**, invariant scan **7/7** with all **11**
-reconstructible controls, all **71/71** pins, protected databases **2/2**,
+reconstructible controls, all **86/86** pins, protected databases **2/2**,
 persisted fingerprints exact, and golden **11/11**. The independent Python
 3.12.13 lane passed **216/216** and verified **21/21** constrained packages.
 The mandatory standalone golden repeated **11/11** byte-identically.
@@ -558,12 +575,13 @@ The mandatory standalone golden repeated **11/11** byte-identically.
 validation, artifact verification, and `git diff --check` passed.
 
 The original R-CLOSE criterion requiring every box to be checked is
-**PENDING**, not passed: `checklist-audit` resolves **108** checked tasks and
-**three** retractions, while R-CLOSE remains unchecked under the explicit
-publication directive. The local release-candidate implementation commit is
-`b18ece34424e03c531bc0e90f1a633262f252d12`; it and every per-Step hash are
-recorded in the append-only pending closing record. A canonical closed-cycle
-record and annotated tag require the publication trigger.
+**PENDING**, not passed: after RE-MEASURE is recorded, `checklist-audit`
+resolves **110** checked tasks and **three** retractions, while R-CLOSE remains
+the sole unchecked box under the explicit publication directive. The hosted
+release candidate is `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; it and every
+completed per-Step hash are recorded in the append-only pending closing
+record. A canonical closed-cycle record and annotated tag require the
+publication trigger.
 
 **v0.13 RE-MEASURE is blocked at its hosted-failure gate (measured
 2026-07-27).** The operator-authorized remote exception pushed exactly
@@ -600,12 +618,80 @@ The run exposed all seven receipt artifact names, but its failed `net` receipt
 cannot satisfy the seven-successful-identity acceptance criterion. Per the
 operator stop condition, no receipt or bundle was downloaded or admitted, no
 release audit or re-derivation was run, and the hosted invariant self-test log
-was not promoted as evidence. Protected pins therefore remain **71 total**
-(**69** evidence plus **2** authorization surfaces). RE-MEASURE stays
-unchecked, R-CLOSE was not resumed, and no post-failure golden run was made;
-the last exact candidate golden measurement remains **11/11** with delta
-**0**. The release notes now describe both hosted assurances as workflow
-definitions and name successful hosted verification as open.
+was not promoted as evidence. At that stop, protected pins therefore remained
+**71 total** (**69** evidence plus **2** authorization surfaces), RE-MEASURE
+stayed unchecked, R-CLOSE was not resumed, and no post-failure golden run was
+made. The later corrected retry is recorded next.
+
+**v0.13 RE-MEASURE retry is complete (measured 2026-07-27).** The
+operator-authorized candidate-only force update moved
+`candidate/v0.13.0` from obsolete `b18ece34424e03c531bc0e90f1a633262f252d12`
+to exact superseding candidate
+`7faaa4e1271616ff9390111c863d12fbcfa4d2fd`. The remote ref resolved to that
+commit, whose workflow includes the cored net invocation. Workflow-dispatch
+run **30277584129**, attempt **1**, used that branch,
+`publish_evidence: true`, and
+`audit_sha=7faaa4e1271616ff9390111c863d12fbcfa4d2fd`. It completed
+**Success** in 50 seconds.
+
+All seven evidence-producing identities passed: `core`, `golden`, `lint`,
+`msrv`, `net`, `shell/python=3.11`, and `shell/python=3.12`. The report-only
+dependency-drift node remained scheduled-only/skipped and emitted no identity,
+so the hosted set is still exactly seven. The hosted net log contains:
+
+```
+Run cargo test -p intel-ingest --features net --locked
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+Run cargo test -p cored --features net --locked
+running 24 tests
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+The cored log includes the formerly failing attestation test, both
+cycle-added contact tests, and all other cored tests as `ok`. The ingest log
+includes
+`concurrent_identity_installation_is_atomic_and_mismatch_is_deterministic ...
+ok`. The hosted Python 3.11 log ran `./run invariant-scan`, passed **7/7**
+registered rules, individually reconstructed R1 through R7, and ended
+`SELF-TEST PASS (7/7 rules, 11 controls)`.
+
+GitHub exposed seven artifacts whose ZIP SHA-256 digests matched the values
+displayed in the run. Each contained one receipt and one paired Sigstore
+bundle. All receipts name run **30277584129**, attempt **1**, success, Linux,
+and both event and checked-out SHA
+`7faaa4e1271616ff9390111c863d12fbcfa4d2fd`. The fourteen files are committed
+under `evidence/ci-runs/30277584129-1/`.
+
+A clean detached worktree at the exact candidate, with byte-identical ignored
+copies of both protected databases, produced
+`evidence/v0.13.0/deferred-audit/report.json`. Release posture required the
+expected head, repository `jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source/signer digest
+`7faaa4e1271616ff9390111c863d12fbcfa4d2fd`, source ref
+`refs/heads/candidate/v0.13.0`, GitHub-hosted runners, and attestations.
+The audit accepted **7** authenticated identities, rejected **0**, measured
+**5 deferred / 2 promoted**, and recorded exact-cosine p95 **8.202667 ms** at
+2,600 documents against the 16.264 ms anchor. A fresh re-derivation passed
+with rows 7, source dispositions 5, triggers 7, release grade, and
+attestations required.
+
+The **34,038-byte** audit report hashes to
+`6d9ebf6d9463303235b12d6f7d8c88a3676de2361696cf5238b7336eb8468a52`.
+Its report plus fourteen receipt/bundle inputs add fifteen exact forward pins:
+the manifest now validates and verifies **86 total**, comprising **84/84**
+evidence files and **2/2** authorization surfaces; both protected databases
+remain exact **2/2**. A4 remains open in the report with one shell-owned
+public egress path and no core-owned public response boundary. The editable-L1
+controller residual likewise remains open in architecture; no live server
+session or L2 work occurred.
+
+Final read-only remote verification returned `origin/main` unchanged at
+`466ebb3fc9736923110803e087acc798e417d084`, candidate branch exact at
+`7faaa4e1271616ff9390111c863d12fbcfa4d2fd`, immutable v0.12.0 tag object
+`94d8215bc2151fecba1280dc793d3f5953cd8055` peeling to
+`e5faf0c161a4256f33976664685653d8bd805d5d`, and no v0.13.0 tag. Publication
+remains a pending operator decision and R-CLOSE remains unchecked.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

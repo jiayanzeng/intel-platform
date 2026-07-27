@@ -10,17 +10,15 @@ All notable changes to intel-platform releases are recorded here.
 
 - Every registered invariant rule now carries an executable fail-before
   mutation. Local CI reconstructs each mutation in a disposable source tree,
-  requires exit 1, and verifies the rule-specific failure text. The hosted
-  workflow definition contains the same self-test, but release-grade hosted
-  verification remains open after run 30274895522 failed in the net lane.
+  requires exit 1, and verifies the rule-specific failure text. Hosted run
+  30277584129 reconstructed all 11 controls and passed 7/7 registered rules.
 - R7 enumerates every production caller of document-by-id body hydration,
   permits only the sector-scoped method, and refuses any renewed public
   unscoped store seam.
-- The existing net CI job definition invokes all 24
-  `cored --features net` tests in addition to the existing 22 `intel-ingest`
-  net tests, without adding a local or hosted job identity. Hosted run
-  30274895522 reached that invocation and ran 24 tests, but finished 23 passed /
-  1 failed; a green release-grade hosted execution remains open.
+- The existing net CI job invokes all 24 `cored --features net` tests in
+  addition to 23 `intel-ingest` net tests, without adding a local or hosted job
+  identity. Hosted run 30277584129 read both invocations from the log and
+  passed **24/24** cored plus **23/23** ingest tests.
 
 ### Changed
 
@@ -31,6 +29,10 @@ All notable changes to intel-platform releases are recorded here.
 - Production canonical-id rematerialization no longer accepts a distance
   parameter. R5 is now an allow-list over production call sites requiring the
   private `DEDUP_MAX_DISTANCE` source directly.
+- Crawler identity installation now uses one atomic process-global
+  initialization and compares the installed bytes with the request. Identity
+  and robots-cache construction occur in `main()` startup, so unrelated
+  `AppState` tests do not install crawler configuration.
 
 ### Fixed
 
@@ -47,6 +49,10 @@ All notable changes to intel-platform releases are recorded here.
   non-numeric threshold. The public maintenance seam was removed and the
   executable invariant now binds every production call to the one private
   threshold.
+- The crawler User-Agent installer no longer has a check-then-set race whose
+  losing thread could emit `could not install crawler User-Agent`. Concurrent
+  identical installers now converge on one identity; different bytes retain
+  the established deterministic refusal.
 
 ### Retractions and publication disposition
 
@@ -59,8 +65,10 @@ All notable changes to intel-platform releases are recorded here.
 - **Publication trigger:** separate operator authorization to publish
   `v0.13.0`. It has not fired. No annotated v0.13.0 tag has been created, no
   publication push has occurred, and `origin/main` has not advanced. The exact
-  candidate commit was pushed only to `candidate/v0.13.0` for the withheld
-  publication's hosted-evidence gate.
+  candidate commit `7faaa4e1271616ff9390111c863d12fbcfa4d2fd` was pushed only
+  to `candidate/v0.13.0` for the withheld publication's hosted-evidence gate.
+  Hosted run 30277584129 passed all seven identities; its release-grade audit
+  accepted all seven signed receipts with zero rejection.
 - A4 remains open because a rewritten shell can bypass or falsify the trusted
   `/attest` handoff. L1 remains client-side defense; an edited controller can
   rewrite it, and the server-enforced L2 forced-command wrapper remains open
