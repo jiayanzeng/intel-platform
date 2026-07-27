@@ -130,6 +130,39 @@
         }
       ],
       "fail_before_note": "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
+    },
+    {
+      "id": "R7",
+      "claim": "Every production document-by-id hydration call is sector-scoped, and the unscoped store method is not public.",
+      "source": "ARCHITECTURE.md:181-183",
+      "scope": "All production Rust document-by-id hydration calls outside crates/store/src/sqlite.rs, plus visibility of the store's unscoped documents_by_ids method; test-only Rust callers are excluded.",
+      "fail_before": [
+        {
+          "file": "crates/store/src/sqlite.rs",
+          "find": "    fn documents_by_ids(&self, ids: &[&str]) -> rusqlite::Result<Vec<Document>> {\n",
+          "replace_with": [
+            "    pub fn documents_by_ids(&self, ids: &[&str]) -> rusqlite::Result<Vec<Document>> {\n"
+          ],
+          "expected_fail": "documents_by_ids must not be public"
+        },
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "        .documents_by_ids_in_sectors(&fused_ids, &req.sectors)\n",
+          "replace_with": [
+            "        .documents_by_ids(&fused_ids)\n"
+          ],
+          "expected_fail": "production document hydration must call documents_by_ids_in_sectors; found documents_by_ids"
+        },
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "        .documents_by_ids_in_sectors(&requested_ids, &req.sectors)\n",
+          "replace_with": [
+            "        .documents_by_ids(&requested_ids)\n"
+          ],
+          "expected_fail": "production document hydration must call documents_by_ids_in_sectors; found documents_by_ids"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R7 FAIL: document hydration was unscoped or documents_by_ids was public"
     }
   ]
 }

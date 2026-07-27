@@ -72,6 +72,12 @@ CANONICAL_DISTANCE_CALL = re.compile(
     r"\b(?P<name>assign_canonical_ids(?:_tx)?|"
     r"rematerialize_canonical_ids_with_distance)\s*\("
 )
+DOCUMENT_ID_HYDRATION_CALL = re.compile(
+    r"(?:\.|::)\s*(?P<name>documents_by_ids(?:_in_sectors)?)\s*\("
+)
+PUBLIC_UNSCOPED_HYDRATION = re.compile(
+    r"(?m)^[ \t]*pub(?:\([^)]*\))?[ \t]+fn[ \t]+documents_by_ids[ \t]*\("
+)
 PRIVATE_KEY_HEADER = re.compile(
     r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----"
 )
@@ -480,6 +486,31 @@ def r6_findings(root: Path) -> list[str]:
     return findings
 
 
+def r7_findings(root: Path) -> list[str]:
+    findings: list[str] = []
+    store = (root / STORE).resolve()
+    for path in rust_files(root):
+        if path.resolve() == store:
+            continue
+        text = production_text(path.relative_to(root), path.read_text())
+        for match in DOCUMENT_ID_HYDRATION_CALL.finditer(text):
+            if match.group("name") != "documents_by_ids_in_sectors":
+                findings.append(
+                    f"{location(root, path, text, match.start())}: "
+                    "production document hydration must call "
+                    "documents_by_ids_in_sectors; found "
+                    f"{match.group('name')}"
+                )
+
+    store_text = (root / STORE).read_text()
+    for match in PUBLIC_UNSCOPED_HYDRATION.finditer(store_text):
+        findings.append(
+            f"{location(root, root / STORE, store_text, match.start())}: "
+            "documents_by_ids must not be public"
+        )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -487,6 +518,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R4": r4_findings,
     "R5": r5_findings,
     "R6": r6_findings,
+    "R7": r7_findings,
 }
 
 

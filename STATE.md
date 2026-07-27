@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; BODY-BOUNDARY is complete and the C1 release blocker is cleared.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace / **22** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; R7-BODY-SECTOR is complete and RETRACT-HC2 is next.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace / **22** net tests; the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -280,6 +280,34 @@ packages. Initial sandboxed standalone golden and Python 3.12 attempts were
 environment non-results because loopback bind/process inspection was denied;
 their identical permitted reruns produced the results above. The C1 release
 blocker is cleared; R7-BODY-SECTOR remains the next assurance task.
+
+**v0.13 R7-BODY-SECTOR is complete (measured 2026-07-27).** Registered R7
+cites the exact body-boundary sentence at `ARCHITECTURE.md:181-183`. Its
+allow-list enumerates production calls to the two document-by-id hydration
+methods outside the store, permits only `documents_by_ids_in_sectors`, and
+separately refuses any public declaration of the unscoped
+`documents_by_ids`.
+
+All three reconstructible controls exited **1** and named their mutated
+location. Re-publication failed at `crates/store/src/sqlite.rs:289`;
+rerouting `/retrieve` failed at `apps/cored/src/main.rs:1126`; rerouting
+`/attest` failed at `apps/cored/src/main.rs:1173`. Clean R7 passed **1/1**,
+and the complete scanner passed **7/7** with **11** executable controls. The
+focused invariant suite increased **10 → 11** and passed under Python 3.11.4
+and 3.12.13.
+
+The compiler remains the primary enforcement mechanism: BODY-BOUNDARY made
+the unscoped method private and unavailable in production. R7 is intentionally
+the cheaper secondary alarm that catches a future re-`pub`; it does not
+replace visibility with a regex. The implementation diff contains no source
+under `crates/` or `apps/`.
+
+Full `./run ci-local` remained **20/20** with **124** workspace Rust tests,
+**22** net tests, **216/216** Python 3.11 shell tests, warning-denied builds,
+clippy/fmt/ShellCheck, locked Rust 1.78, all **71/71** pins, protected
+databases **2/2**, invariant scan **7/7**, and golden **11/11**. Python
+3.12 independently passed **216/216** and verified **21/21** exact packages.
+The mandatory standalone golden run remained byte-identical at **11/11**.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

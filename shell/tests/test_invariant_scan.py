@@ -39,7 +39,7 @@ LEGACY_FAIL_BEFORE_NOTES = {
 }
 
 
-@pytest.mark.parametrize("rule_id", [f"R{number}" for number in range(1, 7)])
+@pytest.mark.parametrize("rule_id", [f"R{number}" for number in range(1, 8)])
 def test_each_registered_rule_passes_clean_and_fires_its_controls(
     rule_id: str,
 ) -> None:
@@ -59,9 +59,11 @@ def test_each_registered_rule_passes_clean_and_fires_its_controls(
 
 def test_every_legacy_fail_before_string_is_preserved_as_a_note() -> None:
     rules = invariant_scan.load_rules(RULES)
-    assert {rule.id: rule.fail_before_note for rule in rules} == (
-        LEGACY_FAIL_BEFORE_NOTES
-    )
+    by_id = {rule.id: rule for rule in rules}
+    assert {
+        rule_id: by_id[rule_id].fail_before_note
+        for rule_id in LEGACY_FAIL_BEFORE_NOTES
+    } == LEGACY_FAIL_BEFORE_NOTES
 
 
 def test_self_test_rejects_a_rule_whose_regex_cannot_match(

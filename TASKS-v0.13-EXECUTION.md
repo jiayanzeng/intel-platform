@@ -619,7 +619,7 @@ record of v0.12's is true.
   is no longer `pub`; `/retrieve` and `/attest` sector-scoped and fail closed on
   empty sectors; both regression tests fail-before/pass-after; oracle test
   passes; error-semantics change recorded twice; public bodies byte-identical
-- [ ] **R7-BODY-SECTOR** — R7 registered with three reconstructible
+- [x] **R7-BODY-SECTOR** — R7 registered with three reconstructible
   fail-befores, all demonstrated FAIL; `invariant-scan` 7/7; ci-local still 20
 - [ ] **RETRACT-HC2** — both retraction records validated;
   `ARCHITECTURE.md` self-consistent and matching enforced reality;
