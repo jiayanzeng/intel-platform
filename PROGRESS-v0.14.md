@@ -228,3 +228,41 @@ Entries are append-only; corrections are new dated entries.
   **v0.14.0**, not the documentation-only v0.13.1 path.
 - test and golden acceptance: NOT RUN for this decision-only checkpoint; no
   implementation or runtime file changed.
+
+### 2026-07-28 · DIAGNOSTIC-KNOB — bounded delay is loud and documented
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: 010536c575b9bf089665a97b0f534aa547825e3d
+- result: PASS under operator-selected option **(b)**. The choice and reasoning
+  were recorded before implementation in decision audit commit
+  `5c0855cbf15d0753d0941083f3086275f15cb834`. `cored` now emits a startup
+  warning whenever either diagnostic variable is set; the warning names both
+  raw settings and the effective bounded delay.
+- bound acceptance: PASS. The live delay path uses the tested bounding helper:
+  missing or invalid values become zero and valid values are capped at
+  **10,000 ms**. The focused Rust test passed under offline and net feature
+  builds.
+- documentation acceptance: PASS. `.env.example`, `README.md`,
+  `deploy/README.md`, and `ARCHITECTURE.md` now name both variables, all four
+  stages, the bound, startup warning, and unset-by-default operating rule. The
+  architecture records that only timing changes; no `/view` response body
+  changes.
+- startup-warning acceptance: PASS with a failure-capable check. The real
+  decomposition control observed the warning in **3/3** delayed core logs,
+  measured analysis median delta **122.232000 ms** versus sector-load median
+  delta **0.186000 ms**, and printed both PASS lines. Its exit status **1** is
+  the runbook control's specified success signal. A corrupted warning fixture
+  was independently rejected. Focused benchmark tests passed **4/4** under
+  Python 3.11.4 and 3.12.13.
+- version acceptance: PASS. Option (b) changes runtime behavior and the
+  operator configuration surface, firing **v0.14.0**; the documentation-only
+  v0.13.1 path does not apply.
+- regression acceptance: PASS. `./run ci-local` passed **20/20** with **125**
+  workspace Rust tests, **48** net tests (**23** `intel-ingest` + **25**
+  `cored`), zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  protected databases **2/2**, and all **86/86** pins exact. Standalone shell
+  passed **221/221** on Python 3.11.4 and 3.12.13 with **21/21** exact packages
+  on both. `invariant-scan --self-test` remained **9/9 rules / 15 controls**.
+- golden-E2E delta: **0**. The matrix and mandatory standalone run both
+  remained **11/11** byte-identical.
