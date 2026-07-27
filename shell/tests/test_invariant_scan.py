@@ -54,7 +54,10 @@ def test_each_registered_rule_passes_clean_and_fires_its_controls(
             control,
         )
         assert status == 1
-        assert control.expected_fail in output
+        assert (
+            invariant_scan.expected_control_finding(rule, control)
+            in output.splitlines()
+        )
 
 
 def test_every_legacy_fail_before_string_is_preserved_as_a_note() -> None:
@@ -76,13 +79,56 @@ def test_self_test_rejects_a_rule_whose_regex_cannot_match(
     assert "mutation did not make the rule fail" in capsys.readouterr().out
 
 
+def test_control_rejects_a_failure_reported_at_the_wrong_site(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    payload = json.loads(RULES.read_text())
+    r7 = next(rule for rule in payload["rules"] if rule["id"] == "R7")
+    r7["fail_before"][1]["expected_line"] += 1
+    registry = tmp_path / "wrong-site-rules.json"
+    registry.write_text(json.dumps(payload) + "\n")
+
+    assert invariant_scan.self_test(ROOT, registry, {"R7"}) == 1
+    output = capsys.readouterr().out
+    assert "missing expected finding" in output
+    assert "apps/cored/src/main.rs:1136" in output
+
+
+def test_overbroad_matcher_cannot_pass_a_control_at_an_unrelated_site(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    matcher = re.compile(
+        r"(?:\.|::)\s*(?P<name>documents_by_ids)"
+        r"(?=_in_sectors\s*\()"
+    )
+    monkeypatch.setattr(
+        invariant_scan,
+        "DOCUMENT_ID_HYDRATION_CALL",
+        matcher,
+    )
+    rules = invariant_scan.load_rules(RULES)
+    rule = next(item for item in rules if item.id == "R7")
+    control = rule.fail_before[1]
+
+    status, output = invariant_scan.exercise_fail_before(ROOT, rule, control)
+
+    assert status == 1
+    assert control.expected_fail in output
+    assert (
+        invariant_scan.expected_control_finding(rule, control)
+        not in output.splitlines()
+    )
+    assert "apps/cored/src/main.rs:1182" in output
+
+
 def test_malformed_registry_exits_two(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     registry = tmp_path / "rules.json"
     registry.write_text(
-        json.dumps({"schema_version": 2, "rules": "not-an-array"}) + "\n"
+        json.dumps({"schema_version": 3, "rules": "not-an-array"}) + "\n"
     )
 
     assert invariant_scan.run(ROOT, registry) == 2

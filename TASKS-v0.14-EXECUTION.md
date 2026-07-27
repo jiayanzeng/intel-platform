@@ -501,7 +501,7 @@ match · golden 11/11.
   control outputs plus a passing over-broad regex; G2 reproduced as four
   mutation outcomes; G3/G4/G5 recorded; G6 recorded as guard gap with the
   release-build check captured
-- [ ] **CONTROL-PRECISION** — every control asserts file and line; R7's two
+- [x] **CONTROL-PRECISION** — every control asserts file and line; R7's two
   controls distinguishable; widened-regex meta-control fails and is reverted; no
   rule logic changed
 - [ ] **RULE-SHAPE-AUDIT** — four mutation outcomes recorded; convertible rules

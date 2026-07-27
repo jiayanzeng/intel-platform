@@ -122,6 +122,8 @@ class FailBefore:
     find: str
     replace_with: tuple[str, ...]
     expected_fail: str
+    expected_file: str
+    expected_line: int
 
 
 @dataclass(frozen=True)
@@ -479,9 +481,30 @@ def r6_findings(root: Path) -> list[str]:
         reference = blocks[AUTHORITY_FILES[0]]
         for relative in AUTHORITY_FILES[1:]:
             if blocks[relative] != reference:
+                candidate = blocks[relative]
+                reference_lines = reference.splitlines()
+                candidate_lines = candidate.splitlines()
+                difference = next(
+                    (
+                        index
+                        for index in range(
+                            max(len(reference_lines), len(candidate_lines))
+                        )
+                        if (
+                            index >= len(reference_lines)
+                            or index >= len(candidate_lines)
+                            or reference_lines[index] != candidate_lines[index]
+                        )
+                    ),
+                    0,
+                )
+                text = (root / relative).read_text()
+                block_line = text.count(
+                    "\n", 0, text.index(AUTHORITY_START)
+                ) + 1
                 findings.append(
-                    f"{relative}: model-profile authorization block differs "
-                    f"from {AUTHORITY_FILES[0]}"
+                    f"{relative}:{block_line + difference}: model-profile "
+                    f"authorization block differs from {AUTHORITY_FILES[0]}"
                 )
     return findings
 
@@ -531,8 +554,8 @@ def load_rules(path: Path) -> list[Rule]:
         raise ConfigError(
             f"{path}: root keys must be exactly schema_version and rules"
         )
-    if raw["schema_version"] != 2:
-        raise ConfigError(f"{path}: schema_version must be 2")
+    if raw["schema_version"] != 3:
+        raise ConfigError(f"{path}: schema_version must be 3")
     if not isinstance(raw["rules"], list) or not raw["rules"]:
         raise ConfigError(f"{path}: rules must be a non-empty array")
 
@@ -546,7 +569,14 @@ def load_rules(path: Path) -> list[Rule]:
         "fail_before",
         "fail_before_note",
     }
-    control_fields = {"file", "find", "replace_with", "expected_fail"}
+    control_fields = {
+        "file",
+        "find",
+        "replace_with",
+        "expected_fail",
+        "expected_file",
+        "expected_line",
+    }
     for index, item in enumerate(raw["rules"]):
         where = f"{path}:rules[{index}]"
         if not isinstance(item, dict) or set(item) != fields:
@@ -570,7 +600,7 @@ def load_rules(path: Path) -> list[Rule]:
                     f"{control_where}: keys must be exactly "
                     f"{sorted(control_fields)}"
                 )
-            for field in {"file", "find", "expected_fail"}:
+            for field in {"file", "find", "expected_fail", "expected_file"}:
                 if (
                     not isinstance(control[field], str)
                     or not control[field].strip()
@@ -582,6 +612,28 @@ def load_rules(path: Path) -> list[Rule]:
             if relative.is_absolute() or ".." in relative.parts:
                 raise ConfigError(
                     f"{control_where}.file: must be a safe relative path"
+                )
+            expected_relative = Path(control["expected_file"])
+            if (
+                expected_relative.is_absolute()
+                or ".." in expected_relative.parts
+            ):
+                raise ConfigError(
+                    f"{control_where}.expected_file: must be a safe "
+                    "relative path"
+                )
+            if control["expected_file"] != control["file"]:
+                raise ConfigError(
+                    f"{control_where}.expected_file: must equal the mutated "
+                    "file"
+                )
+            if (
+                not isinstance(control["expected_line"], int)
+                or isinstance(control["expected_line"], bool)
+                or control["expected_line"] < 1
+            ):
+                raise ConfigError(
+                    f"{control_where}.expected_line: must be a positive integer"
                 )
             replacement = control["replace_with"]
             if (
@@ -603,6 +655,8 @@ def load_rules(path: Path) -> list[Rule]:
                     find=control["find"],
                     replace_with=tuple(replacement),
                     expected_fail=control["expected_fail"],
+                    expected_file=control["expected_file"],
+                    expected_line=control["expected_line"],
                 )
             )
         seen.add(item["id"])
@@ -733,6 +787,13 @@ def exercise_fail_before(
         return status, output.getvalue()
 
 
+def expected_control_finding(rule: Rule, control: FailBefore) -> str:
+    return (
+        f"invariant-scan: {rule.id} FAIL: {control.expected_file}:"
+        f"{control.expected_line}: {control.expected_fail}"
+    )
+
+
 def self_test(
     root: Path,
     rules_path: Path,
@@ -772,14 +833,16 @@ def self_test(
                     f"rule exited {status}, expected 1"
                 )
                 return 1
-            if control.expected_fail not in output:
+            expected_finding = expected_control_finding(rule, control)
+            if expected_finding not in output.splitlines():
                 print(
                     f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: "
-                    f"missing expected substring {control.expected_fail!r}"
+                    f"missing expected finding {expected_finding!r}"
                 )
                 return 1
             print(
                 f"invariant-scan: SELF-TEST {rule.id}/{index} PASS: "
+                f"{control.expected_file}:{control.expected_line}: "
                 f"{control.expected_fail}"
             )
 
