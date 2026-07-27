@@ -214,12 +214,14 @@ impl RobotsGate {
     /// when an `Allow` and a `Disallow` tie, `Allow` wins. No match at all means
     /// allowed — robots is a deny-list, not an allow-list.
     pub fn allowed(&self, path: &str) -> bool {
+        let normalized_path = normalize_percent_encoding(path);
         let mut best: Option<(usize, bool)> = None;
         for r in &self.rules {
-            if !path_matches(&r.pattern, path) {
+            let normalized_pattern = normalize_percent_encoding(&r.pattern);
+            if !path_matches(&normalized_pattern, &normalized_path) {
                 continue;
             }
-            let len = r.pattern.len();
+            let len = normalized_pattern.len();
             best = match best {
                 None => Some((len, r.allow)),
                 Some((blen, _)) if len > blen => Some((len, r.allow)),
@@ -230,6 +232,53 @@ impl RobotsGate {
         }
         best.map_or(true, |(_, allow)| allow)
     }
+}
+
+/// Normalize the RFC 3986 unreserved octets used by robots matching.
+///
+/// Reserved octets deliberately stay encoded: decoding `%2F` to `/` would
+/// re-segment the path and could over- or under-block. Valid encoded octets
+/// that remain encoded get uppercase hex, so equivalent spellings compare
+/// identically. Raw `*` and `$` remain parser metacharacters, while `%2A` and
+/// `%24` remain literals.
+fn normalize_percent_encoding(input: &str) -> String {
+    fn hex_value(byte: u8) -> Option<u8> {
+        match byte {
+            b'0'..=b'9' => Some(byte - b'0'),
+            b'a'..=b'f' => Some(byte - b'a' + 10),
+            b'A'..=b'F' => Some(byte - b'A' + 10),
+            _ => None,
+        }
+    }
+
+    const HEX: &[u8; 16] = b"0123456789ABCDEF";
+    let bytes = input.as_bytes();
+    let mut output = Vec::with_capacity(bytes.len());
+    let mut index = 0;
+    while index < bytes.len() {
+        if bytes[index] == b'%' && index + 2 < bytes.len() {
+            if let (Some(high), Some(low)) =
+                (hex_value(bytes[index + 1]), hex_value(bytes[index + 2]))
+            {
+                let value = (high << 4) | low;
+                if value.is_ascii_alphanumeric() || matches!(value, b'-' | b'.' | b'_' | b'~') {
+                    output.push(value);
+                } else {
+                    output.extend_from_slice(&[
+                        b'%',
+                        HEX[(value >> 4) as usize],
+                        HEX[(value & 0x0f) as usize],
+                    ]);
+                }
+                index += 3;
+                continue;
+            }
+        }
+        output.push(bytes[index]);
+        index += 1;
+    }
+
+    String::from_utf8(output).expect("normalizing valid UTF-8 preserves valid UTF-8")
 }
 
 /// robots.txt path matching: `*` matches any run of characters, a trailing `$`
@@ -727,6 +776,46 @@ mod tests {
     #[test]
     fn unmatched_paths_are_allowed_by_default() {
         assert!(RobotsGate::default().allowed("/anything"));
+    }
+
+    #[test]
+    fn unreserved_percent_encoding_cannot_evade_a_rule() {
+        let gate = RobotsGate::default().disallow("/foo/bar/baz");
+        assert!(!gate.allowed("/foo/bar/%62%61%7A"));
+    }
+
+    #[test]
+    fn encoded_reserved_slash_is_not_decoded() {
+        assert_eq!(normalize_percent_encoding("/foo%2fbar"), "/foo%2Fbar");
+        let gate = RobotsGate::default().disallow("/foo/bar");
+        assert!(gate.allowed("/foo%2Fbar"));
+    }
+
+    #[test]
+    fn encoded_star_is_literal_and_never_becomes_a_wildcard() {
+        let gate = RobotsGate::default().disallow("/foo/%2a/private");
+        assert!(!gate.allowed("/foo/%2A/private"));
+        assert!(gate.allowed("/foo/anything/private"));
+    }
+
+    #[test]
+    fn mixed_case_hex_normalizes_identically() {
+        assert_eq!(
+            normalize_percent_encoding("/%7euser/%2fdata"),
+            normalize_percent_encoding("/%7Euser/%2Fdata")
+        );
+        assert_eq!(
+            normalize_percent_encoding("/%7euser/%2fdata"),
+            "/~user/%2Fdata"
+        );
+    }
+
+    #[test]
+    fn normalized_path_is_unchanged_and_normalization_is_idempotent() {
+        let normalized = "/foo/bar-._~/*/report.pdf$";
+        assert_eq!(normalize_percent_encoding(normalized), normalized);
+        let once = normalize_percent_encoding("/foo/%62ar/%2fdata/%7e");
+        assert_eq!(normalize_percent_encoding(&once), once);
     }
 
     // -- robots.txt parsing ------------------------------------------------
