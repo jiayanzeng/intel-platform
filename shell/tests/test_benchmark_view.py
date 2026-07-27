@@ -6,7 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from tools.benchmark_view import BenchmarkFailure, percentile_95
+from tools.benchmark_view import (
+    BenchmarkFailure,
+    percentile_95,
+    verify_diagnostic_delay_warnings,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -47,6 +51,35 @@ def test_p95_is_nearest_rank() -> None:
     assert percentile_95([float(value) for value in range(1, 11)]) == 10.0
     with pytest.raises(BenchmarkFailure, match="zero samples"):
         percentile_95([])
+
+
+def test_diagnostic_delay_warning_control_can_fail(tmp_path: Path) -> None:
+    first = tmp_path / "first.log"
+    second = tmp_path / "second.log"
+    warning = (
+        'WARNING: /view diagnostic delay configured: '
+        'CORE_VIEW_DIAGNOSTIC_DELAY_STAGE="analysis"; '
+        'CORE_VIEW_DIAGNOSTIC_DELAY_MS="100"; '
+        "configured delay=100 ms (maximum 10000 ms)\n"
+    )
+    first.write_text(warning)
+    second.write_text(warning)
+    assert (
+        verify_diagnostic_delay_warnings(
+            [first, second],
+            stage="analysis",
+            delay_ms=100,
+        )
+        == 2
+    )
+
+    second.write_text(warning.replace("maximum 10000 ms", "maximum unknown"))
+    with pytest.raises(BenchmarkFailure, match="maximum 10000 ms"):
+        verify_diagnostic_delay_warnings(
+            [first, second],
+            stage="analysis",
+            delay_ms=100,
+        )
 
 
 def test_delayed_control_fires_cold_and_warm() -> None:

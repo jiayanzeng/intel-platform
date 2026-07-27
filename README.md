@@ -55,6 +55,15 @@ endpoints are the whole contract.
 `cored` binds `127.0.0.1:8788` (env `CORE_BIND`); optional shared secret via
 `CORE_TOKEN` → `x-core-token` header. Sector lists are always explicit.
 
+`CORE_VIEW_DIAGNOSTIC_DELAY_STAGE` and `CORE_VIEW_DIAGNOSTIC_DELAY_MS` are a
+deliberate `/view` benchmark knob, not a tuning default. The stage may be
+`sector_load`, `analysis`, `response_build`, or `serialization`; the
+millisecond delay is parsed as a non-negative integer and clamped to **10,000
+ms**. When either variable is present, `cored` emits a startup warning naming
+both settings and the effective bounded delay. Leave both unset except during
+an intentional diagnostic run. The knob changes timing only, never the
+`/view` response body.
+
 | Endpoint | Does |
 |---|---|
 | `GET /health` | liveness + archive size |

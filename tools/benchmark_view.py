@@ -399,6 +399,32 @@ class CoreServer(Server):
         return self.log_path.read_text(errors="replace")[-2000:]
 
 
+def verify_diagnostic_delay_warnings(
+    log_paths: list[Path],
+    *,
+    stage: str,
+    delay_ms: int,
+) -> int:
+    if not log_paths:
+        raise BenchmarkFailure("diagnostic delay control produced no core logs")
+    expected = (
+        "WARNING: /view diagnostic delay configured:",
+        f'CORE_VIEW_DIAGNOSTIC_DELAY_STAGE="{stage}"',
+        f'CORE_VIEW_DIAGNOSTIC_DELAY_MS="{delay_ms}"',
+        f"configured delay={min(max(delay_ms, 0), 10_000)} ms",
+        "maximum 10000 ms",
+    )
+    for path in log_paths:
+        log = path.read_text(errors="replace")
+        missing = [fragment for fragment in expected if fragment not in log]
+        if missing:
+            raise BenchmarkFailure(
+                f"{path}: diagnostic delay startup warning missing "
+                f"{', '.join(missing)}"
+            )
+    return len(log_paths)
+
+
 class ControlHandler(BaseHTTPRequestHandler):
     server: "ControlHttpServer"
 
@@ -1015,6 +1041,11 @@ def run_decomposition_control(args: argparse.Namespace) -> int:
             3,
             documents,
         )
+        warning_count = verify_diagnostic_delay_warnings(
+            sorted(log_dir.glob("delayed-*.log")),
+            stage="analysis",
+            delay_ms=100,
+        )
 
     baseline_report = decomposition_stage_report(baseline)
     delayed_report = decomposition_stage_report(delayed)
@@ -1030,6 +1061,10 @@ def run_decomposition_control(args: argparse.Namespace) -> int:
         "decomposition control: "
         f"analysis median delta={analysis_delta:.6f} ms; "
         f"sector_load median delta={load_delta:.6f} ms"
+    )
+    print(
+        "diagnostic delay startup warning: "
+        f"PASS ({warning_count}/{warning_count} delayed core logs)"
     )
     if analysis_delta >= 80.0 and load_delta < 40.0:
         print(

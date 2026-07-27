@@ -511,7 +511,7 @@ match · golden 11/11.
   controls, all demonstrated FAIL; cited architecture sentence exists
 - [x] **R9-TEST-SEAM** — registered with a site-specific control, demonstrated
   FAIL; release-build cleanliness recorded as pre-existing
-- [ ] **DIAGNOSTIC-KNOB** — disposition decided and recorded before
+- [x] **DIAGNOSTIC-KNOB** — disposition decided and recorded before
   implementation; delay bound asserted; variables documented; version trigger
   recorded here
 - [ ] **TEMPLATE-REMEASURE** — `AGENTS.md` amended and the check executable;

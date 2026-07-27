@@ -176,6 +176,14 @@ redirects fail closed rather than silently moving to another origin.
 | `/docs` | GET | sector-filtered full documents | internal |
 | `/attest` | POST | `{answer, context_doc_ids, sectors}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
 
+`CORE_VIEW_DIAGNOSTIC_DELAY_STAGE` plus
+`CORE_VIEW_DIAGNOSTIC_DELAY_MS` form a deliberate benchmark-only timing knob
+for the `sector_load`, `analysis`, `response_build`, and `serialization`
+stages. The delay is bounded to 10,000 ms. If either variable is set, startup
+warns with both raw settings and the effective bounded delay; normal operation
+leaves both unset. The knob changes timing only and never changes a `/view`
+response body.
+
 The public surface is the shell's `/v1/*`. The core is structurally loopback-only:
 startup resolves `CORE_BIND`, checks every resulting address, and refuses before
 binding if any address is not loopback. `/retrieve` and `/docs` carry full bodies

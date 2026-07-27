@@ -47,6 +47,13 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --dry-run
   when the value is missing, empty, or a placeholder; keep the
   `intel-platform` product token structural so robots group selection matches
   the exact User-Agent sent on the wire.
+- `CORE_VIEW_DIAGNOSTIC_DELAY_STAGE` and
+  `CORE_VIEW_DIAGNOSTIC_DELAY_MS` are an intentional benchmark diagnostic, not
+  service defaults. Valid stages are `sector_load`, `analysis`,
+  `response_build`, and `serialization`; the millisecond delay is clamped to
+  10,000. If either variable is set, `cored` emits a startup warning naming
+  both settings and the effective delay. Keep both absent from persistent
+  service configuration unless a bounded `/view` delay is being diagnosed.
 - Cadence granularity is per **sector**, which is what the core's `/ingest`
   endpoint exposes. True per-*source* cadence (multiple feeds within one sector
   on different clocks) would need the core to accept source ids on `/ingest`;

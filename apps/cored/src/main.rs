@@ -904,14 +904,14 @@ fn elapsed_us(started: Instant) -> u64 {
 }
 
 fn diagnostic_delay(stage: &str) {
-    if std::env::var("CORE_VIEW_DIAGNOSTIC_DELAY_STAGE").as_deref() != Ok(stage) {
+    if std::env::var(VIEW_DIAGNOSTIC_DELAY_STAGE_ENV).as_deref() != Ok(stage) {
         return;
     }
-    let delay_ms = std::env::var("CORE_VIEW_DIAGNOSTIC_DELAY_MS")
-        .ok()
-        .and_then(|raw| raw.parse::<u64>().ok())
-        .unwrap_or(0)
-        .min(10_000);
+    // Read once so execution and the startup warning share the asserted bound.
+    let delay_raw: Option<String> = std::env::var(VIEW_DIAGNOSTIC_DELAY_MS_ENV).ok();
+    let delay_ms = bounded_view_diagnostic_delay_ms(
+        delay_raw.as_deref(), // Keep this call expanded for the bound's visibility.
+    );
     if delay_ms > 0 {
         std::thread::sleep(Duration::from_millis(delay_ms));
     }
@@ -1370,6 +1370,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(&bind_addresses[..])
         .await
         .expect("bind");
+    warn_if_view_diagnostic_delay_configured();
     state
         .process_main_to_listener_ready_us
         .store(elapsed_us(process_main_started), Ordering::SeqCst);
@@ -1382,6 +1383,39 @@ async fn main() {
         }
     );
     axum::serve(listener, app).await.expect("serve");
+}
+
+const VIEW_DIAGNOSTIC_DELAY_STAGE_ENV: &str = "CORE_VIEW_DIAGNOSTIC_DELAY_STAGE";
+const VIEW_DIAGNOSTIC_DELAY_MS_ENV: &str = "CORE_VIEW_DIAGNOSTIC_DELAY_MS";
+const VIEW_DIAGNOSTIC_DELAY_MAX_MS: u64 = 10_000;
+
+fn bounded_view_diagnostic_delay_ms(raw: Option<&str>) -> u64 {
+    raw.and_then(|value| value.parse::<u64>().ok())
+        .unwrap_or(0)
+        .min(VIEW_DIAGNOSTIC_DELAY_MAX_MS)
+}
+
+fn view_diagnostic_delay_warning(stage: Option<&str>, delay_raw: Option<&str>) -> Option<String> {
+    if stage.is_none() && delay_raw.is_none() {
+        return None;
+    }
+    let delay_ms = bounded_view_diagnostic_delay_ms(delay_raw);
+    Some(format!(
+        "WARNING: /view diagnostic delay configured: \
+         {VIEW_DIAGNOSTIC_DELAY_STAGE_ENV}={:?}; \
+         {VIEW_DIAGNOSTIC_DELAY_MS_ENV}={:?}; \
+         configured delay={delay_ms} ms (maximum {VIEW_DIAGNOSTIC_DELAY_MAX_MS} ms)",
+        stage.unwrap_or("<unset>"),
+        delay_raw.unwrap_or("<unset>"),
+    ))
+}
+
+fn warn_if_view_diagnostic_delay_configured() {
+    let stage = std::env::var(VIEW_DIAGNOSTIC_DELAY_STAGE_ENV).ok();
+    let delay_raw = std::env::var(VIEW_DIAGNOSTIC_DELAY_MS_ENV).ok();
+    if let Some(warning) = view_diagnostic_delay_warning(stage.as_deref(), delay_raw.as_deref()) {
+        eprintln!("{warning}");
+    }
 }
 
 #[cfg(test)]
@@ -1423,6 +1457,35 @@ mod tests {
 
         assert!(error.contains("192.168.1.10:8788"));
         assert!(error.contains("multi-host seam deferral"));
+    }
+
+    #[test]
+    fn view_diagnostic_delay_is_bounded_and_loud_when_configured() {
+        for raw in [None, Some("not-a-number"), Some("0")] {
+            assert_eq!(bounded_view_diagnostic_delay_ms(raw), 0);
+        }
+        assert_eq!(bounded_view_diagnostic_delay_ms(Some("9999")), 9_999);
+        assert_eq!(
+            bounded_view_diagnostic_delay_ms(Some("10001")),
+            VIEW_DIAGNOSTIC_DELAY_MAX_MS
+        );
+        assert!(
+            bounded_view_diagnostic_delay_ms(Some(&u64::MAX.to_string()))
+                <= VIEW_DIAGNOSTIC_DELAY_MAX_MS
+        );
+
+        assert!(view_diagnostic_delay_warning(None, None).is_none());
+        let warning =
+            view_diagnostic_delay_warning(Some("analysis"), Some("10001")).expect("warning");
+        assert!(warning.contains(VIEW_DIAGNOSTIC_DELAY_STAGE_ENV));
+        assert!(warning.contains(VIEW_DIAGNOSTIC_DELAY_MS_ENV));
+        assert!(warning.contains(r#""analysis""#));
+        assert!(warning.contains("configured delay=10000 ms"));
+        assert!(warning.contains("maximum 10000 ms"));
+
+        let partial = view_diagnostic_delay_warning(None, Some("25")).expect("warning");
+        assert!(partial.contains(r#""<unset>""#));
+        assert!(partial.contains("configured delay=25 ms"));
     }
 
     #[cfg(not(feature = "net"))]
