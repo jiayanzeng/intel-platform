@@ -302,3 +302,40 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; the mandatory standalone post-task run remained
   **11/11** byte-identical.
 - disposition: the measured C1 release blocker is cleared.
+
+### 2026-07-27 · R7-BODY-SECTOR — hydration boundary registered
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: c4f4d65e64229641e249c6beabe48d08f24a5425
+- result: PASS. R7 cites `ARCHITECTURE.md:181-183`, enumerates production
+  method and UFCS calls to both document-by-id hydration methods outside the
+  store, permits only `documents_by_ids_in_sectors`, and separately refuses a
+  public declaration of the unscoped `documents_by_ids`.
+- fail-before acceptance: PASS. All three reconstructible controls exited
+  **1** with concrete findings. Re-publication failed at
+  `crates/store/src/sqlite.rs:289`; routing `/retrieve` back through the
+  unscoped method failed at `apps/cored/src/main.rs:1126`; routing `/attest`
+  back through it failed at `apps/cored/src/main.rs:1173`.
+- clean/self-test acceptance: PASS. Clean R7 passed **1/1**. The complete
+  scanner reported **7/7** and passed **11** executable controls. The focused
+  invariant module increased **10 → 11** and passed under Python 3.11.4 and
+  3.12.13.
+- enforcement placement: the compiler is primary. BODY-BOUNDARY made the
+  unscoped method private and unavailable in production; R7 is the cheaper
+  secondary alarm for a future re-`pub`, not a regex substitute for
+  visibility.
+- CI acceptance: PASS. The final `./run ci-local` remained **20/20** with
+  **124** workspace Rust tests, **22** net tests, **216/216** Python 3.11
+  shell tests, warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78,
+  all **71/71** pins, protected databases **2/2**, invariant scan **7/7**, and
+  golden **11/11**. Python 3.12 independently passed **216/216** and verified
+  **21/21** exact packages. An earlier CI rerun stopped at checklist-audit
+  because the R7 box had been checked before an implementation hash and
+  progress receipt could exist; restoring the task to open for the acceptance
+  run, then checking it in the implementation commit, followed the required
+  two-commit protocol.
+- source acceptance: PASS. The implementation diff contains no path under
+  `crates/` or `apps/`.
+- golden-E2E delta: **0**; the mandatory standalone post-task run remained
+  **11/11** byte-identical.
