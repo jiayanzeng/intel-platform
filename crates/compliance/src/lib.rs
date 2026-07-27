@@ -27,7 +27,7 @@
 #![allow(clippy::unnecessary_map_or)]
 
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::{sleep, Instant};
@@ -625,7 +625,7 @@ fn host_of_origin(origin: &str) -> String {
 
 /// Enforces a minimum interval between requests to ONE host.
 pub struct RateLimiter {
-    min_interval: Duration,
+    min_interval_ns: AtomicU64,
     last: tokio::sync::Mutex<Option<Instant>>,
     acquires: AtomicUsize,
 }
@@ -633,10 +633,26 @@ pub struct RateLimiter {
 impl RateLimiter {
     pub fn per_second(rps: f64) -> Self {
         Self {
-            min_interval: Duration::from_secs_f64(1.0 / rps.max(0.001)),
+            min_interval_ns: AtomicU64::new(Self::interval_ns(rps)),
             last: tokio::sync::Mutex::new(None),
             acquires: AtomicUsize::new(0),
         }
+    }
+
+    fn interval_ns(rps: f64) -> u64 {
+        Duration::from_secs_f64(1.0 / rps.max(0.001))
+            .as_nanos()
+            .try_into()
+            .unwrap_or(u64::MAX)
+    }
+
+    fn min_interval(&self) -> Duration {
+        Duration::from_nanos(self.min_interval_ns.load(Ordering::Relaxed))
+    }
+
+    fn set_rate(&self, rps: f64) {
+        self.min_interval_ns
+            .store(Self::interval_ns(rps), Ordering::Relaxed);
     }
 
     pub async fn acquire(&self) {
@@ -644,8 +660,9 @@ impl RateLimiter {
         let mut last = self.last.lock().await;
         if let Some(prev) = *last {
             let elapsed = prev.elapsed();
-            if elapsed < self.min_interval {
-                sleep(self.min_interval - elapsed).await;
+            let min_interval = self.min_interval();
+            if elapsed < min_interval {
+                sleep(min_interval - elapsed).await;
             }
         }
         *last = Some(Instant::now());
@@ -659,7 +676,7 @@ impl RateLimiter {
 
     /// Requests per second this limiter currently enforces.
     pub fn rate(&self) -> f64 {
-        1.0 / self.min_interval.as_secs_f64().max(f64::MIN_POSITIVE)
+        1.0 / self.min_interval().as_secs_f64().max(f64::MIN_POSITIVE)
     }
 }
 
@@ -686,7 +703,12 @@ impl HostLimiters {
     /// the default (arXiv's ~3s between harvester requests, say).
     pub fn set_host_rate(&self, host: &str, rps: f64) {
         let mut map = self.limiters.lock().unwrap();
-        map.insert(host.to_string(), Arc::new(RateLimiter::per_second(rps)));
+        match map.get(host) {
+            Some(limiter) => limiter.set_rate(rps),
+            None => {
+                map.insert(host.to_string(), Arc::new(RateLimiter::per_second(rps)));
+            }
+        }
     }
 
     /// The rate currently in force for `host` — the default unless a publisher
@@ -1263,6 +1285,55 @@ Sitemap: https://example.org/sitemap.xml
             lim.rate_for("fast.example") <= 2.0,
             "a robots.txt talked us into exceeding our own politeness floor"
         );
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn crawl_delay_update_preserves_clock_counter_and_waits_new_interval() {
+        let limiters = Arc::new(HostLimiters::per_second(2.0));
+        let cache = RobotsCache::new(
+            FakeFetcher::new(RobotsFetch::Body("User-agent: *\nCrawl-delay: 10\n".into())),
+            limiters.clone(),
+            "intel-platform/0.1",
+            Duration::from_secs(3600),
+            64,
+        );
+        let origin = "https://clock.example";
+        let host = "clock.example";
+
+        // Fetching robots.txt is the first acquisition and sets the host clock.
+        assert!(
+            cache
+                .allowed(origin, "/document", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(limiters.acquires_for(host), 1);
+
+        // The synchronous rate transition must mutate the existing limiter,
+        // preserving both that clock and its acquisition counter.
+        cache.apply_crawl_delay(origin).await;
+        assert!((limiters.rate_for(host) - 0.1).abs() < 1e-9);
+        assert_eq!(limiters.acquires_for(host), 1);
+
+        let started = Instant::now();
+        let waiting_limiters = limiters.clone();
+        let waiter = tokio::spawn(async move {
+            waiting_limiters.acquire(host).await;
+        });
+        tokio::task::yield_now().await;
+        assert_eq!(limiters.acquires_for(host), 2);
+        assert!(!waiter.is_finished(), "the new delay was not applied");
+
+        tokio::time::advance(Duration::from_secs(9)).await;
+        tokio::task::yield_now().await;
+        assert!(
+            !waiter.is_finished(),
+            "the limiter released before 10 seconds"
+        );
+
+        tokio::time::advance(Duration::from_secs(1)).await;
+        waiter.await.unwrap();
+        assert_eq!(started.elapsed(), Duration::from_secs(10));
+        assert_eq!(limiters.acquires_for(host), 2);
     }
 
     #[tokio::test]
