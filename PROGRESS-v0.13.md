@@ -77,3 +77,40 @@ Entries are append-only; corrections are new dated entries.
 - cleanup: both disposable worktrees, their temporary database/log, and the
   spawned core process were removed; the live tree returned clean before the
   task record.
+
+### 2026-07-27 · FAIL-BEFORE-EXEC — invariant controls made executable
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: b398f1266324eb43b4b77519f527d09e3b1eb1c9
+- result: PASS. Registry schema 2 gives every R1–R6 rule a reconstructible
+  exact-text mutation and expected failure substring. The scanner applies one
+  control at a time in a fresh copy of the Git-tracked tree, runs only the
+  owning rule, and requires exit 1 plus the recorded reason. The existing
+  no-argument CI path executes this same self-test.
+- preservation acceptance: PASS. All six former decorative `fail_before`
+  strings are preserved byte-for-byte as `fail_before_note`; a dedicated test
+  asserts the exact mapping. No R1–R6 matcher, pattern, scope outcome, or rule
+  matching logic changed.
+- positive-control acceptance: PASS. The real
+  `./run invariant-scan --self-test` passed the clean R1–R6 scan and all
+  **6/6** controls. Temporarily changing R4's provider-key regex to `(?!)`
+  made the same command exit **1** with `SELF-TEST R4/1 FAIL: mutation did not
+  make the rule fail`; restoring it returned the matrix to green. The new
+  focused module passed **10/10**, including malformed-registry and
+  unimplemented-rule exit-2 cases.
+- CI acceptance: PASS. The corrected `./run ci-local` passed **20/20** with
+  **121** workspace Rust tests, **21** net tests, **215/215** Python 3.11
+  shell tests, warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78,
+  protected databases **2/2**, all **71/71** pins, and golden **11/11**.
+  Python 3.12 independently passed **215/215** and verified **21/21** exact
+  packages.
+- integration note: an initial attempt to add the explicit flag to `run`
+  tripped the protected authorization-surface pin and one evidence test, so it
+  was a non-result. `run` was restored byte-exact at SHA-256
+  `7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d`
+  and is absent from the implementation diff.
+- golden-E2E delta: **0**; the mandatory post-task standalone run remained
+  **11/11** byte-identical.
+- decision gate: PASS for this assurance task. The C1 body-boundary release
+  blocker remains open for its ordered correction task.
