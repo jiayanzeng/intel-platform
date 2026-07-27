@@ -128,3 +128,27 @@ Entries are append-only; corrections are new dated entries.
   **11/11** with every public body and corpus anchor unchanged.
 - protected artifact delta: none. Standalone `./run verify-artifacts` matched
   both protected databases **2/2** and all existing pins **39/39**.
+
+### 2026-07-27 · ROBOTS-MERGE — winning-specificity groups merged safely
+
+- owner: Codex
+- commit: dd8898528a7a96aa25079ccd87186cb85550c240
+- result: PASS. The parser finds the longest matching non-`*` specificity,
+  merges every group at that specificity in file order, falls back to merging
+  every `*` group only when no specific token matches, and takes the maximum
+  crawl delay across merged groups.
+- failure-capable acceptance: PASS. Duplicate `intel-platform` groups enforce
+  both disallows. The named generic-root regression proves `Disallow: /` from
+  `*` does not override a specific allow-all; another specific/generic control
+  proves unrelated `*` rules are absent. Two merged specific delays select
+  seven seconds over two.
+- contract acceptance: PASS. The parser doc-comment states both the
+  same-specificity merge and the deliberate `*` exclusion, including why
+  merging generic rules into a specific match would be incorrect.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **108** workspace tests, **20** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, **188/188** Python 3.11 shell tests,
+  protected databases **2/2**, and evidence pins **39/39**.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. No protected or pinned file changed.
