@@ -173,3 +173,38 @@ Entries are append-only; corrections are new dated entries.
 - disposition: the gate-mandated source correction is complete.
   THRESHOLD-BIND may resume without an exemption or a source change in its
   rule-only commit.
+
+### 2026-07-27 · THRESHOLD-BIND — R5 rebound to production call sites
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 3928680edc05e116ef66a24e625e255b3b380fe6
+- result: PASS. R5 enumerates production calls to
+  `assign_canonical_ids`, `assign_canonical_ids_tx`, and
+  `rematerialize_canonical_ids_with_distance`, excludes test-only Rust, and
+  requires every distance argument to be the exact single token
+  `DEDUP_MAX_DISTANCE`. Findings name the file, line, call, and offending
+  token. The independent declaration half still requires exactly one private
+  `DEDUP_MAX_DISTANCE: u32 = 16`.
+- fail-before acceptance: PASS. The renamed-threshold control exited **1** with
+  `R5 FAIL: crates/store/src/sqlite.rs:208: assign_canonical_ids_tx distance
+  argument must be DEDUP_MAX_DISTANCE; found INGEST_FUZZ_LIMIT`. The two
+  original controls also exited **1**: the second named constant failed at
+  line 33, and the literal `16` call failed at line 207. Unmodified HEAD passed
+  R5 at **1/1**.
+- self-test acceptance: PASS. `./run invariant-scan --self-test` passed R1–R6
+  plus **8** executable controls. The focused invariant module passed
+  **10/10** under both Python 3.11.4 and 3.12.13. R5's claim and scope now
+  describe call-site binding, not a naming convention.
+- CI acceptance: PASS. `./run ci-local` remained **20/20** with **121**
+  workspace Rust tests, **21** net tests, **215/215** Python 3.11 shell tests,
+  warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78, all
+  **71/71** pins, protected databases **2/2**, and golden **11/11**.
+- source acceptance: PASS. The implementation diff contains zero paths under
+  `crates/`; the separately completed THRESHOLD-SOURCE-SEAM task owns the
+  source correction.
+- shape lesson: **a deny-list over source text is open at the bottom, and a
+  repo-wide absence claim should be expressed as an allow-list over call sites
+  wherever the call sites are enumerable.** R5 now enforces that lesson.
+- golden-E2E delta: **0**; the mandatory standalone post-task run remained
+  **11/11** byte-identical.
