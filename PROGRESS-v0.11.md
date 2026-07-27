@@ -199,3 +199,28 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. The required standalone `./run golden` passed
   **11/11** with every exact anchor unchanged.
 - protected artifact delta: none. No protected or pinned file changed.
+
+### 2026-07-27 · GATE-CLOSED — network reaches require publisher policy
+
+- owner: Codex
+- commit: 0257ea7a42c12328e1721c2d9fb280c6de097197
+- result: PASS. The shared ingest gate returns the dedicated
+  `NetworkWithoutRobotsCache` error for `Reach::Network` plus
+  `robots_cache: None`, before the operator gate, limiter, or document fetch.
+- failure-capable acceptance: PASS. The runbook-named defect test was inverted
+  rather than removed and now requires the new error for a public network path.
+  A sibling fixture-reach test preserves the prior no-cache behavior: the
+  configured gate allows a public path and rejects a denied path.
+- shipped-path acceptance: PASS. Existing network-plus-cache tests remain green
+  for publisher allow/deny, operator composition, unreachable policy,
+  per-source missing-policy handling, and redirect behavior.
+- design acceptance: PASS. `STATE.md §6f` records and defers the type-level
+  alternative because making the invalid pair unrepresentable would change the
+  connector/context boundary and all builders and fixtures in this patch task.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **115** workspace tests, **21** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, **188/188** Python 3.11 shell tests,
+  protected databases **2/2**, and evidence pins **39/39**.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. No protected or pinned file changed.
