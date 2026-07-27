@@ -84,12 +84,14 @@ impl RobotsGate {
     /// - A "group" is one or more consecutive `User-agent` lines followed by
     ///   that group's rules. A `User-agent` line appearing *after* a rule line
     ///   starts a **new** group; it does not extend the current one.
-    /// - We take the group whose product token is the **longest** one matching
-    ///   our UA (case-insensitive prefix match, §2.2.1), falling back to the
-    ///   `*` group. Specific beats generic, and *only* the winning group's
-    ///   rules apply — rules from `*` are NOT merged in on top of a specific
-    ///   match. Merging them would be a real bug: a site that disallows `/` for
-    ///   `*` and allows everything for us would end up denying us everything.
+    /// - We first find the **longest** product-token specificity matching our
+    ///   UA (case-insensitive prefix match, §2.2.1), then merge every group at
+    ///   that winning specificity in file order. If no specific token matches,
+    ///   every `*` group is merged. Specific beats generic: `*` rules are NOT
+    ///   merged in on top of a specific match. Doing so would be a real bug: a
+    ///   site that disallows `/` for `*` and allows everything for us would end
+    ///   up denying us everything. Across merged groups, the most conservative
+    ///   (maximum) `Crawl-delay` applies.
     /// - An empty `Disallow:` value means "nothing is disallowed" and is the
     ///   conventional way to spell allow-all. It is a no-op rule, not a
     ///   disallow of the empty path.
@@ -152,32 +154,40 @@ impl RobotsGate {
             }
         }
 
-        // Pick the most specific matching group: longest product token that is
-        // a case-insensitive prefix of our UA. `*` is the fallback, never a
-        // "match" in its own right.
+        // Find the winning specificity first, then merge every group at that
+        // specificity. `*` groups are the fallback only and never join a
+        // specific match.
         let ua = user_agent.to_ascii_lowercase();
-        let mut best: Option<(usize, usize)> = None; // (token len, group index)
-        let mut star: Option<usize> = None;
-        for (i, (tokens, _, _)) in groups.iter().enumerate() {
+        let mut best_specificity: Option<usize> = None;
+        for (tokens, _, _) in &groups {
             for t in tokens {
-                if t == "*" {
-                    star.get_or_insert(i);
-                } else if ua.starts_with(t.as_str()) {
+                if t != "*" && ua.starts_with(t.as_str()) {
                     let len = t.len();
-                    if best.map_or(true, |(blen, _)| len > blen) {
-                        best = Some((len, i));
+                    if best_specificity.map_or(true, |best| len > best) {
+                        best_specificity = Some(len);
                     }
                 }
             }
         }
 
-        match best.map(|(_, i)| i).or(star) {
-            Some(i) => Self {
-                rules: groups[i].1.clone(),
-                crawl_delay: groups[i].2,
-            },
-            None => Self::default(), // No applicable group ⇒ allow-all.
+        let mut rules = Vec::new();
+        let mut crawl_delay: Option<Duration> = None;
+        for (tokens, group_rules, group_delay) in &groups {
+            let applies = match best_specificity {
+                Some(best) => tokens
+                    .iter()
+                    .any(|t| t != "*" && t.len() == best && ua.starts_with(t.as_str())),
+                None => tokens.iter().any(|t| t == "*"),
+            };
+            if applies {
+                rules.extend(group_rules.iter().cloned());
+                if let Some(delay) = group_delay {
+                    crawl_delay = Some(crawl_delay.map_or(*delay, |current| current.max(*delay)));
+                }
+            }
         }
+
+        Self { rules, crawl_delay }
     }
 
     /// Add a `Disallow` pattern (`*` and trailing `$` supported).
@@ -815,6 +825,47 @@ Sitemap: https://example.org/sitemap.xml
             g.allowed("/anything-else"),
             "the `*` group should not apply"
         );
+    }
+
+    #[test]
+    fn duplicate_specific_groups_are_merged_in_file_order() {
+        let txt = "User-agent: intel-platform\nDisallow: /first\n\
+                   User-agent: intel-platform\nDisallow: /second\n";
+        let gate = RobotsGate::parse(txt, "intel-platform/0.1");
+
+        assert!(!gate.allowed("/first/private"));
+        assert!(!gate.allowed("/second/private"));
+    }
+
+    #[test]
+    fn star_disallow_root_is_not_merged_into_specific_allow_all_regression() {
+        let txt = "User-agent: *\nDisallow: /\n\
+                   User-agent: intel-platform\nDisallow:\n";
+        let gate = RobotsGate::parse(txt, "intel-platform/0.1");
+
+        assert!(
+            gate.allowed("/anything"),
+            "the generic root deny must not leak into a specific allow-all"
+        );
+    }
+
+    #[test]
+    fn unrelated_star_rules_are_absent_from_a_specific_match() {
+        let txt = "User-agent: *\nDisallow: /generic\n\
+                   User-agent: intel-platform\nDisallow: /specific\n";
+        let gate = RobotsGate::parse(txt, "intel-platform/0.1");
+
+        assert!(gate.allowed("/generic/private"));
+        assert!(!gate.allowed("/specific/private"));
+    }
+
+    #[test]
+    fn merged_groups_use_the_maximum_crawl_delay() {
+        let txt = "User-agent: intel-platform\nCrawl-delay: 2\n\
+                   User-agent: intel-platform\nCrawl-delay: 7\n";
+        let gate = RobotsGate::parse(txt, "intel-platform/0.1");
+
+        assert_eq!(gate.crawl_delay(), Some(Duration::from_secs(7)));
     }
 
     #[test]

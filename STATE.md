@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 SECTOR-BIND is complete; every core endpoint that returns document bodies now requires a sector set enforced in SQL.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **104** Rust workspace / **20** net tests; the shell suite is **188/188** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 ROBOTS-MERGE is complete; every robots group at the winning specificity is merged without leaking `*` rules into a specific match.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **108** Rust workspace / **20** net tests; the shell suite is **188/188** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -160,6 +160,30 @@ identical rerun passed **188/188**, with **21/21** exact packages. Standalone
 corpus anchors did not move. Standalone artifact verification matched both
 protected databases **2/2** and all pins **39/39**. No schema, dependency,
 protected byte, evidence pin, remote ref, or tag changed.
+
+**v0.11 ROBOTS-MERGE is complete (measured 2026-07-27).** The robots parser
+now computes the longest matching non-`*` product-token specificity first and
+then merges every group containing a matching token at that specificity, in
+file order. When no specific token matches it merges every `*` group. A
+specific match never receives `*` rules, and multiple applicable
+`Crawl-delay` values resolve to the conservative maximum.
+
+Four new failure-capable controls prove both halves. Duplicate
+`intel-platform` groups enforce both disallows; the mandatory named regression
+proves a generic `Disallow: /` cannot override a specific allow-all; a separate
+specific-plus-generic control proves unrelated `*` rules are absent; and two
+specific groups select the seven-second maximum delay over two seconds. The
+parser doc-comment states the same-specificity merge and deliberate generic
+exclusion explicitly.
+
+`./run ci-local` passed all **19/19** units with **108** Rust workspace tests,
+**20** net tests, zero warning/lint/format failures, locked Rust 1.78
+checks/tests, **188/188** Python 3.11.4 shell tests, protected databases
+**2/2**, and evidence pins **39/39**. Standalone `./run golden` repeated
+**11/11** with every exact corpus and public-API anchor unchanged. Only the
+compliance parser/tests plus required state and task records changed; no
+dependency, lockfile, schema, protected byte, evidence pin, remote ref, or tag
+changed.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release
