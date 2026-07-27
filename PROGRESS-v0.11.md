@@ -152,3 +152,27 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. The required standalone `./run golden` passed
   **11/11** with every exact anchor unchanged.
 - protected artifact delta: none. No protected or pinned file changed.
+
+### 2026-07-27 · ROBOTS-NORMALIZE — percent-equivalent paths matched safely
+
+- owner: Codex
+- commit: 3770f3f18deca223c8d198507d01dd85f286591b
+- result: PASS. One zero-dependency normalizer is applied to both robots
+  patterns and request paths. Unreserved percent triplets decode; every
+  retained valid triplet uses uppercase hex.
+- semantic acceptance: PASS. Reserved octets remain encoded, so `%2F` cannot
+  re-segment the path and `%2A` cannot become a wildcard. Raw `*` and trailing
+  `$` keep their parser semantics. Normalized specificity is used for
+  longest-rule selection.
+- failure-capable acceptance: PASS. The encoded `baz` audit case is blocked,
+  reserved slash remains encoded, encoded star is literal, mixed-case hex
+  converges, and normalization is idempotent. Existing wildcard and anchor
+  controls remain green.
+- dependency acceptance: PASS. No crate, manifest, or lockfile changed.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **113** workspace tests, **20** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, **188/188** Python 3.11 shell tests,
+  protected databases **2/2**, and evidence pins **39/39**.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. No protected or pinned file changed.
