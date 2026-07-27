@@ -704,6 +704,7 @@ def _run_real_path_positive_control(
     subscriptions,
     embed,
     gated_docs: list[dict],
+    sectors: list[str],
 ) -> dict:
     target = sorted(gated_docs, key=lambda item: item["doc_id"])[0]
     shape = ADVERSARIAL_SHAPES[0]
@@ -740,7 +741,7 @@ def _run_real_path_positive_control(
         )
     control["http_status"] = response.status_code
     context_ids = list(recording_core.last_retrieve_context_ids)
-    context_docs = core.docs(context_ids) if context_ids else []
+    context_docs = core.docs(context_ids, sectors) if context_ids else []
     control["context_doc_ids"] = context_ids
     control["gated_context_doc_ids"] = [
         document["doc_id"]
@@ -802,6 +803,7 @@ def _run_adversarial_cell(
     target: dict,
     shape: dict,
     chat_model: str,
+    sectors: list[str],
 ) -> dict:
     prompt = _adversarial_prompt(shape, target)
     recording_chat.last_answer = None
@@ -835,7 +837,7 @@ def _run_adversarial_cell(
         "gated_match_telemetry": _gated_match_telemetry("", []),
     }
     context_ids = list(core.last_retrieve_context_ids)
-    context_docs = core.docs(context_ids) if context_ids else []
+    context_docs = core.docs(context_ids, sectors) if context_ids else []
     attempt["gated_context_doc_ids"] = [
         document["doc_id"]
         for document in context_docs
@@ -879,6 +881,7 @@ def _run_adversarial_battery(
     gated_docs: list[dict],
     chat_model: str,
     embed_model: str,
+    sectors: list[str],
     report_path: Path | None,
     resume_from: Path | None,
     real_path_positive_control: dict | None = None,
@@ -927,6 +930,7 @@ def _run_adversarial_battery(
                     target=target,
                     shape=shape,
                     chat_model=chat_model,
+                    sectors=sectors,
                 )
                 if candidate["valid_attempt"]:
                     candidate["transport_retry_count"] = invocation - 1
@@ -1165,6 +1169,7 @@ def main(
         f"  embeddings: {embed.base_url} "
         f"(model={embed.model}, timeout={embed.timeout_seconds:g}s)"
     )
+    configured_sectors = [sector["id"] for sector in core.sectors()]
 
     print("== 1. embeddings populate ==")
     t0 = time.time()
@@ -1172,7 +1177,7 @@ def main(
     embedding_requests = 0
     fixture_docs: list[dict] = []
     try:
-        missing = core.embeddings_missing(embed.model)
+        missing = core.embeddings_missing(embed.model, configured_sectors)
         provider_dim = None
         stats = None
         if missing:
@@ -1182,7 +1187,7 @@ def main(
             provider_dim = len(embedded[0]) if embedded else None
             vectors = _embedding_items(batch, embedded)
             core.upsert_embeddings(embed.model, vectors)
-        still = core.embeddings_missing(embed.model)
+        still = core.embeddings_missing(embed.model, configured_sectors)
         if embedding_requests:
             stats = core.embeddings_stats(embed.model)
         stats_ok = (
@@ -1194,7 +1199,8 @@ def main(
         backfill_ok = embedding_requests > 0 and not still and stats_ok
         if backfill_ok:
             fixture_docs = core.docs(
-                [document["doc_id"] for document in missing]
+                [document["doc_id"] for document in missing],
+                configured_sectors,
             )
         check(
             "embeddings backfill",
@@ -1275,7 +1281,10 @@ def main(
             else:
                 body = response.json()
                 citations = body.get("citations", [])
-                docs = core.docs([c["doc_id"] for c in citations])
+                docs = core.docs(
+                    [c["doc_id"] for c in citations],
+                    configured_sectors,
+                )
                 gated = [d for d in docs if d.get("license") == "IndexOnly"]
                 answer = body.get("answer", "")
                 overlap = _has_gated_overlap(answer, docs)
@@ -1310,6 +1319,7 @@ def main(
                         subscriptions=subscriptions,
                         embed=embed,
                         gated_docs=fixture_gated,
+                        sectors=configured_sectors,
                     )
                     _run_adversarial_battery(
                         api=api,
@@ -1318,6 +1328,7 @@ def main(
                         gated_docs=fixture_gated,
                         chat_model=chat.model,
                         embed_model=embed.model,
+                        sectors=configured_sectors,
                         report_path=adversarial_report,
                         resume_from=adversarial_resume_from,
                         real_path_positive_control=positive_control,

@@ -304,7 +304,7 @@ fn guard(state: &AppState, headers: &HeaderMap) -> Result<(), ApiErr> {
     }
 }
 
-fn parse_sectors(raw: &str) -> Vec<String> {
+fn parse_csv(raw: &str) -> Vec<String> {
     raw.split(',')
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty())
@@ -318,7 +318,7 @@ fn configured_view_sectors(state: &AppState, raw: &str) -> Vec<String> {
         .iter()
         .map(|sector| sector.id.as_str())
         .collect();
-    let mut sectors: Vec<String> = parse_sectors(raw)
+    let mut sectors: Vec<String> = parse_csv(raw)
         .into_iter()
         .filter(|sector| configured.contains(sector.as_str()))
         .collect();
@@ -620,6 +620,12 @@ struct AttestReq {
 #[derive(Deserialize)]
 struct MissingQ {
     model: String,
+    sectors: String,
+}
+
+#[derive(Deserialize)]
+struct ModelQ {
+    model: String,
 }
 
 #[derive(Serialize)]
@@ -670,6 +676,7 @@ struct RecordResp {
 #[derive(Deserialize)]
 struct DocsQ {
     ids: String,
+    sectors: String,
 }
 
 // --- handlers -----------------------------------------------------------------
@@ -1025,7 +1032,7 @@ async fn search(
     Query(p): Query<SearchQ>,
 ) -> Result<Json<Vec<SearchHitResp>>, ApiErr> {
     guard(&st, &headers)?;
-    let sectors = parse_sectors(&p.sectors);
+    let sectors = parse_csv(&p.sectors);
     let hits = st
         .store
         .search(&p.q, &sectors, p.limit.min(50))
@@ -1150,9 +1157,10 @@ async fn embeddings_missing(
     Query(p): Query<MissingQ>,
 ) -> Result<Json<Vec<MissingDoc>>, ApiErr> {
     guard(&st, &headers)?;
+    let sectors = parse_csv(&p.sectors);
     let docs = st
         .store
-        .docs_missing_embeddings(&p.model)
+        .docs_missing_embeddings(&p.model, &sectors)
         .map_err(internal)?;
     Ok(Json(
         docs.into_iter()
@@ -1168,7 +1176,7 @@ async fn embeddings_missing(
 async fn embeddings_stats(
     State(st): State<Arc<AppState>>,
     headers: HeaderMap,
-    Query(p): Query<MissingQ>,
+    Query(p): Query<ModelQ>,
 ) -> Result<Json<EmbeddingStatsResp>, ApiErr> {
     guard(&st, &headers)?;
     let stats = st.store.embeddings_stats(&p.model).map_err(internal)?;
@@ -1222,9 +1230,13 @@ async fn docs(
     Query(p): Query<DocsQ>,
 ) -> Result<Json<Vec<DocDto>>, ApiErr> {
     guard(&st, &headers)?;
-    let ids = parse_sectors(&p.ids);
+    let ids = parse_csv(&p.ids);
+    let sectors = parse_csv(&p.sectors);
     let id_refs: Vec<&str> = ids.iter().map(String::as_str).collect();
-    let documents = st.store.documents_by_ids(&id_refs).map_err(internal)?;
+    let documents = st
+        .store
+        .documents_by_ids_in_sectors(&id_refs, &sectors)
+        .map_err(internal)?;
     Ok(Json(documents.iter().map(doc_dto).collect()))
 }
 
@@ -1506,7 +1518,7 @@ mod tests {
         let stats = embeddings_stats(
             State(st.clone()),
             HeaderMap::new(),
-            Query(MissingQ {
+            Query(ModelQ {
                 model: "shared-model".into(),
             }),
         )
@@ -1562,6 +1574,89 @@ mod tests {
             response.notes
         );
         assert!(response.vector.is_empty());
+    }
+
+    #[tokio::test]
+    async fn docs_filters_requested_ids_by_sector_and_fails_closed_when_empty() {
+        let st = test_state();
+        do_ingest(&st, &["technology", "finance"], None).await;
+        let all = st.store.load_all().unwrap();
+        let technology_id = all
+            .iter()
+            .find(|document| document.sector.0 == "technology")
+            .unwrap()
+            .id
+            .clone();
+        let finance_id = all
+            .iter()
+            .find(|document| document.sector.0 == "finance")
+            .unwrap()
+            .id
+            .clone();
+        let ids = format!("{technology_id},{finance_id}");
+
+        let entitled = docs(
+            State(st.clone()),
+            HeaderMap::new(),
+            Query(DocsQ {
+                ids: ids.clone(),
+                sectors: "technology".into(),
+            }),
+        )
+        .await
+        .expect("sector-bound docs")
+        .0;
+        assert_eq!(entitled.len(), 1);
+        assert_eq!(entitled[0].doc_id, technology_id);
+        assert_eq!(entitled[0].sector, "technology");
+
+        let empty = docs(
+            State(st),
+            HeaderMap::new(),
+            Query(DocsQ {
+                ids,
+                sectors: String::new(),
+            }),
+        )
+        .await
+        .expect("empty sectors fail closed")
+        .0;
+        assert!(empty.is_empty());
+    }
+
+    #[tokio::test]
+    async fn missing_embeddings_filters_by_sector_and_fails_closed_when_empty() {
+        let st = test_state();
+        do_ingest(&st, &["technology", "finance"], None).await;
+
+        let finance = embeddings_missing(
+            State(st.clone()),
+            HeaderMap::new(),
+            Query(MissingQ {
+                model: "sector-bound-model".into(),
+                sectors: "finance".into(),
+            }),
+        )
+        .await
+        .expect("sector-bound embedding queue")
+        .0;
+        assert!(!finance.is_empty());
+        assert!(finance
+            .iter()
+            .all(|document| document.doc_id.starts_with("filings-digest::")));
+
+        let empty = embeddings_missing(
+            State(st),
+            HeaderMap::new(),
+            Query(MissingQ {
+                model: "sector-bound-model".into(),
+                sectors: String::new(),
+            }),
+        )
+        .await
+        .expect("empty sectors fail closed")
+        .0;
+        assert!(empty.is_empty());
     }
 
     // HC5 regression guard: a sector-only request runs every source in the

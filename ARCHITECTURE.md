@@ -163,11 +163,11 @@ redirects fail closed rather than silently moving to another origin.
 | `/view` | GET | analyzed corpus; excerpts gated by license | **excerpt gated** |
 | `/search` | GET | ranked docs; snippets nulled for IndexOnly | **snippet gated** |
 | `/retrieve` | POST | context assembly; full bodies (model context) | internal |
-| `/embeddings/missing` | GET | backfill work queue | internal |
+| `/embeddings/missing` | GET | sector-filtered backfill work queue | internal |
 | `/embeddings/stats` | GET | stored vector count/dimension for one model key | internal |
 | `/embeddings` | POST | vectors posted back by the shell | internal |
 | `/signals/record` | POST | shell posts signals back | internal |
-| `/docs` | GET | full documents | internal |
+| `/docs` | GET | sector-filtered full documents | internal |
 | `/attest` | POST | `{answer, context_doc_ids}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
 
 The public surface is the shell's `/v1/*`. The core is structurally loopback-only:
@@ -176,7 +176,9 @@ binding if any address is not loopback. `/retrieve` and `/docs` carry full bodie
 only for analysis, and the shipped shell sends model output through `/attest`
 before `/v1/ask` returns it. This prevents copied IndexOnly context on the shipped
 path, but does not constrain an arbitrary rewrite that omits the call or supplies
-a false scope (A4 accepted risk).
+a false scope (A4 accepted risk). Every endpoint that returns document bodies
+takes an explicit sector set whose predicate is enforced in core SQL;
+`/embeddings/missing` has no maintenance exception.
 
 ## 6. Invariant map (which invariant lives where, and why)
 

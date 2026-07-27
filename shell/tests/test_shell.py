@@ -176,6 +176,30 @@ AUTH = {"Authorization": "Bearer ak_acme_7f3d9c"}
 # --- tests --------------------------------------------------------------------
 
 
+def test_document_body_clients_always_send_explicit_sector_queries():
+    seen: dict[str, dict[str, str]] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen[request.url.path] = dict(request.url.params)
+        return httpx.Response(200, json=[])
+
+    core = CoreClient("http://core", transport=httpx.MockTransport(handler))
+    assert core.docs(["technology::one"], ["technology"]) == []
+    assert core.embeddings_missing(
+        "embed-model",
+        ["science", "technology", "finance"],
+    ) == []
+
+    assert seen["/docs"] == {
+        "ids": "technology::one",
+        "sectors": "technology",
+    }
+    assert seen["/embeddings/missing"] == {
+        "model": "embed-model",
+        "sectors": "science,technology,finance",
+    }
+
+
 def test_missing_key_is_401():
     c = make_client()
     assert c.get("/v1/signals").status_code == 401

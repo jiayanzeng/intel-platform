@@ -212,7 +212,8 @@ def test_real_path_positive_control_fires_the_deployed_handler() -> None:
                 "suppressed": [],
             }
 
-        def docs(self, ids: list[str]) -> list[dict]:
+        def docs(self, ids: list[str], sectors: list[str]) -> list[dict]:
+            assert sectors == ["science", "technology"]
             return [target] if target["doc_id"] in ids else []
 
         def attest(self, answer: str, ids: list[str]) -> dict:
@@ -240,6 +241,7 @@ def test_real_path_positive_control_fires_the_deployed_handler() -> None:
         ],
         embed=EmbedDouble(),
         gated_docs=[target],
+        sectors=["science", "technology"],
     )
 
     assert control["outcome"] == GUARD_FIRED
@@ -606,7 +608,8 @@ def test_gateway_timeout_is_retried_and_not_counted_as_an_attempt() -> None:
     class RecordingCoreDouble:
         last_retrieve_context_ids: list[str] = []
 
-        def docs(self, ids: list[str]) -> list[dict]:
+        def docs(self, ids: list[str], sectors: list[str]) -> list[dict]:
+            assert sectors == ["technology"]
             return [target] if ids else []
 
     core = RecordingCoreDouble()
@@ -626,6 +629,7 @@ def test_gateway_timeout_is_retried_and_not_counted_as_an_attempt() -> None:
         gated_docs=[target],
         chat_model="chat-model",
         embed_model="embed-model",
+        sectors=["technology"],
         report_path=None,
         resume_from=None,
         max_attempts_per_cell=2,
@@ -658,7 +662,8 @@ def test_transient_gateway_timeout_is_retried_until_model_completion() -> None:
     class RecordingCoreDouble:
         last_retrieve_context_ids: list[str] = []
 
-        def docs(self, ids: list[str]) -> list[dict]:
+        def docs(self, ids: list[str], sectors: list[str]) -> list[dict]:
+            assert sectors == ["technology"]
             return [target] if ids else []
 
         def attest(self, answer: str, ids: list[str]) -> dict:
@@ -704,6 +709,7 @@ def test_transient_gateway_timeout_is_retried_until_model_completion() -> None:
         gated_docs=[target],
         chat_model="chat-model",
         embed_model="embed-model",
+        sectors=["technology"],
         report_path=None,
         resume_from=None,
         real_path_positive_control=positive_control,
@@ -777,7 +783,15 @@ def test_verifier_stops_after_failed_embedding_prerequisite(
             raise AssertionError("chat must not run after embedding failure")
 
     class FixtureCore:
-        def embeddings_missing(self, model: str) -> list[dict]:
+        def sectors(self) -> list[dict]:
+            return [{"id": "technology"}]
+
+        def embeddings_missing(
+            self,
+            model: str,
+            sectors: list[str],
+        ) -> list[dict]:
+            assert sectors == ["technology"]
             return [{"doc_id": "source::one", "body": "fixture body"}]
 
     embed = FailingEmbed()
@@ -815,7 +829,15 @@ def test_verifier_rejects_a_fresh_database_that_is_already_preembedded(
         timeout_seconds = 3.0
 
     class PreembeddedCore:
-        def embeddings_missing(self, model: str) -> list[dict]:
+        def sectors(self) -> list[dict]:
+            return [{"id": "technology"}]
+
+        def embeddings_missing(
+            self,
+            model: str,
+            sectors: list[str],
+        ) -> list[dict]:
+            assert sectors == ["technology"]
             return []
 
     monkeypatch.setattr(

@@ -84,7 +84,8 @@ def run(client_arg: str | None, subs_path: str | None, data_dir: str,
     if embed is None:
         print("  embeddings: skipped (LLM_EMBED_BASE_URL/LLM_BASE_URL not set)")
     else:
-        missing = core.embeddings_missing(embed.model)
+        configured_sectors = [sector["id"] for sector in core.sectors()]
+        missing = core.embeddings_missing(embed.model, configured_sectors)
         if not missing:
             print(f"  embeddings: up to date (model '{embed.model}')")
         else:
@@ -132,7 +133,7 @@ def run(client_arg: str | None, subs_path: str | None, data_dir: str,
             print("  llm-enrich: skipped (chat endpoint not configured)")
         else:
             ids = view.get("kept_doc_ids", [])[:10]
-            docs = core.docs(ids) if ids else []
+            docs = core.docs(ids, list(sub.sectors)) if ids else []
             known = {"deepseek", "qwen", "nvidia", "vllm"}  # cheap demo floor
             try:
                 with open("config/entities.json", encoding="utf-8") as f:

@@ -649,7 +649,7 @@ pins match · golden 11/11.
 
 - [x] **E0** — entering state re-measured at v0.10.3; S1–S8 and every augment row confirmed or refuted; four scratch controls demonstrate current wrong behavior; v0.10.3 guards confirmed live
 - [x] **BIND-LOOPBACK** — non-loopback binds refused before binding; pure runner-testable check; no override flag; `CORE_TOKEN` disposition recorded
-- [ ] **SECTOR-BIND** — `/docs` requires and SQL-filters sectors; `/embeddings/missing` resolved under (a) or (b) with `ARCHITECTURE.md` updated; empty sector set fails closed; golden byte-identical
+- [x] **SECTOR-BIND** — `/docs` requires and SQL-filters sectors; `/embeddings/missing` resolved under (a) or (b) with `ARCHITECTURE.md` updated; empty sector set fails closed; golden byte-identical
 - [ ] **ROBOTS-MERGE** — same-specificity groups merged; `*` never merged into a specific match, with a named regression test; merged crawl-delay is the maximum
 - [ ] **ROBOTS-NORMALIZE** — unreserved octets decoded, reserved preserved; metacharacters survive; idempotent; controls fail-before/pass-after
 - [ ] **DELAY-CLOCK** — interval updated in place; `last` and `acquires` preserved; paused-clock elapsed-behavior test fails before and passes after

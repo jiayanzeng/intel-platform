@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 BIND-LOOPBACK is complete; the core now structurally refuses every non-loopback bind.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **102** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 SECTOR-BIND is complete; every core endpoint that returns document bodies now requires a sector set enforced in SQL.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **104** Rust workspace / **20** net tests; the shell suite is **188/188** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -130,6 +130,36 @@ override was introduced and no dependency changed. `ARCHITECTURE.md` and the
 daemon contract now name the startup resolver/check as the enforcement
 mechanism. The public API, corpus, protected artifacts, evidence pins, remote
 refs, and tags are unchanged.
+
+**v0.11 SECTOR-BIND is complete (measured 2026-07-27).** `/docs` now requires
+both `ids` and `sectors` and calls
+`documents_by_ids_in_sectors(ids, sectors)`. `/embeddings/missing` now requires
+both `model` and `sectors` and calls the sector-bound
+`docs_missing_embeddings(model, sectors)`. Both store methods return an empty
+result for an empty sector set and include `sector IN (…)` in the SQL itself;
+the id and sector values remain bound parameters. The old misleading
+`parse_sectors(&p.ids)` call is gone in favor of the neutral `parse_csv`.
+
+The shell passes subscriber entitlements to `/docs`. The embedding maintenance
+worker and real-model verifier pass all sector ids reported by the core, so
+backfill covers the configured archive rather than depending on which
+subscriber happened to start it. Every Python call site and its doubles were
+updated. Handler controls span technology and finance ids and prove that only
+the entitled document returns; separate `/docs` and `/embeddings/missing`
+controls prove empty sectors return nothing. The store-level bound-parameter
+test independently exercises both new SQL scopes, and a shell transport test
+captures the exact `sectors` query parameters.
+
+`./run ci-local` passed all **19/19** units with **104** Rust workspace tests,
+**20** net tests, zero warning/lint/format failures, locked Rust 1.78
+checks/tests, and **188/188** Python 3.11.4 shell tests. A first sandboxed
+Python 3.12.13 run was an environment non-result: the same eight process and
+loopback controls seen at E0 were denied after 180 tests passed. The permitted
+identical rerun passed **188/188**, with **21/21** exact packages. Standalone
+`./run golden` repeated **11/11** exactly, proving the public `/v1/*` bodies and
+corpus anchors did not move. Standalone artifact verification matched both
+protected databases **2/2** and all pins **39/39**. No schema, dependency,
+protected byte, evidence pin, remote ref, or tag changed.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release
@@ -3248,6 +3278,22 @@ mandatory would break existing same-host deployments while adding no remote
 protection beyond the enforced bind. Operators that need the extra local
 boundary may continue to set it; the shipped launcher and service contract are
 unchanged.
+
+### 6e. Why `/embeddings/missing` has no HC2 exception (v0.11/SECTOR-BIND)
+
+**Decision:** take the preferred sector-bound outcome. `/embeddings/missing`
+enumerates document bodies, so it now requires an explicit sector list and
+enforces it in core SQL just like `/docs`; HC2 has zero unnamed or named
+body-returning exceptions. The alternative maintenance exception was rejected
+because the predicate is cheap and an exception would preserve the broader
+enumeration seam that triggered this task.
+
+The embedding worker sends the core's full configured sector set, not the
+current subscriber's entitlements. Backfill is archive maintenance and must
+not become dependent on which subscriber runs first; the explicit full set
+keeps that intent visible while the core still refuses an empty scope. `/docs`,
+by contrast, receives the current subscriber's entitled sectors because it
+serves that subscriber's downstream enrichment path.
 
 ## 7. Run reference
 

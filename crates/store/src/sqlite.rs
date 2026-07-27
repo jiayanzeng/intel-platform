@@ -297,6 +297,38 @@ impl SqliteStore {
         rows.collect()
     }
 
+    /// Fetch only the named documents in the explicit sector allow-list.
+    /// Empty ids or sectors fail closed.
+    pub fn documents_by_ids_in_sectors(
+        &self,
+        ids: &[&str],
+        sectors: &[String],
+    ) -> rusqlite::Result<Vec<Document>> {
+        if ids.is_empty() || sectors.is_empty() {
+            return Ok(Vec::new());
+        }
+        let conn = self.conn.lock().unwrap();
+        let id_placeholders = ids.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+        let sector_placeholders = sectors.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+        let sql = format!(
+            "SELECT id, sector, url, title, body, published_day, published_raw,
+                    authors, tags, source_id, retrieved_from, source_kind, license
+             FROM documents
+             WHERE id IN ({id_placeholders})
+               AND sector IN ({sector_placeholders})"
+        );
+        let mut stmt = conn.prepare(&sql)?;
+        let mut bind: Vec<&dyn rusqlite::ToSql> = Vec::with_capacity(ids.len() + sectors.len());
+        for id in ids {
+            bind.push(id);
+        }
+        for sector in sectors {
+            bind.push(sector);
+        }
+        let rows = stmt.query_map(bind.as_slice(), row_to_document)?;
+        rows.collect()
+    }
+
     pub fn count(&self) -> rusqlite::Result<usize> {
         let conn = self.conn.lock().unwrap();
         conn.query_row("SELECT COUNT(*) FROM documents", [], |r| r.get::<_, i64>(0))
@@ -891,17 +923,32 @@ pub struct VectorSearchResult {
 impl SqliteStore {
     /// Documents that have no embedding yet for the given model — the
     /// backfill work queue.
-    pub fn docs_missing_embeddings(&self, model: &str) -> rusqlite::Result<Vec<Document>> {
+    pub fn docs_missing_embeddings(
+        &self,
+        model: &str,
+        sectors: &[String],
+    ) -> rusqlite::Result<Vec<Document>> {
+        if sectors.is_empty() {
+            return Ok(Vec::new());
+        }
         let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare(
+        let sector_placeholders = sectors.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+        let sql = format!(
             "SELECT d.id, d.sector, d.url, d.title, d.body, d.published_day,
                     d.published_raw, d.authors, d.tags, d.source_id,
                     d.retrieved_from, d.source_kind, d.license
              FROM documents d
-             LEFT JOIN embeddings e ON e.doc_id = d.id AND e.model = ?1
-             WHERE e.doc_id IS NULL",
-        )?;
-        let rows = stmt.query_map([model], row_to_document)?;
+             LEFT JOIN embeddings e ON e.doc_id = d.id AND e.model = ?
+             WHERE e.doc_id IS NULL
+               AND d.sector IN ({sector_placeholders})"
+        );
+        let mut stmt = conn.prepare(&sql)?;
+        let mut bind: Vec<&dyn rusqlite::ToSql> = Vec::with_capacity(1 + sectors.len());
+        bind.push(&model);
+        for sector in sectors {
+            bind.push(sector);
+        }
+        let rows = stmt.query_map(bind.as_slice(), row_to_document)?;
         rows.collect()
     }
 
@@ -1405,6 +1452,30 @@ mod tests {
         assert_eq!(bound.len(), 1);
         assert_eq!(bound[0].id, shaped_id);
         assert!(s.documents_by_ids(&[]).unwrap().is_empty());
+
+        let scoped = s
+            .documents_by_ids_in_sectors(&[shaped_id, "finance-doc"], &["technology".to_string()])
+            .unwrap();
+        assert_eq!(scoped.len(), 1);
+        assert_eq!(scoped[0].id, shaped_id);
+        assert!(s
+            .documents_by_ids_in_sectors(&[shaped_id], &[])
+            .unwrap()
+            .is_empty());
+        assert!(s
+            .documents_by_ids_in_sectors(&[], &["technology".to_string()])
+            .unwrap()
+            .is_empty());
+
+        let missing = s
+            .docs_missing_embeddings("sector-bound-model", &["finance".to_string()])
+            .unwrap();
+        assert_eq!(missing.len(), 1);
+        assert_eq!(missing[0].id, "finance-doc");
+        assert!(s
+            .docs_missing_embeddings("sector-bound-model", &[])
+            .unwrap()
+            .is_empty());
     }
 
     #[test]

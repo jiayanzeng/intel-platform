@@ -124,8 +124,10 @@ class CoreClient:
             {"answer": answer, "context_doc_ids": list(context_doc_ids)},
         )
 
-    def embeddings_missing(self, model: str) -> list[dict]:
-        return self._get("/embeddings/missing", model=model)
+    def embeddings_missing(self, model: str, sectors: list[str]) -> list[dict]:
+        return self._get(
+            "/embeddings/missing", model=model, sectors=",".join(sectors)
+        )
 
     def embeddings_stats(self, model: str) -> dict:
         return self._get("/embeddings/stats", model=model)
@@ -142,5 +144,7 @@ class CoreClient:
             {"client": client, "window_end": window_end, "signals": signals},
         )
 
-    def docs(self, ids: list[str]) -> list[dict]:
-        return self._get("/docs", ids=",".join(ids))
+    def docs(self, ids: list[str], sectors: list[str]) -> list[dict]:
+        return self._get(
+            "/docs", ids=",".join(ids), sectors=",".join(sectors)
+        )
