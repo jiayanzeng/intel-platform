@@ -208,3 +208,44 @@ Entries are append-only; corrections are new dated entries.
   wherever the call sites are enumerable.** R5 now enforces that lesson.
 - golden-E2E delta: **0**; the mandatory standalone post-task run remained
   **11/11** byte-identical.
+
+### 2026-07-27 · UA-CONTACT — crawler identity made required
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: d5fbcb2f6d50425c1953ea4c2e41f067179d2a68
+- result: PASS. Net startup now requires `INTEL_CRAWLER_CONTACT` inside
+  `build_robots_cache`; the structural `intel-platform` token cannot be
+  supplied by the operator. The process installs one immutable identity,
+  derives its advertised version from cored's `CARGO_PKG_VERSION`, and shares
+  those exact bytes between both HTTP clients and `RobotsCache`.
+- refusal acceptance: PASS against the real net binary. Unset and empty
+  contacts exited **101** before binding with
+  `INTEL_CRAWLER_CONTACT is required for a net-enabled harvester`.
+  `ops@example.com`, `you@operator.test`, and `changeme` each exited **101**
+  with an explicit placeholder refusal. A valid
+  `crawler-operator@unit.test` value reached listener readiness; the process
+  was then stopped immediately without a publisher request.
+- identity acceptance: PASS. The cored net suite measured
+  `intel-platform/0.12.0`, proving the version comes from the product crate.
+  The loopback wire control captured byte-identical
+  `intel-platform/0.12.0 (research prototype; contact:
+  wire-contact@unit.test)` headers from the document and robots clients. The
+  same installed string is passed to `RobotsCache`. The first wire attempt was
+  a host-proxy non-result; with the repository-documented loopback `NO_PROXY`
+  path, both requests reached the local listener.
+- offline acceptance: PASS. A dedicated default-feature test proves
+  `build_robots_cache` returns `None` without reading or requiring contact
+  configuration. Workspace tests increased **121 → 122**. Net
+  `intel-ingest` tests increased **21 → 22**, and the additional net-enabled
+  cored suite passed **22/22**.
+- documentation acceptance: PASS. `.env.example` carries the required empty
+  setting, so an unchanged copy refuses safely; README and deploy guidance
+  document the required value, rejected placeholders, and immutable product
+  token.
+- CI acceptance: PASS. `./run ci-local` remained **20/20** with **122**
+  workspace Rust tests, **22** net tests, **215/215** shell tests,
+  warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78, all
+  **71/71** pins, protected databases **2/2**, and golden **11/11**.
+- golden-E2E delta: **0**; the mandatory standalone post-task run remained
+  **11/11** byte-identical.
