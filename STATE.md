@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 STORE-IDENTITY is complete; edits and takedowns now rematerialize canonical document identity inside the same transaction as the maintenance write.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 RE-MEASURE is complete; authenticated release-candidate evidence is pinned and re-derived, and R-CLOSE awaits the separate operator release decision.** Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Published tag refs are unchanged: annotated v0.10.3 tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` still dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities still agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -315,6 +315,69 @@ tests. Standalone `./run golden` repeated **11/11**. Standalone
 `./run verify-artifacts` matched protected databases **2/2** and evidence pins
 **39/39**. No schema, dependency, lockfile, protected byte, evidence pin,
 remote ref, or tag changed.
+
+**v0.11 RE-MEASURE is complete (measured 2026-07-27).** The clean candidate
+was `17221504d0c572e2b52f8509cb720d4a7c72f47d`; remote `main` was pushed to
+that exact commit before the operator-authorized dispatch. GitHub Actions run
+**30236305375**, attempt **1**, used `workflow_dispatch`,
+`audit_sha=17221504d0c572e2b52f8509cb720d4a7c72f47d`, and
+`publish_evidence=true`. Core, golden, lint, MSRV, net, shell
+`python=3.11`, and shell `python=3.12` all passed. Each emitted one receipt
+and one persisted Sigstore bundle, and all seven checkouts and receipt SHAs
+name the candidate.
+
+The first production-audit attempt in the clean detached candidate worktree
+was a non-result before measurement because ignored `data/core.db` was absent.
+An initial copy attempt was also a non-result because the fresh worktree had no
+`data/` directory. After creating that ignored directory, the exact protected
+database bytes were copied in: core SHA-256
+`db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+and live-smoke SHA-256
+`94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`.
+`git status --porcelain` remained empty, so the measurement subject was still
+a clean candidate tree.
+
+The production command required `--expected-head`,
+`--evidence-grade release`, `--require-attestations`, repository and workflow
+identity, source digest, and `refs/heads/main`. It accepted **7** authenticated
+receipts with the exact distinct identity set, rejected **0**, and recorded
+**7** observed runner executions. The report is labeled `v0.11 RECEIPT`,
+records a clean subject, and reports **5 deferred / 2 promoted**: the five
+unchanged deferrals remain T7 single-flight, Postgres, pgvector, multi-host
+hardening, and A4; CI-runner evidence is promoted by the complete authenticated
+matrix, while `/view` materialization remains promoted to its future
+implementation task. Exact-cosine p95 was **15.033417 ms** over 2,600
+documents, below the **16.264 ms** A3 anchor. The report is
+`evidence/v0.11.0/deferred-audit/report.json`, **33,741 bytes**, SHA-256
+`2bfade7c8bf5d39323a91d0a599b4576bc83a9bdce1ef9c29cca7d7db82d3d71`.
+Fresh re-derivation passed with rows 7, source dispositions 5, triggers 7,
+release grade, and attestations required.
+
+Both hosted negative controls ran only on the disposable
+`codex/v0.11-remeasure-controls` branch. Run **30236791703** planted one core
+failure; all seven signed packages persisted, the audit rejected the core
+receipt as `conclusion is not success: failure`, found the core identity
+missing, and accepted/observed **0** executions. Run **30237021683** passed all
+seven jobs but rewrote the signed Python 3.12 receipt to claim
+`python=3.11`; the audit found the duplicate 3.11 identity and missing 3.12
+identity and again accepted/observed **0**. A preceding dispatch command against
+control commit `33e99893e707dc53dffb01f4eeda6fef51c42034` returned HTTP 422 before
+creating a run because its one-line YAML scalar was not dispatchable; the
+block-scalar correction was re-parsed and the source-shape test repeated
+**36 passed / 1 skipped** before the successful control dispatch. The remote
+branch, local branch, and disposable worktree were then deleted; neither
+negative receipt set nor report was committed.
+
+Manifest validation and standalone artifact verification now match all
+**54/54** immutable file pins and both protected databases **2/2**. The full
+local matrix passed **19/19** with **119** Rust workspace tests, **21** net
+tests, zero rustc/clippy/format failures, locked Rust 1.78 checks/tests, and
+**191/191** Python 3.11.4 shell tests. The independent Python 3.12.13 lane
+passed **191/191** with **21/21** exact packages; both lanes emitted only the
+known third-party Starlette/httpx deprecation warning. Mandatory standalone
+golden remained byte-identical at **11/11**. Remote tag enumeration still maps
+the published v0.9.0, v0.10.0, v0.10.1, and v0.10.3 annotated objects to their
+unchanged peeled commits; no tag was created, moved, or published in this task.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release

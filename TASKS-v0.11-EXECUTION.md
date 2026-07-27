@@ -656,7 +656,7 @@ pins match · golden 11/11.
 - [x] **GATE-CLOSED** — `Reach::Network` with no cache errors; the defect-encoding test inverted with offline coverage preserved; type-level alternative recorded
 - [x] **BILLING-ATOMIC** — failed batches leave live state and disk untouched; successful batches save once; four controls fail-before/pass-after
 - [x] **STORE-IDENTITY** — both maintenance writes rematerialize in-transaction; one shared `max_distance`; four controls fail-before/pass-after
-- [ ] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
+- [x] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
 - [ ] **R-CLOSE** — version choice recorded with reasoning; `ARCHITECTURE.md` matches enforced reality; A4 still open; disposition recorded with its trigger
 
 ---
