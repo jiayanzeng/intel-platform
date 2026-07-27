@@ -236,3 +236,41 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: **0**; the tag, release commit, 14 v0.11
   receipt/bundle files, all 54 manifest pins, and both protected databases are
   unchanged.
+
+### 2026-07-27 · INFRA-POLICY — credential boundary replaces false host ban
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 03abc066458c06249ef28fb0d3d02dacce89895c
+- result: PASS with operator-selected **Option A**. RFC 1918 addresses and
+  loopback-forward ports remain documentable because they grant no access
+  without the operator's LAN or local route; no specific threat model was
+  identified that makes them secret. The enforceable boundary is credential
+  material.
+- three-location acceptance: PASS. The active runbook's standing prohibition,
+  `AGENTS.md`, and `STATE.md` decision-log §6g record the choice and reasoning.
+  All three name the v0.11 host/port clause as false when written and lacking
+  an executable guard for its entire lifetime.
+- historical finding acceptance: PASS. The decision record cites E0's 11-path
+  tracked scan, including `.env.example`, `README.md`, shell tests, and
+  append-only history; ten paths predated the v0.12 runbook. Option B was
+  rejected because no threat model justified it and historical records could
+  never be cleaned completely.
+- R4 acceptance: PASS. The registered rule scans every Git-tracked text file
+  for tracked `.env` files, provider-key shapes, private-key headers, concrete
+  long bearer values, non-placeholder secret assignments, and raw
+  secret-bearing fields. Empty values, explicit placeholders, short demo
+  fixtures, binary files, and non-secret network coordinates are scoped out in
+  writing. The clean registry reports **5/5** passing rules.
+- failure-control acceptance: PASS. A detached scratch worktree with a planted
+  fake `sk-proj-…` key at `README.md:1` exited **1** with
+  `invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value`. The
+  scratch worktree was removed and the clean pass repeated.
+- matrix acceptance: PASS. `./run ci-local` passed **20/20** with **121**
+  workspace Rust tests, **21** net tests, **200/200** dirty-worktree shell
+  tests, warning-denied builds, clippy/fmt, locked Rust 1.78 lanes, protected
+  artifacts **2/2**, and all **54/54** pins.
+- golden-E2E delta: **0**; matrix and standalone golden each passed
+  **11/11** exact anchors.
+- protected artifact delta: **0**; no protected database, evidence pin, release
+  tag, or remote ref changed.
