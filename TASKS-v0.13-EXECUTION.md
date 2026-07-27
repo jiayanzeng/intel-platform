@@ -601,28 +601,72 @@ executing jobs recorded · net test-count delta recorded · golden **11/11**.
 
 ---
 
+## Step 11 · IDENTITY-INSTALL — Make crawler identity installation race-free 🤖
+
+**Objective.** Make crawler-identity installation race-free by construction
+and stop unrelated tests from depending on process startup identity.
+
+**Gate.** `crates/ingest/src/net.rs`, `apps/cored/src/main.rs`, and their
+tests. The mandatory `STATE.md` and checklist updates and the separate
+append-only `PROGRESS-v0.13.md` receipt remain governed by `AGENTS.md §5`.
+No schema, public `/v1/*` body, or UA-CONTACT refusal-semantics change is in
+scope. A net-enabled production `cored` must still refuse startup without a
+real contact.
+
+**Steps.**
+
+1. Confirm or refute D1–D3 against the entering tree before implementation and
+   record every disposition.
+2. Replace the `OnceLock` check-then-set window with one atomic initialization,
+   compare the installed bytes with the request, and remove the unreachable
+   lost-race error branch.
+3. Move identity and robots-cache construction to `main()` startup. Have
+   `AppState` receive the already-decided `Option<Arc<RobotsCache>>`, so tests
+   unrelated to crawling do not install process identity.
+4. Make the cycle-added contact test deliberately differ from CI's contact and
+   add concurrency controls: many identical installers all succeed and observe
+   one identity; a differing installer deterministically returns the existing
+   different-bytes error.
+5. Re-measure missing, empty, placeholder, and different-bytes refusals, then
+   run the cored net suite repeatedly with test-thread counts including 1 and
+   a value above the host core count.
+6. Run the complete local definition of done and standalone golden.
+
+**Acceptance criteria.** Lost-race branch unreachable and removed · D2
+disposition recorded with reasoning · unrelated cored tests do not install a
+crawler identity · concurrency control green · differing-bytes control
+deterministically returns the correct error · cored net suite green across
+varied `--test-threads` · UA-CONTACT refusal semantics unchanged and
+re-measured · ci-local **20/20** · golden **11/11**.
+
+**Done when** identity installation cannot lose a race and a test unrelated to
+crawling does not depend on crawler configuration.
+
+---
+
 ## Step 10 · RE-MEASURE — Produce authenticated v0.13.0 hosted evidence 🤖🧑
 
 **Objective.** Produce release-grade hosted evidence for the v0.13.0 candidate
 without publishing it.
 
 **Gate.** The operator authorizes one narrow relaxation of the standing
-read-only remote constraint: push exactly one non-`main` candidate branch.
-Do not advance `origin/main`, create or push any tag, or publish. Stop if any
-step would require one of those actions. The evidence receipt/bundle set,
-forward protected-file pins, release-grade audit report, `STATE.md`,
-`PROGRESS-v0.13.md`, pending closing record, and successful-run citations in
-`CHANGELOG.md` are in scope because the acceptance criteria require them.
-No source change is in scope; a hosted failure is a finding, not permission to
-edit source.
+read-only remote constraint: reuse and, if required, force-update only
+`candidate/v0.13.0` to the superseding candidate. Do not advance `origin/main`,
+create or push any tag, or publish. Stop if any step would require one of those
+actions. The evidence receipt/bundle set, forward protected-file pins,
+release-grade audit report, `STATE.md`, `PROGRESS-v0.13.md`, pending closing
+record, and successful-run citations in `CHANGELOG.md` are in scope because
+the acceptance criteria require them. No source change is in scope; a hosted
+failure is a finding, not permission to edit source.
 
 **Steps.**
 
 1. Push the exact candidate tree to a non-`main` branch and record the branch
    and commit. Confirm the remote branch resolves to a commit whose `ci.yml`
    contains the cored net-test invocation.
-2. Dispatch that branch with `publish_evidence: true` and
-   `audit_sha=b18ece34424e03c531bc0e90f1a633262f252d12`.
+2. Dispatch that branch with `publish_evidence: true` and `audit_sha` set to
+   the new candidate commit; `b18ece34424e03c531bc0e90f1a633262f252d12` is
+   superseded.
 3. Capture the run and all seven hosted identities. Read the net log and record
    the cored invocation plus its **24-test** result; do not infer execution
    from the job conclusion.
@@ -636,9 +680,9 @@ edit source.
 7. Confirm `origin/main` and all tags remain unchanged, then run the local
    definition of done and standalone golden.
 
-**Acceptance criteria.** Hosted run id recorded and pinned to candidate
-`b18ece34…` · net log proves the cored invocation executed **24** tests ·
-hosted invariant self-test reconstructs **11** controls · signed
+**Acceptance criteria.** Hosted run id recorded and pinned to the superseding
+candidate · net log proves the cored invocation executed its full measured
+count · hosted invariant self-test reconstructs **11** controls · signed
 receipt/bundle set committed and re-derived · new pin count recorded in three
 places · hosted identity set remains seven · `origin/main` unchanged and no
 tag created or pushed · golden **11/11**.
@@ -653,9 +697,9 @@ claim rests on workflow inspection.
 **Objective.** Decide the release, account for every diff path, and close the
 cycle with a record that is measured rather than assumed.
 
-**Gate.** Steps 1–7, NET-TEST-EXEC, and RE-MEASURE complete and boxed.
-Worktree clean. **🧑 One operator decision: the version disposition and whether
-to publish.**
+**Gate.** Steps 1–7, NET-TEST-EXEC, IDENTITY-INSTALL, and RE-MEASURE complete
+and boxed. Worktree clean. **🧑 One operator decision: the version disposition
+and whether to publish.**
 
 **Steps.**
 
@@ -719,8 +763,12 @@ record of v0.12's is true.
   existing hosted net job; planted assertion inversion makes that command red;
   ci-local remains 20 jobs; hosted identities remain seven; full net-gated
   test inventory and count delta recorded; golden 11/11
+- [x] **IDENTITY-INSTALL** — crawler identity initialization is atomic;
+  unrelated tests do not install it; concurrency and different-bytes controls
+  pass; refusal semantics unchanged; varied-thread net suites green; ci-local
+  20/20; golden 11/11
 - [ ] **RE-MEASURE** — hosted run pinned to the v0.13.0 candidate; net log
-  proves 24 cored tests; invariant log proves 11 controls; seven signed
+  proves the full cored count; invariant log proves 11 controls; seven signed
   identities committed and re-derived; new pin count recorded; `origin/main`
   and tags unchanged; golden 11/11
 - [ ] **R-CLOSE** — version choice recorded with reasoning; every diff path
@@ -781,6 +829,8 @@ Step 9 — operator-directed NET-TEST-EXEC follow-up added; gate widened before 
 
 Step 10 — operator-directed RE-MEASURE follow-up added to discharge the declared hosted-evidence deferral — 2026-07-27
 
+Step 11 — operator-directed IDENTITY-INSTALL follow-up added after the first hosted cored net execution exposed a process-global installation race — 2026-07-27
+
 Step 5 — CHANGELOG gate widened to contain its acceptance record — 2026-07-27
 
 Step 5 — live verification caller added to the gate — 2026-07-27
@@ -793,6 +843,15 @@ written to satisfy that requirement. Every earlier release pinned a hosted run
 against an exact candidate. RE-MEASURE is added before R-CLOSE to discharge the
 declared requirement; the omission was a runbook defect, not an execution
 defect.
+
+### 2026-07-27 · RE-MEASURE retry candidate
+
+Hosted run 30274895522 failed the newly executed cored net suite and therefore
+did not produce an admissible release set. IDENTITY-INSTALL now precedes the
+retry. Step 10 is amended to reuse only `candidate/v0.13.0`, to allow its
+operator-authorized force-update, and to bind dispatch and acceptance to the
+superseding candidate rather than the obsolete `b18ece34…` candidate.
+`origin/main`, tags, and publication remain outside the authorization.
 
 ### 2026-07-27 · R-CLOSE publication split
 

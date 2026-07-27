@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized local release candidate, but RE-MEASURE is blocked by hosted run 30274895522 failing its net job. Publication remains a pending operator decision; RE-MEASURE and R-CLOSE are deliberately unchecked and the cycle remains open.** Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, remains the latest published seven-job evidence; failed v0.13 run **30274895522**, attempt **1**, is not admitted or promoted. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **46** tests in the net job (**22** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. The last candidate golden measurement is **11/11**, protected database evidence is exact **2/2**, and the manifest remains at **69/69** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
+**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized local release candidate; IDENTITY-INSTALL has closed the race exposed by failed hosted run 30274895522, and the release-grade RE-MEASURE retry is pending. Publication remains a pending operator decision; RE-MEASURE and R-CLOSE are deliberately unchecked and the cycle remains open.** Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, remains the latest published seven-job evidence; failed v0.13 run **30274895522**, attempt **1**, is measured failure evidence but is not admitted or promoted. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. The last candidate golden measurement is **11/11**, protected database evidence is exact **2/2**, and the manifest remains at **69/69** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -405,6 +405,86 @@ implementation to update its forward manifest entry to SHA-256
 `30475367926eff8b990b70dac6d17339c4e6ec0e685aa4b01f8d01a2c328b304`
 at **41104** bytes; the immutable v0.12.0 `run` hash and all other historical
 pins are preserved in their release.
+
+**v0.13 IDENTITY-INSTALL is complete locally (measured 2026-07-27).** D1,
+D2, and D3 were each confirmed against the entering tree rather than accepted
+from the directive. D1 was the exact `OnceLock` check-then-set window:
+`install_crawler_user_agent` read `USER_AGENT.get()` and later called
+`USER_AGENT.set()`, so two first installers could both observe `None`; the
+loser alone could emit `could not install crawler User-Agent`. D2 was also
+live: test-only `AppState::new` delegated to `new_with_startup`, which
+unconditionally constructed the robots cache under `net`, so the unrelated
+attestation test acquired process-startup identity. D3 was confirmed by three
+independent literals with identical bytes: the contact test, local net job,
+and hosted net job all used `crawler-tests@unit.test`.
+
+D1 is closed by construction. The installer now uses one
+`OnceLock::get_or_init` operation and compares the bytes actually installed
+with the requested bytes. Identical concurrent requests succeed; a mismatch
+returns `crawler User-Agent is already configured with different bytes`.
+The lost-race branch and its message were deleted; a mechanical search finds
+zero `USER_AGENT.set()`, `USER_AGENT.get()`, or `could not install crawler
+User-Agent` occurrences in the two gated source files. A 64-thread barrier
+control passed with every installer observing the same identity, after which
+a differing request returned exactly
+`http: crawler User-Agent is already configured with different bytes`.
+
+For D2, the selected disposition is option (a): identity and robots-cache
+construction moved to `main()` startup, and `AppState::new_with_startup`
+receives its already-decided limiter and optional cache. This keeps the
+production refusal at the place where the process actually starts and avoids
+widening the production/test-constructor seam. Test-only `AppState::new`
+passes no cache, and the attestation test asserts that absence before testing
+license semantics. The focused attestation test passed without installing
+crawler configuration. For D3, the contact test deliberately installs
+`identity-test@unit.test`, asserts that it differs from the CI value
+`crawler-tests@unit.test`, and then proves the CI value is refused with the
+exact different-bytes error.
+
+UA-CONTACT refusal semantics did not move. Three real net-enabled binary runs
+each exited **101** before listening: missing and empty contacts both emitted
+`cored refused to start: INTEL_CRAWLER_CONTACT is required for a net-enabled
+harvester`; `ops@example.com` emitted `cored refused to start:
+INTEL_CRAWLER_CONTACT must name a real operator contact, not placeholder
+"ops@example.com"`. The focused invalid-contact unit control and deliberately
+different valid-contact control also passed.
+
+This host reports **12** logical processors. The complete cored net suite
+passed **24/24** with `--test-threads=1`, `4`, and `64` (above the processor
+count), passed a repeated `64`-thread run, and passed the exact default CI
+invocation. The concurrency control increases the ingest net suite from
+**22** to **23**; the cored count remains **24**, and workspace default-feature
+tests remain **124**. Full permitted `./run ci-local` passed **20/20** with
+**124** workspace tests, the **47-test** net job (**23** ingest + **24**
+cored), Python 3.11 **216/216**, invariant scan **7/7** with all **11**
+controls, warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78,
+all **71/71** pins, protected databases **2/2**, and golden **11/11**.
+Python 3.12 independently passed **216/216** and verified **21/21** exact
+packages. Standalone golden repeated **11/11** with delta **0**.
+
+The first full ingest-net run without a loopback proxy exclusion failed the
+pre-existing `cross_origin_redirect_reads_and_honors_new_robots_before_fetching`
+wire control with `connection closed before message completed`. The exact
+test failed identically in an exported pre-change
+`f4e8195f2a15735efe8c387b1eb836faeb585752` tree. With both `NO_PROXY` and
+`no_proxy` set to `127.0.0.1,localhost`, that isolated control and the full
+**23/23** ingest suite passed; the same explicit local exemption was used for
+the complete CI measurement. This is recorded as an environment
+qualification, not attributed to IDENTITY-INSTALL.
+
+Hosted run **30274895522** therefore adds material evidence to the already
+checked NET-TEST-EXEC task: its log proved that all **24** cored tests really
+executed, and the first benefit of that execution was exposing D1. The
+observed old message distinguishes the lost-race branch from all refusal
+branches: missing/empty yields `is required`; placeholder yields `must name a
+real operator contact`; already-installed different bytes yields `already
+configured with different bytes`; the observed `could not install crawler
+User-Agent` was reachable only after the check-then-set race.
+
+The general lesson is also explicit: a green parallel test run is not evidence
+of race-freedom, and a process-global initialized from a test binary is
+order-dependent by default. The earlier local **24/24** was a measured pass,
+but it did not prove the absence of a scheduler interleaving.
 
 **v0.13 R-CLOSE has a verified local release-candidate disposition and a
 pending publication disposition (measured 2026-07-27).** The operator

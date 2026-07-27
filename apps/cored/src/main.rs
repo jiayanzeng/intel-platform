@@ -212,7 +212,15 @@ fn build_robots_cache(_limiter: Arc<HostLimiters>) -> Option<Arc<RobotsCache>> {
 impl AppState {
     #[cfg(test)]
     fn new(store: SqliteStore, gaz: Gazetteer, cfg: CoreConfig, token: Option<String>) -> Self {
-        Self::new_with_startup(store, gaz, cfg, token, StoreOpenTimings::default())
+        Self::new_with_startup(
+            store,
+            gaz,
+            cfg,
+            token,
+            StoreOpenTimings::default(),
+            Arc::new(HostLimiters::per_second(DEFAULT_RPS)),
+            None,
+        )
     }
 
     fn new_with_startup(
@@ -221,8 +229,9 @@ impl AppState {
         cfg: CoreConfig,
         token: Option<String>,
         store_open_timings: StoreOpenTimings,
+        limiter: Arc<HostLimiters>,
+        robots_cache: Option<Arc<RobotsCache>>,
     ) -> Self {
-        let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
         Self {
             store,
             gaz,
@@ -233,7 +242,7 @@ impl AppState {
             view_computes: AtomicUsize::new(0),
             store_open_timings,
             process_main_to_listener_ready_us: AtomicU64::new(0),
-            robots_cache: build_robots_cache(limiter.clone()),
+            robots_cache,
             limiter,
         }
     }
@@ -1320,6 +1329,8 @@ async fn main() {
     let bind_addresses =
         loopback_only(&bind).unwrap_or_else(|error| panic!("cored refused to start: {error}"));
     let token = std::env::var("CORE_TOKEN").ok();
+    let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
+    let robots_cache = build_robots_cache(limiter.clone());
 
     let cfg: CoreConfig =
         serde_json::from_str(&std::fs::read_to_string(&config_path).expect("read core config"))
@@ -1337,6 +1348,8 @@ async fn main() {
         cfg,
         token,
         store_open_timings,
+        limiter,
+        robots_cache,
     ));
 
     let app = Router::new()
@@ -1446,7 +1459,8 @@ mod tests {
     #[cfg(feature = "net")]
     #[test]
     fn valid_contact_builds_one_versioned_identity_for_cache_and_clients() {
-        let contact = "crawler-tests@unit.test";
+        let contact = "identity-test@unit.test";
+        assert_ne!(contact, "crawler-tests@unit.test");
         let expected = format!(
             "intel-platform/{} (research prototype; contact: {contact})",
             env!("CARGO_PKG_VERSION")
@@ -1459,6 +1473,16 @@ mod tests {
         assert_eq!(
             intel_ingest::net::crawler_user_agent(env!("CARGO_PKG_VERSION"), contact),
             expected
+        );
+
+        let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
+        let error = match build_robots_cache_for_contact(limiter, Some("crawler-tests@unit.test")) {
+            Ok(_) => panic!("different process identity bytes must be refused"),
+            Err(error) => error,
+        };
+        assert_eq!(
+            error,
+            "could not configure crawler identity: http: crawler User-Agent is already configured with different bytes"
         );
     }
 
@@ -1573,6 +1597,10 @@ mod tests {
     #[tokio::test]
     async fn attest_endpoint_refuses_an_index_only_body() {
         let st = test_state();
+        assert!(
+            st.robots_cache.is_none(),
+            "an attestation test must not construct the crawler startup cache"
+        );
         do_ingest(&st, &["technology"], Some(&["osdaily"])).await;
         let document = st
             .store

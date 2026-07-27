@@ -37,21 +37,13 @@ pub fn install_crawler_user_agent(
     contact: &str,
 ) -> Result<&'static str, IngestError> {
     let user_agent = crawler_user_agent(version, contact);
-    if let Some(installed) = USER_AGENT.get() {
-        if installed == &user_agent {
-            return Ok(installed.as_str());
-        }
-        return Err(IngestError::Http(
-            "crawler User-Agent is already configured with different bytes".to_string(),
-        ));
+    let installed = USER_AGENT.get_or_init(|| user_agent.clone());
+    if installed == &user_agent {
+        return Ok(installed.as_str());
     }
-    USER_AGENT
-        .set(user_agent)
-        .map_err(|_| IngestError::Http("could not install crawler User-Agent".to_string()))?;
-    Ok(USER_AGENT
-        .get()
-        .expect("crawler User-Agent was set")
-        .as_str())
+    Err(IngestError::Http(
+        "crawler User-Agent is already configured with different bytes".to_string(),
+    ))
 }
 
 fn configured_user_agent() -> Result<&'static str, IngestError> {
@@ -466,6 +458,37 @@ mod tests {
         server.join().expect("wire server exits");
         assert_eq!(page_user_agent, expected);
         assert_eq!(robots_user_agent, expected);
+    }
+
+    #[test]
+    fn concurrent_identity_installation_is_atomic_and_mismatch_is_deterministic() {
+        const INSTALLERS: usize = 64;
+        let barrier = Arc::new(std::sync::Barrier::new(INSTALLERS));
+        let installers = (0..INSTALLERS)
+            .map(|_| {
+                let barrier = barrier.clone();
+                thread::spawn(move || {
+                    barrier.wait();
+                    install_crawler_user_agent("0.12.0", "wire-contact@unit.test")
+                })
+            })
+            .collect::<Vec<_>>();
+
+        let expected = crawler_user_agent("0.12.0", "wire-contact@unit.test");
+        for installer in installers {
+            let installed = installer
+                .join()
+                .expect("identity installer thread")
+                .expect("identical identity installation");
+            assert_eq!(installed, expected);
+        }
+
+        let error = install_crawler_user_agent("0.12.0", "different-contact@unit.test")
+            .expect_err("different identity bytes must be refused");
+        assert_eq!(
+            error.to_string(),
+            "http: crawler User-Agent is already configured with different bytes"
+        );
     }
 
     #[tokio::test]
