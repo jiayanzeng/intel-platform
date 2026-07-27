@@ -654,7 +654,7 @@ pins match · golden 11/11.
 - [x] **ROBOTS-NORMALIZE** — unreserved octets decoded, reserved preserved; metacharacters survive; idempotent; controls fail-before/pass-after
 - [x] **DELAY-CLOCK** — interval updated in place; `last` and `acquires` preserved; paused-clock elapsed-behavior test fails before and passes after
 - [x] **GATE-CLOSED** — `Reach::Network` with no cache errors; the defect-encoding test inverted with offline coverage preserved; type-level alternative recorded
-- [ ] **BILLING-ATOMIC** — failed batches leave live state and disk untouched; successful batches save once; four controls fail-before/pass-after
+- [x] **BILLING-ATOMIC** — failed batches leave live state and disk untouched; successful batches save once; four controls fail-before/pass-after
 - [ ] **STORE-IDENTITY** — both maintenance writes rematerialize in-transaction; one shared `max_distance`; four controls fail-before/pass-after
 - [ ] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
 - [ ] **R-CLOSE** — version choice recorded with reasoning; `ARCHITECTURE.md` matches enforced reality; A4 still open; disposition recorded with its trigger

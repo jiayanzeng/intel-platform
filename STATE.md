@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 GATE-CLOSED is complete; the ingest seam now refuses every network reach that has no publisher robots cache before a document request can occur.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **115** Rust workspace / **21** net tests; the shell suite is **188/188** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 BILLING-ATOMIC is complete; a rejected webhook batch now leaves both live entitlement state and its persistent backend exactly unchanged.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **115** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -250,6 +250,35 @@ opt-in, and redirect composition.
 **21** net tests, zero warning/lint/format failures, locked Rust 1.78
 checks/tests, **188/188** Python 3.11.4 shell tests, protected databases
 **2/2**, and evidence pins **39/39**. Standalone `./run golden` repeated
+**11/11** with every exact anchor unchanged. No dependency, lockfile, schema,
+protected byte, evidence pin, remote ref, or tag changed.
+
+**v0.11 BILLING-ATOMIC is complete (measured 2026-07-27).** The shared neutral
+event helper now constructs a detached in-memory `SubscriptionStore` from the
+live store's frozen subscription values, applies and validates the complete
+batch there, and publishes the resulting list to the process-lifetime store
+only after every event succeeds. The routes retain their existing order:
+publish the validated snapshot, call the selected backend's `save()` once,
+then return the unchanged response shape. Authentication and the accepted
+event vocabulary are unchanged.
+
+Four controls cover the boundary. A signed two-event batch whose second event
+is invalid returns HTTP 400 and leaves `acme-research` at its original science
+plus technology sectors in live state. The path-backed control also observes
+the JSON file unchanged after that 400, then performs an unrelated
+`quant-desk` update and save and proves the rejected acme mutation still does
+not land. A valid delete/create batch publishes every event and records exactly
+one save. An unhandled neutral event inside a valid batch still returns its
+`ignored` result while a sibling update commits, again with one save.
+`apply_event`'s docstring now names detached batch staging as well as
+caller-owned persistence.
+
+`./run ci-local` passed all **19/19** units with **115** Rust workspace tests,
+**21** net tests, zero warning/lint/format failures, locked Rust 1.78
+checks/tests, and **191/191** Python 3.11.4 shell tests. The independent Python
+3.12.13 lane also passed **191/191**; both emitted only the existing
+third-party Starlette/httpx deprecation warning. Protected databases remained
+**2/2** and evidence pins **39/39**. Standalone `./run golden` repeated
 **11/11** with every exact anchor unchanged. No dependency, lockfile, schema,
 protected byte, evidence pin, remote ref, or tag changed.
 

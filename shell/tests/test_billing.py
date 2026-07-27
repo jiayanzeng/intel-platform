@@ -18,6 +18,15 @@ from intel_shell.core_client import CoreClient
 SECRET = "whsec_test"
 
 
+class CountingStore(SubscriptionStore):
+    def __init__(self, subscriptions):
+        super().__init__(subscriptions)
+        self.save_calls = 0
+
+    def save(self):
+        self.save_calls += 1
+
+
 def _store():
     return SubscriptionStore(
         [
@@ -146,8 +155,8 @@ def test_webhook_applies_signed_event_and_affects_auth():
     assert s.json()["sectors"] == ["science"]
 
 
-def test_webhook_batch_events():
-    store = _store()
+def test_webhook_valid_batch_applies_every_event_and_saves_once():
+    store = CountingStore(_store().all())
     c = _app(store)
     raw, headers = _signed({"events": [
         {"type": "subscription.deleted", "data": {"client": "quant-desk"}},
@@ -159,6 +168,73 @@ def test_webhook_batch_events():
     assert r.json()["received"] == 2
     assert store.get("quant-desk") is None
     assert store.get("new-co").sectors == ("finance",)
+    assert store.save_calls == 1
+
+
+def test_webhook_invalid_second_event_leaves_live_state_unchanged():
+    store = _store()
+    c = _app(store)
+    before = store.all()
+    raw, headers = _signed({"events": [
+        {"type": "subscription.updated",
+         "data": {"client": "acme-research", "sectors": ["science"]}},
+        {"type": "subscription.updated", "data": {"sectors": ["finance"]}},
+    ]})
+    r = c.post("/v1/billing/webhook", content=raw, headers=headers)
+    assert r.status_code == 400
+    assert store.all() == before
+    assert store.get("acme-research").sectors == ("science", "technology")
+
+
+def test_save_after_failed_batch_cannot_persist_its_first_event(tmp_path):
+    path = tmp_path / "subs.json"
+    path.write_text(json.dumps({"subscriptions": [
+        {"client": "acme-research", "sectors": ["science", "technology"],
+         "key_hash": "acme-h"},
+        {"client": "quant-desk", "sectors": ["finance"], "key_hash": "quant-h"},
+    ]}))
+    from intel_shell.config import load_subscription_store
+    store = load_subscription_store(str(path))
+    c = _app(store)
+    raw, headers = _signed({"events": [
+        {"type": "subscription.updated",
+         "data": {"client": "acme-research", "sectors": ["science"]}},
+        {"type": "subscription.updated", "data": {}},
+    ]})
+    assert c.post("/v1/billing/webhook", content=raw, headers=headers).status_code == 400
+    rejected_disk = json.loads(path.read_text())
+    rejected_acme = next(
+        s for s in rejected_disk["subscriptions"] if s["client"] == "acme-research"
+    )
+    assert rejected_acme["sectors"] == ["science", "technology"]
+
+    # An unrelated later commit must not smuggle the rejected first mutation
+    # onto disk.
+    store.upsert("quant-desk", ("science",))
+    store.save()
+    on_disk = json.loads(path.read_text())
+    by_client = {s["client"]: s for s in on_disk["subscriptions"]}
+    assert by_client["acme-research"]["sectors"] == ["science", "technology"]
+    assert by_client["quant-desk"]["sectors"] == ["science"]
+
+
+def test_webhook_ignored_event_inside_valid_batch_is_reported_and_committed():
+    store = CountingStore(_store().all())
+    c = _app(store)
+    raw, headers = _signed({"events": [
+        {"type": "invoice.paid", "data": {"client": "acme-research"}},
+        {"type": "subscription.updated",
+         "data": {"client": "acme-research", "sectors": ["science"]}},
+    ]})
+    r = c.post("/v1/billing/webhook", content=raw, headers=headers)
+    assert r.status_code == 200
+    assert r.json()["results"][0] == {
+        "action": "ignored",
+        "reason": "unhandled event type 'invoice.paid'",
+    }
+    assert r.json()["results"][1]["action"] == "updated"
+    assert store.get("acme-research").sectors == ("science",)
+    assert store.save_calls == 1
 
 
 def test_webhook_persists_to_disk(tmp_path):

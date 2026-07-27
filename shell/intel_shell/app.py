@@ -268,7 +268,10 @@ def create_app(
         return {"received": 1, "results": results}
 
     def _apply_events(events: list, known_sectors: list[str] | None) -> list[dict]:
-        """Apply already-authenticated events to the store (in memory)."""
+        """Validate a batch on detached state, then publish it in one mutation."""
+        # Subscription records are frozen value objects, so this detached list
+        # cannot mutate a record still visible through the live store.
+        staged = SubscriptionStore(store.all())
         results = []
         try:
             for ev in events:
@@ -276,9 +279,13 @@ def create_app(
                     raise HTTPException(
                         status_code=400, detail="each event must be an object"
                     )
-                results.append(billing.apply_event(store, ev, known_sectors))
+                results.append(billing.apply_event(staged, ev, known_sectors))
         except billing.BillingError as e:
             raise HTTPException(status_code=400, detail=str(e))
+        # Publish only after the whole batch validates. The route saves this
+        # live snapshot immediately after return, preserving publish/save/result
+        # ordering for both JSON and SQLite backends.
+        store._subs = staged.all()
         return results
 
     return app

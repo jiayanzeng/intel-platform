@@ -65,11 +65,12 @@ def apply_event(
 ) -> dict:
     """Apply one billing event to `store` in memory; return a result summary.
 
-    Persistence is the caller's job (so a batch can be saved once). `event`
-    must be a dict with a `type` and a `data` object. When `known_sectors` is
-    provided, sectors outside that set are dropped with a warning note rather
-    than granted — defense in depth against a compromised billing channel,
-    on top of the core's own filtering.
+    Persistence is the caller's job (so a batch can be saved once), and batch
+    callers stage these mutations on a detached store before publishing the
+    fully validated state. `event` must be a dict with a `type` and a `data`
+    object. When `known_sectors` is provided, sectors outside that set are
+    dropped with a warning note rather than granted — defense in depth against
+    a compromised billing channel, on top of the core's own filtering.
     """
     etype = event.get("type")
     if not isinstance(etype, str):
