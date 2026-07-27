@@ -2,6 +2,25 @@
 
 **As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.12 is closed and published.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
+**v0.13 cycle activation is complete; E0 has not yet run (measured
+2026-07-27).** The mandatory opener found only the operator-supplied untracked
+`TASKS-v0.13-EXECUTION.md`. Entering HEAD was
+`466ebb3fc9736923110803e087acc798e417d084`, described as
+`v0.12.0-1-g466ebb3`; local `main` and `origin/main` were aligned with zero
+ahead / zero behind. Annotated `v0.12.0` remained tag object
+`94d8215bc2151fecba1280dc793d3f5953cd8055`, dereferencing exactly to release
+commit `e5faf0c161a4256f33976664685653d8bd805d5d`.
+
+Implementation commit `5223d783b43c250102418163ef124f4e662b727b`
+admitted only the supplied runbook, the `AGENTS.md` v0.13 declaration, and the
+new append-only progress-log skeleton. After that commit, `./run cycle-check`
+passed with v0.13 open and ten closed execution runbooks;
+`./run checklist-audit` resolved the entering **99/99** checked tasks, reported
+the one existing v0.11 retraction separately, and found zero exemptions;
+`git diff --check` passed. No test, golden, artifact, hosted-runner,
+publication, or release claim is made by this preparatory pair. E0 begins from
+the clean post-audit tree.
+
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`
 (`7485ff91dc0e428b8c99f9b62fe5affee9eb76461e380fba1309c73da12b9aa9`) and
