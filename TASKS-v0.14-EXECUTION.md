@@ -509,7 +509,7 @@ match · golden 11/11.
   stated limitation in three places; no source changed
 - [x] **R8-IDENTITY-BEFORE-BIND** — registered with three site-specific
   controls, all demonstrated FAIL; cited architecture sentence exists
-- [ ] **R9-TEST-SEAM** — registered with a site-specific control, demonstrated
+- [x] **R9-TEST-SEAM** — registered with a site-specific control, demonstrated
   FAIL; release-build cleanliness recorded as pre-existing
 - [ ] **DIAGNOSTIC-KNOB** — disposition decided and recorded before
   implementation; delay bound asserted; variables documented; version trigger

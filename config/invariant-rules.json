@@ -278,6 +278,35 @@
         }
       ],
       "fail_before_note": "invariant-scan: R8 FAIL: crawler identity construction did not precede the listener bind"
+    },
+    {
+      "id": "R9",
+      "claim": "No workspace manifest enables test-support outside a dev-dependency edge, so public items gated on test-support are not reachable from a non-dev dependency edge.",
+      "source": "TASKS-v0.14-EXECUTION.md:342-344",
+      "scope": "All root-enumerated workspace Cargo.toml files. A test-support feature declaration is allowed, and dependency activation is allowed only in [dev-dependencies] or target-specific dev-dependencies.",
+      "fail_before": [
+        {
+          "file": "apps/cored/Cargo.toml",
+          "find": "intel-store = { path = \"../../crates/store\" }\nintel-retrieve = { path = \"../../crates/retrieve\" }\naxum = { version = \"0.7\", default-features = false, features = [\"http1\", \"json\", \"query\", \"tokio\"] }\ntokio = { version = \"1\", features = [\"rt-multi-thread\", \"macros\", \"net\"] }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\n\n[features]\nnet = [\"intel-ingest/net\"]\n\n[dev-dependencies]\nintel-store = { path = \"../../crates/store\", features = [\"test-support\"] }\n",
+          "replace_with": [
+            "intel-store = { path = \"../../crates/store\", features = [\"test-support\"] }\n",
+            "intel-retrieve = { path = \"../../crates/retrieve\" }\n",
+            "axum = { version = \"0.7\", default-features = false, features = [\"http1\", \"json\", \"query\", \"tokio\"] }\n",
+            "tokio = { version = \"1\", features = [\"rt-multi-thread\", \"macros\", \"net\"] }\n",
+            "serde = { version = \"1\", features = [\"derive\"] }\n",
+            "serde_json = \"1\"\n",
+            "\n",
+            "[features]\n",
+            "net = [\"intel-ingest/net\"]\n",
+            "\n",
+            "[dev-dependencies]\n"
+          ],
+          "expected_fail": "test-support is enabled outside [dev-dependencies]; found section [dependencies]",
+          "expected_file": "apps/cored/Cargo.toml",
+          "expected_line": 15
+        }
+      ],
+      "fail_before_note": "invariant-scan: R9 FAIL: apps/cored/Cargo.toml: test-support escaped dev-dependencies"
     }
   ]
 }

@@ -23,6 +23,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -42,6 +43,11 @@ TEST_MODULE = re.compile(r"(?m)^#\[cfg\(test\)\]\s*\nmod\s+tests\s*\{")
 TCP_BIND = re.compile(r"\b(?:tokio::net::)?TcpListener::bind\s*\(")
 CRAWLER_IDENTITY_CONSTRUCTION = re.compile(r"\bbuild_robots_cache\s*\(")
 ROBOTS_CACHE_BINDING = re.compile(r"(?m)^[ \t]*let[ \t]+robots_cache[ \t]*=")
+TOML_TABLE = re.compile(r"^[ \t]*\[([^\]]+)\][ \t]*(?:#.*)?$")
+TEST_SUPPORT = re.compile(r"(?<![A-Za-z0-9_-])test-support(?![A-Za-z0-9_-])")
+TEST_SUPPORT_FEATURE_DEFINITION = re.compile(
+    r"^[ \t]*[\"']?test-support[\"']?[ \t]*="
+)
 RUST_FUNCTION = re.compile(
     r"(?m)^[ \t]*(?:pub(?:\([^)]*\))?[ \t]+)?"
     r"(?:async[ \t]+)?fn[ \t]+(?P<name>[A-Za-z_][A-Za-z0-9_]*)[ \t]*(?:<|\()"
@@ -641,6 +647,57 @@ def r8_findings(root: Path) -> list[str]:
     return findings
 
 
+def _workspace_manifests(root: Path) -> list[Path]:
+    workspace_manifest = root / "Cargo.toml"
+    try:
+        workspace = tomllib.loads(workspace_manifest.read_text())
+        members = workspace["workspace"]["members"]
+    except (OSError, tomllib.TOMLDecodeError, KeyError, TypeError) as error:
+        raise ConfigError(f"Cargo.toml: cannot enumerate workspace: {error}") from error
+    if not isinstance(members, list) or any(
+        not isinstance(member, str) for member in members
+    ):
+        raise ConfigError("Cargo.toml: workspace.members must be a string array")
+    return [workspace_manifest, *(root / member / "Cargo.toml" for member in members)]
+
+
+def r9_findings(root: Path) -> list[str]:
+    findings: list[str] = []
+    for path in _workspace_manifests(root):
+        relative = path.relative_to(root)
+        try:
+            text = path.read_text()
+            tomllib.loads(text)
+        except (OSError, tomllib.TOMLDecodeError) as error:
+            raise ConfigError(f"{relative}: cannot parse workspace manifest: {error}") from error
+
+        section = ""
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            table = TOML_TABLE.match(line)
+            if table is not None:
+                section = table.group(1).strip()
+                continue
+            if line.lstrip().startswith("#") or TEST_SUPPORT.search(line) is None:
+                continue
+
+            allowed_dev_edge = section == "dev-dependencies" or section.endswith(
+                ".dev-dependencies"
+            )
+            feature_definition = TEST_SUPPORT_FEATURE_DEFINITION.match(line)
+            allowed_feature_definition = (
+                section == "features"
+                and feature_definition is not None
+                and TEST_SUPPORT.search(line[feature_definition.end() :]) is None
+            )
+            if allowed_dev_edge or allowed_feature_definition:
+                continue
+            findings.append(
+                f"{relative}:{line_number}: test-support is enabled outside "
+                f"[dev-dependencies]; found section [{section or '<root>'}]"
+            )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -650,6 +707,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R6": r6_findings,
     "R7": r7_findings,
     "R8": r8_findings,
+    "R9": r9_findings,
 }
 
 
