@@ -339,3 +339,40 @@ Entries are append-only; corrections are new dated entries.
   `crates/` or `apps/`.
 - golden-E2E delta: **0**; the mandatory standalone post-task run remained
   **11/11** byte-identical.
+
+### 2026-07-27 · RETRACT-HC2 — false v0.12 invariant claims retracted
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: a2d41c9d822fdae4ef017dae44aefa65551e4a53
+- result: PASS. The retraction registry now records the false v0.12 R-CLOSE
+  HC2 claim and, separately, the defective THRESHOLD-ONE correction. The first
+  is corrected by BODY-BOUNDARY plus R7-BODY-SECTOR; the second is corrected
+  by THRESHOLD-SOURCE-SEAM plus THRESHOLD-BIND.
+- architecture acceptance: PASS. `/retrieve` and `/attest` request shapes now
+  name sectors; the body-boundary sentence and HC2 table row describe the
+  explicit core-SQL predicates, empty-set refusal, and private test-only
+  unscoped seam that the source and R7 enforce. A4 remains open because a
+  rewritten shell can bypass or falsify `/attest`; the editable-L1 residual
+  remains open until the scheduled server-side L2 wrapper lands.
+- historical-record acceptance: PASS. The
+  `PROGRESS-v0.12.md` task diff is exactly **31 additions / 0 deletions**.
+  Original task records and checked boxes were not edited.
+- checklist acceptance: PASS before this task's checkbox and receipt were
+  created. v0.12 remained **11/11** checked with its two retractions reported
+  separately; the repository reported **106** checked tasks and **three**
+  retractions across cycles, with zero exemptions.
+- immutability acceptance: PASS. Annotated v0.12.0 tag object
+  `94d8215bc2151fecba1280dc793d3f5953cd8055` still peels exactly to release
+  commit `e5faf0c161a4256f33976664685653d8bd805d5d`; schema validation and
+  `verify-artifacts` matched all **71/71** protected pins and both protected
+  databases **2/2**. No path under `evidence/` or
+  `config/protected-artifacts.json` changed.
+- CI acceptance: PASS. `./run ci-local` remained **20/20** with **124**
+  workspace Rust tests, **22** net tests, **216/216** Python 3.11 shell tests,
+  warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78, invariant
+  scan **7/7** with **11** executable controls, all **71/71** pins, protected
+  databases **2/2**, and golden **11/11**. Python 3.12 independently passed
+  **216/216** and verified **21/21** exact packages.
+- golden-E2E delta: **0**; the mandatory standalone post-task run remained
+  **11/11** byte-identical.
