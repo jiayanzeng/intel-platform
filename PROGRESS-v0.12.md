@@ -274,3 +274,46 @@ Entries are append-only; corrections are new dated entries.
   **11/11** exact anchors.
 - protected artifact delta: **0**; no protected database, evidence pin, release
   tag, or remote ref changed.
+
+### 2026-07-27 · OPS-AUTHORITY — remote authorization made executable
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 0ef43a56aa4a7d813932fbf3607bf3ba68e420fa
+- result: PASS with operator-selected **L1 now, L2 scheduled**. Under the
+  operator-approved runbook amendment, this task shares one atomic
+  implementation commit with OPS-ADMIT so the previously untracked controller
+  is never committed without its construction guard and executable pins.
+- L1 acceptance: PASS. `TRANSITIONS` is structured tuples, every remote payload
+  passes `build_remote_command` before SSH, and the allowlist permits only
+  lifecycle operations over the five named containers, bounded Docker
+  inventory, loopback `/health` and `/v1/models` probes on 8080–8082, and the
+  named exact read-only commands. Existing tests exercise every emitted
+  transition and all allowed categories. Planted `docker rm`, `docker run`,
+  `rm -rf`, and sixth-container commands each raise `ProfileError`.
+- policy-copy acceptance: PASS. `AGENTS.md` and
+  `intel-platform-OPERATIONS.md` carry byte-identical marker-delimited policy
+  blocks. Registered R6 passes on the real tree. Changing one word in only the
+  operations copy of a disposable Git-backed tree exited 1 with
+  `model-profile authorization block differs from AGENTS.md`; the scratch tree
+  was removed and the clean **6/6** registry pass repeated.
+- pin acceptance: PASS. Manifest schema 2 retains all **54/54** evidence pins
+  and adds two exact `authorization` pins. `run` is 40,980 bytes at
+  `7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d`;
+  `tools/model_profiles.py` is 21,394 bytes at
+  `b7b84261a6bc45706f93f338682108a31c3b88ad00ad4c91061a90f77ed74292`.
+  The validator's existing failure-capable test now proves a one-byte `run`
+  mutation is refused.
+- residual/schedule acceptance: PASS. Both mirrored copies state plainly that
+  L1 cannot survive an agent editing the controller. L2 is scheduled for the
+  next operator-authorized server-administration session and must be installed
+  and refusal-tested before another model profile is admitted. No live server
+  session occurred.
+- matrix acceptance: PASS. The shared implementation passed `./run ci-local`
+  **20/20**, **121** workspace Rust tests, **21** net tests, and warning-denied
+  builds/lints; the operations file retained exactly nine tests.
+- golden-E2E delta: **0**; matrix and mandatory standalone golden both passed
+  all **11/11** exact anchors.
+- protected artifact delta: database bytes remain exact **2/2** and all 54
+  evidence pins remain exact; the only pin-set change is the two deliberate
+  authorization-surface records.
