@@ -537,3 +537,95 @@ Entries are append-only; corrections are new dated entries.
 - checklist disposition: RE-MEASURE remains unchecked; R-CLOSE remains
   unchecked. No source under `apps/` or `crates/`, no evidence file, no tag,
   and no publication state changed.
+
+### 2026-07-27 · NET-TEST-EXEC addendum — first hosted execution exposed D1
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- implementation commit:
+  `2567f48aaba879011857db9177ebd60624678cc7`
+- measured addendum: hosted workflow-dispatch run **30274895522**, attempt
+  **1**, read `cargo test -p cored --features net --locked` from the net log
+  and then `running 24 tests`. This upgrades the earlier workflow-definition
+  inspection to direct execution evidence: all **24** cored tests executed.
+  The first thing that coverage bought was discovery of D1:
+
+  ```
+  thread 'tests::attest_endpoint_refuses_an_index_only_body' (3254) panicked at apps/cored/src/main.rs:202:33:
+  cored refused to start: could not configure crawler identity: http: could not install crawler User-Agent
+
+  test result: FAILED. 23 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.71s
+  ```
+
+- disposition: NET-TEST-EXEC remains accepted and checked. It promised that
+  the tests execute, not that newly reached behavior was already defect-free;
+  its first hosted execution made the hidden race observable.
+
+### 2026-07-27 · IDENTITY-INSTALL — atomic startup identity
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: d0b409a05597fc43356aeeb55a25ec597e358a85
+- result: PASS. Crawler-identity initialization is atomic, an unrelated
+  attestation test no longer performs startup identity installation, and the
+  complete local definition of done is green.
+- diagnosis acceptance: PASS; all three rows were confirmed against the
+  entering source. D1 was a live `OnceLock::get()` then `set()` TOCTOU window.
+  D2 was a live concern leak: test-only `AppState::new` reached unconditional
+  robots-cache construction under `net`. D3 was a live coincidence: the test,
+  local job, and hosted job all used `crawler-tests@unit.test`.
+- race-closure acceptance: PASS. `get_or_init` performs the one atomic
+  initialization and the implementation compares installed bytes with
+  requested bytes. The lost-race branch was deleted. A mechanical source
+  search returned no `USER_AGENT.set()`, `USER_AGENT.get()`, or
+  `could not install crawler User-Agent` match in either gated source file.
+- D2 disposition acceptance: PASS; option **(a)** was selected. `main()` now
+  constructs the identity-backed robots cache and passes it into `AppState`.
+  Test construction passes no cache. This keeps refusal at actual process
+  startup and avoids creating a production/test-constructor difference that
+  hides the startup path. The unrelated attestation test asserts the cache is
+  absent and passes.
+- concurrency acceptance: PASS. A barrier released **64** simultaneous
+  identical installers; all succeeded and observed the same bytes. The
+  subsequent differing installer returned exactly `http: crawler User-Agent
+  is already configured with different bytes`.
+- D3 acceptance: PASS. The valid-contact test now installs
+  `identity-test@unit.test`, explicitly different from CI's
+  `crawler-tests@unit.test`, then requests the CI bytes and verifies the exact
+  different-bytes error. It no longer passes because unrelated literals
+  coincide.
+- varied-schedule acceptance: PASS. The host reports **12** logical
+  processors. The full cored net suite passed **24/24** with
+  `--test-threads=1`, `4`, and `64`, passed a repeated `64`-thread run, and
+  passed the exact default CI invocation. The new ingest concurrency test
+  raises that suite from **22/22** to **23/23**; the cored count remains
+  **24/24**.
+- refusal-semantics acceptance: PASS by execution against the real net binary.
+  Missing and empty `INTEL_CRAWLER_CONTACT` each exited **101** with
+  `INTEL_CRAWLER_CONTACT is required for a net-enabled harvester`;
+  `ops@example.com` exited **101** with `must name a real operator contact,
+  not placeholder "ops@example.com"`. The deliberately different initialized
+  identity returned the unchanged different-bytes error. The branch
+  discrimination is now measured: missing/empty → `is required`; placeholder
+  → `must name a real operator contact`; different installed bytes → `already
+  configured with different bytes`; the failed hosted run's `could not
+  install crawler User-Agent` could only be the removed race loser.
+- CI acceptance: PASS. With both `NO_PROXY` and `no_proxy` set to
+  `127.0.0.1,localhost`, full `./run ci-local` passed **20/20** with **124**
+  Rust workspace tests, **47** tests in the net job (**23** ingest + **24**
+  cored), Python 3.11 **216/216**, invariant scan **7/7** with **11**
+  controls, warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78,
+  all **71/71** pins, protected databases **2/2**, and golden **11/11**.
+  Python 3.12 independently passed **216/216** and verified **21/21**
+  constrained packages.
+- environment qualification: the pre-existing ingest cross-origin wire test
+  failed without the loopback proxy exclusion in both the current tree and an
+  exported pre-change `f4e8195f2a15735efe8c387b1eb836faeb585752` tree.
+  With the explicit exclusion, the focused test and complete **23/23** ingest
+  suite passed. This is an environment qualification, not credited to the
+  implementation.
+- golden-E2E delta: **0**; the mandatory standalone run passed **11/11**
+  byte-identically.
+- record lesson: a green parallel test run is not evidence of race-freedom,
+  and a process-global initialized from a test binary is order-dependent by
+  default.
