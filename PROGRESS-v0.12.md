@@ -414,3 +414,61 @@ Entries are append-only; corrections are new dated entries.
 - evidence limit: these pure and mocked controls prove the refusal state
   machine, not the server wire. HC13 still applies; no live server session was
   run for this task.
+
+### 2026-07-27 · RE-MEASURE — authenticated v0.12 candidate evidence admitted
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 64b8ac39ed7e7916eebf27ebbe5f4de7d740a1b9
+- gate acceptance: PASS. The measurement subject was the clean candidate
+  `d664a7d3c524a3dfab932e158d9545953844b8dd`. Remote `main` was
+  fast-forwarded and independently resolved to that exact commit before
+  dispatch. The production audit required expected head, release grade,
+  attestations, repository/workflow identity, source digest, and
+  `refs/heads/main`; every evidence path was fresh.
+- hosted acceptance: PASS. Operator-authorized workflow-dispatch run
+  **30253646597**, attempt **1**, passed core, golden, lint, MSRV, net, shell
+  `python=3.11`, and shell `python=3.12`. Seven receipt/bundle pairs persisted,
+  every receipt named the candidate, and `invariant-scan` remained inside the
+  existing Python 3.11 shell leg, leaving exactly seven hosted identities.
+- report acceptance: PASS. A clean detached worktree with byte-exact ignored
+  copies of both protected databases produced the release-grade
+  `v0.12 RECEIPT`. It accepted **7** distinct authenticated identities,
+  rejected **0**, observed **7**, and measured **5 deferred / 2 promoted**.
+  Exact-cosine p95 was **10.324209 ms** at 2,600 documents against the
+  **16.264 ms** anchor.
+- durability acceptance: PASS. The **33,852-byte** report hashes to
+  `067fa823ba7c4e840100d30aa6a2b9fadae747ac41eca2d725b508bd410a8bc3`.
+  Its 14 receipt/bundle inputs and report occupy fresh immutable paths.
+  Manifest schema 2 validates all **69/69** evidence pins and **2/2**
+  authorization pins. Fresh re-derivation passed with rows 7, source
+  dispositions 5, triggers 7, release grade, and attestations required.
+- planted-failure acceptance: PASS. Disposable hosted run **30254382891**
+  persisted seven signed packages with core as the sole failed job. The
+  auditor rejected core for `conclusion is not success: failure`, found that
+  identity missing, and accepted/observed **0/0** executions.
+- duplicate-identity acceptance: PASS. Disposable hosted run **30254838500**
+  passed every job but signed two `shell/python=3.11` receipts and no
+  `shell/python=3.12`. The auditor reported the duplicate and missing identity,
+  set `matrix_complete=false`, and again accepted/observed **0/0**.
+- negative-control non-results: correctly excluded. Run **30254221740** also
+  tripped `cycle-check` because the planted diagnostic contained a forbidden
+  cycle literal. Run **30254680116** also tripped the workflow source-shape
+  assertion because the deliberate receipt rewrite removed its sentinel. Each
+  guard was restored on the disposable branch; the focused lane passed
+  **36/36** with one environment skip before each counted dispatch.
+- cleanup acceptance: PASS. Remote and local
+  `codex/v0.12-remeasure-controls`, both detached worktrees, ignored database
+  copies, control packages, and control reports were deleted. Final remote
+  enumeration found no control branch. No negative-control evidence entered
+  the implementation commit.
+- matrix acceptance: PASS. `./run ci-local` passed **20/20** with **121**
+  workspace Rust tests, **21** net tests, warning-denied builds, clippy, fmt,
+  ShellCheck, locked Rust 1.78 lanes, **205/205** Python 3.11.4 shell tests,
+  71/71 pins, and protected databases **2/2**. The independent Python 3.12.13
+  lane passed **205/205**; both environments retain **21/21** exact packages.
+- golden-E2E delta: **0**; hosted, local-matrix, and mandatory standalone
+  golden each passed all **11/11** byte-identical anchors.
+- tag acceptance: PASS. Final remote enumeration returned unchanged annotated
+  objects and peeled commits for v0.9.0, v0.10.0, v0.10.1, v0.10.3, and
+  v0.11.0. Local-only v0.10.2 remains absent remotely; no published tag moved.
