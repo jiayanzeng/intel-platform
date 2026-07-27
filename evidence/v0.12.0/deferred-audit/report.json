@@ -1,0 +1,892 @@
+{
+  "attestations_required": true,
+  "evidence_grade": "release",
+  "host": {
+    "logical_cpu_count": 12,
+    "machine": "arm64",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.11.4"
+  },
+  "measured_at": "2026-07-27T09:27:10Z",
+  "measurements": {
+    "attestation_boundary": {
+      "core_attest_inspection_calls": 1,
+      "core_owned_public_response_boundaries": 0,
+      "hc1_invariant_under_shell_replacement_claims": [],
+      "public_answer_paths": 1,
+      "public_answer_paths_without_core_owned_response_boundary": 1,
+      "risk": "the shipped shell calls /attest, but public egress remains shell-owned and HC1 is not invariant under shell replacement",
+      "shell_owned_public_egress_points": 1,
+      "shell_owned_public_egress_sources": [
+        "shell/intel_shell/app.py:159"
+      ],
+      "shipped_shell_trust": "repository-owned and operator-controlled",
+      "third_party_or_untrusted_shells": 0
+    },
+    "ci_runner": {
+      "accepted_runner_receipts": [
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-core.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:42Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "core",
+          "matrix": null,
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-core.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        },
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-golden.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:43Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "golden",
+          "matrix": null,
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-golden.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        },
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-lint.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:26Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "lint",
+          "matrix": null,
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-lint.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        },
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-msrv.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:39Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "msrv",
+          "matrix": null,
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-msrv.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        },
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-net.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:28Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "net",
+          "matrix": null,
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-net.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        },
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-shell-py3.11.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:38Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "shell",
+          "matrix": "python=3.11",
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-shell-py3.11.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        },
+        {
+          "attestation_bundle": "evidence/ci-runs/30253646597-1/30253646597-1-shell-py3.12.json.sigstore",
+          "attestation_verified": true,
+          "certificate_identity": "https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/main",
+          "completed_at": "2026-07-27T09:22:44Z",
+          "conclusion": "success",
+          "event_sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "job": "shell",
+          "matrix": "python=3.12",
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-shell-py3.12.json",
+          "repository": "jiayanzeng/intel-platform",
+          "run_attempt": "1",
+          "run_id": "30253646597",
+          "runner_os": "Linux",
+          "sha": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "signer_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+          "source_ref": "refs/heads/main",
+          "workflow": "CI"
+        }
+      ],
+      "attestations_required": true,
+      "audited_head_commit": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+      "configured_workflows": [
+        ".github/workflows/ci.yml"
+      ],
+      "current_process_is_github_actions": false,
+      "expected_job_identities": [
+        {
+          "job": "core",
+          "matrix": null
+        },
+        {
+          "job": "golden",
+          "matrix": null
+        },
+        {
+          "job": "lint",
+          "matrix": null
+        },
+        {
+          "job": "msrv",
+          "matrix": null
+        },
+        {
+          "job": "net",
+          "matrix": null
+        },
+        {
+          "job": "shell",
+          "matrix": "python=3.11"
+        },
+        {
+          "job": "shell",
+          "matrix": "python=3.12"
+        }
+      ],
+      "expected_repository": "jiayanzeng/intel-platform",
+      "expected_source_digest": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+      "expected_source_ref": "refs/heads/main",
+      "expected_workflow": "jiayanzeng/intel-platform/.github/workflows/ci.yml",
+      "git_remote_entries": [
+        "origin\tgit@github.com:jiayanzeng/intel-platform.git (fetch)",
+        "origin\tgit@github.com:jiayanzeng/intel-platform.git (push)"
+      ],
+      "git_remote_entry_count": 2,
+      "matrix_findings": [],
+      "observed_runner_executions": 7,
+      "rejected_runner_receipts": [],
+      "released_commit": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+      "runner_receipts": [
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-core.json"
+        },
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-golden.json"
+        },
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-lint.json"
+        },
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-msrv.json"
+        },
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-net.json"
+        },
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-shell-py3.11.json"
+        },
+        {
+          "path": "evidence/ci-runs/30253646597-1/30253646597-1-shell-py3.12.json"
+        }
+      ],
+      "single_run_matrix_complete": true,
+      "workflow_configuration_counts_as_execution": false
+    },
+    "multi_host": {
+      "cored_default_bind": "127.0.0.1:8788",
+      "deployment_core_and_shell_host": "same host",
+      "deployment_core_url": "http://127.0.0.1:8788",
+      "progress_files_scanned": [
+        "PROGRESS-v0.10.1.md",
+        "PROGRESS-v0.10.2.md",
+        "PROGRESS-v0.10.3.md",
+        "PROGRESS-v0.10.md",
+        "PROGRESS-v0.11.md",
+        "PROGRESS-v0.12.md",
+        "PROGRESS-v0.8.md",
+        "PROGRESS-v0.9.md"
+      ],
+      "recorded_cross_host_core_shell_requests": 0,
+      "recorded_remote_core_url_hits": [],
+      "shell_default_core_url": "http://127.0.0.1:8788",
+      "source_evidence": [
+        "apps/cored/src/main.rs:1273",
+        "shell/intel_shell/config.py:46",
+        "deploy/intel-pipeline.service:14"
+      ]
+    },
+    "pgvector": {
+      "a3_retrieve_anchor_ms": 16.264,
+      "algorithm": "brute-force exact cosine over deterministic 768d vectors",
+      "archive_reports": [
+        {
+          "algorithm": "brute-force exact cosine",
+          "database": "disposable copy of data/core.db",
+          "dimension": 768,
+          "dimension_mismatches": 0,
+          "documents": 1764,
+          "engine": "intel_store::SqliteStore::vector_search",
+          "limit": 8,
+          "maximum_ms": 7.48375,
+          "measured_samples": 30,
+          "median_ms": 4.925604,
+          "minimum_ms": 4.177417,
+          "p95_method": "nearest-rank: sorted_samples[ceil(0.95*n)-1]",
+          "p95_ms": 6.476959,
+          "protected_archive": {
+            "bytes": 6729728,
+            "copy_seeded_embedding_rows": 1764,
+            "original_embedding_rows": 0,
+            "path": "data/core.db",
+            "sha256": "db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0"
+          },
+          "samples_ms": [
+            6.2111659999999995,
+            7.48375,
+            6.476959,
+            5.476624999999999,
+            5.624834000000001,
+            4.898708,
+            5.8026670000000005,
+            4.873542,
+            5.18725,
+            4.561667,
+            5.679875,
+            4.583583,
+            4.955292,
+            4.277958,
+            5.102291999999999,
+            4.8009580000000005,
+            4.843166,
+            4.44225,
+            4.648292,
+            4.35975,
+            4.177417,
+            6.09575,
+            5.503959,
+            4.608916,
+            4.558416,
+            4.439292,
+            4.335,
+            5.351959,
+            5.559375,
+            4.952500000000001
+          ],
+          "sector": "science",
+          "warmup_samples": 1
+        },
+        {
+          "algorithm": "brute-force exact cosine",
+          "database": "disposable copy of data/live-smoke.db",
+          "dimension": 768,
+          "dimension_mismatches": 0,
+          "documents": 2600,
+          "engine": "intel_store::SqliteStore::vector_search",
+          "limit": 8,
+          "maximum_ms": 17.653708,
+          "measured_samples": 30,
+          "median_ms": 7.100229000000001,
+          "minimum_ms": 6.4521250000000006,
+          "p95_method": "nearest-rank: sorted_samples[ceil(0.95*n)-1]",
+          "p95_ms": 10.324209000000002,
+          "protected_archive": {
+            "bytes": 9490432,
+            "copy_seeded_embedding_rows": 2600,
+            "original_embedding_rows": 0,
+            "path": "data/live-smoke.db",
+            "sha256": "94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a"
+          },
+          "samples_ms": [
+            7.820333000000001,
+            7.679291,
+            7.190666,
+            7.255916,
+            6.9423330000000005,
+            7.017333,
+            6.832042,
+            6.483833,
+            6.676375,
+            6.592959,
+            6.8724169999999996,
+            6.641166,
+            6.4521250000000006,
+            6.72825,
+            6.570125,
+            7.097208,
+            17.653708,
+            10.201500000000001,
+            8.037917,
+            7.327375,
+            7.948040999999999,
+            6.975083,
+            7.10325,
+            7.077667,
+            6.852583,
+            7.66875,
+            10.324209000000002,
+            7.4800830000000005,
+            7.1432910000000005,
+            7.434292
+          ],
+          "sector": "science",
+          "warmup_samples": 1
+        }
+      ],
+      "comparison_note": "A3's 16.264 ms full-request observation is an anchor, not a retrieval SLO; the current exact-cosine component remains below even that measured request cost.",
+      "engine": "intel_store::SqliteStore::vector_search",
+      "largest_evidenced_corpus": 2600,
+      "largest_p95_below_a3_anchor": true,
+      "largest_p95_ms": 10.324209000000002,
+      "scale_note_order_of_magnitude": "10^5\u201310^6 documents",
+      "two_point_p95_ms_per_1000_documents": 4.601973684210528
+    },
+    "scheduler": {
+      "active_cored_processes": 0,
+      "active_scheduler_processes": 0,
+      "configured_jobs": 2,
+      "cored_processes": [],
+      "documented_deployment_modes": [
+        "one Type=oneshot scheduler owned by one systemd timer",
+        "one long-lived in-process scheduler loop"
+      ],
+      "documented_modes_are_alternatives": true,
+      "execution_within_one_scheduler": "serial for-loop",
+      "expanded_jobs": 5,
+      "loopback_8788_accepting": false,
+      "scheduler_processes": [],
+      "source_evidence": [
+        "shell/intel_shell/scheduler.py:256",
+        "shell/intel_shell/scheduler.py:259",
+        "deploy/intel-pipeline.service:10",
+        "deploy/intel-pipeline.service:18",
+        "deploy/intel-pipeline.timer:9",
+        "deploy/README.md:4"
+      ],
+      "supported_simultaneous_harvest_callers": 1
+    },
+    "view": {
+      "cross_corpus_slopes": [
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": -1150.105083,
+          "large_documents": 2600,
+          "large_p95_ms": 543.318334,
+          "p95_ms_per_1000_documents": -1375.723783,
+          "path": "cold",
+          "small_documents": 1764,
+          "small_p95_ms": 1693.423417
+        },
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": 4.419959,
+          "large_documents": 2600,
+          "large_p95_ms": 12.584125,
+          "p95_ms_per_1000_documents": 5.287032,
+          "path": "warm",
+          "small_documents": 1764,
+          "small_p95_ms": 8.164166
+        },
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": 160.970792,
+          "large_documents": 2600,
+          "large_p95_ms": 523.764917,
+          "p95_ms_per_1000_documents": 192.548794,
+          "path": "cold",
+          "small_documents": 1764,
+          "small_p95_ms": 362.794125
+        },
+        {
+          "delta_documents": 836,
+          "delta_p95_ms": 4.096124,
+          "large_documents": 2600,
+          "large_p95_ms": 12.565458,
+          "p95_ms_per_1000_documents": 4.89967,
+          "path": "warm",
+          "small_documents": 1764,
+          "small_p95_ms": 8.469334
+        }
+      ],
+      "gate": {
+        "exit_code": 1,
+        "outcomes": [
+          {
+            "disposition": "design-trigger-fired",
+            "documents": 1764,
+            "misses": 2,
+            "path": "cold",
+            "runs": 2
+          },
+          {
+            "disposition": "pass",
+            "documents": 1764,
+            "misses": 0,
+            "path": "warm",
+            "runs": 2
+          },
+          {
+            "disposition": "design-trigger-fired",
+            "documents": 2600,
+            "misses": 2,
+            "path": "cold",
+            "runs": 2
+          },
+          {
+            "disposition": "pass",
+            "documents": 2600,
+            "misses": 0,
+            "path": "warm",
+            "runs": 2
+          }
+        ],
+        "overall": "materialization-trigger-fired",
+        "rule": "two misses for the same archive/path fire the design trigger; one miss requires another recorded run"
+      },
+      "promoted_task": "future /view materialization implementation",
+      "reports": [
+        {
+          "cold_p95_ms": 1693.423417,
+          "cold_passed": false,
+          "documents": 1764,
+          "protected_path": "data/core.db",
+          "run": 1,
+          "warm_p95_ms": 8.164166,
+          "warm_passed": true
+        },
+        {
+          "cold_p95_ms": 543.318334,
+          "cold_passed": false,
+          "documents": 2600,
+          "protected_path": "data/live-smoke.db",
+          "run": 1,
+          "warm_p95_ms": 12.584125,
+          "warm_passed": true
+        },
+        {
+          "cold_p95_ms": 362.794125,
+          "cold_passed": false,
+          "documents": 1764,
+          "protected_path": "data/core.db",
+          "run": 2,
+          "warm_p95_ms": 8.469334,
+          "warm_passed": true
+        },
+        {
+          "cold_p95_ms": 523.764917,
+          "cold_passed": false,
+          "documents": 2600,
+          "protected_path": "data/live-smoke.db",
+          "run": 2,
+          "warm_p95_ms": 12.565458,
+          "warm_passed": true
+        }
+      ],
+      "slo": {
+        "anchor": {
+          "milliseconds": 16.264,
+          "source": "A3 POST /retrieve, 2600 rows, learning/science/k=8"
+        },
+        "cold": {
+          "fires_at_ms": 162.64,
+          "headroom_factor": 10.0,
+          "reason": "new cored process, SQLite open, sector corpus load, and view analysis"
+        },
+        "physically_plausible_on_host": "yes",
+        "predeclared_before_timing": true,
+        "warm": {
+          "fires_at_ms": 32.528,
+          "headroom_factor": 2.0,
+          "reason": "valid generation-cache hit near measured local HTTP/store cost"
+        }
+      },
+      "v2_decomposition_reports": [
+        {
+          "body_sha256": [
+            "43af73a081eca3d0e57f646b54129df2a27550b129a56729683fd7c0c413784f"
+          ],
+          "cold_p95_ms": 1696.9485,
+          "documents": 1764,
+          "run": 1,
+          "stage_p95_ms": {
+            "analysis": 330.248,
+            "client_json_decode": 1.137333,
+            "handler_other_residual": 0.984,
+            "handler_total": 350.902,
+            "http_transfer": 1.202375,
+            "process_main_to_listener_ready": 4.43,
+            "process_spawn_to_listener_ready": 1344.24875,
+            "response_build": 1.217,
+            "sector_load": 14.453,
+            "serialization": 5.091,
+            "startup_other_residual": 1341.40375,
+            "store_connection": 0.48,
+            "store_cursor_migration": 0.081,
+            "store_fingerprint_backfill": 1.857,
+            "store_open": 2.845,
+            "store_schema_fts": 0.687,
+            "unattributed_residual": 0.172667,
+            "wire_request_total": 352.104375
+          },
+          "stage_share_of_cold_p95_percent": {
+            "analysis": 19.461286,
+            "client_json_decode": 0.067022,
+            "handler_other_residual": 0.057986,
+            "handler_total": 20.678412,
+            "http_transfer": 0.070855,
+            "process_main_to_listener_ready": 0.261057,
+            "process_spawn_to_listener_ready": 79.215648,
+            "response_build": 0.071717,
+            "sector_load": 0.851705,
+            "serialization": 0.300009,
+            "startup_other_residual": 79.047994,
+            "store_connection": 0.028286,
+            "store_cursor_migration": 0.004773,
+            "store_fingerprint_backfill": 0.109432,
+            "store_open": 0.167654,
+            "store_schema_fts": 0.040484,
+            "unattributed_residual": 0.010175,
+            "wire_request_total": 20.749267
+          }
+        },
+        {
+          "body_sha256": [
+            "5685e69aafe006ef2cfaf33836a99d36310b9a314594edbd9163ee25bbc8af81"
+          ],
+          "cold_p95_ms": 540.458167,
+          "documents": 2600,
+          "run": 1,
+          "stage_p95_ms": {
+            "analysis": 463.776,
+            "client_json_decode": 1.074167,
+            "handler_other_residual": 1.402,
+            "handler_total": 502.16,
+            "http_transfer": 1.645,
+            "process_main_to_listener_ready": 4.158,
+            "process_spawn_to_listener_ready": 35.547167,
+            "response_build": 1.605,
+            "sector_load": 36.963,
+            "serialization": 7.739,
+            "startup_other_residual": 32.950167,
+            "store_connection": 0.162,
+            "store_cursor_migration": 0.033,
+            "store_fingerprint_backfill": 3.138,
+            "store_open": 3.7,
+            "store_schema_fts": 0.496,
+            "unattributed_residual": 0.191083,
+            "wire_request_total": 503.805
+          },
+          "stage_share_of_cold_p95_percent": {
+            "analysis": 85.811637,
+            "client_json_decode": 0.198751,
+            "handler_other_residual": 0.25941,
+            "handler_total": 92.913759,
+            "http_transfer": 0.304371,
+            "process_main_to_listener_ready": 0.769347,
+            "process_spawn_to_listener_ready": 6.577228,
+            "response_build": 0.29697,
+            "sector_load": 6.839197,
+            "serialization": 1.431933,
+            "startup_other_residual": 6.09671,
+            "store_connection": 0.029975,
+            "store_cursor_migration": 0.006106,
+            "store_fingerprint_backfill": 0.580618,
+            "store_open": 0.684604,
+            "store_schema_fts": 0.091774,
+            "unattributed_residual": 0.035356,
+            "wire_request_total": 93.218131
+          }
+        },
+        {
+          "body_sha256": [
+            "43af73a081eca3d0e57f646b54129df2a27550b129a56729683fd7c0c413784f"
+          ],
+          "cold_p95_ms": 374.208,
+          "documents": 1764,
+          "run": 2,
+          "stage_p95_ms": {
+            "analysis": 319.076,
+            "client_json_decode": 0.744292,
+            "handler_other_residual": 1.064,
+            "handler_total": 340.294,
+            "http_transfer": 1.053583,
+            "process_main_to_listener_ready": 2.719,
+            "process_spawn_to_listener_ready": 34.141708,
+            "response_build": 0.972,
+            "sector_load": 15.493,
+            "serialization": 4.896,
+            "startup_other_residual": 32.145708,
+            "store_connection": 0.171,
+            "store_cursor_migration": 0.034,
+            "store_fingerprint_backfill": 1.671,
+            "store_open": 2.233,
+            "store_schema_fts": 0.449,
+            "unattributed_residual": 0.156666,
+            "wire_request_total": 341.274458
+          },
+          "stage_share_of_cold_p95_percent": {
+            "analysis": 85.267017,
+            "client_json_decode": 0.198898,
+            "handler_other_residual": 0.284334,
+            "handler_total": 90.937126,
+            "http_transfer": 0.28155,
+            "process_main_to_listener_ready": 0.726601,
+            "process_spawn_to_listener_ready": 9.123725,
+            "response_build": 0.259749,
+            "sector_load": 4.140211,
+            "serialization": 1.308363,
+            "startup_other_residual": 8.590332,
+            "store_connection": 0.045697,
+            "store_cursor_migration": 0.009086,
+            "store_fingerprint_backfill": 0.446543,
+            "store_open": 0.596727,
+            "store_schema_fts": 0.119987,
+            "unattributed_residual": 0.041866,
+            "wire_request_total": 91.199135
+          }
+        },
+        {
+          "body_sha256": [
+            "5685e69aafe006ef2cfaf33836a99d36310b9a314594edbd9163ee25bbc8af81"
+          ],
+          "cold_p95_ms": 544.959125,
+          "documents": 2600,
+          "run": 2,
+          "stage_p95_ms": {
+            "analysis": 479.292,
+            "client_json_decode": 1.004042,
+            "handler_other_residual": 1.378,
+            "handler_total": 508.472,
+            "http_transfer": 1.209,
+            "process_main_to_listener_ready": 3.602,
+            "process_spawn_to_listener_ready": 34.284292,
+            "response_build": 1.582,
+            "sector_load": 22.148,
+            "serialization": 7.658,
+            "startup_other_residual": 31.678,
+            "store_connection": 0.166,
+            "store_cursor_migration": 0.029,
+            "store_fingerprint_backfill": 2.497,
+            "store_open": 3.096,
+            "store_schema_fts": 0.507,
+            "unattributed_residual": 0.193666,
+            "wire_request_total": 509.681
+          },
+          "stage_share_of_cold_p95_percent": {
+            "analysis": 87.950082,
+            "client_json_decode": 0.184242,
+            "handler_other_residual": 0.252863,
+            "handler_total": 93.304613,
+            "http_transfer": 0.221852,
+            "process_main_to_listener_ready": 0.660967,
+            "process_spawn_to_listener_ready": 6.291168,
+            "response_build": 0.290297,
+            "sector_load": 4.064158,
+            "serialization": 1.405243,
+            "startup_other_residual": 5.812913,
+            "store_connection": 0.030461,
+            "store_cursor_migration": 0.005322,
+            "store_fingerprint_backfill": 0.4582,
+            "store_open": 0.568116,
+            "store_schema_fts": 0.093035,
+            "unattributed_residual": 0.035538,
+            "wire_request_total": 93.526464
+          }
+        }
+      ],
+      "v2_design": "docs/V2-VIEW-DESIGN.md",
+      "v2_materialization_implemented": false
+    },
+    "writers": {
+      "archive_write_inventory": [
+        {
+          "owner": "cored startup",
+          "path": "SqliteStore::open_with_timings",
+          "source": "apps/cored/src/main.rs:1285",
+          "writes": "schema/FTS triggers, cursor migration, missing-fingerprint backfill"
+        },
+        {
+          "owner": "cored /ingest",
+          "path": "append_new",
+          "source": "apps/cored/src/main.rs:788",
+          "writes": "documents/FTS and corpus-derived canonical_id in one transaction"
+        },
+        {
+          "owner": "cored paged /ingest",
+          "path": "commit_harvest_page",
+          "source": "apps/cored/src/main.rs:267",
+          "writes": "documents/FTS, canonical_id, and cursor in one transaction"
+        },
+        {
+          "owner": "cored /embeddings",
+          "path": "upsert_embeddings",
+          "source": "apps/cored/src/main.rs:1200",
+          "writes": "embeddings"
+        },
+        {
+          "owner": "cored /signals/record",
+          "path": "record_signals",
+          "source": "apps/cored/src/main.rs:1217",
+          "writes": "signals_history"
+        },
+        {
+          "owner": "store maintenance/test surface; no product caller",
+          "path": "update_document + delete_document + rematerialize_canonical_ids",
+          "sources": [
+            "crates/store/src/sqlite.rs:442",
+            "crates/store/src/sqlite.rs:482",
+            "crates/store/src/sqlite.rs:656"
+          ],
+          "writes": "documents/FTS, embeddings, and corpus-derived canonical_id"
+        }
+      ],
+      "archive_writer": "single cored process; one Mutex<rusqlite::Connection>",
+      "separate_shell_configuration_writers": [
+        {
+          "database": "SUBSCRIPTIONS_PATH, never CORE_DB",
+          "owner": "public billing handlers",
+          "path": "SqliteSubscriptionStore.save",
+          "source": "shell/intel_shell/app.py:214"
+        },
+        {
+          "database": "SUBSCRIPTIONS_PATH, never CORE_DB",
+          "owner": "admin key CLI",
+          "path": "SqliteSubscriptionStore.save",
+          "source": "tools/admin_keys.py:66"
+        },
+        {
+          "database": "destination subscription DB, never CORE_DB",
+          "owner": "one-shot subscription migration",
+          "path": "SqliteSubscriptionStore.save",
+          "source": "tools/migrate_subscriptions.py:42"
+        }
+      ],
+      "shell_direct_archive_writers": 0,
+      "supported_archive_writer_processes": 1
+    }
+  },
+  "schema_version": 2,
+  "subject": {
+    "head_commit": "d664a7d3c524a3dfab932e158d9545953844b8dd",
+    "measured_source_sha256": {
+      "crates/store/examples/cosine_bench.rs": "e9f86f8c7eb2aa200249b458be128d28d767d44cb3f1a595ee411bd728f1bffd",
+      "crates/store/src/sqlite.rs": "5cbed29a142176eda9578904932c4fb87edc61c261d99cfec1aa6cca30cc3228",
+      "deploy/intel-pipeline.service": "cc5460cac995256bb3097a33b9693cc233de2fed79afbfb05f9522855b3183d5",
+      "deploy/intel-pipeline.timer": "bfd534f5c1ad2d77bf835ed7e42a7bb058a7d081b198d8758c08e1f47a0c392d",
+      "docs/T8-scale-design-note.md": "bca751e1b5946d10a9ad2e43dd32f288212b88fc47939b4603aa41e7552f554a",
+      "docs/V2-VIEW-DESIGN.md": "e905ba006205640597a9e60e856c60e78ad0459b13e6bfade01d36206ed7233c",
+      "evidence/v0.10/view-decomposition/summary.json": "08ed57632d1b43ef2aed67f50c5d91ad1342da58ac49396b836e6f0c5050c22b",
+      "evidence/v0.9/view-benchmark/summary.json": "c4df6d94fde139806365bc304b5f72701803bbe3fb05e508f6101867ea309934",
+      "shell/intel_shell/app.py": "e5577e1d490ea55615974c8a96c45f828748db7d9f393983a6ef5dbb79f9733d",
+      "shell/intel_shell/scheduler.py": "08668f579ac442e2fc9072b2f6363561951ce301e38cb5392d9c3315af829181",
+      "tools/audit_deferred.py": "4f3c0af0d0edfb158b5955b3bea53496a7ed359bd8e6f4a77f5a8f8d52f867e1"
+    },
+    "worktree_dirty": false,
+    "worktree_status": []
+  },
+  "summary": {
+    "deferred": 5,
+    "implemented_deferred_subsystems": 0,
+    "promoted": 2
+  },
+  "task": "v0.12 RECEIPT",
+  "triggers": [
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "T7 robots single-flight",
+      "measurement": "1 supported simultaneous harvest caller(s); 0 active scheduler process(es)",
+      "unchanged_trigger": "a second concurrent harvester"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "Postgres",
+      "measurement": "1 supported archive writer process(es); shell direct archive writers=0",
+      "unchanged_trigger": "a second archive writer"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "pgvector",
+      "measurement": "largest evidenced corpus=2600; exact-cosine p95=10.324209 ms; A3 request anchor=16.264 ms",
+      "unchanged_trigger": "exact cosine over the archive stops fitting the measured request budget"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "Multi-host seam hardening",
+      "measurement": "recorded cross-host core/shell requests=0; bind=127.0.0.1:8788; CORE_URL=http://127.0.0.1:8788",
+      "unchanged_trigger": "an actual core/shell host split"
+    },
+    {
+      "disposition": "defer",
+      "future_task": null,
+      "id": "A4 untrusted-shell attestation boundary",
+      "measurement": "public answer paths without a core-owned response boundary=1; shell-owned public egress points=1; third-party/untrusted shells=0; invariance claims=0",
+      "unchanged_trigger": "a third-party or untrusted shell, or any claim that HC1 is invariant under shell replacement"
+    },
+    {
+      "disposition": "promote",
+      "future_task": null,
+      "id": "CI-runner evidence",
+      "measurement": "complete release-matrix runner receipts=7; rejected receipts=0; workflow config is not an execution",
+      "unchanged_trigger": "a runner execution receipt exists for the released commit"
+    },
+    {
+      "disposition": "promote",
+      "future_task": "future /view materialization implementation",
+      "id": "/view materialization",
+      "measurement": "V1 gate=materialization-trigger-fired; V2 reports=4; V2 materialization implemented=False; promoted task=future /view materialization implementation",
+      "unchanged_trigger": "cold or warm p95 crosses the predeclared V1 SLO in both runs"
+    }
+  ]
+}

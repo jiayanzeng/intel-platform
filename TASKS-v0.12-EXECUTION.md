@@ -725,7 +725,7 @@ of v0.11's is true.
 - [x] **OPS-AUTHORITY** — enforcement level decided and recorded; L1 allowlist tested in both directions with ≥4 planted refusals; `run` and `model_profiles.py` hash-pinned; `OPERATIONS.md §5` and `AGENTS.md` byte-identical under R6; the "what this does not do" sentence present
 - [x] **OPS-ADMIT** — operations work committed in one implementation commit; 200/200 now true of HEAD; live evidence recorded with provenance and HC13 limits; three C7-augment items disposed; controller ownership stated
 - [x] **OPS-FAILCLOSED** — four fail-closed claims tested in both directions; managed socket reused never killed; hung and dead servers distinguishable; ask-first command set asserted absent from every emitted script
-- [ ] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; hosted identity set still exactly seven; release-grade report pinned and re-derived
+- [x] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; hosted identity set still exactly seven; release-grade report pinned and re-derived
 - [ ] **R-CLOSE** — version choice recorded with reasoning; v0.11.0's disposition in `CHANGELOG.md`; `ARCHITECTURE.md` matches enforced reality; A4 and the Step 7 residual both still open
 
 ---
