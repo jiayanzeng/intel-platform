@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 E0 re-measured the entering state and confirmed S1–S8; v0.10.3 remains published and closed.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 BIND-LOOPBACK is complete; the core now structurally refuses every non-loopback bind.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **102** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -100,6 +100,36 @@ and resumed adversarial paths both call the same
 the independent witness matched all 39 pins. No runtime, dependency, lockfile,
 architecture, protected byte, pinned evidence byte, provider configuration,
 remote ref, or tag changed during E0.
+
+**v0.11 BIND-LOOPBACK is complete (measured 2026-07-27).** `CORE_BIND`
+now resolves through the standard library's `ToSocketAddrs` before configuration
+or archive setup and before `TcpListener::bind`. The pure, socket-free
+`loopback_only(&str) -> Result<Vec<SocketAddr>, String>` boundary accepts a
+resolution only when it is nonempty and every resolved IP is loopback; the
+listener consumes the already-validated addresses rather than resolving the
+name a second time.
+
+Three failure-capable unit tests reject `0.0.0.0:8788`, `[::]:8788`, a LAN
+literal, and a synthetic hostname result containing both loopback and
+non-loopback addresses; they accept IPv4 loopback, IPv6 loopback, and
+`localhost`. The mixed-result refusal names `192.168.1.10:8788` and the
+multi-host seam deferral. A first direct `target/debug/cored` probe was a
+non-result because that binary predated the source change and reached the old
+bind. After an explicit warning-denied rebuild, the same
+`CORE_BIND=0.0.0.0:8788 target/debug/cored` command exited before binding and
+reported the offending `0.0.0.0:8788` plus the multi-host design-task message.
+
+The permitted `./run ci-local` passed all **19/19** units with **102** Rust
+workspace tests, **20** net tests, zero rustc/clippy/format failures, locked
+Rust 1.78 checks/tests, **187/187** Python 3.11.4 shell tests, golden **11/11**,
+protected artifacts **2/2**, and all **39/39** pins. A required standalone
+`./run golden` repeated **11/11**, and standalone `./run verify-artifacts`
+repeated **2/2** exact databases plus **39/39** pins. `git diff` reports no
+change under `run`, `deploy/`, any Cargo manifest, or `Cargo.lock`; no bind
+override was introduced and no dependency changed. `ARCHITECTURE.md` and the
+daemon contract now name the startup resolver/check as the enforcement
+mechanism. The public API, corpus, protected artifacts, evidence pins, remote
+refs, and tags are unchanged.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release
@@ -3200,6 +3230,24 @@ The same three-clause shape, run against the crate the task named as "the noted 
 **The rule worth keeping:** *an LSH band's selectivity depends on the threshold as a **fraction** of fingerprint width, not its absolute value.* 16/64 = 25% divergence is far outside the regime where any exact Hamming index beats a linear scan. Widening the fingerprint does not help if the threshold widens with it; it helps only if the *absolute* distance stays at 16 (e.g. 16/128), and that is **a different similarity rule** — it changes which documents are duplicates, which is corpus corruption, not an optimization. T5's gate says stop, and it was right to.
 
 **Decision: not merged.** The design note has been corrected in place, and the swap it should have named — **persist the fingerprint** — is now the recommendation in §4.
+
+### 6d. Why non-loopback `CORE_BIND` has no override (v0.11/BIND-LOOPBACK)
+
+**Decision:** resolve `CORE_BIND`, require every result to be loopback, and
+refuse startup if any address is not. There is deliberately no warning-only
+mode and no override environment variable. An override would preserve the
+original unauthenticated remote-exposure defect behind one extra setting. A
+real requirement to bind beyond one host is the documented multi-host seam
+trigger: it needs a design task that defines transport authentication,
+authorization, and deployment topology before the boundary can move.
+
+`CORE_TOKEN` remains optional. With loopback enforced structurally, the token
+is defense-in-depth against unrelated local processes, not the mechanism that
+makes the core private and not a substitute for shell entitlement. Making it
+mandatory would break existing same-host deployments while adding no remote
+protection beyond the enforced bind. Operators that need the extra local
+boundary may continue to set it; the shipped launcher and service contract are
+unchanged.
 
 ## 7. Run reference
 

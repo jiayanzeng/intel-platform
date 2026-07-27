@@ -170,11 +170,13 @@ redirects fail closed rather than silently moving to another origin.
 | `/docs` | GET | full documents | internal |
 | `/attest` | POST | `{answer, context_doc_ids}` ⇒ `{clean_answer, violations[]}` | **enforces HC1** |
 
-The public surface is the shell's `/v1/*`. The core is loopback-only; `/retrieve`
-and `/docs` carry full bodies only for analysis, and the shipped shell sends
-model output through `/attest` before `/v1/ask` returns it. This prevents copied
-IndexOnly context on the shipped path, but does not constrain an arbitrary
-rewrite that omits the call or supplies a false scope (A4 accepted risk).
+The public surface is the shell's `/v1/*`. The core is structurally loopback-only:
+startup resolves `CORE_BIND`, checks every resulting address, and refuses before
+binding if any address is not loopback. `/retrieve` and `/docs` carry full bodies
+only for analysis, and the shipped shell sends model output through `/attest`
+before `/v1/ask` returns it. This prevents copied IndexOnly context on the shipped
+path, but does not constrain an arbitrary rewrite that omits the call or supplies
+a false scope (A4 accepted risk).
 
 ## 6. Invariant map (which invariant lives where, and why)
 

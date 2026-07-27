@@ -25,8 +25,10 @@
 //!   the shell returns it on a public path. This is an internal seam, not a
 //!   public API.
 //!
-//! Binding: 127.0.0.1 only. Optional shared secret: set CORE_TOKEN and the
-//! shell sends `x-core-token` on every request.
+//! Binding is structurally restricted to loopback: every address resolved from
+//! CORE_BIND is checked before a socket is opened, and startup refuses any
+//! non-loopback address. Optional defense-in-depth: set CORE_TOKEN and the shell
+//! sends `x-core-token` on every request.
 //!
 //! Env: CORE_CONFIG (config/core.json), CORE_ENTITIES (config/entities.json),
 //!      CORE_DB (data/intel.db), CORE_BIND (127.0.0.1:8788), CORE_TOKEN.
@@ -47,6 +49,7 @@ use intel_store::{SqliteStore, StoreOpenTimings};
 use intel_view::{compute_view, entity_names, ViewParams};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::net::{SocketAddr, ToSocketAddrs};
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
@@ -1227,6 +1230,30 @@ async fn docs(
 
 // --- main -----------------------------------------------------------------------
 
+fn validate_loopback_addresses(
+    bind: &str,
+    addresses: Vec<SocketAddr>,
+) -> Result<Vec<SocketAddr>, String> {
+    if addresses.is_empty() {
+        return Err(format!("CORE_BIND {bind:?} resolved to no addresses"));
+    }
+    if let Some(address) = addresses.iter().find(|address| !address.ip().is_loopback()) {
+        return Err(format!(
+            "CORE_BIND {bind:?} resolved to non-loopback address {address}; \
+             non-loopback binding is the multi-host seam deferral and requires a design task"
+        ));
+    }
+    Ok(addresses)
+}
+
+fn loopback_only(bind: &str) -> Result<Vec<SocketAddr>, String> {
+    let addresses = bind
+        .to_socket_addrs()
+        .map_err(|error| format!("could not resolve CORE_BIND {bind:?}: {error}"))?
+        .collect();
+    validate_loopback_addresses(bind, addresses)
+}
+
 #[tokio::main]
 async fn main() {
     let process_main_started = Instant::now();
@@ -1235,6 +1262,8 @@ async fn main() {
         std::env::var("CORE_ENTITIES").unwrap_or_else(|_| "config/entities.json".into());
     let db_path = std::env::var("CORE_DB").unwrap_or_else(|_| "data/intel.db".into());
     let bind = std::env::var("CORE_BIND").unwrap_or_else(|_| "127.0.0.1:8788".into());
+    let bind_addresses =
+        loopback_only(&bind).unwrap_or_else(|error| panic!("cored refused to start: {error}"));
     let token = std::env::var("CORE_TOKEN").ok();
 
     let cfg: CoreConfig =
@@ -1270,7 +1299,9 @@ async fn main() {
         .route("/docs", get(docs))
         .with_state(state.clone());
 
-    let listener = tokio::net::TcpListener::bind(&bind).await.expect("bind");
+    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])
+        .await
+        .expect("bind");
     state
         .process_main_to_listener_ready_us
         .store(elapsed_us(process_main_started), Ordering::SeqCst);
@@ -1288,6 +1319,43 @@ async fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn loopback_bind_check_rejects_unspecified_and_lan_literals() {
+        for bind in ["0.0.0.0:8788", "[::]:8788", "192.168.1.10:8788"] {
+            let error = loopback_only(bind).expect_err("non-loopback bind must be refused");
+            assert!(
+                error.contains("non-loopback address"),
+                "unexpected error for {bind}: {error}"
+            );
+            assert!(
+                error.contains("multi-host seam deferral"),
+                "refusal must identify the design seam: {error}"
+            );
+        }
+    }
+
+    #[test]
+    fn loopback_bind_check_accepts_ipv4_ipv6_and_localhost() {
+        for bind in ["127.0.0.1:8788", "[::1]:8788", "localhost:8788"] {
+            let addresses = loopback_only(bind)
+                .unwrap_or_else(|error| panic!("loopback bind {bind} should be accepted: {error}"));
+            assert!(!addresses.is_empty());
+            assert!(addresses.iter().all(|address| address.ip().is_loopback()));
+        }
+    }
+
+    #[test]
+    fn hostname_with_mixed_loopback_and_non_loopback_answers_is_rejected() {
+        let loopback: SocketAddr = "127.0.0.1:8788".parse().unwrap();
+        let non_loopback: SocketAddr = "192.168.1.10:8788".parse().unwrap();
+        let error =
+            validate_loopback_addresses("mixed-address.example:8788", vec![loopback, non_loopback])
+                .expect_err("every resolved address must be loopback");
+
+        assert!(error.contains("192.168.1.10:8788"));
+        assert!(error.contains("multi-host seam deferral"));
+    }
 
     // Workspace root, from this crate's manifest dir (apps/cored -> ../..).
     fn root() -> std::path::PathBuf {
