@@ -31,6 +31,75 @@ exemptions; `git diff --check` passed. No test, golden, artifact,
 hosted-runner, publication, or release claim is made by this preparatory pair.
 E0 begins from the intentionally preserved dirty operations tree.
 
+**v0.12 E0 is complete (measured 2026-07-27).** The entering-state gate passed:
+all dirty tracked content is attributable to the supplied model-profile
+operations work, including the draft-omitted `README.md`; no operations hunk or
+untracked operations file was stashed, reverted, cleaned, or admitted.
+
+The first sandboxed `./run ci-local` was an environment non-result: all
+non-shell lanes passed, while eight shell tests were denied loopback binds or
+process inspection. The identical permitted rerun passed all **19/19** units:
+warning-denied offline and net builds, **119** Rust workspace tests, **21** net
+tests, clippy, fmt, ShellCheck, locked Rust 1.78 check/tests, **200/200** Python
+3.11.4 shell tests, protected artifacts **2/2**, all **54/54** pins, and golden
+**11/11**. The independent Python 3.12.13 lane passed **200/200** and both
+interpreters verified **21/21** exact constrained packages. Temporarily moving
+`shell/tests/test_model_profiles.py` outside collection and restoring it
+immediately produced **191/191** under Python 3.11.4: the untracked file adds
+exactly nine cases, so the header's 200 count describes the dirty worktree, not
+the published v0.11.0 release.
+
+Standalone `./run golden` passed the same **11/11** byte-identical anchors.
+`./run verify-artifacts`, `cycle-check`, `checklist-audit`,
+`progress-check`, `version-check`, and
+`python3 tools/evidence_artifacts.py validate` all passed. The checklist
+resolved **88/88** entering checked tasks with zero exemptions. A separate
+`shasum -a 256`/byte-count witness matched `data/core.db` at
+`db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0`
+and 6,729,728 bytes and `data/live-smoke.db` at
+`94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a`
+and 9,490,432 bytes. Annotated `v0.11.0` remained object
+`fcfa4825e6ffbc06c0ad73e18044965c10786aa8`, peeled to the unchanged release
+commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`.
+
+All C1-C7 findings were confirmed; none refuted:
+
+1. **C1:** a disposable real `cored` on a scratch database first ingested one
+   finance document (HTTP 200, generation 1). Setting that row's persisted
+   `simhash` to NULL made the later canonical rematerialization fail. A
+   non-paged `techwire` ingest returned HTTP **500**, yet the database grew
+   from **1 to 5** rows with all **4** `techwire` rows durable, while view
+   generation stayed at **1**. This is the required fail-before.
+2. **C2:** the exact recursive Rust grep found one production caller outside
+   the store, `apps/cored/src/main.rs` passing literal `16`; the store exposes
+   `assign_canonical_ids(max_distance)`, and its other nine call sites are
+   inside the store's `#[cfg(test)]` module.
+3. **C3:** `checklist_audit.py` finds checked boxes, resolves their qualified
+   progress entries, and validates real commit hashes. It never reads or
+   evaluates task acceptance criteria, exactly as its module contract states.
+4. **C4:** the measured **200 versus 191** control confirms the nine-test
+   release/worktree identity drift described above.
+5. **C5:** the tracked-path grep excluding `evidence/` found 11 paths, not only
+   the draft's five examples: `.env.example`, `PROGRESS-v0.8.md`,
+   `PROGRESS-v0.9.md`, `README.md`, `STATE.md`,
+   `TASKS-v0.8.1-EXECUTION.md`, `TASKS-v0.9-EXECUTION.md`,
+   `TASKS-v0.10.3-EXECUTION.md`, `TASKS-v0.11-EXECUTION.md`,
+   `TASKS-v0.12-EXECUTION.md`, and `shell/tests/test_llm_config.py`. The ten
+   paths other than the current correction runbook were already committed
+   before the supplied operations body; dirty operations text adds occurrences
+   to `STATE.md` but did not create that path-level conflict.
+6. **C6:** `./run models` calls the agent-editable
+   `tools/model_profiles.py`, whose mutable free-form `TRANSITIONS` strings
+   carry the remote lifecycle commands. Current content respects the named
+   allowlist, but no structural boundary refuses an edited command.
+7. **C7:** the nine new tests exercise only `classify_profile` and
+   `transition_script`. Missing-container, foreign-listener, health-failure,
+   and stale-socket refusals remain unexecuted by tests. The three augments
+   also reproduce: malformed tabular output raises bare `ValueError`;
+   `_require_containers` couples every profile to all five containers; and
+   `cmd_models` deliberately uses bare `python3` without documenting its
+   pre-venv rationale.
+
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
 `TASKS-v0.11-EXECUTION.md`; `AGENTS.md` correctly still declared the latest
