@@ -2,6 +2,25 @@
 
 **As of:** 2026-07-26 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.10.3 is published and the v0.10.3 execution cycle is closed.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
+**v0.11 cycle activation is complete; E0 has not yet run (measured
+2026-07-27).** The read-only opener found only the operator-supplied untracked
+`TASKS-v0.11-EXECUTION.md`; `AGENTS.md` correctly still declared the latest
+closed cycle, v0.10.3. Entering HEAD was
+`d24f2b83c9657b1fa47d7f3315a4120181f2624e`, described as
+`v0.10.3-1-gd24f2b8`; local `main` and `origin/main` were aligned at that
+commit with zero ahead / zero behind.
+
+Implementation commit `57e56b7268345ea17dda6641dd2682295b43ec55`
+admitted the reviewed runbook unchanged, declared v0.11 active, and created
+its append-only progress log. The pre-admission `./run cycle-check` correctly
+refused the uncommitted runbook because it had no first committed version.
+After the implementation commit, `./run cycle-check` passed with v0.11 open
+and eight closed execution runbooks; `./run checklist-audit` resolved the
+entering 77/77 checked tasks with zero exemptions; `git diff --check` passed.
+No test, golden, artifact, hosted-runner, publication, or release claim is
+made by this preparatory correction. E0 restarts from the clean post-audit
+tree.
+
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release
 `v0.10.3`. The publication gate is open: RE-MEASURE authenticated seven
