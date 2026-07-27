@@ -10,11 +10,11 @@ anything, and re-read the two documents it points at:
 - **`STATE.md`** — authoritative for *current status* (what is true right now).
   You update this after every task; see §5.
 
-**Active cycle:** v0.12
+**Active cycle:** v0.13
 
 Task work for this declared cycle is ordered in
-**`TASKS-v0.12-EXECUTION.md`**. Every completed step is logged in
-**`PROGRESS-v0.12.md`**. The declaration points at the open cycle while work
+**`TASKS-v0.13-EXECUTION.md`**. Every completed step is logged in
+**`PROGRESS-v0.13.md`**. The declaration points at the open cycle while work
 remains and at the latest closed cycle after its release record is appended,
 until the operator supplies the next runbook. Every older execution runbook
 appends its dated closing record; its progress log and full original task
