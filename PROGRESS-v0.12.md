@@ -317,3 +317,52 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: database bytes remain exact **2/2** and all 54
   evidence pins remain exact; the only pin-set change is the two deliberate
   authorization-surface records.
+
+### 2026-07-27 · OPS-ADMIT — model-profile operations enter HEAD
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 0ef43a56aa4a7d813932fbf3607bf3ba68e420fa
+- result: PASS. The operator-approved atomic implementation admitted
+  `tools/model_profiles.py`, `shell/tests/test_model_profiles.py`,
+  `intel-platform-OPERATIONS.md`, and the `run`/`AGENTS.md` operations changes
+  in one commit, together with the selected L1 guard, pins, documentation,
+  runbook amendment, and measured STATE record. OPS-AUTHORITY has its own
+  preceding append-only audit commit; this is the separate OPS-ADMIT record.
+- shell-count acceptance: PASS. Python 3.11.4 and 3.12.13 each passed exactly
+  **200/200**, and both verified **21/21** constrained packages. The initial
+  direct sandboxed invocation was an environment non-result with eight denied
+  loopback/process-topology controls; identical permitted reruns passed. The
+  former nine-test dirty delta is now part of HEAD, while released v0.11.0
+  remains correctly recorded at 191/191.
+- live-evidence acceptance: PASS as prior measured evidence only. The durable
+  record names the operator-authorized 2026-07-27 Terminal.app/localhost:2222
+  provenance, the exact two newly created container IDs, explicit 8080/8081
+  HTTP health overriding `intel-embed`'s known wrong-port Docker label, the
+  `osascript do shell script` route failure, and every measured profile/tunnel
+  result. HC13 limits are explicit: one real-hardware run proves only that
+  session, not later controller edits, another host, or changed server state.
+  No server, Docker, SSH, or network session was run in v0.12.
+- C7-augment acceptance: PASS. A malformed tabular inventory row now raises
+  `ProfileError` and is tested. Requiring all five containers remains an
+  intentional cross-project refusal because the shared controller must know
+  every conflicting role exists before selecting either profile. `cmd_models`
+  documents its deliberate stdlib-only bare-`python3` path so recovery works
+  before a venv exists.
+- ownership acceptance: PASS. The operations manual records
+  `tools/model_profiles.py` in intel-platform as the single executable source
+  of truth for both projects; Athenaeum delegates to it and must not keep a
+  duplicate controller.
+- gate remeasurement: PASS. Because the operations files changed from E0 for
+  L1 and the required augments, the complete offline matrix was rerun before
+  admission as required; the runbook independently prohibited a new live
+  session.
+- matrix acceptance: PASS. `./run ci-local` passed **20/20** with **121**
+  workspace Rust tests, **21** net tests, warning-denied offline/net builds,
+  clippy, fmt, ShellCheck, locked Rust 1.78 checks/tests, all shell tests, and
+  artifact validation.
+- golden-E2E delta: **0**; matrix and mandatory standalone golden both passed
+  all **11/11** byte-identical anchors.
+- protected artifact delta: protected databases remain exact **2/2** and all
+  **54/54** evidence pins remain exact; both newly admitted authorization pins
+  also match.
