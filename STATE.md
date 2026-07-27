@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-26 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.10.3 is published and the v0.10.3 execution cycle is closed.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 E0 re-measured the entering state and confirmed S1–S8; v0.10.3 remains published and closed.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **99** Rust workspace / **20** net tests; the shell suite is **187/187** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -20,6 +20,86 @@ entering 77/77 checked tasks with zero exemptions; `git diff --check` passed.
 No test, golden, artifact, hosted-runner, publication, or release claim is
 made by this preparatory correction. E0 restarts from the clean post-audit
 tree.
+
+**v0.11 E0 is complete (measured 2026-07-27).** The restarted opener produced
+no `git status --porcelain=v1` output. HEAD was
+`ac1b2ef9cc6b9913add42d22b2d4b23f10e2a29a`, described as
+`v0.10.3-3-gac1b2ef`; the activation implementation/audit pair explains local
+`main` being two commits ahead / zero behind `origin/main` at
+`d24f2b83c9657b1fa47d7f3315a4120181f2624e`. The published v0.10.3 release
+identity remained unchanged.
+
+The first sandboxed `./run ci-local` attempt is an environment non-result:
+every Rust, MSRV, lint, lifecycle, and evidence-rederivation unit passed, while
+eight shell controls were denied `ps` or loopback binds and reported 179
+passes / 8 permission failures. The permitted identical rerun passed all
+**19/19** units with **99** Rust workspace tests, **20** net tests,
+warning-denied offline/net builds, clippy/fmt, locked Rust 1.78 check/tests,
+and **187/187** Python 3.11.4 shell tests. The independent Python 3.12.13 lane
+also passed **187/187**; both interpreters verified the exact **21/21**
+constrained packages and emitted the existing single third-party
+Starlette/httpx deprecation warning.
+
+Standalone `./run golden` passed **11/11** with every corpus, duplicate,
+signal, rerun, entitlement, citation, snippet, and authentication anchor
+unchanged. `./run verify-artifacts` matched the protected databases **2/2**
+and manifest validation matched all **39/39** pinned files. A separate
+`hashlib.sha256` witness read every declared pin itself and independently
+reported **39/39** matches with zero mismatches. `version-check`,
+`cycle-check`, `checklist-audit`, and `progress-check` passed; the checklist
+entered v0.11 at **77/77** checked historical tasks with zero exemptions.
+
+All eight defects and every augment row were confirmed against the clean
+entering tree:
+
+1. **S1:** `CORE_BIND` still flows directly from the environment/default into
+   `TcpListener::bind`; source search found no `is_loopback` check.
+   `CORE_TOKEN` is optional and `guard()` returns success when it is absent.
+2. **S2:** `/docs` accepts only `ids`, calls the misleadingly named
+   `parse_sectors(&p.ids)`, and reaches `documents_by_ids`, whose SQL has no
+   sector predicate. `/embeddings/missing` accepts only `model` and enumerates
+   bodies through `docs_missing_embeddings`, also with no sector predicate.
+3. **S3:** parsing still chooses one longest-token group by strict `>` and
+   clones only that group's rules, while the existing comment correctly
+   protects a specific group from the unrelated `*` group.
+4. **S4:** `path_matches` still compares the raw pattern and path; the crate
+   contains no percent/decode/url-encoding implementation.
+5. **S5:** `set_host_rate` still replaces the host's limiter with a fresh one,
+   discarding both its `last` clock and per-host acquisition counter after the
+   robots fetch.
+6. **S6:** `Reach::Network` still skips publisher policy when
+   `robots_cache` is `None`; the existing test deliberately asserts that
+   fail-open behavior. The shipped net builder still refuses to start without
+   constructing a cache, so the defect remains dormant at that caller.
+7. **S7:** `_apply_events` still mutates the process-lifetime store event by
+   event; a later `BillingError` raises HTTP 400 before `store.save()` but does
+   not undo earlier in-memory mutations.
+8. **S8:** `update_document` still performs a bare update and
+   `delete_document` commits its delete transaction without rematerializing
+   canonical ids. `assign_canonical_ids_tx` is already available; source
+   search found no non-test caller of either maintenance method outside
+   `sqlite.rs`.
+
+The four required scratch controls demonstrated the wrong behavior before
+being removed. Three temporary compliance tests passed while asserting that a
+second `User-agent: intel-platform` group's disallow was ignored, that
+`/foo/bar/%62%61%7A` evaded `/foo/bar/baz`, and that applying a ten-second
+crawl delay reset `acquires_for` from one to zero and let the next paused-clock
+acquire complete with zero elapsed time. A temporary signed-webhook test passed
+while asserting that a two-event batch returned HTTP 400 yet left the first
+event's `acme-research` sector mutation live. The scratch edits were removed,
+and `git diff` returned empty before this record was written.
+
+The v0.10.3 guards remain live. The committed receipt declares
+`evidence_grade: release`, `attestations_required: true`, task
+`v0.10.3 RECEIPT`, and the exact seven-member `(job, matrix)` identity set.
+All seven accepted rows are distinct, verified, successful, and accompanied
+by tracked, existing receipt/bundle paths; rejection count is zero. The fresh
+and resumed adversarial paths both call the same
+`_adversarial_outcome_invariant_error` checker, and protected validation plus
+the independent witness matched all 39 pins. No runtime, dependency, lockfile,
+architecture, protected byte, pinned evidence byte, provider configuration,
+remote ref, or tag changed during E0.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release
