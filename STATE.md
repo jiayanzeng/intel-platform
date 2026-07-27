@@ -2,6 +2,35 @@
 
 **As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **v0.11 is closed and the approved minor release is published.** Annotated tag object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` dereferences exactly to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; one atomic push published that mapping and remote verification returned it byte-for-byte. Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.3 remains published and unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.11.0.
 
+**v0.12 cycle activation is complete; E0 has not yet run (measured
+2026-07-27).** The mandatory opener measured entering HEAD
+`916b20f8c3dabd743a0568cb14353a0c889e2ab1`, described as
+`v0.11.0-1-g916b20f-dirty`; local `main` and `origin/main` were aligned with
+zero ahead / zero behind. Annotated `v0.11.0` remained object
+`fcfa4825e6ffbc06c0ad73e18044965c10786aa8`, dereferencing exactly to release
+commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`.
+
+The full dirty inventory was captured before any edit and preserved without
+stash, revert, clean, or broad staging. Modified tracked files were
+`AGENTS.md`, `README.md`, `STATE.md`, and `run`; untracked files were the
+supplied `TASKS-v0.12-EXECUTION.md`, `intel-platform-OPERATIONS.md`,
+`shell/tests/test_model_profiles.py`, and `tools/model_profiles.py`. The draft
+omitted `README.md`; its diff is nevertheless explained by the same
+model-profile work (command documentation, operations-manual link, and the
+nine-test count). The other tracked diffs contain the standing authorization,
+prior live-evidence record, and `./run models` dispatch, while the three
+untracked operations files are the manual, controller, and tests.
+
+Implementation commit `a81430ab8a50961d03eff019d3449405312d8280`
+admitted only the supplied runbook, the `AGENTS.md` v0.12 declaration, and the
+new append-only progress-log skeleton; partial staging left the pre-existing
+`AGENTS.md` operations hunk untouched. After that commit,
+`./run cycle-check` passed with v0.12 open and nine closed execution runbooks;
+`./run checklist-audit` resolved the entering **88/88** checked tasks with zero
+exemptions; `git diff --check` passed. No test, golden, artifact,
+hosted-runner, publication, or release claim is made by this preparatory pair.
+E0 begins from the intentionally preserved dirty operations tree.
+
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
 `TASKS-v0.11-EXECUTION.md`; `AGENTS.md` correctly still declared the latest
