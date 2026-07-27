@@ -394,3 +394,24 @@ Entries are append-only; corrections are new dated entries.
   databases **2/2** matched. The independent Python 3.12.13 lane passed
   **191/191** and **21/21** packages, and the final standalone golden remained
   **11/11**.
+
+### 2026-07-27 · ERRATA — STORE-IDENTITY threshold criterion retracted
+
+- status: RETRACTED. The original STORE-IDENTITY entry above remains unchanged,
+  but its acceptance claim that ingest, update, and delete all used the same
+  constant was false.
+- claimed criterion: “one shared `max_distance` constant”.
+- measured v0.11.0 reality: update and delete selected the store-local
+  `DEDUP_MAX_DISTANCE = 16`, while the production ingest handler independently
+  called `assign_canonical_ids(16)`. The values happened to agree; the source of
+  truth did not.
+- discovery: v0.12 E0's recursive production-source inventory found the
+  out-of-store literal call while reproducing C2. The earlier v0.11 checklist
+  audit had validated box/progress/commit provenance, not the truth of this
+  repo-wide absence criterion.
+- correction: `TASKS-v0.12-EXECUTION.md` INGEST-ATOMIC moved ingest
+  rematerialization inside the store transaction, and THRESHOLD-ONE exposed only
+  a no-argument production seam that selects the private threshold internally.
+- release disposition: v0.11.0 remains published with this known,
+  now-corrected defect. Its tag, commit, evidence, and original progress text
+  are immutable; this append-only erratum records the correction forward.

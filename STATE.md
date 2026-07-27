@@ -188,6 +188,32 @@ criteria. Full `./run ci-local` passed **20/20** with **121** workspace,
 remained **11/11**. The job-count increase is exactly the new registered static
 invariant unit, not a new hosted job identity.
 
+**v0.12 RETRACT-0110 is complete (measured 2026-07-27).** v0.11.0 stays
+published with a known, now-corrected defect: STORE-IDENTITY claimed “one
+shared `max_distance` constant”, but the released source used the private store
+constant for maintenance writes while the production ingest handler separately
+passed literal `16`. Equal values did not make that one source of truth.
+INGEST-ATOMIC moved ingest rematerialization inside the store transaction and
+THRESHOLD-ONE made the production maintenance seam no-argument, so the
+threshold is now selected only inside the store.
+
+The permanent record is corrected forward, not rewritten. The v0.11 progress
+file has an append-only erratum after its closing record; the original
+STORE-IDENTITY lines and all v0.11 checklist boxes remain byte-for-byte as
+published. `checklist-retractions.json` quotes the false criterion and names
+both correcting v0.12 tasks. Before this task's checkbox, `checklist-audit`
+resolved **92 checked, 1 retracted**, all 92 progress entries and commits, and
+zero exemptions.
+
+The header's **191/191** shell count is the suite reproduced by the released
+v0.11.0 commit. The preserved untracked operations test file adds exactly nine
+cases, so the current dirty worktree runs **200/200**; that delta is not
+attributed to the release. Annotated tag object
+`fcfa4825e6ffbc06c0ad73e18044965c10786aa8` still peels to
+`6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`. Manifest validation and protected
+artifact verification remain **54/54** pins and **2/2** databases, and
+standalone golden remains **11/11**.
+
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
 `TASKS-v0.11-EXECUTION.md`; `AGENTS.md` correctly still declared the latest

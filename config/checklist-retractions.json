@@ -2,5 +2,14 @@
   "schema_version": 1,
   "record_date": "2026-07-27",
   "accepted_by": "repository operator through TASKS-v0.12-EXECUTION.md",
-  "retractions": []
+  "retractions": [
+    {
+      "runbook": "TASKS-v0.11-EXECUTION.md",
+      "task_id": "STORE-IDENTITY",
+      "date": "2026-07-27",
+      "reason": "The v0.11 acceptance criterion \"one shared `max_distance` constant\" was false: maintenance writes used DEDUP_MAX_DISTANCE, but the production ingest handler still passed a separate literal 16.",
+      "accepted_by": "repository operator through TASKS-v0.12-EXECUTION.md Step 5",
+      "corrected_by": "TASKS-v0.12-EXECUTION.md INGEST-ATOMIC and THRESHOLD-ONE"
+    }
+  ]
 }
