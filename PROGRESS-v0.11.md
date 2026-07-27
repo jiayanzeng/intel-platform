@@ -176,3 +176,26 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: none. The required standalone `./run golden` passed
   **11/11** with every exact anchor unchanged.
 - protected artifact delta: none. No protected or pinned file changed.
+
+### 2026-07-27 · DELAY-CLOCK — crawl-delay transition preserves politeness state
+
+- owner: Codex
+- commit: c2fe99a3c16e067cdf0d91b79d0aaea34ad657f7
+- result: PASS. A limiter's interval is atomic and mutates in place;
+  `set_host_rate` remains synchronous, updates known hosts, and still creates
+  a limiter for an unknown host. The async clock and acquisition counter stay
+  on the same object.
+- one-way acceptance: PASS. `apply_crawl_delay` still changes the rate only
+  when publisher policy is slower than the configured floor, and `rate_for`
+  reports the adopted rate.
+- elapsed-behavior acceptance: PASS. A paused-clock test establishes the
+  robots-fetch clock at counter one, adopts a ten-second delay, observes the
+  second acquire pending through nine seconds, and observes release at exactly
+  ten seconds with counter two. Existing per-host isolation remains green.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **114** workspace tests, **20** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, **188/188** Python 3.11 shell tests,
+  protected databases **2/2**, and evidence pins **39/39**.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. No protected or pinned file changed.
