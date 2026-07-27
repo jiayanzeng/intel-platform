@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 BILLING-ATOMIC is complete; a rejected webhook batch now leaves both live entitlement state and its persistent backend exactly unchanged.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **115** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 STORE-IDENTITY is complete; edits and takedowns now rematerialize canonical document identity inside the same transaction as the maintenance write.** Operator-approved annotated tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; remote verification returned that same mapping. Authenticated run **30202019640**, attempt **1**, passed all seven expected jobs against exact evidence candidate `a1d8c958b4eaf4fe4add75cc49a7fec341c8f8a5`. The release audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 raw receipt/bundle files and release report are immutable pins; manifest schema 2 matches all **39/39** file pins. Both required hosted negative controls fired and accepted zero executions. Annotated v0.10.2 tag object `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences exactly to release commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains local and unpublished, and this cycle did not move or publish it. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.10.3.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -281,6 +281,40 @@ third-party Starlette/httpx deprecation warning. Protected databases remained
 **2/2** and evidence pins **39/39**. Standalone `./run golden` repeated
 **11/11** with every exact anchor unchanged. No dependency, lockfile, schema,
 protected byte, evidence pin, remote ref, or tag changed.
+
+**v0.11 STORE-IDENTITY is complete (measured 2026-07-27).** Both public
+maintenance writes now hold one SQLite transaction across their data mutation
+and global canonical-id rematerialization. A successful `update_document`
+recomputes identity after changing content, fingerprint, sector, or publication
+order; a successful `delete_document` removes embeddings and the document,
+then reassigns every survivor before commit. Missing-row operations retain
+their clean `false` result without paying the scan. The ingest transaction and
+both maintenance paths use the single store-local
+`DEDUP_MAX_DISTANCE = 16` constant.
+
+The doc-comments record the tradeoff: edits and takedowns are maintenance APIs,
+not the ingest hot path, and correctness deliberately pays a corpus-wide scan.
+The first warning-denied control invocation was a compile non-result because
+the newly introduced constant was then referenced only from tests and therefore
+failed the dead-code warning gate. After the already-existing ingest call was
+routed through the constant, the still-unfixed methods produced the intended
+evidence: **18/21** store tests passed and three controls failed. A body edit
+left the survivor pointing at the old canonical, a publication-day change left
+the old tie-break winner in place, and deleting the canonical left a surviving
+row naming the deleted id. The no-op update control passed and preserved the
+exact `(id, canonical_id)` rows.
+
+After the transactional repair, all **21/21** store tests passed. The body edit
+makes the former duplicate canonical to itself; the earlier publication date
+moves both documents to the new winner; deleting the canonical yields zero
+rows naming the deleted id and makes its survivor canonical; the no-op update
+remains byte-identical. `./run ci-local` passed all **19/19** units with
+**119** Rust workspace tests, **21** net tests, zero warning/lint/format
+failures, locked Rust 1.78 checks/tests, and **191/191** Python 3.11.4 shell
+tests. Standalone `./run golden` repeated **11/11**. Standalone
+`./run verify-artifacts` matched protected databases **2/2** and evidence pins
+**39/39**. No schema, dependency, lockfile, protected byte, evidence pin,
+remote ref, or tag changed.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release

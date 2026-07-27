@@ -29,6 +29,8 @@ use std::path::Path;
 use std::sync::Mutex;
 use std::time::Instant;
 
+const DEDUP_MAX_DISTANCE: u32 = 16;
+
 const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS documents (
     id            TEXT PRIMARY KEY,
@@ -425,13 +427,19 @@ impl SqliteStore {
     /// the FTS index in step via the AFTER UPDATE trigger. Returns false if no
     /// such document exists.
     ///
+    /// This is a maintenance API, not the ingest hot path. A successful edit
+    /// rematerializes canonical identity over the full corpus inside the same
+    /// transaction; the corpus-wide cost is the deliberate correctness
+    /// tradeoff for corrections that can change content or publication order.
+    ///
     /// A plain `UPDATE` is used rather than `INSERT OR REPLACE` on purpose:
     /// REPLACE only fires DELETE triggers when `recursive_triggers` is on, so
     /// it would silently leave the old terms in the index on a default
     /// connection. This is exactly the kind of quiet divergence T9.5 is about.
     pub fn update_document(&self, doc: &Document) -> rusqlite::Result<bool> {
-        let conn = self.conn.lock().unwrap();
-        let n = conn.execute(
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction()?;
+        let n = tx.execute(
             "UPDATE documents SET
                  sector = ?2, url = ?3, title = ?4, body = ?5,
                  published_day = ?6, published_raw = ?7, authors = ?8, tags = ?9,
@@ -455,16 +463,27 @@ impl SqliteStore {
                 fingerprint_of(doc) as i64,
             ],
         )?;
+        if n > 0 {
+            assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;
+        }
+        tx.commit()?;
         Ok(n > 0)
     }
 
     /// Remove a document and its embeddings; the AFTER DELETE trigger evicts it
     /// from the search index. Returns false if it wasn't there.
+    ///
+    /// This is likewise a maintenance API, not the ingest hot path. A
+    /// successful takedown pays the corpus-wide canonical rematerialization
+    /// cost inside its transaction so no survivor can name the deleted row.
     pub fn delete_document(&self, id: &str) -> rusqlite::Result<bool> {
         let mut conn = self.conn.lock().unwrap();
         let tx = conn.transaction()?;
         tx.execute("DELETE FROM embeddings WHERE doc_id = ?1", params![id])?;
         let n = tx.execute("DELETE FROM documents WHERE id = ?1", params![id])?;
+        if n > 0 {
+            assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;
+        }
         tx.commit()?;
         Ok(n > 0)
     }
@@ -795,7 +814,7 @@ impl SqliteStore {
         let tx = conn.transaction()?;
         let new = append_new_tx(&tx, docs)?;
         if new > 0 {
-            assign_canonical_ids_tx(&tx, 16)?;
+            assign_canonical_ids_tx(&tx, DEDUP_MAX_DISTANCE)?;
         }
 
         let existing = tx
@@ -1336,6 +1355,101 @@ mod tests {
     const SYNDICATED: &str = "Syndicated: DeepSeek said researchers can request \
         the V4 Pro checkpoints starting today. Early adopters are serving the \
         release through vLLM at launch.";
+
+    fn canonical_rows(s: &SqliteStore) -> Vec<(String, Option<String>)> {
+        let conn = s.conn.lock().unwrap();
+        let mut stmt = conn
+            .prepare("SELECT id, canonical_id FROM documents ORDER BY id")
+            .unwrap();
+        stmt.query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap()
+    }
+
+    #[test]
+    fn body_update_rematerializes_identity_after_the_old_canonical_moves_away() {
+        let s = tmp_store();
+        s.append_new(&[
+            dup_doc("original", "2026-07-03", ORIGINAL),
+            dup_doc("survivor", "2026-07-04", SYNDICATED),
+        ])
+        .unwrap();
+        s.assign_canonical_ids(DEDUP_MAX_DISTANCE).unwrap();
+        assert_eq!(
+            s.canonical_id("survivor").unwrap().as_deref(),
+            Some("original")
+        );
+
+        let changed = dup_doc(
+            "original",
+            "2026-07-03",
+            "Unrelated coastal salinity observations from public ocean buoys.",
+        );
+        assert!(s.update_document(&changed).unwrap());
+        assert_eq!(
+            s.canonical_id("survivor").unwrap().as_deref(),
+            Some("survivor")
+        );
+    }
+
+    #[test]
+    fn published_day_update_rematerializes_the_older_original_tie_break() {
+        let s = tmp_store();
+        s.append_new(&[
+            dup_doc("alpha", "2026-07-04", ORIGINAL),
+            dup_doc("beta", "2026-07-05", SYNDICATED),
+        ])
+        .unwrap();
+        s.assign_canonical_ids(DEDUP_MAX_DISTANCE).unwrap();
+        assert_eq!(s.canonical_id("beta").unwrap().as_deref(), Some("alpha"));
+
+        let newly_older = dup_doc("beta", "2026-07-03", SYNDICATED);
+        assert!(s.update_document(&newly_older).unwrap());
+        assert_eq!(s.canonical_id("beta").unwrap().as_deref(), Some("beta"));
+        assert_eq!(s.canonical_id("alpha").unwrap().as_deref(), Some("beta"));
+    }
+
+    #[test]
+    fn deleting_a_canonical_row_rematerializes_every_survivor() {
+        let s = tmp_store();
+        s.append_new(&[
+            dup_doc("original", "2026-07-03", ORIGINAL),
+            dup_doc("survivor", "2026-07-04", SYNDICATED),
+        ])
+        .unwrap();
+        s.assign_canonical_ids(DEDUP_MAX_DISTANCE).unwrap();
+
+        assert!(s.delete_document("original").unwrap());
+        assert_eq!(
+            s.canonical_id("survivor").unwrap().as_deref(),
+            Some("survivor")
+        );
+        let dangling: i64 = s
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM documents WHERE canonical_id = 'original'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(dangling, 0);
+    }
+
+    #[test]
+    fn no_op_update_leaves_canonical_ids_byte_identical() {
+        let s = tmp_store();
+        let original = dup_doc("original", "2026-07-03", ORIGINAL);
+        let survivor = dup_doc("survivor", "2026-07-04", SYNDICATED);
+        s.append_new(&[original.clone(), survivor]).unwrap();
+        s.assign_canonical_ids(DEDUP_MAX_DISTANCE).unwrap();
+        let before = canonical_rows(&s);
+
+        assert!(s.update_document(&original).unwrap());
+        assert_eq!(canonical_rows(&s), before);
+    }
 
     #[test]
     fn duplicate_ingest_maps_to_one_canonical_id() {
