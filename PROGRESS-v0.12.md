@@ -41,3 +41,50 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: NOT MEASURED; no claim.
 - protected artifact delta: NOT MEASURED; no protected or pinned file was
   touched.
+
+### 2026-07-27 · E0 — entering state rebuilt and seven findings confirmed
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 83e7bfab5388d851f05dc9e804ec91a3aebecf70
+- result: PASS. The deliberately dirty operations worktree remained intact.
+  The permitted entering matrix passed **19/19** with **119** workspace Rust
+  tests, **21** net tests, **200/200** Python 3.11 shell tests, zero denied
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, **2/2**
+  protected databases, **54/54** pins, and **11/11** golden. The initial
+  sandboxed matrix is recorded as an environment non-result because eight
+  shell controls were denied loopback/process access.
+- shell-count acceptance: PASS. Python 3.12 passed **200/200** and both
+  interpreters verified **21/21** constrained packages. Moving only
+  `shell/tests/test_model_profiles.py` out of collection, then restoring it
+  immediately, passed **191/191** under Python 3.11; the exact delta is nine.
+  Thus 191 is the released v0.11.0 suite and 200 is the dirty-worktree suite.
+- C1 acceptance: PASS fail-before. A disposable real `cored` and scratch DB
+  began with one finance document and generation 1. After a NULL persisted
+  fingerprint forced rematerialization failure, non-paged `techwire` returned
+  HTTP **500** but left **5** total documents / **4** `techwire` rows durable;
+  generation remained 1.
+- C2 acceptance: PASS. Recursive Rust grep found exactly one production call
+  outside the store: `apps/cored/src/main.rs` passes literal `16`. The public
+  store method accepts a caller-supplied threshold; all other nine calls are
+  in its `#[cfg(test)]` module.
+- C3/C6/C7 acceptance: PASS as confirmed findings. Checklist audit proves
+  box/progress/commit provenance but does not evaluate criteria. The mutable
+  model controller carries free-form remote transition strings without a
+  structural allowlist. Its nine tests cover only `classify_profile` and
+  `transition_script`; four named failure gates and all three augment
+  dispositions remain for the operations tasks.
+- C4 acceptance: PASS through the 200/191 control. C5 acceptance: PASS with a
+  correction to the draft's example set—the tracked scan excluding
+  `evidence/` found **11** paths. Ten predate the current correction runbook;
+  historical committed occurrences already falsified v0.11's absence claim
+  before the supplied operations body.
+- finding disposition: C1-C7 all confirmed; none refuted.
+- lifecycle acceptance: PASS. Standalone `golden`, `verify-artifacts`,
+  `cycle-check`, `checklist-audit` (**88/88**, zero exemptions),
+  `progress-check`, `version-check`, and manifest validation passed.
+- golden-E2E delta: **0**; all **11/11** anchors remained byte-identical.
+- protected artifact delta: **0**. Independent SHA-256 and byte-count witnesses
+  matched `data/core.db` and `data/live-smoke.db`; annotated `v0.11.0` remained
+  object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` peeled to unchanged release
+  commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`.
