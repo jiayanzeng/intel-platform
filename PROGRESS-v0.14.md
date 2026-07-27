@@ -148,3 +148,36 @@ Entries are append-only; corrections are new dated entries.
   protected databases **2/2**, and all **86/86** pins exact.
 - golden-E2E delta: **0**. The matrix and mandatory standalone run both
   remained **11/11** byte-identical.
+
+### 2026-07-28 · R8-IDENTITY-BEFORE-BIND — identity precedes listener
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: ab266df2fc671649b6bff0ea1ce6eb2c21796fa2
+- result: PASS. `ARCHITECTURE.md` now states that production `cored` runs its
+  one `build_robots_cache` crawler-identity construction call before the sole
+  `TcpListener::bind`; when `net` is enabled, this installs the process-scoped
+  identity before the listener can accept a request. R8 enumerates those two
+  call sites in production `main`, requires exactly one of each, and compares
+  their source order.
+- control acceptance: PASS. Reordering the calls made R8 fail at
+  `apps/cored/src/main.rs:1333`; deleting identity construction failed at line
+  1333 with the missing-call finding; and adding a second bind before identity
+  construction failed at line 1331 with the two-bind finding. All three
+  controls are site-specific and distinguish the offending condition.
+- invariant acceptance: PASS. R8 passes on HEAD. The complete self-test passes
+  **8/8 rules / 14 controls**, and the focused invariant module passes
+  **14/14** on Python 3.11.4 and 3.12.13.
+- source-preservation acceptance: PASS. Implementation commit
+  `ab266df2fc671649b6bff0ea1ce6eb2c21796fa2` changed zero files under
+  `crates/` or `apps/`.
+- shell acceptance: PASS after environment retry. The first sandboxed
+  standalone attempts denied loopback binds and `ps` after **211** passing
+  tests; permitted repeats passed **219/219** under both Python 3.11.4 and
+  3.12.13.
+- regression acceptance: PASS. `./run ci-local` remained **20/20** with
+  **124** workspace Rust tests, **47** net tests, zero rustc/clippy/fmt/
+  ShellCheck failures, locked Rust 1.78 green, protected databases **2/2**,
+  and all **86/86** pins exact.
+- golden-E2E delta: **0**. The matrix and mandatory standalone run both
+  remained **11/11** byte-identical.
