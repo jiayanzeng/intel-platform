@@ -1,47 +1,112 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "rules": [
     {
       "id": "R1",
       "claim": "No production assign_canonical_ids call exists outside the store.",
       "source": "TASKS-v0.12-EXECUTION.md:323-330",
       "scope": "Production Rust outside crates/store/src/sqlite.rs; test-only Rust is excluded.",
-      "fail_before": "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production assign_canonical_ids call outside the store"
+      "fail_before": [
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "    let n = store.count().unwrap_or(0);\n",
+          "replace_with": [
+            "    let _ = store.assign_canonical_ids(16);\n",
+            "    let n = store.count().unwrap_or(0);\n"
+          ],
+          "expected_fail": "production assign_canonical_ids call outside the store"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production assign_canonical_ids call outside the store"
     },
     {
       "id": "R2",
       "claim": "The core has exactly one production TCP bind and it consumes addresses returned by loopback_only.",
       "source": "ARCHITECTURE.md:175-177",
       "scope": "All production Rust TcpListener binds; the sole allowed call is apps/cored/src/main.rs using bind_addresses.",
-      "fail_before": "invariant-scan: R2 FAIL: apps/cored/src/main.rs:1267: TcpListener bind outside the validated bind_addresses path"
+      "fail_before": [
+        {
+          "file": "apps/cored/src/main.rs",
+          "find": "    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n",
+          "replace_with": [
+            "    let _unvalidated = tokio::net::TcpListener::bind(\"0.0.0.0:0\").await;\n",
+            "    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n"
+          ],
+          "expected_fail": "TcpListener bind outside the validated bind_addresses path"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R2 FAIL: apps/cored/src/main.rs:1267: TcpListener bind outside the validated bind_addresses path"
     },
     {
       "id": "R3",
       "claim": "No recognized LLM client import, provider/base-URL constant, or provider call exists in production under crates/.",
-      "source": "AGENTS.md:78-81",
+      "source": "AGENTS.md:81-84",
       "scope": "Production Rust below crates/; test-only modules and files are excluded.",
-      "fail_before": "invariant-scan: R3 FAIL: crates/core/src/lib.rs:16: LLM client import"
+      "fail_before": [
+        {
+          "file": "crates/core/src/lib.rs",
+          "find": "//! intel-core: the shared vocabulary of the platform.\n",
+          "replace_with": [
+            "use async_openai::Client;\n",
+            "//! intel-core: the shared vocabulary of the platform.\n"
+          ],
+          "expected_fail": "LLM client import"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R3 FAIL: crates/core/src/lib.rs:16: LLM client import"
     },
     {
       "id": "R4",
       "claim": "No tracked file contains a secret-bearing environment file, provider key, private key, raw token field, non-placeholder secret assignment, or concrete long Authorization bearer value.",
-      "source": "AGENTS.md:103-109",
+      "source": "AGENTS.md:106-112",
       "scope": "All Git-tracked text; binary files are excluded, while documented non-secret network coordinates, placeholders, and short demo fixtures are allowed.",
-      "fail_before": "invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value"
+      "fail_before": [
+        {
+          "file": "README.md",
+          "find": "A multi-sector intelligence gathering and analysis platform, split into a\n",
+          "replace_with": [
+            "sk-proj-",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nA multi-sector intelligence gathering and analysis platform, split into a\n"
+          ],
+          "expected_fail": "provider-key-shaped value"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value"
     },
     {
       "id": "R5",
       "claim": "Production Rust has one private canonical-distance constant and no numeric canonical-distance call argument.",
       "source": "TASKS-v0.12-EXECUTION.md:366-368",
       "scope": "All production Rust; store tests may use alternate numeric distances.",
-      "fail_before": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
+      "fail_before": [
+        {
+          "file": "crates/store/src/sqlite.rs",
+          "find": "const DEDUP_MAX_DISTANCE: u32 = 16;\n",
+          "replace_with": [
+            "const DEDUP_MAX_DISTANCE: u32 = 16;\n",
+            "const SECOND_DEDUP_MAX_DISTANCE: u32 = 17;\n"
+          ],
+          "expected_fail": "second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
     },
     {
       "id": "R6",
       "claim": "AGENTS.md and intel-platform-OPERATIONS.md contain byte-identical model-profile authorization blocks.",
       "source": "TASKS-v0.12-EXECUTION.md:522-525",
       "scope": "The single MODEL_PROFILE_AUTHORITY marker-delimited block in each governed Markdown file.",
-      "fail_before": "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
+      "fail_before": [
+        {
+          "file": "intel-platform-OPERATIONS.md",
+          "find": "**Server model-profile authority — L1 now, L2 scheduled.**",
+          "replace_with": [
+            "**Server model-profile authority — L1 now, L2 deferred.**"
+          ],
+          "expected_fail": "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
     }
   ]
 }

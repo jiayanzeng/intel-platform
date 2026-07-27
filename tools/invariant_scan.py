@@ -15,9 +15,14 @@ Rust files under a ``tests`` directory and text after the conventional
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
+import os
 import re
+import shutil
 import subprocess
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -108,12 +113,21 @@ class ConfigError(ValueError):
 
 
 @dataclass(frozen=True)
+class FailBefore:
+    file: str
+    find: str
+    replace_with: tuple[str, ...]
+    expected_fail: str
+
+
+@dataclass(frozen=True)
 class Rule:
     id: str
     claim: str
     source: str
     scope: str
-    fail_before: str
+    fail_before: tuple[FailBefore, ...]
+    fail_before_note: str
 
 
 def production_text(path: Path, text: str) -> str:
@@ -379,37 +393,95 @@ def load_rules(path: Path) -> list[Rule]:
         raise ConfigError(
             f"{path}: root keys must be exactly schema_version and rules"
         )
-    if raw["schema_version"] != 1:
-        raise ConfigError(f"{path}: schema_version must be 1")
+    if raw["schema_version"] != 2:
+        raise ConfigError(f"{path}: schema_version must be 2")
     if not isinstance(raw["rules"], list) or not raw["rules"]:
         raise ConfigError(f"{path}: rules must be a non-empty array")
 
     rules: list[Rule] = []
     seen: set[str] = set()
-    fields = {"id", "claim", "source", "scope", "fail_before"}
+    fields = {
+        "id",
+        "claim",
+        "source",
+        "scope",
+        "fail_before",
+        "fail_before_note",
+    }
+    control_fields = {"file", "find", "replace_with", "expected_fail"}
     for index, item in enumerate(raw["rules"]):
         where = f"{path}:rules[{index}]"
         if not isinstance(item, dict) or set(item) != fields:
             raise ConfigError(f"{where}: keys must be exactly {sorted(fields)}")
-        for field in fields:
+        for field in fields - {"fail_before"}:
             if not isinstance(item[field], str) or not item[field].strip():
                 raise ConfigError(f"{where}.{field}: must be a non-empty string")
         if item["id"] in seen:
             raise ConfigError(f"{where}.id: duplicate rule {item['id']}")
         if item["id"] not in CHECKS:
             raise ConfigError(f"{where}.id: no implemented check for {item['id']}")
+
+        controls_raw = item["fail_before"]
+        if not isinstance(controls_raw, list) or not controls_raw:
+            raise ConfigError(f"{where}.fail_before: must be a non-empty array")
+        controls: list[FailBefore] = []
+        for control_index, control in enumerate(controls_raw):
+            control_where = f"{where}.fail_before[{control_index}]"
+            if not isinstance(control, dict) or set(control) != control_fields:
+                raise ConfigError(
+                    f"{control_where}: keys must be exactly "
+                    f"{sorted(control_fields)}"
+                )
+            for field in {"file", "find", "expected_fail"}:
+                if (
+                    not isinstance(control[field], str)
+                    or not control[field].strip()
+                ):
+                    raise ConfigError(
+                        f"{control_where}.{field}: must be a non-empty string"
+                    )
+            relative = Path(control["file"])
+            if relative.is_absolute() or ".." in relative.parts:
+                raise ConfigError(
+                    f"{control_where}.file: must be a safe relative path"
+                )
+            replacement = control["replace_with"]
+            if (
+                not isinstance(replacement, list)
+                or not replacement
+                or any(not isinstance(part, str) for part in replacement)
+            ):
+                raise ConfigError(
+                    f"{control_where}.replace_with: must be a non-empty "
+                    "array of strings"
+                )
+            if "".join(replacement) == control["find"]:
+                raise ConfigError(
+                    f"{control_where}: replacement must change the file"
+                )
+            controls.append(
+                FailBefore(
+                    file=control["file"],
+                    find=control["find"],
+                    replace_with=tuple(replacement),
+                    expected_fail=control["expected_fail"],
+                )
+            )
         seen.add(item["id"])
-        rules.append(Rule(**item))
+        rules.append(
+            Rule(
+                id=item["id"],
+                claim=item["claim"],
+                source=item["source"],
+                scope=item["scope"],
+                fail_before=tuple(controls),
+                fail_before_note=item["fail_before_note"],
+            )
+        )
     return rules
 
 
-def run(root: Path, rules_path: Path) -> int:
-    try:
-        rules = load_rules(rules_path)
-    except ConfigError as error:
-        print(f"invariant-scan: CONFIG FAIL: {error}")
-        return 2
-
+def run_rules(root: Path, rules: list[Rule]) -> int:
     failed = False
     for rule in rules:
         findings = CHECKS[rule.id](root.resolve())
@@ -425,18 +497,181 @@ def run(root: Path, rules_path: Path) -> int:
     return 0
 
 
+def select_rules(rules: list[Rule], rule_ids: set[str] | None) -> list[Rule]:
+    if rule_ids is None:
+        return rules
+    known = {rule.id for rule in rules}
+    unknown = sorted(rule_ids - known)
+    if unknown:
+        raise ConfigError(f"requested rule is not registered: {', '.join(unknown)}")
+    return [rule for rule in rules if rule.id in rule_ids]
+
+
+def run(
+    root: Path,
+    rules_path: Path,
+    rule_ids: set[str] | None = None,
+) -> int:
+    try:
+        rules = load_rules(rules_path)
+        selected = select_rules(rules, rule_ids)
+    except ConfigError as error:
+        print(f"invariant-scan: CONFIG FAIL: {error}")
+        return 2
+    return run_rules(root, selected)
+
+
+def _tracked_paths(root: Path) -> list[Path]:
+    result = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "-z"],
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        message = result.stderr.decode(errors="replace").strip()
+        raise ConfigError(f"git ls-files failed for {root}: {message}")
+    return [
+        Path(raw.decode())
+        for raw in result.stdout.split(b"\0")
+        if raw
+    ]
+
+
+def _copy_tracked_tree(root: Path, destination: Path) -> None:
+    destination.mkdir(parents=True)
+    for relative in _tracked_paths(root):
+        source = root / relative
+        target = destination / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if source.is_symlink():
+            os.symlink(os.readlink(source), target)
+        else:
+            shutil.copy2(source, target)
+
+    for command in (["git", "init", "-q"], ["git", "add", "-A"]):
+        result = subprocess.run(
+            command,
+            cwd=destination,
+            check=False,
+            text=True,
+            capture_output=True,
+        )
+        if result.returncode != 0:
+            raise ConfigError(
+                f"{' '.join(command)} failed in self-test copy: "
+                f"{result.stderr.strip()}"
+            )
+
+
+def _apply_control(root: Path, control: FailBefore) -> None:
+    path = root / control.file
+    try:
+        text = path.read_text()
+    except OSError as error:
+        raise ConfigError(
+            f"{control.file}: cannot apply fail-before: {error}"
+        ) from error
+    occurrences = text.count(control.find)
+    if occurrences != 1:
+        raise ConfigError(
+            f"{control.file}: fail-before find text occurs {occurrences} "
+            "times; expected exactly 1"
+        )
+    path.write_text(text.replace(control.find, "".join(control.replace_with), 1))
+
+
+def exercise_fail_before(
+    root: Path,
+    rule: Rule,
+    control: FailBefore,
+) -> tuple[int, str]:
+    with tempfile.TemporaryDirectory(prefix=f"invariant-scan-{rule.id}-") as raw:
+        copied_root = Path(raw) / "tree"
+        _copy_tracked_tree(root, copied_root)
+        _apply_control(copied_root, control)
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            status = run_rules(copied_root, [rule])
+        return status, output.getvalue()
+
+
+def self_test(
+    root: Path,
+    rules_path: Path,
+    rule_ids: set[str] | None = None,
+) -> int:
+    try:
+        rules = load_rules(rules_path)
+        selected = select_rules(rules, rule_ids)
+    except ConfigError as error:
+        print(f"invariant-scan: CONFIG FAIL: {error}")
+        return 2
+
+    if run_rules(root, selected) != 0:
+        print("invariant-scan: SELF-TEST FAIL: unmutated tree is not clean")
+        return 1
+
+    controls_run = 0
+    for rule in selected:
+        for index, control in enumerate(rule.fail_before, start=1):
+            controls_run += 1
+            try:
+                status, output = exercise_fail_before(root, rule, control)
+            except ConfigError as error:
+                print(
+                    f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: {error}"
+                )
+                return 1
+            if status == 0:
+                print(
+                    f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: "
+                    "mutation did not make the rule fail"
+                )
+                return 1
+            if status != 1:
+                print(
+                    f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: "
+                    f"rule exited {status}, expected 1"
+                )
+                return 1
+            if control.expected_fail not in output:
+                print(
+                    f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: "
+                    f"missing expected substring {control.expected_fail!r}"
+                )
+                return 1
+            print(
+                f"invariant-scan: SELF-TEST {rule.id}/{index} PASS: "
+                f"{control.expected_fail}"
+            )
+
+    print(
+        "invariant-scan: SELF-TEST PASS "
+        f"({len(selected)}/{len(selected)} rules, {controls_run} controls)"
+    )
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=ROOT)
-    parser.add_argument("--rules", type=Path)
+    parser.add_argument("--rules", type=Path, dest="rules_path")
+    parser.add_argument("--rule", action="append", dest="rule_ids")
+    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     root = args.root.resolve()
-    rules = (
-        args.rules.resolve()
-        if args.rules is not None
+    rules_path = (
+        args.rules_path.resolve()
+        if args.rules_path is not None
         else root / RULES_FILE
     )
-    return run(root, rules)
+    selected = set(args.rule_ids) if args.rule_ids else None
+    # No-argument execution is the CI path (through ``./run invariant-scan``).
+    # Keep the executable controls on by default so the existing local/hosted
+    # job cannot accidentally regress to clean-tree checks alone.
+    if args.self_test or (args.rules_path is None and args.rule_ids is None):
+        return self_test(root, rules_path, selected)
+    return run(root, rules_path, selected)
 
 
 if __name__ == "__main__":

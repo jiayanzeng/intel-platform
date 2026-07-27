@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; E0 confirmed C1–C5 against the published v0.12.0 baseline.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **205/205** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; FAIL-BEFORE-EXEC is complete and C1 remains release-blocking.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -95,6 +95,48 @@ cycle's release posture, not its publication authority; the version and
 publication decisions still belong to R-CLOSE. Both disposable worktrees,
 their temporary database, and the spawned core process were removed, and the
 live tree returned clean.
+
+**v0.13 FAIL-BEFORE-EXEC is complete (measured 2026-07-27).** Registry schema
+2 replaces each decorative `fail_before` string with one or more executable
+controls: a safe relative file, exact find text, replacement fragments, and an
+expected failure substring. Every original prose string is preserved
+byte-for-byte in `fail_before_note`; a dedicated test asserts the six-value
+mapping.
+
+`invariant_scan.py --self-test` first requires the unmutated tree to pass, then
+copies the Git-tracked tree into a fresh temporary directory for each control,
+initializes only that disposable copy's index, applies one exact substitution,
+runs only the owning rule, and requires exit 1 plus the recorded substring.
+The copy excludes build products, archives, virtual environments, and network
+state by construction. Malformed registries and unimplemented rule ids still
+exit 2. No R1–R6 matcher, pattern, or allow/deny outcome changed in this task.
+
+The no-argument scanner path now executes the same self-test, so the existing
+`./run invariant-scan` invocation in ci-local and the Python 3.11 hosted lane
+both exercise the controls without adding a job. An initial attempt to pass
+the flag from `run` correctly tripped its authorization-surface pin and one
+evidence test; that was an integration non-result. The launcher was restored
+byte-exact at SHA-256
+`7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d`
+and remains unchanged. The self-testing behavior lives entirely in the
+scanner, as allowed by this task's gate.
+
+The required inversion fired against the real CLI. Temporarily replacing R4's
+provider-key regex with `(?!)` left the clean tree at 6/6 but made
+`--self-test` exit **1** with
+`SELF-TEST R4/1 FAIL: mutation did not make the rule fail`. Restoring the
+matcher produced R1–R6 clean PASS plus all **6/6** recorded controls PASS.
+The new test module contributes ten cases: six parametrized clean/fire
+controls, exact preservation of all legacy prose, the non-matching-regex
+failure, malformed-registry exit 2, and unimplemented-rule exit 2.
+
+The corrected full `./run ci-local` passed all **20/20** jobs with unchanged
+**121** Rust workspace / **21** net counts, warning-denied builds,
+clippy/fmt/ShellCheck, locked Rust 1.78, **215/215** Python 3.11.4 tests, all
+**71/71** pins, protected databases **2/2**, and golden **11/11**. Python
+3.12.13 independently passed **215/215** and verified **21/21** exact packages.
+The C1 release blocker remains open; this task changes the assurance harness,
+not the body boundary.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

@@ -560,7 +560,7 @@ record of v0.12's is true.
   against HEAD in a scratch worktree and R5's two original fail-befores
   separately confirmed to fire; C3 reproduced as command output; C4/C5
   dispositions recorded
-- [ ] **FAIL-BEFORE-EXEC** — `fail_before` reconstructible and executed;
+- [x] **FAIL-BEFORE-EXEC** — `fail_before` reconstructible and executed;
   `--self-test` in ci-local job 20 with the count still 20; a non-matching regex
   turns CI red, demonstrated; `shell/tests/test_invariant_scan.py` green on both
   interpreters; no rule logic changed

@@ -37,6 +37,9 @@ Corollaries, each earned:
 
 - **A test double that cannot fail is not a test.** Before trusting a guard,
   give the double the ability to violate it and confirm the guard catches it.
+  Every registered invariant rule carries a reconstructible `fail_before`
+  mutation whose expected failure is executed by `invariant-scan --self-test`;
+  prose saying a rule fired is not a control.
 - **Fixtures prove the state machine, not the wire (HC13).** A green fixture test
   is evidence about parsing and control flow, never about what a real server
   does. Live-path claims require a live run.
@@ -228,8 +231,8 @@ Gate or move an out-of-scope criterion to a task whose Gate contains it.
 4. **Run every acceptance criterion** listed for the task and **capture the
    output** — command text and result. Self-verify; do not ask the operator to
    run anything you can run yourself. An acceptance criterion phrased as a
-   repo-wide absence must be discharged by a registered `invariant-scan` rule,
-   not by inspection.
+   repo-wide absence must be discharged by a registered, self-testing
+   `invariant-scan` rule with an executable `fail_before`, not by inspection.
 5. **Run `./run golden`** (§6). Its exit code defines whether the regression
    anchor held. If it moves by even one document / id / distance on a task meant
    to preserve it, **stop** — that is corpus corruption, not progress.
