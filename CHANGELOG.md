@@ -9,14 +9,18 @@ All notable changes to intel-platform releases are recorded here.
 ### Added
 
 - Every registered invariant rule now carries an executable fail-before
-  mutation. Local and hosted CI reconstruct each mutation in a disposable
-  source tree, require exit 1, and verify the rule-specific failure text.
+  mutation. Local CI reconstructs each mutation in a disposable source tree,
+  requires exit 1, and verifies the rule-specific failure text. The hosted
+  workflow definition contains the same self-test, but release-grade hosted
+  verification remains open after run 30274895522 failed in the net lane.
 - R7 enumerates every production caller of document-by-id body hydration,
   permits only the sector-scoped method, and refuses any renewed public
   unscoped store seam.
-- The existing net CI job now executes all 24 `cored --features net` tests in
-  addition to the existing 22 `intel-ingest` net tests, without adding a local
-  or hosted job identity.
+- The existing net CI job definition invokes all 24
+  `cored --features net` tests in addition to the existing 22 `intel-ingest`
+  net tests, without adding a local or hosted job identity. Hosted run
+  30274895522 reached that invocation and ran 24 tests, but finished 23 passed /
+  1 failed; a green release-grade hosted execution remains open.
 
 ### Changed
 
@@ -54,7 +58,9 @@ All notable changes to intel-platform releases are recorded here.
   the correction-only `v0.12.1` alternative therefore does not apply.
 - **Publication trigger:** separate operator authorization to publish
   `v0.13.0`. It has not fired. No annotated v0.13.0 tag has been created, no
-  push has occurred, and `origin/main` has not advanced.
+  publication push has occurred, and `origin/main` has not advanced. The exact
+  candidate commit was pushed only to `candidate/v0.13.0` for the withheld
+  publication's hosted-evidence gate.
 - A4 remains open because a rewritten shell can bypass or falsify the trusted
   `/attest` handoff. L1 remains client-side defense; an edited controller can
   rewrite it, and the server-enforced L2 forced-command wrapper remains open

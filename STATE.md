@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized local release candidate. Publication remains a pending operator decision; R-CLOSE is deliberately unchecked and the cycle remains open.** Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, remains the latest published seven-job evidence and is not promoted to v0.13 evidence. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **46** tests in the net job (**22** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest matches **69/69** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
+**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized local release candidate, but RE-MEASURE is blocked by hosted run 30274895522 failing its net job. Publication remains a pending operator decision; RE-MEASURE and R-CLOSE are deliberately unchecked and the cycle remains open.** Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, remains the latest published seven-job evidence; failed v0.13 run **30274895522**, attempt **1**, is not admitted or promoted. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **46** tests in the net job (**22** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. The last candidate golden measurement is **11/11**, protected database evidence is exact **2/2**, and the manifest remains at **69/69** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -362,9 +362,10 @@ the newly reached `cored` binary passes **24/24**, including
 The workspace total remains **124** because its default-feature `cored` run
 still excludes those two tests. The hosted workflow's identities remain
 exactly `core`, `lint`, `net`, `msrv`, `shell`, `golden`, and `drift`; only a
-step was added inside `net`. Publication and push are withheld, so this
-hosted-path result is a captured workflow-definition inspection rather than a
-live GitHub execution.
+step was added inside `net`. At task completion this hosted-path result was a
+workflow-definition inspection, not a live GitHub execution. The later
+RE-MEASURE attempt and its failure are recorded below rather than
+retroactively promoted into this task's acceptance.
 
 The fail-before used an exported disposable tree. Inverting the placeholder
 test's `error.contains(CRAWLER_CONTACT_ENV)` assertion made the exact new
@@ -409,11 +410,11 @@ pins are preserved in their release.
 pending publication disposition (measured 2026-07-27).** The operator
 authorized `v0.13.0` because UA-CONTACT landed, so the correction-only
 `v0.12.1` alternative does not apply. The separate publication trigger is an
-operator authorization to publish `v0.13.0`; it has not fired. Accordingly,
-no annotated v0.13.0 tag was created, no push or other remote mutation was
-performed, and `origin/main` was not advanced. `version-check` passes without
-the tag, so the exception permitting a local-only tag did not trigger.
-Read-only `git ls-remote` returned remote `main` unchanged at
+operator authorization to publish `v0.13.0`; it has not fired. At the time of
+that local disposition, no annotated v0.13.0 tag or remote mutation existed
+and `origin/main` had not advanced. `version-check` passed without the tag, so
+the exception permitting a local-only tag did not trigger. Read-only
+`git ls-remote` returned remote `main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084`, the published v0.10.3/v0.11.0/
 v0.12.0 annotated objects and peeled commits unchanged, no remote v0.10.2
 reference, and no remote v0.13.0 reference.
@@ -483,6 +484,48 @@ publication directive. The local release-candidate implementation commit is
 `b18ece34424e03c531bc0e90f1a633262f252d12`; it and every per-Step hash are
 recorded in the append-only pending closing record. A canonical closed-cycle
 record and annotated tag require the publication trigger.
+
+**v0.13 RE-MEASURE is blocked at its hosted-failure gate (measured
+2026-07-27).** The operator-authorized remote exception pushed exactly
+`b18ece34424e03c531bc0e90f1a633262f252d12` to the non-`main` branch
+`candidate/v0.13.0`. Before dispatch, the remote branch resolved to that exact
+commit, whose `.github/workflows/ci.yml` contains
+`cargo test -p cored --features net --locked`. `origin/main` remained
+`466ebb3fc9736923110803e087acc798e417d084`, and no local or remote
+`v0.13.0` tag existed.
+
+Workflow-dispatch run **30274895522**, attempt **1**, used
+`candidate/v0.13.0`, `publish_evidence: true`, and
+`audit_sha=b18ece34424e03c531bc0e90f1a633262f252d12`. It finished **Failure**:
+the `core`, `lint`, `msrv`, both `shell` matrix legs, and `golden` jobs passed;
+the `net` job failed; and the report-only `drift` job was skipped. The failed
+hosted command and output were:
+
+```
+cargo test -p cored --features net --locked
+running 24 tests
+test tests::attest_endpoint_refuses_an_index_only_body ... FAILED
+test tests::net_build_refuses_missing_empty_and_placeholder_contacts ... ok
+test tests::valid_contact_builds_one_versioned_identity_for_cache_and_clients ... ok
+
+thread 'tests::attest_endpoint_refuses_an_index_only_body' (3254) panicked at apps/cored/src/main.rs:202:33:
+cored refused to start: could not configure crawler identity: http: could not install crawler User-Agent
+
+test result: FAILED. 23 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.71s
+error: test failed, to rerun pass `-p cored --bin cored`
+Error: Process completed with exit code 101.
+```
+
+The run exposed all seven receipt artifact names, but its failed `net` receipt
+cannot satisfy the seven-successful-identity acceptance criterion. Per the
+operator stop condition, no receipt or bundle was downloaded or admitted, no
+release audit or re-derivation was run, and the hosted invariant self-test log
+was not promoted as evidence. Protected pins therefore remain **71 total**
+(**69** evidence plus **2** authorization surfaces). RE-MEASURE stays
+unchecked, R-CLOSE was not resumed, and no post-failure golden run was made;
+the last exact candidate golden measurement remains **11/11** with delta
+**0**. The release notes now describe both hosted assurances as workflow
+definitions and name successful hosted verification as open.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

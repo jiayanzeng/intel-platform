@@ -601,13 +601,61 @@ executing jobs recorded · net test-count delta recorded · golden **11/11**.
 
 ---
 
+## Step 10 · RE-MEASURE — Produce authenticated v0.13.0 hosted evidence 🤖🧑
+
+**Objective.** Produce release-grade hosted evidence for the v0.13.0 candidate
+without publishing it.
+
+**Gate.** The operator authorizes one narrow relaxation of the standing
+read-only remote constraint: push exactly one non-`main` candidate branch.
+Do not advance `origin/main`, create or push any tag, or publish. Stop if any
+step would require one of those actions. The evidence receipt/bundle set,
+forward protected-file pins, release-grade audit report, `STATE.md`,
+`PROGRESS-v0.13.md`, pending closing record, and successful-run citations in
+`CHANGELOG.md` are in scope because the acceptance criteria require them.
+No source change is in scope; a hosted failure is a finding, not permission to
+edit source.
+
+**Steps.**
+
+1. Push the exact candidate tree to a non-`main` branch and record the branch
+   and commit. Confirm the remote branch resolves to a commit whose `ci.yml`
+   contains the cored net-test invocation.
+2. Dispatch that branch with `publish_evidence: true` and
+   `audit_sha=b18ece34424e03c531bc0e90f1a633262f252d12`.
+3. Capture the run and all seven hosted identities. Read the net log and record
+   the cored invocation plus its **24-test** result; do not infer execution
+   from the job conclusion.
+4. Read the hosted invariant-scan log and record all **11** reconstructed
+   controls.
+5. Download and verify all signed receipts and Sigstore bundles, admit their
+   exact bytes to the forward protected-file pins, and record the new pin
+   count in `STATE.md`, `PROGRESS-v0.13.md`, and the pending closing record.
+6. Run `verify-artifacts`, `evidence-report`, and release-posture
+   `audit-deferred` with attestations required.
+7. Confirm `origin/main` and all tags remain unchanged, then run the local
+   definition of done and standalone golden.
+
+**Acceptance criteria.** Hosted run id recorded and pinned to candidate
+`b18ece34…` · net log proves the cored invocation executed **24** tests ·
+hosted invariant self-test reconstructs **11** controls · signed
+receipt/bundle set committed and re-derived · new pin count recorded in three
+places · hosted identity set remains seven · `origin/main` unchanged and no
+tag created or pushed · golden **11/11**.
+
+**Done when** v0.13.0 has release-grade hosted evidence and no hosted-execution
+claim rests on workflow inspection.
+
+---
+
 ## Step 8 · R-CLOSE — Version disposition and closing record 🧑🤖
 
 **Objective.** Decide the release, account for every diff path, and close the
 cycle with a record that is measured rather than assumed.
 
-**Gate.** Steps 1–7 and NET-TEST-EXEC complete and boxed. Worktree clean.
-**🧑 One operator decision: the version disposition and whether to publish.**
+**Gate.** Steps 1–7, NET-TEST-EXEC, and RE-MEASURE complete and boxed.
+Worktree clean. **🧑 One operator decision: the version disposition and whether
+to publish.**
 
 **Steps.**
 
@@ -671,6 +719,10 @@ record of v0.12's is true.
   existing hosted net job; planted assertion inversion makes that command red;
   ci-local remains 20 jobs; hosted identities remain seven; full net-gated
   test inventory and count delta recorded; golden 11/11
+- [ ] **RE-MEASURE** — hosted run pinned to the v0.13.0 candidate; net log
+  proves 24 cored tests; invariant log proves 11 controls; seven signed
+  identities committed and re-derived; new pin count recorded; `origin/main`
+  and tags unchanged; golden 11/11
 - [ ] **R-CLOSE** — version choice recorded with reasoning; every diff path
   classified; `ARCHITECTURE.md` matches enforced reality; A4 and the L1 residual
   both still open
@@ -727,9 +779,20 @@ Step 3 — gate-triggered THRESHOLD-SOURCE-SEAM follow-up added — 2026-07-27
 
 Step 9 — operator-directed NET-TEST-EXEC follow-up added; gate widened before implementation for the changed `run` authorization pin — 2026-07-27
 
+Step 10 — operator-directed RE-MEASURE follow-up added to discharge the declared hosted-evidence deferral — 2026-07-27
+
 Step 5 — CHANGELOG gate widened to contain its acceptance record — 2026-07-27
 
 Step 5 — live verification caller added to the gate — 2026-07-27
+
+### 2026-07-27 · RE-MEASURE omission
+
+The committed runbook's `Deferred means deferred` table required CI-runner
+evidence to be re-measured at the new release commit, but no execution Step was
+written to satisfy that requirement. Every earlier release pinned a hosted run
+against an exact candidate. RE-MEASURE is added before R-CLOSE to discharge the
+declared requirement; the omission was a runbook defect, not an execution
+defect.
 
 ### 2026-07-27 · R-CLOSE publication split
 
@@ -739,8 +802,9 @@ separate decision. Its named trigger is a separate operator authorization to
 publish `v0.13.0`, and that trigger has not fired.
 
 R-CLOSE therefore records and verifies the complete local release candidate,
-including its real implementation commit, but remains unchecked. No push,
-remote-main advance, or annotated tag is permitted. Because `cycle-check`
+including its real implementation commit, but remains unchecked. No
+publication push, remote-main advance, or annotated tag is permitted. Because
+`cycle-check`
 correctly refuses the canonical closing-record heading while any box is
 unchecked, the append-only audit record uses
 `## Pending Cycle closing record`; the canonical heading, final R-CLOSE check,
@@ -802,8 +866,10 @@ records.
 The release identity is `v0.13.0` because UA-CONTACT landed; therefore the
 `v0.12.1` alternative did not trigger. Publication remains pending the named
 trigger of a separate operator authorization to publish `v0.13.0`. No tag was
-required for `version-check`, so none was created locally. No push occurred,
-and read-only verification found remote `main` unchanged at
+required for `version-check`, so none was created locally. The later
+RE-MEASURE gate pushed the exact candidate only to
+`candidate/v0.13.0`; no publication or tag push occurred. Read-only
+verification found remote `main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084` with no v0.13.0 tag.
 
 This is deliberately a pending record, not the canonical closed-cycle record.
