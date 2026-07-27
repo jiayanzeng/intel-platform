@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published and v0.14 DIAGNOSTIC-KNOB is complete. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **221/221** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published and v0.14 TEMPLATE-REMEASURE is complete. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **223/223** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -230,6 +230,32 @@ databases **2/2**, all **86/86** pins exact, and matrix golden **11/11**.
 Standalone shell runs passed **221/221** under Python 3.11.4 and 3.12.13, with
 **21/21** exact packages on both. `invariant-scan --self-test` remained **9/9
 rules / 15 controls**, and the mandatory standalone golden remained **11/11**.
+
+**TEMPLATE-REMEASURE is complete (measured 2026-07-28).** `AGENTS.md` now
+requires every non-`none` action in an active runbook's **Deferred means
+deferred** table to name an existing discharging `Step N`, and requires every
+runbook that changes the release commit to contain a RE-MEASURE step for that
+commit. `cycle-check` enforces the row-to-step assignment on the active
+runbook only, so closed runbooks and their historical omissions are not
+retroactively rejected or rewritten.
+
+The failure-capable scratch test planted a Runner-evidence row whose action was
+“re-measure at the new release commit” but named no step. The checker returned
+failure and reported `deferred row 'Runner evidence' has a non-none action but
+names no discharging Step N`. A companion row assigned to an existing Step 2
+RE-MEASURE passed. The focused cycle-check module passed **11/11** under Python
+3.11.4 and 3.12.13, and the real v0.14 runbook passed `./run cycle-check`.
+No closed `TASKS-v*-EXECUTION.md` file, progress log, or source under `apps/`
+or `crates/` changed; v0.13's omission remains intact as the originating
+evidence.
+
+The exact tree passed `./run ci-local` **20/20** with **125** workspace Rust
+tests, **48** net tests (**23** `intel-ingest` + **25** `cored`), zero
+rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, protected
+databases **2/2**, all **86/86** pins exact, and matrix golden **11/11**.
+Shell passed **223/223** under Python 3.11.4 and 3.12.13.
+`invariant-scan --self-test` remained **9/9 rules / 15 controls**, and the
+mandatory standalone golden remained **11/11**.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked

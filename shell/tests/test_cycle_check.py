@@ -161,6 +161,55 @@ def test_cycle_check_accepts_disclosed_acceptance_edit(
     assert cycle_check.run(root) == 0
 
 
+def test_cycle_check_rejects_unassigned_active_deferral_row(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook.write_text(
+        runbook.read_text().replace(
+            "## Step 1 · CHECK",
+            "## Deferred means deferred\n\n"
+            "| Deferred item | Unchanged trigger | v1.2.3 action |\n"
+            "|---|---|---|\n"
+            "| Runner evidence | release changes | "
+            "re-measure at the new release commit |\n\n"
+            "## Step 1 · CHECK",
+        )
+    )
+
+    assert cycle_check.run(root) == 1
+
+    error = capsys.readouterr().err
+    assert "deferred row 'Runner evidence'" in error
+    assert "non-none action but names no discharging Step N" in error
+
+
+def test_cycle_check_accepts_assigned_active_deferral_row(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook.write_text(
+        runbook.read_text().replace(
+            "## Step 1 · CHECK",
+            "## Deferred means deferred\n\n"
+            "| Deferred item | Unchanged trigger | v1.2.3 action |\n"
+            "|---|---|---|\n"
+            "| Runner evidence | release changes | "
+            "re-measure — discharged by Step 2 |\n\n"
+            "## Step 1 · CHECK",
+        )
+        + "\n## Step 2 · RE-MEASURE\n\n"
+        "**Objective.** Re-measure the release commit.\n\n"
+        "**Acceptance criteria.** Hosted counts captured.\n\n"
+        "**Done when** the counts are recorded.\n"
+    )
+
+    assert cycle_check.run(root) == 0
+
+
 def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
     tmp_path: Path,
     capsys,

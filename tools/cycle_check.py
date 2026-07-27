@@ -61,6 +61,9 @@ CYCLE_LITERAL_RE = re.compile(
     r"(?![A-Za-z0-9_.-])"
 )
 STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+)\b[^\n]*$", re.MULTILINE)
+DEFERRED_HEADING = "## Deferred means deferred"
+MARKDOWN_TABLE_SEPARATOR_RE = re.compile(r"^:?-{3,}:?$")
+STEP_REFERENCE_RE = re.compile(r"\bStep ([0-9]+)\b", re.IGNORECASE)
 BOLD_BLOCK_RE = re.compile(
     r"^\*\*([^*\n]+)\*\*(.*?)"
     r"(?=^\*\*[^*\n]+\*\*|^## |\Z)",
@@ -431,6 +434,100 @@ def check_runbook_amendments(
             )
 
 
+def markdown_table_cells(line: str) -> list[str]:
+    stripped = line.strip()
+    if not stripped.startswith("|") or not stripped.endswith("|"):
+        return []
+    return [cell.strip() for cell in stripped[1:-1].split("|")]
+
+
+def normalized_table_cell(cell: str) -> str:
+    return re.sub(r"\s+", " ", cell.replace("*", "").replace("`", "")).strip()
+
+
+def check_active_deferral_assignments(
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> None:
+    heading_matches = list(
+        re.finditer(rf"^{re.escape(DEFERRED_HEADING)}$", text, re.MULTILINE)
+    )
+    if not heading_matches:
+        return
+    if len(heading_matches) != 1:
+        errors.append(
+            f"{shown(path, root)}: expected at most one "
+            f"{DEFERRED_HEADING!r}; found {len(heading_matches)}"
+        )
+        return
+
+    section_start = heading_matches[0].end()
+    section = text[section_start:]
+    next_heading = re.search(r"^## ", section, re.MULTILINE)
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+
+    lines = section.splitlines()
+    header_index: int | None = None
+    action_index: int | None = None
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if "deferred item" not in normalized:
+            continue
+        header_index = index
+        action_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "action" in cell
+            ),
+            None,
+        )
+        break
+    if header_index is None or action_index is None:
+        errors.append(
+            f"{shown(path, root)}: {DEFERRED_HEADING!r} must contain a "
+            "markdown table with Deferred item and action columns"
+        )
+        return
+
+    steps = set(STEP_HEADING_RE.findall(text))
+    for offset, line in enumerate(lines[header_index + 1 :], header_index + 1):
+        cells = markdown_table_cells(line)
+        if not cells or action_index >= len(cells):
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        item = normalized[0] if normalized else "<unnamed>"
+        action = normalized[action_index]
+        if not action or action.casefold().startswith("none"):
+            continue
+        references = STEP_REFERENCE_RE.findall(action)
+        line_number = (
+            text[:section_start].count("\n")
+            + offset
+            + 1
+        )
+        if not references:
+            errors.append(
+                f"{shown(path, root)}:{line_number}: deferred row {item!r} "
+                "has a non-none action but names no discharging Step N"
+            )
+            continue
+        for step in references:
+            if step not in steps:
+                errors.append(
+                    f"{shown(path, root)}:{line_number}: deferred row {item!r} "
+                    f"names missing discharging Step {step}"
+                )
+
+
 def run(
     root: Path = ROOT,
     *,
@@ -458,6 +555,12 @@ def run(
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         check_runbook_amendments(
+            identity.runbook,
+            active_text,
+            root,
+            errors,
+        )
+        check_active_deferral_assignments(
             identity.runbook,
             active_text,
             root,

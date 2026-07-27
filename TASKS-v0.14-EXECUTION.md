@@ -514,7 +514,7 @@ match · golden 11/11.
 - [x] **DIAGNOSTIC-KNOB** — disposition decided and recorded before
   implementation; delay bound asserted; variables documented; version trigger
   recorded here
-- [ ] **TEMPLATE-REMEASURE** — `AGENTS.md` amended and the check executable;
+- [x] **TEMPLATE-REMEASURE** — `AGENTS.md` amended and the check executable;
   unassigned deferral row fails; closed runbooks unmodified
 - [ ] **RE-MEASURE** — hosted run pinned to candidate; every count read from the
   log; signed set committed; new pin count in three places; identity set seven

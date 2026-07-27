@@ -224,6 +224,11 @@ Before implementation, verify that the task's Gate contains the scope of every
 acceptance criterion. A Gate may not be narrower than its criteria: widen the
 Gate or move an out-of-scope criterion to a task whose Gate contains it.
 
+Every active runbook's **Deferred means deferred** table must assign each
+non-`none` action to a named, existing `Step N`; an asserted action without its
+discharging step is invalid. Every runbook that changes the release commit must
+contain a **RE-MEASURE** step that measures that release commit.
+
 1. **Read** the task's objective and decision gate in
    the active cycle's execution runbook named in the declaration above.
 2. **Check the gate first.** If it trips, record and stop (§1).
