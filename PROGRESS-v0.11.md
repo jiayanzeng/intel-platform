@@ -99,3 +99,32 @@ Entries are append-only; corrections are new dated entries.
   **11/11** with every exact anchor unchanged.
 - protected artifact delta: none. Standalone `./run verify-artifacts` matched
   both protected databases **2/2** and all existing pins **39/39**.
+
+### 2026-07-27 · SECTOR-BIND — document-body endpoints bound in core SQL
+
+- owner: Codex
+- commit: d85156fc8f86b8c6ed187d545b7f3e9ffa37148f
+- result: PASS. `/docs` requires ids plus sectors and
+  `/embeddings/missing` requires model plus sectors. Both store queries bind a
+  `sector IN (…)` predicate in SQL and return empty for an empty sector set.
+- decision acceptance: PASS. The preferred zero-exception outcome was selected
+  for `/embeddings/missing` and recorded in `STATE.md §6e`. The embedding
+  maintenance worker and verifier pass every configured core sector; `/docs`
+  receives the current subscriber's entitled sectors. `ARCHITECTURE.md` now
+  states that every body-returning endpoint is sector-bound in core SQL.
+- failure-capable acceptance: PASS. Handler tests span technology and finance
+  ids, prove cross-sector bodies do not return, and prove empty-sector
+  `/docs` and `/embeddings/missing` queries return nothing. A store test
+  exercises both predicates and bound values; a shell transport test captures
+  the explicit query parameters. All Python call sites and doubles were
+  updated.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **104** workspace tests, **20** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, and **188/188** Python 3.11 shell tests. The
+  first sandboxed Python 3.12 run was an eight-denial environment non-result;
+  the permitted identical rerun passed **188/188**, with **21/21** exact
+  packages.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every public body and corpus anchor unchanged.
+- protected artifact delta: none. Standalone `./run verify-artifacts` matched
+  both protected databases **2/2** and all existing pins **39/39**.
