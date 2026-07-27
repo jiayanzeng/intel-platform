@@ -648,7 +648,16 @@ impl SqliteStore {
         rows.collect()
     }
 
-    /// Collapse near-duplicates onto a canonical id, persistently.
+    /// Rebuild persisted near-duplicate identity using the store-owned threshold.
+    ///
+    /// This is the explicit maintenance/backfill entry point. Production
+    /// callers cannot select a threshold; corpus identity always uses the same
+    /// private rule as append, update, delete, and paged harvest commits.
+    pub fn rematerialize_canonical_ids(&self) -> rusqlite::Result<usize> {
+        self.rematerialize_canonical_ids_with_distance(DEDUP_MAX_DISTANCE)
+    }
+
+    /// Test-only threshold seam for boundary and differential controls.
     ///
     /// Deliberately a *materialization of the existing global rule*, not an
     /// incremental first-seen-wins assignment. `dedup_near` keeps the earliest
@@ -662,7 +671,15 @@ impl SqliteStore {
     ///
     /// Scoped per sector, because that is the only scope in which two documents
     /// are ever compared.
-    pub fn assign_canonical_ids(&self, max_distance: u32) -> rusqlite::Result<usize> {
+    #[cfg(test)]
+    fn assign_canonical_ids(&self, max_distance: u32) -> rusqlite::Result<usize> {
+        self.rematerialize_canonical_ids_with_distance(max_distance)
+    }
+
+    fn rematerialize_canonical_ids_with_distance(
+        &self,
+        max_distance: u32,
+    ) -> rusqlite::Result<usize> {
         let mut conn = self.conn.lock().unwrap();
         let tx = conn.transaction()?;
         let changed = assign_canonical_ids_tx(&tx, max_distance)?;

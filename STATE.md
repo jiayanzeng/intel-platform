@@ -127,6 +127,33 @@ tests, warning-denied builds, clippy/fmt, locked Rust 1.78 check/tests, and
 Standalone golden remained **11/11** byte-identical; protected databases stayed
 exact **2/2** and all **54/54** pins validated.
 
+**v0.12 THRESHOLD-ONE is complete (measured 2026-07-27).** The preferred
+disposition **(b)** is implemented because recursive source search found no
+real out-of-crate caller to preserve. Production now exposes only
+`rematerialize_canonical_ids()` as the documented maintenance/backfill entry
+point; it chooses the private `DEDUP_MAX_DISTANCE` internally. The
+caller-supplied `assign_canonical_ids(max_distance)` seam is compiled only for
+the store's tests, where alternate numeric thresholds remain intentional
+boundary controls. `DEDUP_MAX_DISTANCE` was not exported.
+
+New static rule R1 in `tools/invariant_scan.py` scans production Rust outside
+`crates/store/src/sqlite.rs` and refuses any `assign_canonical_ids` call. Its
+docstring explicitly excludes store-internal/test numeric literals. In a
+disposable detached worktree, an injected
+`store.assign_canonical_ids(16)` produced exit 1 and
+`invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production
+assign_canonical_ids call outside the store`; the worktree was then removed.
+The clean tree reports `R1 PASS` and recursive grep finds the method definition
+and nine calls only inside the store's `#[cfg(test)]` module.
+
+The deferred-writer inventory now names the no-argument maintenance seam. A
+manual raw re-derivation against the release report without its runner-receipt
+directory was an invocation non-result—it downgraded only the CI-runner
+disposition. The authoritative wrapper resolved its historical baseline and
+passed. Full `./run ci-local` passed **19/19** with **121** workspace / **21**
+net tests and **200/200** shell tests; standalone golden remained **11/11**.
+Protected artifacts remained exact **2/2** with **54/54** pins.
+
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
 `TASKS-v0.11-EXECUTION.md`; `AGENTS.md` correctly still declared the latest

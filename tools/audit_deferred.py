@@ -345,7 +345,7 @@ def writer_measurement() -> dict[str, Any]:
             "pub fn record_signals(",
             "pub fn update_document(",
             "pub fn delete_document(",
-            "pub fn assign_canonical_ids(",
+            "pub fn rematerialize_canonical_ids(",
             "pub fn commit_harvest_page(",
             "pub fn upsert_embeddings(",
         ],
@@ -432,11 +432,17 @@ def writer_measurement() -> dict[str, Any]:
             },
             {
                 "owner": "store maintenance/test surface; no product caller",
-                "path": "update_document + delete_document",
-                "writes": "documents/FTS and embeddings",
+                "path": (
+                    "update_document + delete_document + "
+                    "rematerialize_canonical_ids"
+                ),
+                "writes": (
+                    "documents/FTS, embeddings, and corpus-derived canonical_id"
+                ),
                 "sources": [
                     source_ref(STORE, "pub fn update_document("),
                     source_ref(STORE, "pub fn delete_document("),
+                    source_ref(STORE, "pub fn rematerialize_canonical_ids("),
                 ],
             },
         ],
