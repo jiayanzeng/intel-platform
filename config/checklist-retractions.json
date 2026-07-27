@@ -15,7 +15,7 @@
       "runbook": "TASKS-v0.12-EXECUTION.md",
       "task_id": "R-CLOSE",
       "date": "2026-07-27",
-      "reason": "ARCHITECTURE.md:181-183 claimed \"Every endpoint that returns document bodies takes an explicit sector set whose predicate is enforced in core SQL\", but released v0.12.0 hydrated /retrieve and /attest through the public unscoped documents_by_ids method, and /attest had no sector field.",
+      "reason": "The v0.12.0 R-CLOSE HC2 claim was falsified by measurement: an entering-state finance-scoped /attest request returned a violation naming out-of-sector science::b. Released v0.12.0 hydrated /retrieve and /attest through the public unscoped documents_by_ids method, and /attest had no sector field. The live exposure was a cross-sector existence-and-16-token-match oracle, not a document-body leak.",
       "accepted_by": "repository operator through TASKS-v0.13-EXECUTION.md RETRACT-HC2",
       "corrected_by": "TASKS-v0.13-EXECUTION.md BODY-BOUNDARY and R7-BODY-SECTOR"
     },

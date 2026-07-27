@@ -1,4 +1,4 @@
-# intel-platform (v0.12.0 — core-shell)
+# intel-platform (v0.13.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -6,6 +6,10 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 (OAI-PMH harvesting, RSS, bulk/open datasets, compliant crawling, client
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
+
+`v0.13.0` is the authorized local release candidate. Publication, the
+annotated tag, and any advance of remote `main` remain pending a separate
+operator publication authorization.
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:
@@ -57,7 +61,7 @@ endpoints are the whole contract.
 | `GET /view?sectors=` | the full intelligence view: dedup drops, signals with **license-gated hydrated evidence**, named PMI edges, discovery queue, `kept_doc_ids` |
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |
-| `POST /attest {answer, context_ids}` | internal HC1 gate for model output before public return |
+| `POST /attest {answer, context_doc_ids, sectors}` | sector-scoped internal HC1 gate for model output before public return |
 | `GET /embeddings/missing?model&sectors=` | sector-filtered backfill work queue |
 | `GET /embeddings/stats?model` | stored vector count and dimension for one model key |
 | `POST /embeddings {model, items}` | store shell-computed vectors; rejects a dimension change under an existing model key |

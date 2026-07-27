@@ -4,12 +4,61 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.13.0 — 2026-07-27
+
+### Added
+
+- Every registered invariant rule now carries an executable fail-before
+  mutation. Local and hosted CI reconstruct each mutation in a disposable
+  source tree, require exit 1, and verify the rule-specific failure text.
+- R7 enumerates every production caller of document-by-id body hydration,
+  permits only the sector-scoped method, and refuses any renewed public
+  unscoped store seam.
+- The existing net CI job now executes all 24 `cored --features net` tests in
+  addition to the existing 22 `intel-ingest` net tests, without adding a local
+  or hosted job identity.
+
+### Changed
+
+- Net-enabled `cored` startup requires a non-placeholder
+  `INTEL_CRAWLER_CONTACT`. The structural `intel-platform` robots token remains
+  fixed, its advertised version is derived from the crate version, and the
+  byte-identical identity is used by both HTTP clients and `RobotsCache`.
+- Production canonical-id rematerialization no longer accepts a distance
+  parameter. R5 is now an allow-list over production call sites requiring the
+  private `DEDUP_MAX_DISTANCE` source directly.
+
 ### Fixed
 
+- Published `v0.12.0` returned attestation violations naming documents outside
+  the caller's sector set: a finance-scoped request named `science::b`. The
+  exposure was a cross-sector existence-and-16-token-match oracle, not a
+  document-body leak. `v0.13.0` closes it by binding `/attest` hydration to the
+  caller's sector set in core SQL.
 - Final `/retrieve` hydration and `/attest` now bind the shell-decided sector
   set in core SQL. The internal `/attest` endpoint intentionally returns the
   same `400 unknown context document id` response for an out-of-sector id and a
   nonexistent id, removing the former cross-sector existence/match oracle.
+- The v0.12 R5 correction could be bypassed by renaming an alternate
+  non-numeric threshold. The public maintenance seam was removed and the
+  executable invariant now binds every production call to the one private
+  threshold.
+
+### Retractions and publication disposition
+
+- The v0.12.0 R-CLOSE HC2 claim is retracted as **falsified by measurement**,
+  not merely contradicted by source reading: the entering-state finance-scoped
+  `/attest` probe returned a violation naming the out-of-sector
+  `science::b`. BODY-BOUNDARY and R7-BODY-SECTOR correct the claim forward.
+- The operator authorized `v0.13.0` because the UA-CONTACT trigger landed;
+  the correction-only `v0.12.1` alternative therefore does not apply.
+- **Publication trigger:** separate operator authorization to publish
+  `v0.13.0`. It has not fired. No annotated v0.13.0 tag has been created, no
+  push has occurred, and `origin/main` has not advanced.
+- A4 remains open because a rewritten shell can bypass or falsify the trusted
+  `/attest` handoff. L1 remains client-side defense; an edited controller can
+  rewrite it, and the server-enforced L2 forced-command wrapper remains open
+  and scheduled.
 
 ## v0.12.0 — 2026-07-27
 

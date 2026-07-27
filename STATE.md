@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; NET-TEST-EXEC is complete and R-CLOSE is next. Version v0.13.0 is authorized; publication remains a separate pending operator decision.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **46** tests in the net job (**22** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized local release candidate. Publication remains a pending operator decision; R-CLOSE is deliberately unchecked and the cycle remains open.** Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, remains the latest published seven-job evidence and is not promoted to v0.13 evidence. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **46** tests in the net job (**22** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest matches **69/69** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -404,6 +404,85 @@ implementation to update its forward manifest entry to SHA-256
 `30475367926eff8b990b70dac6d17339c4e6ec0e685aa4b01f8d01a2c328b304`
 at **41104** bytes; the immutable v0.12.0 `run` hash and all other historical
 pins are preserved in their release.
+
+**v0.13 R-CLOSE has a verified local release-candidate disposition and a
+pending publication disposition (measured 2026-07-27).** The operator
+authorized `v0.13.0` because UA-CONTACT landed, so the correction-only
+`v0.12.1` alternative does not apply. The separate publication trigger is an
+operator authorization to publish `v0.13.0`; it has not fired. Accordingly,
+no annotated v0.13.0 tag was created, no push or other remote mutation was
+performed, and `origin/main` was not advanced. `version-check` passes without
+the tag, so the exception permitting a local-only tag did not trigger.
+Read-only `git ls-remote` returned remote `main` unchanged at
+`466ebb3fc9736923110803e087acc798e417d084`, the published v0.10.3/v0.11.0/
+v0.12.0 annotated objects and peeled commits unchanged, no remote v0.10.2
+reference, and no remote v0.13.0 reference.
+
+The release-facing correction records the measured severity plainly:
+published v0.12.0 returned an attestation violation naming out-of-sector
+`science::b` to a finance-scoped request. This was an existence-and-16-token
+normalized-match oracle, not a document-body leak. The HC2 retraction now says
+the claim was **falsified by measurement**, and v0.13.0 closes the oracle by
+sector-scoping the final `/retrieve` and `/attest` hydration in core SQL.
+Out-of-sector and nonexistent attestation ids intentionally return the same
+`400 unknown context document id` response.
+
+The complete `v0.12.0..v0.13.0-local-candidate` diff contains **29 paths**,
+each classified exactly once:
+
+- **release authorities and public documentation (6):** `CHANGELOG.md`,
+  `Cargo.lock`, `README.md`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`;
+- **architecture and operating documentation (4):** `.env.example`,
+  `AGENTS.md`, `ARCHITECTURE.md`, and `deploy/README.md`;
+- **core/shell runtime and store implementation (4):**
+  `apps/cored/src/main.rs`, `crates/ingest/src/net.rs`,
+  `crates/store/src/sqlite.rs`, and `shell/intel_shell/core_client.py`;
+- **executable assurance and CI (9):** `.github/workflows/ci.yml`,
+  `config/invariant-rules.json`, `config/protected-artifacts.json`, `run`,
+  `shell/tests/test_invariant_scan.py`, `shell/tests/test_shell.py`,
+  `shell/tests/test_verify_llm.py`, `tools/invariant_scan.py`, and
+  `tools/verify_llm.py`;
+- **state, progress, task, and retraction records (6):**
+  `PROGRESS-v0.12.md`, `PROGRESS-v0.13.md`, `STATE.md`,
+  `TASKS-v0.12-EXECUTION.md`, `TASKS-v0.13-EXECUTION.md`, and
+  `config/checklist-retractions.json`.
+
+`PROGRESS-v0.12.md` remains append-only relative to the release tag:
+**93 additions / 0 deletions**. No path under `evidence/` or `data/` changed.
+The v0.12.0 annotated object and peeled commit remain
+`94d8215bc2151fecba1280dc793d3f5953cd8055` and
+`e5faf0c161a4256f33976664685653d8bd805d5d`; v0.11.0, v0.10.3, and local-only
+v0.10.2 are also unmoved. The version update changed only the local `cored`
+package version in `Cargo.lock`; dependency resolution did not move.
+
+The final architecture reconciliation matches enforced reality.
+`ARCHITECTURE.md` keeps A4 open because a rewritten shell can bypass or
+falsify `/attest`; this cycle constrains only the honest shipped path. Its
+model-profile row keeps the L1 controller residual open because an edited
+controller can rewrite the client-side allowlist; the server-enforced L2
+forced-command wrapper remains open and scheduled. Neither residual is closed
+or narrowed.
+
+The complete permitted local test-and-assurance matrix passed at the v0.13.0
+candidate. `./run ci-local` passed all **20/20** jobs with **124** Rust
+workspace tests, **46** tests in the net job (**22** ingest + **24** cored),
+zero rustc/clippy/format/ShellCheck failures, locked Rust 1.78 green,
+Python 3.11.4 **216/216**, invariant scan **7/7** with all **11**
+reconstructible controls, all **71/71** pins, protected databases **2/2**,
+persisted fingerprints exact, and golden **11/11**. The independent Python
+3.12.13 lane passed **216/216** and verified **21/21** constrained packages.
+The mandatory standalone golden repeated **11/11** byte-identically.
+`version-check`, `cycle-check`, `checklist-audit`, `progress-check`, manifest
+validation, artifact verification, and `git diff --check` passed.
+
+The original R-CLOSE criterion requiring every box to be checked is
+**PENDING**, not passed: `checklist-audit` resolves **108** checked tasks and
+**three** retractions, while R-CLOSE remains unchecked under the explicit
+publication directive. The local release-candidate implementation commit and
+per-Step hashes are recorded in the subsequent append-only pending closing
+record; a canonical closed-cycle record and annotated tag require the
+publication trigger.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

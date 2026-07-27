@@ -731,6 +731,23 @@ Step 5 — CHANGELOG gate widened to contain its acceptance record — 2026-07-2
 
 Step 5 — live verification caller added to the gate — 2026-07-27
 
+### 2026-07-27 · R-CLOSE publication split
+
+The operator authorized release identity `v0.13.0` because UA-CONTACT landed,
+so the `v0.12.1` alternative does not apply. Publication is withheld as a
+separate decision. Its named trigger is a separate operator authorization to
+publish `v0.13.0`, and that trigger has not fired.
+
+R-CLOSE therefore records and verifies the complete local release candidate,
+including its real implementation commit, but remains unchecked. No push,
+remote-main advance, or annotated tag is permitted. Because `cycle-check`
+correctly refuses the canonical closing-record heading while any box is
+unchecked, the append-only audit record uses
+`## Pending Cycle closing record`; the canonical heading, final R-CLOSE check,
+and tag-object field wait for the publication decision. This deliberately
+leaves the original "checklist fully checked" acceptance criterion pending
+rather than claiming it over an unmet publication criterion.
+
 The first strict allow-list measurement found a production threshold parameter
 at `crates/store/src/sqlite.rs:685`. Step 3's original Gate explicitly requires
 that finding to be recorded and acted on in a follow-up task rather than hidden
