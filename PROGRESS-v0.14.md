@@ -266,3 +266,32 @@ Entries are append-only; corrections are new dated entries.
   on both. `invariant-scan --self-test` remained **9/9 rules / 15 controls**.
 - golden-E2E delta: **0**. The matrix and mandatory standalone run both
   remained **11/11** byte-identical.
+
+### 2026-07-28 · TEMPLATE-REMEASURE — active deferrals require owners
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: 7fde11f6e74af7807e5d6cd7bdf4d40c594424c7
+- result: PASS. `AGENTS.md` now requires each non-`none` action in an active
+  **Deferred means deferred** table to name an existing discharging `Step N`;
+  runbooks that change the release commit must contain a RE-MEASURE step for
+  that commit. `cycle-check` enforces the row assignment on the active runbook.
+- fail-before acceptance: PASS. A scratch active runbook with a non-`none`
+  Runner-evidence action and no step failed with `deferred row 'Runner
+  evidence' has a non-none action but names no discharging Step N`. A companion
+  fixture assigned to an existing Step 2 RE-MEASURE passed. The real v0.14
+  runbook also passed.
+- preservation acceptance: PASS. No closed execution runbook, progress log, or
+  source under `apps/` or `crates/` changed. v0.13's omission remains intact as
+  the originating evidence; closed runbooks are not retroactively checked by
+  this new active-runbook rule.
+- shell acceptance: PASS. The focused cycle-check module passed **11/11** on
+  Python 3.11.4 and 3.12.13. The complete shell suite passed **223/223** on
+  both interpreters.
+- regression acceptance: PASS. `./run ci-local` passed **20/20** with **125**
+  workspace Rust tests, **48** net tests (**23** `intel-ingest` + **25**
+  `cored`), zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  protected databases **2/2**, and all **86/86** pins exact.
+  `invariant-scan --self-test` remained **9/9 rules / 15 controls**.
+- golden-E2E delta: **0**. The matrix and mandatory standalone run both
+  remained **11/11** byte-identical.
