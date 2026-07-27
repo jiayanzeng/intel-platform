@@ -124,3 +124,35 @@ Entries are append-only; corrections are new dated entries.
   **11/11** byte-identical anchors.
 - protected artifact delta: **0**; no protected database or pinned evidence
   file changed.
+
+### 2026-07-27 · THRESHOLD-ONE — production threshold seam closed
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 086166a0618426e6ecde9da34aecca8d2cd8541a
+- result: PASS with preferred disposition (b). No real out-of-crate caller
+  existed, so production exposes no-argument
+  `rematerialize_canonical_ids()` for maintenance/backfill while the
+  caller-supplied threshold method is store-test-only.
+- threshold acceptance: PASS. Recursive Rust grep finds the definition and
+  nine calls only inside `crates/store/src/sqlite.rs` and its `#[cfg(test)]`
+  module. `DEDUP_MAX_DISTANCE` remains private and every production path
+  selects it inside the store.
+- R1 failure control: PASS. A disposable detached worktree with an injected
+  `store.assign_canonical_ids(16)` exited 1 with
+  `invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production
+  assign_canonical_ids call outside the store`; the exact scratch worktree was
+  removed afterward. The clean tree exits 0 with `R1 PASS`.
+- R1 scope acceptance: PASS. Its module docstring explicitly excludes
+  store-internal and test numeric thresholds while refusing all production
+  calls outside the store.
+- executable-evidence acceptance: PASS. The deferred writer inventory names
+  the no-argument maintenance seam. A raw release-report re-derivation without
+  its runner directory was an invocation non-result; the authoritative
+  wrapper resolved the proper historical baseline and passed.
+- matrix acceptance: PASS. `./run ci-local` passed **19/19** with **121**
+  workspace Rust tests, **21** net tests, **200/200** shell tests,
+  warning-denied builds, lint/format, and locked Rust 1.78 lanes.
+- golden-E2E delta: **0**; standalone and matrix golden passed **11/11**.
+- protected artifact delta: **0**; protected databases remained exact **2/2**
+  and all **54/54** evidence pins matched.
