@@ -376,3 +376,66 @@ Entries are append-only; corrections are new dated entries.
   **216/216** and verified **21/21** exact packages.
 - golden-E2E delta: **0**; the mandatory standalone post-task run remained
   **11/11** byte-identical.
+
+### 2026-07-27 · NET-TEST-EXEC — cored net tests executed by CI
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 2567f48aaba879011857db9177ebd60624678cc7
+- result: PASS. The existing local and hosted `net` jobs now run
+  `cargo test -p cored --features net --locked` with the required
+  non-placeholder test contact after the existing
+  `cargo test -p intel-ingest --features net --locked`.
+- gate acceptance: PASS after a disclosed pre-implementation widening.
+  Changing the hash-pinned `run` bytes required the forward
+  `config/protected-artifacts.json` authorization pin to remain in scope.
+  The new pin is
+  `30475367926eff8b990b70dac6d17339c4e6ec0e685aa4b01f8d01a2c328b304`
+  at **41104** bytes; the v0.12.0 tag and release commit retain the old
+  `7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d`
+  **40980-byte** launcher. No source under `apps/` or `crates/` changed.
+- execution/count acceptance: PASS. `ci-local` stayed **20/20** jobs. The net
+  job moved **22 → 46** executed tests: `intel-ingest` remained **22/22** and
+  `cored` added **24/24**, including
+  `net_build_refuses_missing_empty_and_placeholder_contacts` and
+  `valid_contact_builds_one_versioned_identity_for_cache_and_clients`.
+  The default-feature workspace count remained **124**.
+- fail-before acceptance: PASS. In a disposable exported tree, inverting the
+  placeholder assertion made the exact new cored command exit **101** with
+  **23 passed / 1 failed**, naming
+  `net_build_refuses_missing_empty_and_placeholder_contacts` and the required
+  `INTEL_CRAWLER_CONTACT` refusal. Restoring the assertion made the same
+  command pass **24/24**. Restored scratch and live source hashes matched.
+- hosted acceptance: PASS by workflow-definition inspection, not live hosted
+  execution. Publication and push are withheld, so no new GitHub run exists.
+  The hosted net job contains the exact cored test step and the job identity
+  inventory remains the same seven values: `core`, `lint`, `net`, `msrv`,
+  `shell`, `golden`, and `drift`.
+- net-gated inventory acceptance: PASS. The cored command lists and executes
+  both direct `#[cfg(feature = "net")]` tests. The existing ingest command
+  lists and executes the module-gated
+  `both_live_clients_send_the_installed_user_agent_byte_identically`,
+  `cross_origin_redirect_reads_and_honors_new_robots_before_fetching`, and
+  `same_origin_redirect_reuses_the_cached_robots_policy` tests. All other
+  `cfg(feature = "net")` occurrences select production code; no net-gated
+  test item is unreached.
+- control lesson: `cargo check --all-targets` proves a test compiles and says
+  nothing about whether it runs. A `--features` gate splits the compiled and
+  executed sets; only the feature-matched `cargo test` invocation executes
+  that test.
+- deferred cosmetic notes: R7's two call-site controls intentionally retain
+  identical `expected_fail` strings, so their self-test output does not
+  distinguish the two fresh-tree mutations. R6 intentionally retains an
+  `expected_fail` value containing the full `invariant-scan: R6 FAIL:` prefix,
+  which produces the doubled prefix in output. Both are recorded for a
+  future site-specific-control pass and were not changed in v0.13.
+- CI acceptance: PASS. Full permitted `./run ci-local` passed **20/20** with
+  **124** workspace tests, the **46-test** net job, Python 3.11 **216/216**,
+  invariant scan **7/7** with **11** controls, warning-denied builds,
+  clippy/fmt/ShellCheck, locked Rust 1.78, all **71/71** pins, protected
+  databases **2/2**, and golden **11/11**. Python 3.12 independently passed
+  **216/216** and verified **21/21** exact packages. Initial sandboxed
+  standalone golden and Python 3.12 runs were loopback/process-permission
+  non-results; identical permitted reruns passed.
+- golden-E2E delta: **0**; the mandatory standalone post-task run remained
+  **11/11** byte-identical.
