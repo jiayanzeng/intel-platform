@@ -918,8 +918,7 @@ explicitly pending closing disposition:
 - RETRACT-HC2 — `a2d41c9d822fdae4ef017dae44aefa65551e4a53`
 - NET-TEST-EXEC — `2567f48aaba879011857db9177ebd60624678cc7`
 - IDENTITY-INSTALL — `d0b409a05597fc43356aeeb55a25ec597e358a85`
-- RE-MEASURE — pending this task's implementation commit; the append-only
-  audit record resolves it after the commit exists
+- RE-MEASURE — `394755eb00e5f0ef88f4fe01d352e06b4bb9e09f`
 - R-CLOSE/release candidate —
   pending the separate publication decision
 

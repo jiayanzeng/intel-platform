@@ -629,3 +629,74 @@ Entries are append-only; corrections are new dated entries.
 - record lesson: a green parallel test run is not evidence of race-freedom,
   and a process-global initialized from a test binary is order-dependent by
   default.
+
+### 2026-07-27 · RE-MEASURE retry — authenticated hosted evidence
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 394755eb00e5f0ef88f4fe01d352e06b4bb9e09f
+- result: **PASS.** Release-grade hosted evidence now exists for exact
+  candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd` without publishing it.
+- branch/candidate acceptance: PASS by remote execution and read-only
+  verification. The operator-authorized force update changed only
+  `candidate/v0.13.0`; the remote ref resolved to the exact candidate and its
+  workflow contains `cargo test -p cored --features net --locked`.
+- hosted-run acceptance: PASS. Workflow-dispatch run **30277584129**, attempt
+  **1**, used `publish_evidence: true` and
+  `audit_sha=7faaa4e1271616ff9390111c863d12fbcfa4d2fd`, completed **Success**
+  in **50 seconds**, and produced exactly seven successful evidence
+  identities: core, golden, lint, MSRV, net, shell Python 3.11, and shell
+  Python 3.12. The report-only drift node remained skipped and emitted no
+  eighth identity.
+- hosted-net acceptance: PASS by direct log measurement, not job-status
+  inference. The log records
+  `cargo test -p intel-ingest --features net --locked` at **23 passed / 0
+  failed**, followed by `cargo test -p cored --features net --locked`,
+  `running 24 tests`, and **24 passed / 0 failed**. The cored run includes the
+  formerly failing attestation test and both cycle-added contact tests; the
+  ingest run includes the concurrent identity-installation control.
+- invariant-self-test acceptance: PASS by hosted log measurement. The Python
+  3.11 job ran `./run invariant-scan`, passed registered rules **7/7**,
+  reconstructed R1 through R7 individually, and ended `SELF-TEST PASS (7/7
+  rules, 11 controls)`.
+- signed-evidence acceptance: PASS. Seven downloaded artifacts yielded
+  fourteen receipt/bundle files; their ZIP digests matched the hosted values.
+  Every receipt names run **30277584129**, attempt **1**, success, Linux, and
+  both event and checked-out SHA
+  `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`. The files are committed under
+  `evidence/ci-runs/30277584129-1/`.
+- release-audit acceptance: PASS by execution. Release-posture
+  `audit-deferred` required the expected candidate, repository, workflow,
+  branch ref, GitHub-hosted runners, and attestations; it accepted **7**
+  authenticated identities, rejected **0**, and measured **5 deferred / 2
+  promoted**. `audit-deferred --rederive` passed with rows **7**, source
+  dispositions **5**, triggers **7**, release grade, and attestations
+  required. The resulting **34,038-byte** report hashes to
+  `6d9ebf6d9463303235b12d6f7d8c88a3676de2361696cf5238b7336eb8468a52`.
+- pin-count acceptance: PASS by manifest validation, artifact verification,
+  and `evidence-report`. The fourteen hosted inputs plus one audit report add
+  fifteen forward pins. The new count is **86 total**: **84/84 evidence** and
+  **2/2 authorization surfaces**; protected databases remain exact **2/2**.
+- local-definition acceptance: PASS by execution after evidence admission.
+  With explicit loopback proxy exclusion, `./run ci-local` passed **20/20**
+  with **124** workspace tests, **47** net tests (**23** ingest + **24**
+  cored), Python 3.11 **216/216**, invariant scan **7/7** with **11**
+  controls, all **86/86** pins, and golden **11/11**. Python 3.12 independently
+  verified **21/21** constraints and passed **216/216** tests.
+- remote-immutability acceptance: PASS by read-only verification.
+  `origin/main` remains
+  `466ebb3fc9736923110803e087acc798e417d084`; the v0.12.0 annotated tag
+  object remains `94d8215bc2151fecba1280dc793d3f5953cd8055` and peels to
+  `e5faf0c161a4256f33976664685653d8bd805d5d`; no local or remote v0.13.0
+  tag exists. No tag, `main` push, or publication occurred.
+- standing-constraint acceptance: PASS. No source changed during
+  RE-MEASURE; `PROGRESS-v0.12.md` remains **93 additions / 0 deletions** from
+  v0.12.0; public `/v1/*` bodies, SQLite schema, protected databases, A4, and
+  the editable-L1 controller residual did not move. No live server session or
+  L2 work occurred.
+- golden-E2E delta: **0**. The post-admission `ci-local` golden and the
+  mandatory standalone run each passed **11/11** byte-identically.
+- checklist disposition: RE-MEASURE is checked. `checklist-audit` resolves
+  **110** checked tasks with **three** retractions; R-CLOSE remains the sole
+  unchecked task pending the named trigger of a separate operator
+  authorization to publish `v0.13.0`.
