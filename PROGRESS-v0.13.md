@@ -486,3 +486,54 @@ Entries are append-only; corrections are new dated entries.
   tag was needed or created. No push or remote mutation occurred. Read-only
   verification returned `origin/main` unchanged at
   `466ebb3fc9736923110803e087acc798e417d084` and no v0.13.0 tag.
+
+### 2026-07-27 · RE-MEASURE — blocked by hosted net-test failure
+
+- runbook: `TASKS-v0.13-EXECUTION.md`
+- owner: Codex
+- commit: 0d611db0c12cf663901deb6783c1b1a143e1f8ef
+- result: **FAIL / BLOCKED.** Operator-authorized workflow-dispatch run
+  **30274895522**, attempt **1**, audited exact candidate
+  `b18ece34424e03c531bc0e90f1a633262f252d12` from
+  `candidate/v0.13.0` with `publish_evidence: true`. The run finished
+  **Failure**, so the directive's stop condition fired and R-CLOSE was not
+  resumed.
+- branch/candidate acceptance: PASS. The exact candidate was pushed only to
+  `candidate/v0.13.0`; the remote branch resolved to that commit and its
+  workflow contains `cargo test -p cored --features net --locked`.
+- hosted-run acceptance: FAIL. `core`, `lint`, `msrv`, both `shell` matrix
+  legs, and `golden` passed; `net` failed; report-only `drift` was skipped.
+  The cored invocation did execute **24** tests, but returned **23 passed /
+  1 failed** and exit **101**. The failure was
+  `tests::attest_endpoint_refuses_an_index_only_body`, whose startup path
+  reported `cored refused to start: could not configure crawler identity:
+  http: could not install crawler User-Agent`. Both cycle-added contact tests
+  passed in that same hosted invocation.
+- invariant-self-test acceptance: NOT REACHED. The `core` job passed, but its
+  self-test log was not promoted as evidence after the hosted failure tripped
+  the stop condition; no claim about **11** reconstructed hosted controls is
+  made.
+- receipt/bundle acceptance: FAIL / NOT ADMITTED. The run exposed seven
+  receipt artifact names, preserving the configured seven-identity shape, but
+  the failed `net` receipt cannot satisfy seven successful identities. No
+  artifact was downloaded or committed, no receipt/bundle was admitted, and
+  no release audit or re-derivation was run.
+- pin-count acceptance: NOT CHANGED. The manifest remains **71** total pins:
+  **69/69** evidence and **2/2** authorization surfaces. There is no new pin
+  count because no failed-run evidence was admitted.
+- remote immutability acceptance: PASS. Final read-only verification returned
+  `origin/main` unchanged at
+  `466ebb3fc9736923110803e087acc798e417d084`, the candidate branch unchanged
+  at `b18ece34424e03c531bc0e90f1a633262f252d12`, and no local or remote
+  `v0.13.0` tag.
+- release-note acceptance: PASS for truthfulness, not for hosted closure.
+  `CHANGELOG.md` now describes both hosted assurances as workflow definitions,
+  cites failed run **30274895522**, and leaves green release-grade hosted
+  verification open.
+- golden-E2E delta: **0 at the last candidate measurement, 11/11**. No
+  post-failure golden command was run because the operator required an
+  immediate stop on any hosted job failure; this task's golden criterion is
+  therefore NOT RE-RUN and is not claimed as a fresh pass.
+- checklist disposition: RE-MEASURE remains unchecked; R-CLOSE remains
+  unchecked. No source under `apps/` or `crates/`, no evidence file, no tag,
+  and no publication state changed.
