@@ -366,3 +366,51 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: protected databases remain exact **2/2** and all
   **54/54** evidence pins remain exact; both newly admitted authorization pins
   also match.
+
+### 2026-07-27 · OPS-FAILCLOSED — model-profile refusals become executable
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 869d8e03ea1e45ad62f9af9bbb4f2ced4cf9599a
+- result: PASS. Container inventory, listener observation, health results, and
+  socket state now each pass through a pure disposition function before an I/O
+  caller acts. The functions return only `proceed`, `reuse`, `move-aside`, or
+  `refuse`; all new controls are offline and invoke no network, SSH, or Docker.
+- inventory acceptance: PASS. Complete inventory proceeds. Removing
+  `athenaeum-embed-gpu` refuses and names that exact missing container.
+- listener acceptance: PASS. Free ports proceed, a live managed socket with
+  its complete listener set reuses, and a foreign listener refuses with its
+  port named. A wiring test replaces tunnel stop and bridge creation with test
+  failures and proves `_start_tunnel` reuses the healthy managed tunnel without
+  invoking either operation.
+- health acceptance: PASS. Only HTTP 200 with exact `{"status":"ok"}` proceeds.
+  HTTP 503, a 200 loading body, and a curl timeout all refuse. Timeout exit 28
+  reports “hung or still loading”; a connection failure reports “dead or
+  unreachable”, and the test asserts those messages differ.
+- socket acceptance: PASS. An absent socket proceeds, a live readable socket
+  reuses, a stale readable socket moves aside, and an unreadable socket
+  refuses. The stale-path rename itself converts an OS failure into
+  `ProfileError`.
+- ask-first acceptance: PASS. Every emitted `intel`, `athenaeum`,
+  `athenaeum-bulk`, and `stop` transition is asserted free of `docker run`,
+  `docker rm`, `docker rmi`, `docker pull`, `/data/models`, and `kill`.
+- shell-count acceptance: PASS. The model-profile file passes **14/14**; the
+  full shell suite increased by the five new controls and passes **205/205**
+  under both Python 3.11.4 and 3.12.13. Both constrained environments remain
+  **21/21** exact packages.
+- authorization-pin acceptance: PASS. The unchanged `run` remains 40,980
+  bytes at
+  `7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d`.
+  The deliberately changed controller is 28,297 bytes at
+  `1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`;
+  manifest schema 2 validates all **54/54** evidence pins and both
+  authorization pins.
+- matrix acceptance: PASS. Final `./run ci-local` passed **20/20** with
+  **121** workspace Rust tests, **21** net tests, warning-denied offline/net
+  builds, clippy, fmt, ShellCheck, locked Rust 1.78 lanes, protected databases
+  **2/2**, persisted fingerprints, and the append-only progress guard.
+- golden-E2E delta: **0**; the matrix and mandatory standalone golden each
+  passed all **11/11** byte-identical anchors.
+- evidence limit: these pure and mocked controls prove the refusal state
+  machine, not the server wire. HC13 still applies; no live server session was
+  run for this task.
