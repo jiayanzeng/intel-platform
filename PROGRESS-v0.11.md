@@ -283,3 +283,52 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: none. Standalone `./run verify-artifacts` matched
   protected databases **2/2** and existing pins **39/39**; no schema,
   protected, or pinned file changed.
+
+### 2026-07-27 · RE-MEASURE — authenticated v0.11 candidate evidence admitted
+
+- owner: Codex
+- commit: 3c6bb3002abc1477f923d3c825aee776eb126457
+- gate acceptance: PASS. Remote `main` and the clean measurement subject were
+  exact candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`; the production
+  audit required the expected head, release grade, attestations, repository,
+  workflow, source digest, and `refs/heads/main`.
+- hosted acceptance: PASS. Operator-authorized run **30236305375**, attempt
+  **1**, passed core, golden, lint, MSRV, net, shell `python=3.11`, and shell
+  `python=3.12`. Seven receipt/bundle pairs persisted, every receipt named the
+  candidate, and the audit accepted the exact seven distinct identities with
+  **0 rejected** and **7 observed executions**.
+- report acceptance: PASS after one pre-measurement missing-file non-result and
+  one missing-directory copy non-result in the clean detached worktree. Exact
+  ignored copies of both protected databases left `git status` clean. The final
+  report is release-grade, requires attestations, is labeled `v0.11 RECEIPT`,
+  records a clean subject, and measures **5 deferred / 2 promoted**. Exact
+  cosine p95 was **15.033417 ms** at 2,600 documents against the **16.264 ms**
+  anchor.
+- durability acceptance: PASS. The **33,741-byte** report hashes to
+  `2bfade7c8bf5d39323a91d0a599b4576bc83a9bdce1ef9c29cca7d7db82d3d71`.
+  Its 14 receipt/bundle inputs and the report occupy fresh paths; manifest
+  schema 2 validates all **54/54** pins. Fresh re-derivation passed with rows
+  7, source dispositions 5, triggers 7, release grade, and attestations
+  required.
+- negative-control acceptance: PASS. Hosted run **30236791703** persisted all
+  seven signed packages but planted a core failure; the audit rejected that
+  receipt and accepted/observed **0** executions. Hosted run **30237021683**
+  passed all jobs but signed two `shell/python=3.11` identities and no
+  `shell/python=3.12`; the identity guard again accepted/observed **0**. One
+  preceding HTTP 422 dispatch attempt created no run; its disposable YAML
+  syntax was corrected and the source-shape lane repeated **36 passed / 1
+  skipped** before dispatch. The remote and local throwaway branch and its
+  worktree were deleted; no negative-control evidence was committed.
+- regression acceptance: PASS. `./run ci-local` passed **19/19** with
+  **119** workspace tests, **21** net tests, warning-denied builds,
+  clippy/fmt, locked Rust 1.78, and **191/191** Python 3.11 shell tests. The
+  independent Python 3.12 lane passed **191/191**; both interpreters verified
+  **21/21** exact packages.
+- golden-E2E delta: none. The mandatory standalone `./run golden` passed
+  **11/11** with every corpus and public-response anchor unchanged.
+- protected artifact delta: evidence-only. Both database artifacts remained
+  exact **2/2**; 15 fresh immutable file pins were added, moving the manifest
+  from **39/39** to **54/54** without altering any prior path or hash.
+- tag acceptance: PASS. Remote enumeration returned the unchanged published
+  annotated objects and peeled commits for v0.9.0, v0.10.0, v0.10.1, and
+  v0.10.3. No tag was created, moved, or published.
