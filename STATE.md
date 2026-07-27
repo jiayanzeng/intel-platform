@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; THRESHOLD-BIND is complete and C1 remains release-blocking.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **121** Rust workspace / **21** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; UA-CONTACT is complete and C1 remains release-blocking.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **122** Rust workspace / **22** net tests; the committed shell suite is **215/215** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -203,6 +203,35 @@ Rust tests, **21** net tests, **215/215** shell tests, warning-denied builds,
 clippy/fmt/ShellCheck, locked Rust 1.78, all **71/71** pins, protected
 databases **2/2**, and golden **11/11**. No source file under `crates/`
 changed in the THRESHOLD-BIND implementation.
+
+**v0.13 UA-CONTACT is complete (measured 2026-07-27).** A net-enabled core
+requires `INTEL_CRAWLER_CONTACT` at `build_robots_cache`. A real net binary
+with the variable unset or empty exited **101** before binding and named the
+required setting. The same binary refused `ops@example.com`,
+`you@operator.test`, and `changeme` with explicit placeholder errors. With
+`crawler-operator@unit.test`, the process reached listener readiness and was
+then stopped immediately; no publisher request was made.
+
+The `intel-platform` product token is a compile-time constant and cannot be
+supplied by the operator. The full identity is installed once per process,
+derives its version from cored's `CARGO_PKG_VERSION` (measured
+`intel-platform/0.12.0`), and is then consumed by both reqwest clients and
+passed byte-identically to `RobotsCache`. A real loopback wire control captured
+the exact same
+`intel-platform/0.12.0 (research prototype; contact: wire-contact@unit.test)`
+header from the document and robots clients. Its first sandboxed attempt was a
+proxy-routing non-result; the repository-documented
+`NO_PROXY=127.0.0.1,localhost` path reached the local listener and passed.
+
+The offline-only test proves `build_robots_cache` returns `None` without
+reading or requiring a contact. Workspace Rust tests increased **121 → 122**;
+net `intel-ingest` tests increased **21 → 22**. The additional net-enabled
+cored suite passed **22/22**, covering missing, empty, case-insensitive
+placeholder, valid-contact, and crate-version behavior. Full ci-local remained
+**20/20** with shell **215/215**, warning-denied builds,
+clippy/fmt/ShellCheck, locked Rust 1.78, all **71/71** pins, protected
+databases **2/2**, and golden **11/11**. `.env.example`, the main README, and
+the deploy guide document the required setting and the structural-token rule.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

@@ -260,6 +260,17 @@ world, and each **refuses to pretend** if it can't:
 run uses a new `data/live-<UTC-timestamp>-<pid>.db`; an intentional named
 override remains possible as
 `CORE_DB=data/named-smoke.db ./run harvest-arxiv`.
+Every net-enabled run also requires a real, monitored crawler contact:
+
+```bash
+INTEL_CRAWLER_CONTACT=<operator-email-or-contact-URL> ./run harvest-arxiv
+```
+
+The process refuses to start when that setting is missing, empty, or still a
+placeholder (`example.com`, `you@`, or `changeme`). The structural
+`intel-platform` product token is not configurable: the exact versioned
+User-Agent sent by both HTTP clients is also handed to the robots policy cache,
+so publisher group selection and wire identity cannot diverge.
 `config/protected-artifacts.json` is the one authority for `data/core.db` and
 `data/live-smoke.db`: it records each immutable evidence artifact's hash, byte
 size, corpus facts, cursor state, purpose, and provenance. A live harvest

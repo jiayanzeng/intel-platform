@@ -42,6 +42,11 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --dry-run
 - Adjust `WorkingDirectory`, `User`/`Group`, and the `Environment=` lines in the
   service unit to your install path and secrets (`CORE_URL`, `CORE_TOKEN`,
   `LLM_BASE_URL`, `API_KEY_PEPPER`).
+- A net-enabled `cored` also requires
+  `INTEL_CRAWLER_CONTACT=<operator-email-or-contact-URL>`. It refuses startup
+  when the value is missing, empty, or a placeholder; keep the
+  `intel-platform` product token structural so robots group selection matches
+  the exact User-Agent sent on the wire.
 - Cadence granularity is per **sector**, which is what the core's `/ingest`
   endpoint exposes. True per-*source* cadence (multiple feeds within one sector
   on different clocks) would need the core to accept source ids on `/ingest`;

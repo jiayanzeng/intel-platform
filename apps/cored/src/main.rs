@@ -145,20 +145,62 @@ const DEFAULT_RPS: f64 = 2.0;
 /// Builds the live `robots.txt` cache. Only exists on a `net` build, because
 /// only a `net` build can fetch anything.
 #[cfg(feature = "net")]
-fn build_robots_cache(limiter: Arc<HostLimiters>) -> Option<Arc<RobotsCache>> {
-    use intel_ingest::net::{HttpRobotsFetcher, ROBOTS_CAPACITY, ROBOTS_TTL, USER_AGENT};
-    // A failure here means the TLS backend would not initialize. Starting
-    // anyway would mean starting a network-enabled harvester with no publisher
-    // robots check — fail-open on exactly the thing this task exists to close.
-    // Refusing to start is the safe direction.
-    let fetcher = HttpRobotsFetcher::new().expect("could not build the robots.txt HTTP client");
-    Some(Arc::new(RobotsCache::new(
+const CRAWLER_CONTACT_ENV: &str = "INTEL_CRAWLER_CONTACT";
+
+#[cfg(feature = "net")]
+fn required_crawler_contact(contact: Option<&str>) -> Result<&str, String> {
+    let contact = contact
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| format!("{CRAWLER_CONTACT_ENV} is required for a net-enabled harvester"))?;
+    let lowercase = contact.to_ascii_lowercase();
+    if ["example.com", "you@", "changeme"]
+        .iter()
+        .any(|placeholder| lowercase.contains(placeholder))
+    {
+        return Err(format!(
+            "{CRAWLER_CONTACT_ENV} must name a real operator contact, not placeholder {contact:?}"
+        ));
+    }
+    Ok(contact)
+}
+
+#[cfg(feature = "net")]
+fn build_robots_cache_for_contact(
+    limiter: Arc<HostLimiters>,
+    contact: Option<&str>,
+) -> Result<(Arc<RobotsCache>, String), String> {
+    use intel_ingest::net::{
+        crawler_user_agent, install_crawler_user_agent, HttpRobotsFetcher, ROBOTS_CAPACITY,
+        ROBOTS_TTL,
+    };
+
+    let contact = required_crawler_contact(contact)?;
+    let user_agent = crawler_user_agent(env!("CARGO_PKG_VERSION"), contact);
+    let installed = install_crawler_user_agent(env!("CARGO_PKG_VERSION"), contact)
+        .map_err(|error| format!("could not configure crawler identity: {error}"))?;
+    let fetcher = HttpRobotsFetcher::new()
+        .map_err(|error| format!("could not build the robots.txt HTTP client: {error}"))?;
+    let cache = Arc::new(RobotsCache::new(
         Arc::new(fetcher),
         limiter,
-        USER_AGENT,
+        installed,
         ROBOTS_TTL,
         ROBOTS_CAPACITY,
-    )))
+    ));
+    Ok((cache, user_agent))
+}
+
+#[cfg(feature = "net")]
+fn build_robots_cache(limiter: Arc<HostLimiters>) -> Option<Arc<RobotsCache>> {
+    let contact = std::env::var(CRAWLER_CONTACT_ENV).ok();
+    // Missing identity or a client-construction failure would start a
+    // network-enabled harvester without a truthful publisher-facing identity
+    // or without its robots gate. Both are fail-open on the reason this
+    // function exists, so startup refuses instead.
+    let (cache, _) = build_robots_cache_for_contact(limiter, contact.as_deref())
+        .unwrap_or_else(|error| panic!("cored refused to start: {error}"));
+    Some(cache)
 }
 
 /// Offline build: nothing is fetched, so no publisher is asked.
@@ -1364,6 +1406,56 @@ mod tests {
 
         assert!(error.contains("192.168.1.10:8788"));
         assert!(error.contains("multi-host seam deferral"));
+    }
+
+    #[cfg(not(feature = "net"))]
+    #[test]
+    fn offline_build_does_not_require_or_construct_a_crawler_identity() {
+        let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
+        assert!(build_robots_cache(limiter).is_none());
+    }
+
+    #[cfg(feature = "net")]
+    #[test]
+    fn net_build_refuses_missing_empty_and_placeholder_contacts() {
+        for contact in [
+            None,
+            Some(""),
+            Some("   "),
+            Some("ops@example.com"),
+            Some("you@operator.test"),
+            Some("changeme"),
+            Some("MAILTO:CHANGEME@operator.test"),
+        ] {
+            let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
+            let error = match build_robots_cache_for_contact(limiter, contact) {
+                Ok(_) => panic!("placeholder identity must refuse startup"),
+                Err(error) => error,
+            };
+            assert!(
+                error.contains(CRAWLER_CONTACT_ENV),
+                "refusal must name the required setting: {error}"
+            );
+        }
+    }
+
+    #[cfg(feature = "net")]
+    #[test]
+    fn valid_contact_builds_one_versioned_identity_for_cache_and_clients() {
+        let contact = "crawler-tests@unit.test";
+        let expected = format!(
+            "intel-platform/{} (research prototype; contact: {contact})",
+            env!("CARGO_PKG_VERSION")
+        );
+        let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));
+        let (_cache, cache_user_agent) = build_robots_cache_for_contact(limiter, Some(contact))
+            .expect("real contact builds the live robots cache");
+
+        assert_eq!(cache_user_agent, expected);
+        assert_eq!(
+            intel_ingest::net::crawler_user_agent(env!("CARGO_PKG_VERSION"), contact),
+            expected
+        );
     }
 
     // Workspace root, from this crate's manifest dir (apps/cored -> ../..).

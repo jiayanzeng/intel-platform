@@ -9,14 +9,57 @@
 use crate::{gate, IngestError, Reach, SourceContext};
 use intel_compliance::{MissingPolicy, RobotsFetch, RobotsFetcher};
 use reqwest::redirect::Policy;
+use std::sync::OnceLock;
 use std::time::Duration;
 
-/// The User-Agent we identify ourselves with — and, necessarily, the same token
-/// a publisher's `robots.txt` will name if they want to address us
-/// specifically. It is passed to `RobotsCache` so group selection matches the
-/// identity we actually send on the wire; a crawler that obeys the rules
-/// written for a *different* UA than the one it presents is not obeying them.
-pub const USER_AGENT: &str = "intel-platform/0.1 (research prototype; contact: you@example.com)";
+/// Structural product token used for publisher `robots.txt` group selection.
+///
+/// This is deliberately not operator-configurable: the full User-Agent handed
+/// to `RobotsCache` must start with the same stable token sent on the wire. A
+/// typo here would select one publisher policy while presenting another
+/// identity (the group-selection reason documented at lines 14–18).
+pub const PRODUCT_TOKEN: &str = "intel-platform";
+
+static USER_AGENT: OnceLock<String> = OnceLock::new();
+
+/// Construct the one process identity from the product crate's version and the
+/// operator-supplied contact substring.
+pub fn crawler_user_agent(version: &str, contact: &str) -> String {
+    format!("{PRODUCT_TOKEN}/{version} (research prototype; contact: {contact})")
+}
+
+/// Install the exact identity shared by both HTTP clients and `RobotsCache`.
+///
+/// A process cannot change identity after it has begun fetching. Reinstalling
+/// the same bytes is harmless; a different identity is refused.
+pub fn install_crawler_user_agent(
+    version: &str,
+    contact: &str,
+) -> Result<&'static str, IngestError> {
+    let user_agent = crawler_user_agent(version, contact);
+    if let Some(installed) = USER_AGENT.get() {
+        if installed == &user_agent {
+            return Ok(installed.as_str());
+        }
+        return Err(IngestError::Http(
+            "crawler User-Agent is already configured with different bytes".to_string(),
+        ));
+    }
+    USER_AGENT
+        .set(user_agent)
+        .map_err(|_| IngestError::Http("could not install crawler User-Agent".to_string()))?;
+    Ok(USER_AGENT
+        .get()
+        .expect("crawler User-Agent was set")
+        .as_str())
+}
+
+fn configured_user_agent() -> Result<&'static str, IngestError> {
+    USER_AGENT
+        .get()
+        .map(String::as_str)
+        .ok_or_else(|| IngestError::Http("crawler User-Agent is not configured".to_string()))
+}
 
 /// How long a fetched `robots.txt` stays authoritative before we re-ask.
 pub const ROBOTS_TTL: Duration = Duration::from_secs(24 * 3600);
@@ -37,9 +80,10 @@ pub struct HttpRobotsFetcher {
 
 impl HttpRobotsFetcher {
     pub fn new() -> Result<Self, IngestError> {
+        let user_agent = configured_user_agent()?;
         Ok(Self {
             client: reqwest::Client::builder()
-                .user_agent(USER_AGENT)
+                .user_agent(user_agent)
                 .timeout(Duration::from_secs(15))
                 // A robots request must never follow silently to a different
                 // origin. A redirect is treated as unreachable (fail closed),
@@ -106,9 +150,10 @@ struct ReqwestPageFetcher {
 
 impl ReqwestPageFetcher {
     fn new() -> Result<Self, IngestError> {
+        let user_agent = configured_user_agent()?;
         Ok(Self {
             client: reqwest::Client::builder()
-                .user_agent(USER_AGENT)
+                .user_agent(user_agent)
                 // Every Location is resolved below, and the robots gate runs
                 // before the next request. Automatic redirects would ask the
                 // new origin for content before asking it for permission.
@@ -247,7 +292,11 @@ mod tests {
     use super::*;
     use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
     use std::collections::HashMap;
+    use std::io::{Read, Write};
+    use std::net::{Shutdown, TcpListener};
+    use std::sync::mpsc;
     use std::sync::{Arc, Mutex};
+    use std::thread;
 
     struct FakePageFetcher {
         responses: HashMap<String, PageResponse>,
@@ -315,6 +364,7 @@ mod tests {
 
     fn context(fetcher: Arc<PolicyRobotsFetcher>) -> SourceContext {
         let limiter = Arc::new(HostLimiters::per_second(1000.0));
+        let user_agent = crawler_user_agent("test", "crawler-tests@unit.test");
         SourceContext {
             robots: RobotsGate::new(&[]),
             limiter: limiter.clone(),
@@ -322,7 +372,7 @@ mod tests {
             robots_cache: Some(Arc::new(RobotsCache::new(
                 fetcher,
                 limiter,
-                USER_AGENT,
+                user_agent,
                 Duration::from_secs(3600),
                 16,
             ))),
@@ -345,6 +395,77 @@ mod tests {
             retry_after_secs: None,
             body: Some(body.to_string()),
         }
+    }
+
+    fn user_agent_wire_server(
+        requests: usize,
+    ) -> (String, mpsc::Receiver<String>, thread::JoinHandle<()>) {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind wire server");
+        let address = listener.local_addr().expect("wire server address");
+        let (sender, receiver) = mpsc::channel();
+        let handle = thread::spawn(move || {
+            for stream in listener.incoming().take(requests) {
+                let mut stream = stream.expect("accept wire request");
+                let mut request = Vec::new();
+                let mut buffer = [0_u8; 1024];
+                while !request.windows(4).any(|window| window == b"\r\n\r\n") {
+                    let read = stream.read(&mut buffer).expect("read wire request");
+                    if read == 0 {
+                        break;
+                    }
+                    request.extend_from_slice(&buffer[..read]);
+                }
+                let headers = String::from_utf8(request).expect("HTTP headers are UTF-8");
+                let user_agent = headers
+                    .lines()
+                    .find_map(|line| {
+                        let (name, value) = line.split_once(':')?;
+                        name.eq_ignore_ascii_case("user-agent")
+                            .then(|| value.trim().to_string())
+                    })
+                    .expect("wire request carries User-Agent");
+                sender.send(user_agent).expect("record User-Agent");
+                stream
+                    .write_all(
+                        b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok",
+                    )
+                    .expect("write wire response");
+                stream.flush().expect("flush wire response");
+                stream
+                    .shutdown(Shutdown::Write)
+                    .expect("finish wire response");
+            }
+        });
+        (format!("http://{address}"), receiver, handle)
+    }
+
+    #[tokio::test]
+    async fn both_live_clients_send_the_installed_user_agent_byte_identically() {
+        let expected = crawler_user_agent("0.12.0", "wire-contact@unit.test");
+        let installed = install_crawler_user_agent("0.12.0", "wire-contact@unit.test")
+            .expect("install identity");
+        assert_eq!(installed, expected);
+
+        let (base_url, receiver, server) = user_agent_wire_server(2);
+        let pages = ReqwestPageFetcher::new().expect("build page client");
+        let page = pages
+            .fetch(&format!("{base_url}/document"))
+            .await
+            .expect("fetch document");
+        assert_eq!(page.status, 200);
+        let robots = HttpRobotsFetcher::new().expect("build robots client");
+        let robots_result = robots.fetch(&format!("{base_url}/robots.txt")).await;
+        assert_eq!(robots_result, RobotsFetch::Body("ok".to_string()));
+
+        let page_user_agent = receiver
+            .recv_timeout(Duration::from_secs(2))
+            .expect("document User-Agent");
+        let robots_user_agent = receiver
+            .recv_timeout(Duration::from_secs(2))
+            .expect("robots User-Agent");
+        server.join().expect("wire server exits");
+        assert_eq!(page_user_agent, expected);
+        assert_eq!(robots_user_agent, expected);
     }
 
     #[tokio::test]

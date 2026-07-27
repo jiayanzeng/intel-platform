@@ -610,7 +610,7 @@ record of v0.12's is true.
 - [x] **THRESHOLD-SOURCE-SEAM** — the gate-discovered production distance
   parameter is removed; alternate-distance controls remain test-only; strict
   R5 candidate passes; golden 11/11
-- [ ] **UA-CONTACT** — net build refuses to start without a real contact; every
+- [x] **UA-CONTACT** — net build refuses to start without a real contact; every
   placeholder form refused; product token structural and identical on the wire
   and in `RobotsCache`; advertised version derived from the crate; offline build
   unchanged and proven so
