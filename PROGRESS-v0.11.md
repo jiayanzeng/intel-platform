@@ -332,3 +332,65 @@ Entries are append-only; corrections are new dated entries.
 - tag acceptance: PASS. Remote enumeration returned the unchanged published
   annotated objects and peeled commits for v0.9.0, v0.10.0, v0.10.1, and
   v0.10.3. No tag was created, moved, or published.
+
+### 2026-07-27 · R-CLOSE — v0.11.0 minor release published
+
+- owner: Codex
+- commit: 6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321
+- result: PASS. The operator explicitly selected and authorized release
+  v0.11.0 after RE-MEASURE authenticated seven distinct successful identities
+  with zero rejection and both real hosted negative controls accepted zero
+  executions.
+- release identity: PASS. `v0.11.0` is annotated tag object
+  `fcfa4825e6ffbc06c0ad73e18044965c10786aa8`, which dereferences exactly to
+  release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`. Its annotation is
+  `intel-platform v0.11.0`; the separate closing audit does not move the tag.
+- publication outcome: PASS. One atomic push advanced remote `main` to the
+  release commit and created the v0.11.0 tag. Read-only remote verification
+  returned main and the peeled tag at the release commit and the tag ref at
+  the annotated object.
+- version disposition: PASS. `/docs` and `/embeddings/missing` gain required
+  internal sector parameters, while bind, robots, network-policy failure,
+  billing rejection, and maintenance-write behavior change. Public `/v1/*`
+  JSON bodies, the SQLite schema, cache representation, dependency resolution,
+  and golden retrieval outputs are unchanged; a minor release accurately
+  describes the internal-API and runtime delta.
+- diff inventory: PASS. All **40** paths in `v0.10.3..v0.11.0` are classified
+  exactly once in `STATE.md`: five release/public-documentation paths, one
+  architecture path, four core runtime/store paths, four shell runtime paths,
+  four executable verifier/test paths, one evidence-configuration path, 15
+  durable-evidence paths, and six operating/state/task records.
+- architecture reconciliation: PASS. `ARCHITECTURE.md §6` names `/docs` and
+  `/embeddings/missing` in the core-SQL HC2 boundary and records their explicit
+  sector-set, empty-fail-closed behavior. HC1 still says a rewritten shell can
+  bypass or falsify the shipped `/attest` handoff, so A4 remains open.
+- version authorities: PASS. Rust package, Python package, FastAPI literal,
+  `STATE.md`, and newest changelog heading all read 0.11.0. Cargo mechanically
+  changed only the local `cored` package version in `Cargo.lock`; no dependency
+  resolution moved. `./run version-check` matched the exact annotated HEAD tag.
+- candidate acceptance: PASS. Before the release commit, `./run ci-local`
+  passed **19/19** with 119 workspace tests, 21 net tests, warning-denied
+  builds, clippy/fmt, locked Rust 1.78, 191 Python 3.11 shell tests, golden
+  **11/11**, protected databases **2/2**, all **54/54** pins, persisted
+  fingerprints, and lifecycle auditors. The independent Python 3.12.13 lane
+  passed **191/191**; both interpreters verified **21/21** exact packages.
+- golden-E2E delta: none. The required standalone `./run golden` passed
+  **11/11** with every exact anchor unchanged.
+- protected artifact delta: none. All **54/54** file pins matched and both
+  protected databases remained exact **2/2** with unchanged corpus facts.
+- carried v0.10.2 disposition: PASS. Local annotated tag object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` still dereferences to
+  `7d127abac0b993c9e98294ee1c03ff01153de9d0`; v0.10.2 remains local,
+  unpublished, and unmoved.
+- final closure audit: PASS after one restricted-sandbox non-result. The first
+  closed-state `./run ci-local` completed every non-shell lane but denied
+  loopback socket creation and `ps` access to eight shell tests with
+  `Operation not permitted`; those were environment refusals, not product
+  assertion failures. The exact rerun with the required system access passed
+  all **19/19** jobs. `cycle-check` reported v0.11 closed with nine closed
+  execution runbooks; `checklist-audit` resolved **88/88** checked tasks with
+  zero exemptions; `progress-check` resolved R-CLOSE to the release commit;
+  `version-check` matched the exact HEAD tag; all **54/54** pins and protected
+  databases **2/2** matched. The independent Python 3.12.13 lane passed
+  **191/191** and **21/21** packages, and the final standalone golden remained
+  **11/11**.

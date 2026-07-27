@@ -657,7 +657,7 @@ pins match · golden 11/11.
 - [x] **BILLING-ATOMIC** — failed batches leave live state and disk untouched; successful batches save once; four controls fail-before/pass-after
 - [x] **STORE-IDENTITY** — both maintenance writes rematerialize in-transaction; one shared `max_distance`; four controls fail-before/pass-after
 - [x] **RE-MEASURE** — seven authenticated distinct-identity receipts accepted; both negative controls fired; release-grade report pinned and re-derived
-- [ ] **R-CLOSE** — version choice recorded with reasoning; `ARCHITECTURE.md` matches enforced reality; A4 still open; disposition recorded with its trigger
+- [x] **R-CLOSE** — version choice recorded with reasoning; `ARCHITECTURE.md` matches enforced reality; A4 still open; disposition recorded with its trigger
 
 ---
 
@@ -769,3 +769,56 @@ The suite is green throughout because HC13 is exactly right: fixtures prove the
 state machine, not the wire. **A property is only real where something refuses to
 proceed without it** — and that sentence now has to hold for invariants, not just
 for evidence.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-27
+- **Release disposition:** release
+- **Release:** `v0.11.0`
+- **Release commit:** `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`
+- **Annotated tag object:** `fcfa4825e6ffbc06c0ad73e18044965c10786aa8`
+
+The eleven executed task records resolve to these implementation commits:
+
+- E0 — `337e7c04b76ee8034b6cf2e75f5897869f538d6c`
+- BIND-LOOPBACK — `022faf9579706f5aceb0b21662098d1f81824a05`
+- SECTOR-BIND — `d85156fc8f86b8c6ed187d545b7f3e9ffa37148f`
+- ROBOTS-MERGE — `dd8898528a7a96aa25079ccd87186cb85550c240`
+- ROBOTS-NORMALIZE — `3770f3f18deca223c8d198507d01dd85f286591b`
+- DELAY-CLOCK — `c2fe99a3c16e067cdf0d91b79d0aaea34ad657f7`
+- GATE-CLOSED — `0257ea7a42c12328e1721c2d9fb280c6de097197`
+- BILLING-ATOMIC — `d3a06a584133514fea3a2426fd5ead5eab3df2a0`
+- STORE-IDENTITY — `7ac5067b6989366f75f1b2e0e57c46f9684fcfca`
+- RE-MEASURE — `3c6bb3002abc1477f923d3c825aee776eb126457`
+- R-CLOSE/release — `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`
+
+Cycle activation was recorded separately at
+`57e56b7268345ea17dda6641dd2682295b43ec55`; it is preparatory history rather
+than one of the eleven execution Steps.
+
+The operator selected v0.11.0 because `/docs` and `/embeddings/missing` gain
+required internal sector parameters and bind, robots, network-policy failure,
+billing rejection, and maintenance-write behavior change. Public `/v1/*` JSON
+bodies, the SQLite schema, cache representation, dependency resolution, and
+golden retrieval outputs are unchanged. A minor release accurately describes
+that internal-API and runtime delta. `STATE.md` classifies all 40 paths exactly
+once. The five version authorities agree at 0.11.0, README and the changelog
+record the release, and Cargo mechanically changed only the local `cored`
+package version in the lockfile.
+
+Publication and carried dispositions are explicit. v0.11.0 was published only
+after the complete local definition of done passed, RE-MEASURE authenticated
+seven distinct successful identities with zero rejection, and both real hosted
+negative controls accepted zero executions. One atomic push advanced remote
+`main` to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`
+and created annotated tag object
+`fcfa4825e6ffbc06c0ad73e18044965c10786aa8`; remote verification returned
+that exact mapping. Hosted run 30236305375 supplied the 14 immutable
+receipt/bundle inputs and the admitted report; all 54 evidence pins match.
+A4 remains open because a rewritten shell can still bypass or falsify the
+trusted `/attest` handoff. The local v0.10.2 annotated tag remains object
+`d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, dereferencing to
+`7d127abac0b993c9e98294ee1c03ff01153de9d0`; it remains unpublished and this
+cycle did not move it. The release commit contains the classified diff,
+agreeing authorities, architecture reconciliation, changelog, and mechanically
+updated lockfile; this later append-only closing record does not move the tag.
