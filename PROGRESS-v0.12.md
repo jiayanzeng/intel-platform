@@ -156,3 +156,45 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; standalone and matrix golden passed **11/11**.
 - protected artifact delta: **0**; protected databases remained exact **2/2**
   and all **54/54** evidence pins matched.
+
+### 2026-07-27 · INVARIANT-SCAN — absence claims become executable
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 2a613edc977cd70c14f64dfc83229591500b32f7
+- result: PASS. `./run invariant-scan` now loads the exact-schema registry in
+  `config/invariant-rules.json`; every rule carries `id`, `claim`, `source`,
+  `scope`, and a nonempty `fail_before`. It is local CI job 20 and runs in the
+  existing Python 3.11 hosted shell identity, so the local count increased from
+  19 to 20 without adding a hosted job identity.
+- seeded-rule acceptance: PASS at **4/4**. R1 protects the Step 3 production
+  call-site boundary; R2 enforces one production `TcpListener::bind` consuming
+  the loopback-validated address list; R3 scans production Rust under
+  `crates/` for recognized LLM imports, provider/base-URL constants, and
+  provider calls; R5 permits exactly one private canonical-distance constant
+  and no numeric production call argument. Each registry entry cites the prose
+  sentence it executes. R4 remains intentionally deferred until Step 6 records
+  the operator-selected credential policy text, as the runbook requires.
+- failure-control acceptance: PASS. In a disposable worktree, an extra bind,
+  an `async_openai::Client` import, and a second canonical-distance constant
+  made R2, R3, and R5 each fail with path and line evidence; the worktree was
+  removed. R1 retains Step 3's separate captured failure. A temporary registry
+  whose first rule had an empty `fail_before` exited **2** with
+  `rules[0].fail_before: must be a non-empty string`; the temporary file was
+  removed.
+- checklist acceptance: PASS. `checklist_audit.py` now loads the exact-schema
+  retraction registry, rejects retraction/exemption overlap and retractions
+  naming no resolved checked box, and reports checked and retracted counts
+  separately. Before this task's implementation/progress pair it resolved
+  **91 checked, 0 retracted**, all 91 entries and commits, and zero exemptions.
+- operating-contract acceptance: PASS. `AGENTS.md` now requires every
+  repo-wide absence criterion to have a registered scan and requires each
+  task Gate to contain the scope of all its acceptance criteria.
+- matrix acceptance: PASS. Final `./run ci-local` passed **20/20** with
+  **121** workspace Rust tests, **21** net tests, **200/200** dirty-worktree
+  shell tests, warning-denied offline/net builds, clippy, fmt, locked Rust
+  1.78 lanes, protected artifacts **2/2**, and **54/54** evidence pins.
+- golden-E2E delta: **0**; the matrix and final standalone golden runs passed
+  every one of the **11/11** anchors.
+- protected artifact delta: **0**; no protected database, pinned evidence,
+  release tag, or remote ref changed.
