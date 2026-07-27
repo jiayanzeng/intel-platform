@@ -1,4 +1,4 @@
-# intel-platform (v0.10.3 — core-shell)
+# intel-platform (v0.11.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -58,11 +58,11 @@ endpoints are the whole contract.
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |
 | `POST /attest {answer, context_ids}` | internal HC1 gate for model output before public return |
-| `GET /embeddings/missing?model` | backfill work queue |
+| `GET /embeddings/missing?model&sectors=` | sector-filtered backfill work queue |
 | `GET /embeddings/stats?model` | stored vector count and dimension for one model key |
 | `POST /embeddings {model, items}` | store shell-computed vectors; rejects a dimension change under an existing model key |
 | `POST /signals/record {client, window_end, signals}` | audit trail |
-| `GET /docs?ids=` | full documents (internal) |
+| `GET /docs?ids=&sectors=` | sector-filtered full documents (internal) |
 
 Note the embedding flow: the **shell** calls the model and POSTs vectors;
 the core only stores them and does cosine. The core never talks to an LLM.
@@ -441,8 +441,8 @@ PYTHONPATH=shell python3 -m intel_shell.scheduler --tick 60   # long-lived loop
 ### Tests
 
 ```bash
-cargo test --workspace --locked                # Rust workspace: 99 tests
-PYTHONPATH=shell python3 -m pytest shell/tests # shell: 187 tests; core seams use
+cargo test --workspace --locked                # Rust workspace: 119 tests
+PYTHONPATH=shell python3 -m pytest shell/tests # shell: 191 tests; core seams use
                                               # doubles except explicit E2E tests
 ```
 

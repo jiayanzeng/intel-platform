@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.10.3 (core-shell) · **Status:** **v0.11 RE-MEASURE is complete; authenticated release-candidate evidence is pinned and re-derived, and R-CLOSE awaits the separate operator release decision.** Hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Published tag refs are unchanged: annotated v0.10.3 tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` still dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities still agree at 0.10.3.
+**As of:** 2026-07-27 · **Version:** v0.11.0 (core-shell) · **Status:** **R-CLOSE minor release approved and candidate verification is in progress; no v0.11.0 tag exists until the verified release commit is created.** The operator selected and authorized publication of v0.11.0 after hosted run **30236305375**, attempt **1**, passed all seven expected jobs against exact evidence candidate `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **54/54** file pins. Both required hosted negative controls fired and accepted zero executions. Published tag refs remain unchanged during candidate preparation: annotated v0.10.3 tag object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` still dereferences exactly to release commit `d86ba26e38ff41efbae997a1f909d124a6d6e969`; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **19/19** with **119** Rust workspace / **21** net tests; the shell suite is **191/191** under Python 3.11.4 and 3.12.13, and both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. The five release authorities are being reconciled at 0.11.0 before the release commit.
 
 **v0.11 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The read-only opener found only the operator-supplied untracked
@@ -378,6 +378,83 @@ known third-party Starlette/httpx deprecation warning. Mandatory standalone
 golden remained byte-identical at **11/11**. Remote tag enumeration still maps
 the published v0.9.0, v0.10.0, v0.10.1, and v0.10.3 annotated objects to their
 unchanged peeled commits; no tag was created, moved, or published in this task.
+
+**v0.11 R-CLOSE selected the minor release and candidate verification is in
+progress (measured 2026-07-27).** The operator explicitly approved release and
+publication of `v0.11.0`. The gate is open: RE-MEASURE authenticated seven
+distinct successful identities with zero rejection, both hosted negative
+controls accepted zero executions, all 54 evidence pins and both protected
+databases match, and the complete local definition of done was green before
+release reconciliation.
+
+The minor disposition follows `ARCHITECTURE.md §8`. `/docs` and
+`/embeddings/missing` gain required internal sector parameters; loopback bind,
+robots evaluation, network-policy failure, billing rejection, and maintenance
+identity behavior change. Public `/v1/*` JSON bodies, the SQLite schema, cache
+representation, dependency resolution, and golden retrieval outputs are
+unchanged. This is the same internal-API and runtime-change basis used for the
+v0.10.0 minor release, not an evidence-only patch.
+
+The complete `v0.10.3..release-candidate` diff contains **40 paths**, each
+classified exactly once:
+
+- **release and public documentation (5):** `README.md`, `CHANGELOG.md`,
+  `Cargo.lock`, `apps/cored/Cargo.toml`, and
+  `shell/intel_shell/__init__.py`.
+- **architecture and invariant authority (1):** `ARCHITECTURE.md`.
+- **core runtime and store behavior (4):** `apps/cored/src/main.rs`,
+  `crates/compliance/src/lib.rs`, `crates/ingest/src/lib.rs`, and
+  `crates/store/src/sqlite.rs`.
+- **shell runtime behavior (4):** `shell/intel_shell/app.py`,
+  `shell/intel_shell/billing.py`, `shell/intel_shell/core_client.py`, and
+  `shell/intel_shell/pipeline.py`.
+- **executable verifier and tests (4):** `tools/verify_llm.py`,
+  `shell/tests/test_billing.py`, `shell/tests/test_shell.py`, and
+  `shell/tests/test_verify_llm.py`.
+- **evidence configuration (1):** `config/protected-artifacts.json`.
+- **durable evidence (15):** all fourteen receipt/bundle files under
+  `evidence/ci-runs/30236305375-1/` and
+  `evidence/v0.11.0/deferred-audit/report.json`.
+- **operating, state, and task records (6):** `AGENTS.md`,
+  `PROGRESS-v0.10.3.md`, `PROGRESS-v0.11.md`, `STATE.md`,
+  `TASKS-v0.10.3-EXECUTION.md`, and `TASKS-v0.11-EXECUTION.md`.
+
+`ARCHITECTURE.md` now states the enforced loopback startup refusal, identifies
+`/docs` and `/embeddings/missing` in the HC2 core-SQL boundary, and says
+plainly that `/attest` protects the trusted shipped path but a rewritten shell
+can still bypass or falsify the handoff. A4 therefore remains open. `README.md`
+names the required sector parameters and the measured 119-workspace /
+191-shell counts. `AGENTS.md` already has the correct cycle-neutral closure
+semantics: v0.11 remains the declared cycle after its closing record is
+appended, until an operator supplies another runbook.
+
+The Rust package, Python package, FastAPI literal, this header, and newest
+changelog heading now read 0.11.0. Cargo mechanically changed only the local
+`cored` package version from 0.10.3 to 0.11.0 in `Cargo.lock`; no dependency
+resolution moved. An intermediate `./run version-check` correctly refused the
+still-old STATE authority while the other four authorities read 0.11.0; final
+candidate verification follows this reconciliation.
+
+Publication disposition is explicit. v0.11.0 will be published because the
+operator selected the minor release after the authenticated success and
+failure controls passed. The exact release commit and annotated tag object are
+recorded only after they exist; the later append-only closing record will not
+move the tag. v0.10.2 remains local and unpublished at annotated tag object
+`d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, dereferencing to
+`7d127abac0b993c9e98294ee1c03ff01153de9d0`; this release does not move or
+publish it.
+
+The reconciled release candidate passed the complete local definition of done.
+`./run ci-local` passed all **19/19** jobs with **119** Rust workspace tests,
+**21** net tests, warning-denied builds, clippy/fmt, locked Rust 1.78
+check/tests, **191/191** Python 3.11.4 shell tests, golden **11/11**, protected
+databases **2/2**, all **54/54** pins, persisted fingerprints, and every
+lifecycle auditor. The independent Python 3.12.13 lane passed **191/191** with
+the same single third-party Starlette/httpx warning, and both interpreters
+verified **21/21** exact packages. `version-check` reconciled all five
+authorities at 0.11.0 with the expected pre-tag warning; cycle, checklist,
+progress, manifest, and `git diff --check` passed. The 40-path inventory
+matches the Git diff exactly.
 
 **v0.10.3 R-CLOSE selected and published the patch release (measured
 2026-07-26).** The operator explicitly approved release

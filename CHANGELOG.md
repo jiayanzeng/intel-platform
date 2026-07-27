@@ -2,6 +2,64 @@
 
 All notable changes to intel-platform releases are recorded here.
 
+## v0.11.0 — 2026-07-27
+
+### Added
+
+- Structural loopback-only startup validation for every resolved `CORE_BIND`
+  address, with refusal before configuration, archive setup, or listener bind.
+- Explicit sector sets on `/docs` and `/embeddings/missing`, enforced by bound
+  predicates in core SQL and empty-set fail-closed behavior.
+- Failure-capable coverage for duplicate robots groups, percent-equivalent
+  paths, crawl-delay timing, missing publisher policy, billing rollback, and
+  canonical identity after edits and takedowns.
+
+### Changed
+
+- Same-specificity robots groups now merge in file order while a specific
+  product match remains isolated from generic `*` rules; multiple applicable
+  crawl delays use the conservative maximum.
+- Robots patterns and request paths normalize unreserved percent triplets
+  without decoding reserved delimiters or turning encoded literals into
+  wildcards.
+- Crawl-delay changes update the existing per-host limiter in place, preserving
+  its clock and acquisition counter; network ingestion without a publisher
+  policy cache now fails closed.
+- Billing batches validate against detached state before publishing once, and
+  successful document maintenance rematerializes corpus-wide canonical identity
+  in the same SQLite transaction.
+
+### Fixed
+
+- Non-loopback or mixed-resolution core binds can no longer expose unauthenticated
+  internal endpoints.
+- Internal document enumeration can no longer escape the core's sector boundary.
+- A later invalid billing event can no longer leave an earlier entitlement
+  mutation live in memory or persist it through an unrelated save.
+- Document edits, publication-order changes, and canonical-row deletion can no
+  longer leave stale or dangling `canonical_id` values.
+
+### Publication and carried dispositions
+
+- The operator selected a minor release because `/docs` and
+  `/embeddings/missing` gain required internal query parameters and bind,
+  robots, billing-failure, and maintenance-write behavior changes. Public
+  `/v1/*` JSON bodies, the SQLite schema, cache representation, dependency
+  resolution, and golden retrieval outputs are unchanged.
+- Hosted run 30236305375 passed all seven expected jobs at exact candidate
+  `17221504d0c572e2b52f8509cb720d4a7c72f47d`. The release audit authenticated
+  all seven distinct receipts with zero rejection, measured five deferred /
+  two promoted rows, and recorded exact-cosine p95 at 15.033417 ms for 2,600
+  documents.
+- Real hosted controls rejected a persisted failed-core receipt and a duplicated
+  `python=3.11` matrix, accepting zero executions in each case. The admitted
+  report, receipts, and Sigstore bundles bring immutable evidence to 54/54 pins.
+- T7 single-flight, Postgres, pgvector, multi-host seam hardening, and the A4
+  untrusted-shell boundary remain deferred. `/view` materialization remains a
+  promoted future implementation; this release does not claim to close A4.
+- v0.10.2 remains local and unpublished at its original annotated tag object;
+  this release does not move or publish it.
+
 ## v0.10.3 — 2026-07-26
 
 ### Added

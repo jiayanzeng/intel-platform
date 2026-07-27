@@ -184,8 +184,8 @@ takes an explicit sector set whose predicate is enforced in core SQL;
 
 | invariant | enforced in | why there |
 |---|---|---|
-| HC1 no gated text public | core (`/search`, `/view`); core + trusted shipped shell (`/attest` for `/v1/ask`) | source gating is unconditional; answer attestation is effective on the shipped path but remains bypassable by a rewritten shell until public egress crosses a core-owned boundary (A4) |
-| HC2 sector filtering | core SQL | a shell bug must not bypass it |
+| HC1 no gated text public | core (`/search`, `/view`); core + trusted shipped shell (`/attest` for `/v1/ask`) | source gating is unconditional; answer attestation is enforced on the shipped path, but a rewritten shell can still bypass or falsify that handoff until public egress crosses a core-owned boundary (A4 remains open) |
+| HC2 sector filtering | core SQL, including `/docs` and `/embeddings/missing` | every body-returning query requires an explicit sector set and fails closed when it is empty, so a shell bug cannot bypass filtering |
 | HC3 no LLM in core | core (by omission) | keeps the engine deterministic and offline-testable |
 | HC8 politeness | core `AppState` | a TTL / limiter that doesn't outlive the request is theatre |
 | HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
