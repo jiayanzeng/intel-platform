@@ -88,3 +88,39 @@ Entries are append-only; corrections are new dated entries.
   matched `data/core.db` and `data/live-smoke.db`; annotated `v0.11.0` remained
   object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8` peeled to unchanged release
   commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`.
+
+### 2026-07-27 · INGEST-ATOMIC — corpus append and identity share one commit
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: 904866e41a6848de9bde021e12e5c4d7b4fff774
+- result: PASS. `append_new` now appends and globally rematerializes
+  `canonical_id` inside one SQLite transaction. The non-paged handler only
+  bumps view generation after that successful durability point; no fallible
+  operation remains between them.
+- non-paged failure acceptance: PASS fail-before/pass-after. Before the fix,
+  the new regression returned HTTP 500 and preserved generation but found
+  **5** committed rows instead of the required **1**. After the fix, the same
+  injected missing-fingerprint failure returns HTTP 500, leaves count at 1,
+  and leaves generation unmoved.
+- paged boundary acceptance: PASS before and after. A successful first page
+  leaves two documents durable with canonical ids, cursor token, and generation
+  1; a later injected page failure adds zero rows, preserves that cursor and
+  identity, and does not bump generation again.
+- architecture/API acceptance: PASS. `ARCHITECTURE.md` §3 item 8 now names the
+  same-transaction rule for every store write path that adds, changes, or
+  removes rows. No schema or `/ingest` success-body change occurred. Source
+  search finds `append_new` in the handler and no handler-level
+  `assign_canonical_ids` call.
+- executable-evidence correction: the first `ci-local` correctly refused a
+  stale `audit_deferred.py` locator for the removed handler assignment. Its
+  writer inventory now locates the actual atomic `append_new` path; no deferred
+  trigger or disposition changed. The identical rerun passed **19/19**.
+- matrix acceptance: PASS with **121** workspace Rust tests, **21** net tests,
+  warning-denied offline/net builds, clippy, fmt, locked Rust 1.78 check/tests,
+  **200/200** Python 3.11 shell tests, and protected evidence **2/2** with all
+  **54/54** pins. Standalone relevant Rust/MSRV lanes also passed.
+- golden-E2E delta: **0**; standalone and matrix golden runs both passed all
+  **11/11** byte-identical anchors.
+- protected artifact delta: **0**; no protected database or pinned evidence
+  file changed.
