@@ -198,3 +198,41 @@ Entries are append-only; corrections are new dated entries.
   every one of the **11/11** anchors.
 - protected artifact delta: **0**; no protected database, pinned evidence,
   release tag, or remote ref changed.
+
+### 2026-07-27 · RETRACT-0110 — v0.11 threshold claim corrected forward
+
+- runbook: `TASKS-v0.12-EXECUTION.md`
+- owner: Codex
+- commit: a954e2ae4e107ce59a8dabd18bdff9d695ddbb7b
+- result: PASS. The retraction registry now names v0.11 STORE-IDENTITY,
+  quotes its false “one shared `max_distance` constant” criterion, states the
+  released handler/store split, and names v0.12 INGEST-ATOMIC plus
+  THRESHOLD-ONE as the correcting tasks.
+- permanent-record acceptance: PASS. `PROGRESS-v0.11.md` gained one 21-line
+  erratum after its closing record. `git diff --unified=0` showed only an
+  addition beginning after original line 396; the original STORE-IDENTITY
+  entry at lines 257–285 and every closed-runbook checkbox were not edited.
+- checklist acceptance: PASS. Before this task's implementation/progress pair,
+  `checklist-audit` reported **92 checked, 1 retracted**, all 92 entries and
+  commits resolved, and zero exemptions. The retraction is distinct from an
+  exemption and names a resolved checked box.
+- state/release acceptance: PASS. The `STATE.md` header reports the released
+  suite at **191/191** and separately records that the preserved untracked
+  operations test file adds nine cases for **200/200** in the dirty worktree.
+  It states explicitly that v0.11.0 remains published with the known,
+  now-corrected threshold-source defect.
+- immutable-release acceptance: PASS before and after. Annotated `v0.11.0`
+  remained object `fcfa4825e6ffbc06c0ad73e18044965c10786aa8`, peeling exactly
+  to release commit `6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`.
+  Manifest validation matched **54/54** pins; `./run verify-artifacts` matched
+  both protected databases **2/2**; `git diff --name-only` found no change
+  under `config/protected-artifacts.json` or `evidence/`.
+- matrix acceptance: PASS. `./run ci-local` passed **20/20** with **121**
+  workspace Rust tests, **21** net tests, **200/200** current-worktree shell
+  tests, warning-denied builds, clippy/fmt, locked Rust 1.78 lanes, the
+  retraction-aware checklist, and all artifact checks.
+- golden-E2E delta: **0**; the matrix and standalone runs each passed
+  **11/11** exact anchors.
+- protected artifact delta: **0**; the tag, release commit, 14 v0.11
+  receipt/bundle files, all 54 manifest pins, and both protected databases are
+  unchanged.
