@@ -559,13 +559,55 @@ what its own correction failed to correct.
 
 ---
 
+## Step 9 · NET-TEST-EXEC — Execute every net-gated cored test 🤖
+
+**Objective.** Make every `net`-gated test in `apps/cored` execute in both
+local and hosted CI, rather than merely compile under `--all-targets`.
+
+**Gate.** `run` (`ci_net_test`), `.github/workflows/ci.yml`'s existing net job,
+and `config/protected-artifacts.json` only for the required forward update to
+the changed `run` authorization-surface pin. No source under `crates/` or
+`apps/` changes. The mandatory `STATE.md` and checklist updates, and the
+separate `PROGRESS-v0.13.md` audit receipt, remain governed by `AGENTS.md §5`.
+The original operator gate named only the first two implementation files; it
+was widened before implementation because changing pinned `run` bytes would
+otherwise make `verify-artifacts` and `ci-local` fail. This does not alter the
+v0.12.0 tag, release commit, evidence bytes, database hashes, or any historical
+manifest.
+
+**Steps.**
+
+1. Add `cargo test -p cored --features net --locked` inside the existing local
+   net job and as a step inside the existing hosted net job, alongside the
+   `intel-ingest` net test invocation.
+2. Execute both cored net-gated tests locally and record the new net count.
+3. In a disposable tree, invert one placeholder assertion and prove the exact
+   new cored test command exits nonzero; restore the source and prove it green.
+4. Inventory every directly or module-gated `net` test item in the workspace
+   and identify the existing job command that executes it. Record any gap
+   rather than widening this task silently.
+5. Record that `cargo check --all-targets` proves only compilation:
+   `--features` changes the executed test set, and only `cargo test` executes
+   it. Record the two cosmetic R6/R7 `expected_fail` notes without changing
+   them in this cycle.
+
+**Acceptance criteria.** Both cored net tests execute in `ci-local` and in the
+hosted net job definition · planted assertion inversion makes the new job
+command red and restored source is green · ci-local remains **20** jobs · the
+hosted seven-job identity set is unchanged · full net-gated test inventory and
+executing jobs recorded · net test-count delta recorded · golden **11/11**.
+
+**Done when** no test added by this cycle is compiled without being run.
+
+---
+
 ## Step 8 · R-CLOSE — Version disposition and closing record 🧑🤖
 
 **Objective.** Decide the release, account for every diff path, and close the
 cycle with a record that is measured rather than assumed.
 
-**Gate.** Steps 1–7 complete and boxed. Worktree clean. **🧑 One operator
-decision: the version disposition and whether to publish.**
+**Gate.** Steps 1–7 and NET-TEST-EXEC complete and boxed. Worktree clean.
+**🧑 One operator decision: the version disposition and whether to publish.**
 
 **Steps.**
 
@@ -625,6 +667,10 @@ record of v0.12's is true.
   `ARCHITECTURE.md` self-consistent and matching enforced reality;
   `PROGRESS-v0.12.md` additions only; `v0.12.0` tag, commit, and 71 pins
   byte-identical; A4 and the L1 residual still open
+- [x] **NET-TEST-EXEC** — both cored net tests execute locally and in the
+  existing hosted net job; planted assertion inversion makes that command red;
+  ci-local remains 20 jobs; hosted identities remain seven; full net-gated
+  test inventory and count delta recorded; golden 11/11
 - [ ] **R-CLOSE** — version choice recorded with reasoning; every diff path
   classified; `ARCHITECTURE.md` matches enforced reality; A4 and the L1 residual
   both still open
@@ -678,6 +724,8 @@ record of v0.12's is true.
 ## Runbook amendments
 
 Step 3 — gate-triggered THRESHOLD-SOURCE-SEAM follow-up added — 2026-07-27
+
+Step 9 — operator-directed NET-TEST-EXEC follow-up added; gate widened before implementation for the changed `run` authorization pin — 2026-07-27
 
 Step 5 — CHANGELOG gate widened to contain its acceptance record — 2026-07-27
 

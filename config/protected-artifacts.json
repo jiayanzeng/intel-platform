@@ -537,10 +537,10 @@
     {
       "path": "run",
       "grade": "authorization",
-      "sha256": "7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d",
-      "bytes": 40980,
+      "sha256": "30475367926eff8b990b70dac6d17339c4e6ec0e685aa4b01f8d01a2c328b304",
+      "bytes": 41104,
       "purpose": "Hash-pinned entry point for the operator-authorized model-profile command surface.",
-      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary; the pin makes later executable-surface edits visible to manifest validation."
+      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary. NET-TEST-EXEC was separately operator-directed on 2026-07-27 and added only the cored net test invocation, with its non-placeholder test contact, inside the existing local CI job, replacing v0.12.0's immutable run hash 7afede56f13b5ee73d3f1dbe92910ce535908623676db21664409855c5ac006d (40980 bytes) in the forward manifest; the pin makes later executable-surface edits visible to validation."
     },
     {
       "path": "tools/model_profiles.py",

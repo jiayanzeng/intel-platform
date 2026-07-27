@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; RETRACT-HC2 is complete and R-CLOSE awaits the operator's version/publication decision.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace / **22** net tests; the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
+**As of:** 2026-07-27 · **Version:** v0.12.0 (core-shell) · **Status:** **v0.13 is active; NET-TEST-EXEC is complete and R-CLOSE is next. Version v0.13.0 is authorized; publication remains a separate pending operator decision.** Annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` dereferences exactly to release commit `e5faf0c161a4256f33976664685653d8bd805d5d`. Hosted run **30253646597**, attempt **1**, passed all seven expected jobs against exact evidence candidate `d664a7d3c524a3dfab932e158d9545953844b8dd`. The release-grade audit accepted seven distinct authenticated identities, rejected zero, measured **5 deferred / 2 promoted**, and re-derived with release posture and attestations required. Its 14 receipt/bundle files and report are immutable pins; manifest schema 2 matches all **69/69** evidence-file pins plus **2/2** authorization-surface pins. Both required hosted negative controls fired and accepted zero executions. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **46** tests in the net job (**22** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. X-REGEN remains **45/45** valid real-model cells as `NOT EXERCISED`, zero `LEAK`, with positive control `GUARD FIRED`. Golden is **11/11** and protected database evidence is exact **2/2**. All five release authorities agree at 0.12.0 and `version-check` matches the exact annotated release tag.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -350,6 +350,60 @@ controls, all **71/71** pins, protected databases **2/2**, and golden
 **11/11**. Python 3.12 independently passed **216/216** and verified
 **21/21** exact packages. The mandatory standalone golden remained
 byte-identical at **11/11**.
+
+**v0.13 NET-TEST-EXEC is complete (measured 2026-07-27).** The existing
+local and hosted net jobs now execute
+`cargo test -p cored --features net --locked` after the existing
+`intel-ingest` invocation. `ci-local` remains **20/20** jobs. Its net job
+executes **46** tests instead of **22**: `intel-ingest` remains **22/22** and
+the newly reached `cored` binary passes **24/24**, including
+`net_build_refuses_missing_empty_and_placeholder_contacts` and
+`valid_contact_builds_one_versioned_identity_for_cache_and_clients`.
+The workspace total remains **124** because its default-feature `cored` run
+still excludes those two tests. The hosted workflow's identities remain
+exactly `core`, `lint`, `net`, `msrv`, `shell`, `golden`, and `drift`; only a
+step was added inside `net`. Publication and push are withheld, so this
+hosted-path result is a captured workflow-definition inspection rather than a
+live GitHub execution.
+
+The fail-before used an exported disposable tree. Inverting the placeholder
+test's `error.contains(CRAWLER_CONTACT_ENV)` assertion made the exact new
+command exit **101** with **23 passed / 1 failed**, and named
+`tests::net_build_refuses_missing_empty_and_placeholder_contacts` plus
+`refusal must name the required setting: INTEL_CRAWLER_CONTACT is required
+for a net-enabled harvester`. Restoring the assertion made the same command
+pass **24/24**. The restored scratch and live
+`apps/cored/src/main.rs` both hashed
+`fde0a339f9c22dfc2470ad5ac76b1284f7fb0d34b79640c0c48771d47f45f076`;
+the implementation diff has no path under `apps/` or `crates/`.
+
+The full net-gated test inventory has no other unreached item. The two direct
+`#[cfg(feature = "net")]` cored tests above execute in the widened cored
+command. The net-gated `intel-ingest::net` module contains
+`both_live_clients_send_the_installed_user_agent_byte_identically`,
+`cross_origin_redirect_reads_and_honors_new_robots_before_fetching`, and
+`same_origin_redirect_reuses_the_cached_robots_policy`; all three execute in
+the existing **22-test** ingest command. The other `cfg(feature = "net")`
+source occurrences select production code, not test items.
+
+The first standalone commands inside the restricted workspace sandbox were
+environment non-results: loopback binds and `ps` inspection were denied.
+Their identical permitted reruns passed golden **11/11** and Python 3.12
+**216/216** with **21/21** constrained packages. Full permitted
+`./run ci-local` passed all **20/20** jobs with **124** workspace tests,
+the **46-test** net job, Python 3.11 **216/216**, invariant scan **7/7**
+with **11** controls, warning-denied builds, clippy/fmt/ShellCheck, locked
+Rust 1.78, all **71/71** pins, protected databases **2/2**, and golden
+**11/11**.
+
+The general control lesson is now explicit: `cargo check --all-targets`
+proves that a test compiles and says nothing about whether it runs, while a
+`--features` gate changes the test set that `cargo test` executes. Because
+`run` is an authorization-surface pin, the task Gate was widened before
+implementation to update its forward manifest entry to SHA-256
+`30475367926eff8b990b70dac6d17339c4e6ec0e685aa4b01f8d01a2c328b304`
+at **41104** bytes; the immutable v0.12.0 `run` hash and all other historical
+pins are preserved in their release.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

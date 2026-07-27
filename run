@@ -384,6 +384,8 @@ ci_net_check() {
 ci_net_test() {
   RUSTFLAGS="-D warnings" \
     cargo test -p intel-ingest --features net --locked
+  INTEL_CRAWLER_CONTACT="crawler-tests@unit.test" RUSTFLAGS="-D warnings" \
+    cargo test -p cored --features net --locked
 }
 
 ci_clippy() {

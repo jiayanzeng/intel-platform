@@ -219,6 +219,11 @@ jobs:
 
       - name: cargo test -p intel-ingest --features net --locked
         run: cargo test -p intel-ingest --features net --locked
+
+      - name: cargo test -p cored --features net --locked
+        env:
+          INTEL_CRAWLER_CONTACT: crawler-tests@unit.test
+        run: cargo test -p cored --features net --locked
       - name: emit CI-runner receipt
         if: always()
         run: |
