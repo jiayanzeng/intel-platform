@@ -699,7 +699,12 @@ cycle with a record that is measured rather than assumed.
 
 **Gate.** Steps 1–7, NET-TEST-EXEC, IDENTITY-INSTALL, and RE-MEASURE complete
 and boxed. Worktree clean. **🧑 One operator decision: the version disposition
-and whether to publish.**
+and whether to publish.** Directive 5 fires that decision and widens this
+closing Gate to the release-facing `README.md`, `CHANGELOG.md`, `STATE.md`,
+this runbook and its append-only progress record, the local annotated tag,
+the atomic `main`/tag publication refs, read-only remote verification, and the
+post-push CI record. No source, schema, public-body, protected-evidence, or
+architecture-boundary change is in scope.
 
 **Steps.**
 
@@ -871,6 +876,18 @@ and tag-object field wait for the publication decision. This deliberately
 leaves the original "checklist fully checked" acceptance criterion pending
 rather than claiming it over an unmet publication criterion.
 
+### 2026-07-27 · R-CLOSE publication authorization
+
+Directive 5 fired the separately named publication trigger after accepting
+IDENTITY-INSTALL and RE-MEASURE. Publication of `v0.13.0` is authorized. The
+release implementation commit contains the release-facing state, the complete
+86-pin evidence set, and the four v0.14 candidate inputs. After that commit
+exists and passes the complete definition of done, the annotated tag can be
+created. The following append-only audit-record commit changes the R-CLOSE box
+and the closing-record heading together and records the exact release commit
+and tag object; this preserves a valid open state before that commit and a
+valid closed state after it.
+
 The first strict allow-list measurement found a production threshold parameter
 at `crates/store/src/sqlite.rs:685`. Step 3's original Gate explicitly requires
 that finding to be recorded and acted on in a follow-up task rather than hidden
@@ -897,12 +914,13 @@ schema.
 ## Pending Cycle closing record
 
 - **Candidate recorded:** 2026-07-27
-- **Release disposition:** release identity authorized; publication pending
+- **Release disposition:** release identity and publication authorized
 - **Release:** `v0.13.0`
 - **Release commit:** pending final R-CLOSE; the superseding hosted evidence
   candidate is `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`
-- **Annotated tag object:** not created; `version-check` passes without it and
-  the publication trigger has not fired
+- **Annotated tag object:** created after the release implementation commit
+  passes the complete definition of done; the exact object is populated in
+  the append-only closing audit record
 
 The twelve task records resolve to these implementation commits or the
 explicitly pending closing disposition:
@@ -919,20 +937,17 @@ explicitly pending closing disposition:
 - NET-TEST-EXEC — `2567f48aaba879011857db9177ebd60624678cc7`
 - IDENTITY-INSTALL — `d0b409a05597fc43356aeeb55a25ec597e358a85`
 - RE-MEASURE — `394755eb00e5f0ef88f4fe01d352e06b4bb9e09f`
-- R-CLOSE/release candidate —
-  pending the separate publication decision
+- R-CLOSE/release — pending this task's release implementation commit
 
 Cycle activation remains preparatory history at
 `5223d783b43c250102418163ef124f4e662b727b`; it is not one of the twelve task
 records.
 
 The release identity is `v0.13.0` because UA-CONTACT landed; therefore the
-`v0.12.1` alternative did not trigger. Publication remains pending the named
-trigger of a separate operator authorization to publish `v0.13.0`. No tag was
-required for `version-check`, so none was created locally. The later
-RE-MEASURE gate pushed the exact candidate only to
-`candidate/v0.13.0`; no publication or tag push occurred. Read-only
-verification found remote `main` unchanged at
+`v0.12.1` alternative did not trigger. Directive 5 fired the separately named
+operator-authorization trigger to publish `v0.13.0`. The later RE-MEASURE gate
+had pushed the exact evidence candidate only to `candidate/v0.13.0`; read-only
+pre-publication verification found remote `main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084` with no v0.13.0 tag.
 
 RE-MEASURE authenticated the superseding candidate
@@ -949,8 +964,8 @@ re-derived successfully. The fourteen receipt/bundle files and the
 **34,038-byte** report are pinned at their exact bytes. The forward manifest is
 now **86 total pins**: **84 evidence** plus **2 authorization surfaces**.
 
-This is deliberately a pending record, not the canonical closed-cycle record.
-R-CLOSE remains unchecked, `cycle-check` keeps v0.13 open, and the original
-fully-checked acceptance criterion remains pending until the publication
-decision is recorded. A4 and the editable-L1 controller residual both remain
-open; L2 remains scheduled and unexecuted.
+This remains the pending form only until the release implementation commit
+passes and the tag object exists. The append-only closing audit record changes
+the R-CLOSE box and heading together, preserving `cycle-check` validity. A4 and
+the editable-L1 controller residual both remain open; L2 remains scheduled and
+unexecuted.

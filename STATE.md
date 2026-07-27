@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is the authorized release candidate with release-grade hosted evidence complete at candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; publication remains a pending operator decision, R-CLOSE is deliberately unchecked, and the cycle remains open.** Hosted workflow-dispatch run **30277584129**, attempt **1**, passed all seven identities; its release audit accepted seven authenticated receipts with zero rejection and required attestations. Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`; failed v0.13 run **30274895522**, attempt **1**, remains measured failure evidence but is not admitted. Published annotated v0.10.3 and v0.11.0 remain unchanged; local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. The candidate golden measurement is **11/11**, protected database evidence is exact **2/2**, and the manifest now contains **84/84** evidence pins plus **2/2** authorization-surface pins. All five release authorities agree at 0.13.0; `version-check` passes with the expected warning that HEAD is ahead of the immutable v0.12.0 tag.
+**As of:** 2026-07-27 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is authorized for publication; R-CLOSE is preparing the release commit from the release-grade evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`.** Hosted workflow-dispatch run **30277584129**, attempt **1**, passed all seven identities; its release audit accepted seven authenticated receipts with zero rejection and required attestations. Failed v0.13 run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published annotated tag object `94d8215bc2151fecba1280dc793d3f5953cd8055` still dereferences exactly to immutable v0.12.0 release commit `e5faf0c161a4256f33976664685653d8bd805d5d`; published v0.10.3 and v0.11.0 remain unchanged, and local-only v0.10.2 remains unpublished and unmoved. Current local CI is **20/20** with **124** Rust workspace tests and **47** tests in the net job (**23** `intel-ingest` + **24** `cored`); the committed shell suite is **216/216** under Python 3.11.4 and 3.12.13, while the published v0.11.0 tree remains **191/191**. Both interpreters verify **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
@@ -486,14 +486,14 @@ of race-freedom, and a process-global initialized from a test binary is
 order-dependent by default. The earlier local **24/24** was a measured pass,
 but it did not prove the absence of a scheduler interleaving.
 
-**v0.13 R-CLOSE has a verified local release-candidate disposition and a
-pending publication disposition (measured 2026-07-27).** The operator
+**v0.13 R-CLOSE has a verified release disposition and an authorized
+publication disposition (measured 2026-07-27).** The operator
 authorized `v0.13.0` because UA-CONTACT landed, so the correction-only
-`v0.12.1` alternative does not apply. The separate publication trigger is an
-operator authorization to publish `v0.13.0`; it has not fired. At the time of
-that local disposition, no annotated v0.13.0 tag or remote mutation existed
-and `origin/main` had not advanced. `version-check` passed without the tag, so
-the exception permitting a local-only tag did not trigger. Read-only
+`v0.12.1` alternative does not apply. The separate publication trigger fired
+when the operator accepted IDENTITY-INSTALL and release-grade RE-MEASURE and
+authorized publication of `v0.13.0` in Directive 5. Before that authorization,
+no annotated v0.13.0 tag or publication mutation existed and `origin/main` had
+not advanced. Read-only
 `git ls-remote` returned remote `main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084`, the published v0.10.3/v0.11.0/
 v0.12.0 annotated objects and peeled commits unchanged, no remote v0.10.2
@@ -574,14 +574,14 @@ The mandatory standalone golden repeated **11/11** byte-identically.
 `version-check`, `cycle-check`, `checklist-audit`, `progress-check`, manifest
 validation, artifact verification, and `git diff --check` passed.
 
-The original R-CLOSE criterion requiring every box to be checked is
-**PENDING**, not passed: after RE-MEASURE is recorded, `checklist-audit`
-resolves **110** checked tasks and **three** retractions, while R-CLOSE remains
-the sole unchecked box under the explicit publication directive. The hosted
-release candidate is `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; it and every
-completed per-Step hash are recorded in the append-only pending closing
-record. A canonical closed-cycle record and annotated tag require the
-publication trigger.
+Before the publication authorization, `checklist-audit` resolved **110**
+checked tasks and **three** retractions while R-CLOSE remained the sole
+unchecked box. Directive 5 fired the outstanding trigger. The release
+implementation commit records the authorized disposition and all release
+content; the following append-only audit-record commit checks R-CLOSE and
+records the exact release commit and annotated tag object together, so
+`cycle-check` transitions directly from one valid open state to one valid
+closed state.
 
 **v0.13 RE-MEASURE is blocked at its hosted-failure gate (measured
 2026-07-27).** The operator-authorized remote exception pushed exactly
@@ -686,12 +686,31 @@ public egress path and no core-owned public response boundary. The editable-L1
 controller residual likewise remains open in architecture; no live server
 session or L2 work occurred.
 
-Final read-only remote verification returned `origin/main` unchanged at
+Pre-publication read-only remote verification returned `origin/main` unchanged at
 `466ebb3fc9736923110803e087acc798e417d084`, candidate branch exact at
 `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`, immutable v0.12.0 tag object
 `94d8215bc2151fecba1280dc793d3f5953cd8055` peeling to
-`e5faf0c161a4256f33976664685653d8bd805d5d`, and no v0.13.0 tag. Publication
-remains a pending operator decision and R-CLOSE remains unchecked.
+`e5faf0c161a4256f33976664685653d8bd805d5d`, and no v0.13.0 tag. Directive 5
+subsequently authorized publication; the closing record carries the resulting
+exact mapping.
+
+**v0.14 candidate inputs carried forward from v0.13 review
+(recorded 2026-07-27; not acted on in this cycle):**
+
+1. Tighten every `expected_fail` to include file and line, so each control
+   proves its rule fired at the mutated site. R7's two call-site controls
+   currently share failure text, and R6 carries the full message prefix while
+   the other rules carry only the message.
+2. Perform an allow-list audit of R1, R3, R4, and R6, including renamed and
+   restructured equivalents. R3 is specifically a deny-list over known
+   provider names and remains open at the bottom by construction.
+3. Add a mandatory RE-MEASURE step to the runbook template. v0.13 declared
+   hosted re-measurement in its deferral table but omitted the task that would
+   discharge it.
+4. Consider registered invariant R8 for identity-before-bind. Moving identity
+   installation into `main()` fixed placement, but ordering before listener
+   bind is currently guarded by statement order plus one manual binary run,
+   not by a reconstructible structural rule.
 
 **Post-release shared-model operations are live-verified (measured
 2026-07-27).** Tier A created persistent `intel-gen`

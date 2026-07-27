@@ -7,9 +7,11 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.13.0` is the authorized local release candidate. Publication, the
-annotated tag, and any advance of remote `main` remain pending a separate
-operator publication authorization.
+`v0.13.0` is authorized for publication. Its release-grade hosted evidence is
+workflow-dispatch run `30277584129` against exact evidence candidate
+`7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; the committed release record
+separately identifies that candidate, the later release commit, and its
+annotated tag object.
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:

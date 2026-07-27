@@ -62,13 +62,13 @@ All notable changes to intel-platform releases are recorded here.
   `science::b`. BODY-BOUNDARY and R7-BODY-SECTOR correct the claim forward.
 - The operator authorized `v0.13.0` because the UA-CONTACT trigger landed;
   the correction-only `v0.12.1` alternative therefore does not apply.
-- **Publication trigger:** separate operator authorization to publish
-  `v0.13.0`. It has not fired. No annotated v0.13.0 tag has been created, no
-  publication push has occurred, and `origin/main` has not advanced. The exact
-  candidate commit `7faaa4e1271616ff9390111c863d12fbcfa4d2fd` was pushed only
-  to `candidate/v0.13.0` for the withheld publication's hosted-evidence gate.
-  Hosted run 30277584129 passed all seven identities; its release-grade audit
-  accepted all seven signed receipts with zero rejection.
+- **Publication trigger:** the operator separately authorized publication of
+  `v0.13.0` on 2026-07-27 after accepting IDENTITY-INSTALL and RE-MEASURE.
+  Evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`
+  remains distinct from the later release commit. Hosted run 30277584129
+  passed all seven identities; its release-grade audit accepted all seven
+  signed receipts with zero rejection. The release contains **86 exact pins**:
+  **84 evidence files** plus **2 authorization surfaces**.
 - A4 remains open because a rewritten shell can bypass or falsify the trusted
   `/attest` handoff. L1 remains client-side defense; an edited controller can
   rewrite it, and the server-enforced L2 forced-command wrapper remains open
