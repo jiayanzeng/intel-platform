@@ -327,3 +327,51 @@ Entries are append-only; corrections are new dated entries.
   **116/116** pins and both protected databases remain exact. No product
   runtime code, dependency, lockfile, corpus, release tag, installed version,
   or historical evidence byte changed.
+
+### 2026-07-28 · RE-MEASURE — v0.15.0 candidate evidence admitted
+
+- owner: Codex
+- commit: 350ed7a
+- result: PASS. The operator authorized only a non-`main` candidate push.
+  Evidence candidate `43706216c06608039d9c3e7ef2b86024b22d4a79` was pushed
+  to `candidate/v0.15.0`; `origin/main` remained
+  `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and no `v0.15.0` tag was
+  created.
+- pre-dispatch acceptance: PASS. The remote candidate resolved to the exact
+  evidence commit. Its `.github/workflows/ci.yml` blob was
+  `96e85af978981b7af9bdd8e9e11069f158f35e57`, byte-identical to the local
+  candidate, and was read before dispatch.
+- hosted acceptance: PASS. Workflow-dispatch run `30347262430` attempt 1
+  succeeded at the candidate with zero rejected receipts. Its hosted logs
+  measured **126** workspace tests; **49** net tests (**23** `intel-ingest` +
+  **26** `cored`); `invariant-scan` **11/11 rules / 19 controls**; R10
+  **20** local jobs / **24** local checks, **6** blocking jobs / **23**
+  hosted checks, and **45** derived exemptions; and golden **11/11**.
+- shell/identity acceptance: PASS. Python 3.11.15 and 3.12.13 each collected
+  **243** tests and reported **242 passed / 1 intended on-site-only skipped**,
+  equal to the local candidate's **243 passed**. The six blocking jobs
+  produced exactly seven workflow-derived identities: `core`, `golden`,
+  `lint`, `msrv`, `net`, `shell/python=3.11`, and `shell/python=3.12`.
+- release-audit acceptance: PASS. The clean detached candidate required
+  attestations, accepted all **7** signed receipts, rejected **0**, and
+  measured **5** deferred / **2** promoted. The report is
+  `evidence/v0.15.0/deferred-audit/report.json`, SHA-256
+  `540a721f510ffcc3ae174948f90f5ebef5ececfde0be6cb90bdcbda8ff61c531`,
+  **34395** bytes. Authenticated re-derivation passed with **7** rows,
+  **5** source dispositions, **7** triggers, release grade, and attestations
+  required.
+- pin acceptance: PASS. Fourteen receipt/bundle files plus the report added
+  fifteen forward pins. All **131/131** manifest pins match:
+  **129/129** evidence plus **2/2** authorization surfaces; both protected
+  databases remain exact **2/2**.
+- local acceptance: PASS. The first post-admission matrix start failed fast at
+  `cycle-check` because the Step 7 amendment was wrapped instead of using the
+  validator's exact one-line form. It was corrected before the implementation
+  commit. The complete rerun passed **20/20** with **126** workspace tests,
+  **49** net tests, shell **243/243**, `invariant-scan` **11/11 rules /
+  19 controls**, all **131/131** pins, and standalone golden **11/11**.
+- scope acceptance: PASS. No published tag, `origin/main`, historical evidence
+  byte, product runtime path, dependency, lockfile, corpus, or public response
+  changed. Step 8 remains blocked on its separate operator publication
+  decision.
+- golden-E2E delta: **0**; the final standalone result remained **11/11**.
