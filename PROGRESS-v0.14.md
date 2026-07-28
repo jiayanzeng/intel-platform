@@ -295,3 +295,41 @@ Entries are append-only; corrections are new dated entries.
   `invariant-scan --self-test` remained **9/9 rules / 15 controls**.
 - golden-E2E delta: **0**. The matrix and mandatory standalone run both
   remained **11/11** byte-identical.
+
+### 2026-07-28 · STEP8-COUNT-AMENDMENT — compare one candidate, not one step
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Operator + Codex
+- commit: 38b316fdfff4079f8ebb5f1e78543d487e019244
+- result: PASS. One disclosed Step 8 amendment corrects the global definition
+  of done, Step 8's log-reading instruction, and its acceptance criterion. The
+  final scanner total is **9 rules / 15 controls**: CONTROL-PRECISION preserves
+  11 controls while adding site precision, R8 adds three, and R9 adds one.
+  Hosted evidence must now equal the local self-test at the same candidate
+  commit and the pair must be **9 / 15**.
+- root cause: the former criterion was anchored to a moment—Step 2's recorded
+  value—when the durable property is an equality between hosted and local
+  measurements at one commit. A step-number anchor goes stale as soon as a
+  later step legitimately changes the quantity; a property relation does not.
+  This is the second runbook defect of the same broader shape as v0.13's
+  deferral row: the text declared a requirement that later execution could not
+  correctly discharge.
+- deferred candidate: consider a sibling to
+  `check_active_deferral_assignments` that detects acceptance criteria citing a
+  step's measured value rather than an invariant relation. This is recorded as
+  a **v0.15 candidate input** only and is not implemented in v0.14.
+- validation acceptance: PASS. `./run cycle-check` accepted the disclosed
+  amendment; the focused cycle-check module passed **11/11** under Python
+  3.11.4 and 3.12.13; `./run ci-local` passed **20/20**; and the mandatory
+  standalone golden remained **11/11**.
+- pre-hosted count finding: explicit discovery on the amendment tree reported
+  **125** workspace tests and **48** net tests split as **23** `intel-ingest`
+  plus **25** `cored`. This differs from the operator-provided Step 8
+  expectation of 24 + 24 and is recorded without changing source or
+  reconciling the counts.
+- preservation acceptance: PASS. `origin/main` remains
+  `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`; no branch or tag was pushed, no
+  closed runbook or progress log changed, and A4 plus the editable-L1
+  controller residual remain open.
+- golden-E2E delta: **0**. Matrix and standalone golden both remained
+  **11/11** byte-identical.
