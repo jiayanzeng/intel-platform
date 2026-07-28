@@ -1,4 +1,4 @@
-# intel-platform (v0.15.1 — core-shell)
+# intel-platform (v0.15.2 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,18 +7,24 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.15.1` is the selected release identity. Its release-grade hosted evidence
-is workflow-dispatch run `30357365420`, attempt 1, against exact evidence
-candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`. That candidate was pushed
-under the provisional branch name `candidate/v0.16.0` before the operator's
-version decision; signed receipts pin the commit and source ref, while the
+`v0.15.2` is the selected release identity. Its release-grade hosted evidence
+is workflow-dispatch run `30369139464`, attempt 1, against exact evidence
+candidate `2ce912dca181e5e7b949a4b2e6fd8487412388f9` on
+`candidate/v0.15.2`. Signed receipts pin that candidate and source ref; the
 cycle closing record separately identifies the later release commit. The
-annotated `v0.15.1` tag targets the release commit, not the candidate.
+annotated `v0.15.2` tag targets the release commit, not the candidate.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The active pair is
-[`TASKS-v0.17-EXECUTION.md`](docs/cycles/TASKS-v0.17-EXECUTION.md) and
-[`PROGRESS-v0.17.md`](docs/cycles/PROGRESS-v0.17.md).
+[`TASKS-v0.18-EXECUTION.md`](docs/cycles/TASKS-v0.18-EXECUTION.md) and
+[`PROGRESS-v0.18.md`](docs/cycles/PROGRESS-v0.18.md).
+
+**Current source scope is one real publisher.** `arxiv-cs` is the only
+configured network source; the other three configured sources are
+`example.org` fixture placeholders. v0.18 performed the platform's first live
+harvest under a gate that enforces the publisher policy it claims to enforce,
+but it did not turn a one-publisher platform into an aggregator. A second real
+publisher remains an open product and compliance decision for a later cycle.
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:
@@ -293,6 +299,12 @@ through v0.15.0 could instead supply only the first path segment, weakening
 multi-segment or query-specific publisher rules; single-segment rules remained
 enforced. The usual fresh-database, crawler-contact, and artifact-verification
 requirements still apply.
+Cycle v0.18 then performed the first real harvest under that corrected gate:
+three arXiv OAI-PMH pages yielded **2,692** documents and two continuation
+tokens in a fresh ignored database, without changing protected evidence. The
+wire observation used `intel-platform/0.15.1`; this release bumps the
+versioned identity to `intel-platform/0.15.2`, so a re-run preserves the
+product token and gate semantics but not that historical User-Agent line.
 Every net-enabled run also requires a real, monitored crawler contact:
 
 ```bash
@@ -304,6 +316,11 @@ placeholder (`example.com`, `you@`, or `changeme`). The structural
 `intel-platform` product token is not configurable: the exact versioned
 User-Agent sent by both HTTP clients is also handed to the robots policy cache,
 so publisher group selection and wire identity cannot diverge.
+The tag also contains a robots-only diagnostic client behind the
+`diagnostics` / `robots-preview` Cargo features. It is excluded from default
+builds, currently has no support owner, and is not a supported product or
+operator surface. Promotion requires both a named owner and an explicit
+operator decision.
 `config/protected-artifacts.json` is the one authority for `data/core.db` and
 `data/live-smoke.db`: it records each immutable evidence artifact's hash, byte
 size, corpus facts, cursor state, purpose, and provenance. A live harvest

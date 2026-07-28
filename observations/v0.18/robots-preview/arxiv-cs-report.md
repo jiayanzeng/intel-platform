@@ -22,6 +22,17 @@ placeholders.
 - crawler product token/version: `intel-platform/0.15.1`; the monitored contact
   was loaded from the ignored `.env` and is intentionally not recorded
 
+## Release identity boundary
+
+This is a historical wire observation bound to
+`intel-platform/0.15.1`. Release v0.15.2 changes the version authority, so its
+head emits `intel-platform/0.15.2`; a re-run cannot reproduce the versioned
+User-Agent line above. The stable `intel-platform` product token is unchanged,
+RFC 9309 group selection is by product token, and arXiv served no policy or
+group in this 404 response. The recorded **11,083** bytes, hash, request, and
+verdict remain facts about the 2026-07-28 observation, not a claim that a later
+wire request is byte-identical.
+
 The feature-gated client constructs the literal `/robots.txt` URL and disables
 redirects. Its executing loopback control observed exactly one request, for
 `/robots.txt`, carrying the byte-identical installed crawler identity. The live

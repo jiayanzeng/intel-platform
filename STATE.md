@@ -1,6 +1,117 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; v0.15.2 candidate RE-MEASURE is complete and the operator publication decision gates R-CLOSE.** Exact-candidate local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. Candidate branch `candidate/v0.15.2` is exact at `2ce912dca181e5e7b949a4b2e6fd8487412388f9`; no `v0.15.2` tag exists. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.18 R-CLOSE publication is authorized on F1; the v0.15.2 release commit and exact-release verification are in progress.** Exact evidence candidate `2ce912dca181e5e7b949a4b2e6fd8487412388f9` is on `candidate/v0.15.2`; hosted run `30369139464` attempt 1 authenticates all **7/7** derived identities. The candidate passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225` until authorized publication. No `v0.15.2` tag exists yet. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.18 R-CLOSE release preparation is authorized (measured 2026-07-28).**
+Release disposition: release (as of 2026-07-28). The publication trigger is
+**F1**, not the runbook's mechanical patch default. The operator selected
+v0.15.2 because the published v0.15.1 harness makes a false lifecycle claim
+and the forward correction is a zero-risk patch with an executing regression.
+
+The trigger was verified at the tagged tree rather than inferred from current
+provenance. Exact command
+`git show v0.15.1:run | shasum -a 256` returned
+`7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`;
+the object is **41,959** bytes and `git grep` locates
+“cored still running on … for inspection” at tagged `run:839`. Current `run`
+is **42,056** bytes at
+`caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678`;
+it reports the observation database/runtime log, calls `cmd_down`, and the
+executing fail-before detects removal of that shutdown. The implementation is
+commit `dae015e`.
+
+v0.15.2 is the compatible patch **identity** because no `/v1/*` route,
+response body, schema, or other named surface moved; that mechanical fact is
+not the publication reason. Evidence candidate
+`2ce912dca181e5e7b949a4b2e6fd8487412388f9` and the release commit are
+separate named subjects. The release commit and annotated tag remain pending
+the exact-release matrix.
+
+No default-build compliance behavior changed. ORIGIN-CASE shipped nothing
+because E0 proved `reqwest::Url` normalizes initial and redirected authorities
+before the production gate. Matcher provenance and the robots-only client are
+excluded unless `diagnostics` / `robots-preview` are selected; the default
+allow/deny outcomes and live gate remain unchanged. The only default
+production behavior change is `run`'s truthful managed-process lifecycle.
+The public API, SQLite schema, dependencies, protected databases, and golden
+corpus are unchanged.
+
+The v0.15.1 robots incident remains bounded. The sole configured network
+source and the historically observed redirect use single-segment paths, for
+which old and corrected comparison targets are identical; the three
+multi-segment configured URLs are fixture-backed and issue no publisher
+request. No configured live URL or observed redirect was affected, so the
+correction remains forward-only and retractions stay **three**.
+
+v0.18 nevertheless records an important first: one bare live harvest reached
+three real arXiv OAI-PMH pages under a gate that enforces the policy it claims
+to enforce, followed two `resumptionToken`s, and ingested **2,692** documents
+into a fresh ignored database. The preceding robots-only preview fetched the
+recorded **11,083-byte** arXiv HTTP 404 response, SHA-256
+`fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2`;
+absence-only `robots_on_missing: "allow"` permitted the target while explicit
+policy and unreachable outcomes remain fail-closed.
+
+Both wire reports now state their release-identity boundary. Every reported
+request used `intel-platform/0.15.1`; the v0.15.2 head emits
+`intel-platform/0.15.2`, so a re-run cannot reproduce that versioned
+User-Agent line. The stable `intel-platform` product token is unchanged, and
+arXiv served no policy group whose selection could differ. The reports remain
+historical observations rather than future byte-reproducibility claims.
+
+The feature-gated preview ships inert, unsupported, and currently unowned. Its
+named promotion trigger is both a named owner and an explicit operator
+decision to make `diagnostics` / `robots-preview` a supported product or
+operator surface. Neither condition is met. Separately, `arxiv-cs` is the only
+real configured publisher; the other three sources are `example.org`
+placeholders. The platform therefore aggregates one publisher. Adding a
+second is an open product question for a later cycle and remains its own
+compliance decision.
+
+The release diff from annotated v0.15.1 contains exactly **39 paths**,
+classified once each:
+
+- **Default runtime behavior and failure-capable verification (2):** `run` and
+  `shell/tests/test_harvest_preflight.py`.
+- **Inert feature-gated diagnostics (5):** `crates/compliance/Cargo.toml`,
+  `crates/compliance/src/lib.rs`, `crates/ingest/Cargo.toml`,
+  `crates/ingest/src/bin/robots_preview.rs`, and
+  `crates/ingest/src/net.rs`.
+- **Release authorities, documentation, and architecture (8):**
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `Cargo.lock`, `README.md`, `STATE.md`,
+  `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`, and
+  `shell/intel_shell/app.py`.
+- **Operating contract and cycle history (5):** `AGENTS.md`,
+  `docs/cycles/PROGRESS-v0.17.md`, `docs/cycles/PROGRESS-v0.18.md`,
+  `docs/cycles/TASKS-v0.17-EXECUTION.md`, and
+  `docs/cycles/TASKS-v0.18-EXECUTION.md`.
+- **Authenticated hosted evidence and protected index (16):**
+  `config/protected-artifacts.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-core.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-core.json.sigstore`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-golden.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-golden.json.sigstore`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-lint.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-lint.json.sigstore`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-msrv.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-msrv.json.sigstore`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-net.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-net.json.sigstore`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-shell-py3.11.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-shell-py3.11.json.sigstore`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-shell-py3.12.json`,
+  `evidence/ci-runs/30369139464-1/30369139464-1-shell-py3.12.json.sigstore`,
+  and `evidence/v0.15.2/deferred-audit/report.json`.
+- **Historical wire observations (3):**
+  `observations/v0.18/live-harvest/arxiv-cs-report.md`,
+  `observations/v0.18/robots-preview/arxiv-cs-report.md`, and
+  `observations/v0.18/robots-preview/arxiv-cs-robots.txt`.
+
+`ARCHITECTURE.md` preserves A4, the editable-L1 controller residual, R3/R4's
+bounded open-bottom scanners, the active-runbook measured-value heuristic,
+and T7 robots single-flight as open; L2 remains scheduled. The unsupported
+preview and one-real-publisher fact add explicit product/support limitations
+without weakening any architectural invariant.
 
 **v0.18 RE-MEASURE is complete at the v0.15.2 candidate (measured
 2026-07-28).** The runbook's default patch trigger fired because no `/v1/*`

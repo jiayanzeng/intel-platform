@@ -157,6 +157,22 @@ Pinned dispositions:
   feature enabled, this installs the process-scoped identity before the
   listener can accept a request.
 
+**v0.18 wire and support boundary.** The cycle changed no default-build
+compliance verdict or robots-policy behavior. ORIGIN-CASE shipped nothing
+because the production network path normalizes authority bytes through
+`reqwest::Url` before the gate. The `diagnostics` and `robots-preview` features
+ship an inert robots-only observation client and matcher provenance; default
+builds exclude both, they currently have no support owner, and they are not a
+supported product or operator surface. Their promotion trigger is a named
+owner plus an explicit operator decision to support the feature pair.
+
+The live evidence is deliberately narrow: `arxiv-cs` is the only configured
+network source, while the other three configured sources are `example.org`
+fixtures. The first correctly gated harvest therefore proves the wire path
+against one publisher, not multi-publisher aggregation. Adding a second real
+publisher remains an open product question and a separate compliance
+decision.
+
 **Redirects are re-gated before the next request (v0.8/T5).** Both
 `reqwest::Client`s in `crates/ingest/src/net.rs` use `Policy::none()`. Document
 redirects are resolved manually (maximum 10 hops), and the full publisher +

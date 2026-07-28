@@ -32,7 +32,7 @@ def create_app(
     billing_secret: str | None = None,
     stripe_secret: str | None = None,
 ) -> FastAPI:
-    app = FastAPI(title="intel-platform shell", version="0.15.1")
+    app = FastAPI(title="intel-platform shell", version="0.15.2")
 
     # A bare list still works (tests pass one); wrap it in an in-memory store
     # whose save() is a no-op so nothing accidentally writes to disk in tests.

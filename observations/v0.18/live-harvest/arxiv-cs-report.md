@@ -4,6 +4,17 @@ Observed on **2026-07-28**, beginning at **14:11:01Z**. The operator action was
 one bare `./run harvest-arxiv`, timed without any `CORE_DB`, date-window, page,
 port, or concurrency override.
 
+## Release identity boundary
+
+Every request in this report used crawler identity
+`intel-platform/0.15.1`. Release v0.15.2 changes the version authority, so its
+head emits `intel-platform/0.15.2`; a re-run cannot reproduce that versioned
+User-Agent line. The stable `intel-platform` product token is unchanged, and
+arXiv served no robots policy whose group selection could differ. The page,
+cursor, timing, and document counts below remain facts about this historical
+run rather than a promise that a later harvest will reproduce its identity
+line or corpus bytes.
+
 ## Isolation and process scope
 
 - preflight: artifact schema v2 valid; all **146/146** pins matched; protected

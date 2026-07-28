@@ -116,6 +116,7 @@ durable artifact is the offline test it produces.
 | L2 forced-command wrapper | an operator server session | none — remains scheduled |
 | R3/R4 open-bottom coverage | a provider or credential spelling outside registered vocabulary | none |
 | CI-runner evidence | an authenticated receipt set with identified matrix legs, durably committed | **re-measure at the new release commit — discharged by Step 6** |
+| ROBOTS-PREVIEW supported surface | an operator names an owner and explicitly promotes the `diagnostics` / `robots-preview` feature pair into the supported product or operator surface | **Step 7 records the shipped diagnostic as inert, feature-gated, and unsupported; no promotion** |
 
 ---
 
@@ -346,7 +347,14 @@ value · signed set committed and re-derived · new pin count in three places ·
 **Objective.** Close the cycle with a measured record.
 
 **Gate.** Steps 1–6 complete and boxed. Worktree clean. **🧑 One operator
-decision: publication.**
+decision: publication.** Release scope is limited to the five version
+authorities and derived `Cargo.lock` package version; `CHANGELOG.md`,
+`README.md`, `ARCHITECTURE.md`, `STATE.md`, the active runbook and progress
+records; the two v0.18 Markdown wire-observation reports; one local annotated
+tag; and authorized `main`/tag publication. No public route, response body,
+schema, default-build compliance behavior, dependency resolution, protected
+database, evidence receipt/bundle/report, manifest pin, harvested database, or
+historical closed-cycle record changes.
 
 **Steps.**
 
@@ -374,6 +382,27 @@ decision: publication.**
     later cycle: three of four configured sources are placeholders, so this
     platform currently aggregates one publisher. **Do not add sources here** —
     each new publisher is its own compliance decision.
+12. Record in both v0.18 wire-observation reports that their bytes and
+    User-Agent facts are historically bound to `intel-platform/0.15.1`; the
+    v0.15.2 release head emits `intel-platform/0.15.2`, so a re-run cannot
+    reproduce that versioned line even though the stable product token and
+    absence-only arXiv disposition are unchanged.
+13. State in `CHANGELOG.md` that no default-build compliance behavior changed:
+    ORIGIN-CASE shipped nothing, the preview is excluded from the default
+    build, and `run` is the only production-path movement.
+14. Keep the preview inert and unsupported. Its promotion trigger is a named
+    owner plus an explicit operator decision to make the feature pair a
+    supported product or operator surface.
+
+**Acceptance criteria.** Version cites F1 rather than the mechanical default ·
+candidate and release commit separate · disposition dated · v0.15.1 tagged
+`run` hash/size/false line verified · v0.15.1 incident scope recorded · first
+correctly gated live harvest and policy hash recorded · both wire reports bind
+their historical crawler version · no default-build compliance behavior
+changed · preview remains inert with a named promotion trigger · one real
+publisher recorded as an open product question · every diff path classified ·
+`ARCHITECTURE.md` matches enforced reality with all named residuals open · all
+pins match · golden 11/11.
 
 ---
 
@@ -398,6 +427,8 @@ Step 6 — Widen RE-MEASURE after the hosted measurement and before its first
 evidence-admission commit to contain every signed-evidence, release-audit,
 manifest, and status surface required by its acceptance criteria while keeping
 the remote and product prohibitions explicit — 2026-07-28
+
+Step 7 — Widen R-CLOSE before its first release commit to contain the release, wire-report, support-trigger, product-scope, tag, and publication acceptance surfaces required by the operator — 2026-07-28
 
 ---
 
@@ -463,9 +494,18 @@ the remote and product prohibitions explicit — 2026-07-28
 ## Pending Cycle closing record
 
 - **Candidate recorded:** 2026-07-28
-- **Release disposition:** pending the one Step 7 operator publication decision.
+- **Release disposition:** release authorized by the operator as of
+  2026-07-28; Step 7 exact-release measurement, closing audit, and publication
+  are in progress.
 - **Release version:** v0.15.2. No observable `/v1/*` route or response body
-  moved, so the runbook's default patch trigger applies.
+  moved, so patch is the compatible identity. Publication is triggered by F1:
+  published v0.15.1 falsely claims its managed core remains running after
+  `harvest-arxiv`, while the forward correction has an executing regression.
+- **F1 tagged-tree verification:** `v0.15.1:run` is **41,959** bytes at
+  SHA-256
+  `7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`
+  and contains the false line at `run:839`. Current `run` removes the line,
+  reports durable inspection paths, and calls `cmd_down`.
 - **Evidence candidate:** `2ce912dca181e5e7b949a4b2e6fd8487412388f9`
   on `candidate/v0.15.2`.
 - **Hosted evidence:** workflow-dispatch run `30369139464` attempt 1; all
@@ -482,7 +522,18 @@ the remote and product prohibitions explicit — 2026-07-28
   **34,520** bytes at `evidence/v0.15.2/deferred-audit/report.json`.
 - **Evidence pins:** **161/161** total — **159/159** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
+- **Default-build scope:** no compliance behavior changed. ORIGIN-CASE shipped
+  nothing; matcher/preview diagnostics are feature-gated and unsupported; the
+  only default production behavior change is `run`'s lifecycle correction.
+- **Wire identity:** the **11,083-byte** robots 404 and **2,692-document**
+  harvest are historical observations under `intel-platform/0.15.1`. Both
+  reports state that v0.15.2 emits a different versioned line while preserving
+  the stable product token.
+- **Open support/product scope:** preview promotion requires a named owner plus
+  explicit operator support authorization. The platform has one real
+  publisher (`arxiv-cs`) and three fixture placeholders; a second publisher is
+  a later, separate compliance decision.
+- **Release commit:** pending Step 7's exact-release measurement.
 - **Remote disposition:** `origin/main` remains
   `f13c6129d608ab9259f421dce6ed419ce469c225`; candidate branch
   `candidate/v0.15.2` is exact at the evidence candidate; no `v0.15.2` tag

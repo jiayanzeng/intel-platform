@@ -4,6 +4,77 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.2 — 2026-07-28
+
+### Fixed
+
+- `harvest-arxiv` no longer claims that its managed `cored` process remains
+  available after the command returns. It reports the durable observation
+  database and runtime log, then calls `cmd_down`; an executing fail-before
+  control proves removal of that shutdown is detected.
+- Publication is triggered by that false claim in the published v0.15.1 tree,
+  not merely by the runbook's mechanical patch default. The tagged `run` is
+  **41,959** bytes at SHA-256
+  `7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`
+  and contains the false “cored still running … for inspection” line.
+
+### Diagnostic and default-build scope
+
+- No default-build compliance behavior changed. ORIGIN-CASE correctly shipped
+  nothing after E0 proved `reqwest::Url` normalizes authority bytes before the
+  gate; the matcher diagnostics and robots-only preview are excluded unless
+  the `diagnostics` / `robots-preview` features are selected. The only
+  default production behavior change is the `run` lifecycle correction above.
+- The feature-gated preview ships inert and unsupported. It becomes a supported
+  product or operator surface only after an operator names an owner and
+  explicitly promotes the feature pair; neither condition is met in this
+  release.
+
+### Wire verification
+
+- The first real publisher-policy preview requested only arXiv
+  `/robots.txt`. It received the recorded **11,083-byte** HTTP 404 response,
+  SHA-256
+  `fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2`;
+  the source's absence-only opt-in allowed the configured OAI-PMH target.
+- The first harvest run under a gate that enforces the policy it claims
+  ingested **2,692** real arXiv documents across three pages into a fresh,
+  ignored observation database. It followed two `resumptionToken`s, persisted
+  a final null cursor with high-water date 2026-07-28, and changed no protected
+  or golden corpus byte.
+- All wire facts were observed under crawler identity
+  `intel-platform/0.15.1`. The v0.15.2 release head emits
+  `intel-platform/0.15.2`, so a re-run cannot reproduce that versioned
+  User-Agent line. The stable `intel-platform` product token is unchanged, and
+  arXiv served no policy group whose selection could differ.
+
+### Evidence and disposition
+
+- Authenticated run 30369139464 attempt 1 against evidence candidate
+  `2ce912dca181e5e7b949a4b2e6fd8487412388f9` passed all seven derived
+  identities with zero rejected receipts: workspace **131**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), invariant-scan **11/11 rules /
+  23 controls**, and golden **11/11**. Both hosted shell lanes collected
+  **245** as **244 passed / 1 declared on-site-only skip**, matching local
+  **245/245** at the same commit.
+- The authenticated release-posture audit measured **5 deferred / 2 promoted /
+  0 deferred subsystems implemented**. Its report is SHA-256
+  `78901f2d181672f2a0ec073c18ec5bb02c68762de0fc7362b49f903ed6509448`
+  at **34,520** bytes. All **161** pins remain exact: **159** evidence plus
+  **2** authorization surfaces.
+- Publication was explicitly selected as **release as of 2026-07-28** because
+  F1 is a verified false claim in v0.15.1 and its zero-risk forward correction
+  has an executing regression. The bounded v0.15.1 robots incident affected no
+  configured live URL or historically observed redirect; retractions remain
+  three.
+- This platform currently aggregates one publisher: `arxiv-cs` is real and
+  three of four configured sources are `example.org` fixture placeholders.
+  Adding a second publisher is an open product question for a later cycle and
+  remains a separate compliance decision.
+- A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom
+  scanners, the measured-value heuristic, and T7 robots single-flight remain
+  open; L2 remains scheduled.
+
 ## v0.15.1 — 2026-07-28
 
 ### Fixed
