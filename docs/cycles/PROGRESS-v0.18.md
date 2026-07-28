@@ -173,3 +173,38 @@ Entries are append-only; corrections are new dated entries.
   compliance, XML, paging, cursor, retry, redirect, or status defect was found.
 - golden-E2E delta: **0**; the mandatory standalone invocation passed
   **11/11** after the harvest.
+
+### 2026-07-28 · WIRE-FINDINGS — managed-core lifecycle made deterministic
+
+- owner: Codex
+- commit: dae015e
+- result: PASS. Step 4 finding F1 has exactly one disposition: **fixed with an
+  offline regression test**. `cmd_harvest_arxiv` now calls `cmd_down` after
+  printing its evidence-backed checklist, reports the observation database and
+  runtime log, and makes no false claim that its managed core remains running.
+- regression acceptance: PASS. The executing fail-before removed the terminal
+  shutdown and failed **1/1** with `cmd_harvest_arxiv must stop its managed
+  core before returning`; the pass-after harness file passed **2/2**.
+- fixture acceptance: PASS, no addition required. No real XML shape, status
+  code, or redirect differed from existing fixture coverage, so no
+  publisher-derived fixture was manufactured.
+- corpus/scope acceptance: PASS. No publisher request, live database write,
+  harvested fixture/document, protected database, evidence artifact/receipt,
+  dependency, schema, model-profile behavior, or public-surface change
+  occurred. No harvested document entered the protected or golden corpus.
+- authorization-pin acceptance: PASS. `run` moved from
+  `7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`
+  (**41,959** bytes) to
+  `caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678`
+  (**42,056** bytes); its model-profile functions and dispatch,
+  `tools/model_profiles.py`, and the authorization policy remain unchanged.
+  Manifest validation and `verify-artifacts` passed all **146/146** pins and
+  protected databases **2/2** exact.
+- matrix acceptance: PASS. Local CI passed **20/20** with **131** workspace
+  tests, **55** net tests, shell **245/245** on both Python 3.11.4 and 3.12.13,
+  locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures, and
+  `invariant-scan` **11/11 rules / 23 controls**. The first sandboxed Python
+  3.12 attempt was a permission non-result; the identical authorized command
+  passed.
+- golden-E2E delta: **0**; the mandatory standalone invocation passed
+  **11/11** byte-identically.
