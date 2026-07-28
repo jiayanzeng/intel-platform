@@ -226,3 +226,37 @@ Entries are append-only; corrections are new dated entries.
   pins plus both protected databases remained exact.
 - golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · REVIEW-DISCIPLINE — dated dispositions enforced
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: 7e6244c333df939a0bbccd1a0857ec9c28742799
+- gate acceptance: PASS. The Step 6 gate contains the governing contract,
+  checker, tests, active records, and closed-runbook preservation criterion.
+  No closed runbook changed.
+- entry-point-rule acceptance: PASS. `AGENTS.md` requires command claims to be
+  verified at the command entry point, cites v0.14's wrapper-without-`main()`
+  false finding and its v0.13 mirror, and states explicitly that this
+  human/agent review discipline is non-executable.
+- dated-disposition acceptance: PASS. `AGENTS.md` makes a closing disposition
+  an as-of-date claim. `cycle-check` prospectively requires
+  `Release disposition: release|no-release (as of YYYY-MM-DD)` when the
+  declared runbook closes; the dated form passed.
+- fail-before acceptance: PASS. The scratch undated record emitted
+  `cycle-check: ERROR: TASKS-v1.2.3-EXECUTION.md: declared closed cycle release
+  disposition must state an as-of date; found undated '- **Release
+  disposition:** no-release'`, followed by
+  `cycle-check: FAIL (1 defect(s))`.
+- test acceptance: PASS. The focused cycle-check module passed **15/15** on
+  Python 3.11.4 and 3.12.13. Full shell passed **237/237** on both
+  interpreters with **21/21** exact packages, a **+2** delta attributable to
+  `test_cycle_check_rejects_undated_active_disposition` and
+  `test_cycle_check_accepts_dated_active_disposition`.
+- matrix acceptance: PASS. `./run ci-local` remained **20/20**, Rust remained
+  **125** workspace / **48** net (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  `invariant-scan` remained **10/10 rules / 18 controls**, and all **101/101**
+  pins plus both protected databases remained exact.
+- golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
+  **11/11** byte-identical.
