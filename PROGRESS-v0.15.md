@@ -193,3 +193,36 @@ Entries are append-only; corrections are new dated entries.
   pins plus both protected databases remained exact.
 - golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · CRITERION-SHAPE — cross-step measured values rejected
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: 0adad389a0e9e5cb4d5870af9c5cfbdc093f015d
+- gate acceptance: PASS. The Step 5 gate now contains the checker and tests,
+  the required architectural limitation, and the active runbook records it
+  changes. No closed runbook changed.
+- rejection acceptance: PASS. A scratch active-runbook criterion that cited
+  another step's recorded count failed with
+  `TASKS-v1.2.3-EXECUTION.md:9: active Step 2 acceptance criterion cites Step
+  1's recorded/measured quantity; assert the invariant relation at the same
+  commit instead`.
+- relation acceptance: PASS. A criterion asserting that hosted counts equal
+  local counts at the same commit passed; the current active runbook also
+  passed `cycle-check`.
+- limitation acceptance: PASS. `ARCHITECTURE.md` states that the check is a
+  same-clause vocabulary heuristic, identifies false-negative and
+  false-positive risks, and excludes closed historical runbooks from
+  retroactive evaluation.
+- test acceptance: PASS. The focused cycle-check module passed **13/13** on
+  Python 3.11.4 and 3.12.13. Full shell passed **235/235** on both
+  interpreters with **21/21** exact packages, a **+2** delta attributable to
+  `test_cycle_check_rejects_cross_step_recorded_quantity` and
+  `test_cycle_check_accepts_same_commit_quantity_relation`.
+- matrix acceptance: PASS. `./run ci-local` remained **20/20**, Rust remained
+  **125** workspace / **48** net (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  `invariant-scan` remained **10/10 rules / 18 controls**, and all **101/101**
+  pins plus both protected databases remained exact.
+- golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
+  **11/11** byte-identical.
