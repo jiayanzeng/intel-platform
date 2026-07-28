@@ -69,3 +69,32 @@ Entries are append-only; corrections are new dated entries.
   **2/2**. No protected file or published object changed.
 - golden-E2E delta: **0**; mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-29 · STATUS-TRUE — publication status made executable
+
+- owner: Codex
+- commit: 9834a8e
+- result: PASS. The reconciliation executes inside `cycle-check`; its Gate
+  contains the checker, focused shell tests, forward `STATE.md` correction, and
+  runbook/progress status only. No closed runbook or historical append moved.
+- fail-before acceptance: PASS. With the checker present and the false header
+  intact, `cycle-check` exited **1** with exactly two messages:
+  `publication disposition agreement` for a reachable annotated release versus
+  pending publication, and `publication assertion freshness` for asserted
+  `origin/main` `f13c6129…` versus measured `344124819c…`.
+- focused-test acceptance: PASS. `test_cycle_check.py` passed **20/20** on both
+  Python 3.11.4 and Python 3.12.13. The new controls fail both rules and all
+  three ref labels, accept a current header, and exclude the historical body.
+- publication-audit acceptance: PASS. The forward header/audit records local
+  and remote main `344124819c…`, annotated object `22beef8e…`, peeled target
+  `b3c4c4d3…`, and publication CI run `30375179895`, attempt **1**, event
+  `push`, exact head, completed status, and `success` conclusion. No run was
+  dispatched.
+- pass-after acceptance: PASS. Cycle, checklist, progress, and version tools
+  plus the reconciliation are green; `invariant-scan` remains **11/11 rules /
+  23 controls**.
+- scope acceptance: PASS. The v0.18 closing record, `PROGRESS-v0.18.md`, every
+  closed runbook, and every historical `STATE.md` append remain unchanged. No
+  production Rust path, dependency, lockfile, schema, protected database, or
+  public surface changed.
+- golden-E2E delta: **0**; mandatory standalone execution passed **11/11**.
