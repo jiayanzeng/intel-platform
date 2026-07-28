@@ -505,8 +505,12 @@ directory.
 
 **Objective.** Produce release-grade hosted evidence for the v0.16 candidate.
 
-**Gate.** 🧑 **One narrow authorization: a non-`main` branch push.** No tag, no
-`main` advance, no publication.
+**Gate.** 🧑 **One narrow authorization: a non-`main` branch push.** Scope is
+the exact candidate ref and remote workflow, hosted logs, the signed
+receipt/bundle set, release-grade audit report, protected-file manifest,
+`STATE.md`, this active runbook's gate/amendment/checklist/pending-closing
+records, and the later append-only progress entry. No tag, no `main` advance,
+no publication, and no closed runbook or progress-log edit.
 
 **Steps.**
 
@@ -521,17 +525,22 @@ directory.
    both net legs, both shell legs, the invariant rule and control counts, R10's
    derived exemption count, and golden. Compare each against the local
    measurement **at the same commit** — that equality is the criterion, not any
-   number written earlier in this file.
+   number written earlier in this file. For the shell lanes, equality means the
+   collected-test total: hosted passes plus the one entering-state on-site-only
+   skip equals local passes. That already-declared skip is intended and is not
+   a count mismatch.
 5. Commit the signed receipt/bundle set, re-run `./run verify-artifacts` and
    `./run evidence-report`, and record the new pin count in `STATE.md`,
    `PROGRESS-v0.16.md`, and the pending closing record.
 6. Confirm the hosted identity set matches the derived value.
 7. Run `./run audit-deferred` in release posture with attestations required.
 
-**Acceptance criteria.** Hosted run id pinned to the candidate · every count read
-from the log and equal to the local measurement at that commit · identity set
-matches the derived value · signed set committed and re-derived · new pin count
-in three places · `origin/main` unchanged, no tag · golden 11/11.
+**Acceptance criteria.** Hosted run id pinned to the candidate · every count
+read from the log and equal to the local measurement at that commit, with shell
+equality measured as the collected total and only the declared on-site test
+skipped hosted · identity set matches the derived value · signed set committed
+and re-derived · new pin count in three places · `origin/main` unchanged, no
+tag · golden 11/11.
 
 **Done when** v0.16's hosted evidence exists at the same grade as v0.14.1's.
 
@@ -593,7 +602,7 @@ all pins match · golden 11/11.
   golden byte-identical
 - [x] **RELOCATABLE** — fail-before and pass-after across two checkouts sharing a
   target directory; every `CARGO_MANIFEST_DIR` use classified
-- [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
+- [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; new pin count in three places
 - [ ] **R-CLOSE** — version cites Step 5; candidate and release commit separate;
   disposition dated; `STATE.md` scope corrected forward; all open items open
@@ -637,3 +646,34 @@ all pins match · golden 11/11.
 - Do not commit `.env`, provider keys, tokens, or private key material.
 - Do not batch `STATE.md` / `PROGRESS-v0.16.md` updates or combine two tasks in
   one commit.
+
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-28
+- **Release disposition:** pending the separate Step 8 operator publication
+  decision; no publication action is authorized by Step 7.
+- **Release version if authorized:** v0.15.0. Step 5 recorded the new
+  authenticated internal `/entities/unknown` route and the minor trigger
+  fired.
+- **Evidence candidate:** `43706216c06608039d9c3e7ef2b86024b22d4a79`
+  on `candidate/v0.15.0`.
+- **Hosted evidence:** workflow-dispatch run `30347262430` attempt 1; all
+  **7/7** derived identities authenticated, zero rejected receipts, across
+  **6** blocking jobs. Hosted logs measured **126** workspace tests, **49**
+  net tests (**23 + 26**), shell **242 passed / 1 intended on-site-only
+  skipped** on each interpreter, `invariant-scan` **11/11 rules / 19
+  controls**, R10's **45** derived exemptions, and golden **11/11**. Each
+  hosted shell collected **243** tests, equal to the local candidate's
+  **243 passed**.
+- **Release-grade audit:** **5** deferred / **2** promoted; report SHA-256
+  `540a721f510ffcc3ae174948f90f5ebef5ececfde0be6cb90bdcbda8ff61c531`,
+  **34395** bytes. Authenticated re-derivation passed.
+- **Evidence pins:** **131/131** total — **129/129** evidence plus **2/2**
+  authorization surfaces; protected databases exact **2/2**.
+- **Release commit:** pending Step 8's final R-CLOSE measurement and decision.
+- **Remote disposition:** `origin/main` remains
+  `0a25c50f9de6a020fa6a04b04847f6242b809f7e`; no `v0.15.0` tag exists.
+
+## Runbook amendments
+
+Step 7 — Widen the gate before the first Step 7 commit to contain every evidence-admission surface, and make same-commit shell equality explicit for the declared hosted-only skip — 2026-07-28
