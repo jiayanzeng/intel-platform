@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published; v0.14 SELF-TEST-SCOPE is complete and the replacement Step 8 candidate is pending its implementation/audit pair. The prior syntax-only RE-MEASURE block is corrected below: no-argument `./run invariant-scan` intentionally executes `self_test`. Candidate branch `candidate/v0.14.0` still points to superseded `0af15157efc88357b84d0c08492c938cfef00660`; no workflow was dispatched. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **225/225** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published; v0.14 RE-MEASURE is complete against evidence candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. Remote branch `candidate/v0.14.0` resolves to that exact commit, authenticated workflow-dispatch run `30324186389` succeeded, and the release-grade audit accepted seven identities with zero rejection. Reconciled `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`; no `v0.14.0` tag exists and no publication occurred.** Annotated `v0.13.0` tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` still dereferences exactly to published release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **225/225** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Hosted shell totals are **224 passed / 1 skipped** on each interpreter. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence files plus **2/2** authorization surfaces. All five release authorities remain at 0.13.0 pending R-CLOSE. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -324,6 +324,67 @@ standalone golden **11/11**. No source under `crates/` or `apps/` changed. A4
 and the editable-L1 controller residual remain open; L2 remains scheduled.
 RE-MEASURE remains unchecked until the replacement candidate is pushed and
 hosted evidence completes.
+
+**v0.14 RE-MEASURE is complete (measured 2026-07-28).** The exact
+SELF-TEST-SCOPE audit commit
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` supersedes `0af15157…` as the
+evidence candidate. Only `candidate/v0.14.0` was advanced. Read-only remote
+verification resolved that branch to the full candidate, left `origin/main`
+at `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, and found no `v0.14.0` tag.
+Before dispatch, the remote candidate's immutable workflow was read and
+confirmed to check out `audit_sha` for the workspace, net, both shell, lint,
+MSRV, and golden jobs. No main advance, tag, publication, or live server
+session occurred.
+
+Workflow-dispatch run **30324186389**, attempt **1**, used
+`publish_evidence: true` and
+`audit_sha=ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. It completed success with
+exactly seven evidence identities: core, golden, lint, MSRV, net, shell
+`python=3.11`, and shell `python=3.12`; report-only drift was skipped.
+
+Every required count was read from its hosted log rather than inferred from
+job status:
+
+- workspace results summed to **125 passed / 0 failed**;
+- `intel-ingest --features net` reported **23 passed / 0 failed**, and
+  `cored --features net` reported **25 passed / 0 failed**, for **48** net;
+- Python 3.11 and 3.12 each reported **224 passed / 1 skipped / 1 third-party
+  warning**. The complete suite in each leg includes the registry-derived
+  invariant-control parameterization; the platform skip does not apply to that
+  module;
+- Python 3.11 emitted verbatim `invariant-scan: PASS (9/9 registered rules)`
+  and `invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`;
+- hosted golden emitted `golden result: PASS (11/11 checks)`.
+
+The seven downloaded receipt/bundle pairs all name run **30324186389**,
+attempt **1**, success, Linux, and both event and checked-out SHA
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. The release-posture
+`audit-deferred` verification required attestations and checked repository,
+workflow signer, source digest, source ref
+`refs/heads/candidate/v0.14.0`, and GitHub-hosted runner identity. It accepted
+**7**, rejected **0**, and measured **5 deferred / 2 promoted**.
+
+The first detached audit invocation was a setup non-result: the clean worktree
+did not contain the intentionally ignored protected databases, so measurement
+stopped before attestation verification. Read-only links to the already
+verified **2/2** protected bytes restored the complete measurement subject
+without making its Git tree dirty; the identical release audit then passed.
+The first re-derivation invocation omitted its receipt-directory input and
+correctly re-derived CI-runner evidence as deferred. The corrected sandboxed
+invocation could not execute GitHub's online attestation checks and produced
+the same non-result. The permitted invocation with
+`--runner-receipts-dir evidence/ci-runs/30324186389-1` passed with rows **7**,
+source dispositions **5**, triggers **7**, release grade, and attestations
+required.
+
+Fourteen hosted files plus the **34,076-byte** release audit report add fifteen
+forward pins. The manifest is now **101/101**: **99/99 evidence** plus **2/2
+authorization surfaces**. Manifest validation, `verify-artifacts`,
+`evidence-report`, and deferred-audit re-derivation pass at those exact bytes.
+The first standalone golden attempt was a sandbox non-result because loopback
+bind was denied; the identical permitted command passed **11/11**.
+A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+R-CLOSE and publication remain pending a separate operator decision.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked

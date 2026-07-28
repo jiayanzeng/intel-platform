@@ -570,7 +570,7 @@ match · golden 11/11.
   unassigned deferral row fails; closed runbooks unmodified
 - [x] **SELF-TEST-SCOPE** — focused control coverage derived from the registry;
   uncovered rule demonstrated red; actual no-argument wiring recorded
-- [ ] **RE-MEASURE** — hosted run pinned to candidate; every count read from the
+- [x] **RE-MEASURE** — hosted run pinned to candidate; every count read from the
   log; signed set committed; new pin count in three places; identity set seven
 - [ ] **R-CLOSE** — version choice cites Step 6's trigger; evidence candidate and
   release commit separate; A4, L1 residual, and any stated limitation open
@@ -605,6 +605,34 @@ match · golden 11/11.
 - Do not commit `.env`, provider keys, tokens, or private key material.
 - Do not batch `STATE.md` / `PROGRESS-v0.14.md` updates or combine two tasks in
   one commit.
+
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-28
+- **Release disposition:** pending Step 9's separate operator publication
+  decision
+- **Release:** pending; Step 6's implementation trigger selects `v0.14.0`
+- **Evidence candidate:**
+  `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`
+- **Hosted evidence:** workflow-dispatch run **30324186389**, attempt **1**,
+  with seven authenticated identities and zero rejection
+- **Evidence pins:** **101 total** — **99 evidence** plus **2 authorization
+  surfaces**
+- **Release commit:** pending final R-CLOSE
+- **Annotated tag object:** not created; publication is not authorized
+
+Hosted logs report **125** workspace tests; **48** net tests split as **23**
+`intel-ingest` plus **25** `cored`; shell **224 passed / 1 skipped** under each
+of Python 3.11 and 3.12; `invariant-scan: PASS (9/9 registered rules)` and
+`invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`; and golden
+**11/11**. The release-grade audit accepted all seven signed receipts, required
+attestations, and measured **5 deferred / 2 promoted**. A4 and the editable-L1
+controller residual remain open; L2 remains scheduled and unexecuted.
+
+This is deliberately pending rather than the canonical closing record.
+R-CLOSE remains unchecked, `origin/main` remains
+`0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, and no tag or publication
+occurred.
 
 ## Runbook amendments
 
