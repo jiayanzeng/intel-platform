@@ -109,3 +109,42 @@ Entries are append-only; corrections are new dated entries.
   changed.
 - golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · IDENTITY-DERIVE — hosted receipt scope derived
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: e853ce380782a04c1573ea67fd657b8572e9b2c8
+- derivation acceptance: PASS. `tools/audit_deferred.py` imports and reuses
+  R10's workflow parser. It derives `core`, `golden`, `lint`, `msrv`, `net`,
+  `shell/python=3.11`, and `shell/python=3.12` from the six blocking workflow
+  jobs and their matrix legs. `EXPECTED_RUNNER_JOB_IDENTITIES` and the
+  deferred-test fixture's duplicate identity tuple are removed.
+- report-only acceptance: PASS. The exclusion criterion is job-level
+  `continue-on-error: true`, not a name list. A scratch `derived-report` job
+  carrying that property stayed outside the set, while a scratch blocking
+  `derived-extra` job entered it without any Python authority edit.
+- narrowing acceptance: PASS. Exact identities are recovered from the
+  protected historical deferred-audit reports and compared with the current
+  workflow-derived set. Removing `golden` in a scratch workflow emitted
+  `workflow-derived runner identity set narrowed relative to protected
+  historical evidence`, accepted **0** executions, and exposed the removed
+  `('golden', None)` identity. The current derived and protected sets are
+  equal at seven identities.
+- compatibility acceptance: PASS. `LEGACY_RUNNER_JOB_COUNTS` still governs
+  reports admitted before exact identity matrices existed. Deferred-evidence
+  re-derivation stayed green, and `./run verify-artifacts` validated all
+  **101/101** pins and both protected databases byte-identically.
+- test acceptance: PASS. The deferred-audit module passed **40/40** on Python
+  3.11.4 and 3.12.13; the three required mutation tests passed on both.
+  Complete shell passed **231/231** on both interpreters with **21/21** exact
+  packages. The first sandboxed module run was a non-result only because
+  macOS denied its on-site `ps` call; the permitted complete runs are the
+  recorded results.
+- matrix acceptance: PASS. `./run ci-local` remained **20/20**, with **125**
+  workspace Rust tests, **48** net tests (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  `invariant-scan` **10/10 rules / 18 controls**, and all protected evidence
+  exact.
+- golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
+  **11/11** byte-identical.
