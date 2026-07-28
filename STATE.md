@@ -1,6 +1,100 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.15 RE-MEASURE is complete at v0.14.1 evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` on `candidate/v0.14.1`; no tag or `main` advance is authorized or present.** Hosted workflow-dispatch run `30333331839` attempt 1 authenticated all **7/7** derived blocking identities across **6** blocking jobs with zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **The operator selected release of v0.14.1 as of 2026-07-28. Release preparation is in progress; the exact release commit and annotated tag object will be recorded after those objects exist.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains separately authenticated by workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 R-CLOSE release reconciliation is in progress (measured
+2026-07-28).** The selected release is **v0.14.1** because Step 4 recorded
+that no observable name changed: the `x-intel-view-stage-*` header set and the
+four stage strings `analysis`, `response_build`, `sector_load`, and
+`serialization` are identical to v0.14.0. That patch trigger fired before
+R-CLOSE; the version is not a default chosen at closure.
+
+Evidence and release subjects remain deliberately separate. The authenticated
+evidence candidate is
+`6d197e562315b4fc6feb20c35b5fadc75b6b44a4`; the later release commit
+contains the admitted receipts, report, release authorities, classified diff,
+and release reconciliation and will be named by exact hash after it exists.
+The annotated tag will target that release commit, never the evidence
+candidate.
+
+The complete `v0.14.0..v0.14.1-local-release` diff contains **38 paths**, each
+classified exactly once:
+
+- **release authorities and public release documentation (6):** `README.md`,
+  `CHANGELOG.md`, `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`;
+- **hosted parity workflow (1):** `.github/workflows/ci.yml`;
+- **operating contract, architecture, and cycle discipline (4):** `AGENTS.md`,
+  `ARCHITECTURE.md`, `shell/tests/test_cycle_check.py`, and
+  `tools/cycle_check.py`;
+- **workflow-derived receipt identity (2):**
+  `shell/tests/test_deferred_audit.py` and `tools/audit_deferred.py`;
+- **R10 registry, implementation, and focused tests (3):**
+  `config/invariant-rules.json`, `shell/tests/test_invariant_scan.py`, and
+  `tools/invariant_scan.py`;
+- **Rust/Python stage correspondence (1):**
+  `shell/tests/test_benchmark_view.py`;
+- **protected manifest and durable hosted evidence (16):**
+  `config/protected-artifacts.json`, all fourteen receipt/bundle files under
+  `evidence/ci-runs/30333331839-1/`, and
+  `evidence/v0.14.1/deferred-audit/report.json`;
+- **prior-cycle forward publication records (2):** `PROGRESS-v0.14.md` and
+  `TASKS-v0.14-EXECUTION.md`;
+- **state, progress, and active runbook records (3):** `STATE.md`,
+  `PROGRESS-v0.15.md`, and `TASKS-v0.15-EXECUTION.md`.
+
+Before the mechanical release-authority bump, the cycle changed zero paths
+under `crates/` or `apps/`. R-CLOSE changes only
+`apps/cored/Cargo.toml` there, from version 0.14.0 to 0.14.1; no product
+implementation source changed anywhere under either tree. Cargo mechanically
+updates only the local `cored` package version in `Cargo.lock`; dependency
+resolution must remain byte-identical.
+
+`ARCHITECTURE.md` already matches enforced reality and needs no release edit.
+A rewritten shell can still bypass or falsify `/attest`, so A4 remains open.
+An edited L1 controller can still rewrite its client-side command boundary, so
+the server-enforced L2 wrapper remains open and scheduled. R3 and R4 remain
+open-bottom deny-lists over recognized vocabulary and encodings. The
+active-runbook measured-value check remains a documented same-clause
+vocabulary heuristic, not semantic proof.
+
+The proposed v0.16 subject is recorded but not acted on. v0.15 is the second
+consecutive cycle whose findings all concern verification apparatus rather
+than product implementation. Across the recent sequence, `invariant-scan`
+grew **7 rules / 11 controls → 9 / 15 → 10 / 18**, shell tests grew **216 →
+225 → 237**, and protected pins grew **86 → 101 → 116**. R10 currently
+reports **45** exemptions against **24** local and **23** hosted normalized
+checks: **18** runner source/toolchain/cache/interpreter setup entries, **24**
+signed receipt/attestation persistence entries, one Python-environment setup
+entry, one report-only job, and one operator-local database check. The two
+large name-enumerated groups should be evaluated as derivable exemption
+classes with parser-enforced membership criteria, so their counts become
+outputs rather than inputs and the verification apparatus becomes smaller.
+Step 8 also exposed an adjacent exit-propagation gap: `ci_net_test` runs the
+two net test commands sequentially without returning immediately after the
+first failure, so a passing `cored` command can make the wrapper report success
+after `intel-ingest` failed. No harness change is made in this cycle. The
+observed `intel-ingest` failure was the known proxy-routing non-result in a
+fresh worktree without local environment configuration; the exact wire test
+passed when rerun with the repository-recorded
+`NO_PROXY=127.0.0.1,localhost` path. A complete matrix with that explicit
+loopback bypass was therefore required before release and passed **20/20**:
+**125** workspace tests, **48** net tests (**23** `intel-ingest` + **25**
+`cored`), shell **237/237** on Python 3.11.4, `invariant-scan` **10/10 rules /
+18 controls**, protected pins **116/116**, protected databases **2/2**, and
+golden **11/11**. The independently rebuilt Python 3.12.13 lane verified
+**21/21** pinned packages and passed **237/237**; a separate golden invocation
+also passed **11/11**. The first restricted-sandbox attempts at those two
+independent commands were environment non-results because loopback binds and
+`ps` were denied; their identical permitted reruns produced the stated
+measurements.
+
+Publication is selected because the prior withholding condition is discharged:
+release-grade evidence exists at the exact candidate, all seven identities
+authenticate with zero rejection, and every hosted count equals local at that
+commit. A no-release disposition has no remaining trigger. The exact release
+commit, annotated tag object, closed-cycle record, and remote mapping remain
+facts to measure and append after their objects exist.
 
 **v0.15 RE-MEASURE is complete (measured 2026-07-28).** The operator
 authorized only a non-`main` candidate push. Candidate

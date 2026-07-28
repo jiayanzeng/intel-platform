@@ -4,6 +4,53 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.14.1 — 2026-07-28
+
+### Added
+
+- R10 derives normalized verification scope from the local `ci-local` entry
+  points and the blocking hosted workflow, then checks parity in both
+  directions with three site-specific reconstructed failures.
+- The deferred auditor derives its seven blocking receipt identities from
+  `.github/workflows/ci.yml`; report-only status is determined by job-level
+  `continue-on-error: true`, and narrowing below protected historical evidence
+  is rejected.
+- A cross-language source test derives every Rust `diagnostic_delay("…")`
+  stage and requires it to appear in the Python benchmark header map.
+
+### Changed
+
+- Hosted Python 3.11 now executes `checklist-audit` and `progress-check`,
+  matching their local entry points without changing the six-job blocking
+  topology.
+- Active-runbook criteria that explicitly cite another step's stored
+  measurement are rejected by a documented vocabulary heuristic; same-commit
+  invariant relations remain valid.
+- Closing dispositions are dated, and the operating contract requires command
+  behavior claims to be checked at the command's actual entry point.
+
+### Evidence and disposition
+
+- Step 4 retained all four observable diagnostic stage names. The
+  `x-intel-view-stage-*` header set and stage strings remain identical to
+  v0.14.0, firing the patch-release identity `v0.14.1`.
+- Authenticated run 30333331839 attempt 1 against evidence candidate
+  `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` passed all seven derived
+  identities: workspace **125**, net **48** (**23** `intel-ingest` + **25**
+  `cored`), invariant scan **10/10 rules / 18 controls**, and golden
+  **11/11**. Each hosted shell lane collected **237** tests as **236 passed /
+  1 intended on-site-only skip**, matching the local candidate's **237
+  passed**.
+- The release-grade audit accepted seven authenticated receipts with zero
+  rejection and measured **5 deferred / 2 promoted**. The protected manifest
+  contains **116 exact pins**: **114 evidence** plus **2 authorization
+  surfaces**.
+- Publication was explicitly selected as **release as of 2026-07-28**. Public
+  `/v1/*` bodies, the SQLite schema, diagnostic stage names, and golden
+  behavior are unchanged. A4, the editable-L1 controller residual, the R3/R4
+  open-bottom limitations, and the active-runbook heuristic limitation remain
+  open.
+
 ## v0.14.0 — 2026-07-28
 
 ### Added
