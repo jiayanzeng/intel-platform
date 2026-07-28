@@ -98,3 +98,32 @@ Entries are append-only; corrections are new dated entries.
   production Rust path, dependency, lockfile, schema, protected database, or
   public surface changed.
 - golden-E2E delta: **0**; mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · EXPORT-BUDGET — review corpus reduced losslessly
+
+- owner: Codex
+- commit: d33e092
+- result: PASS. Root-run Repomix 1.17.0 moved from **4,887,220 bytes /
+  339 included files** to a fixed-point **2,640,795 bytes / 146 files**.
+- selection acceptance: PASS. The configured export excludes `evidence/**` and
+  the exact `docs/cycles/{TASKS,PROGRESS}-v0.{8,9,10,11}*` pattern, retains
+  `Cargo.lock`, `config/protected-artifacts.json`, `AGENTS.md`, and `run`, and
+  contains all **89/89** tracked files under `crates/`, `apps/`, `tools/`, and
+  `shell/`. The Repomix security scan is disabled so it cannot silently omit a
+  source; registered self-testing invariant R4 remains the credential control.
+- archival acceptance: PASS. The pre-split `STATE.md` was **535,858 bytes** at
+  SHA-256
+  `9553fb682d04e1b2a925e90bd11ab2ae867bd0e6025193abde9a643c9239f3b6`.
+  The byte-identical archived block is **297,739 bytes** at SHA-256
+  `3233af5b4c148f7a7f4700edba3238dc67245f28d83dc07cc53c26ebdca6a414`.
+  Substituting it once for the retained pointer reconstructed the exact
+  **535,858-byte** pre-split hash. No repository file was deleted.
+- artifact acceptance: PASS. Manifest validation and `verify-artifacts` passed
+  **161/161** pins and protected databases **2/2** after the split.
+- status acceptance: PASS. `cycle-check`, `checklist-audit`,
+  `progress-check`, `version-check`, and Step 2's publication reconciliation
+  are all green after this append names the real implementation commit.
+- scope acceptance: PASS. No production path, dependency, lockfile, schema,
+  protected artifact, public surface, or historical closed-cycle record moved.
+- golden-E2E delta: **0**; mandatory standalone `./run golden` passed
+  **11/11**.
