@@ -445,7 +445,7 @@ decision: publication.**
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with both interpreters; G1 reproduced with fetch
+- [x] **E0** — entering matrix with both interpreters; G1 reproduced with fetch
   counts or refuted; G2's undetectability shown by four passing tools over a
   false `STATE.md`; G5 confirmed or closed clean; G6 answered from named tests;
   G3 byte totals recorded; `STATE.md` unedited
@@ -501,6 +501,69 @@ decision: publication.**
 - If any Step's Objective, Acceptance criteria, or "Done when" is amended after
   this file is first committed, name the amendment in a dated
   `## Runbook amendments` block in the same commit.
+
+---
+
+## Execution records
+
+### 2026-07-29 · E0
+
+PASS. The Gate contains every acceptance surface: only this status record, the
+E0 checklist box, and the append-only v0.19 progress record move; `STATE.md`
+remains blob `f8f07f6944140ccc2ab4a34da2e2cf3b18767601`, byte-identical to `HEAD`.
+
+- **Entering matrix:** the first sandboxed `./run ci-local` was a permission
+  non-result when a loopback-only net test could not bind. The identical
+  permitted command passed **20/20** with **131** workspace tests, **55** net
+  tests (**29** `intel-ingest` + **26** `cored`), shell **245/245** under
+  Python 3.11.4, zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78,
+  `invariant-scan` **11/11 rules / 23 controls**, **161/161** pins, protected
+  databases **2/2**, and golden **11/11**. A clean constrained Python 3.12.13
+  rebuild resolved **21/21** packages and independently passed shell
+  **245/245**. Standalone `./run golden` passed **11/11**, delta **0**.
+- **Refs and G2:** local and remote `origin/main` are
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; local and remote annotated
+  `v0.15.2` are object `22beef8e023e52024cfe9614273e2d82b39f4956`,
+  peeled to `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`, which is reachable from
+  `HEAD`. This contradicts the header's asserted remote main
+  `f13c6129d608ab9259f421dce6ed419ce469c225` and remote-tag absence.
+  Nevertheless `cycle-check`, `checklist-audit`, `progress-check`, and
+  `version-check` all passed, confirming G2 and its fail-before premise.
+- **G1:** CONFIRMED by a temporary executing trait-fetcher control, then
+  removed. A first `Unreachable` denial remained denied after the fake upstream
+  changed to allow, with `RobotsCache::fetches()=1` and fake calls **1**. A
+  cached allowing policy re-fetched after its TTL into `Unreachable`; after the
+  fake upstream changed back to allow, the cache still denied with fetches
+  **2** and fake calls **2**. The source blob was restored byte-identically.
+- **G5:** CLOSED CLEAN as not a production defect. A temporary executing
+  control passed `not-an-absolute-url` to the production network entry:
+  `reqwest::Url::parse` returned `relative URL without a base` before the gate,
+  with robots fetches **0** and page fetches **0**. Redirects are derived by
+  `reqwest::Url::join` and rejected before the next gate when invalid; every
+  URL that reaches `host_of`/`origin_of` on the network path is therefore an
+  absolute `reqwest::Url`. The helper sentinels can occur only on non-network
+  fixture/helper inputs and cannot key a production request. The temporary test
+  was removed and the source blob restored byte-identically.
+- **G6:** ANSWERED. `rate_limiter_consulted_between_pages` proves two harvest
+  pages cause two limiter acquisitions, and
+  `fetching_robots_txt_is_itself_rate_limited` proves the policy fetch also
+  acquires the shared host limiter.
+  `crawl_delay_update_preserves_clock_counter_and_waits_new_interval` measures
+  an imposed publisher delay of 10 seconds, but no test measures the default
+  **0.500-second** interval between harvest pages. The v0.18 live log therefore
+  reported that floor; the page test proves consultation, not elapsed time.
+- **G3:** CONFIRMED, with the drafted quantities corrected by execution.
+  Root-run Repomix 1.17.0 collected **340** files, excluded one Rust file under
+  its security scan, and wrote **4,887,220 bytes / 339 included files**
+  (`4,877,747` content characters). Gitignored `.DS_Store` excluded,
+  `evidence/**` contributes **1,613,565 bytes / 178 regular files**; the exact
+  Step 3 closed-cycle pattern contributes **657,725 bytes / 17 files**; and
+  `STATE.md` is **534,657 bytes / 8,133 lines**.
+- **Final integrity:** standalone `verify-artifacts` passed **161/161** pins
+  and protected databases **2/2**. The same local/remote `v0.15.2` tag object,
+  peeled target, and `origin/main` were re-read after the temporary controls.
+  No protected file, published object, production path, dependency, lockfile,
+  schema, public surface, or `STATE.md` byte changed.
 
 ---
 
