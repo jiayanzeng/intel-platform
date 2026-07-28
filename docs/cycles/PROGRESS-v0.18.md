@@ -92,3 +92,46 @@ Entries are append-only; corrections are new dated entries.
   percent-encoding normalization layer was introduced.
 - golden-E2E delta: **0**; the mandatory standalone invocation passed
   **11/11**.
+
+### 2026-07-28 · ROBOTS-PREVIEW — live absence disposition recorded
+
+- owner: Codex
+- commit: 6ede754
+- result: PASS with **GO** for LIVE-HARVEST. The sole configured network
+  source, `arxiv-cs`, made exactly one request under the installed
+  `intel-platform/0.15.1` crawler identity:
+  `GET https://oaipmh.arxiv.org/robots.txt`. Redirects were disabled and none
+  was followed; the configured contact was loaded from ignored `.env` and was
+  not recorded.
+- live-policy acceptance: PASS. The origin returned HTTP **404**,
+  `Content-Type: text/html; charset=utf-8`, with **11,083** raw bytes. There was
+  therefore no selected specific or `*` group, matched rule, `Allow` exception,
+  or `Crawl-delay`. The per-source `robots_on_missing: "allow"` maps to
+  `MissingPolicy::RfcAllowAll`, so the configured `/oai?...` target is allowed.
+  Explicit policies and unreachable responses remain fail-closed.
+- reproducibility acceptance: PASS. The raw response is committed at
+  `observations/v0.18/robots-preview/arxiv-cs-robots.txt`, SHA-256
+  `fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2`,
+  with its command/result report alongside.
+- robots-only acceptance: PASS. The feature-gated client constructs literal
+  `/robots.txt`, disables redirects, and contains one send call. Its loopback
+  control observed exactly one `/robots.txt` request with the installed
+  identity; the live run reported request count **1**, path `/robots.txt`, and
+  redirects **0**. No document or harvest URL was requested.
+- fail-before/pass-after acceptance: PASS. Missing diagnostic matcher and
+  preview-fetch surfaces first made their focused builds exit **101**.
+  Pass-after suites report compliance diagnostics **40/40**, ingest preview
+  library **30/30**, and preview binary **1/1**. A sandboxed loopback attempt
+  was a non-result; its identical permitted invocation passed.
+- scope acceptance: PASS. No dependency was added; `Cargo.lock`, default and
+  `net`-only public APIs, `/v1/*`, SQLite schema, protected artifacts, and the
+  harvest path are unchanged. The staged raw response and report passed R4's
+  tracked-text credential scan.
+- matrix acceptance: PASS. Local CI passed **20/20** with **131** workspace
+  tests, **55** net tests (**29** ingest plus **26** cored), shell **244/244**,
+  locked Rust 1.78, all **146/146** pins, protected databases **2/2**, and zero
+  final rustc/clippy/fmt/ShellCheck failures. Supplemental preview clippy first
+  caught two `needless_borrow` warnings; after the two call-site correction it
+  passed with `-D warnings`.
+- golden-E2E delta: **0**; the final mandatory standalone invocation passed
+  **11/11**.
