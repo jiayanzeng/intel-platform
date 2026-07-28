@@ -421,14 +421,38 @@ mod tests {
         }
     }
 
-    fn fixture(name: &str) -> String {
-        format!("{}/tests/fixtures/{}", env!("CARGO_MANIFEST_DIR"), name)
+    fn workspace_root() -> std::path::PathBuf {
+        let cwd = std::env::current_dir().expect("current test directory");
+        cwd.ancestors()
+            .find(|candidate| {
+                candidate.join("Cargo.toml").is_file()
+                    && candidate.join("crates/ingest/Cargo.toml").is_file()
+                    && candidate.join("fixtures").is_dir()
+            })
+            .map(std::path::Path::to_path_buf)
+            .unwrap_or_else(|| {
+                panic!(
+                    "could not locate workspace fixtures from runtime directory {}",
+                    cwd.display()
+                )
+            })
     }
 
-    // The single-page fixture committed at the workspace root (crates/ingest ->
-    // ../.. is the repo root).
+    fn fixture(name: &str) -> String {
+        workspace_root()
+            .join("crates/ingest/tests/fixtures")
+            .join(name)
+            .display()
+            .to_string()
+    }
+
+    // The single-page fixture committed at the workspace root.
     fn repo_fixture(name: &str) -> String {
-        format!("{}/../../fixtures/{}", env!("CARGO_MANIFEST_DIR"), name)
+        workspace_root()
+            .join("fixtures")
+            .join(name)
+            .display()
+            .to_string()
     }
 
     fn source_at(path: String) -> ArxivOaiSource {

@@ -471,6 +471,26 @@ path.
 4. Record whether this changes any product path. If it does not, say so — that
    is the claim that keeps this a verification fix.
 
+**Entering classification (2026-07-28, before implementation).** The derived
+set is three uses and all three are fixture-locating: the `cored` test module's
+workspace-root helper locates root fixtures and the entity file; the two
+`intel-ingest` `arxiv_oai` test helpers locate, respectively, crate-local
+paging fixtures and the workspace-root single-page fixture. There are zero
+non-fixture uses.
+
+**Measured disposition (2026-07-28).** All three fixture helpers now resolve
+the workspace at test run time from the current checkout; the Rust tree has
+zero remaining `env!("CARGO_MANIFEST_DIR")` uses. The E0 fail-before reused
+`/private/tmp/intel-v016-f3-shared` after moving its build checkout and failed
+18/24 `cored` tests. The pass-after built in
+`/private/tmp/intel-v016-step6.LX1zfx/build`, moved to
+`/private/tmp/intel-v016-step6.LX1zfx/relocated`, and reused
+`/private/tmp/intel-v016-step6.LX1zfx/shared-target`; its second cargo run
+performed no compilation and passed all 126 workspace tests. The full
+20-job matrix passed while reusing the uncleared Step 5 target, and golden
+remained 11/11. Every code change is within a `#[cfg(test)]` module; no product
+runtime path changed.
+
 **Acceptance criteria.** Fail-before and pass-after both captured under a shared
 target directory across two checkout locations · every `CARGO_MANIFEST_DIR` use
 classified · no product runtime path changed · Rust tests green offline and with
@@ -571,7 +591,7 @@ all pins match · golden 11/11.
 - [x] **SEAM** — no direct core-owned config read, or the residual stated as open;
   `CORE_ENTITIES` honoured; no silent fallback; version trigger recorded here;
   golden byte-identical
-- [ ] **RELOCATABLE** — fail-before and pass-after across two checkouts sharing a
+- [x] **RELOCATABLE** — fail-before and pass-after across two checkouts sharing a
   target directory; every `CARGO_MANIFEST_DIR` use classified
 - [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; new pin count in three places

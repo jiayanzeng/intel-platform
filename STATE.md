@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0, DOC-LAYOUT, JOB-PROPAGATION, EXEMPT-DERIVE, and SEAM complete. Step 5's new authenticated internal `/entities/unknown` route fired the `v0.15.0` trigger; installed version bytes remain v0.14.1 until the release commit. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The current v0.16 full matrix passes **20/20** from `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **126** Rust workspace tests, and **49** net tests (**23** `intel-ingest` + **26** `cored`); current standalone shell passes **243/243** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains the published-cycle measurement of **236 passed / 1 skipped** per interpreter. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **11/11 rules / 19 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0, DOC-LAYOUT, JOB-PROPAGATION, EXEMPT-DERIVE, SEAM, and RELOCATABLE complete. Step 5's new authenticated internal `/entities/unknown` route fired the `v0.15.0` trigger; installed version bytes remain v0.14.1 until the release commit. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The current v0.16 full matrix passes **20/20** from the uncleared `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **126** Rust workspace tests, and **49** net tests (**23** `intel-ingest` + **26** `cored`); current standalone shell passes **243/243** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains the published-cycle measurement of **236 passed / 1 skipped** per interpreter. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **11/11 rules / 19 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.16 RELOCATABLE is complete (measured 2026-07-28).** Test fixture
+resolution now follows the checkout from which the test is run rather than the
+checkout in which its binary was compiled.
+
+- The derived Rust set contained **three**
+  `env!("CARGO_MANIFEST_DIR")` uses. All three were fixture locators: one
+  `cored` workspace-root helper and two `intel-ingest` helpers for crate-local
+  and workspace-root fixtures. There were **zero** other uses, and the
+  post-fix Rust search finds zero remaining occurrences.
+- Both test modules now discover the workspace at run time by walking ancestors
+  of the current test directory and checking committed checkout markers. They
+  do not derive source paths from the executable, target directory, or any
+  build-time source path.
+- The E0 fail-before built at `/private/tmp/intel-v016-f3-build`, relocated to
+  `/private/tmp/intel-v016-f3-relocated`, and reused
+  `/private/tmp/intel-v016-f3-shared` without compilation; **18/24** `cored`
+  tests failed at the departed embedded path. The pass-after built at
+  `/private/tmp/intel-v016-step6.LX1zfx/build`, relocated to
+  `/private/tmp/intel-v016-step6.LX1zfx/relocated`, and reused
+  `/private/tmp/intel-v016-step6.LX1zfx/shared-target`; the second cargo run
+  reported `Finished` in **0.10s** with no compilation and passed all
+  **126/126** workspace tests.
+- The full matrix then reused the existing, uncleared
+  `/private/tmp/intel-v016-step5-ci-target` and passed **20/20**: **126**
+  workspace tests, **49** net tests (**23 + 26**), Python 3.11.4 shell
+  **243/243**, warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78,
+  and golden **11/11**. The standalone post-task golden also remained
+  **11/11**.
+- Every code change is inside a Rust `#[cfg(test)]` module. No product runtime
+  path, public or internal API, dependency, lockfile, corpus, pin, release tag,
+  or installed version byte changed. The Step 5 `v0.15.0` release trigger is
+  unchanged.
 
 **v0.16 SEAM is complete (measured 2026-07-28).** The operator selected
 Option B: extracted candidate names are compared inside core rather than

@@ -1595,13 +1595,25 @@ mod tests {
         );
     }
 
-    // Workspace root, from this crate's manifest dir (apps/cored -> ../..).
+    // Resolve the checkout at test run time. The test binary may have been
+    // compiled in a checkout that was subsequently relocated while reusing
+    // CARGO_TARGET_DIR, so no build-time source path may participate here.
     fn root() -> std::path::PathBuf {
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("..")
-            .join("..")
-            .canonicalize()
-            .expect("workspace root")
+        let cwd = std::env::current_dir().expect("current test directory");
+        cwd.ancestors()
+            .find(|candidate| {
+                candidate.join("Cargo.toml").is_file()
+                    && candidate.join("apps/cored/Cargo.toml").is_file()
+                    && candidate.join("config/entities.json").is_file()
+                    && candidate.join("fixtures").is_dir()
+            })
+            .map(std::path::Path::to_path_buf)
+            .unwrap_or_else(|| {
+                panic!(
+                    "could not locate workspace fixtures from runtime directory {}",
+                    cwd.display()
+                )
+            })
     }
 
     fn tmp_db() -> std::path::PathBuf {
