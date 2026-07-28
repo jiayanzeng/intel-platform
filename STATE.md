@@ -1,6 +1,29 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 is active and E0 is complete.** From fresh `CARGO_TARGET_DIR=/private/tmp/intel-v017-e0-ci-target`, `./run ci-local` passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **126** workspace tests, **49** net tests (**23** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **243/243** on a clean Python 3.11.4 environment, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. A clean Python 3.12.13 environment also resolved **21/21** constrained packages and passed **243/243**. The isolated User-Agent wire test nevertheless failed **20/20** at HEAD and **10/10** at release commit `8f97205a…`; the full-suite pass is a masked platform-proxy interaction, not evidence that the double is sound. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, pins, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 NET-DOUBLE is complete after E0.** From `CARGO_TARGET_DIR=/private/tmp/intel-v017-e0-ci-target`, `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **126** workspace tests, **50** net tests (**24** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **243/243** on clean Python 3.11.4 and 3.12.13 environments with **21/21** exact packages, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. The isolated User-Agent wire test moved from **0/20** to **20/20** while a deliberate mismatched byte string still fires its assertion. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, pins, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 NET-DOUBLE is complete (measured 2026-07-28).** The task Gate
+contained every acceptance criterion and the diff changes only test support
+inside `crates/ingest/src/net.rs`; no product path changed. The raw listener and
+wire-header capture remain intact. The test now installs a scoped `NO_PROXY`
+value before constructing the two real reqwest clients and restores the prior
+process value through a drop guard, so the IP-literal loopback request reaches
+the raw socket instead of the operator's configured proxy.
+
+The same isolated sample that failed **20/20** in E0 passes **20/20** after the
+change. A separate expected-panic control feeds a deliberately different
+document-client string into the exact shared assertion and observes
+`document client User-Agent bytes differ`; both clients' actual wire bytes
+still equal the installed identity. The complete net lane passes **24/24**,
+the complete local matrix reaches job 20 with **50 = 24 + 26** net tests, and
+standalone golden remains **11/11**.
+
+The fix is general for operator/system proxies that reqwest can bypass through
+the standard `NO_PROXY` contract, while the observed trigger is specific to a
+proxy that covers the fixture's IP literal. It would fail again if reqwest
+stopped honoring `NO_PROXY`, if a future test bypassed the scoped guard, or if
+another process rewrote traffic below reqwest's proxy layer. It does not change
+production proxy behavior.
 
 **v0.17 E0 is complete (measured 2026-07-28 at activation-audit commit
 `79f5b6232959a13b9f4adb768c6c9f7a1bcfbcd9`).** The first fresh-target matrix

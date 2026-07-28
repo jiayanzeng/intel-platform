@@ -449,7 +449,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 - [x] **E0** — entering matrix with its stopping point; F2 rate measured over ≥10
   runs and classified; F2 mechanism measured; F1 case table built; F1a and F1c
   settled; published-record question answered; F5 MSRV cost measured
-- [ ] **NET-DOUBLE** — failing test green at the measured repetition count; the
+- [x] **NET-DOUBLE** — failing test green at the measured repetition count; the
   byte-identical assertion still able to fail; no product path changed
 - [ ] **ROBOTS-PATH** — every case-table row tested; multi-segment rules block
   fail-before/pass-after; fragment excluded, query included; redirects gated;

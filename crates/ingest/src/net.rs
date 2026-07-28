@@ -284,6 +284,7 @@ mod tests {
     use super::*;
     use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
     use std::collections::HashMap;
+    use std::ffi::OsString;
     use std::io::{Read, Write};
     use std::net::{Shutdown, TcpListener};
     use std::sync::mpsc;
@@ -389,6 +390,27 @@ mod tests {
         }
     }
 
+    struct RestoreNoProxy(Option<OsString>);
+
+    impl Drop for RestoreNoProxy {
+        fn drop(&mut self) {
+            match self.0.take() {
+                Some(previous) => std::env::set_var("NO_PROXY", previous),
+                None => std::env::remove_var("NO_PROXY"),
+            }
+        }
+    }
+
+    fn bypass_operator_proxy_for_loopback_fixture() -> RestoreNoProxy {
+        let previous = std::env::var_os("NO_PROXY");
+        // Reqwest reads proxy configuration while each client is built. This
+        // test must reach the raw listener below rather than any operator proxy;
+        // the guard restores the process environment even if an assertion
+        // unwinds.
+        std::env::set_var("NO_PROXY", "127.0.0.1,localhost");
+        RestoreNoProxy(previous)
+    }
+
     fn user_agent_wire_server(
         requests: usize,
     ) -> (String, mpsc::Receiver<String>, thread::JoinHandle<()>) {
@@ -431,8 +453,20 @@ mod tests {
         (format!("http://{address}"), receiver, handle)
     }
 
+    fn assert_wire_user_agents(expected: &str, page_user_agent: &str, robots_user_agent: &str) {
+        assert_eq!(
+            page_user_agent, expected,
+            "document client User-Agent bytes differ"
+        );
+        assert_eq!(
+            robots_user_agent, expected,
+            "robots client User-Agent bytes differ"
+        );
+    }
+
     #[tokio::test]
     async fn both_live_clients_send_the_installed_user_agent_byte_identically() {
+        let _no_proxy = bypass_operator_proxy_for_loopback_fixture();
         let expected = crawler_user_agent("0.12.0", "wire-contact@unit.test");
         let installed = install_crawler_user_agent("0.12.0", "wire-contact@unit.test")
             .expect("install identity");
@@ -456,8 +490,17 @@ mod tests {
             .recv_timeout(Duration::from_secs(2))
             .expect("robots User-Agent");
         server.join().expect("wire server exits");
-        assert_eq!(page_user_agent, expected);
-        assert_eq!(robots_user_agent, expected);
+        assert_wire_user_agents(&expected, &page_user_agent, &robots_user_agent);
+    }
+
+    #[test]
+    #[should_panic(expected = "document client User-Agent bytes differ")]
+    fn wire_user_agent_assertion_rejects_a_deliberate_mismatch() {
+        assert_wire_user_agents(
+            "intel-platform/expected",
+            "intel-platform/deliberately-different",
+            "intel-platform/expected",
+        );
     }
 
     #[test]
