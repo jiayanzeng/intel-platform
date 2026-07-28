@@ -9,3 +9,4 @@ __pycache__/
 /.env.*
 !/.env.example
 *.DS_Store
+repomix-output.xml
