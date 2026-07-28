@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published and v0.14 TEMPLATE-REMEASURE is complete. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **223/223** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published; v0.14's disclosed Step 8 runbook amendment is complete and the authorized candidate push is pending its audit commit. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` is at the two later append-only audits, `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **223/223** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -256,6 +256,32 @@ databases **2/2**, all **86/86** pins exact, and matrix golden **11/11**.
 Shell passed **223/223** under Python 3.11.4 and 3.12.13.
 `invariant-scan --self-test` remained **9/9 rules / 15 controls**, and the
 mandatory standalone golden remained **11/11**.
+
+**The Step 8 count amendment is complete (measured 2026-07-28).** One disclosed
+Step 8 amendment corrects both appearances of the stale count model. The global
+definition now states the measured progression from **7 rules / 11 controls**
+to **9 rules / 15 controls**: CONTROL-PRECISION preserves 11 while making
+sites explicit, R8 adds three controls, and R9 adds one. Step 8 now requires
+hosted and local self-test totals to agree at the same candidate commit and to
+equal **9 / 15**, rather than anchoring the hosted result to Step 2's earlier
+measurement.
+
+This exact amendment tree passed `./run cycle-check`; the focused checker tests
+passed **11/11** under Python 3.11.4 and 3.12.13; `./run ci-local` passed
+**20/20**; and standalone golden remained **11/11**. Explicit test discovery
+reported **125** workspace tests and **48** net tests split as **23**
+`intel-ingest` plus **25** `cored`. That local split differs from the
+operator-provided Step 8 expectation of 24 + 24 and is recorded as a
+pre-hosted comparison finding, not reconciled by changing source.
+
+The reusable defect shape is retained for the amendment's append-only progress
+record: a criterion tied to one step's measured value goes stale when a later
+step legitimately changes the quantity; equality at one candidate commit is
+the durable property. A possible sibling to Step 7's active-deferral guard—
+detecting acceptance criteria that cite a step's measured value rather than an
+invariant relation—is a **v0.15 candidate input only**. It is not implemented
+in v0.14. A4 and the editable-L1 controller residual remain open; L2 remains
+scheduled.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked

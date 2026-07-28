@@ -161,8 +161,10 @@ under Python 3.11 **and** 3.12; clippy, fmt, ShellCheck, floor byte-compilation,
 and locked Rust 1.78 green. No mock, fixture, double, health response,
 hand-authored receipt, or workflow configuration is promoted to wire evidence.
 
-`invariant-scan` enters at **7 rules / 11 controls** and exits at **9 rules**
-with a control count recorded by Step 2. `ci-local` enters and exits at **20**.
+`invariant-scan` enters at **7 rules / 11 controls** and exits at **9 rules /
+15 controls**. CONTROL-PRECISION preserves the count at 11 while making each
+control site-specific; R8-IDENTITY-BEFORE-BIND adds 3; R9-TEST-SEAM adds 1.
+`ci-local` enters and exits at **20**.
 
 ---
 
@@ -446,7 +448,10 @@ silently.
    the candidate.
 4. **Read the per-invocation counts out of the hosted log**, not from job status:
    `intel-ingest` net, `cored` net, workspace, both shell legs, and the
-   invariant self-test's rule and control counts.
+   invariant self-test's rule and control counts. The hosted self-test must
+   report the same rule/control pair as `./run invariant-scan --self-test` at
+   the same candidate commit, and that pair must be **9 rules / 15 controls**
+   at this candidate.
 5. Commit the signed receipt/bundle set, re-run `./run verify-artifacts` and
    `./run evidence-report`, and record the new pin count in `STATE.md`,
    `PROGRESS-v0.14.md`, and the pending closing record.
@@ -454,9 +459,10 @@ silently.
 7. Run `./run audit-deferred` in release posture with attestations required.
 
 **Acceptance criteria.** Hosted run id pinned to the candidate · every count read
-from the log · self-test rule and control counts match Step 2's recorded values ·
-signed set committed and re-derived · new pin count in three places · identity
-set still seven · `origin/main` unchanged, no tag · golden 11/11.
+from the log · hosted and local self-test rule/control counts match at the same
+candidate commit and equal **9 / 15** · signed set committed and re-derived · new
+pin count in three places · identity set still seven · `origin/main` unchanged,
+no tag · golden 11/11.
 
 **Done when** v0.14's hosted evidence exists at the same grade as v0.13's.
 
@@ -551,3 +557,7 @@ match · golden 11/11.
 - Do not commit `.env`, provider keys, tokens, or private key material.
 - Do not batch `STATE.md` / `PROGRESS-v0.14.md` updates or combine two tasks in
   one commit.
+
+## Runbook amendments
+
+Step 8 — Replace stale Step 2 count anchors with same-commit equality and final 9 / 15 — 2026-07-28
