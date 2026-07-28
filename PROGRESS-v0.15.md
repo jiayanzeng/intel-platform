@@ -72,3 +72,40 @@ Entries are append-only; corrections are new dated entries.
   files were unchanged.
 - golden-E2E delta: **0**. The mandatory post-task standalone run remained
   **11/11** byte-identical.
+
+### 2026-07-28 · R10-CI-PARITY — local and hosted check scope derived
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: 35a5583f7c9f05bf7e713bcc2afebec3c86e8249
+- mechanism decision: PASS. R10 parses `run`'s real function bodies and
+  dispatch plus `ci.yml`'s jobs, matrix axes, steps, actions, and commands. No
+  third manifest or correspondence marker was added. This was preferred
+  because both existing authorities are regular enough to parse, while a
+  marker would create another hand-maintained scope list.
+- parity acceptance: PASS. The clean report derives **20 local jobs / 24
+  normalized checks** and **6 blocking hosted jobs / 23 normalized checks**.
+  The workflow now runs `checklist-audit` and `progress-check` in its Python
+  3.11 leg. The sole local-only verification is protected database bytes,
+  which hosted runners intentionally do not contain; hosted CI validates the
+  manifest schema.
+- exemption acceptance: PASS. R10 reports and the focused test pins **45**
+  explicit exemptions: one report-only drift job, one operator-local protected
+  database check, 18 runner setup steps, one Python environment setup step,
+  and 24 release receipt/attestation/persistence steps.
+- control acceptance: PASS. All three site-specific controls fail with exact
+  file and line: local check removal at `run:439`, hosted check removal at
+  `.github/workflows/ci.yml:221`, and an unpaired hosted check at line 228.
+  No-argument scanner execution passes **10/10 rules / 18 controls**.
+- test acceptance: PASS. The focused scanner module passed **20/20** on Python
+  3.11.4 and 3.12.13. Full shell passed **228/228** on both interpreters with
+  **21/21** exact packages.
+- matrix acceptance: PASS. `./run ci-local` remains **20/20**, with **125**
+  workspace Rust tests, **48** net tests (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, all **101/101**
+  pins, and protected databases **2/2**.
+- preservation acceptance: PASS. No source under `crates/` or `apps/`, public
+  API body, SQLite schema, dependency, protected artifact, or closed record
+  changed.
+- golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
+  **11/11** byte-identical.
