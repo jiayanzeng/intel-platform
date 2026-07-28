@@ -412,3 +412,60 @@ Entries are append-only; corrections are new dated entries.
   `apps/` changed.
 - golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · RE-MEASURE — authenticated replacement-candidate evidence
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: f8cfe16f03454a1f8665e874601035dcccae1665
+- candidate acceptance: PASS. Only non-`main` branch
+  `candidate/v0.14.0` was advanced, to exact SELF-TEST-SCOPE audit commit
+  `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. Read-only verification left
+  `origin/main` at `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9` and found no
+  `v0.14.0` tag. No publication or live server session occurred.
+- workflow preflight: PASS. The exact candidate's remote `ci.yml` was read
+  before dispatch and confirmed to check out `audit_sha` in the workspace,
+  net, both shell, lint, MSRV, and golden jobs.
+- hosted acceptance: PASS. Workflow-dispatch run **30324186389**, attempt
+  **1**, used `publish_evidence: true` and
+  `audit_sha=ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; all seven
+  evidence identities succeeded and report-only drift was skipped.
+- hosted count acceptance: PASS from raw logs, not job status. Workspace
+  results sum to **125 passed / 0 failed**. Net is **48**: **23**
+  `intel-ingest` plus **25** `cored`. Python 3.11 and 3.12 each report
+  **224 passed / 1 skipped / 1 third-party warning** and execute the
+  registry-derived invariant-control module. The scanner lines are verbatim
+  `invariant-scan: PASS (9/9 registered rules)` and
+  `invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`. Hosted golden is
+  verbatim `golden result: PASS (11/11 checks)`.
+- evidence acceptance: PASS. Seven receipt/bundle pairs name run
+  **30324186389**, attempt **1**, success, Linux, and both event and checkout
+  SHA equal to the evidence candidate. Release-grade `audit-deferred` required
+  attestations, accepted **7**, rejected **0**, and measured **5 deferred / 2
+  promoted**. Re-derivation passed with rows **7**, source dispositions **5**,
+  triggers **7**, release grade, and attestations required.
+- artifact acceptance: PASS. The fourteen hosted files and **34,076-byte**
+  audit report add fifteen forward pins. Manifest validation,
+  `verify-artifacts`, and `evidence-report` report **101/101** pins: **99/99
+  evidence** plus **2/2 authorization surfaces**, with protected databases
+  exact **2/2**.
+- measured non-results: the first detached audit lacked the intentionally
+  ignored protected databases; a re-derivation omitted the receipt directory;
+  sandboxed attestation checks could not reach GitHub; and sandboxed standalone
+  golden could not bind loopback. The first Python 3.12 standalone suite also
+  had eight sandbox-only failures because loopback binds and `ps` were denied.
+  Each stopped without a pass claim. The same complete audit, corrected
+  re-derivation, permitted golden command, and permitted Python 3.12 suite then
+  passed.
+- regression acceptance: PASS. `./run ci-local` passed **20/20** with **125**
+  workspace tests, **48** net tests (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, all **101/101**
+  pins exact, `invariant-scan` **9/9 rules / 15 controls**, and golden
+  **11/11**. Standalone shell passed **225/225** on Python 3.11.4 and 3.12.13
+  with **21/21** exact packages on both.
+- preservation acceptance: PASS. No source under `crates/` or `apps/` and no
+  closed runbook or progress log changed. A4 and the editable-L1 controller
+  residual remain open; L2 remains scheduled. R-CLOSE remains pending its
+  separate operator publication decision.
+- golden-E2E delta: **0**. Hosted, matrix, and mandatory standalone golden all
+  remained **11/11** byte-identical.
