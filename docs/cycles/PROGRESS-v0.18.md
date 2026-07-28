@@ -208,3 +208,55 @@ Entries are append-only; corrections are new dated entries.
   passed.
 - golden-E2E delta: **0**; the mandatory standalone invocation passed
   **11/11** byte-identically.
+
+### 2026-07-28 · RE-MEASURE — v0.15.2 candidate evidence admitted
+
+- owner: Codex
+- commit: a170597
+- result: PASS. The runbook's default patch trigger set **v0.15.2** because no
+  `/v1/*` route or response body moved. The clean evidence candidate is
+  `2ce912dca181e5e7b949a4b2e6fd8487412388f9` on
+  `candidate/v0.15.2`; publication and the release commit remain pending
+  R-CLOSE's operator decision.
+- remote-workflow acceptance: PASS. Before dispatch, the candidate branch's
+  `ci.yml` contained every expected core, lint, net, MSRV, two-shell, golden,
+  signed-receipt, bundle, and upload invocation. The remote workflow Git blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` equals the local blob.
+- same-commit local acceptance: PASS. Exact-candidate `./run ci-local` passed
+  **20/20** with **131** workspace tests, **55** net tests (**29** ingest +
+  **26** cored), shell **245/245** under Python 3.11.4 and 3.12.13, locked
+  Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures,
+  `invariant-scan` **11/11 rules / 23 controls**, and golden **11/11**.
+- hosted-log acceptance: PASS. Authenticated workflow-dispatch
+  [run 30369139464 attempt 1](https://github.com/jiayanzeng/intel-platform/actions/runs/30369139464)
+  completed successfully at the exact candidate. The logs, read independently
+  of job status, report **131** workspace tests, **55** net tests
+  (**29 + 26**), both shell lanes collecting **245** tests as **244 passed + 1
+  declared on-site-only skip**, `invariant-scan` **11/11 rules / 23 controls**,
+  R10's **45** derived exemptions, and golden **11/11**. Each collected count
+  equals its local same-commit value.
+- identity/attestation acceptance: PASS. All **7/7** derived identities across
+  **6** blocking jobs have successful Linux receipts and persisted Sigstore
+  bundles; zero receipts were rejected. Every bundle authenticated the exact
+  receipt bytes, repository, CI workflow signer, candidate digest, source ref
+  `refs/heads/candidate/v0.15.2`, and GitHub-hosted runner identity.
+- deferred-audit acceptance: PASS. Release-posture `audit-deferred` reports
+  **5 deferred / 2 promoted / 0 deferred subsystems implemented** and
+  re-derived with all seven authenticated rows. The largest archive is
+  **2,600** documents with exact-cosine p95 **9.613 ms**, below the recorded
+  **16.264 ms** A3 request anchor. The report is SHA-256
+  `78901f2d181672f2a0ec073c18ec5bb02c68762de0fc7362b49f903ed6509448`,
+  **34,520** bytes.
+- pin/corpus acceptance: PASS. Seven receipts, seven bundles, and one
+  release-grade report add **15** manifest entries. Pre- and post-commit
+  validation, `verify-artifacts`, and `evidence-report` pass **161/161** pins:
+  **159/159** evidence plus **2/2** authorization surfaces; both protected
+  databases are exact. No protected or golden corpus row changed.
+- remote/scope acceptance: PASS. Live remote inspection found
+  `origin/main` unchanged at
+  `f13c6129d608ab9259f421dce6ed419ce469c225`, the candidate ref exact, and no
+  `v0.15.2` tag. No publication, product path, public surface, dependency,
+  lockfile, schema, protected database, or harvested observation changed.
+- golden-E2E delta: **0**. The first post-admission invocation was a sandbox
+  loopback-bind non-result; the identical permitted invocation passed
+  **11/11**.
