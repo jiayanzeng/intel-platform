@@ -84,3 +84,33 @@ Entries are append-only; corrections are new dated entries.
   **131/131** pins and both protected databases match.
 - golden-E2E delta: **0**; the matrix and mandatory standalone invocation both
   remained **11/11**.
+
+### 2026-07-28 · NET-DOUBLE — raw wire fixture bypasses operator proxies
+
+- owner: Codex
+- commit: dcf7eaa
+- result: PASS. The Gate remained test-support-only:
+  `crates/ingest/src/net.rs` production behavior is unchanged, and the raw
+  listener/header capture remains the test subject.
+- mechanism acceptance: PASS. The test scopes `NO_PROXY` to
+  `127.0.0.1,localhost` before constructing both real reqwest clients and
+  restores the prior value through a drop guard. The operator proxy can no
+  longer intercept the IP-literal raw fixture.
+- rate acceptance: PASS. The exact isolated sample changed from **0/20** in E0
+  to **20/20** after the fix. The complete ingest net suite passes **24/24**.
+- failure-capability acceptance: PASS. A dedicated expected-panic control feeds
+  `intel-platform/deliberately-different` into the same shared wire assertion
+  and observes `document client User-Agent bytes differ`; the equality guard
+  can still fail.
+- matrix acceptance: PASS. From
+  `CARGO_TARGET_DIR=/private/tmp/intel-v017-e0-ci-target`, `./run ci-local`
+  reaches job 20 and passes **20/20** with **126** workspace tests, **50** net
+  tests (**24 + 26**), shell **243/243**, locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules /
+  19 controls**, all **131/131** pins, and golden **11/11**.
+- portability acceptance: PASS with boundary stated. The fix applies to
+  reqwest-visible operator/system proxies honoring `NO_PROXY`; it would need
+  revisiting if reqwest stopped honoring that contract, a future test omitted
+  the scoped guard, or traffic were rewritten below reqwest's proxy layer.
+- golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
+  both remained **11/11**.
