@@ -97,3 +97,48 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; standalone post-task result remained **11/11**.
 - protected artifact delta: **0**; no protected artifact, manifest pin, release
   tag, release commit, product source, schema, or public response changed.
+
+### 2026-07-28 · DOC-LAYOUT — cycle documents have one location
+
+- owner: Codex
+- commit: 0403fbd
+- result: PASS. The pre-move retention criterion was: root holds what a reader
+  consults at the start of every session; everything else lives under `docs/`.
+  The tracked root now contains only those session-entry documents plus the
+  declared runner/build/config files. Ignored local `.env` and `.DS_Store`
+  remain untracked and were not classified as repository content.
+- byte-identity acceptance: PASS. SHA-256 captured before and immediately after
+  relocation matched **31/31** files: **17** task documents, **12** progress
+  records, the operations guide, and the supplied reviewer-lessons document.
+  Git recorded every previously tracked historical document as a 100% rename;
+  only the active runbook subsequently changed for its required checkbox.
+- layout acceptance: PASS. All **29** cycle documents are under `docs/cycles/`;
+  the operations and reviewer-lessons documents are under `docs/`.
+  `AGENTS.md`, `README.md`, R6's registry/implementation/control, and current
+  architecture citations name the new paths.
+- resolver acceptance: PASS. `tools/cycle_identity.py` is the only live
+  `docs/cycles` location rule. Cycle, checklist, deferred-audit, and progress
+  consumers import it. A derived no-fallback control leaves root files present
+  and proves the canonical pair is still required; a separate control proves
+  first-committed-runbook history survives both staged and committed renames.
+- consumer-search acceptance: PASS. F6's four tools and cycle test were found.
+  The search also found F6's omitted operations-path consumer in R6's scanner,
+  registry, and test, plus `README.md`/`AGENTS.md`; all were updated. No source
+  under `crates/` or `apps/`, workflow, or Repomix configuration changed.
+- convention acceptance: PASS. `ARCHITECTURE.md §8` now states in one sentence
+  that cycle v0.15 shipped artifact `v0.14.1`, so cycle and release identifiers
+  may intentionally differ. The operator-supplied lessons are committed at
+  `docs/REVIEWER-LESSONS-v0.13-v0.14.md` and cited by `AGENTS.md`.
+- tool acceptance: PASS. `cycle-check` reports active v0.16 open, thirteen
+  closed execution runbooks, and three historical documents. `checklist-audit`
+  remains **130 checked / 130 matched / 130 resolved**, zero exemptions, and
+  **three** retractions. `progress-check` resolves E0 before this append.
+  Invariant scan remains **10/10 rules / 18/18 controls**.
+- test acceptance: PASS. Focused cycle/invariant tests passed **37/37**; full
+  shell passed **239/239** under Python 3.11.4 and 3.12.13.
+- protected/pack acceptance: PASS. All **116/116** pins and **2/2** databases
+  match. Repomix **1.17.0** packed **282** files, included `Cargo.lock` exactly
+  once, and included both active cycle documents from `docs/cycles/`.
+- golden-E2E delta: **0**; post-task `./run golden` remained **11/11**.
+- protected artifact delta: **0**; no pin, protected byte, product source,
+  schema, release tag, release commit, or public response changed.
