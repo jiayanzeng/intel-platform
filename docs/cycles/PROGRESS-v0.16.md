@@ -289,3 +289,41 @@ Entries are append-only; corrections are new dated entries.
   remained **11/11**. All **116/116** pins and both protected databases remain
   exact. No dependency, lockfile, corpus, public response, published tag,
   release commit, or historical evidence byte changed.
+
+### 2026-07-28 · RELOCATABLE — fixture paths follow the runtime checkout
+
+- owner: Codex
+- commit: ca76ec4
+- result: PASS. Test fixture resolution no longer embeds the checkout used to
+  compile the binary; it discovers the checkout from which the tests run.
+- classification acceptance: PASS. The derived Rust set was **three**
+  `env!("CARGO_MANIFEST_DIR")` uses, all fixture-locating: one `cored`
+  workspace-root helper and two `intel-ingest` helpers for crate-local and
+  workspace-root fixtures. There were zero other uses, and the post-fix Rust
+  search finds zero remaining occurrences.
+- relocation acceptance: PASS. The recorded E0 fail-before built at
+  `/private/tmp/intel-v016-f3-build`, moved to
+  `/private/tmp/intel-v016-f3-relocated`, and reused
+  `/private/tmp/intel-v016-f3-shared` without compilation; **18/24** `cored`
+  tests failed at the departed embedded path. The pass-after built at
+  `/private/tmp/intel-v016-step6.LX1zfx/build`, moved to
+  `/private/tmp/intel-v016-step6.LX1zfx/relocated`, and reused
+  `/private/tmp/intel-v016-step6.LX1zfx/shared-target`; its second cargo run
+  reported `Finished` in **0.10s** without compilation and passed all
+  **126/126** workspace tests.
+- runtime-scope acceptance: PASS. Both resolvers walk ancestors of the current
+  test directory and validate committed checkout markers. They do not derive
+  paths from the executable, target directory, or build-time checkout. Every
+  code change is inside a Rust `#[cfg(test)]` module, so no product runtime
+  path or API changed.
+- matrix acceptance: PASS. The existing, uncleared
+  `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` was reused;
+  `./run ci-local` passed **20/20** with **126** workspace tests, **49** net
+  tests (**23** ingest + **26** cored), Python 3.11.4 shell **243/243**,
+  warning-denied builds, clippy/fmt/ShellCheck, locked Rust 1.78, and golden
+  **11/11**.
+- golden/source acceptance: PASS. The final standalone `./run golden` remained
+  **11/11**. The Rust and shell test-count deltas are both **0**. All
+  **116/116** pins and both protected databases remain exact. No product
+  runtime code, dependency, lockfile, corpus, release tag, installed version,
+  or historical evidence byte changed.
