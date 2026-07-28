@@ -4,6 +4,57 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.1 — 2026-07-28
+
+### Fixed
+
+- Publisher robots policy now evaluates the complete request path plus query,
+  excludes the client-only fragment, and re-runs that derivation before the
+  first document request and every redirect. From v0.8.0 through v0.15.0 the
+  gate could supply only the first path segment, so multi-segment or
+  query-specific publisher rules could be weakened; single-segment rules
+  remained enforced.
+- The failure-capable raw-wire net fixture bypasses ambient loopback proxies,
+  making its byte-identical request assertion deterministic without weakening
+  the double.
+- `harvest-arxiv` verifies protected artifacts before environment setup,
+  reachability probing, or any publisher request.
+
+### Verification
+
+- R11's declared four-spelling scope is exercised by five reconstructible
+  controls: both direct config paths, both environment names, and an
+  environment-derived module-local variable. The v0.16 control-breadth
+  limitation is closed without claiming unknown future spellings.
+- Authenticated run 30357365420 attempt 1 against evidence candidate
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394` passed all seven derived
+  identities with zero rejected receipts: workspace **131**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), invariant-scan **11/11 rules /
+  23 controls**, and golden **11/11**. Both hosted shell lanes collected
+  **244** as **243 passed / 1 declared on-site-only skip**, matching local
+  **244/244** at the same commit; the ingest net leg was **29/29** both hosted
+  and local.
+
+### Evidence and disposition
+
+- The patch trigger fired because no observable route, response body, or
+  schema moved; this release corrects behavior within the existing surface.
+  The signed receipts retain their provisional `candidate/v0.16.0` source ref
+  and pin the candidate commit, not the branch's proposed version.
+- The version-corrected offline release-posture audit accepted **7/7**
+  attestations with zero rejection and measured **5 deferred / 2 promoted**.
+  Its report is SHA-256
+  `d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`
+  at **34469** bytes. All **146** pins remain exact: **144** evidence plus
+  **2** authorization surfaces.
+- Publication was explicitly selected as **release as of 2026-07-28**. The E0
+  audit found no immutable false completeness claim, so the correction is
+  forward-only and retractions remain three. The Step 3 acceptance lifts the
+  temporary live-harvest suspension.
+- A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom
+  scanners, the measured-value heuristic, and T7 robots single-flight remain
+  open; L2 remains scheduled.
+
 ## v0.15.0 — 2026-07-28
 
 ### Added

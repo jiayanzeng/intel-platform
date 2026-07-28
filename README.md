@@ -1,4 +1,4 @@
-# intel-platform (v0.15.0 — core-shell)
+# intel-platform (v0.15.1 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,16 +7,18 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.15.0` is the selected release identity. Its release-grade hosted evidence
-is workflow-dispatch run `30347262430`, attempt 1, against exact evidence
-candidate `43706216c06608039d9c3e7ef2b86024b22d4a79`. The cycle closing record
-separately identifies that evidence candidate and the later release commit;
-the annotated `v0.15.0` tag targets the release commit, not the candidate.
+`v0.15.1` is the selected release identity. Its release-grade hosted evidence
+is workflow-dispatch run `30357365420`, attempt 1, against exact evidence
+candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`. That candidate was pushed
+under the provisional branch name `candidate/v0.16.0` before the operator's
+version decision; signed receipts pin the commit and source ref, while the
+cycle closing record separately identifies the later release commit. The
+annotated `v0.15.1` tag targets the release commit, not the candidate.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The active pair is
-[`TASKS-v0.16-EXECUTION.md`](docs/cycles/TASKS-v0.16-EXECUTION.md) and
-[`PROGRESS-v0.16.md`](docs/cycles/PROGRESS-v0.16.md).
+[`TASKS-v0.17-EXECUTION.md`](docs/cycles/TASKS-v0.17-EXECUTION.md) and
+[`PROGRESS-v0.17.md`](docs/cycles/PROGRESS-v0.17.md).
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:
@@ -282,6 +284,15 @@ world, and each **refuses to pretend** if it can't:
 run uses a new `data/live-<UTC-timestamp>-<pid>.db`; an intentional named
 override remains possible as
 `CORE_DB=data/named-smoke.db ./run harvest-arxiv`.
+The entry point runs `./run verify-artifacts` before environment setup,
+reachability probing, or any document request. The temporary live-harvest
+suspension is lifted for v0.15.1: Step 3 proved that publisher policy now
+receives the complete path plus query, excludes the client-only fragment, and
+is re-evaluated before the first request and every redirect. Releases v0.8.0
+through v0.15.0 could instead supply only the first path segment, weakening
+multi-segment or query-specific publisher rules; single-segment rules remained
+enforced. The usual fresh-database, crawler-contact, and artifact-verification
+requirements still apply.
 Every net-enabled run also requires a real, monitored crawler contact:
 
 ```bash

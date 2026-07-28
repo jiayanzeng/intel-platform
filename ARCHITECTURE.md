@@ -143,6 +143,11 @@ Pinned dispositions:
   Unreachable origin still fails closed.
 - **A fixture read is not a request.** `gate()` takes a `Reach`; a fixture-backed
   source never fetches `robots.txt`. Pinned by test.
+- **The policy target is the complete request path plus query, never the
+  fragment.** This exact target is derived before the first document request
+  and again before every redirected request. A rule for `/a/b?mode=full`
+  therefore cannot be weakened to `/a`, and a client-only `#fragment` can
+  never affect a publisher verdict.
 - **A published `Crawl-delay` can only slow us down**, never speed us past our own
   floor (2 rps).
 - **Politeness is process-scoped (HC8):** `HostLimiters` and `RobotsCache` in
@@ -270,9 +275,13 @@ create, imply, or move a `vX.Y.Z` release. Cycle v0.15 shipped artifact
 Release identity is chosen explicitly at the cycle-closing release task after
 the measured diff is classified:
 
-- runtime, storage, or public/API behavior requires the corresponding minor
-  release;
-- operations and evidence-only changes may use a patch release;
+- adding, removing, renaming, or incompatibly reshaping an observable route,
+  response body, schema, or other named surface requires the corresponding
+  minor release;
+- a correctness or behavior fix within existing names and shapes uses a patch
+  release, including a compliance correction that should propagate under patch
+  semantics;
+- operations and evidence-only changes may also use a patch release;
 - a cycle with no shipped change may close with no release.
 
 For an actual release, the authoritative mapping is the annotated Git tag to

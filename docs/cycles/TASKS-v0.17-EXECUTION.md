@@ -512,13 +512,15 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 ## Pending Cycle closing record
 
 - **Candidate recorded:** 2026-07-28
-- **Release disposition:** pending the separate Step 7 operator publication
-  decision; no publication action is authorized by Step 6.
-- **Release version if authorized:** v0.16.0. The runtime correction to
-  publisher robots-policy enforcement fires the minor-version trigger; Step 7
-  owns the final release-version record.
+- **Release disposition:** release authorized by the operator as of
+  2026-07-28; Step 7 publication and its final measured record are in progress.
+- **Release version:** v0.15.1. No observable `/v1/*` route, response body, or
+  schema moved, so the runbook's patch trigger applies; the behavior change is
+  the correction of runtime publisher robots-policy enforcement.
 - **Evidence candidate:** `3481e4ba85d65c927b7d0fc3a430bc04fb094394`
-  on `candidate/v0.16.0`.
+  on provisionally named branch `candidate/v0.16.0`. The receipts pin this
+  commit and signed source ref; the branch name predates and does not override
+  the operator's release-version decision.
 - **Hosted evidence:** workflow-dispatch run `30357365420` attempt 1; all
   **7/7** derived identities authenticated, zero rejected receipts, across
   **6** blocking jobs. Hosted logs measured **131** workspace tests, **55**
@@ -528,13 +530,15 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
   hosted shell collected **244** tests, equal to the local candidate's
   **244 passed**; the ingest net leg is **29/29** both hosted and local.
 - **Release-grade audit:** **5** deferred / **2** promoted; report SHA-256
-  `34804a849db56bb05cc97d4f45541702832478768119c0251769a07dd76b1bcc`,
-  **34468** bytes. Authenticated release-grade re-derivation passed.
+  `d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`,
+  **34469** bytes at `evidence/v0.15.1/deferred-audit/report.json`.
+  Offline authenticated release-grade re-derivation against the same seven
+  receipts passed; no hosted re-dispatch was required.
 - **Evidence pins:** **146/146** total — **144/144** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
 - **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
 - **Remote disposition:** `origin/main` remains
-  `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`; no `v0.16.0` tag exists.
+  `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`; no `v0.15.1` tag exists yet.
 
 ## Runbook amendments
 

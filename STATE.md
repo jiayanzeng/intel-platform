@@ -1,6 +1,90 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 RE-MEASURE is complete; R-CLOSE awaits the separate operator publication decision.** Exact candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` is on non-`main` ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. The same candidate passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. `origin/main` remains `cdae3c922a2156701c0df0ceb4f45fc937fa7f20` and no `v0.16.0` tag exists. Published `v0.15.0`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.17 R-CLOSE publication is authorized and the exact release-commit verification is in progress.** Exact evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` is on provisionally named non-`main` ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. The same candidate passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The release commit and annotated `v0.15.1` tag are pending the exact-release matrix. `origin/main` remains `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`. Published `v0.15.0`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 R-CLOSE release preparation is complete (measured 2026-07-28).**
+Release disposition: release (as of 2026-07-28). The operator authorized
+publication as **v0.15.1**. The patch trigger fired because no observable
+`/v1/*` route, response body, schema, or other named surface moved. The
+shipped behavior change is a correctness correction within those existing
+surfaces: publisher robots enforcement now receives the complete path plus
+query and excludes the client-only fragment.
+
+The evidence candidate and release commit are separate identities. Evidence
+candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` was pushed before the version
+decision under the provisional branch name `candidate/v0.16.0`; the seven
+signed receipts pin that commit and exact source ref, not the branch's proposed
+version. The release commit and annotated `v0.15.1` tag remain pending the
+exact-release matrix and will be recorded after those objects exist.
+
+Re-running the release-posture audit offline in a clean detached checkout of
+that same candidate required no hosted re-dispatch. It accepted the same
+**7/7** authenticated receipts with zero rejection, retained **5 deferred /
+2 promoted**, and produced
+`evidence/v0.15.1/deferred-audit/report.json`, SHA-256
+`d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`,
+**34469** bytes. Its disposable exact-cosine timing sample is **8.913750 ms**;
+all source, configuration, Git, receipt-identity, and disposition fields
+matched the prior version-provisional report. The manifest therefore still has
+**146** pins — **144** evidence plus **2** authorization surfaces — with one
+corrected report path/hash rather than another admission.
+
+The first affected release is **v0.8.0**. From v0.8.0 through v0.15.0,
+multi-segment and query-specific publisher rules could be weakened because the
+gate received only the first path segment; a client-only fragment was also
+retained. Single-segment rules, publisher/operator gate composition,
+fail-closed outcomes, and re-gating order remained enforced. v0.15.1 derives
+the full path plus query, excludes the fragment, and evaluates it before the
+first document request and every redirect, including after an origin change.
+E0 found no immutable published false completeness claim: the published
+“full gate” statements cover composition and call order, while RFC-matcher
+statements cover matching the path supplied to the matcher. This is a forward
+correction; retractions remain **three**.
+
+The temporary live-harvest suspension is explicitly **lifted** by Step 3's
+accepted ROBOTS-PATH result. No live harvest ran during the cycle, and every
+future live harvest still runs `./run verify-artifacts`, uses a fresh
+destination, and supplies a monitored crawler contact. R11's v0.16 limitation
+is discharged rather than narrowed: five controls cover the four declared
+spellings (`config/core.json`, `config/entities.json`, `CORE_CONFIG`, and
+`CORE_ENTITIES`) plus a module-local variable derived from `CORE_ENTITIES`, as
+recorded in `ARCHITECTURE.md`. A4, the editable-L1 controller residual, R3/R4's
+bounded open-bottom scanners, the measured-value heuristic, and T7 robots
+single-flight remain open; L2 remains scheduled.
+
+The release diff from annotated `v0.15.0` contains exactly **34 paths**,
+classified once each:
+
+- **Runtime behavior and failure-capable verification (4):**
+  `crates/ingest/src/lib.rs`, `crates/ingest/src/net.rs`, `run`, and
+  `shell/tests/test_harvest_preflight.py`.
+- **Invariant, architecture, and operating contract (3):** `AGENTS.md`,
+  `ARCHITECTURE.md`, and `config/invariant-rules.json`.
+- **Release authorities and operator documentation (7):** `CHANGELOG.md`,
+  `Cargo.lock`, `README.md`, `STATE.md`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Cycle planning and append-only audit history (4):**
+  `docs/cycles/PROGRESS-v0.16.md`, `docs/cycles/PROGRESS-v0.17.md`,
+  `docs/cycles/TASKS-v0.16-EXECUTION.md`, and
+  `docs/cycles/TASKS-v0.17-EXECUTION.md`.
+- **Authenticated hosted receipts and bundles (14):**
+  `evidence/ci-runs/30357365420-1/30357365420-1-core.json`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-core.json.sigstore`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-golden.json`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-golden.json.sigstore`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-lint.json`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-lint.json.sigstore`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-msrv.json`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-msrv.json.sigstore`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-net.json`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-net.json.sigstore`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.11.json`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.11.json.sigstore`,
+  `evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.12.json`, and
+  `evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.12.json.sigstore`.
+- **Protected evidence index and release report (2):**
+  `config/protected-artifacts.json` and
+  `evidence/v0.15.1/deferred-audit/report.json`.
 
 **v0.17 RE-MEASURE is complete (measured 2026-07-28).** The operator
 authorized one narrow non-`main` push of exact evidence candidate
@@ -27,12 +111,13 @@ same derived exemption count **45**.
 
 The signed bundle set is stored under
 `evidence/ci-runs/30357365420-1/`. The release-posture deferred audit required
-attestations and accepted **7/7** identities with zero rejection. It recorded
-**5 deferred / 2 promoted**, exact cosine p95 **8.660458 ms**, and produced
-`evidence/v0.16.0/deferred-audit/report.json` at SHA-256
-`34804a849db56bb05cc97d4f45541702832478768119c0251769a07dd76b1bcc`,
-**34468** bytes. Authenticated re-derivation passes with `evidence_grade=release`,
-`attestations_required=true`, and seven rows/triggers.
+attestations and accepted **7/7** identities with zero rejection. Step 7's
+offline version-corrected reproduction retained **5 deferred / 2 promoted**,
+measured exact cosine p95 **8.913750 ms**, and produced
+`evidence/v0.15.1/deferred-audit/report.json` at SHA-256
+`d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`,
+**34469** bytes. Authenticated re-derivation passes with
+`evidence_grade=release`, `attestations_required=true`, and seven rows/triggers.
 
 The fourteen signed hosted files plus that audit report add fifteen pins.
 Manifest validation, `verify-artifacts`, and `evidence-report` pass with
@@ -46,9 +131,10 @@ passed **11/11**, delta **0**.
 This step changes only authenticated evidence, its manifest admission, and
 cycle/status records. It changes no production path, public response, schema,
 dependency, lockfile, protected corpus byte, release tag, or `main` ref.
-Candidate branch `v0.16.0` records the minor-version trigger from correcting
-runtime publisher robots-policy enforcement; Step 7 owns the final release
-version, release commit, dated disposition, and publication action.
+The candidate's `candidate/v0.16.0` source ref was named provisionally before
+the version decision. It records signed provenance, not a release trigger.
+Step 7 selected v0.15.1 because the robots correctness fix changes behavior
+within existing names and shapes and no observable surface moved.
 
 **v0.17 R11-BREADTH is complete (measured 2026-07-28).** Step 5's Gate
 was widened before its first commit to include the architecture reconciliation
