@@ -363,3 +363,52 @@ Entries are append-only; corrections are new dated entries.
   amendment passed local CI **20/20**, shell **223/223** on both interpreters,
   `invariant-scan --self-test` **9/9 rules / 15 controls**, and golden
   **11/11**.
+
+### 2026-07-28 · SELF-TEST-SCOPE — registry-derived coverage and wiring correction
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Operator + Codex
+- commit: bb5ce61fef2d90cf63f7382baed5488fe68c3569
+- result: PASS. The focused pytest parameterization now loads every rule id
+  from `config/invariant-rules.json`, asserts exact registered-id coverage and
+  a non-empty control set, and exercises each rule's controls at their expected
+  sites. Omitting the final registered id made the new coverage assertion red;
+  the failure-capable guard test passed by observing that rejection.
+- wiring decision: preserve the existing no-argument self-test behavior.
+  Current code and v0.13 evidence candidate `7faaa4e…` both route
+  no-argument `./run invariant-scan` through `self_test`. Job 20 and hosted
+  Python 3.11 therefore already execute all registry-loaded controls; both
+  hosted shell pytest legs independently execute the derived focused coverage.
+  No redundant flag-only edit was made to `run` or `ci.yml`.
+- retained-log evidence: v0.13 run **30277584129** lint contains no invariant
+  step; the invariant execution is in its Python 3.11 shell job. That retained
+  log prints every R1–R7 control and ends verbatim
+  `invariant-scan: SELF-TEST PASS (7/7 rules, 11 controls)`. The published
+  record attributes the count to that hosted Python 3.11 log, so the claim is
+  supported.
+- retraction disposition: retraction #4 and the proposed second retraction
+  were refused because the retained code and log falsify their reasons.
+  `config/checklist-retractions.json` remains unchanged with the three valid
+  forward retractions; no closed runbook or progress log was edited.
+- directive corrections: (1) the accepted net split is **23**
+  `intel-ingest` + **25** `cored`; (2) the assertion that no hosted job emits a
+  self-test count was false because no-argument execution emits it; and (3)
+  the assertion that v0.13 review checked only the harness and not wiring was
+  false because the committed CLI default and retained hosted execution prove
+  the wiring. The preceding RE-MEASURE-GATE entry is therefore a syntax-only
+  non-result, corrected forward here.
+- active-runbook acceptance: PASS. A disclosed gate-added SELF-TEST-SCOPE task
+  records the measured behavior, and Step 8 now requires the exact hosted
+  registered-rule and self-test summary lines plus both derived shell pytest
+  legs.
+- test acceptance: PASS. The focused module passed **17/17** under Python
+  3.11.4 and 3.12.13; implicit and explicit scanner commands both ended
+  `SELF-TEST PASS (9/9 rules, 15 controls)`; complete shell passed **225/225**
+  on both interpreters.
+- regression acceptance: PASS. `./run ci-local` remained **20/20** with
+  **125** workspace tests, **48** net tests (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, protected
+  databases **2/2**, and all **86/86** pins exact. No source under `crates/` or
+  `apps/` changed.
+- golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
+  **11/11** byte-identical.
