@@ -127,3 +127,42 @@ Entries are append-only; corrections are new dated entries.
   protected artifact, public surface, or historical closed-cycle record moved.
 - golden-E2E delta: **0**; mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-29 · NEGATIVE-CACHE — transient failure gets a chosen policy
+
+- owner: Codex
+- commit: 499716d
+- result: PASS. `Unreachable` remains fail-closed but is cached for a named
+  **300-second** negative TTL instead of the ordinary **86,400-second** policy
+  TTL.
+- gate acceptance: PASS. The dated runbook amendment widened Step 4 only to the
+  one production cache-construction call and required status records. No
+  document-request control flow, connector behavior, `/v1/*` surface, schema,
+  dependency, lockfile, protected artifact, limiter, crawl-delay ratchet, or
+  single-flight behavior moved.
+- fail-before acceptance: PASS. Both new controls exited **101** before the
+  implementation: the standalone unreachable result and the good-policy
+  overwrite result each remained cached past their expected negative boundary.
+- Decision A acceptance: PASS. `ROBOTS_NEGATIVE_TTL` is named beside
+  `ROBOTS_TTL` and passed into production. Executing controls prove
+  `Unavailable` retains the ordinary TTL, repeated unreachable denial performs
+  no fetch before 300 seconds, and the result is retried at expiry.
+- Decision B acceptance: PASS and DEFERRED WITH TRIGGER. The operator selected
+  no stale-policy fallback on 2026-07-29. `Unreachable` still overwrites an
+  expired good policy and denies. Reconsideration requires a measured live
+  transient robots outage for an admitted publisher while a usable
+  last-known-good policy exists, followed by explicit operator authorization.
+- fail-closed acceptance: PASS. Existing tests re-prove default 404 handling,
+  explicit publisher `Disallow`, network-without-cache rejection before a
+  request, and the subtractive operator deny-list. `apply_crawl_delay` remains
+  byte-identical at slice SHA-256 `ea16d8cac28b094f23eba38c5656c800a79515c049b57f0a85f85abe6bd77327`;
+  the limiter/`acquires` slice remains
+  `4280d757274fd3ae739a2e600054b1fe517287cff64e56abea82176ea73c38ed`.
+- matrix acceptance: PASS. `./run ci-local` passed **20/20** with **133**
+  workspace tests, **55** net tests (**29 + 26**), locked warning-denied Rust
+  1.78, Python 3.11 shell **248/248**, invariant **11/11 rules / 23 controls**,
+  all **161/161** pins, protected databases **2/2**, and clean
+  clippy/fmt/ShellCheck. Python 3.12.13 independently passed **248/248**.
+- status acceptance: PASS. Cycle, checklist, progress, and version checks are
+  green after this append names the real implementation commit.
+- golden-E2E delta: **0**; standalone and full-matrix runs passed **11/11**.
