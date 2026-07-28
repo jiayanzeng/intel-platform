@@ -45,6 +45,19 @@ Corollaries, each earned:
   does. Live-path claims require a live run.
 - **Report what the wire actually did.** "Blocked", "should work", and "reached
   the endpoint" are non-results until documents land and you can count them.
+- **Verify command claims at the command's entry point, not its caller.** In
+  v0.14, reading `run`'s wrapper without `invariant_scan.py`'s `main()` produced
+  a false self-test finding; this mirrored v0.13, when the tool was read and its
+  wrapper was not. This is deliberately a non-executable review discipline for
+  humans and agents: syntax cannot prove that a reviewer followed the call
+  chain.
+- **A closing disposition is true as of a date, not forever.** v0.14's later
+  publication authorization superseded its accurate-at-close `no-release`
+  disposition without making the historical record false. Every cycle closed
+  under this contract records `Release disposition: release|no-release (as of
+  YYYY-MM-DD)`. `cycle-check` enforces the dated form prospectively when the
+  declared runbook closes; already-closed runbooks remain immutable historical
+  evidence.
 - **Verify the entering state; trust no summary.** At cycle start, rebuild and
   re-run rather than believing the header of the last handoff — including this
   one.

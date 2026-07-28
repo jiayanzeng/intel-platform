@@ -30,7 +30,12 @@ DATE_RE = re.compile(
     r"^- \*\*Cycle closed:\*\* ([0-9]{4}-[0-9]{2}-[0-9]{2})$",
     re.MULTILINE,
 )
-DISPOSITION_RE = re.compile(
+DATED_DISPOSITION_RE = re.compile(
+    r"^- \*\*Release disposition:\*\* (release|no-release) "
+    r"\(as of ([0-9]{4}-[0-9]{2}-[0-9]{2})\)$",
+    re.MULTILINE,
+)
+LEGACY_DISPOSITION_RE = re.compile(
     r"^- \*\*Release disposition:\*\* (release|no-release)$",
     re.MULTILINE,
 )
@@ -151,6 +156,7 @@ def check_release_record(
     checked: int,
     errors: list[str],
     verify_local_tag_refs: bool = True,
+    require_dated_disposition: bool = False,
 ) -> None:
     date_match = exactly_one(
         DATE_RE, section, path, root, "cycle-close date", errors
@@ -161,11 +167,48 @@ def check_release_record(
             f"{date_match.group(1)!r}"
         )
 
-    disposition_match = exactly_one(
-        DISPOSITION_RE, section, path, root, "release disposition", errors
-    )
-    if disposition_match is None:
-        return
+    dated_dispositions = list(DATED_DISPOSITION_RE.finditer(section))
+    legacy_dispositions = list(LEGACY_DISPOSITION_RE.finditer(section))
+    if require_dated_disposition:
+        if len(dated_dispositions) != 1:
+            if len(dated_dispositions) == 0 and len(legacy_dispositions) == 1:
+                errors.append(
+                    f"{shown(path, root)}: declared closed cycle release "
+                    "disposition must state an as-of date; found undated "
+                    f"{legacy_dispositions[0].group(0)!r}"
+                )
+            else:
+                errors.append(
+                    f"{shown(path, root)}: closing record must contain "
+                    "exactly one dated release disposition; found "
+                    f"{len(dated_dispositions)}"
+                )
+            return
+        if legacy_dispositions:
+            errors.append(
+                f"{shown(path, root)}: closing record contains both dated "
+                "and legacy release dispositions"
+            )
+            return
+        disposition_match = dated_dispositions[0]
+    else:
+        disposition_matches = dated_dispositions + legacy_dispositions
+        if len(disposition_matches) != 1:
+            errors.append(
+                f"{shown(path, root)}: closing record must contain exactly "
+                "one release disposition; found "
+                f"{len(disposition_matches)}"
+            )
+            return
+        disposition_match = disposition_matches[0]
+
+    if disposition_match.re is DATED_DISPOSITION_RE:
+        disposition_date = disposition_match.group(2)
+        if not valid_iso_date(disposition_date):
+            errors.append(
+                f"{shown(path, root)}: invalid release-disposition date "
+                f"{disposition_date!r}"
+            )
 
     disposition = disposition_match.group(1)
     if disposition == "release":
@@ -240,6 +283,7 @@ def check_closed_execution(
     root: Path,
     errors: list[str],
     verify_local_tag_refs: bool = True,
+    require_dated_disposition: bool = False,
 ) -> None:
     checked = len(CHECKED_RE.findall(text))
     unchecked = len(UNCHECKED_RE.findall(text))
@@ -262,6 +306,7 @@ def check_closed_execution(
         checked,
         errors,
         verify_local_tag_refs,
+        require_dated_disposition,
     )
 
 
@@ -637,6 +682,7 @@ def run(
                 root,
                 errors,
                 verify_local_tag_refs,
+                require_dated_disposition=True,
             )
         elif unchecked < 1:
             errors.append(

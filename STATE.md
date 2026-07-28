@@ -1,6 +1,32 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 CRITERION-SHAPE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **235/235** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 REVIEW-DISCIPLINE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 REVIEW-DISCIPLINE is complete (measured 2026-07-28).** Two
+v0.14 review lessons are now governing `AGENTS.md` rules. A command-behavior
+claim must be verified at the command's entry point, citing v0.14's false
+finding from reading `run` without `invariant_scan.py`'s `main()` and its
+v0.13 mirror. That rule is explicitly non-executable: source syntax cannot
+prove that a human or agent followed a call chain. A closing disposition is
+now explicitly an as-of-date claim, so later authorization supersedes rather
+than contradicts the historical record.
+
+`cycle-check` prospectively requires the declared runbook's closing record to
+use `Release disposition: release|no-release (as of YYYY-MM-DD)`, while
+preserving all already-closed runbooks byte-for-byte. The scratch fail-before
+produced: `cycle-check: ERROR: TASKS-v1.2.3-EXECUTION.md: declared closed cycle
+release disposition must state an as-of date; found undated '- **Release
+disposition:** no-release'`, followed by `cycle-check: FAIL (1 defect(s))`.
+The dated form passed.
+
+The focused cycle-check module passes **15/15** on both interpreters. Full
+shell passes **237/237**, a **+2** delta from CRITERION-SHAPE attributable to
+`test_cycle_check_rejects_undated_active_disposition` and
+`test_cycle_check_accepts_dated_active_disposition`. `./run ci-local` remains
+**20/20**, Rust remains **125** workspace / **48** net (**23 + 25**), all
+**101/101** pins and both protected databases remain exact, `invariant-scan`
+remains **10/10 rules / 18 controls**, and matrix plus mandatory standalone
+golden remain **11/11** byte-identical.
 
 **v0.15 CRITERION-SHAPE is complete (measured 2026-07-28).**
 `cycle-check` now evaluates only the active runbook's acceptance-criterion

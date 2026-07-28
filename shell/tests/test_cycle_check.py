@@ -250,6 +250,58 @@ def test_cycle_check_accepts_same_commit_quantity_relation(
     assert cycle_check.run(root) == 0
 
 
+def _close_active_cycle(root: Path, disposition: str) -> None:
+    _commit_cycle_root(root)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook.write_text(
+        runbook.read_text().replace("- [ ] unfinished task", "- [x] finished")
+        + "\n## Runbook amendments\n\n"
+        "Step 1 — Record the closing checklist — 2026-07-28\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-28\n"
+        f"{disposition}\n"
+        "- **Intentionally unreleased implementation commits:**\n"
+        f"  - `{commit}`\n"
+    )
+
+
+def test_cycle_check_rejects_undated_active_disposition(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _close_active_cycle(
+        root,
+        "- **Release disposition:** no-release",
+    )
+
+    assert cycle_check.run(root) == 1
+
+    error = capsys.readouterr().err
+    assert "TASKS-v1.2.3-EXECUTION.md:" in error
+    assert "release disposition must state an as-of date" in error
+    assert "found undated '- **Release disposition:** no-release'" in error
+
+
+def test_cycle_check_accepts_dated_active_disposition(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _close_active_cycle(
+        root,
+        "- **Release disposition:** no-release (as of 2026-07-28)",
+    )
+
+    assert cycle_check.run(root) == 0
+
+
 def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
     tmp_path: Path,
     capsys,

@@ -357,7 +357,9 @@ into an active runbook silently.
 
 **Objective.** Make two lessons v0.14 paid for binding rather than remembered.
 
-**Gate.** `AGENTS.md`, `tools/cycle_check.py`, and its tests.
+**Gate.** `AGENTS.md`, `tools/cycle_check.py`, its tests, this active runbook's
+gate/amendment/checklist record, and the closed-runbook preservation check.
+**No closed runbook is edited.**
 
 **Steps.**
 
@@ -461,7 +463,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
   trigger recorded here
 - [x] **CRITERION-SHAPE** — step-value criterion rejected; heuristic limitation
   stated in `ARCHITECTURE.md`; closed runbooks unmodified
-- [ ] **REVIEW-DISCIPLINE** — both rules in `AGENTS.md` citing v0.14; undated
+- [x] **REVIEW-DISCIPLINE** — both rules in `AGENTS.md` citing v0.14; undated
   disposition fails `cycle-check`; non-executable status stated
 - [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; identity set matches derived value; new pin count in three places
@@ -508,3 +510,4 @@ Step 1 — Add the governing E0 scope gate required by `AGENTS.md §5` — 2026-
 Step 2 — Widen the R10 gate to contain its architecture claim and any required hosted counterpart — 2026-07-28
 Step 4 — Widen the gate for the operator decision and authorized H1/H3/Step 7 corrections; record the unchanged-name v0.14.1 trigger — 2026-07-28
 Step 5 — Widen the gate to contain the required architectural limitation and active checklist record — 2026-07-28
+Step 6 — Widen the gate to contain the active checklist record and closed-runbook preservation criterion — 2026-07-28
