@@ -20,11 +20,13 @@ import io
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
 import tomllib
 from dataclasses import dataclass
+from itertools import product
 from pathlib import Path
 from typing import Callable
 
@@ -152,6 +154,512 @@ class Rule:
     scope: str
     fail_before: tuple[FailBefore, ...]
     fail_before_note: str
+
+
+@dataclass(frozen=True)
+class WorkflowStep:
+    job: str
+    name: str
+    line: int
+    run_line: int | None
+    run: str | None
+    uses: str | None
+
+
+@dataclass(frozen=True)
+class WorkflowJob:
+    id: str
+    line: int
+    report_only: bool
+    matrix: tuple[tuple[str, tuple[str, ...]], ...]
+    steps: tuple[WorkflowStep, ...]
+
+
+@dataclass(frozen=True)
+class CheckSite:
+    id: str
+    file: str
+    line: int
+    label: str
+
+
+@dataclass(frozen=True)
+class ParityReport:
+    findings: tuple[str, ...]
+    local_jobs: int
+    local_checks: int
+    blocking_jobs: int
+    hosted_checks: int
+    exemptions: tuple[str, ...]
+
+
+JOB_HEADER = re.compile(r"^  (?P<id>[A-Za-z0-9_-]+):\s*$")
+STEP_HEADER = re.compile(
+    r"^      - (?P<field>name|uses):\s*(?P<value>.+?)\s*$"
+)
+FUNCTION_HEADER = re.compile(
+    r"(?m)^(?P<name>[A-Za-z_][A-Za-z0-9_]*)\(\)\s*\{\s*$"
+)
+CI_LOCAL_INVOCATION = re.compile(
+    r'(?m)^(?P<indent>\s*)ci_local_job\s+"(?P<label>[^"]+)"\s+'
+    r"(?P<target>[A-Za-z_][A-Za-z0-9_]*)\s+\|\|\s+return\s+\$\?\s*$"
+)
+RUN_DISPATCH = re.compile(
+    r"(?m)^\s{2}(?P<command>[a-z0-9][a-z0-9-]*)\)\s+"
+    r"(?P<target>[A-Za-z_][A-Za-z0-9_]*)\b"
+)
+CARGO_INVOCATION = re.compile(
+    r"\bcargo\s+(?P<verb>check|test|clippy|fmt|run)\s+"
+    r"(?P<args>[^\n;&|]+)"
+)
+LOCAL_CHECK_EXEMPTIONS = {
+    "evidence-artifacts:verify": (
+        "protected database bytes are operator-local evidence and are absent "
+        "from hosted runners; hosted CI validates the manifest schema"
+    ),
+}
+HOSTED_ACTION_EXEMPTIONS = {
+    "actions/checkout@v4": "runner source checkout",
+    "actions/setup-python@v5": "runner interpreter setup",
+    "dtolnay/rust-toolchain@master": "runner Rust toolchain setup",
+    "Swatinem/rust-cache@v2": "runner build-cache setup",
+    "actions/attest-build-provenance@v4": "release-evidence attestation",
+    "actions/upload-artifact@v4": "release-evidence persistence",
+}
+HOSTED_STEP_EXEMPTIONS = {
+    "install": "runner Python environment setup",
+    "emit CI-runner receipt": "release-evidence receipt emission",
+    "persist CI-runner attestation bundle": (
+        "release-evidence bundle persistence"
+    ),
+}
+
+
+def parse_ci_workflow(path: Path) -> tuple[WorkflowJob, ...]:
+    """Parse the checked-in CI subset without adding a YAML dependency."""
+    try:
+        lines = path.read_text().splitlines()
+    except OSError as error:
+        raise ConfigError(f"{path}: cannot read workflow: {error}") from error
+    try:
+        jobs_line = next(
+            index for index, line in enumerate(lines) if line == "jobs:"
+        )
+    except StopIteration as error:
+        raise ConfigError(f"{path}: missing top-level jobs mapping") from error
+
+    headers = [
+        (index, match.group("id"))
+        for index, line in enumerate(lines[jobs_line + 1 :], jobs_line + 1)
+        if (match := JOB_HEADER.match(line)) is not None
+    ]
+    if not headers:
+        raise ConfigError(f"{path}: jobs mapping contains no jobs")
+
+    jobs: list[WorkflowJob] = []
+    for position, (start, job_id) in enumerate(headers):
+        end = headers[position + 1][0] if position + 1 < len(headers) else len(lines)
+        block = lines[start:end]
+        report_only = any(
+            line == "    continue-on-error: true" for line in block
+        )
+
+        axes: list[tuple[str, tuple[str, ...]]] = []
+        matrix_indent: int | None = None
+        for line_number, line in enumerate(block, start=start + 1):
+            if line == "      matrix:":
+                matrix_indent = 6
+                continue
+            if matrix_indent is None:
+                continue
+            indent = len(line) - len(line.lstrip(" "))
+            if line.strip() and indent <= matrix_indent:
+                matrix_indent = None
+                continue
+            axis = re.match(
+                r"^        (?P<name>[A-Za-z0-9_-]+):\s*(?P<values>\[.*\])\s*$",
+                line,
+            )
+            if axis is None:
+                continue
+            try:
+                values = json.loads(axis.group("values"))
+            except json.JSONDecodeError as error:
+                raise ConfigError(
+                    f"{path}:{line_number}: matrix values must be a JSON-style "
+                    f"inline array: {error}"
+                ) from error
+            if not isinstance(values, list) or not values or any(
+                not isinstance(value, (str, int, float, bool))
+                for value in values
+            ):
+                raise ConfigError(
+                    f"{path}:{line_number}: matrix axis must be a non-empty "
+                    "scalar array"
+                )
+            axes.append(
+                (axis.group("name"), tuple(str(value) for value in values))
+            )
+
+        steps: list[WorkflowStep] = []
+        step_starts = [
+            (index, match.group("field"), match.group("value"))
+            for index, line in enumerate(block)
+            if (match := STEP_HEADER.match(line)) is not None
+        ]
+        for step_position, (relative_start, field, value) in enumerate(
+            step_starts
+        ):
+            relative_end = (
+                step_starts[step_position + 1][0]
+                if step_position + 1 < len(step_starts)
+                else len(block)
+            )
+            step_block = block[relative_start:relative_end]
+            name = value if field == "name" else value
+            uses = value if field == "uses" else None
+            run_text: str | None = None
+            run_line: int | None = None
+            for offset, line in enumerate(step_block):
+                scalar = re.match(r"^        run:\s*(.*?)\s*$", line)
+                if scalar is None:
+                    nested_uses = re.match(r"^        uses:\s*(.+?)\s*$", line)
+                    if nested_uses is not None:
+                        uses = nested_uses.group(1)
+                    continue
+                run_line = start + relative_start + offset + 1
+                value_text = scalar.group(1)
+                if value_text in {"|", ">"}:
+                    body: list[str] = []
+                    for body_line in step_block[offset + 1 :]:
+                        if body_line.startswith("          "):
+                            body.append(body_line[10:])
+                    run_text = "\n".join(body)
+                else:
+                    run_text = value_text
+                break
+            steps.append(
+                WorkflowStep(
+                    job=job_id,
+                    name=name,
+                    line=start + relative_start + 1,
+                    run_line=run_line,
+                    run=run_text,
+                    uses=uses,
+                )
+            )
+        jobs.append(
+            WorkflowJob(
+                id=job_id,
+                line=start + 1,
+                report_only=report_only,
+                matrix=tuple(axes),
+                steps=tuple(steps),
+            )
+        )
+    return tuple(jobs)
+
+
+def blocking_job_identities(
+    path: Path,
+) -> frozenset[tuple[str, str | None]]:
+    """Derive receipt identities from non-report-only jobs and matrix values."""
+    identities: set[tuple[str, str | None]] = set()
+    for job in parse_ci_workflow(path):
+        if job.report_only:
+            continue
+        if not job.matrix:
+            identities.add((job.id, None))
+            continue
+        templates = [
+            match.group("template")
+            for step in job.steps
+            if step.run is not None
+            for match in re.finditer(
+                r'"matrix"\s*:\s*"(?P<template>[^"]*\$\{\{'
+                r'\s*matrix\.[^}]+\}\}[^"]*)"',
+                step.run,
+            )
+        ]
+        if len(templates) != 1:
+            raise ConfigError(
+                f"{path}:{job.line}: matrix job {job.id} must emit exactly "
+                f"one receipt matrix template; found {len(templates)}"
+            )
+        names = [name for name, _values in job.matrix]
+        value_sets = [values for _name, values in job.matrix]
+        for combination in product(*value_sets):
+            matrix = templates[0]
+            for name, value in zip(names, combination):
+                matrix = re.sub(
+                    r"\$\{\{\s*matrix\." + re.escape(name) + r"\s*\}\}",
+                    value,
+                    matrix,
+                )
+            if "${{" in matrix:
+                raise ConfigError(
+                    f"{path}:{job.line}: matrix receipt template for {job.id} "
+                    "contains an unresolved expression"
+                )
+            identities.add((job.id, matrix))
+    return frozenset(identities)
+
+
+def _bash_functions(text: str) -> dict[str, str]:
+    lines = text.splitlines()
+    functions: dict[str, str] = {}
+    for match in FUNCTION_HEADER.finditer(text):
+        start_line = text.count("\n", 0, match.end()) + 1
+        end_line = next(
+            (
+                index
+                for index in range(start_line, len(lines))
+                if lines[index] == "}"
+            ),
+            None,
+        )
+        if end_line is None:
+            raise ConfigError(f"run: unterminated function {match.group('name')}")
+        functions[match.group("name")] = "\n".join(lines[start_line:end_line])
+    return functions
+
+
+def _canonical_cargo_commands(text: str) -> set[str]:
+    commands: set[str] = set()
+    collapsed = re.sub(r"\\\n[ \t]*", " ", text)
+    for match in CARGO_INVOCATION.finditer(collapsed):
+        try:
+            arguments = shlex.split(match.group("args"))
+        except ValueError:
+            continue
+        retained: list[str] = []
+        for token in arguments:
+            if token in {"2>&1", "||", "&&"}:
+                break
+            if token.startswith(("$", '"$', "'$")):
+                break
+            retained.append(token)
+        if "--example" in retained:
+            example_index = retained.index("--example")
+            if example_index + 1 < len(retained):
+                commands.add(
+                    "cargo-example:" + retained[example_index + 1]
+                )
+                continue
+        commands.add(
+            "cargo:" + match.group("verb") + ":" + " ".join(retained)
+        )
+    return commands
+
+
+def _direct_check_ids(text: str) -> set[str]:
+    source = "\n".join(
+        line for line in text.splitlines() if not line.lstrip().startswith("#")
+    )
+    checks = _canonical_cargo_commands(source)
+    patterns = (
+        ("version-check", r"tools/version_check\.py"),
+        ("cycle-check", r"(?:tools\.cycle_check|tools/cycle_check\.py)"),
+        ("checklist-audit", r"tools/checklist_audit\.py"),
+        ("invariant-scan", r"tools/invariant_scan\.py"),
+        ("deferred-audit", r"tools/audit_deferred\.py"),
+        (
+            "evidence-artifacts:validate",
+            r"tools/evidence_artifacts\.py[^\n]*(?:validate)|"
+            r"tools/evidence_artifacts\.py\s+\\\n[^\n]*validate",
+        ),
+        (
+            "evidence-artifacts:verify",
+            r"tools/evidence_artifacts\.py[^\n]*(?:\bverify\b)",
+        ),
+        ("python-constraints", r"tools/python_constraints\.py"),
+        ("python-byte-compile", r"\bpy_compile\b"),
+        ("shellcheck-presence", r"command\s+-v\s+shellcheck|shellcheck\s+--version"),
+        ("shellcheck-run", r"shellcheck\s+(?:\./)?run\b"),
+        ("shell-tests", r"-m\s+pytest\s+shell/tests(?:[/\s]|$)"),
+        ("golden", r"tools/golden_e2e\.py"),
+        ("progress-check", r"tools\.progress_check|tools/progress_check\.py"),
+    )
+    for check_id, pattern in patterns:
+        if re.search(pattern, source):
+            checks.add(check_id)
+    return checks
+
+
+def _function_check_ids(
+    target: str,
+    functions: dict[str, str],
+    seen: set[str] | None = None,
+) -> set[str]:
+    visited = set() if seen is None else set(seen)
+    if target in visited or target not in functions:
+        return set()
+    visited.add(target)
+    body = functions[target]
+    checks = _direct_check_ids(body)
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        for candidate in functions:
+            if re.search(r"\b" + re.escape(candidate) + r"\b", stripped):
+                checks.update(
+                    _function_check_ids(candidate, functions, visited)
+                )
+    return checks
+
+
+def _workflow_step_check_ids(
+    step: WorkflowStep,
+    functions: dict[str, str],
+    dispatch: dict[str, str],
+) -> set[str]:
+    if step.run is None:
+        return set()
+    checks = _direct_check_ids(step.run)
+    for command in re.findall(r"(?:^|\s)\./run\s+([a-z0-9-]+)", step.run):
+        target = dispatch.get(command)
+        if target is not None:
+            checks.update(_function_check_ids(target, functions))
+    return checks
+
+
+def _hosted_step_exemption(step: WorkflowStep) -> str | None:
+    if step.uses is not None:
+        return HOSTED_ACTION_EXEMPTIONS.get(step.uses)
+    return HOSTED_STEP_EXEMPTIONS.get(step.name)
+
+
+def r10_report(root: Path) -> ParityReport:
+    run_path = root / "run"
+    workflow_path = root / ".github" / "workflows" / "ci.yml"
+    try:
+        run_text = run_path.read_text()
+        functions = _bash_functions(run_text)
+        workflow = parse_ci_workflow(workflow_path)
+    except (OSError, ConfigError) as error:
+        return ParityReport(
+            findings=(f"run:1: cannot derive CI parity scope: {error}",),
+            local_jobs=0,
+            local_checks=0,
+            blocking_jobs=0,
+            hosted_checks=0,
+            exemptions=(),
+        )
+    dispatch = {
+        match.group("command"): match.group("target")
+        for match in RUN_DISPATCH.finditer(run_text)
+    }
+
+    findings: list[str] = []
+    local_sites: list[CheckSite] = []
+    invocations = list(CI_LOCAL_INVOCATION.finditer(functions.get("cmd_ci_local", "")))
+    cmd_start = next(
+        (
+            index
+            for index, line in enumerate(run_text.splitlines(), start=1)
+            if line == "cmd_ci_local() {"
+        ),
+        1,
+    )
+    for invocation in invocations:
+        line = cmd_start + functions["cmd_ci_local"][: invocation.start()].count("\n") + 1
+        label = invocation.group("label")
+        target = invocation.group("target")
+        check_ids = _function_check_ids(target, functions)
+        if not check_ids:
+            findings.append(
+                f"run:{line}: local ci-local check {label!r} target "
+                f"{target} is unclassified"
+            )
+            continue
+        local_sites.extend(
+            CheckSite(check_id, "run", line, label)
+            for check_id in sorted(check_ids)
+        )
+
+    exemptions: list[str] = []
+    hosted_sites: list[CheckSite] = []
+    blocking_jobs = 0
+    for job in workflow:
+        if job.report_only:
+            exemptions.append(
+                f".github/workflows/ci.yml:{job.line}: hosted job {job.id}: "
+                "job-level continue-on-error=true makes it report-only"
+            )
+            continue
+        blocking_jobs += 1
+        job_checks = 0
+        for step in job.steps:
+            reason = _hosted_step_exemption(step)
+            if reason is not None:
+                exemptions.append(
+                    f".github/workflows/ci.yml:{step.line}: hosted step "
+                    f"{job.id}/{step.name}: {reason}"
+                )
+                continue
+            check_ids = _workflow_step_check_ids(step, functions, dispatch)
+            if not check_ids:
+                findings.append(
+                    f".github/workflows/ci.yml:{step.run_line or step.line}: "
+                    f"blocking hosted step {job.id}/{step.name!r} is "
+                    "unclassified and not exempt"
+                )
+                continue
+            job_checks += len(check_ids)
+            hosted_sites.extend(
+                CheckSite(
+                    check_id,
+                    ".github/workflows/ci.yml",
+                    step.run_line or step.line,
+                    f"{job.id}/{step.name}",
+                )
+                for check_id in sorted(check_ids)
+            )
+        if job_checks == 0:
+            findings.append(
+                f".github/workflows/ci.yml:{job.line}: blocking hosted job "
+                f"{job.id} contains no parity-covered check"
+            )
+
+    local_by_id: dict[str, CheckSite] = {}
+    for site in local_sites:
+        local_by_id.setdefault(site.id, site)
+    hosted_by_id: dict[str, CheckSite] = {}
+    for site in hosted_sites:
+        hosted_by_id.setdefault(site.id, site)
+
+    for check_id in sorted(set(local_by_id) - set(hosted_by_id)):
+        site = local_by_id[check_id]
+        reason = LOCAL_CHECK_EXEMPTIONS.get(check_id)
+        if reason is not None:
+            exemptions.append(
+                f"{site.file}:{site.line}: local check {site.label}: {reason}"
+            )
+            continue
+        findings.append(
+            f"{site.file}:{site.line}: local check {site.label!r} "
+            f"({check_id}) has no blocking hosted counterpart"
+        )
+    for check_id in sorted(set(hosted_by_id) - set(local_by_id)):
+        site = hosted_by_id[check_id]
+        findings.append(
+            f"{site.file}:{site.line}: blocking hosted check {site.label!r} "
+            f"({check_id}) has no local ci-local counterpart"
+        )
+
+    return ParityReport(
+        findings=tuple(findings),
+        local_jobs=len(invocations),
+        local_checks=len(local_by_id),
+        blocking_jobs=blocking_jobs,
+        hosted_checks=len(hosted_by_id),
+        exemptions=tuple(exemptions),
+    )
+
+
+def r10_findings(root: Path) -> list[str]:
+    return list(r10_report(root).findings)
 
 
 def production_text(path: Path, text: str) -> str:
@@ -708,6 +1216,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R7": r7_findings,
     "R8": r8_findings,
     "R9": r9_findings,
+    "R10": r10_findings,
 }
 
 
@@ -842,13 +1351,24 @@ def load_rules(path: Path) -> list[Rule]:
 def run_rules(root: Path, rules: list[Rule]) -> int:
     failed = False
     for rule in rules:
-        findings = CHECKS[rule.id](root.resolve())
+        resolved_root = root.resolve()
+        findings = CHECKS[rule.id](resolved_root)
         if findings:
             failed = True
             for finding in findings:
                 print(f"invariant-scan: {rule.id} FAIL: {finding}")
         else:
-            print(f"invariant-scan: {rule.id} PASS: {rule.claim}")
+            suffix = ""
+            if rule.id == "R10":
+                report = r10_report(resolved_root)
+                suffix = (
+                    f" (local_jobs={report.local_jobs}, "
+                    f"local_checks={report.local_checks}, "
+                    f"blocking_jobs={report.blocking_jobs}, "
+                    f"hosted_checks={report.hosted_checks}, "
+                    f"exemptions={len(report.exemptions)})"
+                )
+            print(f"invariant-scan: {rule.id} PASS: {rule.claim}{suffix}")
     if failed:
         return 1
     print(f"invariant-scan: PASS ({len(rules)}/{len(rules)} registered rules)")

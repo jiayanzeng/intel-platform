@@ -385,9 +385,15 @@ jobs:
         # remains responsible for tag-object identity; this runner still checks
         # every release record, recorded commit, source literal, and amendment.
         run: ./run cycle-check --skip-local-tag-verification
+      - name: checked-task evidence
+        if: matrix.python-version == '3.11'
+        run: ./run checklist-audit
       - name: registered static repository invariants
         if: matrix.python-version == '3.11'
         run: ./run invariant-scan
+      - name: append-only progress record
+        if: matrix.python-version == '3.11'
+        run: ./run progress-check
       - name: byte-compile all Python at the 3.11 floor
         if: matrix.python-version == '3.11'
         run: find tools shell -type f -name '*.py' -print0 | xargs -0 python3.11 -m py_compile

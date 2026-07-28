@@ -307,6 +307,51 @@
         }
       ],
       "fail_before_note": "invariant-scan: R9 FAIL: apps/cored/Cargo.toml: test-support escaped dev-dependencies"
+    },
+    {
+      "id": "R10",
+      "claim": "Every local ci-local check has a non-report-only hosted counterpart and every blocking hosted verification has a local counterpart; exemptions are explicit and counted.",
+      "source": "ARCHITECTURE.md:210",
+      "scope": "All ci_local_job invocations in run and every step in non-report-only jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions. Runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database verification are explicit counted exemptions.",
+      "fail_before": [
+        {
+          "file": "run",
+          "find": "  ci_local_job \"net test (-D warnings)\" ci_net_test || return $?\n",
+          "replace_with": [
+            "  ci_local_job \"net test (-D warnings)\" true || return $?\n"
+          ],
+          "expected_fail": "local ci-local check 'net test (-D warnings)' target true is unclassified",
+          "expected_file": "run",
+          "expected_line": 439
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "find": "      - name: cargo test -p intel-ingest --features net --locked\n        run: cargo test -p intel-ingest --features net --locked\n",
+          "replace_with": [
+            "      - name: cargo test -p intel-ingest --features net --locked\n",
+            "        run: true\n"
+          ],
+          "expected_fail": "blocking hosted step net/'cargo test -p intel-ingest --features net --locked' is unclassified and not exempt",
+          "expected_file": ".github/workflows/ci.yml",
+          "expected_line": 221
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "find": "      - name: cargo test -p cored --features net --locked\n        env:\n          INTEL_CRAWLER_CONTACT: crawler-tests@unit.test\n        run: cargo test -p cored --features net --locked\n",
+          "replace_with": [
+            "      - name: cargo test -p cored --features net --locked\n",
+            "        env:\n",
+            "          INTEL_CRAWLER_CONTACT: crawler-tests@unit.test\n",
+            "        run: cargo test -p cored --features net --locked\n",
+            "      - name: unpaired hosted check\n",
+            "        run: cargo test -p intel-core --locked\n"
+          ],
+          "expected_fail": "blocking hosted check 'net/unpaired hosted check' (cargo:test:-p intel-core --locked) has no local ci-local counterpart",
+          "expected_file": ".github/workflows/ci.yml",
+          "expected_line": 228
+        }
+      ],
+      "fail_before_note": "invariant-scan: R10 FAIL: local and blocking hosted check sets diverged"
     }
   ]
 }

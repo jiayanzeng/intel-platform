@@ -196,9 +196,11 @@ execution.
 **Objective.** Make a check that exists in one place and not the other fail CI.
 
 **Gate.** `tools/invariant_scan.py`, `config/invariant-rules.json`,
-`shell/tests/test_invariant_scan.py`, and — only if a machine-readable
-correspondence marker is required — `run` and `.github/workflows/ci.yml`. **No
-source under `crates/` or `apps/` changes.**
+`shell/tests/test_invariant_scan.py`, `ARCHITECTURE.md`, this active runbook's
+gate/amendment/checklist record, and `.github/workflows/ci.yml` only for
+required hosted counterparts. `run` may change only if a machine-readable
+correspondence marker is required. **No source under `crates/` or `apps/`
+changes.**
 
 **Steps.**
 
@@ -431,7 +433,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 
 - [x] **E0** — entering matrix captured; H1 reproduced in both directions; H2
   reproduced in both directions; H3 reproduced; H4/H5 recorded
-- [ ] **R10-CI-PARITY** — registered with ≥3 site-specific controls, all FAIL;
+- [x] **R10-CI-PARITY** — registered with ≥3 site-specific controls, all FAIL;
   exemptions declared with reasons and counted; mechanism recorded; measured
   counts recorded
 - [ ] **IDENTITY-DERIVE** — identity set derived from `ci.yml`; report-only
@@ -486,3 +488,4 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 ## Runbook amendments
 
 Step 1 — Add the governing E0 scope gate required by `AGENTS.md §5` — 2026-07-28
+Step 2 — Widen the R10 gate to contain its architecture claim and any required hosted counterpart — 2026-07-28

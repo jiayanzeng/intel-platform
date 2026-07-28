@@ -1,6 +1,33 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 E0 subject `40351d4f33c45db552e72a4ded5e0f29e2cac4f0`, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 R10-CI-PARITY, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **228/228** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 R10-CI-PARITY is complete (measured 2026-07-28).** R10 parses
+the existing `run` function bodies/dispatch and the existing workflow jobs,
+matrix axes, steps, actions, and commands; it adds no third scope manifest and
+requires no correspondence markers. Command entry points normalize to
+verification identities, so wrappers are resolved through the functions they
+actually execute. The workflow gained hosted Python 3.11 counterparts for
+`checklist-audit` and `progress-check`; `ci-local` remains exactly **20** jobs.
+
+On the clean tree R10 reports **20 local jobs / 24 normalized checks** and
+**6 blocking hosted jobs / 23 normalized checks**, with **45** explicit
+exemptions: one report-only drift job, one operator-local protected-database
+verification, 18 runner source/toolchain/cache/interpreter setup steps, one
+Python environment setup step, and 24 signed-receipt/attestation persistence
+steps. The exact exemption count is test-pinned so growth is not silent.
+The one local-only verification is deliberate because the protected databases
+are not present on hosted runners; hosted CI validates their manifest schema.
+
+All three R10 site controls fail at the intended location: replacing the local
+net-test target reports `run:439`; replacing the hosted `intel-ingest` net
+test reports `.github/workflows/ci.yml:221`; adding an unpaired hosted cargo
+test reports `.github/workflows/ci.yml:228`. No-argument `invariant-scan`
+passes **10/10 rules / 18 controls**. The focused scanner module passes
+**20/20** on both interpreters; full shell passes **228/228** on Python 3.11.4
+and 3.12.13. The complete matrix remains **20/20**, with Rust **125**
+workspace / **48** net (**23 + 25**), all **101** pins and both protected
+databases exact, and golden **11/11**.
 
 **v0.15 E0 is complete (measured 2026-07-28 at
 `40351d4f33c45db552e72a4ded5e0f29e2cac4f0`).** The permitted

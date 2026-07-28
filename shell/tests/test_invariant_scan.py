@@ -176,3 +176,38 @@ def test_rule_id_without_an_implemented_check_exits_two(
 
     assert invariant_scan.run(ROOT, registry) == 2
     assert "no implemented check for R99" in capsys.readouterr().out
+
+
+def test_r10_reports_derived_scope_and_counted_exemptions() -> None:
+    report = invariant_scan.r10_report(ROOT)
+
+    assert report.findings == ()
+    assert report.local_jobs == 20
+    assert report.local_checks == 24
+    assert report.blocking_jobs == 6
+    assert report.hosted_checks == 23
+    assert len(report.exemptions) == 45
+    assert any(
+        "protected database bytes are operator-local evidence" in exemption
+        for exemption in report.exemptions
+    )
+    assert any(
+        "continue-on-error=true makes it report-only" in exemption
+        for exemption in report.exemptions
+    )
+
+
+def test_ci_workflow_parser_derives_current_blocking_identities() -> None:
+    identities = invariant_scan.blocking_job_identities(
+        ROOT / ".github" / "workflows" / "ci.yml"
+    )
+
+    assert identities == {
+        ("core", None),
+        ("golden", None),
+        ("lint", None),
+        ("msrv", None),
+        ("net", None),
+        ("shell", "python=3.11"),
+        ("shell", "python=3.12"),
+    }
