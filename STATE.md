@@ -1,6 +1,86 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published and v0.15 is closed with release disposition `release (as of 2026-07-28)`. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains closing-audit commit `fb2d501e850fd7c67045b83c475e089f5c5fa535`, and its publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0 complete. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The v0.16 E0 full matrix passes **20/20** from a fresh target directory with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.16 E0 is complete (measured 2026-07-28 at activation-audit commit
+`90d07721f21f78cc0803facb7138141083104b8e`).** The entering matrix and every
+F1–F6 disposition were re-derived rather than carried forward:
+
+- With the ordinary repository target,
+  `CARGO_TARGET_DIR=/Users/yzjia/intel-platform/target`, `./run ci-local`
+  reached workspace tests and failed: the `cored` binary ran **24** tests,
+  **6 passed / 18 failed**, all 18 at `apps/cored/src/main.rs:1558` because its
+  embedded checkout path no longer existed. With the fresh explicit target
+  `CARGO_TARGET_DIR=/private/tmp/intel-v016-e0-ci-target`, the full command
+  passed **20/20** jobs: **125** workspace tests; **48** net tests (**23**
+  ingest + **25** cored); shell **237/237** on Python 3.11.4; warning-denied
+  offline and net checks; clippy, fmt, ShellCheck, Python 3.11 byte compilation,
+  locked Rust 1.78 check/test, golden **11/11**, artifacts **2/2**, and
+  invariant-scan **10/10 rules / 18/18 controls**. A clean repository-local
+  Python 3.12.13 rebuild independently resolved **21/21** pinned packages and
+  passed **237/237** shell tests.
+- The fresh-target matrix has a measured path caveat: its Cargo commands used
+  `/private/tmp/intel-v016-e0-ci-target`, but `cmd_golden` set
+  `CORED_BIN=target/debug/cored` and therefore launched the ordinary target's
+  binary after building into the explicit target. A separate
+  `./run golden`, with the ordinary target and a freshly built current-checkout
+  product binary, passed **11/11**. The runner-path mismatch is carried into
+  Step 3's `run` gate; it does not turn the full matrix's Rust measurements
+  into a default-target claim.
+- The `cmd_ci_local` body parser derived **20** job targets. Every target is the
+  left operand of `|| return $?`, and `ci_local_job` reaches it through
+  `if "$@"; then`; there were no additional unparsed `&&`/`||` lines and no
+  negated job calls. Injecting `false` for the first command of each derived
+  body made **13 report FAIL** and exposed **7 that still reported PASS**:
+  `ci_deferred_evidence`, `ci_floor_compile`, `ci_shellcheck`, `ci_net_test`,
+  `ci_pytest`, `cmd_golden`, and `verify_fingerprint_fixture`. Thus F1 is
+  confirmed with seven mask-capable jobs, not the review's lower bound of five.
+- F1b's literal answer is **yes, but only through its cleanup**. Replacing both
+  fingerprint validation commands with `false` while leaving the final
+  `rm -rf` successful made `ci_local_job` return **0**. Replacing the cleanup
+  itself with `false` made it return **1**. No preceding validation failure can
+  escape while the unconditional trailing cleanup succeeds.
+- On GNU Bash **3.2.57(1)-release (arm64-apple-darwin25)**, all eight mechanism
+  rows matched the runbook: `if fn`, both conditional subshell variants,
+  `fn || status=$?`, a wrapper called with `|| return $?`, and a background
+  subshell/wait reached through that call site all printed the post-failure
+  marker and exited 0; a plain wrapper and the separately invoked
+  `bash -euo pipefail` process exited 1 before the marker. There is no
+  operator-shell divergence.
+- F2 is confirmed. With
+  `CORE_ENTITIES=/private/tmp/v016-alt-entities.json`, an actual invocation of
+  the enrichment branch completed but its captured known-name set had **20**
+  names from root `config/entities.json` and did not contain the alternate
+  file's sole `only_from_env` name. The shell directly reads the core-owned
+  path and ignores both the environment override and the seam.
+- F3 is confirmed as a verification-reproducibility defect, not a product
+  failure. A `cored` test binary built in
+  `/private/tmp/intel-v016-f3-build`, then run after that worktree moved to
+  `/private/tmp/intel-v016-f3-relocated` with shared target
+  `/private/tmp/intel-v016-f3-shared`, was reused without recompilation and
+  failed **18/24** tests at the missing compiled-in path. `strings` named the
+  departed build checkout. No product request path was exercised.
+- F4 and F5 are confirmed: `run:934` says “19-job” and “stopping on failure”
+  although the derived matrix has 20 and seven jobs can mask their first
+  failure; `config/invariant-rules.json:319` pins R10's control to the defective
+  `ci_net_test || return $?` call-site bytes.
+- F6's stated totals are refuted but its defect is confirmed. The root contains
+  **17** `TASKS-v*.md` files (**14** execution runbooks plus three legacy task
+  documents) and **12** `PROGRESS-v*.md` files, not 15 and 11.
+  `tools/cycle_check.py`, `tools/checklist_audit.py`,
+  `tools/audit_deferred.py`, and `tools/cycle_identity.py` independently
+  construct or glob these paths; `shell/tests/test_cycle_check.py` also
+  restates them. `AGENTS.md` names the active pair and `ARCHITECTURE.md` names
+  the convention. No root Markdown path is protected by a manifest pin.
+- Hosted blast radius is **none**: `.github/workflows/ci.yml` contains no
+  `ci_local_job` or `cmd_ci_local` invocation; its verification steps invoke
+  `./run` subcommands or their commands directly. The independently rerun
+  `version-check`, `cycle-check`, `checklist-audit`, `progress-check`,
+  `invariant-scan`, `verify-artifacts`, and golden all passed. The annotated
+  `v0.14.1` tag object and release commit are unchanged, all **116/116** pins
+  and **2/2** protected databases re-verified, and retractions remain **three**.
+  No published count is false, so no retraction is owed; F1–F6 are forward
+  corrections.
 
 **v0.15 R-CLOSE release reconciliation is complete locally (measured
 2026-07-28).** The selected release is **v0.14.1** because Step 4 recorded

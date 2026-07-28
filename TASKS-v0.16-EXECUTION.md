@@ -532,7 +532,7 @@ all pins match · golden 11/11.
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix captured with its target directory; F1 reproduced
+- [x] **E0** — entering matrix captured with its target directory; F1 reproduced
   by derivation; F1b answered; mechanism table re-verified on the operator's
   bash; F2/F3/F5/F6 confirmed or refuted; hosted blast radius measured
 - [ ] **DOC-LAYOUT** — every moved file byte-identical; one resolver, no second
