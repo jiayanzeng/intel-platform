@@ -2,6 +2,25 @@
 
 **As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At the exact release commit, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
+**v0.15 cycle activation is complete; E0 has not yet run (measured
+2026-07-28).** The mandatory opener found only the operator-supplied untracked
+`TASKS-v0.15-EXECUTION.md`. Entering HEAD was
+`a75c9cf5defa42e985811b01f9905b6ac99797fd`, described as
+`v0.14.0-3-ga75c9cf`; local `main` and `origin/main` were aligned with zero
+ahead / zero behind. Annotated `v0.14.0` remained tag object
+`dddc1a52d28a1832727a8d8eb5e87fc7168511c6`, dereferencing exactly to release
+commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`.
+
+Implementation commit `31916e01098ae9b68d2b6af10877ad91ea6d270f`
+admitted only the supplied runbook, the `AGENTS.md` v0.15 declaration, and the
+new append-only progress-log skeleton. After that commit, `./run cycle-check`
+passed with v0.15 open and twelve closed execution runbooks;
+`./run checklist-audit` resolved the entering **121/121** checked tasks,
+reported the three existing retractions separately, and found zero exemptions;
+`git diff --check` passed. No test, golden, artifact, hosted-runner,
+publication, or release claim is made by this preparatory pair. E0 begins from
+the clean post-audit tree.
+
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
 the two v0.13 append-only audit commits. The mandatory opener found only the
