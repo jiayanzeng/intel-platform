@@ -19,10 +19,11 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+from collections import Counter
 
 from . import briefing, config
 from .core_client import CoreClient, CoreError
-from .enrichment import gazetteer_suggestions
+from .enrichment import entity_candidates
 from .llm import chat_from_env, embed_from_env
 
 EMBED_BATCH = 16
@@ -134,20 +135,19 @@ def run(client_arg: str | None, subs_path: str | None, data_dir: str,
         else:
             ids = view.get("kept_doc_ids", [])[:10]
             docs = core.docs(ids, list(sub.sectors)) if ids else []
-            known = {"deepseek", "qwen", "nvidia", "vllm"}  # cheap demo floor
+            candidates = entity_candidates(chat, docs)
             try:
-                with open("config/entities.json", encoding="utf-8") as f:
-                    import json as _json
-
-                    gaz = _json.load(f)
-                    known = {
-                        a.lower()
-                        for e in gaz.get("entities", [])
-                        for a in [e["name"], *e.get("aliases", [])]
-                    }
-            except FileNotFoundError:
-                pass
-            suggestions = gazetteer_suggestions(chat, docs, known)
+                unknown = core.unknown_entities(list(candidates))
+            except CoreError as e:
+                print(f"error: entity comparison failed: {e}", file=sys.stderr)
+                return 1
+            suggestions = Counter(
+                {
+                    name: candidates[name]
+                    for name in unknown
+                    if name in candidates
+                }
+            )
             if suggestions:
                 print("  llm-enrich: gazetteer candidates from the model:")
                 for name, n in suggestions.most_common(10):

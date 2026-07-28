@@ -390,8 +390,13 @@ edit, and the exemption list can no longer grow by hand without a stated reason.
 **Objective.** Remove the direct read of `config/entities.json` from shell
 enrichment.
 
-**Gate.** `shell/intel_shell/pipeline.py`, the CoreClient, and — only if a
-core-owned route is required — `apps/cored/src/main.rs` and its tests.
+**Gate.** `shell/intel_shell/pipeline.py`, `shell/intel_shell/enrichment.py`,
+the CoreClient, their shell tests, and — because the selected design requires a
+core-owned route — `apps/cored/src/main.rs` and its tests. The repo-wide absence
+criterion also includes `tools/invariant_scan.py`,
+`config/invariant-rules.json`, and `shell/tests/test_invariant_scan.py`.
+`ARCHITECTURE.md` and `README.md` are included because both enumerate the core
+route contract.
 **🧑 One operator decision: whether a new core-owned route ships, which sets the
 version.**
 
@@ -415,6 +420,23 @@ version.**
    `v0.15.0`. State which fired and why.
 5. **Do not claim this narrows A4.** A4 is the untrusted-shell public egress
    boundary; this is config ownership. Two different seams.
+
+**Operator decision and measured disposition (2026-07-28): Option B — compare
+inside core.** Returning
+the gazetteer through a core-owned boundary would stop the filesystem read but
+would duplicate the core's complete entity vocabulary into the shell. Moving
+only the comparison into core keeps that state private: the shell still calls
+the model, sends the extracted candidate names to a narrow authenticated
+internal route, and receives only the unknown subset. Keeping a corrected
+direct read was rejected because it would leave the ownership violation open.
+This decision adds a core-owned route, so the `v0.15.0` trigger fires. A4 is
+unchanged: the new route is internal config ownership, not the untrusted-shell
+public-egress boundary. The implemented authenticated `POST /entities/unknown`
+accepts extracted candidate names and returns only the unknown subset. A live
+alternate-`CORE_ENTITIES` control classified that file's name and alias as
+known; an unavailable comparison returned pipeline status 1. R11 fails on the
+removed direct shell read and now measures 11 rules / 19 controls. Golden
+remained 11/11.
 
 **Acceptance criteria.** No direct read of a core-owned config path from the
 shell, or an explicit written statement that the seam remains crossed and why ·
@@ -546,7 +568,7 @@ all pins match · golden 11/11.
   help true in both halves; `ci-local` still 20
 - [x] **EXEMPT-DERIVE** — every exemption carries a criterion or a written reason;
   count is measured not pinned; no check lost coverage
-- [ ] **SEAM** — no direct core-owned config read, or the residual stated as open;
+- [x] **SEAM** — no direct core-owned config read, or the residual stated as open;
   `CORE_ENTITIES` honoured; no silent fallback; version trigger recorded here;
   golden byte-identical
 - [ ] **RELOCATABLE** — fail-before and pass-after across two checkouts sharing a

@@ -49,7 +49,7 @@
           ],
           "expected_fail": "TcpListener bind outside the validated bind_addresses path",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1370
+          "expected_line": 1416
         }
       ],
       "fail_before_note": "invariant-scan: R2 FAIL: apps/cored/src/main.rs:1267: TcpListener bind outside the validated bind_addresses path"
@@ -184,7 +184,7 @@
           ],
           "expected_fail": "production document hydration must call documents_by_ids_in_sectors; found documents_by_ids",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1135
+          "expected_line": 1155
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -194,7 +194,7 @@
           ],
           "expected_fail": "production document hydration must call documents_by_ids_in_sectors; found documents_by_ids",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1182
+          "expected_line": 1202
         }
       ],
       "fail_before_note": "invariant-scan: R7 FAIL: document hydration was unscoped or documents_by_ids was public"
@@ -207,7 +207,7 @@
       "fail_before": [
         {
           "file": "apps/cored/src/main.rs",
-          "find": "    let robots_cache = build_robots_cache(limiter.clone());\n\n    let cfg: CoreConfig =\n        serde_json::from_str(&std::fs::read_to_string(&config_path).expect(\"read core config\"))\n            .expect(\"parse core config\");\n    let gaz =\n        Gazetteer::from_json(&std::fs::read_to_string(&entities_path).expect(\"read entities\"))\n            .expect(\"parse entities\");\n    let (store, store_open_timings) =\n        SqliteStore::open_with_timings(Path::new(&db_path)).expect(\"open store\");\n\n    let n = store.count().unwrap_or(0);\n    let state = Arc::new(AppState::new_with_startup(\n        store,\n        gaz,\n        cfg,\n        token,\n        store_open_timings,\n        limiter,\n        robots_cache,\n    ));\n\n    let app = Router::new()\n        .route(\"/health\", get(health))\n        .route(\"/sectors\", get(sectors))\n        .route(\"/ingest\", post(ingest))\n        .route(\"/view\", get(view))\n        .route(\"/search\", get(search))\n        .route(\"/retrieve\", post(retrieve))\n        .route(\"/attest\", post(attest))\n        .route(\"/embeddings/missing\", get(embeddings_missing))\n        .route(\"/embeddings/stats\", get(embeddings_stats))\n        .route(\"/embeddings\", post(embeddings_upsert))\n        .route(\"/signals/record\", post(signals_record))\n        .route(\"/docs\", get(docs))\n        .with_state(state.clone());\n\n    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n        .await\n        .expect(\"bind\");\n",
+          "find": "    let robots_cache = build_robots_cache(limiter.clone());\n\n    let cfg: CoreConfig =\n        serde_json::from_str(&std::fs::read_to_string(&config_path).expect(\"read core config\"))\n            .expect(\"parse core config\");\n    let gaz =\n        Gazetteer::from_json(&std::fs::read_to_string(&entities_path).expect(\"read entities\"))\n            .expect(\"parse entities\");\n    let (store, store_open_timings) =\n        SqliteStore::open_with_timings(Path::new(&db_path)).expect(\"open store\");\n\n    let n = store.count().unwrap_or(0);\n    let state = Arc::new(AppState::new_with_startup(\n        store,\n        gaz,\n        cfg,\n        token,\n        store_open_timings,\n        limiter,\n        robots_cache,\n    ));\n\n    let app = Router::new()\n        .route(\"/health\", get(health))\n        .route(\"/sectors\", get(sectors))\n        .route(\"/ingest\", post(ingest))\n        .route(\"/view\", get(view))\n        .route(\"/search\", get(search))\n        .route(\"/retrieve\", post(retrieve))\n        .route(\"/attest\", post(attest))\n        .route(\"/entities/unknown\", post(entities_unknown))\n        .route(\"/embeddings/missing\", get(embeddings_missing))\n        .route(\"/embeddings/stats\", get(embeddings_stats))\n        .route(\"/embeddings\", post(embeddings_upsert))\n        .route(\"/signals/record\", post(signals_record))\n        .route(\"/docs\", get(docs))\n        .with_state(state.clone());\n\n    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n        .await\n        .expect(\"bind\");\n",
           "replace_with": [
             "    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])\n",
             "        .await\n",
@@ -242,6 +242,7 @@
             "        .route(\"/search\", get(search))\n",
             "        .route(\"/retrieve\", post(retrieve))\n",
             "        .route(\"/attest\", post(attest))\n",
+            "        .route(\"/entities/unknown\", post(entities_unknown))\n",
             "        .route(\"/embeddings/missing\", get(embeddings_missing))\n",
             "        .route(\"/embeddings/stats\", get(embeddings_stats))\n",
             "        .route(\"/embeddings\", post(embeddings_upsert))\n",
@@ -251,7 +252,7 @@
           ],
           "expected_fail": "TcpListener::bind occurs before build_robots_cache",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1333
+          "expected_line": 1378
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -261,7 +262,7 @@
           ],
           "expected_fail": "expected exactly one build_robots_cache call in production main; found 0",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1333
+          "expected_line": 1378
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -274,7 +275,7 @@
           ],
           "expected_fail": "production main contains 2 TcpListener::bind calls; expected exactly one",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1331
+          "expected_line": 1376
         }
       ],
       "fail_before_note": "invariant-scan: R8 FAIL: crawler identity construction did not precede the listener bind"
@@ -352,6 +353,26 @@
         }
       ],
       "fail_before_note": "invariant-scan: R10 FAIL: local and blocking hosted check sets diverged"
+    },
+    {
+      "id": "R11",
+      "claim": "Production shell code does not read core-owned configuration paths directly.",
+      "source": "ARCHITECTURE.md:45",
+      "scope": "All production Python modules directly under shell/intel_shell. Built-in open and Path-style open/read_text/read_bytes calls are rejected when their operand directly names config/core.json, config/entities.json, CORE_CONFIG, or CORE_ENTITIES, including a module-local variable derived from one of those names.",
+      "fail_before": [
+        {
+          "file": "shell/intel_shell/pipeline.py",
+          "find": "from .core_client import CoreClient, CoreError\n",
+          "replace_with": [
+            "from .core_client import CoreClient, CoreError\n",
+            "_CORE_GAZETTEER_CONTROL = open(\"config/entities.json\", encoding=\"utf-8\")\n"
+          ],
+          "expected_fail": "production shell reads core-owned configuration \"config/entities.json\" directly",
+          "expected_file": "shell/intel_shell/pipeline.py",
+          "expected_line": 26
+        }
+      ],
+      "fail_before_note": "invariant-scan: R11 FAIL: production shell read config/entities.json directly"
     }
   ]
 }

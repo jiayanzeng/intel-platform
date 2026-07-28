@@ -33,17 +33,15 @@ def extract_entities(chat: ChatClient, title: str, body: str) -> list[dict]:
     return [e for e in ents if isinstance(e, dict) and e.get("name")]
 
 
-def gazetteer_suggestions(
-    chat: ChatClient, docs: list[dict], known_names_lower: set[str]
-) -> Counter:
-    """Names the LLM found that the gazetteer doesn't know, with counts."""
-    unknown: Counter = Counter()
+def entity_candidates(chat: ChatClient, docs: list[dict]) -> Counter:
+    """Count entity names extracted by the model for core-side comparison."""
+    candidates: Counter = Counter()
     for d in docs:
         try:
             for e in extract_entities(chat, d.get("title", ""), d.get("body", "")):
                 name = e["name"].strip()
-                if name and name.lower() not in known_names_lower:
-                    unknown[name] += 1
+                if name:
+                    candidates[name] += 1
         except LlmError as err:
             print(f"  enrich: skipped {d.get('doc_id', '?')} ({err})")
-    return unknown
+    return candidates

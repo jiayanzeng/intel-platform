@@ -355,6 +355,16 @@ fn guard(state: &AppState, headers: &HeaderMap) -> Result<(), ApiErr> {
     }
 }
 
+fn configured_guard(state: &AppState, headers: &HeaderMap) -> Result<(), ApiErr> {
+    if state.token.is_none() {
+        return Err((
+            StatusCode::SERVICE_UNAVAILABLE,
+            "CORE_TOKEN is required for entity comparison".into(),
+        ));
+    }
+    guard(state, headers)
+}
+
 fn parse_csv(raw: &str) -> Vec<String> {
     raw.split(',')
         .map(|s| s.trim().to_string())
@@ -667,6 +677,16 @@ struct AttestReq {
     answer: String,
     context_doc_ids: Vec<String>,
     sectors: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct UnknownEntitiesReq {
+    names: Vec<String>,
+}
+
+#[derive(Debug, Serialize)]
+struct UnknownEntitiesResp {
+    unknown: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -1203,6 +1223,31 @@ async fn attest(
     Ok(Json(attest_answer(&req.answer, &context)))
 }
 
+async fn entities_unknown(
+    State(st): State<Arc<AppState>>,
+    headers: HeaderMap,
+    Json(req): Json<UnknownEntitiesReq>,
+) -> Result<Json<UnknownEntitiesResp>, ApiErr> {
+    configured_guard(&st, &headers)?;
+    let known: HashSet<String> = st
+        .gaz
+        .entities
+        .iter()
+        .flat_map(|entity| entity.aliases.iter().chain(std::iter::once(&entity.name)))
+        .map(|name| name.to_lowercase())
+        .collect();
+    let unknown = req
+        .names
+        .into_iter()
+        .filter_map(|name| {
+            let trimmed = name.trim();
+            (!trimmed.is_empty() && !known.contains(&trimmed.to_lowercase()))
+                .then(|| trimmed.to_string())
+        })
+        .collect();
+    Ok(Json(UnknownEntitiesResp { unknown }))
+}
+
 async fn embeddings_missing(
     State(st): State<Arc<AppState>>,
     headers: HeaderMap,
@@ -1360,6 +1405,7 @@ async fn main() {
         .route("/search", get(search))
         .route("/retrieve", post(retrieve))
         .route("/attest", post(attest))
+        .route("/entities/unknown", post(entities_unknown))
         .route("/embeddings/missing", get(embeddings_missing))
         .route("/embeddings/stats", get(embeddings_stats))
         .route("/embeddings", post(embeddings_upsert))
@@ -1630,6 +1676,14 @@ mod tests {
         Arc::new(AppState::new(store, gaz, cfg, None))
     }
 
+    fn state_with_gazetteer(gazetteer_json: &str, token: Option<String>) -> Arc<AppState> {
+        let cfg: CoreConfig = serde_json::from_value(serde_json::json!({ "sectors": [] }))
+            .expect("parse empty test config");
+        let gaz = Gazetteer::from_json(gazetteer_json).expect("parse test entities");
+        let store = SqliteStore::open(&tmp_db()).expect("open store");
+        Arc::new(AppState::new(store, gaz, cfg, token))
+    }
+
     async fn do_ingest(
         st: &Arc<AppState>,
         sectors: &[&str],
@@ -1690,6 +1744,48 @@ mod tests {
         assert_eq!(response.clean_answer, intel_core::ATTEST_REFUSAL);
         assert_eq!(response.violations.len(), 1);
         assert_eq!(response.violations[0].doc_id, document.id);
+    }
+
+    #[tokio::test]
+    async fn unknown_entity_comparison_uses_the_core_loaded_gazetteer() {
+        let gazetteer = r#"{"entities":[
+                {"id":"known","name":"Known Name","kind":"Org",
+                 "aliases":["Known Alias"]}
+            ]}"#;
+        let unavailable = entities_unknown(
+            State(state_with_gazetteer(gazetteer, None)),
+            HeaderMap::new(),
+            Json(UnknownEntitiesReq {
+                names: vec!["Novel Entity".into()],
+            }),
+        )
+        .await
+        .expect_err("entity comparison requires configured authentication");
+        assert_eq!(unavailable.0, StatusCode::SERVICE_UNAVAILABLE);
+
+        let st = state_with_gazetteer(gazetteer, Some("entity-comparison-test-token".into()));
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "x-core-token",
+            HeaderValue::from_static("entity-comparison-test-token"),
+        );
+        let response = entities_unknown(
+            State(st),
+            headers,
+            Json(UnknownEntitiesReq {
+                names: vec![
+                    "Known Name".into(),
+                    "known alias".into(),
+                    " Novel Entity ".into(),
+                    "   ".into(),
+                ],
+            }),
+        )
+        .await
+        .expect("comparison succeeds")
+        .0;
+
+        assert_eq!(response.unknown, vec!["Novel Entity"]);
     }
 
     #[tokio::test]

@@ -179,9 +179,13 @@ AUTH = {"Authorization": "Bearer ak_acme_7f3d9c"}
 
 def test_document_body_clients_always_send_explicit_sector_queries():
     seen: dict[str, dict[str, str]] = {}
+    entity_request: dict[str, list[str]] = {}
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen[request.url.path] = dict(request.url.params)
+        if request.url.path == "/entities/unknown":
+            entity_request.update(json.loads(request.content))
+            return httpx.Response(200, json={"unknown": ["Novel Entity"]})
         return httpx.Response(200, json=[])
 
     core = CoreClient("http://core", transport=httpx.MockTransport(handler))
@@ -190,6 +194,9 @@ def test_document_body_clients_always_send_explicit_sector_queries():
         "embed-model",
         ["science", "technology", "finance"],
     ) == []
+    assert core.unknown_entities(["Known Name", "Novel Entity"]) == [
+        "Novel Entity"
+    ]
 
     assert seen["/docs"] == {
         "ids": "technology::one",
@@ -199,6 +206,7 @@ def test_document_body_clients_always_send_explicit_sector_queries():
         "model": "embed-model",
         "sectors": "science,technology,finance",
     }
+    assert entity_request == {"names": ["Known Name", "Novel Entity"]}
 
 
 def test_missing_key_is_401():

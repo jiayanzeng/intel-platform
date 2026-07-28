@@ -73,6 +73,7 @@ an intentional diagnostic run. The knob changes timing only, never the
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |
 | `POST /attest {answer, context_doc_ids, sectors}` | sector-scoped internal HC1 gate for model output before public return |
+| `POST /entities/unknown {names}` | requires `CORE_TOKEN`; compares shell-extracted names against the core-loaded gazetteer and returns only the unknown subset |
 | `GET /embeddings/missing?model&sectors=` | sector-filtered backfill work queue |
 | `GET /embeddings/stats?model` | stored vector count and dimension for one model key |
 | `POST /embeddings {model, items}` | store shell-computed vectors; rejects a dimension change under an existing model key |

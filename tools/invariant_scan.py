@@ -15,6 +15,7 @@ items are classified as test-only.
 from __future__ import annotations
 
 import argparse
+import ast
 import contextlib
 import io
 import json
@@ -1329,6 +1330,108 @@ def r9_findings(root: Path) -> list[str]:
     return findings
 
 
+CORE_OWNED_CONFIG_REFERENCES = {
+    "config/core.json",
+    "config/entities.json",
+    "CORE_CONFIG",
+    "CORE_ENTITIES",
+}
+PYTHON_READ_METHODS = {"open", "read_bytes", "read_text"}
+
+
+def _core_owned_config_reference(node: ast.AST | None) -> str | None:
+    if node is None:
+        return None
+    for child in ast.walk(node):
+        if (
+            isinstance(child, ast.Constant)
+            and isinstance(child.value, str)
+            and child.value in CORE_OWNED_CONFIG_REFERENCES
+        ):
+            return child.value
+    return None
+
+
+def _assigned_names(node: ast.Assign | ast.AnnAssign | ast.NamedExpr) -> set[str]:
+    if isinstance(node, ast.Assign):
+        targets = node.targets
+    else:
+        targets = [node.target]
+    return {
+        target.id
+        for target in targets
+        if isinstance(target, ast.Name)
+    }
+
+
+def r11_findings(root: Path) -> list[str]:
+    """Reject production shell filesystem reads sourced from core config."""
+    findings: list[str] = []
+    shell_root = root / "shell" / "intel_shell"
+    for path in sorted(shell_root.glob("*.py")):
+        relative = path.relative_to(root)
+        try:
+            text = path.read_text()
+            tree = ast.parse(text, filename=str(relative))
+        except (OSError, SyntaxError) as error:
+            raise ConfigError(f"{relative}: cannot parse production shell: {error}") from error
+
+        tainted: dict[str, str] = {}
+        assignments = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.Assign, ast.AnnAssign, ast.NamedExpr))
+        ]
+        changed = True
+        while changed:
+            changed = False
+            for assignment in assignments:
+                value = assignment.value
+                reference = _core_owned_config_reference(value)
+                if reference is None and value is not None:
+                    reference = next(
+                        (
+                            tainted[child.id]
+                            for child in ast.walk(value)
+                            if isinstance(child, ast.Name) and child.id in tainted
+                        ),
+                        None,
+                    )
+                if reference is None:
+                    continue
+                for name in _assigned_names(assignment):
+                    if tainted.get(name) != reference:
+                        tainted[name] = reference
+                        changed = True
+
+        for call in (node for node in ast.walk(tree) if isinstance(node, ast.Call)):
+            if isinstance(call.func, ast.Name):
+                is_read = call.func.id == "open"
+            elif isinstance(call.func, ast.Attribute):
+                is_read = call.func.attr in PYTHON_READ_METHODS
+            else:
+                is_read = False
+            if not is_read:
+                continue
+
+            reference = _core_owned_config_reference(call)
+            if reference is None:
+                reference = next(
+                    (
+                        tainted[child.id]
+                        for child in ast.walk(call)
+                        if isinstance(child, ast.Name) and child.id in tainted
+                    ),
+                    None,
+                )
+            if reference is not None:
+                findings.append(
+                    f'{relative}:{call.lineno}: production shell reads core-owned '
+                    f'configuration "{reference}" directly'
+                )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -1340,6 +1443,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R8": r8_findings,
     "R9": r9_findings,
     "R10": r10_findings,
+    "R11": r11_findings,
 }
 
 
