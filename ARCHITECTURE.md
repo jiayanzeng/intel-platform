@@ -157,14 +157,15 @@ Pinned dispositions:
   feature enabled, this installs the process-scoped identity before the
   listener can accept a request.
 
-**v0.18 wire and support boundary.** The cycle changed no default-build
+**v0.18 wire / v0.19 support boundary.** v0.18 changed no default-build
 compliance verdict or robots-policy behavior. ORIGIN-CASE shipped nothing
 because the production network path normalizes authority bytes through
-`reqwest::Url` before the gate. The `diagnostics` and `robots-preview` features
-ship an inert robots-only observation client and matcher provenance; default
-builds exclude both, they currently have no support owner, and they are not a
-supported product or operator surface. Their promotion trigger is a named
-owner plus an explicit operator decision to support the feature pair.
+`reqwest::Url` before the gate. The published v0.15.2 tag contained an inert
+robots-only observation client and matcher provenance; its v0.18 observations
+remain historical evidence. On 2026-07-29 the operator selected retirement:
+the current tree contains neither feature declaration, diagnostic API,
+robots-only network helper/test, nor preview binary. The default product gate
+remains the only supported robots-policy surface.
 
 The live evidence is deliberately narrow: `arxiv-cs` is the only configured
 network source, while the other three configured sources are `example.org`

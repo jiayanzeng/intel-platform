@@ -15,12 +15,6 @@ tokio = { version = "1", features = ["time"], optional = true }
 
 [features]
 net = ["dep:reqwest", "dep:tokio"]
-robots-preview = ["net", "intel-compliance/diagnostics", "tokio/rt", "tokio/net"]
-
-[[bin]]
-name = "robots-preview"
-path = "src/bin/robots_preview.rs"
-required-features = ["robots-preview"]
 
 [dev-dependencies]
 # Async connector tests (fixture-driven, offline). Also brings the time driver

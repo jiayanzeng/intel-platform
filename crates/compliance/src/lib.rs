@@ -49,54 +49,6 @@ pub struct RobotsGate {
     crawl_delay: Option<Duration>,
 }
 
-/// Which robots group supplied the active policy.
-#[cfg(feature = "diagnostics")]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum RobotsGroupKind {
-    /// One or more longest matching product-token groups were selected.
-    Specific,
-    /// No product token matched, so one or more `*` groups were selected.
-    Fallback,
-    /// The policy contained no applicable group.
-    None,
-}
-
-/// Group-selection facts emitted by the feature-gated robots preview.
-#[cfg(feature = "diagnostics")]
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct RobotsSelectionDiagnostics {
-    /// Whether selection was specific, fallback, or absent.
-    pub kind: RobotsGroupKind,
-    /// Winning product tokens, de-duplicated in file order.
-    pub product_tokens: Vec<String>,
-}
-
-/// One policy rule that matched the requested comparison target.
-#[cfg(feature = "diagnostics")]
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct RobotsRuleDiagnostics {
-    /// `true` for `Allow`, `false` for `Disallow`.
-    pub allow: bool,
-    /// The rule bytes after robots field parsing and comment stripping.
-    pub pattern: String,
-    /// Length after the matcher's percent-encoding normalization.
-    pub normalized_specificity: usize,
-    /// Whether this rule was among the most-specific rules that decided.
-    pub winning: bool,
-}
-
-/// Decision facts emitted by the feature-gated robots preview.
-#[cfg(feature = "diagnostics")]
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct RobotsDecisionDiagnostics {
-    /// The exact verdict returned by [`RobotsGate::allowed`].
-    pub allowed: bool,
-    /// Every matching rule in selected-group/file order.
-    pub matched_rules: Vec<RobotsRuleDiagnostics>,
-    /// Whether a winning `Allow` overrode a matching `Disallow`.
-    pub allow_carved_exception: bool,
-}
-
 impl RobotsGate {
     /// Deny-list constructor (the historical shape): every entry is a
     /// `Disallow` pattern. Plain prefixes keep behaving exactly as before,
@@ -146,34 +98,10 @@ impl RobotsGate {
     /// - Unknown fields (`Sitemap`, `Host`, …) are ignored, and a body with no
     ///   applicable group is allow-all — robots is a deny-list.
     pub fn parse(text: &str, user_agent: &str) -> Self {
-        Self::parse_internal(text, user_agent).0
+        Self::parse_internal(text, user_agent)
     }
 
-    /// Parse with the same matcher while retaining selected-group provenance.
-    ///
-    /// This surface exists only for the operational robots preview. Product
-    /// builds use [`RobotsGate::parse`] and carry no diagnostic API.
-    #[cfg(feature = "diagnostics")]
-    pub fn parse_with_diagnostics(
-        text: &str,
-        user_agent: &str,
-    ) -> (Self, RobotsSelectionDiagnostics) {
-        let (gate, product_tokens, specific) = Self::parse_internal(text, user_agent);
-        let kind = match specific {
-            Some(true) => RobotsGroupKind::Specific,
-            Some(false) => RobotsGroupKind::Fallback,
-            None => RobotsGroupKind::None,
-        };
-        (
-            gate,
-            RobotsSelectionDiagnostics {
-                kind,
-                product_tokens,
-            },
-        )
-    }
-
-    fn parse_internal(text: &str, user_agent: &str) -> (Self, Vec<String>, Option<bool>) {
+    fn parse_internal(text: &str, user_agent: &str) -> Self {
         // (ua tokens, rules, crawl_delay) per group, in file order.
         let mut groups: Vec<(Vec<String>, Vec<Rule>, Option<Duration>)> = Vec::new();
         // True while we are still accumulating the UA lines of the group being
@@ -248,7 +176,6 @@ impl RobotsGate {
 
         let mut rules = Vec::new();
         let mut crawl_delay: Option<Duration> = None;
-        let mut product_tokens = Vec::new();
         for (tokens, group_rules, group_delay) in &groups {
             let applies = match best_specificity {
                 Some(best) => tokens
@@ -257,24 +184,6 @@ impl RobotsGate {
                 None => tokens.iter().any(|t| t == "*"),
             };
             if applies {
-                match best_specificity {
-                    Some(best) => {
-                        for token in tokens.iter().filter(|token| {
-                            token.as_str() != "*"
-                                && token.len() == best
-                                && ua.starts_with(token.as_str())
-                        }) {
-                            if !product_tokens.contains(token) {
-                                product_tokens.push(token.clone());
-                            }
-                        }
-                    }
-                    None => {
-                        if !product_tokens.iter().any(|token| token == "*") {
-                            product_tokens.push("*".to_string());
-                        }
-                    }
-                }
                 rules.extend(group_rules.iter().cloned());
                 if let Some(delay) = group_delay {
                     crawl_delay = Some(crawl_delay.map_or(*delay, |current| current.max(*delay)));
@@ -282,12 +191,7 @@ impl RobotsGate {
             }
         }
 
-        let specific = if product_tokens.is_empty() {
-            None
-        } else {
-            Some(best_specificity.is_some())
-        };
-        (Self { rules, crawl_delay }, product_tokens, specific)
+        Self { rules, crawl_delay }
     }
 
     /// Add a `Disallow` pattern (`*` and trailing `$` supported).
@@ -314,49 +218,18 @@ impl RobotsGate {
     /// when an `Allow` and a `Disallow` tie, `Allow` wins. No match at all means
     /// allowed — robots is a deny-list, not an allow-list.
     pub fn allowed(&self, path: &str) -> bool {
-        self.decision_internal(path).0
+        self.decision_internal(path)
     }
 
-    /// Return the exact matcher verdict with its deciding-rule provenance.
-    ///
-    /// This calls the same internal decision routine as [`RobotsGate::allowed`]
-    /// and is feature-gated to the robots preview.
-    #[cfg(feature = "diagnostics")]
-    pub fn decision_with_diagnostics(&self, path: &str) -> RobotsDecisionDiagnostics {
-        let (allowed, matched, best_specificity) = self.decision_internal(path);
-        let matched_rules = matched
-            .iter()
-            .map(|(index, specificity)| {
-                let rule = &self.rules[*index];
-                RobotsRuleDiagnostics {
-                    allow: rule.allow,
-                    pattern: rule.pattern.clone(),
-                    normalized_specificity: *specificity,
-                    winning: Some(*specificity) == best_specificity,
-                }
-            })
-            .collect::<Vec<_>>();
-        let winning_allow = matched_rules.iter().any(|rule| rule.winning && rule.allow);
-        let matching_disallow = matched_rules.iter().any(|rule| !rule.allow);
-
-        RobotsDecisionDiagnostics {
-            allowed,
-            matched_rules,
-            allow_carved_exception: winning_allow && matching_disallow,
-        }
-    }
-
-    fn decision_internal(&self, path: &str) -> (bool, Vec<(usize, usize)>, Option<usize>) {
+    fn decision_internal(&self, path: &str) -> bool {
         let normalized_path = normalize_percent_encoding(path);
         let mut best: Option<(usize, bool)> = None;
-        let mut matched = Vec::new();
-        for (index, r) in self.rules.iter().enumerate() {
+        for r in &self.rules {
             let normalized_pattern = normalize_percent_encoding(&r.pattern);
             if !path_matches(&normalized_pattern, &normalized_path) {
                 continue;
             }
             let len = normalized_pattern.len();
-            matched.push((index, len));
             best = match best {
                 None => Some((len, r.allow)),
                 Some((blen, _)) if len > blen => Some((len, r.allow)),
@@ -365,11 +238,7 @@ impl RobotsGate {
                 keep => keep,
             };
         }
-        (
-            best.map_or(true, |(_, allow)| allow),
-            matched,
-            best.map(|(specificity, _)| specificity),
-        )
+        best.map_or(true, |(_, allow)| allow)
     }
 }
 
@@ -1066,49 +935,6 @@ Sitemap: https://example.org/sitemap.xml
         assert!(
             g.allowed("/papers/report.pdf"),
             "star-group rule leaked into our group"
-        );
-    }
-
-    #[cfg(feature = "diagnostics")]
-    #[test]
-    fn diagnostics_name_the_selected_group_winning_rule_and_allow_exception() {
-        let (gate, selection) =
-            RobotsGate::parse_with_diagnostics(FIXTURE, "intel-platform/0.1 (research)");
-        assert_eq!(selection.kind, RobotsGroupKind::Specific);
-        assert_eq!(selection.product_tokens, ["intel-platform"]);
-
-        let decision = gate.decision_with_diagnostics("/data/open/corpus.xml");
-        assert!(decision.allowed);
-        assert!(decision.allow_carved_exception);
-        assert_eq!(
-            decision
-                .matched_rules
-                .iter()
-                .filter(|rule| rule.winning)
-                .map(|rule| (rule.allow, rule.pattern.as_str()))
-                .collect::<Vec<_>>(),
-            [(true, "/data/open")]
-        );
-    }
-
-    #[cfg(feature = "diagnostics")]
-    #[test]
-    fn diagnostics_name_the_star_fallback_and_a_denying_rule() {
-        let (gate, selection) = RobotsGate::parse_with_diagnostics(FIXTURE, "other-bot/2.0");
-        assert_eq!(selection.kind, RobotsGroupKind::Fallback);
-        assert_eq!(selection.product_tokens, ["*"]);
-
-        let decision = gate.decision_with_diagnostics("/papers/report.pdf");
-        assert!(!decision.allowed);
-        assert!(!decision.allow_carved_exception);
-        assert_eq!(
-            decision
-                .matched_rules
-                .iter()
-                .filter(|rule| rule.winning)
-                .map(|rule| (rule.allow, rule.pattern.as_str()))
-                .collect::<Vec<_>>(),
-            [(false, "/*.pdf$")]
         );
     }
 

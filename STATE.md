@@ -1,6 +1,38 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 NEGATIVE-CACHE is complete; PREVIEW-DISPOSITION is next.** `origin/main` is `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated tag object is `22beef8e023e52024cfe9614273e2d82b39f4956`; tag target is release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Publication CI run `30375179895` attempt 1 completed with conclusion `success` for that exact main commit. The measured implementation tree passed local CI **20/20** before its status box, with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**; the status suite reruns after the separate audit entry names the implementation commit. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 PREVIEW-DISPOSITION is complete; RE-MEASURE awaits its narrow candidate-branch authorization.** `origin/main` is `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated tag object is `22beef8e023e52024cfe9614273e2d82b39f4956`; tag target is release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Publication CI run `30375179895` attempt 1 completed with conclusion `success` for that exact main commit. The measured implementation tree passed local CI **20/20** before its status box, with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**; the status suite reruns after the separate audit entry names the implementation commit. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.19 PREVIEW-DISPOSITION is complete (measured 2026-07-29).**
+The operator selected **retire**. The current tree deletes the coupled
+`diagnostics` and `robots-preview` feature declarations, the preview binary,
+the robots-only network helper and wire test, the diagnostic API and its two
+tests, and the diagnostics-only parser/matcher provenance bookkeeping. Cargo
+metadata now exposes no feature or binary target in `intel-compliance` and only
+the supported `net` feature plus the library target in `intel-ingest`.
+`ARCHITECTURE.md` records the retirement while preserving the published
+v0.15.2 tag and v0.18 wire observations as historical evidence.
+
+Before retirement, the supplemental commands passed **42/42**
+`intel-compliance` tests with `diagnostics` and **30/30** `intel-ingest`
+library tests plus **1/1** preview-binary test with `robots-preview`. After
+retirement, both former command lines exit **101** at Cargo's entry point with
+`does not contain this feature`. The surviving all-features suites reconcile
+to **40/40** compliance tests and **29/29** ingest tests, with no binary suite.
+The default workspace remains **133** tests and the net matrix remains
+**29 + 26 = 55**; the public `/v1/*` surface, SQLite schema, dependencies,
+`Cargo.lock`, protected artifacts, and default robots decisions are unchanged.
+
+The final pre-status `./run ci-local` passes **20/20**: warning-denied current
+and Rust 1.78 offline checks/tests, **133** workspace tests, warning-denied net
+checks plus **29 + 26** net tests, clippy, fmt, ShellCheck, Python 3.11 shell
+**248/248**, invariant **11/11 rules / 23 controls**, all **161/161** pins,
+protected databases **2/2**, and golden **11/11**. The independent constrained
+Python 3.12.13 lane passes **248/248**. An earlier pre-final CI attempt correctly
+found that the credential scanner still saw the deleted but unstaged binary in
+`git ls-files`; staging the deletion exposed the intended post-task tree, after
+which the scanner and all **23** mutation controls passed. A sandboxed golden
+and Python 3.12 attempt were loopback/process-permission non-results; their
+identical permitted invocations produced the passing results above.
 
 **v0.19 NEGATIVE-CACHE is complete (measured 2026-07-29).**
 RFC 9309 §2.3.1.4 requires complete disallow while `robots.txt` is unreachable;
