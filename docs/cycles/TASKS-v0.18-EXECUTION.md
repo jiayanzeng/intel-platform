@@ -308,8 +308,15 @@ protected corpus · golden 11/11 byte-identical · full matrix green.
 
 **Objective.** Produce release-grade hosted evidence for the v0.18 candidate.
 
-**Gate.** 🧑 **One narrow authorization: a non-`main` branch push.** No tag, no
-`main` advance, no publication.
+**Gate.** 🧑 **One narrow authorization: a non-`main` branch push.** Remote
+mutation is limited to the exact candidate branch and its authenticated hosted
+evidence dispatch. Repository admission is limited to that run's seven signed
+receipt/bundle pairs, the release-posture deferred-audit report,
+`config/protected-artifacts.json`, and `STATE.md` / active-cycle status
+records. Clean detached subject worktrees and temporary download directories
+are transient. No tag, `main` advance, publication, product path, public
+surface, dependency, lockfile, schema, protected database, or harvested
+observation changes.
 
 **Steps.**
 
@@ -387,6 +394,11 @@ then include the required `run` authorization-pin update once the executing
 fail-before exposed that pinned-file coupling; contain only F1's harness entry
 point, offline regression, pin validation, and status records — 2026-07-28
 
+Step 6 — Widen RE-MEASURE after the hosted measurement and before its first
+evidence-admission commit to contain every signed-evidence, release-audit,
+manifest, and status surface required by its acceptance criteria while keeping
+the remote and product prohibitions explicit — 2026-07-28
+
 ---
 
 ## Cycle checklist
@@ -405,7 +417,7 @@ point, offline regression, pin validation, and status records — 2026-07-28
   redirect, and XML observations recorded
 - [x] **WIRE-FINDINGS** — every finding fixed with a regression or deferred with a
   trigger; or an explicit empty close
-- [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
+- [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; branch named after the decided version
 - [ ] **R-CLOSE** — version cites its trigger; v0.15.1 incident scope recorded;
   live-harvest first recorded with the policy hash; all open items open
@@ -447,3 +459,31 @@ point, offline regression, pin validation, and status records — 2026-07-28
 - Do not commit `.env`, provider keys, tokens, or private key material.
 - Do not batch `STATE.md` / `PROGRESS-v0.18.md` updates or combine two tasks in
   one commit.
+
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-28
+- **Release disposition:** pending the one Step 7 operator publication decision.
+- **Release version:** v0.15.2. No observable `/v1/*` route or response body
+  moved, so the runbook's default patch trigger applies.
+- **Evidence candidate:** `2ce912dca181e5e7b949a4b2e6fd8487412388f9`
+  on `candidate/v0.15.2`.
+- **Hosted evidence:** workflow-dispatch run `30369139464` attempt 1; all
+  **7/7** derived identities authenticated, zero rejected receipts, across
+  **6** blocking jobs. Hosted logs measured **131** workspace tests, **55**
+  net tests (**29 + 26**), shell **244 passed / 1 declared on-site-only
+  skipped** on each interpreter, `invariant-scan` **11/11 rules / 23
+  controls**, R10's **45** derived exemptions, and golden **11/11**. Each
+  hosted shell collected **245** tests, equal to the local candidate's
+  **245 passed**.
+- **Release-grade audit:** **5** deferred / **2** promoted / **0** deferred
+  subsystems implemented; report SHA-256
+  `78901f2d181672f2a0ec073c18ec5bb02c68762de0fc7362b49f903ed6509448`,
+  **34,520** bytes at `evidence/v0.15.2/deferred-audit/report.json`.
+- **Evidence pins:** **161/161** total — **159/159** evidence plus **2/2**
+  authorization surfaces; protected databases exact **2/2**.
+- **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
+- **Remote disposition:** `origin/main` remains
+  `f13c6129d608ab9259f421dce6ed419ce469c225`; candidate branch
+  `candidate/v0.15.2` is exact at the evidence candidate; no `v0.15.2` tag
+  exists.

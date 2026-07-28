@@ -1,6 +1,53 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; WIRE-FINDINGS fixed the one live-harvest harness-lifecycle finding and RE-MEASURE is next.** Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; v0.15.2 candidate RE-MEASURE is complete and the operator publication decision gates R-CLOSE.** Exact-candidate local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. Candidate branch `candidate/v0.15.2` is exact at `2ce912dca181e5e7b949a4b2e6fd8487412388f9`; no `v0.15.2` tag exists. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.18 RE-MEASURE is complete at the v0.15.2 candidate (measured
+2026-07-28).** The runbook's default patch trigger fired because no `/v1/*`
+route or response body moved. The clean evidence candidate is
+`2ce912dca181e5e7b949a4b2e6fd8487412388f9` on
+`candidate/v0.15.2`; release publication and the final release commit remain
+the Step 7 operator decision. Before dispatch, the remote workflow was read
+from that branch and contained every expected core, lint, net, MSRV, two-shell,
+golden, receipt, bundle, and upload invocation. Its remote Git blob
+`96e85af978981b7af9bdd8e9e11069f158f35e57` equals the local workflow blob.
+
+Exact-candidate local execution passed **20/20** with **131** workspace tests,
+**55** net tests (**29** ingest + **26** cored), shell **245/245** under both
+Python 3.11.4 and 3.12.13, locked Rust 1.78, zero
+rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+controls**, and golden **11/11**. Authenticated hosted workflow-dispatch
+[run 30369139464 attempt 1](https://github.com/jiayanzeng/intel-platform/actions/runs/30369139464)
+completed successfully at the same candidate. Its logs, read independently of
+job status, report **131** workspace tests, **55** net tests (**29 + 26**),
+both shell lanes collecting **245** tests as **244 passed + 1 declared
+on-site-only skip**, `invariant-scan` **11/11 rules / 23 controls**, R10's
+derived **45** exemptions, and golden **11/11**. Thus each hosted count equals
+the local same-commit count, with shell equality measured as collected tests.
+
+All **7/7** derived job identities across the **6** blocking jobs have
+successful Linux receipts and persisted Sigstore bundles; zero receipts were
+rejected. Release-posture `audit-deferred` authenticated every bundle against
+repository `jiayanzeng/intel-platform`, the CI workflow signer, source digest
+`2ce912dca181e5e7b949a4b2e6fd8487412388f9`, and source ref
+`refs/heads/candidate/v0.15.2`. It reports **5 deferred / 2 promoted / 0
+deferred subsystems implemented**. The largest evidenced archive remains
+**2,600** documents; exact cosine p95 measured **9.613 ms**, below the recorded
+**16.264 ms** A3 request anchor.
+
+The admitted audit report is
+`evidence/v0.15.2/deferred-audit/report.json`, SHA-256
+`78901f2d181672f2a0ec073c18ec5bb02c68762de0fc7362b49f903ed6509448`,
+**34,520** bytes. Its seven receipts, seven bundles, and one report add
+**15** records, bringing the protected manifest to **161/161** pins:
+**159/159** evidence plus **2/2** authorization surfaces. Remote reinspection
+found `origin/main` unchanged at
+`f13c6129d608ab9259f421dce6ed419ce469c225`, the candidate branch exact, and
+no `v0.15.2` tag. No publication, product path, public surface, dependency,
+lockfile, schema, protected database, harvested observation, or golden-corpus
+change occurred. The first post-admission golden invocation was a non-result
+because the sandbox denied the core's loopback bind; the identical permitted
+invocation passed **11/11**, delta **0**.
 
 **v0.18 WIRE-FINDINGS is complete with F1 fixed (measured 2026-07-28).**
 The one Step 4 finding has exactly one disposition: **fixed with an offline
