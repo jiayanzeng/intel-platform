@@ -4,6 +4,63 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.14.0 — 2026-07-28
+
+### Added
+
+- R8 proves that production crawler-identity construction precedes the sole
+  listener bind, with three site-specific reconstructed failures.
+- R9 proves that the `test-support` fault-injection feature is reachable only
+  through a dev-dependency edge, with a reconstructed production-edge failure.
+- Active runbooks must assign every non-`none` deferred action to an existing
+  step and must include RE-MEASURE when the release commit changes.
+
+### Changed
+
+- Every invariant control now asserts the file and line of its planted
+  failure. R1 is an allow-list over the five production canonical-identity
+  callers; R3 and R4 remain explicitly bounded open-bottom deny-lists rather
+  than claiming universal absence.
+- The focused invariant pytest parameterization derives its rule ids from the
+  registry and rejects incomplete rule coverage, so registering a later rule
+  cannot silently leave its controls unexecuted.
+- The existing `/view` diagnostic delay remains bounded to 10,000 ms, is
+  documented as benchmark-only, and now emits a startup warning naming both
+  raw settings and the effective delay whenever either setting is present.
+
+### Fixed
+
+- Site-ambiguous invariant controls can no longer pass after firing at the
+  wrong source location.
+- The runbook template no longer permits an active deferred action with no
+  named step responsible for discharging it.
+- The v0.14 review claim that no hosted job emitted invariant self-test output
+  was disproved: no-argument execution enters self-test, and retained v0.13
+  hosted output ends
+  `invariant-scan: SELF-TEST PASS (7/7 rules, 11 controls)`. No fourth
+  retraction exists; the valid retraction count remains three.
+
+### Evidence and disposition
+
+- DIAGNOSTIC-KNOB option (b) added a startup warning and code change, firing
+  the `v0.14.0` trigger; this choice is not an R-CLOSE default.
+- Authenticated run 30324186389 against evidence candidate
+  `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` passed all seven identities:
+  workspace **125**, net **48** (**23** `intel-ingest` + **25** `cored`),
+  invariant scan **9/9 rules / 15 controls**, and golden **11/11**. Each hosted
+  shell leg reported **224 passed / 1 skipped** because the on-site production
+  measurement test intentionally skips without protected corpora and a built
+  `cored`; local lanes passed **225/225**.
+- The release-grade audit accepted seven authenticated receipts with zero
+  rejection and measured **5 deferred / 2 promoted**. The protected manifest
+  contains **101 exact pins**: **99 evidence** plus **2 authorization
+  surfaces**.
+- Publication is not authorized. The named publication trigger is a separate
+  operator authorization to advance `origin/main` and create the annotated
+  `v0.14.0` tag; it has not fired.
+- Public `/v1/*` bodies, the SQLite schema, and golden behavior are unchanged.
+  A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
 ## v0.13.0 — 2026-07-27
 
 ### Added

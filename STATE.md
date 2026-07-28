@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published; v0.14 RE-MEASURE is complete against evidence candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. Remote branch `candidate/v0.14.0` resolves to that exact commit, authenticated workflow-dispatch run `30324186389` succeeded, and the release-grade audit accepted seven identities with zero rejection. Reconciled `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`; no `v0.14.0` tag exists and no publication occurred.** Annotated `v0.13.0` tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` still dereferences exactly to published release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **225/225** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Hosted shell totals are **224 passed / 1 skipped** on each interpreter. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence files plus **2/2** authorization surfaces. All five release authorities remain at 0.13.0 pending R-CLOSE. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is the locally selected release identity because DIAGNOSTIC-KNOB option (b) added a startup warning and code change. R-CLOSE release reconciliation is in progress; publication is not authorized.** Evidence candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` remains on `candidate/v0.14.0`, and authenticated workflow-dispatch run `30324186389` accepted seven identities with zero rejection. `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`; no `v0.14.0` tag exists. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell is **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -385,6 +385,107 @@ The first standalone golden attempt was a sandbox non-result because loopback
 bind was denied; the identical permitted command passed **11/11**.
 A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 R-CLOSE and publication remain pending a separate operator decision.
+
+**v0.14 R-CLOSE release reconciliation is in progress (measured
+2026-07-28).** The version choice is **v0.14.0** because DIAGNOSTIC-KNOB
+option (b) added a startup warning and production code change. That Step 6
+trigger fired before R-CLOSE; this is not a default inherited at closure.
+
+Evidence and release subjects remain deliberately separate. The authenticated
+evidence candidate is
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the later local release commit
+contains the admitted receipts, report, release authorities, classified diff,
+and closing reconciliation and will be named by its exact hash in the
+append-only closing audit after that commit exists.
+
+A proposed fourth retraction was investigated and disproved. Retained v0.13
+run **30277584129** has no invariant step in lint, but its Python 3.11 shell log
+ends verbatim
+`invariant-scan: SELF-TEST PASS (7/7 rules, 11 controls)`. The no-argument
+default at `tools/invariant_scan.py:1039` calls `self_test` when neither
+`--rules` nor `--rule` is supplied. The v0.13 acceptance criterion was
+therefore true when checked, and `config/checklist-retractions.json` correctly
+remains at **three**. This is a disproved review finding, not a v0.13 or
+codebase defect.
+
+The hosted/local shell difference is also reconciled rather than treated as
+drift. Both hosted legs report **224 passed / 1 skipped** because
+`test_on_site_production_measurements_match_committed_receipt` intentionally
+skips when protected corpora and a built `cored` are absent. Those inputs are
+present on-site, where both local interpreter lanes pass **225/225**. The
+registry-derived control-coverage tests execute in both environments.
+
+The complete `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9..v0.14.0-local-release`
+diff contains **37 paths**, each classified exactly once:
+
+- **release authorities and public release documentation (6):** `README.md`,
+  `CHANGELOG.md`, `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`;
+- **architecture authority (1):** `ARCHITECTURE.md`;
+- **diagnostic runtime, configuration, and benchmark control (5):**
+  `.env.example`, `apps/cored/src/main.rs`, `deploy/README.md`,
+  `shell/tests/test_benchmark_view.py`, and `tools/benchmark_view.py`;
+- **operating contract and runbook-lifecycle assurance (3):** `AGENTS.md`,
+  `shell/tests/test_cycle_check.py`, and `tools/cycle_check.py`;
+- **invariant registry, implementation, and focused tests (3):**
+  `config/invariant-rules.json`, `shell/tests/test_invariant_scan.py`, and
+  `tools/invariant_scan.py`;
+- **protected manifest and durable hosted evidence (16):**
+  `config/protected-artifacts.json`, all fourteen receipt/bundle files under
+  `evidence/ci-runs/30324186389-1/`, and
+  `evidence/v0.14.0/deferred-audit/report.json`;
+- **state, progress, and active runbook records (3):** `STATE.md`,
+  `PROGRESS-v0.14.md`, and `TASKS-v0.14-EXECUTION.md`.
+
+`ARCHITECTURE.md` matches enforced reality. Its invariant map keeps A4 open
+because a rewritten shell can bypass or falsify `/attest`; it keeps the
+editable-L1 controller residual open because only the scheduled server-side L2
+wrapper can constrain an edited client. Its repository-absence discussion
+states that R3 and R4 are open-bottom deny-lists whose unknown vocabulary and
+encoding forms remain outside scanner coverage. R8's identity-before-bind
+ordering and the bounded, warning-emitting diagnostic delay are also recorded.
+No public `/v1/*` body, SQLite schema, dependency resolution, or golden
+invariant changed.
+
+The Rust package, Python package, FastAPI literal, this header, and newest
+changelog heading now read **0.14.0**. Cargo mechanically changed only the
+local `cored` package version in `Cargo.lock` from 0.13.0 to 0.14.0; no
+dependency resolution moved. README names the evidence candidate separately
+from the later release commit and states that no v0.14.0 tag exists.
+
+The release-facing content passed the complete pre-commit definition of done.
+`./run ci-local` passed **20/20** with **125** workspace tests, **48** net
+tests (**23 + 25**), warning-denied offline and net builds, clippy, fmt,
+ShellCheck, locked Rust 1.78 checks/tests, **225/225** Python 3.11 shell tests,
+all **101/101** pins, protected databases **2/2**, persisted fingerprints, and
+golden **11/11**. The independent Python 3.12.13 lane passed **225/225** with
+**21/21** exact packages, and mandatory standalone golden repeated
+**11/11**. `version-check` passed all five 0.14.0 authorities and correctly
+warned that the nearest ancestor tag remains 0.13.0. Exact-tag confirmation is
+not yet executable because creating `v0.14.0` is explicitly unauthorized.
+
+Publication is withheld by a named trigger: a separate operator authorization
+must explicitly permit advancing `origin/main` and creating the annotated
+`v0.14.0` tag. That trigger has not fired. R-CLOSE creates no remote-main
+advance, tag, publication, or live server session.
+
+**v0.15 candidate inputs carried forward from v0.14 review (recorded
+2026-07-28; not acted on in this cycle):**
+
+1. **Derive scope rather than assert it.** The formerly unexecuted cored net
+   tests, hardcoded invariant-rule range, and deferral actions naming no step
+   are one defect at three layers. The individual rules are guarded; the
+   hand-maintained machinery selecting which tests and rules run remains a
+   candidate for simplification.
+2. **Check structural acceptance relations.** An acceptance criterion that
+   cites a step's measured quantity rather than an invariant relation is the
+   sibling of Step 7's unassigned-deferral gap and may be registerable.
+3. **Reviewer-verification discipline.** A claim about what a command does is
+   verified at its entry point, not inferred from its caller. The reviewer
+   first made the mirrored error of reading the tool without its wrapper, then
+   read the wrapper without `main()`. An earlier probe also passed `--rules`,
+   the flag that suppresses default self-test, and misread the absent output.
+   This belongs as a candidate `AGENTS.md` evidence rule, not a v0.14 change.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked

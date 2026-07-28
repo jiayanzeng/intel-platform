@@ -6,4 +6,4 @@ requires touching (or recompiling) the Rust core, whose whole contract is
 the ten JSON endpoints wrapped by `core_client.CoreClient`.
 """
 
-__version__ = "0.13.0"
+__version__ = "0.14.0"

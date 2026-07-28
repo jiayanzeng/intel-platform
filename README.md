@@ -1,4 +1,4 @@
-# intel-platform (v0.13.0 — core-shell)
+# intel-platform (v0.14.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,11 +7,12 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.13.0` is authorized for publication. Its release-grade hosted evidence is
-workflow-dispatch run `30277584129` against exact evidence candidate
-`7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; the committed release record
-separately identifies that candidate, the later release commit, and its
-annotated tag object.
+`v0.14.0` is the selected release identity; publication is withheld pending a
+separate operator authorization. Its release-grade hosted evidence is
+workflow-dispatch run `30324186389` against exact evidence candidate
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. The cycle closing record
+separately identifies that evidence candidate and the later local release
+commit. No `v0.14.0` tag exists.
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:
