@@ -103,29 +103,73 @@ pub trait Source: Send + Sync {
     async fn fetch(&self, ctx: &SourceContext) -> Result<Vec<Document>, IngestError>;
 }
 
-/// Extracts the path (plus query) of a URL for the robots check. robots.txt
-/// patterns are matched against exactly this, query string included.
-pub(crate) fn robots_path_of(url: &str) -> String {
-    url.split('/')
-        .nth(3)
-        .map(|rest| format!("/{rest}"))
-        .unwrap_or_else(|| "/".into())
+/// Splits an absolute URL without normalizing its encoded bytes.
+///
+/// The returned tail starts with `/`, `?`, `#`, or is empty. Keeping the tail
+/// verbatim matters because the robots matcher, not URL derivation, owns any
+/// percent-encoding comparison.
+fn absolute_url_parts(url: &str) -> Option<(&str, &str, &str)> {
+    let (scheme, remainder) = url.split_once("://")?;
+    if scheme.is_empty() || remainder.is_empty() {
+        return None;
+    }
+    let authority_end = remainder
+        .char_indices()
+        .find_map(|(index, ch)| matches!(ch, '/' | '?' | '#').then_some(index))
+        .unwrap_or(remainder.len());
+    let authority = &remainder[..authority_end];
+    if authority.is_empty() {
+        return None;
+    }
+    Some((scheme, authority, &remainder[authority_end..]))
 }
 
-/// Extracts the host of a URL, so politeness can be tracked per publisher.
+fn host_from_authority(authority: &str) -> Option<&str> {
+    let host = authority
+        .rsplit_once('@')
+        .map_or(authority, |(_, host)| host);
+    (!host.is_empty()).then_some(host)
+}
+
+/// Derives the robots comparison target from an absolute URL: path plus query,
+/// with the fragment excluded. An absent path becomes `/`; a query on an
+/// absent path is prefixed with `/`. Percent-encoding and repeated slashes are
+/// preserved for the robots matcher.
+pub(crate) fn robots_path_of(url: &str) -> String {
+    let Some((_, _, tail)) = absolute_url_parts(url) else {
+        return "/".to_string();
+    };
+    let comparison_target = tail.split_once('#').map_or(tail, |(before, _)| before);
+    if comparison_target.starts_with('/') {
+        comparison_target.to_string()
+    } else if comparison_target.starts_with('?') {
+        format!("/{comparison_target}")
+    } else {
+        "/".to_string()
+    }
+}
+
+/// Extracts the authority's host (including an explicit port but excluding
+/// userinfo), so politeness can be tracked per publisher.
 pub(crate) fn host_of(url: &str) -> String {
-    url.split('/')
-        .nth(2)
-        .map(|h| h.split('@').next_back().unwrap_or(h).to_string())
-        .unwrap_or_else(|| "unknown".into())
+    absolute_url_parts(url)
+        .and_then(|(_, authority, _)| host_from_authority(authority))
+        .unwrap_or("unknown")
+        .to_string()
 }
 
 /// Extracts the origin (`scheme://host[:port]`) — the unit a `robots.txt`
 /// governs. Per RFC 9309 the policy is per-origin, not per-host: `https://x`
 /// and `http://x` are, strictly, allowed to publish different rules.
 pub(crate) fn origin_of(url: &str) -> String {
-    let scheme = url.split("://").next().unwrap_or("https");
-    format!("{}://{}", scheme, host_of(url))
+    let Some((scheme, authority, _)) = absolute_url_parts(url) else {
+        return "https://unknown".to_string();
+    };
+    format!(
+        "{}://{}",
+        scheme,
+        host_from_authority(authority).unwrap_or("unknown")
+    )
 }
 
 /// Where the bytes for the fetch about to happen will actually come from.
@@ -268,6 +312,131 @@ mod gate_tests {
             origin_of("http://example.org:8080/a/b"),
             "http://example.org:8080"
         );
+    }
+
+    #[test]
+    fn url_derivation_matches_the_e0_case_table() {
+        let cases = [
+            (
+                "https://example.org/private/secret/file",
+                "/private/secret/file",
+                "example.org",
+            ),
+            (
+                "https://example.org/private/secret?x=1",
+                "/private/secret?x=1",
+                "example.org",
+            ),
+            (
+                "https://example.org/private#fragment",
+                "/private",
+                "example.org",
+            ),
+            (
+                "https://example.org/private/secret?x=1#fragment",
+                "/private/secret?x=1",
+                "example.org",
+            ),
+            ("https://example.org", "/", "example.org"),
+            ("https://example.org/", "/", "example.org"),
+            (
+                "https://example.org:8443/private",
+                "/private",
+                "example.org:8443",
+            ),
+            (
+                "https://user:pass@example.org/private",
+                "/private",
+                "example.org",
+            ),
+            (
+                "https://example.org/private/%73ecret",
+                "/private/%73ecret",
+                "example.org",
+            ),
+            (
+                "https://example.org/private//secret",
+                "/private//secret",
+                "example.org",
+            ),
+            ("https://example.org?x=1", "/?x=1", "example.org"),
+        ];
+
+        for (url, expected_path, expected_host) in cases {
+            assert_eq!(robots_path_of(url), expected_path, "path for {url}");
+            assert_eq!(host_of(url), expected_host, "host for {url}");
+        }
+    }
+
+    #[tokio::test]
+    async fn publisher_multi_segment_rule_blocks_a_descendant_path() {
+        let f = CountingFetcher::new(RobotsFetch::Body(
+            "User-agent: *\nDisallow: /private/secret\n".into(),
+        ));
+        let ctx = ctx_with(f, &[]);
+
+        let err = gate(
+            &ctx,
+            "https://example.org/private/secret/file",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("the publisher's multi-segment rule must block");
+        assert!(matches!(err, IngestError::RobotsDisallowed(_)));
+    }
+
+    #[tokio::test]
+    async fn publisher_multi_segment_rule_does_not_block_a_sibling_path() {
+        let f = CountingFetcher::new(RobotsFetch::Body(
+            "User-agent: *\nDisallow: /private/secret\n".into(),
+        ));
+        let ctx = ctx_with(f, &[]);
+
+        gate(
+            &ctx,
+            "https://example.org/private/public",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect("a sibling path is outside the publisher's rule");
+    }
+
+    #[tokio::test]
+    async fn publisher_rule_can_match_a_path_query_pair() {
+        let f = CountingFetcher::new(RobotsFetch::Body(
+            "User-agent: *\nDisallow: /private/secret?token=blocked$\n".into(),
+        ));
+        let ctx = ctx_with(f, &[]);
+
+        let err = gate(
+            &ctx,
+            "https://example.org/private/secret?token=blocked",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("the query is part of the robots comparison target");
+        assert!(matches!(err, IngestError::RobotsDisallowed(_)));
+    }
+
+    #[tokio::test]
+    async fn url_fragment_is_excluded_from_the_publisher_rule_target() {
+        let f = CountingFetcher::new(RobotsFetch::Body(
+            "User-agent: *\nDisallow: /private$\n".into(),
+        ));
+        let ctx = ctx_with(f, &[]);
+
+        let err = gate(
+            &ctx,
+            "https://example.org/private#operator-view",
+            Reach::Network,
+            MissingPolicy::Deny,
+        )
+        .await
+        .expect_err("a fragment must not alter the robots comparison target");
+        assert!(matches!(err, IngestError::RobotsDisallowed(_)));
     }
 
     #[tokio::test]

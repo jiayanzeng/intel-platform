@@ -263,10 +263,11 @@ changed · `cargo test -p intel-ingest --features net --locked` green · full
 **Objective.** Make the robots comparison operate on the URL the publisher's
 policy is written against.
 
-**Gate.** `crates/ingest/src/lib.rs` and its tests; `crates/ingest/Cargo.toml`
-only if Step 1 concluded a dependency is the right answer. **This is a
-compliance-surface change: it is expected to refuse URLs that were previously
-fetched. That is the fix, not a regression.**
+**Gate.** `crates/ingest/src/lib.rs` and its tests;
+`crates/ingest/src/net.rs` test support only for the redirect acceptance
+criterion; `crates/ingest/Cargo.toml` only if Step 1 concluded a dependency is
+the right answer. **This is a compliance-surface change: it is expected to
+refuse URLs that were previously fetched. That is the fix, not a regression.**
 
 **Steps.**
 
@@ -451,7 +452,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
   settled; published-record question answered; F5 MSRV cost measured
 - [x] **NET-DOUBLE** — failing test green at the measured repetition count; the
   byte-identical assertion still able to fail; no product path changed
-- [ ] **ROBOTS-PATH** — every case-table row tested; multi-segment rules block
+- [x] **ROBOTS-PATH** — every case-table row tested; multi-segment rules block
   fail-before/pass-after; fragment excluded, query included; redirects gated;
   `host_of` fixed or deferred with a reason; comment matches code; golden
   byte-identical
@@ -500,3 +501,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 - Do not commit `.env`, provider keys, tokens, or private key material.
 - Do not batch `STATE.md` / `PROGRESS-v0.17.md` updates or combine two tasks in
   one commit.
+
+## Runbook amendments
+
+Step 3 — Widen the gate before the first Step 3 commit to contain the required cross-origin redirect test support — 2026-07-28

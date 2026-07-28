@@ -535,7 +535,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn cross_origin_redirect_reads_and_honors_new_robots_before_fetching() {
+    async fn cross_origin_redirect_into_multi_segment_denial_stops_before_fetching() {
         let robots = PolicyRobotsFetcher::new([
             (
                 "https://first.test/robots.txt",
@@ -543,17 +543,17 @@ mod tests {
             ),
             (
                 "https://second.test/robots.txt",
-                RobotsFetch::Body("User-agent: *\nDisallow: /blocked\n".to_string()),
+                RobotsFetch::Body("User-agent: *\nDisallow: /private/secret\n".to_string()),
             ),
         ]);
         let ctx = context(robots.clone());
         let pages = FakePageFetcher::new([
             (
                 "https://first.test/start",
-                redirect("https://second.test/blocked"),
+                redirect("https://second.test/private/secret"),
             ),
             (
-                "https://second.test/blocked",
+                "https://second.test/private/secret",
                 ok("this body must never be requested"),
             ),
         ]);
@@ -570,7 +570,7 @@ mod tests {
         assert!(matches!(
             error,
             IngestError::RobotsDisallowed(url)
-                if url == "https://second.test/blocked"
+                if url == "https://second.test/private/secret"
         ));
         assert_eq!(
             robots.calls(),

@@ -1,6 +1,57 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 NET-DOUBLE is complete after E0.** From `CARGO_TARGET_DIR=/private/tmp/intel-v017-e0-ci-target`, `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **126** workspace tests, **50** net tests (**24** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **243/243** on clean Python 3.11.4 and 3.12.13 environments with **21/21** exact packages, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. The isolated User-Agent wire test moved from **0/20** to **20/20** while a deliberate mismatched byte string still fires its assertion. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, pins, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 ROBOTS-PATH is complete after NET-DOUBLE and E0.** `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **243/243** on Python 3.11.4, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. The corrected robots target is the complete path plus query with its fragment excluded; every E0 case-table row and the first-hop/cross-origin multi-segment denial paths execute as tests. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, pins, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 ROBOTS-PATH is complete (measured 2026-07-28).** Before
+implementation, Step 3's Gate was widened to include test support in
+`crates/ingest/src/net.rs`, because its cross-origin redirect acceptance
+criterion cannot be exercised solely from `lib.rs`. The dated amendment is in
+the active runbook. E0's dependency gate rejected `url`, so the correction is a
+zero-new-dependency in-crate derivation; `Cargo.toml` and `Cargo.lock` are
+unchanged.
+
+The fail-before `cargo test -p intel-ingest --features net --locked --lib`
+recorded the defect directly: the case table returned `/private` instead of
+`/private/secret/file`; publisher multi-segment and query rules allowed their
+targets; a fragment changed the comparison target; and a cross-origin redirect
+fetched the second document after deriving `/private` instead of refusing
+`/private/secret`. The sibling-path allow control passed. The same invocation
+also encountered the sandbox's unrelated loopback-bind refusal in the raw
+User-Agent fixture; the complete unsandboxed net lane later passed **29/29**.
+
+The corrected, executing table is:
+
+| case | URL distinction | `robots_path_of` | `host_of` |
+|---|---|---|---|
+| multi-segment | `/private/secret/file` | `/private/secret/file` | `example.org` |
+| query | `/private/secret?x=1` | `/private/secret?x=1` | `example.org` |
+| fragment | `/private#fragment` | `/private` | `example.org` |
+| query + fragment | `/private/secret?x=1#fragment` | `/private/secret?x=1` | `example.org` |
+| no path | `https://example.org` | `/` | `example.org` |
+| trailing slash | `https://example.org/` | `/` | `example.org` |
+| explicit port | `example.org:8443/private` | `/private` | `example.org:8443` |
+| userinfo | `user:pass@example.org/private` | `/private` | `example.org` |
+| percent encoding | `/private/%73ecret` | `/private/%73ecret` | `example.org` |
+| doubled slash | `/private//secret` | `/private//secret` | `example.org` |
+| query without path | `https://example.org?x=1` | `/?x=1` | `example.org` |
+
+The parser separates scheme, authority, and the untouched tail; it preserves
+percent-encoding and repeated slashes, prefixes a no-path query with `/`, strips
+userinfo only from the host, preserves an explicit port, and excludes the
+fragment from the robots comparison. The doc comments state these exact
+semantics. Publisher-policy tests now cover a blocked multi-segment descendant,
+an allowed sibling, a query-specific denial, and fragment exclusion. The
+redirect test observes policies for the first and second origins and proves the
+multi-segment second target is refused before its document fetch.
+
+Pass-after measurements are **15/15** ingest gate tests, **1/1** focused
+cross-origin redirect control, **29/29** complete `intel-ingest` net tests,
+locked Rust 1.78 workspace check and test, full local CI **20/20**, and
+standalone golden **11/11**. No `invariant-scan` rule was added: these behaviors
+execute directly at the gate and redirect sites, so a static restatement would
+not add coverage. Step 3 acceptance lifts v0.17's temporary pre-correction live
+harvest suspension; no live harvest was run. T7 remains deferred because this
+change does not coordinate concurrent robots-cache misses.
 
 **v0.17 NET-DOUBLE is complete (measured 2026-07-28).** The task Gate
 contained every acceptance criterion and the diff changes only test support
