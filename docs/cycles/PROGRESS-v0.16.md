@@ -142,3 +142,57 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; post-task `./run golden` remained **11/11**.
 - protected artifact delta: **0**; no pin, protected byte, product source,
   schema, release tag, release commit, or public response changed.
+
+### 2026-07-28 · JOB-PROPAGATION — failing jobs cannot pass
+
+- owner: Codex
+- commit: a251415
+- result: PASS. `ci-local` now runs each target in a separate
+  `bash -euo pipefail` process, preserves the per-job summary, and returns at
+  the first failed job. The executable job table remains **20** entries and is
+  the common source for runtime iteration, R10, the derived help count, and the
+  failure controls.
+- gate acceptance: PASS after a disclosed pre-implementation widening.
+  Changing the authorization-pinned `run` required only its forward
+  `config/protected-artifacts.json` pin to remain in scope. The pin moved from
+  `30475367926eff8b990b70dac6d17339c4e6ec0e685aa4b01f8d01a2c328b304`
+  at 41,104 bytes to
+  `f62a5d4f0b8f07d48c194e2d8e3959b5bfe82a3e61a45413452a284ab4dd348d`
+  at **41,862 bytes**. Every historical manifest remains unchanged.
+- mechanism acceptance: PASS on GNU Bash **3.2.57**. The operator-shell rerun
+  reproduced all eight table rows: the six conditional/in-process forms
+  masked the internal failure, while only a plain wrapper called plainly and
+  the selected separate Bash process exited 1. The selected process boundary
+  survives the retained `|| return` caller context and does not share or
+  replace `cmd_golden`'s `EXIT` trap.
+- derived-control acceptance: PASS. One test parses the production job table
+  and loops over all **20** targets. Inserting `false` as the first body command
+  made every target report `FAIL` and exit non-zero; a matrix-level control
+  also proved the second job is not entered after the first fails. A newly
+  appended table job is therefore covered without a test-list edit.
+- F1b/help acceptance: PASS. `verify_fingerprint_fixture` captures validation
+  status before cleanup; its forced failure returned non-zero while still
+  removing the fixture directory. Help prints the derived **20-job** count,
+  and its stopping claim is now exercised and true.
+- R10 acceptance: PASS. Its coupled control now mutates
+  `net test (-D warnings)|ci_net_test` in the job table and fires at `run:352`.
+  HEAD measures **20** local jobs / **24** local checks against **6** blocking
+  hosted jobs / **23** hosted checks, with the entering **45** exemptions.
+  `invariant-scan` remains **10/10 rules / 18/18 controls**.
+- runner-path acceptance: PASS. All cored launchers now resolve their debug
+  binary from `CARGO_TARGET_DIR`. A permitted custom-target golden launched
+  `/private/tmp/intel-v016-step3-golden-target/debug/cored` and passed
+  **11/11**; its preceding restricted attempt was an environment non-result
+  because loopback bind was denied.
+- matrix acceptance: PASS. Permitted
+  `CARGO_TARGET_DIR=/private/tmp/intel-v016-step3-ci-target ./run ci-local`
+  passed **20/20** with **125** workspace tests, **48** net tests (**23**
+  ingest + **25** cored), Python 3.11.4 shell **241/241**, warning-denied
+  builds, clippy/fmt/ShellCheck, locked Rust 1.78, and golden **11/11**.
+  Python 3.12.13 independently passed **241/241** with **21/21** packages.
+  The shell delta **239 → 241** is exactly the two named propagation and
+  fingerprint-cleanup tests.
+- protected/source acceptance: PASS. All **116/116** pins and **2/2**
+  protected databases match. No `apps/`, `crates/`, workflow, public response,
+  schema, dependency, lockfile, corpus, release tag, or release commit changed.
+- golden-E2E delta: **0**; final post-task result remained **11/11**.
