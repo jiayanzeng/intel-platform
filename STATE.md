@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **The v0.14 cycle is locally closed at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`. Its dated `no-release` closing disposition was accurate when written; the operator has now authorized publication, which is pending exact tag and remote verification.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Evidence candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` remains separately named on `candidate/v0.14.0`, and authenticated workflow-dispatch run `30324186389` accepted seven identities with zero rejection. The pre-publication remote baseline is `origin/main` at `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, with no `v0.14.0` tag. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At the exact release commit, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At the exact release commit, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -515,6 +515,52 @@ post-push CI remain facts to measure and append after they occur.
    standing fact. A later operator authorization can then supersede the dated
    disposition without contradicting or editing the closed record. Carry this
    into the v0.15 runbook template.
+
+**v0.14.0 publication is complete (measured 2026-07-28).** One atomic push
+advanced `origin/main` from
+`0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9` to release commit
+`4ad4c8d71075731dd87c360e8b0d3d91d80b5518` and created annotated tag object
+`dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. Immediate read-only
+verification returned `origin/main` and `v0.14.0^{}` at that exact release
+commit and `v0.14.0` at that exact tag object. A detached worktree at the tag
+reported `git describe --tags --exact-match HEAD` as `v0.14.0`, and
+`./run version-check` passed all five 0.14.0 authorities.
+
+Only after the tag mapping passed, `origin/main` advanced through closing audit
+commit `53f5133ce12efb4ba2a716576dbbf2c6802b98fb` to forward-supersession commit
+`9114ad1ffe572710e9fade1d254a7adb871e4b2e`. Read-only enumeration then
+confirmed the candidate branch absent while the v0.14.0 tag remained fixed at
+the release commit.
+
+All earlier releases matched the pre-publication baseline byte for byte:
+v0.10.3 object `215cfcdbb78e1274a845fdd08a0f17e3d87c94e3` peeled to
+`d86ba26e38ff41efbae997a1f909d124a6d6e969`; v0.11.0 object
+`fcfa4825e6ffbc06c0ad73e18044965c10786aa8` peeled to
+`6daeb7e9f2cc0022b5e1a1dcf2ce8702b5be0321`; v0.12.0 object
+`94d8215bc2151fecba1280dc793d3f5953cd8055` peeled to
+`e5faf0c161a4256f33976664685653d8bd805d5d`; and v0.13.0 object
+`24a6a2aca52974891d120e0f2b295a93d629c1f7` peeled to
+`5ecd42bb6ca44f1588e53e493c67fee17d071b09`. Their protected-manifest blobs
+also remained respectively `c1f3dcc0607ce323aada025fb6f182f406f92d67`,
+`27f152a4497e1bfa61331b8102628c543d231ef8`,
+`b1e6a3f9869120725ae572a5c626b93e0871d6f5`, and
+`7d1ed9a53aa1fe746bc6fccab8fa9e45b201e882`. The v0.14.0 manifest blob is
+`cc14fcb14a4efeb52c976a18c3d0952880da80e4`; current verification remains
+**101/101 pins** and protected databases **2/2**.
+
+Push-triggered CI run **30326565779** executed the exact immutable release
+commit and completed success: all seven blocking jobs passed, report-only
+dependency drift skipped, and the hosted log emitted
+`golden result: PASS (11/11 checks)`. The subsequent audit-record push run
+**30326618807** executed exact commit
+`9114ad1ffe572710e9fade1d254a7adb871e4b2e` with the same seven-success,
+one-skipped outcome and the same **11/11** golden line. Neither run is
+downloaded, admitted, promoted, or pinned. Release evidence remains dispatch
+run **30324186389** against evidence candidate
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`, and the pin count remains
+**101**. A4, the editable-L1 controller residual, and the stated R3/R4
+limitations remain open; L2 remains scheduled. No live server session
+occurred.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
