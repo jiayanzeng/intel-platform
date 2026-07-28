@@ -124,6 +124,10 @@ durable artifact is the offline test it produces.
 **Objective.** Confirm HEAD is green, settle G1 and G2, and produce the input
 Step 3 needs.
 
+**Gate.** Read-only repository, object, and local execution measurements plus
+`STATE.md` and the active runbook status records only. No production path,
+dependency, lockfile, protected artifact, or public surface changes.
+
 **Steps.**
 
 1. Run the full entering matrix and standalone `./run golden`, plus
@@ -352,9 +356,15 @@ decision: publication.**
 
 ---
 
+## Runbook amendments
+
+Step 1 — Define the read-only E0 gate before the first E0 commit so its status-record acceptance surfaces are contained — 2026-07-28
+
+---
+
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with both interpreters; G2 bounded by measured
+- [x] **E0** — entering matrix with both interpreters; G2 bounded by measured
   comparison over configured and redirect URLs; G1 confirmed or closed clean;
   source inventory recorded
 - [ ] **ORIGIN-CASE** — case-differing hosts share one cache entry and one limiter
