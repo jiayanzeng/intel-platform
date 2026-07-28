@@ -375,3 +375,61 @@ Entries are append-only; corrections are new dated entries.
   changed. Step 8 remains blocked on its separate operator publication
   decision.
 - golden-E2E delta: **0**; the final standalone result remained **11/11**.
+
+### 2026-07-28 · R-CLOSE — v0.15.0 release recorded
+
+- runbook: `TASKS-v0.16-EXECUTION.md`
+- owner: Codex
+- commit: 8f97205a3ed4fe82f6a5ede2febce7a5d82d9f81
+- gate acceptance: PASS. Steps 1–7 were boxed, the worktree was clean, and the
+  operator selected publication of v0.15.0 as of 2026-07-28.
+- version acceptance: PASS. Step 5's minor trigger fired because authenticated
+  internal `POST /entities/unknown` is a new core-owned observable route. The
+  five release authorities agree on **0.15.0**; the version records the
+  behavior and was not selected at closure.
+- object-identity acceptance: PASS. Evidence candidate
+  `43706216c06608039d9c3e7ef2b86024b22d4a79` and release commit
+  `8f97205a3ed4fe82f6a5ede2febce7a5d82d9f81` are separate named fields.
+  Annotated tag object `b7ee3445728e1816e1622c9498ffc2f165ed5dd5`
+  dereferences to the release commit, which is a descendant of the candidate.
+- closing-record acceptance: PASS. The runbook uses the validator's exact
+  dated form `Release disposition: release (as of 2026-07-28)`, checks
+  R-CLOSE, and contains one canonical cycle-closing heading.
+- diff acceptance: PASS. `STATE.md` classifies all **74** paths in the
+  v0.14.1-to-release diff exactly once. The product change is the bounded
+  authenticated internal entity-comparison seam; the release-authority bump
+  mechanically changes only the local `cored` package version in
+  `Cargo.lock`, with no dependency-resolution change.
+- scope-correction acceptance: PASS. E0 replaced the prior net-test-only scope
+  with the derived pre-fix set of **seven** mask-capable local job bodies and
+  **zero** hosted workflow steps entering through `ci_local_job`. Every hosted
+  count equals local at the evidence candidate, so no published count is false
+  and no retraction is owed. Retractions remain **three**.
+- architecture acceptance: PASS. A4, the editable-L1 controller residual, the
+  R3/R4 open-bottom limitations, and the measured-value heuristic remain
+  explicitly open. R11's one control exercises only
+  `open("config/entities.json")` against a declared scope of four direct
+  spellings plus derived variables; `ARCHITECTURE.md` records that breadth gap
+  as open and names it as v0.17's first task. No R11 control changed.
+- exemption acceptance: PASS. The entering output reconciles as
+  **45 = 18 + 24 + 1 + 1 + 1**: derived runner setup, derived terminal
+  receipt/attestation persistence, derived constrained Python installation,
+  report-only status, and the sole named operator-local database residual.
+  The count is parser output, not an asserted input.
+- reviewer-correction acceptance: PASS. E0 measured `origin/main` at
+  `0a25c50f9de6a020fa6a04b04847f6242b809f7e`; the runbook's entering
+  `fb2d501e…` assertion was an unverified carry-forward and is logged as an
+  evidence defect rather than silently replaced.
+- release-commit matrix acceptance: PASS. The exact release commit reused the
+  uncleared `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` and
+  passed `./run ci-local` **20/20** with **126** workspace tests, **49** net
+  tests (**23 + 26**), Python 3.11.4 shell **243/243**, `invariant-scan`
+  **11/11 rules / 19 controls**, all **131/131** pins, both protected
+  databases exact, locked Rust 1.78, and zero rustc/clippy/fmt/ShellCheck
+  failures. Python 3.12.13 independently verified **21/21** packages and
+  passed **243/243**.
+- publication acceptance: PASS. Release was selected because v0.15.0 is the
+  first release whose local evidence comes from a harness that preserves job
+  failures. Remote publication follows this audit-record commit.
+- golden-E2E delta: **0**. The exact release commit's matrix and mandatory
+  standalone golden both passed **11/11** byte-identical.

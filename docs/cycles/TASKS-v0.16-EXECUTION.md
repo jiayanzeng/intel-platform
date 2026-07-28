@@ -604,7 +604,7 @@ all pins match · golden 11/11.
   target directory; every `CARGO_MANIFEST_DIR` use classified
 - [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; new pin count in three places
-- [ ] **R-CLOSE** — version cites Step 5; candidate and release commit separate;
+- [x] **R-CLOSE** — version cites Step 5; candidate and release commit separate;
   disposition dated; `STATE.md` scope corrected forward; all open items open
 
 ---
@@ -647,32 +647,66 @@ all pins match · golden 11/11.
 - Do not batch `STATE.md` / `PROGRESS-v0.16.md` updates or combine two tasks in
   one commit.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-28
-- **Release disposition:** pending the separate Step 8 operator publication
-  decision; no publication action is authorized by Step 7.
-- **Release version if authorized:** v0.15.0. Step 5 recorded the new
-  authenticated internal `/entities/unknown` route and the minor trigger
-  fired.
+- **Cycle closed:** 2026-07-28
+- **Release disposition:** release (as of 2026-07-28)
+- **Release:** `v0.15.0`
 - **Evidence candidate:** `43706216c06608039d9c3e7ef2b86024b22d4a79`
-  on `candidate/v0.15.0`.
-- **Hosted evidence:** workflow-dispatch run `30347262430` attempt 1; all
-  **7/7** derived identities authenticated, zero rejected receipts, across
-  **6** blocking jobs. Hosted logs measured **126** workspace tests, **49**
-  net tests (**23 + 26**), shell **242 passed / 1 intended on-site-only
-  skipped** on each interpreter, `invariant-scan` **11/11 rules / 19
-  controls**, R10's **45** derived exemptions, and golden **11/11**. Each
-  hosted shell collected **243** tests, equal to the local candidate's
-  **243 passed**.
-- **Release-grade audit:** **5** deferred / **2** promoted; report SHA-256
-  `540a721f510ffcc3ae174948f90f5ebef5ececfde0be6cb90bdcbda8ff61c531`,
-  **34395** bytes. Authenticated re-derivation passed.
-- **Evidence pins:** **131/131** total — **129/129** evidence plus **2/2**
+- **Hosted dispatch:** `30347262430`, attempt `1`
+- **Release commit:** `8f97205a3ed4fe82f6a5ede2febce7a5d82d9f81`
+- **Annotated tag object:** `b7ee3445728e1816e1622c9498ffc2f165ed5dd5`
+- **Protected pins:** **131/131** total — **129/129** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** pending Step 8's final R-CLOSE measurement and decision.
-- **Remote disposition:** `origin/main` remains
-  `0a25c50f9de6a020fa6a04b04847f6242b809f7e`; no `v0.15.0` tag exists.
+
+Step 5's minor trigger fired because the authenticated internal
+`POST /entities/unknown` route is a new core-owned observable surface. The
+evidence candidate and release commit are separate subjects; the annotated
+tag resolves to the latter, a descendant of the former.
+
+Hosted evidence authenticated all **7/7** workflow-derived identities across
+**6** blocking jobs with zero rejected receipts. At the candidate, hosted logs
+measured **126** workspace tests, **49** net tests (**23 + 26**), shell **242
+passed / 1 intended on-site-only skipped** from **243 collected** on each
+interpreter, `invariant-scan` **11/11 rules / 19 controls**, and golden
+**11/11**, equal to local measurements at that same commit. The release-grade
+audit measured **5 deferred / 2 promoted**; its authenticated report is
+SHA-256
+`540a721f510ffcc3ae174948f90f5ebef5ececfde0be6cb90bdcbda8ff61c531`,
+**34395** bytes.
+
+The exact release commit passed `./run ci-local` **20/20** from the uncleared
+shared Cargo target with **126** workspace tests, **49** net tests (**23**
+`intel-ingest` + **26** `cored`), shell **243/243** on Python 3.11.4,
+`invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, both
+protected databases exact, locked Rust 1.78, and zero
+rustc/clippy/fmt/ShellCheck failures. The independent Python 3.12.13 lane
+verified **21/21** constrained packages and passed **243/243**; standalone
+golden also passed **11/11**.
+
+`STATE.md` classifies all **74** release paths exactly once and corrects the
+old net-test-only scope forward. E0 derived **seven** mask-capable local job
+bodies and **zero** hosted workflow steps entering through `ci_local_job`.
+Every hosted count re-matched at the evidence candidate, so no published count
+is false and no retraction is owed; retractions remain **three**.
+
+The entering R10 exemption output reconciles as **45 = 18 + 24 + 1 + 1 + 1**:
+runner setup, terminal receipt/attestation persistence, constrained Python
+installation, report-only status, and the named operator-local database
+residual. The count is now derived parser output.
+
+A4, the editable-L1 controller residual, the R3/R4 open-bottom limitations,
+the active-runbook measured-value heuristic, and R11's control-breadth gap all
+remain open. R11 has one reconstructed failure against a declared scope of
+four direct spellings plus derived variables; expanding that control breadth
+is v0.17's first task, not a v0.16 change.
+
+E0 measured `origin/main` at
+`0a25c50f9de6a020fa6a04b04847f6242b809f7e`, correcting the runbook's
+unverified entering assertion of `fb2d501e…`. Publication is selected because
+v0.15.0 is the first release whose local evidence was produced by a
+failure-propagating harness; withholding would leave the defective-harness
+v0.14.1 as the published head.
 
 ## Runbook amendments
 
