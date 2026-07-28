@@ -370,9 +370,54 @@
           "expected_fail": "production shell reads core-owned configuration \"config/entities.json\" directly",
           "expected_file": "shell/intel_shell/pipeline.py",
           "expected_line": 26
+        },
+        {
+          "file": "shell/intel_shell/pipeline.py",
+          "find": "from .core_client import CoreClient, CoreError\n",
+          "replace_with": [
+            "from .core_client import CoreClient, CoreError\n",
+            "_CORE_CONFIG_CONTROL = open(\"config/core.json\", encoding=\"utf-8\")\n"
+          ],
+          "expected_fail": "production shell reads core-owned configuration \"config/core.json\" directly",
+          "expected_file": "shell/intel_shell/pipeline.py",
+          "expected_line": 26
+        },
+        {
+          "file": "shell/intel_shell/pipeline.py",
+          "find": "from .core_client import CoreClient, CoreError\n",
+          "replace_with": [
+            "from .core_client import CoreClient, CoreError\n",
+            "_CORE_CONFIG_ENV_CONTROL = open(os.environ[\"CORE_CONFIG\"], encoding=\"utf-8\")\n"
+          ],
+          "expected_fail": "production shell reads core-owned configuration \"CORE_CONFIG\" directly",
+          "expected_file": "shell/intel_shell/pipeline.py",
+          "expected_line": 26
+        },
+        {
+          "file": "shell/intel_shell/pipeline.py",
+          "find": "from .core_client import CoreClient, CoreError\n",
+          "replace_with": [
+            "from .core_client import CoreClient, CoreError\n",
+            "_CORE_ENTITIES_ENV_CONTROL = open(os.environ[\"CORE_ENTITIES\"], encoding=\"utf-8\")\n"
+          ],
+          "expected_fail": "production shell reads core-owned configuration \"CORE_ENTITIES\" directly",
+          "expected_file": "shell/intel_shell/pipeline.py",
+          "expected_line": 26
+        },
+        {
+          "file": "shell/intel_shell/pipeline.py",
+          "find": "from .core_client import CoreClient, CoreError\n",
+          "replace_with": [
+            "from .core_client import CoreClient, CoreError\n",
+            "_CORE_ENTITIES_PATH_CONTROL = os.environ[\"CORE_ENTITIES\"]\n",
+            "_CORE_ENTITIES_HANDLE_CONTROL = open(_CORE_ENTITIES_PATH_CONTROL, encoding=\"utf-8\")\n"
+          ],
+          "expected_fail": "production shell reads core-owned configuration \"CORE_ENTITIES\" directly",
+          "expected_file": "shell/intel_shell/pipeline.py",
+          "expected_line": 27
         }
       ],
-      "fail_before_note": "invariant-scan: R11 FAIL: production shell read config/entities.json directly"
+      "fail_before_note": "invariant-scan: R11 FAIL: production shell read core-owned configuration directly"
     }
   ]
 }

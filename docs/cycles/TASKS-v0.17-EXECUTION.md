@@ -349,7 +349,8 @@ is covered or the singleton is recorded · `ci-local` still **20** jobs · golde
 **Objective.** Discharge the limitation v0.16 recorded as v0.17's first task.
 
 **Gate.** `config/invariant-rules.json`, `tools/invariant_scan.py` if the rule
-schema needs it, and the invariant tests.
+schema needs it, the invariant tests, and `ARCHITECTURE.md` for the required
+limitation reconciliation.
 
 **Steps.**
 
@@ -460,7 +461,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
   byte-identical
 - [x] **HARVEST-PREFLIGHT** — verification precedes reachability; removal fails a
   test; both controls separately identifiable
-- [ ] **R11-BREADTH** — every claimed spelling controlled or the scope narrowed;
+- [x] **R11-BREADTH** — every claimed spelling controlled or the scope narrowed;
   `ARCHITECTURE.md` reconciled
 - [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; ingest net lane green in both
@@ -508,3 +509,4 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 
 Step 3 — Widen the gate before the first Step 3 commit to contain the required cross-origin redirect test support — 2026-07-28
 Step 4 — Widen the gate before the first Step 4 commit to reconcile the whole-file run authorization pin required by ci-local — 2026-07-28
+Step 5 — Widen the gate before the first Step 5 commit to contain the required architecture reconciliation — 2026-07-28

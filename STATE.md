@@ -1,6 +1,36 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 HARVEST-PREFLIGHT is complete after ROBOTS-PATH, NET-DOUBLE, and E0.** `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. `cmd_harvest_arxiv` now verifies protected artifact bytes before environment setup, destination checks, reachability, or any harvest request; its removal mutation fails the named entry-point control. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 R11-BREADTH is complete after HARVEST-PREFLIGHT, ROBOTS-PATH, NET-DOUBLE, and E0.** `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. R11's four direct spellings and module-local taint propagation now each carry an executing, exact-site failure control. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 R11-BREADTH is complete (measured 2026-07-28).** Step 5's Gate
+was widened before its first commit to include the architecture reconciliation
+required by its own acceptance criteria. The existing AST detector already
+recognized every declared spelling and transitive module-local assignments, so
+neither `tools/invariant_scan.py` nor its schema changed.
+
+R11 now has five independently reconstructible failure controls:
+
+- direct `open("config/entities.json")` at
+  `shell/intel_shell/pipeline.py:26`;
+- direct `open("config/core.json")` at line **26**;
+- a direct read through `os.environ["CORE_CONFIG"]` at line **26**;
+- a direct read through `os.environ["CORE_ENTITIES"]` at line **26**; and
+- a module-local variable assigned from `os.environ["CORE_ENTITIES"]`, then
+  passed to `open()` at line **27**.
+
+The focused R11 self-test executes all **5/5** controls and observes each exact
+file, line, spelling, and failure message. The complete invariant module passes
+**21/21** tests, and the complete scanner passes **11/11 rules / 23 controls**,
+up from **19** controls. `ARCHITECTURE.md` now records the v0.16 breadth gap as
+closed while preserving R11's bounded scope: the four declared spellings and
+variables derived from them are controlled, but unknown future configuration
+names are not claimed.
+
+Full local CI remains **20/20** with shell **244/244**, all Rust/MSRV/lint,
+pin, and protected-artifact results unchanged. The mandatory standalone golden
+invocation remains **11/11**. This task changes only invariant controls,
+architecture/status records, and the active checklist; no production path,
+public response, schema, dependency, lockfile, or corpus byte changed.
 
 **v0.17 HARVEST-PREFLIGHT is complete (measured 2026-07-28).** Repository
 search found one entry point governed by AGENTS' live-harvest preflight rule:
