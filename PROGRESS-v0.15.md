@@ -148,3 +148,48 @@ Entries are append-only; corrections are new dated entries.
   exact.
 - golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · STAGE-SOURCE — injectable stage scope derived
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: a806ede26047f995b098ab5f0f1dd1a6e6b6629f
+- operator-decision acceptance: PASS. The operator authorized no observable
+  rename. `apps/cored/src/main.rs` and `tools/benchmark_view.py` have no diff;
+  every `x-intel-view-stage-*` header and stage string remains identical to
+  v0.14.0. The **v0.14.1** release trigger fired; the active cycle remains
+  v0.15.
+- scope acceptance: PASS. Parsing the current Rust source derives exactly
+  `analysis`, `response_build`, `sector_load`, and `serialization`. The test
+  asserts that derived set is a subset of Python's 11-key
+  `DIAGNOSTIC_HEADERS`, not equal to it. Seven header-only entries remain
+  untouched: `handler_total`, `process_main_to_listener_ready`,
+  `store_connection`, `store_cursor_migration`,
+  `store_fingerprint_backfill`, `store_open`, and `store_schema_fts`.
+- path-scope acceptance: PASS. Current code confirms that a cache hit returns
+  before `compute_view_resp`; `sector_load`, `analysis`, and
+  `response_build` therefore inject only on misses. `serialization` executes
+  later in `into_response` and injects on both hits and misses.
+- mechanism acceptance: PASS. The correspondence test reads both existing
+  source files and needs no generated artifact or build step, so
+  `benchmark_view.py` remains independently runnable. No four-name tuple was
+  restated in Python.
+- control acceptance: PASS. A scratch Rust rename emitted
+  `apps/cored/src/main.rs:987: diagnostic_delay stage 'analysis_renamed' is
+  absent from tools/benchmark_view.py:41: DIAGNOSTIC_HEADERS`. A Python map
+  deletion also failed and named both files.
+- correction acceptance: PASS. The active H1 row now distinguishes six
+  blocking jobs from seven identities; H3 names all seven header-only entries;
+  Step 7 names `candidate/v0.14.1`. No cycle artifact or closed runbook changed.
+- test acceptance: PASS. The benchmark-view module passed **6/6** on Python
+  3.11.4 and 3.12.13. Full shell passed **233/233** on both interpreters with
+  **21/21** exact packages, a **+2** delta attributable to
+  `test_rust_diagnostic_delay_stages_are_benchmark_headers` and
+  `test_stage_correspondence_controls_name_both_files`.
+- matrix acceptance: PASS. `./run ci-local` remained **20/20**, Rust remained
+  **125** workspace / **48** net (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green,
+  `invariant-scan` remained **10/10 rules / 18 controls**, and all **101/101**
+  pins plus both protected databases remained exact.
+- golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
+  **11/11** byte-identical.
