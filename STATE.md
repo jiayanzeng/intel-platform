@@ -1,6 +1,48 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 ROBOTS-PATH is complete after NET-DOUBLE and E0.** `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **243/243** on Python 3.11.4, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. The corrected robots target is the complete path plus query with its fragment excluded; every E0 case-table row and the first-hop/cross-origin multi-segment denial paths execute as tests. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, pins, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 HARVEST-PREFLIGHT is complete after ROBOTS-PATH, NET-DOUBLE, and E0.** `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. `cmd_harvest_arxiv` now verifies protected artifact bytes before environment setup, destination checks, reachability, or any harvest request; its removal mutation fails the named entry-point control. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 HARVEST-PREFLIGHT is complete (measured 2026-07-28).** Repository
+search found one entry point governed by AGENTS' live-harvest preflight rule:
+the `harvest-arxiv` dispatch into `cmd_harvest_arxiv`. `up` builds the offline
+core, and no other runner command both constructs a net-enabled harvester and
+requests publisher documents. No live harvest ran in this task.
+
+The fail-before focused shell test failed with
+`cmd_harvest_arxiv must invoke its named artifact-integrity preflight`. The
+entry point now invokes `cmd_verify_artifacts` before `need_cargo`,
+`ensure_venv`, harvest-destination resolution, the arXiv reachability probe, or
+any document request. This placement matters because a missing environment can
+install constrained packages; even that possible outbound action is after
+artifact verification.
+
+The offline dynamic harness replaces every potentially external operation and
+records the exact order:
+`artifact-verification → cargo-check → python-environment →
+destination-protection → reachability-probe → network-request`. A forced
+verification status **37** exits with **37** after recording only
+`artifact-verification`. A reconstructed copy with the two-line preflight
+removed reaches later controls, and the shared assertion fails with a message
+naming `cmd_harvest_arxiv`. The artifact-integrity step and the existing
+`REFUSED: live harvest target` destination message remain distinct: the former
+verifies the recorded bytes and corpus facts, while the latter refuses a
+protected output path.
+
+Because `run` is a whole-file authorization pin, the initial implementation
+correctly made `verify-artifacts` report its hash and byte mismatch. Before the
+first task commit, Step 4's Gate was widened to the `run` pin's
+hash/size/provenance fields only. The forward pin is now
+`7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`
+at **41959** bytes. The exact `run` diff outside the runbook/status surfaces is
+the two-line harvest preflight; `tools/model_profiles.py`, the model-profile
+functions/dispatch, and the authorization policy are unchanged. Manifest
+validation and `verify-artifacts` pass with **131/131** pins and both protected
+databases exact.
+
+The focused preflight control passes **1/1**. Full local CI remains **20/20**
+and adds that control to a shell total of **244/244**; all Rust, invariant,
+pin, protected-artifact, lint, and MSRV results remain green. The mandatory
+standalone golden invocation remains **11/11**.
 
 **v0.17 ROBOTS-PATH is complete (measured 2026-07-28).** Before
 implementation, Step 3's Gate was widened to include test support in

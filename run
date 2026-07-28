@@ -677,6 +677,8 @@ cmd_golden() {
 # cannot. It refuses to pretend: if arXiv is unreachable it stops and says so.
 # --------------------------------------------------------------------------
 cmd_harvest_arxiv() {
+  step "artifact-integrity preflight — verify protected evidence bytes"
+  cmd_verify_artifacts
   need_cargo; ensure_venv
   CORED_BIN="$(cored_debug_bin)"
   local HARVEST_DB

@@ -315,8 +315,10 @@ behaviour · MSRV 1.78 green with `Cargo.lock` committed and `--locked` honoured
 **Objective.** Stop the artifact-integrity preflight from depending on the
 operator's memory.
 
-**Gate.** `run` and its harness tests. Offline-provable — **no live harvest is
-run in this cycle.**
+**Gate.** `run`, its harness tests, and only the `run` authorization pin's
+hash/size/provenance in `config/protected-artifacts.json` after proving the
+model-profile command surface unchanged. Offline-provable — **no live harvest
+is run in this cycle.**
 
 **Steps.**
 
@@ -456,7 +458,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
   fail-before/pass-after; fragment excluded, query included; redirects gated;
   `host_of` fixed or deferred with a reason; comment matches code; golden
   byte-identical
-- [ ] **HARVEST-PREFLIGHT** — verification precedes reachability; removal fails a
+- [x] **HARVEST-PREFLIGHT** — verification precedes reachability; removal fails a
   test; both controls separately identifiable
 - [ ] **R11-BREADTH** — every claimed spelling controlled or the scope narrowed;
   `ARCHITECTURE.md` reconciled
@@ -505,3 +507,4 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 ## Runbook amendments
 
 Step 3 — Widen the gate before the first Step 3 commit to contain the required cross-origin redirect test support — 2026-07-28
+Step 4 — Widen the gate before the first Step 4 commit to reconcile the whole-file run authorization pin required by ci-local — 2026-07-28
