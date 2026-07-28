@@ -196,3 +196,40 @@ Entries are append-only; corrections are new dated entries.
   protected databases match. No `apps/`, `crates/`, workflow, public response,
   schema, dependency, lockfile, corpus, release tag, or release commit changed.
 - golden-E2E delta: **0**; final post-task result remained **11/11**.
+
+### 2026-07-28 · EXEMPT-DERIVE — exemption count is parser output
+
+- owner: Codex
+- commit: 523dc10
+- result: PASS. R10's action-name and receipt-step-name enumerations are gone.
+  Every exemption now records one declared structural criterion or the sole
+  explicitly named environmental residual.
+- criterion acceptance: PASS. The four criteria are job-level
+  `continue-on-error: true`; an unconditional `uses:` action before the first
+  command-bearing step; the exact constrained shell-requirements installation
+  command; and membership in the terminal contiguous `always()` block that
+  references `CI_RECEIPT_PATH`.
+- residual acceptance: PASS. Only local `evidence-artifacts:verify` remains
+  named, because protected database bytes are operator-local and its reason is
+  environmental rather than a structural property of a workflow step.
+- measured-count acceptance: PASS. The parser outputs **45** current
+  exemptions: **18** runner setup actions + **24** receipt/attestation
+  persistence steps + **1** constrained Python install + **1** report-only job
+  + **1** named local residual. No test asserts 45; the test instead requires
+  every output basis to resolve to a declared criterion or that residual.
+- coverage acceptance: PASS. Across all blocking hosted steps, **zero**
+  normalized parity checks matched an exemption, and every step with no
+  normalized check matched a criterion. No prior exemption moved into
+  coverage, and no check silently left coverage. Synthetic newly added setup
+  and terminal receipt steps classified without an exemption-list edit.
+- R10/control acceptance: PASS. HEAD remains **20** local jobs / **24** local
+  checks against **6** blocking hosted jobs / **23** hosted checks.
+  `invariant-scan --self-test` remains **10/10 rules / 18/18 controls**;
+  focused invariant tests passed **20/20**.
+- shell/golden acceptance: PASS. Full shell remained **241/241** under Python
+  3.11.4 and 3.12.13, so the Step 4 shell delta is **0**. Golden remained
+  **11/11**.
+- protected/source acceptance: PASS. The unchanged `run` authorization pin,
+  all **116/116** manifest pins, and **2/2** databases remain exact. No product
+  source, workflow, schema, public response, corpus, dependency, lockfile,
+  release tag, or release commit changed.
