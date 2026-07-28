@@ -1149,6 +1149,126 @@
       "bytes": 34395,
       "purpose": "Authenticated release-grade v0.15.0 deferred-design audit receipt.",
       "provenance": "Clean detached measurement of candidate 43706216c06608039d9c3e7ef2b86024b22d4a79 on 2026-07-28; accepted seven distinct successful receipts from run 30347262430 attempt 1 after each persisted Sigstore bundle verified its exact bytes, source digest, repository, workflow signer, source ref, and GitHub-hosted runner identity."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-core.json",
+      "grade": "supporting",
+      "sha256": "2e2d247e33244b66bf4b3679d1adadd34d06c92ddd3d59977bca6b172ab5e1b5",
+      "bytes": 339,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-core.json.sigstore",
+      "grade": "supporting",
+      "sha256": "6ee42096a574e13c024a80dacd6468ce307990aaaedecaed5b2eef66c5deefe6",
+      "bytes": 11003,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 core receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-golden.json",
+      "grade": "supporting",
+      "sha256": "91552e56ae01bd5b7245d2b7f81b7d5b57a8ae246e224f0868c6862f811f49a4",
+      "bytes": 341,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-golden.json.sigstore",
+      "grade": "supporting",
+      "sha256": "01b24be34680b94490cfe0ede61b9bb46d9ebc35ca6febfd18d814aa460af6f0",
+      "bytes": 10913,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 golden receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-lint.json",
+      "grade": "supporting",
+      "sha256": "a002cf739ac56ef2b76d19e58c42c6c24f79fc98f1dff9e07fa3706eb76cbe11",
+      "bytes": 339,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-lint.json.sigstore",
+      "grade": "supporting",
+      "sha256": "f9bdc2c0f7a0d91b67838a9242aedab958306f49ac70300c37f648a8c72c4ec5",
+      "bytes": 10948,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 lint receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-msrv.json",
+      "grade": "supporting",
+      "sha256": "db44dbd9e7cae5de5b7e56c2e831e7bc1608b0c554a0763582e96626ef25b4d3",
+      "bytes": 339,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-msrv.json.sigstore",
+      "grade": "supporting",
+      "sha256": "fed80a10603940bd42360475ba77ed76931c50f82995c1323b18d0ce23168525",
+      "bytes": 10901,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 MSRV receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-net.json",
+      "grade": "supporting",
+      "sha256": "a45f903b9e26b5218b43136f6ada9f62b78955a8532e506c1e280af766c6697f",
+      "bytes": 338,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-net.json.sigstore",
+      "grade": "supporting",
+      "sha256": "220a58edd32361c833055003931b65506e3cfeda5146440ca22ba616a638732d",
+      "bytes": 10909,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 net receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.11.json",
+      "grade": "supporting",
+      "sha256": "92bee8b0e674bf8be88d7a620c2d3fd309ce5c06fcdd365c3f15f8e18229cc3d",
+      "bytes": 367,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.11.json.sigstore",
+      "grade": "supporting",
+      "sha256": "14ec9ce283793365263bd507fb0e9d34fe12a189e9a943b9c9f2a8eb8a91f45a",
+      "bytes": 11062,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 shell python=3.11 receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.12.json",
+      "grade": "supporting",
+      "sha256": "ca06be98aa95fac6f110763741bb5153232c345b5d9bfbf82dfbc36e804cc652",
+      "bytes": 367,
+      "purpose": "Authenticated CI-runner receipt for v0.16.0 candidate run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; exact bytes verified against the paired persisted Sigstore bundle."
+    },
+    {
+      "path": "evidence/ci-runs/30357365420-1/30357365420-1-shell-py3.12.json.sigstore",
+      "grade": "supporting",
+      "sha256": "7f67fbeea1eedbe7b638b945906b3f6d3894361d31495848855eb2aab0fe1c23",
+      "bytes": 10921,
+      "purpose": "Sigstore bundle for authenticated v0.16.0 shell python=3.12 receipt from run 30357365420 attempt 1.",
+      "provenance": "Operator-authorized authenticated hosted dispatch and gh download on 2026-07-28; verified against source digest 3481e4ba85d65c927b7d0fc3a430bc04fb094394, source ref refs/heads/candidate/v0.16.0, the CI workflow identity, and GitHub-hosted runner policy."
+    },
+    {
+      "path": "evidence/v0.16.0/deferred-audit/report.json",
+      "grade": "release",
+      "sha256": "34804a849db56bb05cc97d4f45541702832478768119c0251769a07dd76b1bcc",
+      "bytes": 34468,
+      "purpose": "Authenticated release-grade v0.16.0 deferred-design audit receipt.",
+      "provenance": "Clean detached measurement of candidate 3481e4ba85d65c927b7d0fc3a430bc04fb094394 on 2026-07-28; accepted seven distinct successful receipts from run 30357365420 attempt 1 after each persisted Sigstore bundle verified its exact bytes, source digest, repository, workflow signer, source ref, and GitHub-hosted runner identity."
     }
   ]
 }

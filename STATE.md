@@ -1,6 +1,54 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 R11-BREADTH is complete after HARVEST-PREFLIGHT, ROBOTS-PATH, NET-DOUBLE, and E0.** `./run ci-local` passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. R11's four direct spellings and module-local taint propagation now each carry an executing, exact-site failure control. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 RE-MEASURE is complete; R-CLOSE awaits the separate operator publication decision.** Exact candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` is on non-`main` ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. The same candidate passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. `origin/main` remains `cdae3c922a2156701c0df0ceb4f45fc937fa7f20` and no `v0.16.0` tag exists. Published `v0.15.0`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 RE-MEASURE is complete (measured 2026-07-28).** The operator
+authorized one narrow non-`main` push of exact evidence candidate
+`3481e4ba85d65c927b7d0fc3a430bc04fb094394`. That commit alone was pushed to
+`candidate/v0.16.0`; no tag or `main` advance was authorized. Before dispatch,
+the remote branch's `.github/workflows/ci.yml` blob
+`96e85af978981b7af9bdd8e9e11069f158f35e57` was read and proved byte-identical
+to the local candidate. Final live remote inspection still reports candidate
+`3481e4ba…`, `origin/main` `cdae3c92…`, and no `v0.16.0` tag.
+
+Workflow-dispatch run
+`https://github.com/jiayanzeng/intel-platform/actions/runs/30357365420`, attempt
+1, succeeded with all **7/7** derived evidence identities and no rejected
+receipt: `core`, `golden`, `lint`, `msrv`, `net`, `shell/python=3.11`, and
+`shell/python=3.12`. The hosted logs, rather than job status, measured **131**
+workspace tests, **55** net tests (**29** ingest + **26** cored),
+`invariant-scan` **11/11 rules / 23 controls**, and golden **11/11**. Each
+hosted shell collected **244** tests and reported **243 passed / 1 declared
+on-site-only skip / 1 warning**; the same candidate locally passed all
+**244/244** with the same warning. The ingest net leg is therefore **29/29**
+both hosted and local at the same commit. R10's topology-derived counts are
+local **20 jobs / 24 checks**, hosted **6 blocking jobs / 23 checks**, with the
+same derived exemption count **45**.
+
+The signed bundle set is stored under
+`evidence/ci-runs/30357365420-1/`. The release-posture deferred audit required
+attestations and accepted **7/7** identities with zero rejection. It recorded
+**5 deferred / 2 promoted**, exact cosine p95 **8.660458 ms**, and produced
+`evidence/v0.16.0/deferred-audit/report.json` at SHA-256
+`34804a849db56bb05cc97d4f45541702832478768119c0251769a07dd76b1bcc`,
+**34468** bytes. Authenticated re-derivation passes with `evidence_grade=release`,
+`attestations_required=true`, and seven rows/triggers.
+
+The fourteen signed hosted files plus that audit report add fifteen pins.
+Manifest validation, `verify-artifacts`, and `evidence-report` pass with
+**146/146** total pins — **144/144** evidence plus **2/2** authorization
+surfaces — and both protected databases remain exact. The first sandboxed
+local-matrix attempt was a non-result when a raw loopback fixture could not
+bind; the identical permitted invocation then passed the full **20/20**
+definition of done. The required separate standalone golden invocation also
+passed **11/11**, delta **0**.
+
+This step changes only authenticated evidence, its manifest admission, and
+cycle/status records. It changes no production path, public response, schema,
+dependency, lockfile, protected corpus byte, release tag, or `main` ref.
+Candidate branch `v0.16.0` records the minor-version trigger from correcting
+runtime publisher robots-policy enforcement; Step 7 owns the final release
+version, release commit, dated disposition, and publication action.
 
 **v0.17 R11-BREADTH is complete (measured 2026-07-28).** Step 5's Gate
 was widened before its first commit to include the architecture reconciliation

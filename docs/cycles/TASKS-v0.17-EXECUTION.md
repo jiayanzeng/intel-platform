@@ -380,8 +380,12 @@ counts recorded in `STATE.md` and `PROGRESS-v0.17.md` · golden 11/11.
 
 **Objective.** Produce release-grade hosted evidence for the v0.17 candidate.
 
-**Gate.** 🧑 **One narrow authorization: a non-`main` branch push.** No tag, no
-`main` advance, no publication.
+**Gate.** 🧑 **One narrow authorization: a non-`main` branch push.** Scope is
+the exact candidate ref and remote workflow, hosted logs, the signed
+receipt/bundle set, release-grade audit report, protected-file manifest,
+`STATE.md`, this active runbook's gate/amendment/checklist/pending-closing
+records, and the later append-only progress entry. No tag, no `main` advance,
+no publication, and no closed runbook or progress-log edit.
 
 **Steps.**
 
@@ -463,7 +467,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
   test; both controls separately identifiable
 - [x] **R11-BREADTH** — every claimed spelling controlled or the scope narrowed;
   `ARCHITECTURE.md` reconciled
-- [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
+- [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; ingest net lane green in both
 - [ ] **R-CLOSE** — version cites its trigger; robots correction recorded; harvest
   suspension resolved; all open items open
@@ -505,8 +509,36 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 - Do not batch `STATE.md` / `PROGRESS-v0.17.md` updates or combine two tasks in
   one commit.
 
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-28
+- **Release disposition:** pending the separate Step 7 operator publication
+  decision; no publication action is authorized by Step 6.
+- **Release version if authorized:** v0.16.0. The runtime correction to
+  publisher robots-policy enforcement fires the minor-version trigger; Step 7
+  owns the final release-version record.
+- **Evidence candidate:** `3481e4ba85d65c927b7d0fc3a430bc04fb094394`
+  on `candidate/v0.16.0`.
+- **Hosted evidence:** workflow-dispatch run `30357365420` attempt 1; all
+  **7/7** derived identities authenticated, zero rejected receipts, across
+  **6** blocking jobs. Hosted logs measured **131** workspace tests, **55**
+  net tests (**29 + 26**), shell **243 passed / 1 declared on-site-only
+  skipped** on each interpreter, `invariant-scan` **11/11 rules / 23
+  controls**, R10's **45** derived exemptions, and golden **11/11**. Each
+  hosted shell collected **244** tests, equal to the local candidate's
+  **244 passed**; the ingest net leg is **29/29** both hosted and local.
+- **Release-grade audit:** **5** deferred / **2** promoted; report SHA-256
+  `34804a849db56bb05cc97d4f45541702832478768119c0251769a07dd76b1bcc`,
+  **34468** bytes. Authenticated release-grade re-derivation passed.
+- **Evidence pins:** **146/146** total — **144/144** evidence plus **2/2**
+  authorization surfaces; protected databases exact **2/2**.
+- **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
+- **Remote disposition:** `origin/main` remains
+  `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`; no `v0.16.0` tag exists.
+
 ## Runbook amendments
 
 Step 3 — Widen the gate before the first Step 3 commit to contain the required cross-origin redirect test support — 2026-07-28
 Step 4 — Widen the gate before the first Step 4 commit to reconcile the whole-file run authorization pin required by ci-local — 2026-07-28
 Step 5 — Widen the gate before the first Step 5 commit to contain the required architecture reconciliation — 2026-07-28
+Step 6 — Widen the gate before the first Step 6 commit to contain every evidence-admission surface and same-commit shell equality for the declared hosted-only skip — 2026-07-28
