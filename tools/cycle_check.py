@@ -64,6 +64,15 @@ STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+)\b[^\n]*$", re.MULTILINE)
 DEFERRED_HEADING = "## Deferred means deferred"
 MARKDOWN_TABLE_SEPARATOR_RE = re.compile(r"^:?-{3,}:?$")
 STEP_REFERENCE_RE = re.compile(r"\bStep ([0-9]+)\b", re.IGNORECASE)
+MEASURED_VALUE_TERM_RE = re.compile(
+    r"\b(?:recorded|measured|stored)\b",
+    re.IGNORECASE,
+)
+QUANTITY_TERM_RE = re.compile(
+    r"\b(?:values?|counts?|numbers?|quantit(?:y|ies)|totals?)\b",
+    re.IGNORECASE,
+)
+CRITERION_CLAUSE_RE = re.compile(r"[^.;\n·]+")
 BOLD_BLOCK_RE = re.compile(
     r"^\*\*([^*\n]+)\*\*(.*?)"
     r"(?=^\*\*[^*\n]+\*\*|^## |\Z)",
@@ -528,6 +537,50 @@ def check_active_deferral_assignments(
                 )
 
 
+def check_active_step_value_criteria(
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> None:
+    """Heuristically reject cross-step stored quantities in acceptance text."""
+    headings = list(STEP_HEADING_RE.finditer(text))
+    for index, heading in enumerate(headings):
+        current_step = heading.group(1)
+        end = (
+            headings[index + 1].start()
+            if index + 1 < len(headings)
+            else len(text)
+        )
+        section = text[heading.end():end]
+        for block in BOLD_BLOCK_RE.finditer(section):
+            raw_label = block.group(1).strip().removesuffix(".")
+            if CONTRACT_FIELD_LABELS.get(raw_label) != "Acceptance criteria":
+                continue
+            body = block.group(2)
+            body_start = heading.end() + block.start(2)
+            for clause in CRITERION_CLAUSE_RE.finditer(body):
+                referenced_steps = set(
+                    STEP_REFERENCE_RE.findall(clause.group(0))
+                ) - {current_step}
+                if (
+                    not referenced_steps
+                    or MEASURED_VALUE_TERM_RE.search(clause.group(0)) is None
+                    or QUANTITY_TERM_RE.search(clause.group(0)) is None
+                ):
+                    continue
+                line_number = (
+                    text.count("\n", 0, body_start + clause.start()) + 1
+                )
+                errors.append(
+                    f"{shown(path, root)}:{line_number}: active Step "
+                    f"{current_step} acceptance criterion cites Step "
+                    f"{', '.join(sorted(referenced_steps, key=int))}'s "
+                    "recorded/measured quantity; assert the invariant relation "
+                    "at the same commit instead"
+                )
+
+
 def run(
     root: Path = ROOT,
     *,
@@ -561,6 +614,12 @@ def run(
             errors,
         )
         check_active_deferral_assignments(
+            identity.runbook,
+            active_text,
+            root,
+            errors,
+        )
+        check_active_step_value_criteria(
             identity.runbook,
             active_text,
             root,

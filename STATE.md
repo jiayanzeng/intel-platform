@@ -1,6 +1,32 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 STAGE-SOURCE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **233/233** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 CRITERION-SHAPE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **235/235** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 CRITERION-SHAPE is complete (measured 2026-07-28).**
+`cycle-check` now evaluates only the active runbook's acceptance-criterion
+blocks for cross-step stored quantities. In one clause it requires all three
+signals before rejecting: a reference to another `Step N`, a
+`recorded`/`measured`/`stored` term, and a
+value/count/number/quantity/total term. The scratch fail-before produced:
+`TASKS-v1.2.3-EXECUTION.md:9: active Step 2 acceptance criterion cites Step
+1's recorded/measured quantity; assert the invariant relation at the same
+commit instead`. A same-commit hosted-equals-local relation passed, as did the
+current v0.15 runbook.
+
+The check is expressly heuristic and remains an open limitation in
+`ARCHITECTURE.md`: paraphrases outside its vocabulary or split across clauses
+may escape detection, and unusual intentional prose may need rephrasing.
+Closed runbooks are not evaluated; the only changed execution runbook is the
+active `TASKS-v0.15-EXECUTION.md`.
+
+The focused cycle-check module passes **13/13** on both interpreters. Full
+shell passes **235/235**, a **+2** delta from STAGE-SOURCE attributable to
+`test_cycle_check_rejects_cross_step_recorded_quantity` and
+`test_cycle_check_accepts_same_commit_quantity_relation`. `./run ci-local`
+remains **20/20**, Rust remains **125** workspace / **48** net (**23 + 25**),
+all **101/101** pins and both protected databases remain exact,
+`invariant-scan` remains **10/10 rules / 18 controls**, and matrix plus
+mandatory standalone golden remain **11/11** byte-identical.
 
 **v0.15 STAGE-SOURCE is complete (measured 2026-07-28).** The operator
 directed that all observable stage names remain unchanged. A source diff

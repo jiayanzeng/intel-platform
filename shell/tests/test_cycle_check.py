@@ -210,6 +210,46 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
     assert cycle_check.run(root) == 0
 
 
+def test_cycle_check_rejects_cross_step_recorded_quantity(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook.write_text(
+        runbook.read_text()
+        + "\n## Step 2 · RE-MEASURE\n\n"
+        "**Objective.** Compare current executions.\n\n"
+        "**Acceptance criteria.** Hosted counts match Step 1's recorded "
+        "values.\n\n"
+        "**Done when** current executions agree.\n"
+    )
+
+    assert cycle_check.run(root) == 1
+
+    error = capsys.readouterr().err
+    assert "TASKS-v1.2.3-EXECUTION.md:" in error
+    assert "active Step 2 acceptance criterion cites Step 1's" in error
+    assert "recorded/measured quantity" in error
+    assert "same commit" in error
+
+
+def test_cycle_check_accepts_same_commit_quantity_relation(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook.write_text(
+        runbook.read_text().replace(
+            "**Acceptance criteria.** Original criterion.",
+            "**Acceptance criteria.** Hosted counts equal local counts at "
+            "the same commit.",
+        )
+    )
+
+    assert cycle_check.run(root) == 0
+
+
 def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
     tmp_path: Path,
     capsys,

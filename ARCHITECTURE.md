@@ -208,6 +208,7 @@ in core SQL; an empty set makes every requested document unavailable.
 | corpus identity atomicity | core store transaction + R1 production-caller allow-list + private canonical-distance constant | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit, no other production canonicalization caller exists, and production callers cannot supply a different threshold |
 | repository absence claims | registered `invariant-scan` rules in local/hosted CI | each scoped claim has executable source coverage and a captured planted failure; prose-only absence is not accepted |
 | local/hosted check parity | R10 over `run` and `.github/workflows/ci.yml` | the local `ci-local` jobs and non-report-only hosted verification steps are derived from their entry-point commands in both directions; runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database bytes are explicit, counted exemptions |
+| active-runbook measured-value references | `cycle-check` acceptance-criterion heuristic | explicit cross-step references to a recorded, measured, or stored value/count/number/quantity/total are rejected; acceptance must state the invariant relation at the same commit |
 | routine model-profile authorization | shipped L1 controller allowlist + pure fail-closed guards + repository pins | the current controller can construct only the five-container/read-only command set and refuses unsafe observed state, but an edited controller can rewrite this client-side boundary; the server-enforced L2 forced-command wrapper remains open and scheduled |
 
 The last row is defense for the shipped controller, not a server-side security
@@ -224,6 +225,14 @@ unknown names or encodings are outside its coverage, so R4 does not prove that
 every possible secret form is absent. These scanner limits do not weaken HC3 or
 the credential-disclosure prohibition; they prevent the checks from claiming
 more than their source detectors establish.
+
+The active-runbook measured-value check is deliberately heuristic, not a
+semantic proof. It recognizes explicit same-clause combinations of a
+cross-step `Step N` reference, a recorded/measured/stored term, and a
+value/count/number/quantity/total term. A paraphrase outside that vocabulary or
+split across clauses can escape it, while an unusual intentional sentence may
+need rephrasing. Closed runbooks remain historical evidence and are not
+retroactively evaluated by this check.
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

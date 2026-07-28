@@ -325,8 +325,9 @@ unnoticed.
 **Objective.** Make an acceptance criterion that cites a step's measured value a
 detectable error.
 
-**Gate.** `tools/cycle_check.py` (or whichever tool owns runbook structure) and
-its tests. **No closed runbook is edited.**
+**Gate.** `tools/cycle_check.py` (or whichever tool owns runbook structure),
+its tests, `ARCHITECTURE.md` for the required limitation, and this active
+runbook's gate/amendment/checklist record. **No closed runbook is edited.**
 
 **Steps.**
 
@@ -458,7 +459,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 - [x] **STAGE-SOURCE** — scope limited to the four injectable names; Rust-side
   rename fails a test naming both files; header-only entries untouched; version
   trigger recorded here
-- [ ] **CRITERION-SHAPE** — step-value criterion rejected; heuristic limitation
+- [x] **CRITERION-SHAPE** — step-value criterion rejected; heuristic limitation
   stated in `ARCHITECTURE.md`; closed runbooks unmodified
 - [ ] **REVIEW-DISCIPLINE** — both rules in `AGENTS.md` citing v0.14; undated
   disposition fails `cycle-check`; non-executable status stated
@@ -506,3 +507,4 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 Step 1 — Add the governing E0 scope gate required by `AGENTS.md §5` — 2026-07-28
 Step 2 — Widen the R10 gate to contain its architecture claim and any required hosted counterpart — 2026-07-28
 Step 4 — Widen the gate for the operator decision and authorized H1/H3/Step 7 corrections; record the unchanged-name v0.14.1 trigger — 2026-07-28
+Step 5 — Widen the gate to contain the required architectural limitation and active checklist record — 2026-07-28
