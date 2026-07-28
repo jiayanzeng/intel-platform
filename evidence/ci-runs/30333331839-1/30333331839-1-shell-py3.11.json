@@ -1,0 +1,13 @@
+{
+  "run_id": "30333331839",
+  "run_attempt": "1",
+  "job": "shell",
+  "matrix": "python=3.11",
+  "workflow": "CI",
+  "repository": "jiayanzeng/intel-platform",
+  "event_sha": "6d197e562315b4fc6feb20c35b5fadc75b6b44a4",
+  "sha": "6d197e562315b4fc6feb20c35b5fadc75b6b44a4",
+  "conclusion": "success",
+  "runner_os": "Linux",
+  "completed_at": "2026-07-28T06:00:25Z"
+}
