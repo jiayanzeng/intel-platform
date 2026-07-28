@@ -1,6 +1,76 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.15.0 is published and v0.16 is closed with release disposition `release (as of 2026-07-28)`. Annotated tag `v0.15.0` resolves through tag object `b7ee3445728e1816e1622c9498ffc2f165ed5dd5` to release commit `8f97205a3ed4fe82f6a5ede2febce7a5d82d9f81`. The atomic release push advanced `origin/main` from `0a25c50f9de6a020fa6a04b04847f6242b809f7e` through closing-audit commit `b398b88ef3553b83f60f06d0ae14610f0c9474a3`; publication CI run `30350691515` passed.** Evidence candidate `43706216c06608039d9c3e7ef2b86024b22d4a79` remains a separate authenticated subject under workflow-dispatch run `30347262430` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The exact release commit passes **20/20** from the uncleared `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **126** Rust workspace tests, and **49** net tests (**23** `intel-ingest` + **26** `cored`); standalone shell passes **243/243** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted Python 3.11.15 and 3.12.13 each report **242 passed / 1 skipped**; the collected **243** equals local, and the one on-site-only skip is intended. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **131/131 pins**: **129/129** evidence plus **2/2** authorization surfaces. `invariant-scan` is **11/11 rules / 19 site-specific controls**. Published `v0.14.1` remains release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba` under unchanged annotated tag object `deea217b8913ae42399a22424dcf91595ce80240`; every earlier published release remains byte-identical and unmoved. Retractions remain **three**. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and R11's control-breadth gap remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **v0.17 is active and E0 is complete.** From fresh `CARGO_TARGET_DIR=/private/tmp/intel-v017-e0-ci-target`, `./run ci-local` passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **126** workspace tests, **49** net tests (**23** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **243/243** on a clean Python 3.11.4 environment, `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, protected databases exact **2/2**, and golden **11/11**. A clean Python 3.12.13 environment also resolved **21/21** constrained packages and passed **243/243**. The isolated User-Agent wire test nevertheless failed **20/20** at HEAD and **10/10** at release commit `8f97205a…`; the full-suite pass is a masked platform-proxy interaction, not evidence that the double is sound. Published `v0.15.0`, `origin/main`, its annotated tag, release commit, receipts, pins, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, R11's control-breadth gap, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.17 E0 is complete (measured 2026-07-28 at activation-audit commit
+`79f5b6232959a13b9f4adb768c6c9f7a1bcfbcd9`).** The first fresh-target matrix
+did not stop at the asserted job 11: it passed all **20/20** jobs from
+`/private/tmp/intel-v017-e0-ci-target`. Standalone `golden`,
+`verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+`version-check`, and `invariant-scan` all passed. Workspace remained **126**,
+net remained **49 = 23 + 26**, both clean local shell lanes passed **243/243**
+with **21/21** exact packages, and golden remained **11/11**.
+
+F2 is deterministic when isolated on this operator platform and can be masked
+by full-suite timing. At HEAD, the exact User-Agent wire test failed **20/20**;
+the same exact test at published release commit
+`8f97205a3ed4fe82f6a5ede2febce7a5d82d9f81` failed **10/10**. The test source
+blob is byte-identical at evidence candidate `43706216…`, the release commit,
+and HEAD. The exact release commit has **zero** GitHub check runs; the
+authenticated Linux net receipt instead belongs to the byte-identical-source
+candidate and records success with **23** ingest tests. This is therefore not
+post-release source drift.
+
+The close mechanism is not the runbook's unread-byte/RST hypothesis. macOS
+currently configures HTTP and HTTPS proxy `127.0.0.1:1082`; its exception list
+contains `localhost` but not `127.0.0.1`. The failing request is routed through
+that proxy and reports structured `hyper::Error(IncompleteMessage)`, a clean
+EOF/FIN rather than `ConnectionReset`. The raw listener did not reach its
+request diagnostic. With `NO_PROXY=127.0.0.1,localhost`, both raw requests
+arrived with complete headers; each socket reported **0 queued request bytes**
+before close while the peer was still open, and the test passed. Step 2 must
+keep the raw byte subject while preventing the loopback fixture from entering
+the operator's proxy.
+
+The executing F1 table measured the current helpers as follows:
+
+| case | URL distinction | `robots_path_of` | `host_of` |
+|---|---|---|---|
+| multi-segment | `/private/secret/file` | `/private` | `example.org` |
+| query | `/private/secret?x=1` | `/private` | `example.org` |
+| fragment | `/private#frag` | `/private#frag` | `example.org` |
+| query + fragment | `/private/secret?x=1#frag` | `/private` | `example.org` |
+| no path | `https://example.org` | `/` | `example.org` |
+| trailing slash | `https://example.org/` | `/` | `example.org` |
+| explicit port | `example.org:8443/private/secret` | `/private` | `example.org:8443` |
+| userinfo | `user:pass@example.org/private/secret` | `/private` | `example.org` |
+| percent encoding | `/private/%73ecret` | `/private` | `example.org` |
+| doubled slash | `/private//secret` | `/private` | `example.org` |
+| query without path | `https://example.org?x=1` | `/` | `example.org?x=1` |
+
+F1a is confirmed: `get_text_with` calls `gate()` at the top of its loop before
+the first `fetch()` and repeats the same order after every redirect. F1c is
+also confirmed: every ingest-side test policy uses only `/`, `/techwire`,
+`/admin`, `/oai`, `/blocked`, or an empty `Disallow`; none can expose a
+multi-segment derivation failure.
+
+The published-record audit found no immutable claim that robots enforcement is
+complete for every URL path. Statements that a redirect reaches the “full
+robots gate” describe the measured publisher/operator/politeness composition
+and call order; the old “correct RFC-9309 path matching” sentence describes
+`RobotsGate` matching the path it is handed. Neither claims that URL derivation
+was complete. The source doc comment is false and will be corrected forward,
+but it is not a published-record retraction. Retractions remain **three**.
+
+F5 rejects a direct `url` dependency. In an isolated lock update, the normal
+`intel-ingest` graph grew from **16 to 44** unique packages and resolved
+`url 2.5.8`, `idna 1.1.0`, `idna_adapter 1.2.2`, and the `icu_* 2.2.0` family.
+`idna_adapter` and all seven resolved ICU packages declare Rust **1.86**.
+Cargo 1.78 fails before compilation because `idna_adapter 1.2.2` requires the
+unstabilized `edition2024` manifest feature. This trips both the MSRV and
+transitive-footprint dependency clauses; the repository lockfile was never
+modified. Step 3 must use an in-crate derivation backed by the complete
+executing table.
 
 **v0.16 R-CLOSE release reconciliation is complete locally (measured
 2026-07-28).** The selected release is **v0.15.0** because Step 5 added the

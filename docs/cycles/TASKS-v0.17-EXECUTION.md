@@ -446,7 +446,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with its stopping point; F2 rate measured over ≥10
+- [x] **E0** — entering matrix with its stopping point; F2 rate measured over ≥10
   runs and classified; F2 mechanism measured; F1 case table built; F1a and F1c
   settled; published-record question answered; F5 MSRV cost measured
 - [ ] **NET-DOUBLE** — failing test green at the measured repetition count; the
