@@ -130,6 +130,7 @@ and pins come from authenticated CI only.
 | L2 forced-command wrapper | an operator server session | none — remains scheduled |
 | R3/R4 open-bottom coverage | a provider or credential spelling outside registered vocabulary | none |
 | Second configured publisher | an explicit, separate compliance review per publisher | none — **do not add a source in this cycle** |
+| Unreachable last-known-good fallback | a measured live transient robots outage for an admitted publisher while a usable last-known-good policy exists, followed by explicit operator authorization of the more-permissive fallback | **Step 4 records the deferral and implements only the short negative TTL; no fallback** |
 | CI-runner evidence | an authenticated receipt set with identified matrix legs, durably committed | **re-measure at the new release commit — discharged by Step 6** |
 
 ---
@@ -284,9 +285,11 @@ check all green after the split · golden 11/11.
 **Objective.** Give `Policy::Unreachable` a caching policy chosen on RFC 9309
 grounds rather than inherited from the success path.
 
-**Gate.** `crates/compliance/src/lib.rs`, `crates/ingest/src/net.rs` constants,
-and their tests. **Blocked on E0 confirming G1.** No `/v1/*` body, route,
-schema, dependency, lockfile, protected artifact, or harvest-path change. **Do
+**Gate.** `crates/compliance/src/lib.rs`, `crates/ingest/src/net.rs` constants
+and tests, the sole production cache-construction call in
+`apps/cored/src/main.rs`, and current status/audit records. **Blocked on E0
+confirming G1.** No `/v1/*` body, route, schema, dependency, lockfile, protected
+artifact, document-request control flow, or connector behavior changes. **Do
 not implement single-flight while you are in `policy_for`** — T7 is deferred and
 its trigger has not fired.
 
@@ -456,7 +459,7 @@ decision: publication.**
 - [x] **EXPORT-BUDGET** — ignores added; `STATE.md` archived losslessly with a
   hash-verified concatenation; export re-run from project root; before/after
   sizes recorded; `Cargo.lock` and the pin manifest still present; 161/161 exact
-- [ ] **NEGATIVE-CACHE** — fail-before captured; negative TTL named and applied
+- [x] **NEGATIVE-CACHE** — fail-before captured; negative TTL named and applied
   only to `Unreachable`; Decision B implemented-with-bound or
   deferred-with-trigger; the four fail-closed properties re-proven; limiter and
   ratchet untouched
@@ -501,6 +504,19 @@ decision: publication.**
 - If any Step's Objective, Acceptance criteria, or "Done when" is amended after
   this file is first committed, name the amendment in a dated
   `## Runbook amendments` block in the same commit.
+
+---
+
+## Runbook amendments
+
+### 2026-07-29 · Step 4 Gate scope correction
+
+Step 4's original Gate omitted the one `apps/cored/src/main.rs` construction
+call that must pass the named production negative TTL into `RobotsCache`, and
+also omitted the status/audit records required by `AGENTS.md §5`. The Gate is
+widened to those exact surfaces and now distinguishes cache construction from
+the unchanged document-request and connector control flow. The Objective,
+Acceptance criteria, and Done-when condition are unchanged.
 
 ---
 
@@ -631,6 +647,56 @@ schema, protected artifact, public surface, or repository file was deleted.
   no deletion.
 - **Golden-E2E delta:** **0**; the mandatory standalone invocation passed
   **11/11**.
+
+### 2026-07-29 · NEGATIVE-CACHE
+
+PASS. The dated Gate amendment adds only the sole production cache-construction
+call and the status records required to apply and audit the named TTL. No
+document-request control flow, connector behavior, `/v1/*` surface, schema,
+dependency, lockfile, protected artifact, limiter, crawl-delay ratchet, or
+single-flight behavior moved.
+
+- **Fail-before:** both durable controls independently exited **101** before the
+  cache supported separate TTLs.
+  `unreachable_retries_after_its_short_ttl_but_not_before` remained denied when
+  its expected 60-second negative TTL expired, and
+  `unreachable_overwrites_last_good_when_fallback_is_deferred` remained denied
+  when its expected ten-second overwrite TTL expired.
+- **Decision A:** `ROBOTS_NEGATIVE_TTL` is **300 seconds**, named beside the
+  **86,400-second** `ROBOTS_TTL` and passed through the one production cache
+  construction. RFC 9309 requires complete disallow while unreachable. Five
+  minutes avoids a tight retry loop without allowing one transient failure to
+  occupy the successful-policy cache's full day. Executing controls prove
+  `Unavailable` keeps the ordinary TTL while only `Unreachable` expires at the
+  negative boundary.
+- **Decision B:** the operator selected **no fallback** on 2026-07-29. An
+  unreachable result overwrites an expired good policy and denies. The
+  permissive alternative is deferred until a measured live transient robots
+  outage affects an admitted publisher while a usable last-known-good policy
+  exists, followed by explicit operator authorization.
+- **Executing results:** the retry control holds `Unavailable` at calls **1**
+  beyond the negative boundary, holds `Unreachable` at calls **1** before its
+  boundary, and refetches at calls **2** exactly at expiry. The overwrite
+  control measures good calls **1**, unreachable calls **2**, no refetch inside
+  the negative TTL, and recovery at calls **3** exactly at expiry.
+- **Fail-closed preservation:** unchanged tests re-prove default 404 handling,
+  explicit publisher `Disallow`, network-without-cache rejection before a
+  request, and the subtractive operator deny-list. The `apply_crawl_delay`
+  source slice is unchanged at SHA-256 `ea16d8cac28b094f23eba38c5656c800a79515c049b57f0a85f85abe6bd77327`;
+  the complete limiter slice including `acquires` is unchanged at
+  `4280d757274fd3ae739a2e600054b1fe517287cff64e56abea82176ea73c38ed`.
+- **Matrix:** final `./run ci-local` passes **20/20** with **133** workspace
+  tests, **55** net tests (**29 + 26**), locked warning-denied Rust 1.78,
+  shell **248/248** on Python 3.11.4, invariant **11/11 rules / 23 controls**,
+  all **161/161** pins, protected databases **2/2**, clippy/fmt/ShellCheck
+  clean, and golden **11/11**. The constrained Python 3.12.13 lane independently
+  passes **248/248**.
+- **Status sequencing:** `cycle-check`, `progress-check`, and `version-check`
+  pass. The expected pre-audit `checklist-audit` refusal names only the checked
+  box without a progress entry; it is rerun after the real implementation
+  commit is recorded.
+- **Golden-E2E delta:** **0**; the mandatory standalone invocation and the final
+  local matrix both passed **11/11**.
 
 ---
 

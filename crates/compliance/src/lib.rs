@@ -564,6 +564,22 @@ struct Entry {
     fetched_at: Instant,
 }
 
+/// Cache lifetimes for definitive policy results and transient failures.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RobotsCacheTtls {
+    policy: Duration,
+    unreachable: Duration,
+}
+
+impl RobotsCacheTtls {
+    pub const fn new(policy: Duration, unreachable: Duration) -> Self {
+        Self {
+            policy,
+            unreachable,
+        }
+    }
+}
+
 /// Per-origin `robots.txt` cache: fetches once, honors a TTL, and is bounded.
 ///
 /// Bounded because a cache keyed by a value an *outside party* influences (the
@@ -579,6 +595,7 @@ pub struct RobotsCache {
     limiters: Arc<HostLimiters>,
     user_agent: String,
     ttl: Duration,
+    negative_ttl: Duration,
     capacity: usize,
     entries: std::sync::Mutex<HashMap<String, Entry>>,
     fetches: AtomicUsize,
@@ -592,11 +609,33 @@ impl RobotsCache {
         ttl: Duration,
         capacity: usize,
     ) -> Self {
+        Self::new_with_ttls(
+            fetcher,
+            limiters,
+            user_agent,
+            RobotsCacheTtls::new(ttl, ttl),
+            capacity,
+        )
+    }
+
+    /// Construct a cache with a distinct TTL for `Unreachable` results.
+    ///
+    /// Successful policies and definitive `Unavailable` results use `ttl`.
+    /// Only transient 5xx/network failures use `negative_ttl`; they continue to
+    /// deny while cached, as required by RFC 9309 §2.3.1.4.
+    pub fn new_with_ttls(
+        fetcher: Arc<dyn RobotsFetcher>,
+        limiters: Arc<HostLimiters>,
+        user_agent: impl Into<String>,
+        ttls: RobotsCacheTtls,
+        capacity: usize,
+    ) -> Self {
         Self {
             fetcher,
             limiters,
             user_agent: user_agent.into(),
-            ttl,
+            ttl: ttls.policy,
+            negative_ttl: ttls.unreachable,
             capacity: capacity.max(1),
             entries: std::sync::Mutex::new(HashMap::new()),
             fetches: AtomicUsize::new(0),
@@ -719,7 +758,11 @@ impl RobotsCache {
     fn cached(&self, origin: &str) -> Option<Policy> {
         let map = self.entries.lock().unwrap();
         let e = map.get(origin)?;
-        if e.fetched_at.elapsed() >= self.ttl {
+        let ttl = match &e.policy {
+            Policy::Unreachable => self.negative_ttl,
+            Policy::Gate(_) | Policy::Unavailable => self.ttl,
+        };
+        if e.fetched_at.elapsed() >= ttl {
             return None; // Stale: re-fetch.
         }
         Some(e.policy.clone())
@@ -1243,6 +1286,16 @@ Sitemap: https://example.org/sitemap.xml
         )
     }
 
+    fn cache_with_ttls(f: Arc<FakeFetcher>, ttl: Duration, negative_ttl: Duration) -> RobotsCache {
+        RobotsCache::new_with_ttls(
+            f,
+            Arc::new(HostLimiters::per_second(1000.0)),
+            "intel-platform/0.1",
+            RobotsCacheTtls::new(ttl, negative_ttl),
+            64,
+        )
+    }
+
     #[tokio::test]
     async fn a_fetched_policy_governs_the_gate() {
         let c = cache_with(FakeFetcher::new(RobotsFetch::Body(FIXTURE.into())));
@@ -1272,6 +1325,111 @@ Sitemap: https://example.org/sitemap.xml
         assert!(
             !c.allowed("https://example.org", "/", MissingPolicy::Deny)
                 .await
+        );
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn unreachable_retries_after_its_short_ttl_but_not_before() {
+        let unavailable_fetcher = FakeFetcher::new(RobotsFetch::Unavailable);
+        let unavailable = cache_with_ttls(
+            unavailable_fetcher.clone(),
+            Duration::from_secs(600),
+            Duration::from_secs(60),
+        );
+        assert!(
+            unavailable
+                .allowed(
+                    "https://unavailable.example",
+                    "/anything",
+                    MissingPolicy::RfcAllowAll
+                )
+                .await
+        );
+        unavailable_fetcher.set(RobotsFetch::Body(
+            "User-agent: *\nDisallow: /anything\n".into(),
+        ));
+        tokio::time::advance(Duration::from_secs(60)).await;
+        assert!(
+            unavailable
+                .allowed(
+                    "https://unavailable.example",
+                    "/anything",
+                    MissingPolicy::RfcAllowAll
+                )
+                .await,
+            "the negative TTL leaked onto a definitive unavailable result"
+        );
+        assert_eq!(
+            unavailable_fetcher.calls(),
+            1,
+            "unavailable must retain the successful-policy TTL"
+        );
+
+        let f = FakeFetcher::new(RobotsFetch::Unreachable);
+        let c = cache_with_ttls(f.clone(), Duration::from_secs(600), Duration::from_secs(60));
+
+        assert!(
+            !c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(f.calls(), 1);
+
+        f.set(RobotsFetch::Body(String::new()));
+        tokio::time::advance(Duration::from_secs(59)).await;
+        assert!(
+            !c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(f.calls(), 1, "negative result re-fetched before its TTL");
+
+        tokio::time::advance(Duration::from_secs(1)).await;
+        assert!(
+            c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(f.calls(), 2, "negative result was not retried at its TTL");
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn unreachable_overwrites_last_good_when_fallback_is_deferred() {
+        let f = FakeFetcher::new(RobotsFetch::Body(String::new()));
+        let c = cache_with_ttls(f.clone(), Duration::from_secs(60), Duration::from_secs(10));
+
+        assert!(
+            c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(f.calls(), 1);
+
+        tokio::time::advance(Duration::from_secs(60)).await;
+        f.set(RobotsFetch::Unreachable);
+        assert!(
+            !c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(f.calls(), 2, "expired good policy was not re-fetched");
+
+        f.set(RobotsFetch::Body(String::new()));
+        tokio::time::advance(Duration::from_secs(9)).await;
+        assert!(
+            !c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(
+            f.calls(),
+            2,
+            "overwriting unreachable result re-fetched before its TTL"
+        );
+
+        tokio::time::advance(Duration::from_secs(1)).await;
+        assert!(
+            c.allowed("https://example.org", "/anything", MissingPolicy::Deny)
+                .await
+        );
+        assert_eq!(
+            f.calls(),
+            3,
+            "overwriting unreachable result was not retried at its TTL"
         );
     }
 

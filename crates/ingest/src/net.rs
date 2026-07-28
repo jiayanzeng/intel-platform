@@ -55,6 +55,12 @@ fn configured_user_agent() -> Result<&'static str, IngestError> {
 
 /// How long a fetched `robots.txt` stays authoritative before we re-ask.
 pub const ROBOTS_TTL: Duration = Duration::from_secs(24 * 3600);
+/// How long a failed robots fetch stays fail-closed before retrying.
+///
+/// RFC 9309 §2.3.1.4 requires complete disallow while the policy is
+/// unreachable. Five minutes avoids a tight retry loop without letting a
+/// transient network failure occupy the successful-policy cache's 24-hour TTL.
+pub const ROBOTS_NEGATIVE_TTL: Duration = Duration::from_secs(5 * 60);
 /// Bound on the number of origins cached, so a config pointing at many hosts
 /// cannot grow the cache without limit.
 pub const ROBOTS_CAPACITY: usize = 512;

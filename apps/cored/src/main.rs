@@ -172,7 +172,7 @@ fn build_robots_cache_for_contact(
 ) -> Result<(Arc<RobotsCache>, String), String> {
     use intel_ingest::net::{
         crawler_user_agent, install_crawler_user_agent, HttpRobotsFetcher, ROBOTS_CAPACITY,
-        ROBOTS_TTL,
+        ROBOTS_NEGATIVE_TTL, ROBOTS_TTL,
     };
 
     let contact = required_crawler_contact(contact)?;
@@ -181,11 +181,11 @@ fn build_robots_cache_for_contact(
         .map_err(|error| format!("could not configure crawler identity: {error}"))?;
     let fetcher = HttpRobotsFetcher::new()
         .map_err(|error| format!("could not build the robots.txt HTTP client: {error}"))?;
-    let cache = Arc::new(RobotsCache::new(
+    let cache = Arc::new(RobotsCache::new_with_ttls(
         Arc::new(fetcher),
         limiter,
         installed,
-        ROBOTS_TTL,
+        intel_compliance::RobotsCacheTtls::new(ROBOTS_TTL, ROBOTS_NEGATIVE_TTL),
         ROBOTS_CAPACITY,
     ));
     Ok((cache, user_agent))

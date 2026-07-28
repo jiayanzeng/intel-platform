@@ -1,6 +1,55 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 EXPORT-BUDGET is complete and the published v0.15.2 status remains executable.** `origin/main` is `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated tag object is `22beef8e023e52024cfe9614273e2d82b39f4956`; tag target is release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Publication CI run `30375179895` attempt 1 completed with conclusion `success` for that exact main commit. The entering tree passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on Python 3.11.4 and a clean Python 3.12.13 rebuild, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 NEGATIVE-CACHE is complete; PREVIEW-DISPOSITION is next.** `origin/main` is `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated tag object is `22beef8e023e52024cfe9614273e2d82b39f4956`; tag target is release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Publication CI run `30375179895` attempt 1 completed with conclusion `success` for that exact main commit. The measured implementation tree passed local CI **20/20** before its status box, with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**; the status suite reruns after the separate audit entry names the implementation commit. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.19 NEGATIVE-CACHE is complete (measured 2026-07-29).**
+RFC 9309 §2.3.1.4 requires complete disallow while `robots.txt` is unreachable;
+§2.4 permits caching but does not require using a stale successful policy.
+`ROBOTS_NEGATIVE_TTL` is therefore named at **300 seconds** beside the
+**86,400-second** `ROBOTS_TTL`. Production constructs `RobotsCache` with both
+values. The cache selects 300 seconds only for `Policy::Unreachable`;
+successful parsed policies and definitive `Unavailable` results retain 86,400
+seconds. Five minutes avoids a tight retry loop while preventing one transient
+failure from occupying the success path's full day.
+
+The operator selected **no last-known-good fallback** on 2026-07-29. An
+`Unreachable` re-fetch still overwrites an expired good policy and fails closed.
+That more-permissive alternative is deferred until a measured live transient
+robots outage affects an admitted publisher while a usable last-known-good
+policy exists, followed by explicit operator authorization.
+
+Both durable controls failed before the implementation with exit **101**:
+`unreachable_retries_after_its_short_ttl_but_not_before` remained denied at the
+short-TTL boundary, and
+`unreachable_overwrites_last_good_when_fallback_is_deferred` likewise remained
+denied after its ten-second test boundary. After implementation, the first
+control keeps `Unavailable` cached at calls **1** after the negative boundary,
+keeps `Unreachable` at calls **1** before its boundary, and refetches to an
+allowing body at calls **2** exactly at the boundary. The overwrite control
+measures calls **1 → 2**, holds the unreachable denial at calls **2** inside
+its TTL, and refetches at calls **3** exactly at expiry.
+
+The four unchanged fail-closed guards all pass:
+`a_404_robots_txt_blocks_a_default_source_but_passes_an_opted_in_one`,
+`opting_in_does_not_bypass_an_explicit_arxiv_disallow`,
+`a_live_fetch_with_no_cache_fails_closed_before_the_operator_gate`, and
+`the_operator_denylist_still_refuses_what_the_publisher_permits`. The
+`apply_crawl_delay` source slice remains SHA-256
+`ea16d8cac28b094f23eba38c5656c800a79515c049b57f0a85f85abe6bd77327`;
+the complete `RateLimiter`/`HostLimiters` slice, including `acquires`, remains
+SHA-256
+`4280d757274fd3ae739a2e600054b1fe517287cff64e56abea82176ea73c38ed`.
+No single-flight behavior was added.
+
+The final pre-status `./run ci-local` passes **20/20**: warning-denied current and Rust
+1.78 offline checks/tests, **133** workspace tests, warning-denied net checks
+plus **29 + 26** net tests, clippy, fmt, ShellCheck, Python 3.11 shell
+**248/248**, invariant **11/11 rules / 23 controls**, all **161/161** pins,
+protected databases **2/2**, and golden **11/11**. The independent constrained
+Python 3.12.13 lane passes **248/248**. Earlier attempts correctly caught a
+one-line R2 self-test displacement and then an offline-only unused import; the
+final construction preserves the planted R2 line and is warning-clean in both
+feature modes.
 
 **v0.19 EXPORT-BUDGET is complete (measured 2026-07-29).**
 Root-run Repomix 1.17.0 measured the pre-change review export at **4,887,220
