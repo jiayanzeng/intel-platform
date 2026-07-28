@@ -367,7 +367,7 @@ Step 1 — Define the read-only E0 gate before the first E0 commit so its status
 - [x] **E0** — entering matrix with both interpreters; G2 bounded by measured
   comparison over configured and redirect URLs; G1 confirmed or closed clean;
   source inventory recorded
-- [ ] **ORIGIN-CASE** — case-differing hosts share one cache entry and one limiter
+- [x] **ORIGIN-CASE** — case-differing hosts share one cache entry and one limiter
   bucket, fail-before/pass-after; path case untouched — or the step skipped with
   E0's clean finding as the reason
 - [ ] **ROBOTS-PREVIEW** — real policy fetched, verdict and matched rule recorded

@@ -1,6 +1,24 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active and E0 is complete; ORIGIN-CASE is gated to skip because the mixed-case-host input is normalized before the only production network call to `gate()`.** At activation-audit commit `af961f9`, local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on clean-rebuilt Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; E0 is complete and ORIGIN-CASE was skipped at its clean G1 gate, leaving ROBOTS-PREVIEW next.** At activation-audit commit `af961f9`, local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on clean-rebuilt Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.18 ORIGIN-CASE is skipped at its decision gate (measured
+2026-07-28).** E0 proved that mixed-case authority bytes cannot reach the
+shipped live gate: `reqwest::Url` normalizes both the initial request and every
+publisher-controlled redirect before `get_text_with` calls `gate()`. The
+runbook explicitly requires a skip on that finding, so no case-normalization
+implementation or new dependency was added.
+
+The production ingest blobs remain
+`crates/ingest/src/lib.rs=773d7ffe2e984f75d7ddf4916e73929d09f5d149`
+and
+`crates/ingest/src/net.rs=0950319247c01aeae3394b8d4683b410c01c70fc`.
+The existing URL case-table and same-origin redirect controls each pass
+**1/1**. Path bytes, including path case, remain untouched; explicit ports and
+userinfo exclusion remain unchanged. Percent-encoding in the authority is
+outside this skipped step: the shipped live path continues to use
+`reqwest::Url`'s authority parsing without adding a second normalization layer.
+The mandatory standalone golden remains **11/11**, delta **0**.
 
 **v0.18 E0 is complete (measured 2026-07-28 at activation-audit commit
 `af961f93221b2ab31e72c5bb3501dafa91aa1dec`).** The first sandboxed matrix
