@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.17 is closed; v0.15.1 is fully verified and locally tagged for authorized publication.** Exact evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` is on provisionally named non-`main` ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. Release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7` passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on both Python 3.11.4 and clean-rebuilt 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` dereferences to that release commit. `origin/main` remains `cdae3c922a2156701c0df0ceb4f45fc937fa7f20` until the closing audit commit and tag are published atomically. Published `v0.15.0`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.15.1 is published and v0.17 is closed with release disposition `release (as of 2026-07-28)`.** The atomic release push advanced `origin/main` from `cdae3c922a2156701c0df0ceb4f45fc937fa7f20` through closing-audit commit `0d99a6387f3087ff90990ff95a1ee6cf6abcb6d4`; publication CI run `30361205715` passed. Annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` dereferences to release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`. Exact evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` remains a separate authenticated subject on provisionally named ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. The release commit passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on both Python 3.11.4 and clean-rebuilt 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Published `v0.15.0`, its annotated tag, release commit, receipts, and every earlier release remain byte-identical and unmoved; protected corpus bytes and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
 
 **v0.17 R-CLOSE is complete (measured 2026-07-28).**
 Release disposition: release (as of 2026-07-28). The operator authorized
@@ -41,6 +41,16 @@ both protected databases exact. The clean repository-local Python 3.12.13
 rebuild verified **21/21** constrained packages and passed **244/244** with
 the same single deprecation warning. The mandatory standalone golden
 invocation passed **11/11**, delta **0**.
+
+The atomic publication push advanced remote `main` from
+`cdae3c922a2156701c0df0ceb4f45fc937fa7f20` to closing-audit commit
+`0d99a6387f3087ff90990ff95a1ee6cf6abcb6d4` while creating remote annotated
+tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba`; its peeled target is release
+commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`. Publication CI run
+`30361205715` completed **success** at the closing commit: all seven
+matrix-expanded jobs from the six blocking job definitions succeeded, while
+the dependency-drift report-only job was skipped as designed. This forward
+STATE append is the publication-audit record and changes no release object.
 
 The first affected release is **v0.8.0**. From v0.8.0 through v0.15.0,
 multi-segment and query-specific publisher rules could be weakened because the
