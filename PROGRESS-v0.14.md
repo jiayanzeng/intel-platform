@@ -469,3 +469,83 @@ Entries are append-only; corrections are new dated entries.
   separate operator publication decision.
 - golden-E2E delta: **0**. Hosted, matrix, and mandatory standalone golden all
   remained **11/11** byte-identical.
+
+### 2026-07-28 · REVIEW-CORRECTION — command behavior is proved at its entry point
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Operator + Codex
+- commit: 4ad4c8d71075731dd87c360e8b0d3d91d80b5518
+- correction: one of the three review findings stands. The expected net split
+  was incorrectly stated as 24 + 24; the measured and accepted split is
+  **23** `intel-ingest` + **25** `cored`.
+- withdrawn finding: Step 8 did not demand output no hosted job produces.
+  No-argument `./run invariant-scan` emits
+  `invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`, so the criterion
+  was satisfiable as written.
+- withdrawn finding: the statement that Directive 2 verified the harness but
+  not the wiring was observationally true but inconsequential. The wiring was
+  already correct, and the v0.13 acceptance criterion was true when checked.
+- root cause: the reviewer read the shell wrapper and inferred tool behavior
+  without reading `main()`, after previously making the mirrored mistake of
+  reading the tool without checking its wrapper. A command-behavior claim is
+  verified at the command's entry point, not its caller. The earlier probe also
+  passed `--rules`, which suppresses default self-test, and misread the absent
+  self-test line as evidence about no-argument execution.
+- disposition: this is a v0.14 review defect only, not a codebase or v0.13
+  defect. Retraction #4 was investigated and disproved. Retained v0.13 run
+  **30277584129** ends
+  `invariant-scan: SELF-TEST PASS (7/7 rules, 11 controls)`, while
+  `tools/invariant_scan.py:1039` makes no-argument execution call `self_test`.
+  Retractions remain **three**.
+
+### 2026-07-28 · R-CLOSE — v0.14.0 selected, locally closed, publication withheld
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Operator + Codex
+- commit: 4ad4c8d71075731dd87c360e8b0d3d91d80b5518
+- version acceptance: PASS. DIAGNOSTIC-KNOB option (b) added a startup warning
+  and production code change, firing **v0.14.0** at Step 6. The disposition is
+  not inherited from R-CLOSE's default.
+- subject acceptance: PASS. Evidence candidate
+  `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` and later release commit
+  `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` are separate named fields.
+  Authenticated run **30324186389**, attempt **1**, remains bound to the
+  candidate; the release commit contains the admitted evidence and release
+  reconciliation.
+- publication decision: **no-release**. The named trigger is a separate
+  operator authorization to advance `origin/main` and create the annotated
+  `v0.14.0` tag. It has not fired. `origin/main` remains
+  `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, no v0.14.0 tag exists, and no
+  publication or live server session occurred.
+- diff acceptance: PASS. The independently enumerated
+  `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9..release` diff contains **37**
+  paths, each classified exactly once in `STATE.md`. The five version
+  authorities agree at 0.14.0; Cargo changed only the local `cored` version in
+  `Cargo.lock`, with no dependency resolution movement.
+- architecture acceptance: PASS. `ARCHITECTURE.md` records R8 ordering, the
+  bounded warning-emitting diagnostic knob, and R3/R4's open-bottom scanner
+  limitations. A4 remains open because a rewritten shell can bypass or falsify
+  `/attest`; the editable-L1 controller residual remains open until scheduled
+  server-side L2.
+- hosted/local reconciliation: PASS. Both hosted shell legs report **224
+  passed / 1 skipped** because the on-site production measurement test
+  intentionally skips without protected corpora and a built `cored`. Both
+  on-site lanes pass **225/225**; this is an expected environment distinction,
+  not test drift.
+- exact-release acceptance: PASS. At clean release commit
+  `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`, `./run ci-local` passed
+  **20/20** with **125** workspace tests, **48** net tests (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, Python 3.11
+  **225/225**, all **101/101** pins exact, protected databases **2/2**, and
+  golden **11/11**. The independent Python 3.12.13 lane passed **225/225** with
+  **21/21** exact packages, and mandatory standalone golden passed **11/11**.
+- version-check acceptance: PASS for all five 0.14.0 authorities. It correctly
+  warns that the nearest tag is v0.13.0. Exact-tag confirmation remains
+  inapplicable until the separately authorized tag-creation trigger fires; no
+  tag was created to manufacture that result.
+- preservation acceptance: PASS. Public `/v1/*` bodies, the SQLite schema,
+  golden assertions, published releases, and the three valid retractions are
+  unchanged. The canonical closing heading and R-CLOSE checkbox changed
+  atomically in this audit record.
+- golden-E2E delta: **0**. Hosted, exact-release matrix, and mandatory
+  standalone golden remain **11/11** byte-identical.

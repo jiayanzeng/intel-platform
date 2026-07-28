@@ -572,7 +572,7 @@ match · golden 11/11.
   uncovered rule demonstrated red; actual no-argument wiring recorded
 - [x] **RE-MEASURE** — hosted run pinned to candidate; every count read from the
   log; signed set committed; new pin count in three places; identity set seven
-- [ ] **R-CLOSE** — version choice cites Step 6's trigger; evidence candidate and
+- [x] **R-CLOSE** — version choice cites Step 6's trigger; evidence candidate and
   release commit separate; A4, L1 residual, and any stated limitation open
 
 ---
@@ -606,33 +606,77 @@ match · golden 11/11.
 - Do not batch `STATE.md` / `PROGRESS-v0.14.md` updates or combine two tasks in
   one commit.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-28
-- **Release disposition:** pending Step 9's separate operator publication
-  decision
-- **Release:** pending; Step 6's implementation trigger selects `v0.14.0`
+- **Cycle closed:** 2026-07-28
+- **Release disposition:** no-release
+- **Release identity selected:** `v0.14.0`
 - **Evidence candidate:**
   `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`
-- **Hosted evidence:** workflow-dispatch run **30324186389**, attempt **1**,
-  with seven authenticated identities and zero rejection
-- **Evidence pins:** **101 total** — **99 evidence** plus **2 authorization
-  surfaces**
-- **Release commit:** pending final R-CLOSE
-- **Annotated tag object:** not created; publication is not authorized
+- **Hosted dispatch:** `30324186389`, attempt `1`
+- **Release commit:** `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`
+- **Tag:** not created; publication is not authorized
+- **Protected pins:** `101` total = `99` evidence + `2` authorization surfaces
+
+Intentionally unreleased implementation commits:
+
+- E0 — `6193a12d093e5e67c01f51fcdd6832a465aa1dd7`
+- CONTROL-PRECISION — `970b717f380b932e96fab6687ac09e38b6eb3413`
+- RULE-SHAPE-AUDIT — `e80c523553b2f0f360330e073ff19c480f75cc4f`
+- R8-IDENTITY-BEFORE-BIND —
+  `ab266df2fc671649b6bff0ea1ce6eb2c21796fa2`
+- R9-TEST-SEAM — `9968f9f426b28e373e24907954cecea2f08bd78a`
+- DIAGNOSTIC-KNOB — `010536c575b9bf089665a97b0f534aa547825e3d`
+- TEMPLATE-REMEASURE — `7fde11f6e74af7807e5d6cd7bdf4d40c594424c7`
+- SELF-TEST-SCOPE — `bb5ce61fef2d90cf63f7382baed5488fe68c3569`
+- RE-MEASURE — `f8cfe16f03454a1f8665e874601035dcccae1665`
+- R-CLOSE/release — `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`
+
+Cycle activation remains preparatory history at
+`b078252c378ca18c65670bae0a3d6d6e0529be09`; it is not one of the ten task
+records.
+
+The release identity is `v0.14.0` because DIAGNOSTIC-KNOB option (b) added a
+startup warning and production code change. This trigger fired at Step 6; the
+choice is not an R-CLOSE default. Publication has a separate trigger: explicit
+operator authorization to advance `origin/main` and create the annotated
+`v0.14.0` tag. That trigger has not fired, so the canonical disposition is
+`no-release`.
+
+The evidence candidate and release commit are distinct subjects. Run
+**30324186389**, attempt **1**, authenticates candidate
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`. The later local release commit
+`4ad4c8d71075731dd87c360e8b0d3d91d80b5518` contains the admitted
+receipt/bundle set, audit report, release authorities, classified 37-path
+diff, and v0.15 candidate inputs.
 
 Hosted logs report **125** workspace tests; **48** net tests split as **23**
-`intel-ingest` plus **25** `cored`; shell **224 passed / 1 skipped** under each
-of Python 3.11 and 3.12; `invariant-scan: PASS (9/9 registered rules)` and
-`invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`; and golden
-**11/11**. The release-grade audit accepted all seven signed receipts, required
-attestations, and measured **5 deferred / 2 promoted**. A4 and the editable-L1
-controller residual remain open; L2 remains scheduled and unexecuted.
+`intel-ingest` plus **25** `cored`; `invariant-scan: PASS (9/9 registered
+rules)` and `invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`; and
+golden **11/11**. Both hosted shell legs report **224 passed / 1 skipped**:
+`test_on_site_production_measurements_match_committed_receipt` intentionally
+skips without protected corpora and a built `cored`. Both on-site interpreter
+lanes pass **225/225**.
 
-This is deliberately pending rather than the canonical closing record.
-R-CLOSE remains unchecked, `origin/main` remains
-`0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, and no tag or publication
-occurred.
+The release-grade audit accepted all seven signed receipts, rejected zero,
+required attestations, and measured **5 deferred / 2 promoted**. At exact
+release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`,
+`./run ci-local` passed **20/20**, both local shell lanes passed **225/225**,
+all **101/101** pins and protected databases **2/2** matched, and matrix plus
+standalone golden passed **11/11** byte-identically.
+
+The investigated fourth retraction was disproved. Retained v0.13 hosted output
+ends `invariant-scan: SELF-TEST PASS (7/7 rules, 11 controls)`, and
+`tools/invariant_scan.py:1039` makes no-argument execution enter self-test.
+Retractions remain **three**.
+
+`ARCHITECTURE.md` keeps A4 open because a rewritten shell can bypass or falsify
+`/attest`; keeps the editable-L1 controller residual open pending the scheduled
+server-side L2 wrapper; and states R3/R4's open-bottom deny-list limitations.
+No public `/v1/*` body, SQLite schema, dependency resolution, or golden
+invariant changed. `origin/main` remains
+`0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`; no tag, publication, or live
+server session occurred.
 
 ## Runbook amendments
 
