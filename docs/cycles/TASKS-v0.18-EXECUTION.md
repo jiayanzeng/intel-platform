@@ -278,7 +278,12 @@ the run · golden 11/11.
 **Objective.** Make Step 4's findings durable. A harvest is a hypothesis
 generator; the tests are what survive.
 
-**Gate.** Offline. Whatever crates Step 4's findings implicate.
+**Gate.** Offline. Scope is limited to `run`, the implicated shell regression
+test, `run`'s one authorization-pin record in
+`config/protected-artifacts.json`, and `STATE.md` / active-cycle status
+records. No publisher request, live database write, harvested
+fixture/document, protected database, evidence artifact/receipt, dependency,
+schema, model-profile behavior, or public surface change.
 
 **Steps.**
 
@@ -377,6 +382,11 @@ Step 4 — Widen LIVE-HARVEST before its network action to contain the fresh
 database, transient runtime files, observation report, and status-record
 surfaces required by its acceptance criteria — 2026-07-28
 
+Step 5 — Define WIRE-FINDINGS scope before its first implementation commit,
+then include the required `run` authorization-pin update once the executing
+fail-before exposed that pinned-file coupling; contain only F1's harness entry
+point, offline regression, pin validation, and status records — 2026-07-28
+
 ---
 
 ## Cycle checklist
@@ -393,7 +403,7 @@ surfaces required by its acceptance criteria — 2026-07-28
 - [x] **LIVE-HARVEST** — isolated database, protected corpus hash-verified after;
   one process; `Crawl-delay` honoured; paging, `resumptionToken`, cursor,
   redirect, and XML observations recorded
-- [ ] **WIRE-FINDINGS** — every finding fixed with a regression or deferred with a
+- [x] **WIRE-FINDINGS** — every finding fixed with a regression or deferred with a
   trigger; or an explicit empty close
 - [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; branch named after the decided version

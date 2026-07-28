@@ -836,13 +836,13 @@ else:
     || echo "    (view query failed)"
   echo
   if [ "$tag" = "PASS" ]; then
-    green "LIVE harvest reached the wire. cored still running on $CORE_URL for inspection."
+    green "LIVE harvest reached the wire."
   else
-    red   "Harvest did NOT fetch documents — T2 remains unverified. cored still up for debugging."
-    red   "Paste this whole output back; the robots/paging log lines above show where it stopped."
+    red   "Harvest did NOT fetch documents — T2 remains unverified."
+    red   "The robots/paging log lines above show where it stopped."
   fi
-  blue  "  peek: curl -s '$CORE_URL/view?sectors=science' | less"
-  blue  "  stop: ./run down"
+  blue  "  observation database: $HARVEST_DB"
+  blue  "  runtime log: $RUNDIR/cored.log"
   echo
   # Derive every HC13 box from captured evidence. A zero-document or failed run
   # checks none of them: reaching an endpoint is not evidence that documents
@@ -869,6 +869,10 @@ print(str(int(d.get("fetched",0))) + "\t" + ("1" if r.get("ok") else "0"))
   checkline "$pages_ok" "more than one OAI-PMH page observed: $page_count"
   checkline "$parse_ok" "real OAI-PMH XML ingested without a parse error"
   checkline "$cursor_ok" "arxiv-cs cursor row present in $HARVEST_DB"
+  # The command owns the process it launched. Stop it before returning so the
+  # printed lifecycle is deterministic even under managed runners that reap
+  # background process groups at command exit.
+  cmd_down
 }
 
 # Print resolved, non-secret configuration without making a network request.

@@ -96,6 +96,19 @@ def _assert_entry_point_order(events: list[str]) -> None:
     )
 
 
+def _harvest_function(text: str) -> str:
+    start = text.index("cmd_harvest_arxiv() {")
+    end = text.index("\n}\n\n# Print resolved", start)
+    return text[start:end]
+
+
+def _assert_success_path_stops_managed_core(function: str) -> None:
+    checklist = function.index('blue  "Checklist backed by this run (HC13):"')
+    assert "  cmd_down" in function[checklist:], (
+        "cmd_harvest_arxiv must stop its managed core before returning"
+    )
+
+
 def test_cmd_harvest_arxiv_enforces_artifact_preflight_before_network(
     tmp_path: Path,
 ) -> None:
@@ -127,3 +140,17 @@ def test_cmd_harvest_arxiv_enforces_artifact_preflight_before_network(
     assert removed_result.returncode == 2
     with pytest.raises(AssertionError, match="cmd_harvest_arxiv"):
         _assert_entry_point_order(removed_events)
+
+
+def test_cmd_harvest_arxiv_has_a_deterministic_post_run_lifecycle() -> None:
+    function = _harvest_function(RUN.read_text())
+    _assert_success_path_stops_managed_core(function)
+    assert "cored still running" not in function
+    assert "cored still up" not in function
+
+    checklist = function.index('blue  "Checklist backed by this run (HC13):"')
+    without_shutdown = (
+        function[:checklist] + function[checklist:].replace("  cmd_down", "", 1)
+    )
+    with pytest.raises(AssertionError, match="must stop its managed core"):
+        _assert_success_path_stops_managed_core(without_shutdown)

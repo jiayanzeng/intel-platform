@@ -1,6 +1,37 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; LIVE-HARVEST completed over 3 real OAI-PMH pages and WIRE-FINDINGS is next with one harness-lifecycle finding.** Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; WIRE-FINDINGS fixed the one live-harvest harness-lifecycle finding and RE-MEASURE is next.** Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.18 WIRE-FINDINGS is complete with F1 fixed (measured 2026-07-28).**
+The one Step 4 finding has exactly one disposition: **fixed with an offline
+regression test**. `cmd_harvest_arxiv` now stops the managed core with
+`cmd_down` before returning, reports the observation database and runtime log,
+and no longer claims that the core remains available for inspection. This
+makes the command lifecycle deterministic under both interactive shells and
+managed runners.
+
+The executing fail-before removed the required terminal `cmd_down` call and
+failed **1/1** with `cmd_harvest_arxiv must stop its managed core before
+returning`; the pass-after harness file is **2/2**. No real XML shape, status
+code, or redirect differed from the existing fixture coverage, so no
+publisher-derived fixture was added. No publisher request or live database
+write was made in this step, and no harvested document entered the protected
+or golden corpus.
+
+Because `run` is authorization-pinned, its one record moved from
+`7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`
+(**41,959** bytes) to
+`caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678`
+(**42,056** bytes). The model-profile functions, dispatch,
+`tools/model_profiles.py`, and authorization policy are unchanged. Manifest
+schema v2 validation and `verify-artifacts` pass with all **146/146** pins and
+protected databases **2/2** exact.
+
+The final local matrix passes **20/20** with **131** workspace tests, **55**
+net tests, both Python 3.11.4 and 3.12.13 at **245/245**, locked Rust 1.78,
+zero rustc/clippy/fmt/ShellCheck failures, and `invariant-scan` **11/11 rules /
+23 controls**. The mandatory standalone golden remains byte-identical at
+**11/11**, delta **0**.
 
 **v0.18 LIVE-HARVEST is complete with one finding for Step 5 (measured
 2026-07-28).** Preflight validated artifact schema v2, all **146/146** pins,
