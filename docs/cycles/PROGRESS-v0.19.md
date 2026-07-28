@@ -166,3 +166,37 @@ Entries are append-only; corrections are new dated entries.
 - status acceptance: PASS. Cycle, checklist, progress, and version checks are
   green after this append names the real implementation commit.
 - golden-E2E delta: **0**; standalone and full-matrix runs passed **11/11**.
+
+### 2026-07-29 · PREVIEW-DISPOSITION — unsupported preview retired
+
+- owner: Codex
+- commit: 2cabfcc
+- result: PASS. The operator selected exactly one disposition: **retire**.
+  Implementation commit `2cabfcc` deletes the coupled `diagnostics` /
+  `robots-preview` feature declarations, preview binary, robots-only
+  fetch/helper and wire test, diagnostic API and its two tests, and
+  diagnostics-only parser/matcher provenance bookkeeping.
+- gate acceptance: PASS. Only the preview's own sources, manifests, feature
+  declarations, tests, binary, `ARCHITECTURE.md`, and required status records
+  moved. The public `/v1/*` surface, SQLite schema, dependency set,
+  `Cargo.lock`, protected artifacts, and default robots-policy decisions are
+  unchanged.
+- disposition acceptance: PASS. Cargo metadata shows no feature or binary
+  target for `intel-compliance`; `intel-ingest` exposes only `net` and its
+  library target. `ARCHITECTURE.md` records retirement and preserves the
+  published v0.15.2 tag plus v0.18 wire observations as historical evidence.
+- supplemental-matrix acceptance: PASS. Before retirement, compliance
+  `--features diagnostics` passed **42/42**, while ingest
+  `--features robots-preview` passed **30/30** library plus **1/1** binary
+  tests. After retirement both commands exit **101** with
+  `does not contain this feature`; surviving all-features suites pass
+  compliance **40/40** and ingest **29/29**, with no binary suite.
+- default-build acceptance: PASS. `./run ci-local` passed **20/20** with
+  **133** workspace tests, **55** net tests (**29 + 26**), warning-denied
+  current and Rust 1.78 builds, Python 3.11 shell **248/248**, invariant
+  **11/11 rules / 23 controls**, **161/161** pins, protected databases
+  **2/2**, and clean clippy/fmt/ShellCheck. Python 3.12.13 independently
+  passed **248/248**.
+- status acceptance: PASS. Cycle, checklist, progress, and version checks are
+  green after this append names the real implementation commit.
+- golden-E2E delta: **0**; standalone and full-matrix runs passed **11/11**.
