@@ -11,6 +11,9 @@ from tools import invariant_scan
 
 ROOT = Path(__file__).resolve().parents[2]
 RULES = ROOT / "config" / "invariant-rules.json"
+PARAMETERIZED_RULE_IDS = tuple(
+    rule.id for rule in invariant_scan.load_rules(RULES)
+)
 LEGACY_FAIL_BEFORE_NOTES = {
     "R1": (
         "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: "
@@ -39,7 +42,20 @@ LEGACY_FAIL_BEFORE_NOTES = {
 }
 
 
-@pytest.mark.parametrize("rule_id", [f"R{number}" for number in range(1, 10)])
+def assert_complete_rule_parameterization(
+    rules: list[invariant_scan.Rule],
+    parameterized_rule_ids: tuple[str, ...],
+) -> None:
+    registered = {rule.id for rule in rules}
+    covered = set(parameterized_rule_ids)
+    assert covered == registered, (
+        "registered invariant rules missing from control parameterization: "
+        f"{sorted(registered - covered)}; unexpected ids: "
+        f"{sorted(covered - registered)}"
+    )
+
+
+@pytest.mark.parametrize("rule_id", PARAMETERIZED_RULE_IDS)
 def test_each_registered_rule_passes_clean_and_fires_its_controls(
     rule_id: str,
 ) -> None:
@@ -58,6 +74,20 @@ def test_each_registered_rule_passes_clean_and_fires_its_controls(
             invariant_scan.expected_control_finding(rule, control)
             in output.splitlines()
         )
+
+
+def test_control_parameterization_covers_every_registered_rule() -> None:
+    rules = invariant_scan.load_rules(RULES)
+    assert_complete_rule_parameterization(rules, PARAMETERIZED_RULE_IDS)
+    assert all(rule.fail_before for rule in rules)
+
+
+def test_control_parameterization_rejects_an_uncovered_rule() -> None:
+    rules = invariant_scan.load_rules(RULES)
+    uncovered = tuple(rule.id for rule in rules[:-1])
+
+    with pytest.raises(AssertionError, match=rules[-1].id):
+        assert_complete_rule_parameterization(rules, uncovered)
 
 
 def test_every_legacy_fail_before_string_is_preserved_as_a_note() -> None:

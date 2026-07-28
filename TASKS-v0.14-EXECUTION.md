@@ -431,6 +431,48 @@ silently.
 
 ---
 
+## Gate-added task · SELF-TEST-SCOPE — Derive control coverage before RE-MEASURE 🤖
+
+**Objective.** Make the focused invariant-control parameterization derive its
+scope from the registry, and make the record match the self-test behavior CI
+actually executes.
+
+**Gate.** `shell/tests/test_invariant_scan.py`, `run`,
+`.github/workflows/ci.yml`, `config/checklist-retractions.json`, the v0.13
+record through forward correction only, and this active runbook. No source
+under `crates/` or `apps/`, no closed runbook or progress-log edit, and no new
+CI job.
+
+**Decision.** Preserve the existing no-argument wiring. Both current code and
+the v0.13 evidence candidate deliberately route no-argument
+`./run invariant-scan` through `self_test`; retained hosted run 30277584129
+ends `SELF-TEST PASS (7/7 rules, 11 controls)`. Do not add a redundant explicit
+flag merely to make command syntax look different, and do not retract a
+property the retained log proves.
+
+**Steps.**
+
+1. Derive the focused pytest parameterization from the loaded registry and
+   assert exact rule-id coverage plus a non-empty control set.
+2. Demonstrate that omitting one registered id makes the coverage assertion
+   red.
+3. Record the no-argument wiring evidence and correct the syntax-only Step 8
+   preflight finding forward.
+4. Amend Step 8 to require the two lines hosted CI actually emits: registered
+   rule count and self-test rule/control count. The hosted shell pytest legs
+   independently exercise the derived parameterization.
+
+**Acceptance criteria.** Pytest parameterization derived from the registry and
+an uncovered-rule case demonstrated red · wiring decision and retained v0.13
+hosted line recorded · false retractions refused with evidence · Step 8
+amendment disclosed · no closed runbook edited · `ci-local` remains **20** ·
+golden **11/11**.
+
+**Done when** focused control coverage cannot silently narrow and every
+historical or current claim names the behavior CI actually executes.
+
+---
+
 ## Step 8 · RE-MEASURE — Hosted evidence for the candidate 🤖🧑
 
 **Objective.** Produce release-grade hosted evidence for the v0.14 candidate.
@@ -448,10 +490,12 @@ silently.
    the candidate.
 4. **Read the per-invocation counts out of the hosted log**, not from job status:
    `intel-ingest` net, `cored` net, workspace, both shell legs, and the
-   invariant self-test's rule and control counts. The hosted self-test must
-   report the same rule/control pair as `./run invariant-scan --self-test` at
-   the same candidate commit, and that pair must be **9 rules / 15 controls**
-   at this candidate.
+   invariant scan's registered-rule and self-test rule/control counts. The
+   no-argument workflow invocation must emit
+   `invariant-scan: PASS (9/9 registered rules)` and
+   `invariant-scan: SELF-TEST PASS (9/9 rules, 15 controls)`, matching the
+   local candidate. Both hosted shell pytest legs must pass the independently
+   registry-derived control parameterization.
 5. Commit the signed receipt/bundle set, re-run `./run verify-artifacts` and
    `./run evidence-report`, and record the new pin count in `STATE.md`,
    `PROGRESS-v0.14.md`, and the pending closing record.
@@ -459,10 +503,12 @@ silently.
 7. Run `./run audit-deferred` in release posture with attestations required.
 
 **Acceptance criteria.** Hosted run id pinned to the candidate · every count read
-from the log · hosted and local self-test rule/control counts match at the same
-candidate commit and equal **9 / 15** · signed set committed and re-derived · new
-pin count in three places · identity set still seven · `origin/main` unchanged,
-no tag · golden 11/11.
+from the log · hosted invariant output contains the registered-rule **9 / 9**
+line and the self-test **9 / 9 rules, 15 controls** line emitted by the
+no-argument candidate invocation · both hosted shell pytest legs pass the
+registry-derived coverage test · signed set committed and re-derived · new pin
+count in three places · identity set still seven · `origin/main` unchanged, no
+tag · golden 11/11.
 
 **Done when** v0.14's hosted evidence exists at the same grade as v0.13's.
 
@@ -522,6 +568,8 @@ match · golden 11/11.
   recorded here
 - [x] **TEMPLATE-REMEASURE** — `AGENTS.md` amended and the check executable;
   unassigned deferral row fails; closed runbooks unmodified
+- [x] **SELF-TEST-SCOPE** — focused control coverage derived from the registry;
+  uncovered rule demonstrated red; actual no-argument wiring recorded
 - [ ] **RE-MEASURE** — hosted run pinned to candidate; every count read from the
   log; signed set committed; new pin count in three places; identity set seven
 - [ ] **R-CLOSE** — version choice cites Step 6's trigger; evidence candidate and
@@ -561,3 +609,5 @@ match · golden 11/11.
 ## Runbook amendments
 
 Step 8 — Replace stale Step 2 count anchors with same-commit equality and final 9 / 15 — 2026-07-28
+Step 7 — Insert the operator-directed SELF-TEST-SCOPE gate before Step 8 — 2026-07-28
+Step 8 — Correct syntax-only preflight to verified no-argument self-test behavior and emitted lines — 2026-07-28

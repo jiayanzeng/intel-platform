@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published; v0.14 RE-MEASURE is blocked before dispatch because the pushed candidate workflow does not invoke `invariant-scan --self-test`. Candidate branch `candidate/v0.14.0` is exactly `0af15157efc88357b84d0c08492c938cfef00660`; no workflow was dispatched. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **223/223** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.13.0 (core-shell) · **Status:** **v0.13.0 is published; v0.14 SELF-TEST-SCOPE is complete and the replacement Step 8 candidate is pending its implementation/audit pair. The prior syntax-only RE-MEASURE block is corrected below: no-argument `./run invariant-scan` intentionally executes `self_test`. Candidate branch `candidate/v0.14.0` still points to superseded `0af15157efc88357b84d0c08492c938cfef00660`; no workflow was dispatched. Annotated tag object `24a6a2aca52974891d120e0f2b295a93d629c1f7` dereferences exactly to release commit `5ecd42bb6ca44f1588e53e493c67fee17d071b09`; reconciled `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`.** Release-grade evidence remains workflow-dispatch run **30277584129**, attempt **1**, against distinct evidence candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd`; its audit accepted seven authenticated receipts with zero rejection and required attestations. Post-push run **30281407090** passed all seven identities at the release commit but is recorded only as post-publication CI, not promoted or pinned as release evidence. Failed run **30274895522**, attempt **1**, remains measured, non-admitted evidence of the D1 identity-install race it surfaced. Published v0.12.0, v0.11.0, and v0.10.3 remain byte-identical and unmoved; local-only v0.10.2 remains unpublished. Current local CI is **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** tests in the net job (**23** `intel-ingest` + **25** `cored`); standalone shell runs are **225/225** under Python 3.11.4 and 3.12.13, with both interpreters verifying **21/21** exact packages. Golden is **11/11**, protected database evidence is exact **2/2**, and the manifest contains **86/86 pins**: **84/84** evidence files plus **2/2** authorization surfaces. All five release authorities agree at 0.13.0. `invariant-scan` is **9/9 rules / 15 site-specific controls**. R3 and R4 are explicitly bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -270,9 +270,8 @@ This exact amendment tree passed `./run cycle-check`; the focused checker tests
 passed **11/11** under Python 3.11.4 and 3.12.13; `./run ci-local` passed
 **20/20**; and standalone golden remained **11/11**. Explicit test discovery
 reported **125** workspace tests and **48** net tests split as **23**
-`intel-ingest` plus **25** `cored`. That local split differs from the
-operator-provided Step 8 expectation of 24 + 24 and is recorded as a
-pre-hosted comparison finding, not reconciled by changing source.
+`intel-ingest` plus **25** `cored`. The operator subsequently corrected the
+24 + 24 expectation; 23 + 25 is the accepted candidate split.
 
 The reusable defect shape is retained for the amendment's append-only progress
 record: a criterion tied to one step's measured value goes stale when a later
@@ -283,22 +282,48 @@ invariant relation—is a **v0.15 candidate input only**. It is not implemented
 in v0.14. A4 and the editable-L1 controller residual remain open; L2 remains
 scheduled.
 
-**RE-MEASURE is blocked at its remote-workflow preflight (measured
-2026-07-28).** The authorized non-`main` push placed exact post-amendment audit
-commit `0af15157efc88357b84d0c08492c938cfef00660` at
-`candidate/v0.14.0`. A remote read then confirmed `origin/main` unchanged at
-`0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, no `v0.14.0` tag, and zero
-workflow runs for the candidate branch.
+**The prior RE-MEASURE preflight block is corrected as a syntax-only
+non-result (measured 2026-07-28).** The candidate workflow invokes
+no-argument `./run invariant-scan`. Both current code and v0.13 evidence
+candidate `7faaa4e1271616ff9390111c863d12fbcfa4d2fd` explicitly route a
+no-argument invocation through `self_test`; `--self-test` is an equivalent
+explicit spelling, not the only execution path. Current implicit and explicit
+commands both ended `SELF-TEST PASS (9/9 rules, 15 controls)`.
 
-The remote candidate's `.github/workflows/ci.yml` contains the workspace test,
-both net test invocations, both Python matrix legs, and golden. Its invariant
-step at line 390 is only `./run invariant-scan`; the workflow contains zero
-`invariant-scan --self-test` invocations. It therefore cannot put the required
-hosted **9 rules / 15 controls** self-test measurement in a log. Per Step 8's
-pre-dispatch rule, no workflow was dispatched and no source was edited to route
-around the finding. No signed receipt set, new pin count, hosted identity
-claim, or release-grade v0.14 evidence exists. RE-MEASURE remains unchecked and
-R-CLOSE has not started.
+The retained lint job for v0.13 run **30277584129** contains no invariant
+output because invariants ran in the Python 3.11 shell job. That shell log
+individually prints all eleven controls and ends verbatim:
+`invariant-scan: SELF-TEST PASS (7/7 rules, 11 controls)`. The published v0.13
+record specifically attributes the count to the hosted Python 3.11 log, so its
+claim is supported. Retraction #4 and the proposed second retraction were not
+added; `checklist-retractions.json` correctly remains at three entries.
+
+**SELF-TEST-SCOPE is complete (measured 2026-07-28).** The focused pytest
+parameterization now derives its nine rule ids from the loaded registry rather
+than `range(1, 10)`, asserts exact registered-id coverage and non-empty
+controls, and includes a failure-capable test that omits one id and observes
+the coverage assertion. The focused module passed **17/17** under Python
+3.11.4 and 3.12.13.
+
+The wiring decision preserves existing behavior: job 20 and hosted Python 3.11
+continue to execute the registry-derived self-test through the no-argument
+default, while both shell pytest legs independently exercise the derived
+focused parameterization. No redundant flag-only edit was made to the
+hash-pinned `run` surface or workflow. The active Step 8 criterion now requires
+the exact registered-rule and self-test summary lines that hosted CI emits.
+
+The directive review produced three forward corrections. The net split is
+**23 + 25**, not 24 + 24. The claim that no hosted job emits self-test output
+was refuted by the retained line above. The claim that prior review verified
+only the harness and not wiring was refuted by both the v0.13 CLI default and
+its retained hosted execution. No closed runbook or progress log was edited.
+
+The exact tree passed `./run ci-local` **20/20**, shell **225/225** under both
+interpreters, `invariant-scan` **9/9 rules / 15 controls**, and matrix plus
+standalone golden **11/11**. No source under `crates/` or `apps/` changed. A4
+and the editable-L1 controller residual remain open; L2 remains scheduled.
+RE-MEASURE remains unchecked until the replacement candidate is pushed and
+hosted evidence completes.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
