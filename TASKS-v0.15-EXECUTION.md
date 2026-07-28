@@ -158,6 +158,11 @@ an earlier step** — that is H4, and this runbook is bound by it.
 **Objective.** Reproduce the post-v0.14.0 state from commands, and confirm or
 refute every gap against HEAD before changing anything.
 
+**Gate.** Read-only measurements in the repository and mutations confined to
+disposable scratch worktrees. Permanent changes are limited to this active
+runbook's E0 gate/checklist record and `STATE.md`; no source, workflow,
+configuration, protected artifact, or historical record changes.
+
 **Steps.**
 
 1. Run the full entering matrix: `./run ci-local`, standalone `./run golden`,
@@ -424,7 +429,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix captured; H1 reproduced in both directions; H2
+- [x] **E0** — entering matrix captured; H1 reproduced in both directions; H2
   reproduced in both directions; H3 reproduced; H4/H5 recorded
 - [ ] **R10-CI-PARITY** — registered with ≥3 site-specific controls, all FAIL;
   exemptions declared with reasons and counted; mechanism recorded; measured
@@ -477,3 +482,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 - Do not commit `.env`, provider keys, tokens, or private key material.
 - Do not batch `STATE.md` / `PROGRESS-v0.15.md` updates or combine two tasks in
   one commit.
+
+## Runbook amendments
+
+Step 1 — Add the governing E0 scope gate required by `AGENTS.md §5` — 2026-07-28

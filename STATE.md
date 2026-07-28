@@ -1,6 +1,56 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At the exact release commit, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 E0 subject `40351d4f33c45db552e72a4ded5e0f29e2cac4f0`, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 E0 is complete (measured 2026-07-28 at
+`40351d4f33c45db552e72a4ded5e0f29e2cac4f0`).** The permitted
+`./run ci-local` passed **20/20** after the first sandboxed attempt stopped only
+because loopback binding and macOS network configuration access were denied.
+The accepted matrix measured **125** workspace Rust tests, **48** net tests
+(**23** `intel-ingest` + **25** `cored`), zero rustc/clippy/fmt/ShellCheck
+failures, locked Rust 1.78 green, Python 3.11.4 **225/225**, all **101/101**
+pins, protected databases **2/2**, and golden **11/11**. Standalone Python
+3.12.13 passed **225/225** with **21/21** exact packages. Standalone
+`golden`, `verify-artifacts`, `cycle-check`, `checklist-audit`,
+`progress-check`, `version-check`, and no-argument `invariant-scan` all passed;
+the scanner remained **9/9 rules / 15 controls**, and the published v0.14.0
+tag object and release commit were unchanged.
+
+H1 reproduced in both directions. Removing the hosted
+`cargo test -p intel-ingest --features net --locked` step left
+`invariant-scan`, `cycle-check`, `checklist-audit`, `progress-check`, and
+`version-check` green; the focused invariant/deferred modules passed **53**
+with the intended on-site-only test skipped. Removing the local
+`ci_local_job "net test (-D warnings)"` line reduced the counted local calls to
+**19** while the same tools and focused tests remained green. No existing
+check compared the two check sets.
+
+H2 is **partly refuted and remains a derived-scope gap**. Adding a proper
+eighth blocking job with receipt emission left `invariant-scan` green, but
+`test_every_workflow_job_emits_and_persists_a_receipt` failed because its
+separate hard-coded count observed **8 != 7**. Removing the `golden` job and
+`("golden", None)` identity did not narrow silently as drafted:
+`test_deferred_audit.py` produced **8 failures / 28 passes / 1 skip**, including
+the receipt-count check (**6 != 7**) and fixtures that still required seven
+identities. The expected identity set is nevertheless still hard-coded and
+not derived from `ci.yml`; Step 3 must preserve the existing narrowing
+alarms while replacing the duplicated authority.
+
+H3 reproduced. Renaming only Rust's injectable `sector_load` delay string to
+`sector_load_renamed` left `invariant-scan` **9/9 / 15**, all **24** offline
+`cored` tests, and all **4** benchmark-view tests green. Python's
+`DIAGNOSTIC_HEADERS` still named `sector_load`, so the cross-language
+correspondence was stale without a failure. The first benchmark-test attempt
+was a sandbox-only non-result because its control server could not bind;
+the permitted rerun is the recorded pass.
+
+H4 and H5 are confirmed. Before v0.14 amendment `38b316f`, Step 8 required
+self-test counts to match “Step 2's recorded values”; the amendment replaced
+that stale relation with hosted/local equality at the same candidate commit.
+`AGENTS.md` contains neither the command-entry-point review rule nor a rule
+requiring the closing disposition field itself to be dated. The originating
+v0.14 review record instead explains that reading `run` without
+`invariant_scan.py`'s `main()` produced the false finding.
 
 **v0.15 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The mandatory opener found only the operator-supplied untracked
