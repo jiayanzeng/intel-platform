@@ -333,3 +333,33 @@ Entries are append-only; corrections are new dated entries.
   controller residual remain open.
 - golden-E2E delta: **0**. Matrix and standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · RE-MEASURE-GATE — remote workflow lacks self-test invocation
+
+- runbook: `TASKS-v0.14-EXECUTION.md`
+- owner: Codex
+- commit: 546c1a04a080a01d00fc9f351ad34f1fbe3fc149
+- result: BLOCKED before workflow dispatch. The authorized push placed exact
+  post-amendment commit `0af15157efc88357b84d0c08492c938cfef00660`
+  at non-`main` branch `candidate/v0.14.0`; this supersedes `066609b…` as the
+  candidate.
+- remote preservation: PASS. A remote read confirmed `origin/main` unchanged
+  at `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, no `v0.14.0` tag, and zero
+  workflow runs for the candidate branch. Nothing was published.
+- workflow preflight: FAIL. The remote candidate's `ci.yml` contains the
+  workspace test, `intel-ingest` net test, `cored` net test, both shell matrix
+  legs, and golden. Its invariant command is only `./run invariant-scan`;
+  there is no `./run invariant-scan --self-test` invocation, so no hosted log
+  can report the required **9 rules / 15 controls** self-test pair.
+- disposition: STOP. No workflow was dispatched, no source was edited to make
+  the candidate green or bypass the preflight, and no receipt, attestation,
+  pin, hosted identity, or release-grade v0.14 evidence claim was created.
+  RE-MEASURE remains unchecked.
+- local comparison finding: the post-amendment tree measured **125** workspace
+  tests and **48** net tests split as **23** `intel-ingest` + **25** `cored`,
+  diverging from the operator-provided 24 + 24 expectation. This was reported
+  and not reconciled.
+- last valid regression anchor: the exact candidate code plus disclosed
+  amendment passed local CI **20/20**, shell **223/223** on both interpreters,
+  `invariant-scan --self-test` **9/9 rules / 15 controls**, and golden
+  **11/11**.
