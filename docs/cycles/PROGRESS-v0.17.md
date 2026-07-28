@@ -201,3 +201,35 @@ Entries are append-only; corrections are new dated entries.
   / 19 controls**.
 - golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
   both remained **11/11**.
+
+### 2026-07-28 · R11-BREADTH — declared scope has exact-site failure controls
+
+- owner: Codex
+- commit: a63b46b
+- result: PASS. R11 retains its declared four-spelling and derived-variable
+  scope; every part now has an independently reconstructible failure control.
+- gate acceptance: PASS after a pre-commit amendment added
+  `ARCHITECTURE.md`, which the task's own reconciliation criterion requires.
+  The existing AST detector and rule schema already supported the full scope,
+  so `tools/invariant_scan.py` did not change.
+- direct-spelling acceptance: PASS. Separate controls fail at
+  `shell/intel_shell/pipeline.py:26` for `config/entities.json`,
+  `config/core.json`, `CORE_CONFIG`, and `CORE_ENTITIES`, each with its exact
+  expected spelling in the finding.
+- derived-variable acceptance: PASS. A fifth control assigns a module-local
+  variable from `os.environ["CORE_ENTITIES"]`, passes that variable to
+  `open()`, and fails at `shell/intel_shell/pipeline.py:27` with the taint source
+  named.
+- self-test acceptance: PASS. Focused R11 self-test executes **5/5** controls.
+  The complete invariant module passes **21/21** tests, and complete
+  `invariant-scan --self-test` passes **11/11 rules / 23 controls**, up from
+  **19** controls.
+- architecture acceptance: PASS. `ARCHITECTURE.md` closes the v0.16
+  control-breadth mismatch and preserves the bounded claim: unknown future
+  configuration names remain outside the four-spelling rule.
+- matrix acceptance: PASS. `./run ci-local` passes all **20/20** jobs with
+  **244/244** shell tests, **131** workspace tests, **55** net tests
+  (**29 + 26**), locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures,
+  all **131/131** pins, and both protected databases exact.
+- golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
+  both remained **11/11**.
