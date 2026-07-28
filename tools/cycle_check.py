@@ -16,8 +16,11 @@ if __package__ in (None, ""):
 from tools.audit_deferred import progress_paths as deferred_progress_paths
 from tools.cycle_identity import (
     CycleIdentityError,
+    execution_runbooks,
     historical_artifacts,
+    progress_records,
     resolve_cycle,
+    task_documents,
 )
 from tools.progress_check import default_progress_path
 
@@ -405,18 +408,41 @@ def runbook_contract_fields(text: str) -> dict[tuple[str, str], str]:
 
 def first_committed_runbook_text(root: Path, path: Path) -> str | None:
     relative = shown(path, root)
+    history_path = relative
+    staged = git_output(root, "diff", "--cached", "--name-status", "-M", "--")
+    if staged:
+        for line in staged.splitlines():
+            fields = line.split("\t")
+            if (
+                len(fields) == 3
+                and fields[0].startswith("R")
+                and fields[2] == relative
+            ):
+                history_path = fields[1]
+                break
     additions = git_output(
         root,
         "log",
+        "--follow",
         "--diff-filter=A",
         "--format=%H",
         "--",
-        relative,
+        history_path,
     )
     if not additions:
         return None
     first_commit = additions.splitlines()[-1]
-    return git_output(root, "show", f"{first_commit}:{relative}")
+    tree = git_output(root, "ls-tree", "-r", "--name-only", first_commit)
+    if tree is None:
+        return None
+    candidates = [
+        candidate
+        for candidate in tree.splitlines()
+        if Path(candidate).name == path.name
+    ]
+    if len(candidates) != 1:
+        return None
+    return git_output(root, "show", f"{first_commit}:{candidates[0]}")
 
 
 def disclosed_amendment_steps(
@@ -648,7 +674,7 @@ def run(
                 "does not exist"
             )
 
-    execution_files = sorted(root.glob("TASKS-v*-EXECUTION.md"))
+    execution_files = execution_runbooks(root)
     active_state = "missing"
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
@@ -709,11 +735,11 @@ def run(
         )
         check_authority(path, text, root, errors)
 
-    plain_task_files = sorted(
+    plain_task_files = [
         path
-        for path in root.glob("TASKS-v*.md")
+        for path in task_documents(root)
         if not path.name.endswith("-EXECUTION.md")
-    )
+    ]
     for path in plain_task_files:
         text = path.read_text()
         if HISTORICAL_BANNER_RE.search(text) is None:
@@ -732,7 +758,7 @@ def run(
         )
 
     deferred_targets = deferred_progress_paths(root)
-    expected_deferred = sorted(root.glob("PROGRESS-v*.md"))
+    expected_deferred = progress_records(root)
     if deferred_targets != expected_deferred:
         errors.append(
             f"{shown(Path(__file__).resolve().parent / 'audit_deferred.py', root)}: "

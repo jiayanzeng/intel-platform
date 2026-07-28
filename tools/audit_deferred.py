@@ -22,7 +22,11 @@ from typing import Any, Callable
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.cycle_identity import historical_artifact_path, resolve_cycle
+from tools.cycle_identity import (
+    historical_artifact_path,
+    progress_records,
+    resolve_cycle,
+)
 from tools.invariant_scan import (
     ConfigError as InvariantConfigError,
     blocking_job_identities,
@@ -117,7 +121,7 @@ def configure_subject_root(root: Path) -> None:
 def progress_paths(root: Path | None = None) -> list[Path]:
     """Return every progress record; the active cycle must never be omitted."""
     selected = ROOT if root is None else root
-    return sorted(selected.resolve().glob("PROGRESS-v*.md"))
+    return progress_records(selected)
 
 
 class AuditFailure(RuntimeError):

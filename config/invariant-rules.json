@@ -97,7 +97,7 @@
     {
       "id": "R5",
       "claim": "Every production canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant.",
-      "source": "TASKS-v0.13-EXECUTION.md:326-333",
+      "source": "docs/cycles/TASKS-v0.13-EXECUTION.md:326-333",
       "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; test-only Rust is excluded.",
       "fail_before": [
         {
@@ -143,22 +143,22 @@
     },
     {
       "id": "R6",
-      "claim": "AGENTS.md and intel-platform-OPERATIONS.md contain byte-identical model-profile authorization blocks.",
-      "source": "TASKS-v0.12-EXECUTION.md:522-525",
-      "scope": "Exact allow-list of AGENTS.md and intel-platform-OPERATIONS.md: each must contain exactly one MODEL_PROFILE_AUTHORITY marker-delimited block, and the two blocks must be byte-identical.",
+      "claim": "AGENTS.md and docs/intel-platform-OPERATIONS.md contain byte-identical model-profile authorization blocks.",
+      "source": "docs/cycles/TASKS-v0.12-EXECUTION.md:522-525",
+      "scope": "Exact allow-list of AGENTS.md and docs/intel-platform-OPERATIONS.md: each must contain exactly one MODEL_PROFILE_AUTHORITY marker-delimited block, and the two blocks must be byte-identical.",
       "fail_before": [
         {
-          "file": "intel-platform-OPERATIONS.md",
+          "file": "docs/intel-platform-OPERATIONS.md",
           "find": "**Server model-profile authority — L1 now, L2 scheduled.**",
           "replace_with": [
             "**Server model-profile authority — L1 now, L2 deferred.**"
           ],
           "expected_fail": "model-profile authorization block differs from AGENTS.md",
-          "expected_file": "intel-platform-OPERATIONS.md",
+          "expected_file": "docs/intel-platform-OPERATIONS.md",
           "expected_line": 407
         }
       ],
-      "fail_before_note": "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
+      "fail_before_note": "invariant-scan: R6 FAIL: docs/intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
     },
     {
       "id": "R7",
@@ -282,7 +282,7 @@
     {
       "id": "R9",
       "claim": "No workspace manifest enables test-support outside a dev-dependency edge, so public items gated on test-support are not reachable from a non-dev dependency edge.",
-      "source": "TASKS-v0.14-EXECUTION.md:342-344",
+      "source": "docs/cycles/TASKS-v0.14-EXECUTION.md:342-344",
       "scope": "All root-enumerated workspace Cargo.toml files. A test-support feature declaration is allowed, and dependency activation is allowed only in [dev-dependencies] or target-specific dev-dependencies.",
       "fail_before": [
         {

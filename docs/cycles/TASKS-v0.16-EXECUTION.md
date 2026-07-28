@@ -535,7 +535,7 @@ all pins match · golden 11/11.
 - [x] **E0** — entering matrix captured with its target directory; F1 reproduced
   by derivation; F1b answered; mechanism table re-verified on the operator's
   bash; F2/F3/F5/F6 confirmed or refuted; hosted blast radius measured
-- [ ] **DOC-LAYOUT** — every moved file byte-identical; one resolver, no second
+- [x] **DOC-LAYOUT** — every moved file byte-identical; one resolver, no second
   location rule; tool totals and retraction count unchanged; 116 pins validate
 - [ ] **JOB-PROPAGATION** — every derived job fails when its first command fails;
   controls generated from the parsed list; F1b resolved; R10 literal updated;

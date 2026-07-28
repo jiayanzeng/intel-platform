@@ -3,20 +3,35 @@ import subprocess
 from pathlib import Path
 
 from tools import cycle_check
+from tools.cycle_identity import (
+    cycle_documents_dir,
+    cycle_progress_path,
+    cycle_runbook_path,
+)
+
+
+def _runbook(root: Path, cycle: str = "v1.2.3") -> Path:
+    return cycle_runbook_path(root, cycle)
+
+
+def _progress(root: Path, cycle: str = "v1.2.3") -> Path:
+    return cycle_progress_path(root, cycle)
 
 
 def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     root = tmp_path / "cycle"
     root.mkdir()
+    cycle_documents_dir(root).mkdir(parents=True)
     (root / "AGENTS.md").write_text(
         "# Contract\n\n"
         "**Active cycle:** v1.2.3\n\n"
-        "Task work is ordered in `TASKS-v1.2.3-EXECUTION.md` and logged in "
-        "`PROGRESS-v1.2.3.md`.\n\n"
+        "Task work is ordered in "
+        "`docs/cycles/TASKS-v1.2.3-EXECUTION.md` and logged in "
+        "`docs/cycles/PROGRESS-v1.2.3.md`.\n\n"
         "## 0. Contract\n\n"
         f"{contract_tail}"
     )
-    (root / "TASKS-v1.2.3-EXECUTION.md").write_text(
+    _runbook(root).write_text(
         "# Open cycle\n\n"
         "## Step 1 · CHECK\n\n"
         "**Objective.** Preserve the contract.\n\n"
@@ -24,7 +39,7 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "**Done when** the original criterion passes.\n\n"
         "- [ ] unfinished task\n"
     )
-    (root / "PROGRESS-v1.2.3.md").write_text("# Progress\n")
+    _progress(root).write_text("# Progress\n")
     config = root / "config"
     config.mkdir()
     (config / "cycle-history.json").write_text(
@@ -56,6 +71,70 @@ def test_cycle_check_accepts_cycle_paths_only_in_declaration(
     tmp_path: Path,
 ) -> None:
     assert cycle_check.run(_cycle_root(tmp_path)) == 0
+
+
+def test_cycle_check_does_not_fallback_to_root_documents(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _runbook(root).rename(root / _runbook(root).name)
+    _progress(root).rename(root / _progress(root).name)
+
+    assert cycle_check.run(root) == 1
+
+    error = capsys.readouterr().err
+    assert "docs/cycles/TASKS-v1.2.3-EXECUTION.md" in error
+    assert "docs/cycles/PROGRESS-v1.2.3.md" in error
+
+
+def test_cycle_check_preserves_runbook_history_across_location_move(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    legacy_runbook = root / _runbook(root).name
+    legacy_progress = root / _progress(root).name
+    _runbook(root).rename(legacy_runbook)
+    _progress(root).rename(legacy_progress)
+    _commit_cycle_root(root)
+    subprocess.run(
+        [
+            "git",
+            "mv",
+            legacy_runbook.name,
+            str(_runbook(root).relative_to(root)),
+        ],
+        cwd=root,
+        check=True,
+    )
+    subprocess.run(
+        [
+            "git",
+            "mv",
+            legacy_progress.name,
+            str(_progress(root).relative_to(root)),
+        ],
+        cwd=root,
+        check=True,
+    )
+
+    assert cycle_check.run(root) == 0
+
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Cycle Check",
+            "-c",
+            "user.email=cycle-check@example.invalid",
+            "commit",
+            "-qm",
+            "move cycle documents",
+        ],
+        cwd=root,
+        check=True,
+    )
+    assert cycle_check.run(root) == 0
 
 
 def test_cycle_check_rejects_stale_contract_path(
@@ -128,7 +207,7 @@ def test_cycle_check_rejects_undisclosed_acceptance_edit(
 ) -> None:
     root = _cycle_root(tmp_path)
     _commit_cycle_root(root)
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
             "**Acceptance criteria.** Original criterion.",
@@ -148,7 +227,7 @@ def test_cycle_check_accepts_disclosed_acceptance_edit(
 ) -> None:
     root = _cycle_root(tmp_path)
     _commit_cycle_root(root)
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
             "**Acceptance criteria.** Original criterion.",
@@ -166,7 +245,7 @@ def test_cycle_check_rejects_unassigned_active_deferral_row(
     capsys,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
             "## Step 1 · CHECK",
@@ -190,7 +269,7 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
     tmp_path: Path,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
             "## Step 1 · CHECK",
@@ -215,7 +294,7 @@ def test_cycle_check_rejects_cross_step_recorded_quantity(
     capsys,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text()
         + "\n## Step 2 · RE-MEASURE\n\n"
@@ -238,7 +317,7 @@ def test_cycle_check_accepts_same_commit_quantity_relation(
     tmp_path: Path,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
             "**Acceptance criteria.** Original criterion.",
@@ -259,7 +338,7 @@ def _close_active_cycle(root: Path, disposition: str) -> None:
         text=True,
         capture_output=True,
     ).stdout.strip()
-    runbook = root / "TASKS-v1.2.3-EXECUTION.md"
+    runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace("- [ ] unfinished task", "- [x] finished")
         + "\n## Runbook amendments\n\n"
@@ -315,7 +394,7 @@ def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
         text=True,
         capture_output=True,
     ).stdout.strip()
-    (root / "TASKS-v1.1.0-EXECUTION.md").write_text(
+    _runbook(root, "v1.1.0").write_text(
         "# Closed cycle\n\n"
         "- [x] completed task\n\n"
         "## Cycle closing record\n\n"
@@ -338,7 +417,7 @@ def test_cycle_check_portable_mode_still_rejects_missing_release_commit(
 ) -> None:
     root = _cycle_root(tmp_path)
     _commit_cycle_root(root)
-    (root / "TASKS-v1.1.0-EXECUTION.md").write_text(
+    _runbook(root, "v1.1.0").write_text(
         "# Closed cycle\n\n"
         "- [x] completed task\n\n"
         "## Cycle closing record\n\n"

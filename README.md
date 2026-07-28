@@ -148,7 +148,7 @@ their SSH tunnels, verify real health, and never recreate a container:
 ./run models stop
 ```
 
-See `intel-platform-OPERATIONS.md` for the measured profile matrix, first
+See `docs/intel-platform-OPERATIONS.md` for the measured profile matrix, first
 post-reboot Terminal.app command, standing authorization, and recovery gates.
 The shipped controller constructs remote commands from a tested L1 allowlist
 and refuses missing containers, foreign listeners, failed health, and unsafe

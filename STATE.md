@@ -1,6 +1,62 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0 complete. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The v0.16 E0 full matrix passes **20/20** from a fresh target directory with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0 and DOC-LAYOUT complete. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The v0.16 E0 full matrix passes **20/20** from a fresh target directory with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); current standalone shell passes **239/239** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains the published-cycle measurement of **236 passed / 1 skipped** per interpreter. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.16 DOC-LAYOUT is complete (measured 2026-07-28).** The retention
+criterion was applied before moving anything: root holds what a reader consults
+at the start of every session; everything else lives under `docs/`.
+
+- All **29** cycle documents moved to `docs/cycles/`,
+  `intel-platform-OPERATIONS.md` moved to `docs/`, and the operator-supplied
+  `REVIEWER-LESSONS-v0.13-v0.14.md` was admitted at `docs/`, for **31** moved
+  files total. Pre/post SHA-256 comparison matched **31/31** before the active
+  runbook's required checklist update. Representative exact hashes are
+  `7876ce03b0b296b75f6fa47ce9fbaef0c6a4d7f5b9c9ffd9cd98aecef0b4be54`
+  for the active runbook,
+  `995cae491656f775e6a41471c2e0ddebcb451b98d16db9d76b2fa7f7ec0373a7`
+  for its progress log, and
+  `9df6468ce8827f32517f6e7865bec52d696e2f26361b1470ee734d799ee3ffde`
+  for the operations guide.
+- The tracked root now contains exactly the six session-entry documents
+  (`README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `STATE.md`, `CHANGELOG.md`),
+  the runner, and the declared build/config files. Two arguable visible root
+  files were not silently classified: ignored `.env` remains in place because
+  the runner reads that local credential-bearing configuration, and ignored
+  `.DS_Store` is untracked host metadata. Neither is part of the repository
+  layout or commit.
+- `tools/cycle_identity.py` now owns the sole live location rule,
+  `docs/cycles`, and exposes active paths plus task, execution-runbook, progress,
+  and shared-legacy-progress resolution. `cycle_check.py`,
+  `checklist_audit.py`, `audit_deferred.py`, `progress_check.py`, and their
+  tests consume that resolver. A control that leaves same-named root documents
+  in place while removing the `docs/cycles` pair fails and names both missing
+  canonical paths: there is no live fallback or second glob root.
+- `cycle-check` follows Git rename history only to preserve its immutable
+  first-committed-runbook comparison across this move; a staged-and-committed
+  location-move control passes before and after commit. This history lookup is
+  not a live document-location fallback.
+- The derived consumer search found the four F6 tools and cycle test, and also
+  found a consumer F6 omitted: the operations authority path used by R6 in
+  `tools/invariant_scan.py`, `config/invariant-rules.json`, and its focused
+  test, plus the current links in `README.md` and `AGENTS.md`. Those paths now
+  name `docs/intel-platform-OPERATIONS.md`; R6 and its site-specific mutation
+  both pass. No `crates/`, `apps/`, workflow, or Repomix configuration file
+  changed.
+- `ARCHITECTURE.md §8` now states the planning-versus-artifact convention with
+  the measured example: cycle v0.15 shipped artifact `v0.14.1`. `AGENTS.md`
+  names the canonical active pair and cites the admitted reviewer-lessons
+  document for its two non-executable review-discipline rules.
+- Repomix **1.17.0** packed **282** files from the reorganized tree and emitted
+  exactly one `<file path="Cargo.lock">`; it also included both active
+  `docs/cycles` files. The generated ignored export was moved out of the
+  workspace to `/private/tmp/repomix-output-v016-step2.xml`.
+- Focused cycle/invariant tests passed **37/37**. Full shell passed **239/239**
+  under both Python 3.11.4 and 3.12.13. `cycle-check` reports active v0.16 open,
+  thirteen closed execution runbooks, and three historical task documents;
+  `checklist-audit` remains **130 checked / 130 matched / 130 resolved**, zero
+  exemptions, and the same **three** retractions; `progress-check` resolves E0.
+  `invariant-scan` remains **10/10 rules / 18/18 controls**; all **116/116**
+  pins and **2/2** databases match; golden remains **11/11**.
 
 **v0.16 E0 is complete (measured 2026-07-28 at activation-audit commit
 `90d07721f21f78cc0803facb7138141083104b8e`).** The entering matrix and every

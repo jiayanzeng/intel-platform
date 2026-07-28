@@ -13,12 +13,12 @@ anything, and re-read the two documents it points at:
 **Active cycle:** v0.16
 
 Task work for this declared cycle is ordered in
-**`TASKS-v0.16-EXECUTION.md`**. Every completed step is logged in
-**`PROGRESS-v0.16.md`**. The declaration points at the open cycle while work
-remains and at the latest closed cycle after its release record is appended,
-until the operator supplies the next runbook. Every older execution runbook
-appends its dated closing record; its progress log and full original task
-document remain preserved as historical rationale. `./run cycle-check`
+**`docs/cycles/TASKS-v0.16-EXECUTION.md`**. Every completed step is logged in
+**`docs/cycles/PROGRESS-v0.16.md`**. The declaration points at the open cycle
+while work remains and at the latest closed cycle after its release record is
+appended, until the operator supplies the next runbook. Every older execution
+runbook appends its dated closing record; its progress log and full original
+task document remain preserved as historical rationale. `./run cycle-check`
 enforces that the declared runbook is either open with an unchecked task or
 closed with one valid release record, and that every older runbook is closed.
 
@@ -50,7 +50,9 @@ Corollaries, each earned:
   a false self-test finding; this mirrored v0.13, when the tool was read and its
   wrapper was not. This is deliberately a non-executable review discipline for
   humans and agents: syntax cannot prove that a reviewer followed the call
-  chain.
+  chain. This rule and the dated-disposition rule immediately below preserve
+  their review provenance in
+  `docs/REVIEWER-LESSONS-v0.13-v0.14.md`.
 - **A closing disposition is true as of a date, not forever.** v0.14's later
   publication authorization superseded its accurate-at-close `no-release`
   disposition without making the historical record false. Every cycle closed
@@ -329,7 +331,7 @@ Record every block precisely. A block is a non-result, never a pass.
 ## 8. Server model profiles — standing operator authorization
 
 The marker-delimited policy below is byte-identically mirrored in
-`intel-platform-OPERATIONS.md` and enforced by invariant R6.
+`docs/intel-platform-OPERATIONS.md` and enforced by invariant R6.
 
 <!-- MODEL_PROFILE_AUTHORITY:START -->
 **Server model-profile authority — L1 now, L2 scheduled.** The operator selected

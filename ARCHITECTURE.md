@@ -250,8 +250,9 @@ scale decisions follow the three-clause gate in `AGENTS.md §3`.
 ## 8. Execution cycles and artifact releases
 
 An execution-cycle name is a planning and evidence namespace, not an artifact
-version. Completing `TASKS-vX.Y-EXECUTION.md` does not by itself create, imply,
-or move a `vX.Y.Z` release.
+version. Completing `docs/cycles/TASKS-vX.Y-EXECUTION.md` does not by itself
+create, imply, or move a `vX.Y.Z` release. Cycle v0.15 shipped artifact
+`v0.14.1`, so differing cycle and release identifiers are intentional.
 
 Release identity is chosen explicitly at the cycle-closing release task after
 the measured diff is classified:

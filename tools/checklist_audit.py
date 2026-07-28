@@ -12,13 +12,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.cycle_identity import execution_runbooks, progress_for_runbook
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EXEMPTIONS_FILE = Path("config/checklist-exemptions.json")
 RETRACTIONS_FILE = Path("config/checklist-retractions.json")
-RUNBOOK_RE = re.compile(
-    r"^TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
-)
 CHECKED_RE = re.compile(r"^- \[x\] \*\*([^*]+)\*\*")
 HEADER_RE = re.compile(
     r"^### ([0-9]{4}-[0-9]{2}-[0-9]{2}) · (.+?) — (.+)$"
@@ -71,21 +73,6 @@ def checked_boxes(path: Path) -> list[Box]:
         if match is not None:
             boxes.append(Box(normalize_task_id(match.group(1)), number))
     return boxes
-
-
-def progress_path(root: Path, runbook: Path) -> Path | None:
-    match = RUNBOOK_RE.fullmatch(runbook.name)
-    if match is None:
-        return None
-    cycle = match.group(1)
-    while True:
-        candidate = root / f"PROGRESS-{cycle}.md"
-        if candidate.is_file():
-            return candidate
-        prefix, separator, _ = cycle.rpartition(".")
-        if not separator:
-            return None
-        cycle = prefix
 
 
 def progress_entries(path: Path) -> list[Entry]:
@@ -371,11 +358,11 @@ def run(root: Path = ROOT) -> int:
     total_exempted = 0
     total_retracted = 0
 
-    runbooks = sorted(root.glob("TASKS-v*-EXECUTION.md"))
+    runbooks = execution_runbooks(root)
     for runbook in runbooks:
         boxes = checked_boxes(runbook)
         total_checked += len(boxes)
-        progress = progress_path(root, runbook)
+        progress = progress_for_runbook(root, runbook)
         if progress is None:
             errors.append(
                 f"{runbook.name}: cannot resolve a progress log from its cycle"

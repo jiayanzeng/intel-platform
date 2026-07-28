@@ -36,7 +36,7 @@ LEGACY_FAIL_BEFORE_NOTES = {
         "second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
     ),
     "R6": (
-        "invariant-scan: R6 FAIL: intel-platform-OPERATIONS.md: "
+        "invariant-scan: R6 FAIL: docs/intel-platform-OPERATIONS.md: "
         "model-profile authorization block differs from AGENTS.md"
     ),
 }

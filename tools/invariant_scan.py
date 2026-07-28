@@ -37,7 +37,7 @@ STORE = Path("crates/store/src/sqlite.rs")
 CORE_MAIN = Path("apps/cored/src/main.rs")
 AUTHORITY_FILES = (
     Path("AGENTS.md"),
-    Path("intel-platform-OPERATIONS.md"),
+    Path("docs/intel-platform-OPERATIONS.md"),
 )
 AUTHORITY_START = "<!-- MODEL_PROFILE_AUTHORITY:START -->"
 AUTHORITY_END = "<!-- MODEL_PROFILE_AUTHORITY:END -->"

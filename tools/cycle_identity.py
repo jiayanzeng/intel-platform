@@ -16,6 +16,10 @@ ACTIVE_CYCLE_RE = re.compile(
 )
 HISTORICAL_KEY_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 HISTORICAL_REGISTRY = Path("config/cycle-history.json")
+CYCLE_DOCUMENTS = Path("docs/cycles")
+EXECUTION_RUNBOOK_RE = re.compile(
+    r"^TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+)
 
 
 class CycleIdentityError(RuntimeError):
@@ -28,6 +32,54 @@ class CycleIdentity:
     declaration: Path
     runbook: Path
     progress: Path
+
+
+def cycle_documents_dir(root: Path) -> Path:
+    """Return the repository's sole cycle-document directory."""
+    return root.resolve() / CYCLE_DOCUMENTS
+
+
+def task_documents(root: Path) -> list[Path]:
+    """Return every execution and legacy task document."""
+    return sorted(cycle_documents_dir(root).glob("TASKS-v*.md"))
+
+
+def execution_runbooks(root: Path) -> list[Path]:
+    """Return every versioned execution runbook."""
+    return [
+        path
+        for path in task_documents(root)
+        if EXECUTION_RUNBOOK_RE.fullmatch(path.name) is not None
+    ]
+
+
+def progress_records(root: Path) -> list[Path]:
+    """Return every versioned progress record."""
+    return sorted(cycle_documents_dir(root).glob("PROGRESS-v*.md"))
+
+
+def cycle_runbook_path(root: Path, cycle: str) -> Path:
+    return cycle_documents_dir(root) / f"TASKS-{cycle}-EXECUTION.md"
+
+
+def cycle_progress_path(root: Path, cycle: str) -> Path:
+    return cycle_documents_dir(root) / f"PROGRESS-{cycle}.md"
+
+
+def progress_for_runbook(root: Path, runbook: Path) -> Path | None:
+    """Resolve a runbook's progress record, including shared legacy logs."""
+    match = EXECUTION_RUNBOOK_RE.fullmatch(runbook.name)
+    if match is None:
+        return None
+    cycle = match.group(1)
+    while True:
+        candidate = cycle_progress_path(root, cycle)
+        if candidate.is_file():
+            return candidate
+        prefix, separator, _ = cycle.rpartition(".")
+        if not separator:
+            return None
+        cycle = prefix
 
 
 def historical_artifacts(root: Path) -> dict[str, Path]:
@@ -120,8 +172,8 @@ def resolve_cycle(root: Path) -> CycleIdentity:
     return CycleIdentity(
         name=name,
         declaration=contract,
-        runbook=root / f"TASKS-{name}-EXECUTION.md",
-        progress=root / f"PROGRESS-{name}.md",
+        runbook=cycle_runbook_path(root, name),
+        progress=cycle_progress_path(root, name),
     )
 
 
