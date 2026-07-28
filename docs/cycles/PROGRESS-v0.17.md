@@ -158,3 +158,46 @@ Entries are append-only; corrections are new dated entries.
   remains deferred because concurrent cache misses are unchanged.
 - golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
   both remained **11/11**.
+
+### 2026-07-28 · HARVEST-PREFLIGHT — artifact verification is an entry-point guard
+
+- owner: Codex
+- commit: 11814e9
+- result: PASS. `cmd_harvest_arxiv` invokes `cmd_verify_artifacts` before
+  cargo/environment setup, destination resolution/protection, reachability, or
+  any harvest request. No live harvest ran.
+- gate acceptance: PASS after a pre-commit amendment. Changing `run` exposed its
+  whole-file authorization pin, so Step 4's Gate was widened only to that pin's
+  hash/size/provenance. The exact runner diff is the two-line harvest preflight;
+  the model-profile functions/dispatch, `tools/model_profiles.py`, and the
+  authorization policy are unchanged.
+- fail-before acceptance: PASS. The focused shell test initially failed with
+  `cmd_harvest_arxiv must invoke its named artifact-integrity preflight`.
+- ordering acceptance: PASS. The offline dynamic harness observes
+  `artifact-verification → cargo-check → python-environment →
+  destination-protection → reachability-probe → network-request`. A forced
+  verification status **37** exits as **37** with only the first event recorded,
+  before any possible outbound operation.
+- removal-control acceptance: PASS. A reconstructed runner with the named
+  two-line preflight removed reaches later controls, and the shared assertion
+  fails with a message naming `cmd_harvest_arxiv`.
+- distinct-control acceptance: PASS. Artifact-integrity verification and
+  protected-destination refusal keep separate calls and separate identifying
+  messages; one verifies existing protected bytes/corpus facts and the other
+  refuses a protected output target.
+- entry-point acceptance: PASS. Repository search found one governed live
+  harvest entry point: `harvest-arxiv` dispatches to `cmd_harvest_arxiv`. No
+  other runner command both creates a net-enabled harvester and requests
+  publisher documents.
+- pin acceptance: PASS. The forward `run` authorization pin is
+  `7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`
+  at **41959** bytes. Manifest validation and `verify-artifacts` pass with
+  **131/131** pins and both protected databases exact; protected corpus bytes
+  did not change.
+- matrix acceptance: PASS. The focused control passes **1/1** and
+  `./run ci-local` passes all **20/20** jobs with **244/244** shell tests,
+  **131** workspace tests, **55** net tests (**29 + 26**), locked Rust 1.78,
+  zero rustc/clippy/fmt/ShellCheck failures, and `invariant-scan` **11/11 rules
+  / 19 controls**.
+- golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
+  both remained **11/11**.
