@@ -469,7 +469,7 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
   `ARCHITECTURE.md` reconciled
 - [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; ingest net lane green in both
-- [ ] **R-CLOSE** — version cites its trigger; robots correction recorded; harvest
+- [x] **R-CLOSE** — version cites its trigger; robots correction recorded; harvest
   suspension resolved; all open items open
 
 ---
@@ -509,36 +509,78 @@ classified · `ARCHITECTURE.md` matches enforced reality · all pins match · go
 - Do not batch `STATE.md` / `PROGRESS-v0.17.md` updates or combine two tasks in
   one commit.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-28
-- **Release disposition:** release authorized by the operator as of
-  2026-07-28; Step 7 publication and its final measured record are in progress.
-- **Release version:** v0.15.1. No observable `/v1/*` route, response body, or
-  schema moved, so the runbook's patch trigger applies; the behavior change is
-  the correction of runtime publisher robots-policy enforcement.
+- **Cycle closed:** 2026-07-28
+- **Release disposition:** release (as of 2026-07-28)
+- **Release:** `v0.15.1`
 - **Evidence candidate:** `3481e4ba85d65c927b7d0fc3a430bc04fb094394`
-  on provisionally named branch `candidate/v0.16.0`. The receipts pin this
-  commit and signed source ref; the branch name predates and does not override
-  the operator's release-version decision.
-- **Hosted evidence:** workflow-dispatch run `30357365420` attempt 1; all
-  **7/7** derived identities authenticated, zero rejected receipts, across
-  **6** blocking jobs. Hosted logs measured **131** workspace tests, **55**
-  net tests (**29 + 26**), shell **243 passed / 1 declared on-site-only
-  skipped** on each interpreter, `invariant-scan` **11/11 rules / 23
-  controls**, R10's **45** derived exemptions, and golden **11/11**. Each
-  hosted shell collected **244** tests, equal to the local candidate's
-  **244 passed**; the ingest net leg is **29/29** both hosted and local.
-- **Release-grade audit:** **5** deferred / **2** promoted; report SHA-256
-  `d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`,
-  **34469** bytes at `evidence/v0.15.1/deferred-audit/report.json`.
-  Offline authenticated release-grade re-derivation against the same seven
-  receipts passed; no hosted re-dispatch was required.
-- **Evidence pins:** **146/146** total — **144/144** evidence plus **2/2**
+- **Evidence branch:** `candidate/v0.16.0`, named provisionally before the
+  version decision; signed receipts preserve that exact source ref.
+- **Hosted dispatch:** `30357365420`, attempt `1`
+- **Release commit:** `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`
+- **Annotated tag object:** `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba`
+- **Protected pins:** **146/146** total — **144/144** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
-- **Remote disposition:** `origin/main` remains
-  `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`; no `v0.15.1` tag exists yet.
+
+The patch trigger fired because no observable `/v1/*` route, response body,
+schema, or other named surface moved. The behavior change is the correction
+of publisher robots-policy enforcement within the existing surface. Evidence
+candidate and release commit are separate subjects; the annotated tag
+dereferences to the latter, which is a descendant of the former. The
+provisional candidate branch name remains signed provenance and does not
+state that a minor release was authorized.
+
+Hosted evidence authenticated all **7/7** workflow-derived identities across
+**6** blocking jobs with zero rejected receipts. At the evidence candidate,
+hosted logs measured **131** workspace tests, **55** net tests (**29**
+`intel-ingest` + **26** `cored`), `invariant-scan` **11/11 rules / 23
+controls**, and golden **11/11**. Each hosted shell lane collected **244** as
+**243 passed / 1 declared on-site-only skip**, equal to local **244/244** at
+that same commit. The ingest net leg was specifically **29/29** both hosted
+and local, proving Step 2 fixed the double without removing its subject.
+
+The version-corrected release-posture audit was reproduced offline against the
+same receipts; no hosted re-dispatch was required. It accepted **7/7**
+attestations with zero rejection and retained **5 deferred / 2 promoted**.
+`evidence/v0.15.1/deferred-audit/report.json` is SHA-256
+`d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`,
+**34469** bytes.
+
+From v0.8.0 through v0.15.0, the publisher gate could supply only the first
+path segment and retain a client-only fragment, weakening multi-segment and
+query-specific rules while leaving single-segment rules enforced. v0.15.1
+supplies the complete path plus query, excludes the fragment, and re-evaluates
+before the first request and every redirect. E0 found no immutable false
+completeness claim, so this is a forward correction and retractions remain
+**three**.
+
+The temporary live-harvest suspension is explicitly lifted by Step 3's
+accepted ROBOTS-PATH result. No live harvest ran in this cycle; the standing
+fresh-destination, monitored-contact, and pre-request `verify-artifacts`
+requirements remain in force.
+
+The exact release commit passed
+`CARGO_TARGET_DIR=/private/tmp/intel-v017-step7-ci-target ./run ci-local`
+**20/20** with **131** workspace tests, **55** net tests (**29 + 26**),
+Python 3.11.4 shell **244/244**, locked Rust 1.78, zero
+rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+controls**, all **146/146** pins, and protected databases exact **2/2**. A
+clean repository-local Python 3.12.13 rebuild verified **21/21** constrained
+packages and passed **244/244**. Standalone golden also passed **11/11**,
+delta **0**.
+
+`STATE.md` classifies all **34** release paths exactly once.
+`ARCHITECTURE.md` records full path-plus-query robots targeting and closes
+R11's v0.16 breadth limitation with five controls against four declared
+spellings plus a derived variable. A4, the editable-L1 controller residual,
+R3/R4's bounded open-bottom scanners, the measured-value heuristic, and T7
+robots single-flight remain open; L2 remains scheduled.
+
+Publication is selected because the evidence is release-grade, all candidate
+and exact-release measurements are green, and no withholding trigger fired.
+The closing audit commit and annotated tag are published atomically after this
+record is committed.
 
 ## Runbook amendments
 

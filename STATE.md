@@ -1,8 +1,8 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.17 R-CLOSE publication is authorized and the exact release-commit verification is in progress.** Exact evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` is on provisionally named non-`main` ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. The same candidate passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The release commit and annotated `v0.15.1` tag are pending the exact-release matrix. `origin/main` remains `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`. Published `v0.15.0`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.17 is closed; v0.15.1 is fully verified and locally tagged for authorized publication.** Exact evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` is on provisionally named non-`main` ref `candidate/v0.16.0`; hosted run `30357365420` attempt 1 authenticates all **7/7** derived identities. Release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7` passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on both Python 3.11.4 and clean-rebuilt 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` dereferences to that release commit. `origin/main` remains `cdae3c922a2156701c0df0ceb4f45fc937fa7f20` until the closing audit commit and tag are published atomically. Published `v0.15.0`, its annotated tag, release commit, receipts, protected corpus bytes, and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
 
-**v0.17 R-CLOSE release preparation is complete (measured 2026-07-28).**
+**v0.17 R-CLOSE is complete (measured 2026-07-28).**
 Release disposition: release (as of 2026-07-28). The operator authorized
 publication as **v0.15.1**. The patch trigger fired because no observable
 `/v1/*` route, response body, schema, or other named surface moved. The
@@ -14,8 +14,10 @@ The evidence candidate and release commit are separate identities. Evidence
 candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` was pushed before the version
 decision under the provisional branch name `candidate/v0.16.0`; the seven
 signed receipts pin that commit and exact source ref, not the branch's proposed
-version. The release commit and annotated `v0.15.1` tag remain pending the
-exact-release matrix and will be recorded after those objects exist.
+version. Release commit
+`a0ba69e0a3e8385287274bb404d5123f9a2b8ac7` is a descendant of the candidate.
+Annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba`
+dereferences exactly to that release commit.
 
 Re-running the release-posture audit offline in a clean detached checkout of
 that same candidate required no hosted re-dispatch. It accepted the same
@@ -28,6 +30,17 @@ all source, configuration, Git, receipt-identity, and disposition fields
 matched the prior version-provisional report. The manifest therefore still has
 **146** pins — **144** evidence plus **2** authorization surfaces — with one
 corrected report path/hash rather than another admission.
+
+At the exact release commit,
+`CARGO_TARGET_DIR=/private/tmp/intel-v017-step7-ci-target ./run ci-local`
+passed all **20/20** jobs: **131** workspace tests, **55** net tests
+(**29** `intel-ingest` + **26** `cored`), Python 3.11.4 shell **244/244**,
+locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures,
+`invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins, and
+both protected databases exact. The clean repository-local Python 3.12.13
+rebuild verified **21/21** constrained packages and passed **244/244** with
+the same single deprecation warning. The mandatory standalone golden
+invocation passed **11/11**, delta **0**.
 
 The first affected release is **v0.8.0**. From v0.8.0 through v0.15.0,
 multi-segment and query-specific publisher rules could be weakened because the

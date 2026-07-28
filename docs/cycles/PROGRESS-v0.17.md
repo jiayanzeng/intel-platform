@@ -287,3 +287,74 @@ Entries are append-only; corrections are new dated entries.
   protected corpus byte, published release, tag, or `main` ref.
 - golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
   both remained **11/11**.
+
+### 2026-07-28 · R-CLOSE — v0.15.1 release recorded
+
+- runbook: `TASKS-v0.17-EXECUTION.md`
+- owner: Codex
+- commit: a0ba69e0a3e8385287274bb404d5123f9a2b8ac7
+- gate acceptance: PASS. Steps 1–6 were boxed and the worktree was clean when
+  Step 7 began; the operator selected publication as v0.15.1 on 2026-07-28.
+- version acceptance: PASS. The patch trigger fired because no observable
+  `/v1/*` route, response body, schema, or other named surface moved. The
+  behavior change is the robots-policy correctness correction within the
+  existing surface. All five release authorities agree on **0.15.1**.
+- object-identity acceptance: PASS. Evidence candidate
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394` and release commit
+  `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7` are separate named fields.
+  Annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba`
+  dereferences to the release commit, which is a descendant of the candidate.
+  Signed receipts retain provisional source ref
+  `refs/heads/candidate/v0.16.0`; the branch name predates the version decision.
+- closing-record acceptance: PASS. The runbook uses the validator's exact
+  dated form `Release disposition: release (as of 2026-07-28)`, checks
+  R-CLOSE, and contains one canonical cycle-closing heading.
+- hosted-evidence acceptance: PASS. Run `30357365420` attempt 1 authenticated
+  all **7/7** derived identities with zero rejected receipts. Hosted logs
+  measured **131** workspace tests, **55** net tests (**29** ingest + **26**
+  cored), `invariant-scan` **11/11 rules / 23 controls**, and golden
+  **11/11**. Both hosted shell lanes collected **244** as **243 passed / 1
+  declared on-site-only skip**, equal to local **244/244** at the same
+  candidate. The ingest leg was **29/29** both hosted and local.
+- audit-correction acceptance: PASS. The v0.15.1 release-posture report was
+  reproduced offline from the same seven authenticated receipts, so no hosted
+  re-dispatch occurred. It retained **5 deferred / 2 promoted** and is
+  SHA-256
+  `d73b198e4bb04c96273ae53ecef5e81e162a645ee6c0827450fd737fc7c8dbb9`
+  at **34469** bytes. All **146/146** pins match: **144/144** evidence plus
+  **2/2** authorization surfaces.
+- robots-correction acceptance: PASS. Releases v0.8.0 through v0.15.0 could
+  supply only the first path segment to publisher policy and retain a
+  client-only fragment, weakening multi-segment and query-specific rules.
+  v0.15.1 supplies full path plus query, excludes the fragment, and re-gates
+  before the first request and every redirect. E0 found no immutable false
+  completeness claim, so correction is forward-only and retractions remain
+  **three**.
+- harvest-suspension acceptance: PASS. Step 3's accepted ROBOTS-PATH result
+  explicitly lifts the temporary suspension. No live harvest ran; fresh
+  destinations, monitored crawler contact, and `verify-artifacts` remain
+  mandatory.
+- diff acceptance: PASS. `STATE.md` classifies all **34** paths in the
+  v0.15.0-to-release diff exactly once. The release-authority bump changes
+  only the local `cored` package version in `Cargo.lock`; dependency
+  resolution is unchanged.
+- architecture acceptance: PASS. `ARCHITECTURE.md` records the complete
+  path-plus-query robots target and discharges R11's v0.16 limitation with
+  five controls against four declared spellings plus a derived variable. A4,
+  the editable-L1 residual, R3/R4's bounded open-bottom scanners, the
+  measured-value heuristic, and T7 robots single-flight remain open; L2
+  remains scheduled.
+- release-commit matrix acceptance: PASS. Exact release commit
+  `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7` passed
+  `CARGO_TARGET_DIR=/private/tmp/intel-v017-step7-ci-target ./run ci-local`
+  **20/20** with **131** workspace tests, **55** net tests (**29 + 26**),
+  Python 3.11.4 shell **244/244**, locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+  controls**, all **146/146** pins, and protected databases exact **2/2**.
+  The clean Python 3.12.13 lane verified **21/21** constrained packages and
+  passed **244/244**.
+- publication acceptance: PASS. Publication was selected because evidence is
+  release-grade and no withholding trigger fired. Remote publication follows
+  this separate audit-record commit.
+- golden-E2E delta: **0**. The exact release commit's matrix and mandatory
+  standalone invocation both passed **11/11** byte-identical.
