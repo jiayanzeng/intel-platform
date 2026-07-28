@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.15 is locally closed with release disposition `release (as of 2026-07-28)`. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; the authorized remote publication is the remaining action.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published and v0.15 is closed with release disposition `release (as of 2026-07-28)`. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains closing-audit commit `fb2d501e850fd7c67045b83c475e089f5c5fa535`, and its publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.15 R-CLOSE release reconciliation is complete locally (measured
 2026-07-28).** The selected release is **v0.14.1** because Step 4 recorded
@@ -95,8 +95,15 @@ release-grade evidence exists at the exact candidate, all seven identities
 authenticate with zero rejection, and every hosted count equals local at that
 commit. A no-release disposition has no remaining trigger. The exact release
 commit and annotated tag object are recorded above and in the canonical cycle
-closing record. The authorized remote `main`/tag mapping remains to be measured
-after publication.
+closing record. The atomic release push advanced `origin/main` from
+`a75c9cf5defa42e985811b01f9905b6ac99797fd` to closing-audit commit
+`fb2d501e850fd7c67045b83c475e089f5c5fa535` and created tag object
+`deea217b8913ae42399a22424dcf91595ce80240`, which peeled to release commit
+`5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`. Candidate ref
+`candidate/v0.14.1` remained
+`6d197e562315b4fc6feb20c35b5fadc75b6b44a4`. Push CI run `30336006396`
+passed all six blocking jobs/seven identities; dependency drift remained
+report-only and skipped.
 
 **v0.15 RE-MEASURE is complete (measured 2026-07-28).** The operator
 authorized only a non-`main` candidate push. Candidate
