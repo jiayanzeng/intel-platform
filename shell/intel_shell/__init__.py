@@ -2,8 +2,8 @@
 
 Everything in this package is deliberately hot-editable: prompts, brief
 copy, subscription logic, API shapes, pipeline orchestration. None of it
-requires touching (or recompiling) the Rust core, whose whole contract is
-the ten JSON endpoints wrapped by `core_client.CoreClient`.
+requires touching (or recompiling) the Rust core, whose internal JSON contract
+is wrapped by `core_client.CoreClient`.
 """
 
-__version__ = "0.14.1"
+__version__ = "0.15.0"

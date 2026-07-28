@@ -1,6 +1,100 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0, DOC-LAYOUT, JOB-PROPAGATION, EXEMPT-DERIVE, SEAM, RELOCATABLE, and RE-MEASURE complete. Step 5's new authenticated internal `/entities/unknown` route fired the `v0.15.0` trigger; installed version bytes remain v0.14.1 until the release commit. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` remains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** v0.16 evidence candidate `43706216c06608039d9c3e7ef2b86024b22d4a79` is a separate authenticated subject on `candidate/v0.15.0`; workflow-dispatch run `30347262430` attempt 1 authenticated all **7/7** derived blocking identities across **6** blocking jobs with zero rejected receipts. The current v0.16 full matrix passes **20/20** from the uncleared `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **126** Rust workspace tests, and **49** net tests (**23** `intel-ingest` + **26** `cored`); current standalone shell passes **243/243** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted Python 3.11.15 and 3.12.13 each report **242 passed / 1 skipped**; the collected **243** equals local, and the one on-site-only skip is intended. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **131/131 pins**: **129/129** evidence plus **2/2** authorization surfaces. `invariant-scan` is **11/11 rules / 19 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.0 (core-shell) · **Status:** **The operator selected release of v0.15.0 as of 2026-07-28. Release preparation is in progress; the exact release commit and annotated tag object will be recorded after those objects exist.** Evidence candidate `43706216c06608039d9c3e7ef2b86024b22d4a79` remains a separate authenticated subject under workflow-dispatch run `30347262430` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The current v0.16 full matrix passes **20/20** from the uncleared `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **126** Rust workspace tests, and **49** net tests (**23** `intel-ingest` + **26** `cored`); standalone shell passes **243/243** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted Python 3.11.15 and 3.12.13 each report **242 passed / 1 skipped**; the collected **243** equals local, and the one on-site-only skip is intended. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **131/131 pins**: **129/129** evidence plus **2/2** authorization surfaces. `invariant-scan` is **11/11 rules / 19 site-specific controls**. Published `v0.14.1` remains release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba` under unchanged annotated tag object `deea217b8913ae42399a22424dcf91595ce80240`; every earlier published release remains byte-identical and unmoved. Retractions remain **three**. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and R11's control-breadth gap remain open; L2 remains scheduled.
+
+**v0.16 R-CLOSE release reconciliation is in progress (measured
+2026-07-28).** The selected release is **v0.15.0** because Step 5 added the
+authenticated internal `POST /entities/unknown` core route. That new
+core-owned observable surface fired the minor trigger before R-CLOSE; the
+version is a record of behavior, not a preference chosen at publication.
+
+Evidence and release subjects remain deliberately separate. The authenticated
+evidence candidate is
+`43706216c06608039d9c3e7ef2b86024b22d4a79`; the later release commit
+contains the admitted receipts, report, version authorities, classified diff,
+architecture reconciliation, and release record and will be named by exact
+hash after it exists. The annotated `v0.15.0` tag will target that release
+commit, never the evidence candidate.
+
+The complete `v0.14.1..v0.15.0-local-release` diff contains **74 paths**, each
+classified exactly once:
+
+- **release authorities and public release documentation (6):** `README.md`,
+  `CHANGELOG.md`, `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`;
+- **document relocation and shared cycle-identity resolution (37):**
+  `.gitignore`, `docs/REVIEWER-LESSONS-v0.13-v0.14.md`, all **29** changed
+  paths under `docs/cycles/` (**12** progress logs and **17** task documents),
+  `docs/intel-platform-OPERATIONS.md`, `shell/tests/test_cycle_check.py`,
+  `tools/audit_deferred.py`, `tools/checklist_audit.py`,
+  `tools/cycle_check.py`, and `tools/cycle_identity.py`;
+- **operating contract and architectural reconciliation (2):** `AGENTS.md`
+  and `ARCHITECTURE.md`;
+- **job propagation, invariant, and exemption apparatus (5):** `run`,
+  `config/invariant-rules.json`, `shell/tests/test_ci_local_propagation.py`,
+  `shell/tests/test_invariant_scan.py`, and `tools/invariant_scan.py`;
+- **core-owned gazetteer seam and relocatable Rust tests (7):**
+  `apps/cored/src/main.rs`, `crates/ingest/src/arxiv_oai.rs`,
+  `shell/intel_shell/core_client.py`, `shell/intel_shell/enrichment.py`,
+  `shell/intel_shell/pipeline.py`, `shell/tests/test_pipeline_entities.py`,
+  and `shell/tests/test_shell.py`;
+- **protected manifest and durable hosted evidence (16):**
+  `config/protected-artifacts.json`, all fourteen receipt/bundle files under
+  `evidence/ci-runs/30347262430-1/`, and
+  `evidence/v0.15.0/deferred-audit/report.json`;
+- **current-state reconciliation (1):** `STATE.md`.
+
+The product implementation change is bounded to the authenticated internal
+entity-comparison seam in `cored` and the shipped shell client/pipeline. The
+`crates/ingest` change is test-only relocation support. R-CLOSE changes only
+the `cored` package version under `apps/`; Cargo mechanically updates that
+local package version in `Cargo.lock`, with no dependency-resolution change.
+No public `/v1/*` response body, SQLite schema, protected corpus, golden
+expectation, published tag, or historical evidence byte changes.
+
+**Scope correction forward:** v0.15's closing record named `ci_net_test` as an
+adjacent local exit-propagation gap. E0 derived the actual pre-fix scope:
+**seven** of twenty local job bodies could mask an earlier command failure,
+while **zero** hosted workflow steps enter through `ci_local_job`. Step 3 fixed
+the job mechanism for all twenty derived jobs and fixed fingerprint cleanup
+status separately. The exact evidence candidate then matched every hosted
+count, so no published count is false and no retraction is owed. Retractions
+remain **three**.
+
+The entering exemption output reconciles as **45 = 18 + 24 + 1 + 1 + 1**:
+eighteen structurally derived runner setup actions, twenty-four structurally
+derived terminal receipt/attestation actions, one structurally derived
+constrained Python installation, one report-only job, and the sole named
+operator-local protected-database residual. The count is now parser output,
+not a remembered or test-pinned input.
+
+All limitations remain explicit. A rewritten shell can still bypass or falsify
+`/attest`, so A4 remains open. An edited L1 controller can still rewrite its
+client-side command boundary, so L2 remains open and scheduled. R3 and R4
+remain bounded open-bottom deny-lists. The active-runbook measured-value check
+remains a same-clause vocabulary heuristic. R11 declares four direct
+configuration spellings plus their derived module-local variables, but its
+single `fail_before` reconstructs only `open("config/entities.json")`; the
+rule's existence is controlled while the rest of its breadth is asserted.
+`ARCHITECTURE.md` records this as an open limitation, and closing that
+control-breadth gap is the first task for v0.17. No R11 control is changed in
+this cycle.
+
+The reviewer-side entering-state assertion that `origin/main` was
+`fb2d501e…` is also corrected as evidence, not silently replaced. E0 measured
+`origin/main` at publication-audit commit
+`0a25c50f9de6a020fa6a04b04847f6242b809f7e`; the earlier specific was an
+unverified carry-forward of the prior turn's release-closing commit. This is
+the same defect class as any asserted measurement and is logged on the same
+terms.
+
+Publication is selected because release-grade evidence exists at the exact
+candidate and the local evidence now comes from a harness whose derived job
+bodies can actually fail. Withholding would leave `v0.14.1`, produced under
+the defective local harness, as the published head while its fix remained
+unpublished. The release commit, exact-commit matrix, annotated tag object,
+canonical closing record, and remote mapping remain facts to measure and
+append after their objects exist.
 
 **v0.16 RE-MEASURE is complete (measured 2026-07-28).** The operator
 authorized only a non-`main` candidate push. Evidence candidate

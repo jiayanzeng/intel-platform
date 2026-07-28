@@ -1,4 +1,4 @@
-# intel-platform (v0.14.1 — core-shell)
+# intel-platform (v0.15.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,11 +7,16 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.14.1` is the selected release identity. Its release-grade hosted evidence
-is workflow-dispatch run `30333331839`, attempt 1, against exact evidence
-candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4`. The cycle closing record
+`v0.15.0` is the selected release identity. Its release-grade hosted evidence
+is workflow-dispatch run `30347262430`, attempt 1, against exact evidence
+candidate `43706216c06608039d9c3e7ef2b86024b22d4a79`. The cycle closing record
 separately identifies that evidence candidate and the later release commit;
-the annotated `v0.14.1` tag targets the release commit, not the candidate.
+the annotated `v0.15.0` tag targets the release commit, not the candidate.
+
+Current and historical execution runbooks and their append-only progress logs
+live under [`docs/cycles/`](docs/cycles/). The active pair is
+[`TASKS-v0.16-EXECUTION.md`](docs/cycles/TASKS-v0.16-EXECUTION.md) and
+[`PROGRESS-v0.16.md`](docs/cycles/PROGRESS-v0.16.md).
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:
@@ -34,7 +39,8 @@ be impossible to forget; the shell owns everything a product person might
 want to change this afternoon.** Editing a prompt, rewording the brief,
 changing the citation style, adding an endpoint, swapping the LLM provider,
 restructuring subscriptions — all shell-only, no recompile. The core's twelve
-endpoints are the whole contract.
+other endpoints plus the authenticated `/entities/unknown` comparison route
+are the whole contract.
 
 ## Who owns what
 

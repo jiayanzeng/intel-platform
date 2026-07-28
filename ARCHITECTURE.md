@@ -228,6 +228,16 @@ every possible secret form is absent. These scanner limits do not weaken HC3 or
 the credential-disclosure prohibition; they prevent the checks from claiming
 more than their source detectors establish.
 
+R11 has a separate open control-breadth limitation. Its declared source scope
+covers direct reads of `config/core.json`, `config/entities.json`,
+`CORE_CONFIG`, and `CORE_ENTITIES`, plus module-local variables derived from
+those spellings, but its single registered `fail_before` reconstructs only
+`open("config/entities.json")`. The control proves that R11 can fire; it does
+not independently prove the other three spellings or derived-variable breadth.
+This is recorded, not repaired, in v0.16. The first task of v0.17 is to close
+that control-breadth gap with independently reconstructible failures while
+preserving the derived source scope.
+
 The active-runbook measured-value check is deliberately heuristic, not a
 semantic proof. It recognizes explicit same-clause combinations of a
 cross-step `Step N` reference, a recorded/measured/stored term, and a

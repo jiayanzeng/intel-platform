@@ -4,6 +4,63 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.0 — 2026-07-28
+
+### Added
+
+- Authenticated internal `POST /entities/unknown` moves gazetteer comparison
+  behind the core-owned configuration seam. The shell still extracts model
+  candidates, while core compares them against the gazetteer it actually
+  loaded and returns only the unknown subset.
+- R11 rejects production shell reads of core-owned configuration spellings.
+  Its current single reconstructed failure proves the rule can fire; its
+  broader declared spelling coverage remains an explicit open limitation and
+  is the first task for v0.17.
+
+### Changed
+
+- All execution runbooks and progress logs now live under `docs/cycles/`,
+  resolved through one shared cycle-identity implementation. Historical file
+  bytes remain unchanged.
+- R10's 45 exemptions are parser output rather than a name-pinned input:
+  18 runner setup actions + 24 terminal receipt/attestation actions + 1
+  constrained Python installation + 1 report-only job + 1 named
+  operator-local protected-database residual.
+- Rust test fixtures resolve from the runtime checkout. A relocated checkout
+  reused a shared, uncleared Cargo target without recompilation and passed all
+  126 workspace tests.
+
+### Fixed
+
+- `ci-local` now runs every one of its 20 derived jobs in a separate
+  `bash -euo pipefail` process, so a failed command cannot be converted into a
+  PASS by the wrapper call site.
+- Fingerprint verification preserves the first validation failure while still
+  cleaning up, and reports cleanup failure only when no earlier failure
+  occurred.
+
+### Evidence and disposition
+
+- The new authenticated internal `/entities/unknown` route fired the minor
+  release trigger. The selected release identity is `v0.15.0`.
+- Authenticated run 30347262430 attempt 1 against evidence candidate
+  `43706216c06608039d9c3e7ef2b86024b22d4a79` passed all seven derived
+  identities across six blocking jobs with zero rejected receipts: workspace
+  **126**, net **49** (**23** `intel-ingest` + **26** `cored`),
+  invariant-scan **11/11 rules / 19 controls**, and golden **11/11**. Each
+  hosted shell lane collected **243** tests as **242 passed / 1 intended
+  on-site-only skip**, matching the local candidate's **243 passed**.
+- The release-grade audit measured **5 deferred / 2 promoted**. The protected
+  manifest contains **131 exact pins**: **129 evidence** plus **2
+  authorization surfaces**.
+- Publication was explicitly selected as **release as of 2026-07-28**. The
+  hosted workflow never enters `ci_local_job`, so the pre-v0.15 local harness
+  defect makes no published count false and no retraction is owed. Retractions
+  remain three.
+- A4, the editable-L1 controller residual, the R3/R4 open-bottom limitations,
+  the active-runbook measured-value heuristic, and R11's control-breadth gap
+  remain open.
+
 ## v0.14.1 — 2026-07-28
 
 ### Added
