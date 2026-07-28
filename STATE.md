@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **The v0.14 cycle is locally closed with `no-release` disposition at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`. DIAGNOSTIC-KNOB option (b) selected identity v0.14.0; publication is not authorized.** Evidence candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` remains separately named on `candidate/v0.14.0`, and authenticated workflow-dispatch run `30324186389` accepted seven identities with zero rejection. `origin/main` remains `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`; no `v0.14.0` tag exists. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At the exact release commit, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **The v0.14 cycle is locally closed at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518`. Its dated `no-release` closing disposition was accurate when written; the operator has now authorized publication, which is pending exact tag and remote verification.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Evidence candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a` remains separately named on `candidate/v0.14.0`, and authenticated workflow-dispatch run `30324186389` accepted seven identities with zero rejection. The pre-publication remote baseline is `origin/main` at `0eff6e4c4987b7ebb138cf0bb1da6ebe8bd851b9`, with no `v0.14.0` tag. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At the exact release commit, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **225/225** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell is **224 passed / 1 skipped** per interpreter by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities agree at 0.14.0; `invariant-scan` is **9/9 rules / 15 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
 **v0.14 cycle activation is complete; E0 has not yet run (measured
 2026-07-28).** The operator selected pre-cycle option (a) and manually pushed
@@ -476,6 +476,23 @@ must explicitly permit advancing `origin/main` and creating the annotated
 `v0.14.0` tag. That trigger has not fired. R-CLOSE creates no remote-main
 advance, tag, publication, or live server session.
 
+**The v0.14 closing disposition has a forward supersession (recorded
+2026-07-28; publication authorized, mapping not yet claimed).** The closed
+runbook's `Release disposition: no-release` and `Tag: not created;
+publication is not authorized` statements were accurate as of their
+2026-07-28 closing record. Later on 2026-07-28, the operator explicitly
+authorized publication. That dated authorization supersedes only the
+prospective disposition and tag-not-created clause; it does not rewrite the
+historical state at closure. The selected identity remains **v0.14.0**, and
+the release subject remains exactly
+`4ad4c8d71075731dd87c360e8b0d3d91d80b5518`. The evidence candidate remains
+separately named as
+`ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`.
+`TASKS-v0.14-EXECUTION.md` is intentionally unmodified; this is a forward
+state record shaped like a retraction, not an edit to the closed runbook.
+Remote publication, exact tag-object mapping, candidate deletion, and
+post-push CI remain facts to measure and append after they occur.
+
 **v0.15 candidate inputs carried forward from v0.14 review (recorded
 2026-07-28; not acted on in this cycle):**
 
@@ -493,6 +510,11 @@ advance, tag, publication, or live server session.
    read the wrapper without `main()`. An earlier probe also passed `--rules`,
    the flag that suppresses default self-test, and misread the absent output.
    This belongs as a candidate `AGENTS.md` evidence rule, not a v0.14 change.
+4. **Date closing-record dispositions.** A closing record should state its
+   release and publication disposition as of a named date, rather than as a
+   standing fact. A later operator authorization can then supersede the dated
+   disposition without contradicting or editing the closed record. Carry this
+   into the v0.15 runbook template.
 
 **v0.13 cycle activation is complete; E0 has not yet run (measured
 2026-07-27).** The mandatory opener found only the operator-supplied untracked
