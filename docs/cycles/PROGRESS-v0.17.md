@@ -233,3 +233,57 @@ Entries are append-only; corrections are new dated entries.
   all **131/131** pins, and both protected databases exact.
 - golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
   both remained **11/11**.
+
+### 2026-07-28 · RE-MEASURE — authenticated release evidence admitted
+
+- owner: Codex
+- commit: 7a9aa36
+- result: PASS. Under the operator's one narrow authorization, exact evidence
+  candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394` was pushed only to
+  `candidate/v0.16.0`. Final live inspection still reports `origin/main` at
+  `cdae3c922a2156701c0df0ceb4f45fc937fa7f20`, the candidate at the exact
+  authorized commit, and no `v0.16.0` tag.
+- gate acceptance: PASS after the pre-commit Step 6 amendment made the Gate
+  contain every evidence-admission surface required by its acceptance
+  criteria. No closed runbook or prior progress entry changed; no tag,
+  publication, or `main` advance occurred.
+- remote-workflow acceptance: PASS. Before dispatch, the remote candidate's
+  `.github/workflows/ci.yml` blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` was read and proved
+  byte-identical to the local candidate.
+- hosted-count acceptance: PASS from workflow-dispatch run `30357365420`,
+  attempt 1. All **7/7** derived identities authenticated with zero rejected
+  receipt across **6** blocking jobs: `core`, `golden`, `lint`, `msrv`, `net`,
+  `shell/python=3.11`, and `shell/python=3.12`. Hosted logs measured **131**
+  workspace tests, **55** net tests (**29** ingest + **26** cored),
+  `invariant-scan` **11/11 rules / 23 controls**, and golden **11/11**.
+- shell-equality acceptance: PASS. Each hosted interpreter collected **244**
+  tests and reported **243 passed / 1 declared on-site-only skip / 1 warning**;
+  the same candidate locally passed all **244/244** with the same warning.
+  The candidate's ingest net leg is specifically **29/29** in both hosted and
+  local execution. R10 measured local **20 jobs / 24 checks**, hosted **6
+  blocking jobs / 23 checks**, and the same derived exemption count **45**.
+- authenticated-audit acceptance: PASS. The release-posture audit required
+  attestations, accepted all **7/7** identities with zero rejection, and
+  recorded **5 deferred / 2 promoted** with exact cosine p95 **8.660458 ms**.
+  `evidence/v0.16.0/deferred-audit/report.json` is SHA-256
+  `34804a849db56bb05cc97d4f45541702832478768119c0251769a07dd76b1bcc`
+  at **34468** bytes. Authenticated re-derivation passed with
+  `evidence_grade=release`, attestations required, and seven rows/triggers.
+- pin acceptance: PASS. Fourteen signed hosted files plus the release audit
+  added fifteen pins. Manifest validation, `verify-artifacts`, and
+  `evidence-report` pass with **146/146** total — **144/144** evidence plus
+  **2/2** authorization surfaces — and both protected databases remain exact.
+- local-matrix acceptance: PASS. A first sandboxed invocation was a non-result
+  when the raw loopback fixture could not bind. The identical permitted
+  `CARGO_TARGET_DIR=/private/tmp/intel-v017-step6-ci-target ./run ci-local`
+  then passed all **20/20** jobs: **131** workspace tests, **55** net tests
+  (**29 + 26**), shell **244/244**, locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+  controls**, persisted fingerprints, and all protected evidence.
+- scope acceptance: PASS. This task changes only authenticated hosted/audit
+  evidence, its manifest admission, and active cycle/status records. It
+  changes no product path, public response, schema, dependency, lockfile,
+  protected corpus byte, published release, tag, or `main` ref.
+- golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
+  both remained **11/11**.
