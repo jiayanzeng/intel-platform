@@ -260,3 +260,70 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The first post-admission invocation was a sandbox
   loopback-bind non-result; the identical permitted invocation passed
   **11/11**.
+
+### 2026-07-28 · R-CLOSE — v0.15.2 release measured and locally tagged
+
+- owner: Codex
+- commit: b3c4c4d
+- result: PASS. Release disposition is **release (as of 2026-07-28)**. The
+  publication trigger is F1, not the runbook's mechanical patch default:
+  published v0.15.1 falsely claims its managed core remains running after the
+  harness has already stopped it, while the forward correction has an
+  executing regression.
+- tagged-tree trigger acceptance: PASS. Exact
+  `git show v0.15.1:run | shasum -a 256` returned
+  `7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455`;
+  the tagged file is **41,959** bytes and contains the false claim at
+  `run:839`. Current `run` reports durable inspection paths, calls `cmd_down`,
+  and its fail-before detects removal of that shutdown.
+- identity/release acceptance: PASS. v0.15.2 is the compatible patch identity
+  because no `/v1/*` route or response body moved, but that fact is not the
+  publication reason. Evidence candidate
+  `2ce912dca181e5e7b949a4b2e6fd8487412388f9` and exact release commit
+  `b3c4c4d3b695ceff27a9d4a2ec610fc851939324` are separate subjects.
+  Local annotated tag object
+  `22beef8e023e52024cfe9614273e2d82b39f4956` peels exactly to the release
+  commit.
+- exact-release acceptance: PASS. Clean-tree `./run ci-local` passed
+  **20/20** with **131** workspace tests, **55** net tests (**29 + 26**),
+  locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures,
+  Python 3.11.4 **245/245**, `invariant-scan` **11/11 rules / 23 controls**,
+  **161/161** pins (**159** evidence + **2** authorization), protected
+  databases **2/2**, and golden **11/11**. A clean constrained Python 3.12.13
+  rebuild independently passed package resolution **21/21** and shell
+  **245/245**. Its first sandboxed attempt was a loopback/`ps` permission
+  non-result; the identical permitted invocation passed.
+- tag-surface acceptance: PASS. Feature-gated compliance diagnostics passed
+  **40/40**; robots-preview ingest passed **30/30** and its binary **1/1**;
+  both feature-clippy invocations passed with zero warnings. The mandatory
+  standalone post-matrix golden invocation passed **11/11**, delta **0**.
+- incident/default-scope acceptance: PASS. The v0.15.1 incident is bounded to
+  no affected configured live URL or observed redirect, so all three
+  retractions remain unchanged. ORIGIN-CASE shipped nothing; diagnostics and
+  robots-preview are absent from the default build; no default-build
+  compliance behavior changed. The only default production-path movement is
+  `run`'s corrected lifecycle.
+- wire acceptance: PASS. The first correctly gated live harvest recorded
+  **2,692** arXiv documents after the robots-only preview recorded the
+  **11,083-byte** 404 at SHA-256
+  `fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2`.
+  Both reports bind those observations to `intel-platform/0.15.1`; release
+  head emits `intel-platform/0.15.2`, so the versioned User-Agent line is not
+  a future byte-reproducibility claim.
+- support/product acceptance: PASS. The inert preview remains unsupported and
+  unowned; promotion requires both a named owner and explicit operator
+  authorization. The configured platform aggregates one real publisher,
+  `arxiv-cs`; its other three sources are `example.org` placeholders, and a
+  second publisher remains a separate future compliance decision.
+- diff/architecture acceptance: PASS. All **39** release-diff paths are
+  classified once across default runtime/test, inert diagnostics, release
+  authorities/docs, contract/history, authenticated evidence/index, and wire
+  observations. `ARCHITECTURE.md` keeps A4, editable L1, R3/R4, the
+  measured-value heuristic, T7 single-flight, the preview limitation, the
+  one-publisher limitation, and scheduled L2 open.
+- publication acceptance: PASS locally. Before tagging, `origin/main` was
+  `f13c6129d608ab9259f421dce6ed419ce469c225`, candidate branch was exact, and
+  neither local nor remote `v0.15.2` existed. The annotated tag was then
+  created only after every exact-release command passed. The closing audit
+  commit and tag are authorized for one atomic push.
+- golden-E2E delta: **0**; standalone release invocation passed **11/11**.

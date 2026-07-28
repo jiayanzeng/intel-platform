@@ -450,7 +450,7 @@ Step 7 — Widen R-CLOSE before its first release commit to contain the release,
   trigger; or an explicit empty close
 - [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; branch named after the decided version
-- [ ] **R-CLOSE** — version cites its trigger; v0.15.1 incident scope recorded;
+- [x] **R-CLOSE** — version cites its trigger; v0.15.1 incident scope recorded;
   live-harvest first recorded with the policy hash; all open items open
 
 ---
@@ -491,12 +491,11 @@ Step 7 — Widen R-CLOSE before its first release commit to contain the release,
 - Do not batch `STATE.md` / `PROGRESS-v0.18.md` updates or combine two tasks in
   one commit.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-28
-- **Release disposition:** release authorized by the operator as of
-  2026-07-28; Step 7 exact-release measurement, closing audit, and publication
-  are in progress.
+- **Cycle closed:** 2026-07-28
+- **Release disposition:** release (as of 2026-07-28)
+- **Release:** v0.15.2
 - **Release version:** v0.15.2. No observable `/v1/*` route or response body
   moved, so patch is the compatible identity. Publication is triggered by F1:
   published v0.15.1 falsely claims its managed core remains running after
@@ -522,6 +521,21 @@ Step 7 — Widen R-CLOSE before its first release commit to contain the release,
   **34,520** bytes at `evidence/v0.15.2/deferred-audit/report.json`.
 - **Evidence pins:** **161/161** total — **159/159** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
+- **Release commit:** `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`
+- **Annotated tag object:** `22beef8e023e52024cfe9614273e2d82b39f4956`
+- **Exact release matrix:** clean-tree `./run ci-local` passes **20/20** with
+  **131** workspace tests, **55** net
+  tests (**29 + 26**), locked Rust 1.78, Python 3.11.4 **245/245**,
+  independently rebuilt Python 3.12.13 **245/245**, `invariant-scan`
+  **11/11 rules / 23 controls**, all pins and protected databases exact, and
+  golden **11/11**. Supplemental tag-surface tests pass compliance
+  diagnostics **40/40**, robots-preview ingest **30/30**, preview binary
+  **1/1**, and both feature-clippy invocations with zero warnings. The
+  mandatory standalone post-matrix golden invocation passes **11/11**, delta
+  **0**.
+- **Publication:** the local annotated tag object peels exactly to the release
+  commit. The closing audit commit and annotated tag are authorized for
+  atomic publication to `origin/main`.
 - **Default-build scope:** no compliance behavior changed. ORIGIN-CASE shipped
   nothing; matcher/preview diagnostics are feature-gated and unsupported; the
   only default production behavior change is `run`'s lifecycle correction.
@@ -533,8 +547,7 @@ Step 7 — Widen R-CLOSE before its first release commit to contain the release,
   explicit operator support authorization. The platform has one real
   publisher (`arxiv-cs`) and three fixture placeholders; a second publisher is
   a later, separate compliance decision.
-- **Release commit:** pending Step 7's exact-release measurement.
 - **Remote disposition:** `origin/main` remains
   `f13c6129d608ab9259f421dce6ed419ce469c225`; candidate branch
-  `candidate/v0.15.2` is exact at the evidence candidate; no `v0.15.2` tag
-  exists.
+  `candidate/v0.15.2` is exact at the evidence candidate; no remote
+  `v0.15.2` tag exists before the authorized atomic publication.

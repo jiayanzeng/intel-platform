@@ -1,8 +1,8 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.18 R-CLOSE publication is authorized on F1; the v0.15.2 release commit and exact-release verification are in progress.** Exact evidence candidate `2ce912dca181e5e7b949a4b2e6fd8487412388f9` is on `candidate/v0.15.2`; hosted run `30369139464` attempt 1 authenticates all **7/7** derived identities. The candidate passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225` until authorized publication. No `v0.15.2` tag exists yet. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.18 R-CLOSE is locally complete with release disposition `release (as of 2026-07-28)`; atomic publication of the closing audit commit and annotated v0.15.2 tag is pending.** Exact release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324` is locally tagged by annotated object `22beef8e023e52024cfe9614273e2d82b39f4956`; evidence candidate `2ce912dca181e5e7b949a4b2e6fd8487412388f9` remains on `candidate/v0.15.2`, and hosted run `30369139464` attempt 1 authenticates all **7/7** derived identities. The exact release commit passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and a clean Python 3.12.13 rebuild, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The inert feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**, with both feature-clippy invocations at zero warnings. Remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225` and the remote tag is absent until the authorized atomic publication. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
-**v0.18 R-CLOSE release preparation is authorized (measured 2026-07-28).**
+**v0.18 R-CLOSE is locally complete (measured 2026-07-28).**
 Release disposition: release (as of 2026-07-28). The publication trigger is
 **F1**, not the runbook's mechanical patch default. The operator selected
 v0.15.2 because the published v0.15.1 harness makes a false lifecycle claim
@@ -23,9 +23,10 @@ commit `dae015e`.
 v0.15.2 is the compatible patch **identity** because no `/v1/*` route,
 response body, schema, or other named surface moved; that mechanical fact is
 not the publication reason. Evidence candidate
-`2ce912dca181e5e7b949a4b2e6fd8487412388f9` and the release commit are
-separate named subjects. The release commit and annotated tag remain pending
-the exact-release matrix.
+`2ce912dca181e5e7b949a4b2e6fd8487412388f9` and exact release commit
+`b3c4c4d3b695ceff27a9d4a2ec610fc851939324` are separate named subjects.
+Annotated tag object `22beef8e023e52024cfe9614273e2d82b39f4956`
+peels exactly to that release commit.
 
 No default-build compliance behavior changed. ORIGIN-CASE shipped nothing
 because E0 proved `reqwest::Url` normalizes initial and redirected authorities
@@ -112,6 +113,25 @@ bounded open-bottom scanners, the active-runbook measured-value heuristic,
 and T7 robots single-flight as open; L2 remains scheduled. The unsupported
 preview and one-real-publisher fact add explicit product/support limitations
 without weakening any architectural invariant.
+
+The exact release commit, with a clean tree throughout measurement, passes
+`./run ci-local` **20/20**: version, cycle, checklist, invariant, deferred
+re-derivation, Python-floor byte-compile, ShellCheck, workspace check/test,
+net check/test, clippy, rustfmt, Rust 1.78 check/test, Python 3.11 shell tests,
+golden, protected artifacts, persisted fingerprints, and progress validation.
+Measured totals are **131** workspace tests, **55** net tests (**29 + 26**),
+shell **245/245** on Python 3.11.4 and, after a clean constrained rebuild,
+**245/245** on Python 3.12.13. The first sandboxed Python 3.12 attempt could
+not bind loopback test doubles or execute `ps` and is a permission non-result;
+the identical permitted invocation passed.
+
+Supplemental tag-surface execution passes compliance diagnostics **40/40**,
+ingest robots-preview **30/30**, and preview-binary **1/1**; both corresponding
+feature-clippy commands pass with zero warnings. All **161/161** pins and both
+protected databases remain exact. The mandatory standalone post-matrix golden
+run passes **11/11**, delta **0**. `origin/main` remains
+`f13c6129d608ab9259f421dce6ed419ce469c225` and the remote tag remains absent
+until the closing audit commit and annotated tag are published atomically.
 
 **v0.18 RE-MEASURE is complete at the v0.15.2 candidate (measured
 2026-07-28).** The runbook's default patch trigger fired because no `/v1/*`
