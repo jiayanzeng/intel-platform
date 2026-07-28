@@ -23,10 +23,15 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.cycle_identity import historical_artifact_path, resolve_cycle
+from tools.invariant_scan import (
+    ConfigError as InvariantConfigError,
+    blocking_job_identities,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "config" / "protected-artifacts.json"
+CI_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
 SCHEDULE = ROOT / "config" / "schedule.json"
 SCHEDULER = ROOT / "shell" / "intel_shell" / "scheduler.py"
 CORE_CONFIG = ROOT / "shell" / "intel_shell" / "config.py"
@@ -52,17 +57,6 @@ EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
 SCHEMA_VERSION = 2
 EVIDENCE_GRADES = ("structural", "release")
-EXPECTED_RUNNER_JOB_IDENTITIES = frozenset(
-    {
-        ("core", None),
-        ("golden", None),
-        ("lint", None),
-        ("msrv", None),
-        ("net", None),
-        ("shell", "python=3.11"),
-        ("shell", "python=3.12"),
-    }
-)
 LEGACY_RUNNER_JOB_COUNTS = {
     "core": 1,
     "golden": 1,
@@ -90,12 +84,14 @@ SCHEDULER_RUNTIME_FIELDS = (
 
 def configure_subject_root(root: Path) -> None:
     """Point every subject-side measurement at one explicit worktree."""
-    global ROOT, MANIFEST, SCHEDULE, SCHEDULER, CORE_CONFIG, CORE_MAIN
+    global ROOT, MANIFEST, CI_WORKFLOW, SCHEDULE, SCHEDULER
+    global CORE_CONFIG, CORE_MAIN
     global PUBLIC_APP, STORE, SUBSCRIPTIONS, SERVICE, TIMER, DEPLOY_README
     global SCALE_NOTE, VIEW_SUMMARY, V2_VIEW_SUMMARY, V2_VIEW_DESIGN
 
     ROOT = root.resolve()
     MANIFEST = ROOT / "config" / "protected-artifacts.json"
+    CI_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
     SCHEDULE = ROOT / "config" / "schedule.json"
     SCHEDULER = ROOT / "shell" / "intel_shell" / "scheduler.py"
     CORE_CONFIG = ROOT / "shell" / "intel_shell" / "config.py"
@@ -126,6 +122,75 @@ def progress_paths(root: Path | None = None) -> list[Path]:
 
 class AuditFailure(RuntimeError):
     """The audit could not establish a required measurement."""
+
+
+def expected_runner_job_identities(
+    workflow: Path | None = None,
+) -> frozenset[tuple[str, str | None]]:
+    """Derive identities from jobs not marked report-only at job level."""
+    selected = CI_WORKFLOW if workflow is None else workflow
+    try:
+        return blocking_job_identities(selected)
+    except InvariantConfigError as error:
+        raise AuditFailure(str(error)) from error
+
+
+def protected_runner_job_identities() -> frozenset[tuple[str, str | None]]:
+    """Recover every exact identity already admitted in protected reports."""
+    try:
+        manifest = json.loads(MANIFEST.read_text())
+        pinned_files = manifest["pinned_files"]
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as error:
+        raise AuditFailure(
+            f"{MANIFEST}: cannot read protected runner identity history: {error}"
+        ) from error
+    if not isinstance(pinned_files, list):
+        raise AuditFailure(f"{MANIFEST}: pinned_files must be an array")
+
+    identities: set[tuple[str, str | None]] = set()
+    for entry in pinned_files:
+        if not isinstance(entry, dict):
+            raise AuditFailure(f"{MANIFEST}: pinned file entry must be an object")
+        relative = entry.get("path")
+        if (
+            not isinstance(relative, str)
+            or not relative.endswith("/deferred-audit/report.json")
+        ):
+            continue
+        report_path = ROOT / relative
+        try:
+            report = json.loads(report_path.read_text())
+            declared = report["measurements"]["ci_runner"].get(
+                "expected_job_identities"
+            )
+        except (OSError, json.JSONDecodeError, KeyError, TypeError) as error:
+            raise AuditFailure(
+                f"{report_path}: cannot read protected runner identities: "
+                f"{error}"
+            ) from error
+        if declared is None:
+            continue
+        if not isinstance(declared, list):
+            raise AuditFailure(
+                f"{report_path}: expected_job_identities must be an array"
+            )
+        for identity in declared:
+            if not isinstance(identity, dict):
+                raise AuditFailure(
+                    f"{report_path}: runner identity must be an object"
+                )
+            job = identity.get("job")
+            matrix = identity.get("matrix")
+            if (
+                not isinstance(job, str)
+                or not job
+                or (matrix is not None and not isinstance(matrix, str))
+            ):
+                raise AuditFailure(
+                    f"{report_path}: invalid protected runner identity"
+                )
+            identities.add((job, matrix))
+    return frozenset(identities)
 
 
 def sha256(path: Path) -> str:
@@ -930,6 +995,21 @@ def runner_receipt_measurement(
     candidate_digests: list[str] = []
     rejected: list[dict[str, Any]] = []
     matrix_findings: list[str] = []
+    expected_identities = (
+        expected_runner_job_identities()
+        if legacy_job_counts is None
+        else frozenset()
+    )
+    if legacy_job_counts is None:
+        removed_identities = (
+            protected_runner_job_identities() - expected_identities
+        )
+        if removed_identities:
+            matrix_findings.append(
+                "workflow-derived runner identity set narrowed relative to "
+                "protected historical evidence: removed="
+                f"{sorted(removed_identities, key=lambda item: (item[0], item[1] or ''))}"
+            )
     released_commit = released_commit.lower()
     if re.fullmatch(r"[0-9a-f]{40,64}", released_commit) is None:
         raise AuditFailure(
@@ -1010,12 +1090,12 @@ def runner_receipt_measurement(
         else:
             declared_matrices = {
                 matrix
-                for expected_job, matrix in EXPECTED_RUNNER_JOB_IDENTITIES
+                for expected_job, matrix in expected_identities
                 if expected_job == job and matrix is not None
             }
             if not any(
                 expected_job == job
-                for expected_job, _ in EXPECTED_RUNNER_JOB_IDENTITIES
+                for expected_job, _ in expected_identities
             ):
                 rejected.append(
                     {
@@ -1280,13 +1360,13 @@ def runner_receipt_measurement(
                     f"sha256={digest}, count={count}"
                 )
         actual_identities = set(identity_counts)
-        if actual_identities != EXPECTED_RUNNER_JOB_IDENTITIES:
+        if actual_identities != expected_identities:
             missing = sorted(
-                EXPECTED_RUNNER_JOB_IDENTITIES - actual_identities,
+                expected_identities - actual_identities,
                 key=lambda identity: (identity[0], identity[1] or ""),
             )
             unexpected = sorted(
-                actual_identities - EXPECTED_RUNNER_JOB_IDENTITIES,
+                actual_identities - expected_identities,
                 key=lambda identity: (identity[0], identity[1] or ""),
             )
             matrix_findings.append(
@@ -1297,10 +1377,12 @@ def runner_receipt_measurement(
             "expected_job_identities": [
                 {"job": job, "matrix": matrix}
                 for job, matrix in sorted(
-                    EXPECTED_RUNNER_JOB_IDENTITIES,
+                    expected_identities,
                     key=lambda identity: (identity[0], identity[1] or ""),
                 )
-            ]
+            ],
+            "runner_identity_source": ".github/workflows/ci.yml",
+            "report_only_job_criterion": "job-level continue-on-error: true",
         }
     if not candidates and receipts:
         matrix_findings.append("no valid receipts remain for matrix validation")

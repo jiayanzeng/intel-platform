@@ -436,7 +436,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 - [x] **R10-CI-PARITY** — registered with ≥3 site-specific controls, all FAIL;
   exemptions declared with reasons and counted; mechanism recorded; measured
   counts recorded
-- [ ] **IDENTITY-DERIVE** — identity set derived from `ci.yml`; report-only
+- [x] **IDENTITY-DERIVE** — identity set derived from `ci.yml`; report-only
   exclusion is a criterion not a name list; all 101 pins validate unchanged;
   silent narrowing impossible
 - [ ] **STAGE-SOURCE** — scope limited to the four injectable names; Rust-side

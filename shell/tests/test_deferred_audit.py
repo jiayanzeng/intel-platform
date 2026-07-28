@@ -14,6 +14,7 @@ from tools.audit_deferred import (
     control_measurements,
     evaluate,
 )
+from tools.invariant_scan import parse_ci_workflow
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -142,14 +143,9 @@ def _receipt_matrix(
     omit: str | None = None,
     split_job: str | None = None,
 ) -> list[Path]:
-    identities = (
-        ("core", None),
-        ("golden", None),
-        ("lint", None),
-        ("msrv", None),
-        ("net", None),
-        ("shell", "python=3.11"),
-        ("shell", "python=3.12"),
+    identities = sorted(
+        audit_deferred.expected_runner_job_identities(),
+        key=lambda identity: (identity[0], identity[1] or ""),
     )
     paths: list[Path] = []
     omitted = False
@@ -167,6 +163,82 @@ def _receipt_matrix(
         )
         paths.append(path)
     return paths
+
+
+def _workflow_variant(tmp_path: Path, suffix: str) -> Path:
+    path = tmp_path / "ci.yml"
+    source = (ROOT / ".github" / "workflows" / "ci.yml").read_text()
+    path.write_text(source.rstrip() + "\n" + suffix)
+    return path
+
+
+def test_added_blocking_job_is_derived_without_python_edit(
+    tmp_path: Path,
+) -> None:
+    workflow = _workflow_variant(
+        tmp_path,
+        """\
+  derived-extra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: extra blocking check
+        run: ./run version-check
+""",
+    )
+
+    identities = audit_deferred.expected_runner_job_identities(workflow)
+
+    assert ("derived-extra", None) in identities
+
+
+def test_job_level_continue_on_error_is_the_report_only_criterion(
+    tmp_path: Path,
+) -> None:
+    workflow = _workflow_variant(
+        tmp_path,
+        """\
+  derived-report:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: informational check
+        run: ./run version-check
+""",
+    )
+
+    identities = audit_deferred.expected_runner_job_identities(workflow)
+
+    assert ("derived-report", None) not in identities
+
+
+def test_removed_workflow_job_reports_historical_identity_narrowing(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipts = _receipt_matrix(tmp_path, head)
+    workflow = tmp_path / "ci.yml"
+    source = (ROOT / ".github" / "workflows" / "ci.yml").read_text()
+    golden_start = source.index("  golden:\n")
+    drift_start = source.index("  drift:\n")
+    workflow.write_text(source[:golden_start] + source[drift_start:])
+    monkeypatch.setattr(audit_deferred, "CI_WORKFLOW", workflow)
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        receipts,
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+    )
+
+    assert measurement["observed_runner_executions"] == 0
+    assert measurement["accepted_runner_receipts"] == []
+    assert any(
+        "identity set narrowed relative to protected historical evidence"
+        in finding
+        and "('golden', None)" in finding
+        for finding in measurement["matrix_findings"]
+    )
 
 
 def test_non_release_ancestor_receipt_is_rejected(tmp_path: Path) -> None:
@@ -391,15 +463,7 @@ def test_complete_release_matrix_from_one_run_promotes(tmp_path: Path) -> None:
     assert {
         (receipt["job"], receipt["matrix"])
         for receipt in measurement["accepted_runner_receipts"]
-    } == {
-        ("core", None),
-        ("golden", None),
-        ("lint", None),
-        ("msrv", None),
-        ("net", None),
-        ("shell", "python=3.11"),
-        ("shell", "python=3.12"),
-    }
+    } == audit_deferred.expected_runner_job_identities()
     assert all(
         {
             "matrix",
@@ -1108,16 +1172,33 @@ def test_zero_runner_receipts_defer_under_restated_trigger() -> None:
 
 
 def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
-    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text()
+    workflow_path = ROOT / ".github" / "workflows" / "ci.yml"
+    workflow = workflow_path.read_text()
     source = TOOL.read_text()
+    workflow_job_count = len(parse_ci_workflow(workflow_path))
 
-    assert workflow.count("- name: emit CI-runner receipt") == 7
-    assert workflow.count("- name: persist CI-runner receipt") == 7
-    assert workflow.count("uses: actions/upload-artifact@v4") == 7
-    assert workflow.count("ref: ${{ inputs.audit_sha || github.sha }}") == 7
-    assert workflow.count("if: always()") >= 14
-    assert workflow.count("uses: actions/attest-build-provenance@v4") == 7
-    assert workflow.count("steps.attest.outputs.bundle-path") == 7
+    assert workflow.count("- name: emit CI-runner receipt") == workflow_job_count
+    assert (
+        workflow.count("- name: persist CI-runner receipt")
+        == workflow_job_count
+    )
+    assert (
+        workflow.count("uses: actions/upload-artifact@v4")
+        == workflow_job_count
+    )
+    assert (
+        workflow.count("ref: ${{ inputs.audit_sha || github.sha }}")
+        == workflow_job_count
+    )
+    assert workflow.count("if: always()") >= workflow_job_count * 2
+    assert (
+        workflow.count("uses: actions/attest-build-provenance@v4")
+        == workflow_job_count
+    )
+    assert (
+        workflow.count("steps.attest.outputs.bundle-path")
+        == workflow_job_count
+    )
     assert workflow.count('"matrix": "python=${{ matrix.python-version }}"') == 1
     assert "publish_evidence:" in workflow
     assert "id-token: write" in workflow

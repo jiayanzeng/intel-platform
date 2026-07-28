@@ -1,6 +1,30 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 R10-CI-PARITY, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **228/228** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 IDENTITY-DERIVE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **231/231** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 IDENTITY-DERIVE is complete (measured 2026-07-28).** The deferred
+auditor no longer declares the current hosted receipt identities in Python.
+It reuses R10's workflow parser and derives the exact blocking set from
+`.github/workflows/ci.yml`: `core`, `golden`, `lint`, `msrv`, `net`,
+`shell/python=3.11`, and `shell/python=3.12`. A job is report-only exactly when
+it carries job-level `continue-on-error: true`; no job name is exempted.
+
+Protected deferred-audit reports provide the non-shrinking historical
+baseline. The current derived set equals that seven-identity baseline. A
+scratch workflow addition appeared in the derived set without a Python edit;
+a scratch report-only addition stayed excluded; and removing `golden` produced
+the explicit finding `workflow-derived runner identity set narrowed relative
+to protected historical evidence` and accepted **0** executions. The legacy
+per-job-count path remains unchanged for reports admitted before exact matrix
+identities were recorded.
+
+The deferred-audit module passes **40/40** on both Python 3.11.4 and 3.12.13;
+the complete shell suite passes **231/231** on both with **21/21** exact
+packages. `./run ci-local` remains **20/20**, with Rust **125** workspace /
+**48** net (**23 + 25**), zero rustc/clippy/fmt/ShellCheck failures, and locked
+Rust 1.78 green. `./run verify-artifacts` validates all **101/101** pins and
+both protected databases unchanged. Matrix and mandatory standalone golden
+both remain **11/11** byte-identical.
 
 **v0.15 R10-CI-PARITY is complete (measured 2026-07-28).** R10 parses
 the existing `run` function bodies/dispatch and the existing workflow jobs,
