@@ -114,6 +114,78 @@ impl RobotsFetcher for HttpRobotsFetcher {
     }
 }
 
+/// Raw result of the single request made by the robots-only preview.
+#[cfg(feature = "robots-preview")]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RobotsPreviewResponse {
+    /// Exact URL passed to reqwest. Redirects remain disabled.
+    pub request_url: String,
+    /// HTTP status code returned by the origin.
+    pub status: u16,
+    /// Response Content-Type, if present and representable as text.
+    pub content_type: Option<String>,
+    /// Unmodified response body bytes, including for non-success statuses.
+    pub body: Vec<u8>,
+}
+
+/// Derive the same origin and comparison target used by the live gate.
+#[cfg(feature = "robots-preview")]
+pub fn robots_preview_target(configured_url: &str) -> (String, String) {
+    (
+        crate::origin_of(configured_url),
+        crate::robots_path_of(configured_url),
+    )
+}
+
+/// Fetch one origin's literal `/robots.txt` without following redirects.
+///
+/// The client reads the process identity installed by
+/// [`install_crawler_user_agent`], so the preview cannot silently select a
+/// policy group under one identity while sending another on the wire.
+#[cfg(feature = "robots-preview")]
+pub async fn fetch_robots_preview(origin: &str) -> Result<RobotsPreviewResponse, IngestError> {
+    let mut robots_url = reqwest::Url::parse(origin)
+        .map_err(|error| IngestError::Http(format!("invalid origin {origin}: {error}")))?;
+    if !matches!(robots_url.scheme(), "http" | "https") {
+        return Err(IngestError::Http(format!(
+            "robots preview requires an HTTP(S) origin: {origin}"
+        )));
+    }
+    robots_url.set_path("/robots.txt");
+    robots_url.set_query(None);
+    robots_url.set_fragment(None);
+
+    let client = reqwest::Client::builder()
+        .user_agent(configured_user_agent()?)
+        .timeout(Duration::from_secs(15))
+        .redirect(Policy::none())
+        .build()
+        .map_err(|error| IngestError::Http(error.to_string()))?;
+    let response = client
+        .get(robots_url.clone())
+        .send()
+        .await
+        .map_err(|error| IngestError::Http(format!("robots preview request failed: {error}")))?;
+    let status = response.status().as_u16();
+    let content_type = response
+        .headers()
+        .get(reqwest::header::CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        .map(str::to_string);
+    let body = response
+        .bytes()
+        .await
+        .map_err(|error| IngestError::Http(format!("robots preview body failed: {error}")))?
+        .to_vec();
+
+    Ok(RobotsPreviewResponse {
+        request_url: robots_url.to_string(),
+        status,
+        content_type,
+        body,
+    })
+}
+
 /// Bound on `503 Retry-After` retries before giving up, so a wedged endpoint
 /// can't hang a harvest indefinitely.
 const MAX_RETRIES: u32 = 5;
@@ -453,6 +525,62 @@ mod tests {
         (format!("http://{address}"), receiver, handle)
     }
 
+    #[cfg(feature = "robots-preview")]
+    fn preview_wire_server() -> (
+        String,
+        mpsc::Receiver<(String, String)>,
+        thread::JoinHandle<()>,
+    ) {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind preview wire server");
+        let address = listener.local_addr().expect("preview wire server address");
+        let (sender, receiver) = mpsc::channel();
+        let handle = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept preview request");
+            let mut request = Vec::new();
+            let mut buffer = [0_u8; 1024];
+            while !request.windows(4).any(|window| window == b"\r\n\r\n") {
+                let read = stream.read(&mut buffer).expect("read preview request");
+                if read == 0 {
+                    break;
+                }
+                request.extend_from_slice(&buffer[..read]);
+            }
+            let headers = String::from_utf8(request).expect("HTTP headers are UTF-8");
+            let request_target = headers
+                .lines()
+                .next()
+                .and_then(|line| line.split_ascii_whitespace().nth(1))
+                .expect("request target")
+                .to_string();
+            let user_agent = headers
+                .lines()
+                .find_map(|line| {
+                    let (name, value) = line.split_once(':')?;
+                    name.eq_ignore_ascii_case("user-agent")
+                        .then(|| value.trim().to_string())
+                })
+                .expect("preview request carries User-Agent");
+            sender
+                .send((request_target, user_agent))
+                .expect("record preview request");
+
+            let body = b"User-agent: *\nDisallow: /private\n";
+            let response_head = format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+                body.len()
+            );
+            stream
+                .write_all(response_head.as_bytes())
+                .expect("write preview response head");
+            stream.write_all(body).expect("write preview response body");
+            stream.flush().expect("flush preview response");
+            stream
+                .shutdown(Shutdown::Write)
+                .expect("finish preview response");
+        });
+        (format!("http://{address}"), receiver, handle)
+    }
+
     fn assert_wire_user_agents(expected: &str, page_user_agent: &str, robots_user_agent: &str) {
         assert_eq!(
             page_user_agent, expected,
@@ -491,6 +619,30 @@ mod tests {
             .expect("robots User-Agent");
         server.join().expect("wire server exits");
         assert_wire_user_agents(&expected, &page_user_agent, &robots_user_agent);
+    }
+
+    #[cfg(feature = "robots-preview")]
+    #[tokio::test]
+    async fn preview_fetch_issues_exactly_one_robots_only_request() {
+        let _no_proxy = bypass_operator_proxy_for_loopback_fixture();
+        let expected = crawler_user_agent("0.12.0", "wire-contact@unit.test");
+        install_crawler_user_agent("0.12.0", "wire-contact@unit.test").expect("install identity");
+        let (base_url, receiver, server) = preview_wire_server();
+        let configured_url = format!("{base_url}/oai/archive?verb=ListRecords");
+        let (origin, comparison_target) = robots_preview_target(&configured_url);
+
+        assert_eq!(comparison_target, "/oai/archive?verb=ListRecords");
+        let response = fetch_robots_preview(&origin).await.expect("fetch preview");
+        assert_eq!(response.status, 200);
+        assert_eq!(response.request_url, format!("{base_url}/robots.txt"));
+        assert_eq!(response.body, b"User-agent: *\nDisallow: /private\n");
+
+        let (request_target, user_agent) = receiver
+            .recv_timeout(Duration::from_secs(2))
+            .expect("one robots request");
+        assert_eq!(request_target, "/robots.txt");
+        assert_eq!(user_agent, expected);
+        server.join().expect("wire server exits after one request");
     }
 
     #[test]

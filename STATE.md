@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; E0 is complete and ORIGIN-CASE was skipped at its clean G1 gate, leaving ROBOTS-PREVIEW next.** At activation-audit commit `af961f9`, local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on clean-rebuilt Python 3.11.4 and 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; ROBOTS-PREVIEW returned HTTP 404 and the source's explicit absence policy gives LIVE-HARVEST a go verdict.** Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.18 ROBOTS-PREVIEW is complete with a Step 4 go verdict (measured
+2026-07-28).** The sole configured network source, `arxiv-cs`, made exactly one
+request under the installed `intel-platform/0.15.1` crawler identity:
+`GET https://oaipmh.arxiv.org/robots.txt`. Automatic redirects were disabled
+and none was followed; no document or harvest URL was requested. The monitored
+contact came from the ignored `.env` and is not recorded.
+
+The origin returned HTTP **404** with `Content-Type: text/html; charset=utf-8`.
+The raw **11,083-byte** arXiv 404 response is recorded at
+`observations/v0.18/robots-preview/arxiv-cs-robots.txt`, SHA-256
+`fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2`,
+alongside the complete observation report. Because no robots policy exists,
+there is no selected specific or `*` group, matched rule, `Allow` exception, or
+`Crawl-delay`. The source's explicit `robots_on_missing: "allow"` maps to
+`MissingPolicy::RfcAllowAll`, so the configured
+`/oai?verb=ListRecords&metadataPrefix=oai_dc&set=cs` target is **allowed** and
+Step 4 is **GO**. This changes absence only: an explicit `Disallow` or an
+unreachable response would still deny.
+
+The preview is feature-gated and adds no dependency. `Cargo.lock`, the default
+and `net`-only public APIs, `/v1/*`, the SQLite schema, protected artifacts, and
+the harvest path are unchanged. Executable fail-before controls first exited
+**101** with the diagnostic matcher and preview-fetch surfaces absent.
+Pass-after suites report `intel-compliance --features diagnostics` **40/40**
+and `intel-ingest --features robots-preview` **30/30** plus preview binary
+**1/1**; the loopback control observed one literal `/robots.txt` request with
+the installed identity. The first supplemental preview clippy run caught two
+`needless_borrow` warnings; after the two call-site correction, preview clippy,
+formatting, and `git diff --check` pass. The final full local matrix passes
+**20/20** with the counts in the header, all **146/146** pins and protected
+databases **2/2** exact, and the mandatory standalone golden is **11/11**,
+delta **0**.
 
 **v0.18 ORIGIN-CASE is skipped at its decision gate (measured
 2026-07-28).** E0 proved that mixed-case authority bytes cannot reach the

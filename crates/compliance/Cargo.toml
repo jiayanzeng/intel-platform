@@ -10,5 +10,10 @@ edition = "2021"
 async-trait = "0.1"
 tokio = { version = "1", features = ["time", "sync"] }
 
+[features]
+# Operational introspection for the robots-only preview binary. Normal builds
+# keep the matcher surface unchanged.
+diagnostics = []
+
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt", "time", "sync", "test-util"] }

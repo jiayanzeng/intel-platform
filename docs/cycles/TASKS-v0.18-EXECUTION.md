@@ -193,7 +193,11 @@ without harvesting a single document.
 
 **Gate.** 🧑 **Operator runs the network step.** Codex prepares the command,
 reads the output, and records. **This step fetches `robots.txt` and nothing
-else.**
+else.** Before that action, scope is limited to a feature-gated diagnostic over
+the shipped compliance matcher and HTTP client, its manifests and offline
+tests, the preview binary, `observations/v0.18/robots-preview/`, and the
+`STATE.md` / active-cycle status records. No default or `net`-only public API,
+`/v1/*` body, schema, lockfile, protected artifact, or harvest path may change.
 
 **Steps.**
 
@@ -360,6 +364,10 @@ decision: publication.**
 
 Step 1 — Define the read-only E0 gate before the first E0 commit so its status-record acceptance surfaces are contained — 2026-07-28
 
+Step 3 — Widen ROBOTS-PREVIEW before its first implementation commit to contain
+the feature-gated diagnostic, offline test, observation, and status-record
+surfaces required by its acceptance criteria — 2026-07-28
+
 ---
 
 ## Cycle checklist
@@ -370,9 +378,9 @@ Step 1 — Define the read-only E0 gate before the first E0 commit so its status
 - [x] **ORIGIN-CASE** — case-differing hosts share one cache entry and one limiter
   bucket, fail-before/pass-after; path case untouched — or the step skipped with
   E0's clean finding as the reason
-- [ ] **ROBOTS-PREVIEW** — real policy fetched, verdict and matched rule recorded
-  with the raw bytes and hash; written go/no-go; nothing but `/robots.txt`
-  requested
+- [x] **ROBOTS-PREVIEW** — real origin response fetched; the 404 absence
+  disposition, lack of a matched group/rule, raw bytes and hash, and written go
+  verdict recorded; nothing but `/robots.txt` requested
 - [ ] **LIVE-HARVEST** — isolated database, protected corpus hash-verified after;
   one process; `Crawl-delay` honoured; paging, `resumptionToken`, cursor,
   redirect, and XML observations recorded
