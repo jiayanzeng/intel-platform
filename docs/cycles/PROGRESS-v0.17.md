@@ -114,3 +114,47 @@ Entries are append-only; corrections are new dated entries.
   the scoped guard, or traffic were rewritten below reqwest's proxy layer.
 - golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
   both remained **11/11**.
+
+### 2026-07-28 · ROBOTS-PATH — complete URL target reaches both robots gates
+
+- owner: Codex
+- commit: 59cce12
+- result: PASS. Before implementation, Step 3's Gate was widened by a dated
+  amendment to include `crates/ingest/src/net.rs` test support required by the
+  cross-origin redirect acceptance criterion. E0 rejected the `url` dependency,
+  so the implementation adds no dependency and leaves both manifests and
+  `Cargo.lock` unchanged.
+- fail-before acceptance: PASS. With the new controls and old implementation,
+  the case table returned `/private` for `/private/secret/file`, the
+  multi-segment and query rules permitted their targets, a fragment changed the
+  comparison target, and the cross-origin redirect fetched its disallowed
+  second document. The sibling-path allow control remained green.
+- derivation acceptance: PASS. All **11** E0 rows execute with stated outputs:
+  full multi-segment paths, path plus query, fragment exclusion, empty path,
+  trailing slash, explicit port, userinfo, percent encoding, doubled slash, and
+  a query without a path. `host_of` now separates the authority before parsing
+  the tail, strips userinfo, preserves an explicit port, and no longer absorbs a
+  no-path query. The source comments state the measured behavior.
+- robots-corpus acceptance: PASS. Publisher policies now test a blocked
+  multi-segment descendant, an allowed sibling, a query-specific denial, and a
+  fragment that is excluded from matching. The focused gate set passes
+  **15/15**.
+- redirect acceptance: PASS. The cross-origin control observes the first
+  origin's policy before its document request, then observes the second
+  origin's multi-segment denial and proves the redirected document is never
+  requested.
+- invariant disposition: PASS with no new rule. The behavior executes directly
+  at the gate and redirect sites; a static rule restating it would not add
+  coverage.
+- MSRV and matrix acceptance: PASS. Warning-denied
+  `cargo +1.78.0 check --workspace --locked --all-targets` passed; the complete
+  ingest net suite passed **29/29**. `./run ci-local` passed **20/20** with
+  **131** workspace tests, **55** net tests (**29 + 26**), shell **243/243**,
+  locked Rust 1.78 check/test, zero rustc/clippy/fmt/ShellCheck failures,
+  `invariant-scan` **11/11 rules / 19 controls**, all **131/131** pins, and
+  both protected databases exact.
+- scope acceptance: PASS. No live harvest ran. The temporary pre-correction
+  harvest suspension is lifted by Step 3 acceptance; T7 robots single-flight
+  remains deferred because concurrent cache misses are unchanged.
+- golden-E2E delta: **0**; the full matrix and mandatory standalone invocation
+  both remained **11/11**.
