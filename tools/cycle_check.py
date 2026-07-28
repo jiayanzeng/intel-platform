@@ -96,6 +96,43 @@ CONTRACT_FIELD_LABELS = {
     "Acceptance criteria": "Acceptance criteria",
     "Done when": "Done when",
 }
+EXECUTION_CYCLE_RE = re.compile(
+    r"^TASKS-v([0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+)
+STATE_HEADER_RE = re.compile(
+    r"^\*\*As of:\*\*.*?(?=\n\n|\Z)",
+    re.MULTILINE | re.DOTALL,
+)
+PENDING_PUBLICATION_RE = re.compile(
+    r"\bpublication\b[^\n]{0,240}?\b(?:pending|outstanding)\b",
+    re.IGNORECASE,
+)
+STATE_REF_ASSERTIONS = (
+    (
+        "origin/main",
+        re.compile(
+            r"(?:`origin/main`|origin/main|Remote `main`)[^`\n]{0,120}"
+            r"`([0-9a-f]{40})`",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "annotated tag object",
+        re.compile(
+            r"annotated (?:tag )?object[^`\n]{0,120}"
+            r"`([0-9a-f]{40})`",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "tag target",
+        re.compile(
+            r"(?:tag target|release commit)[^`\n]{0,120}"
+            r"`([0-9a-f]{40})`",
+            re.IGNORECASE,
+        ),
+    ),
+)
 
 
 def shown(path: Path, root: Path) -> str:
@@ -311,6 +348,111 @@ def check_closed_execution(
         verify_local_tag_refs,
         require_dated_disposition,
     )
+
+
+def cycle_version(path: Path) -> tuple[int, ...] | None:
+    match = EXECUTION_CYCLE_RE.fullmatch(path.name)
+    if match is None:
+        return None
+    return tuple(int(part) for part in match.group(1).split("."))
+
+
+def newest_closed_release(
+    execution_files: list[Path],
+) -> tuple[Path, str, str, str] | None:
+    closed: list[tuple[tuple[int, ...], Path, str]] = []
+    for path in execution_files:
+        text = path.read_text()
+        version = cycle_version(path)
+        if (
+            version is None
+            or UNCHECKED_RE.search(text) is not None
+            or text.count(CLOSING_HEADING) != 1
+        ):
+            continue
+        closed.append(
+            (version, path, text.split(CLOSING_HEADING, 1)[1])
+        )
+    if not closed:
+        return None
+    _, path, section = max(closed, key=lambda item: item[0])
+    disposition = DATED_DISPOSITION_RE.search(section)
+    if disposition is None:
+        disposition = LEGACY_DISPOSITION_RE.search(section)
+    if disposition is None or disposition.group(1) != "release":
+        return None
+    release = RELEASE_RE.search(section)
+    commit = RELEASE_COMMIT_RE.search(section)
+    tag_object = TAG_OBJECT_RE.search(section)
+    if release is None or commit is None or tag_object is None:
+        return None
+    return (
+        path,
+        release.group(2),
+        commit.group(1),
+        tag_object.group(1),
+    )
+
+
+def check_publication_status(
+    root: Path,
+    execution_files: list[Path],
+    errors: list[str],
+) -> None:
+    """Reconcile the status header with the newest reachable closed release."""
+    release = newest_closed_release(execution_files)
+    if release is None:
+        return
+    runbook, tag, recorded_target, recorded_object = release
+    measured_object = git_output(root, "rev-parse", tag)
+    measured_target = git_output(root, "rev-parse", f"{tag}^{{}}")
+    reachable = git_output(
+        root, "merge-base", "--is-ancestor", recorded_target, "HEAD"
+    )
+    if (
+        measured_object != recorded_object
+        or measured_target != recorded_target
+        or reachable is None
+    ):
+        return
+
+    state_path = root / "STATE.md"
+    if not state_path.is_file():
+        return
+    header_match = STATE_HEADER_RE.search(state_path.read_text())
+    if header_match is None:
+        return
+    header = header_match.group(0)
+
+    # Rule 1: a reachable annotated release cannot coexist with a header that
+    # still calls its publication pending or outstanding.
+    if PENDING_PUBLICATION_RE.search(header) is not None:
+        errors.append(
+            f"{shown(state_path, root)}: publication disposition agreement: "
+            f"newest closed release {tag} in {shown(runbook, root)} is an "
+            "annotated tag reachable from HEAD, but the status header asserts "
+            "publication is pending or outstanding"
+        )
+
+    # Rule 2: ref hashes asserted in the live header must equal the refs this
+    # checkout measures. Historical body appends are deliberately out of scope.
+    expected = {
+        "origin/main": git_output(root, "rev-parse", "origin/main"),
+        "annotated tag object": measured_object,
+        "tag target": measured_target,
+    }
+    for label, pattern in STATE_REF_ASSERTIONS:
+        measured = expected[label]
+        if measured is None:
+            continue
+        for assertion in pattern.finditer(header):
+            asserted = assertion.group(1)
+            if asserted != measured:
+                errors.append(
+                    f"{shown(state_path, root)}: publication assertion "
+                    f"freshness: {label} asserts {asserted}, but the measured "
+                    f"ref is {measured}"
+                )
 
 
 def check_authority(
@@ -734,6 +876,8 @@ def run(
             verify_local_tag_refs,
         )
         check_authority(path, text, root, errors)
+
+    check_publication_status(root, execution_files, errors)
 
     plain_task_files = [
         path

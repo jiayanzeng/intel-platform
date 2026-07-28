@@ -7,6 +7,7 @@ from tools.cycle_identity import (
     cycle_documents_dir,
     cycle_progress_path,
     cycle_runbook_path,
+    execution_runbooks,
 )
 
 
@@ -65,6 +66,118 @@ def _commit_cycle_root(root: Path) -> None:
         cwd=root,
         check=True,
     )
+
+
+def _publication_root(tmp_path: Path) -> tuple[Path, str, str]:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Cycle Check",
+            "-c",
+            "user.email=cycle-check@example.invalid",
+            "tag",
+            "-a",
+            "v1.1.0",
+            "-m",
+            "release",
+        ],
+        cwd=root,
+        check=True,
+    )
+    tag_object = subprocess.run(
+        ["git", "rev-parse", "v1.1.0"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    subprocess.run(
+        ["git", "update-ref", "refs/remotes/origin/main", commit],
+        cwd=root,
+        check=True,
+    )
+    _runbook(root, "v1.1.0").write_text(
+        "# Closed cycle\n\n"
+        "- [x] completed task\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-28\n"
+        "- **Release disposition:** release (as of 2026-07-28)\n"
+        "- **Release:** `v1.1.0`\n"
+        f"- **Release commit:** `{commit}`\n"
+        f"- **Annotated tag object:** `{tag_object}`\n"
+    )
+    return root, commit, tag_object
+
+
+def _publication_errors(root: Path) -> list[str]:
+    errors: list[str] = []
+    cycle_check.check_publication_status(
+        root, execution_runbooks(root), errors
+    )
+    return errors
+
+
+def test_publication_status_rejects_pending_reachable_release(
+    tmp_path: Path,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        "**As of:** publication is pending. "
+        f"`origin/main` is `{commit}`; annotated tag object is "
+        f"`{tag_object}`; tag target is `{commit}`.\n\n"
+        "Historical body may say publication was pending.\n"
+    )
+
+    errors = _publication_errors(root)
+    assert len(errors) == 1
+    assert "publication disposition agreement" in errors[0]
+
+
+def test_publication_status_rejects_every_stale_header_ref(
+    tmp_path: Path,
+) -> None:
+    root, _, _ = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. `origin/main` is `{'0' * 40}`; "
+        f"annotated tag object is `{'1' * 40}`; "
+        f"tag target is `{'2' * 40}`.\n\n"
+        "Historical body.\n"
+    )
+
+    errors = _publication_errors(root)
+    assert len(errors) == 3
+    assert all("publication assertion freshness" in error for error in errors)
+    assert any("origin/main" in error for error in errors)
+    assert any("annotated tag object" in error for error in errors)
+    assert any("tag target" in error for error in errors)
+
+
+def test_publication_status_accepts_current_header_and_ignores_body(
+    tmp_path: Path,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. `origin/main` is `{commit}`; "
+        f"annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n\n"
+        "Historical body: publication is pending; "
+        f"`origin/main` was `{'0' * 40}`.\n"
+    )
+
+    assert _publication_errors(root) == []
 
 
 def test_cycle_check_accepts_cycle_paths_only_in_declaration(

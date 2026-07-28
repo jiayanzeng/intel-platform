@@ -449,7 +449,7 @@ decision: publication.**
   counts or refuted; G2's undetectability shown by four passing tools over a
   false `STATE.md`; G5 confirmed or closed clean; G6 answered from named tests;
   G3 byte totals recorded; `STATE.md` unedited
-- [ ] **STATUS-TRUE** — new check fails at the entering commit with both rule
+- [x] **STATUS-TRUE** — new check fails at the entering commit with both rule
   messages captured; focused tests including a passing case; forward publication
   append with measured refs and the CI run's id/attempt/conclusion or its
   recorded absence; no closed record edited
@@ -564,6 +564,38 @@ remains blob `f8f07f6944140ccc2ab4a34da2e2cf3b18767601`, byte-identical to `HEAD
   peeled target, and `origin/main` were re-read after the temporary controls.
   No protected file, published object, production path, dependency, lockfile,
   schema, public surface, or `STATE.md` byte changed.
+
+### 2026-07-29 · STATUS-TRUE
+
+PASS. Step 2's Gate contains every acceptance surface: the reconciliation
+landed inside the already-executed `cycle-check`, its focused shell tests,
+`STATE.md`, and this runbook/progress status. No closed runbook, dated closing
+record, historical `STATE.md` append, production Rust path, dependency,
+lockfile, schema, protected database, or public surface moved.
+
+- **Fail-before:** with the check present and `STATE.md` still unchanged,
+  `./run cycle-check` exited **1** with exactly two defects:
+  `publication disposition agreement` reported that reachable annotated
+  `v0.15.2` contradicted the pending/outstanding header, and
+  `publication assertion freshness` reported asserted `origin/main`
+  `f13c6129d608ab9259f421dce6ed419ce469c225` versus measured
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10`. The verbatim messages are in the
+  forward `STATE.md` audit.
+- **Focused controls:** `shell/tests/test_cycle_check.py` passed **20/20** on
+  Python 3.11.4 and Python 3.12.13. New tests independently fail a pending
+  reachable release, fail stale `origin/main`/annotated-object/tag-target
+  assertions, accept current refs, and prove historical body text is excluded.
+- **Forward correction:** the header and new audit name measured local/remote
+  main `344124819c…`, tag object `22beef8e…`, and peeled release target
+  `b3c4c4d3…`. They record the authorized atomic publication's exact remote
+  postcondition and GitHub publication CI run `30375179895`, attempt **1**,
+  event `push`, exact head `344124819c…`, status `completed`, conclusion
+  `success`; no run was dispatched or replayed.
+- **Pass-after:** `cycle-check`, `checklist-audit`, `progress-check`,
+  `version-check`, and the new reconciliation all pass. `invariant-scan`
+  remains **11/11 rules / 23 controls**.
+- **Golden-E2E delta:** **0**; the mandatory standalone invocation passed
+  **11/11**.
 
 ---
 

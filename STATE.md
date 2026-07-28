@@ -1,6 +1,31 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.18 R-CLOSE is locally complete with release disposition `release (as of 2026-07-28)`; atomic publication of the closing audit commit and annotated v0.15.2 tag is pending.** Exact release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324` is locally tagged by annotated object `22beef8e023e52024cfe9614273e2d82b39f4956`; evidence candidate `2ce912dca181e5e7b949a4b2e6fd8487412388f9` remains on `candidate/v0.15.2`, and hosted run `30369139464` attempt 1 authenticates all **7/7** derived identities. The exact release commit passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on both Python 3.11.4 and a clean Python 3.12.13 rebuild, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The inert feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**, with both feature-clippy invocations at zero warnings. Remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225` and the remote tag is absent until the authorized atomic publication. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 E0 is complete and the published v0.15.2 status is now executable.** `origin/main` is `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated tag object is `22beef8e023e52024cfe9614273e2d82b39f4956`; tag target is release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Publication CI run `30375179895` attempt 1 completed with conclusion `success` for that exact main commit. The entering tree passes local CI **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **245/245** on Python 3.11.4 and a clean Python 3.12.13 rebuild, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the unsupported preview, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.19 STATUS-TRUE publication audit (measured 2026-07-29).**
+Before this step, `cycle-check`, `checklist-audit`, `progress-check`, and
+`version-check` all passed while this header asserted that remote main was
+`f13c6129d608ab9259f421dce6ed419ce469c225` and remote `v0.15.2` was absent.
+With the new reconciliation present and before correcting this file,
+`./run cycle-check` failed with exactly these two rule messages:
+
+> `STATE.md: publication disposition agreement: newest closed release v0.15.2 in docs/cycles/TASKS-v0.18-EXECUTION.md is an annotated tag reachable from HEAD, but the status header asserts publication is pending or outstanding`
+>
+> `STATE.md: publication assertion freshness: origin/main asserts f13c6129d608ab9259f421dce6ed419ce469c225, but the measured ref is 344124819cb3c554f851d0cac3f0f1ed08d1aa10`
+
+Local and remote ref inspection agree: `origin/main` is
+`344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated `v0.15.2` is object
+`22beef8e023e52024cfe9614273e2d82b39f4956`, peeled to release commit
+`b3c4c4d3b695ceff27a9d4a2ec610fc851939324`, which is reachable from `HEAD`.
+The measured result of the authorized atomic publication is that remote main
+and both annotated-tag refs are present at those exact objects. Read-only
+GitHub inspection found publication CI run
+`30375179895`, attempt **1**, event `push`, exact head
+`344124819cb3c554f851d0cac3f0f1ed08d1aa10`, status `completed`, and conclusion
+`success` (created 2026-07-28T15:48:34Z, completed 2026-07-28T15:49:44Z).
+No run was dispatched or replayed. The v0.18 closing record and every
+historical `STATE.md`/progress append remain unchanged; this is the forward
+correction.
 
 **v0.18 R-CLOSE is locally complete (measured 2026-07-28).**
 Release disposition: release (as of 2026-07-28). The publication trigger is
