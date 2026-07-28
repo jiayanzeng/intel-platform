@@ -70,3 +70,25 @@ Entries are append-only; corrections are new dated entries.
   **146/146** pins and both protected databases exact.
 - golden-E2E delta: **0**; both the entering matrix and mandatory post-status
   standalone invocation passed **11/11**.
+
+### 2026-07-28 · ORIGIN-CASE — skipped at the clean G1 gate
+
+- owner: Codex
+- commit: 56d1911
+- result: SKIPPED exactly as the task Gate requires. E0 proved the case-sensitive
+  helpers are not reachable with mixed-case authority bytes on the production
+  network path because `reqwest::Url` normalizes the initial URL and every
+  redirect before `gate()`.
+- implementation acceptance: NOT APPLICABLE. No production or test source,
+  dependency, lockfile, public surface, schema, or protected artifact changed.
+  The production ingest blobs remain `773d7ffe…` for `lib.rs` and `09503192…`
+  for `net.rs`.
+- unchanged-behavior acceptance: PASS. The existing URL case-table and
+  same-origin redirect controls each pass **1/1**. Path bytes and path case,
+  explicit-port preservation, and userinfo exclusion remain unchanged because
+  no normalization implementation was made.
+- authority-encoding scope: RECORDED as out of scope for this skipped step. The
+  shipped path continues to use `reqwest::Url` authority parsing; no second
+  percent-encoding normalization layer was introduced.
+- golden-E2E delta: **0**; the mandatory standalone invocation passed
+  **11/11**.
