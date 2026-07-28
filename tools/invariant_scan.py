@@ -184,6 +184,13 @@ class CheckSite:
 
 
 @dataclass(frozen=True)
+class CiLocalJob:
+    label: str
+    target: str
+    line: int
+
+
+@dataclass(frozen=True)
 class ParityReport:
     findings: tuple[str, ...]
     local_jobs: int
@@ -200,9 +207,11 @@ STEP_HEADER = re.compile(
 FUNCTION_HEADER = re.compile(
     r"(?m)^(?P<name>[A-Za-z_][A-Za-z0-9_]*)\(\)\s*\{\s*$"
 )
-CI_LOCAL_INVOCATION = re.compile(
-    r'(?m)^(?P<indent>\s*)ci_local_job\s+"(?P<label>[^"]+)"\s+'
-    r"(?P<target>[A-Za-z_][A-Za-z0-9_]*)\s+\|\|\s+return\s+\$\?\s*$"
+CI_LOCAL_JOB_TABLE = re.compile(
+    r"(?ms)^\s*cat <<'JOBS'\n(?P<body>.*?)^JOBS$"
+)
+CI_LOCAL_JOB_SPEC = re.compile(
+    r"(?P<label>[^|\n]+)\|(?P<target>[A-Za-z_][A-Za-z0-9_]*)"
 )
 RUN_DISPATCH = re.compile(
     r"(?m)^\s{2}(?P<command>[a-z0-9][a-z0-9-]*)\)\s+"
@@ -424,6 +433,42 @@ def _bash_functions(text: str) -> dict[str, str]:
     return functions
 
 
+def parse_ci_local_jobs(text: str) -> tuple[CiLocalJob, ...]:
+    """Derive the executable local-CI matrix from run's sole job table."""
+    functions = _bash_functions(text)
+    body = functions.get("ci_local_jobs")
+    if body is None:
+        raise ConfigError("run: missing ci_local_jobs function")
+    table = CI_LOCAL_JOB_TABLE.search(body)
+    if table is None:
+        raise ConfigError("run: ci_local_jobs has no parseable JOBS table")
+
+    function_start = next(
+        match.start()
+        for match in FUNCTION_HEADER.finditer(text)
+        if match.group("name") == "ci_local_jobs"
+    )
+    table_start = text.find(table.group("body"), function_start)
+    jobs: list[CiLocalJob] = []
+    seen_targets: set[str] = set()
+    offset = table_start
+    for raw_line in table.group("body").splitlines(keepends=True):
+        line_text = raw_line.rstrip("\n")
+        line = text.count("\n", 0, offset) + 1
+        offset += len(raw_line)
+        match = CI_LOCAL_JOB_SPEC.fullmatch(line_text)
+        if match is None:
+            raise ConfigError(f"run:{line}: malformed ci-local job specification")
+        target = match.group("target")
+        if target in seen_targets:
+            raise ConfigError(f"run:{line}: duplicate ci-local target {target}")
+        seen_targets.add(target)
+        jobs.append(CiLocalJob(match.group("label"), target, line))
+    if not jobs:
+        raise ConfigError("run: ci_local_jobs table is empty")
+    return tuple(jobs)
+
+
 def _canonical_cargo_commands(text: str) -> set[str]:
     commands: set[str] = set()
     collapsed = re.sub(r"\\\n[ \t]*", " ", text)
@@ -553,28 +598,27 @@ def r10_report(root: Path) -> ParityReport:
 
     findings: list[str] = []
     local_sites: list[CheckSite] = []
-    invocations = list(CI_LOCAL_INVOCATION.finditer(functions.get("cmd_ci_local", "")))
-    cmd_start = next(
-        (
-            index
-            for index, line in enumerate(run_text.splitlines(), start=1)
-            if line == "cmd_ci_local() {"
-        ),
-        1,
-    )
-    for invocation in invocations:
-        line = cmd_start + functions["cmd_ci_local"][: invocation.start()].count("\n") + 1
-        label = invocation.group("label")
-        target = invocation.group("target")
-        check_ids = _function_check_ids(target, functions)
+    try:
+        local_jobs = parse_ci_local_jobs(run_text)
+    except ConfigError as error:
+        return ParityReport(
+            findings=(f"run:1: cannot derive CI parity scope: {error}",),
+            local_jobs=0,
+            local_checks=0,
+            blocking_jobs=0,
+            hosted_checks=0,
+            exemptions=(),
+        )
+    for job in local_jobs:
+        check_ids = _function_check_ids(job.target, functions)
         if not check_ids:
             findings.append(
-                f"run:{line}: local ci-local check {label!r} target "
-                f"{target} is unclassified"
+                f"run:{job.line}: local ci-local check {job.label!r} target "
+                f"{job.target} is unclassified"
             )
             continue
         local_sites.extend(
-            CheckSite(check_id, "run", line, label)
+            CheckSite(check_id, "run", job.line, job.label)
             for check_id in sorted(check_ids)
         )
 
@@ -650,7 +694,7 @@ def r10_report(root: Path) -> ParityReport:
 
     return ParityReport(
         findings=tuple(findings),
-        local_jobs=len(invocations),
+        local_jobs=len(local_jobs),
         local_checks=len(local_by_id),
         blocking_jobs=blocking_jobs,
         hosted_checks=len(hosted_by_id),

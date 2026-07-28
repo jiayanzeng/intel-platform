@@ -23,6 +23,7 @@
 # missing, rather than pretending to have run.
 
 set -euo pipefail
+RUN_SCRIPT="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 cd "$(dirname "$0")"
 
 # Load local endpoints and secrets once, before any defaults are resolved.
@@ -296,12 +297,21 @@ cmd_verify_fingerprints() {
 }
 
 verify_fingerprint_fixture() {
-  local fixture_dir fixture_db
+  local fixture_dir fixture_db status cleanup_status
   fixture_dir="$(mktemp -d)"
   fixture_db="$fixture_dir/golden-fingerprint-fixture.db"
-  cargo run --quiet -p intel-store --example fingerprint_fixture -- "$fixture_db"
-  cmd_verify_fingerprints "$fixture_db"
-  rm -rf "$fixture_dir"
+  status=0
+  cargo run --quiet -p intel-store --example fingerprint_fixture -- \
+    "$fixture_db" || status=$?
+  if [ "$status" -eq 0 ]; then
+    cmd_verify_fingerprints "$fixture_db" || status=$?
+  fi
+  cleanup_status=0
+  rm -rf "$fixture_dir" || cleanup_status=$?
+  if [ "$cleanup_status" -ne 0 ]; then
+    [ "$status" -ne 0 ] || status=$cleanup_status
+  fi
+  return "$status"
 }
 
 cmd_test() {
@@ -327,6 +337,49 @@ cmd_test() {
 
 CI_LOCAL_RESULTS=()
 
+ci_local_jobs() {
+  cat <<'JOBS'
+release version consistency|cmd_version_check
+active cycle consistency|cmd_cycle_check
+checked-task evidence|cmd_checklist_audit
+registered static invariants|cmd_invariant_scan
+deferred evidence re-derivation|ci_deferred_evidence
+Python 3.11 floor byte-compile|ci_floor_compile
+ShellCheck presence and harness lint|ci_shellcheck
+workspace check (-D warnings)|ci_workspace_check
+workspace test (-D warnings)|ci_workspace_test
+net check (-D warnings)|ci_net_check
+net test (-D warnings)|ci_net_test
+clippy|ci_clippy
+rustfmt|ci_fmt
+Rust 1.78 locked check|ci_msrv_check
+Rust 1.78 locked test|ci_msrv_test
+shell pytest|ci_pytest
+golden E2E|cmd_golden
+protected artifacts|cmd_verify_artifacts
+persisted fingerprints|verify_fingerprint_fixture
+append-only progress record|cmd_progress_check
+JOBS
+}
+
+ci_local_job_count() {
+  local count=0 label target
+  while IFS='|' read -r label target; do
+    count=$((count + 1))
+  done < <(ci_local_jobs)
+  printf '%s\n' "$count"
+}
+
+CI_LOCAL_JOB_TOTAL="$(ci_local_job_count)"
+
+ci_local_target_is_declared() {
+  local candidate="$1" label target
+  while IFS='|' read -r label target; do
+    [ "$candidate" = "$target" ] && return 0
+  done < <(ci_local_jobs)
+  return 1
+}
+
 ci_local_summary() {
   local result status label
   step "ci-local summary"
@@ -342,10 +395,9 @@ ci_local_summary() {
 }
 
 ci_local_job() {
-  local label="$1"
-  shift
+  local label="$1" target="$2"
   step "ci-local: $label"
-  if "$@"; then
+  if bash -euo pipefail "$RUN_SCRIPT" __ci-local-job "$target"; then
     CI_LOCAL_RESULTS+=("PASS|$label")
     return 0
   else
@@ -422,30 +474,14 @@ cmd_invariant_scan() {
 }
 
 cmd_ci_local() {
+  local label target
   need_cargo
   ensure_venv
   CI_LOCAL_RESULTS=()
 
-  ci_local_job "release version consistency" cmd_version_check || return $?
-  ci_local_job "active cycle consistency" cmd_cycle_check || return $?
-  ci_local_job "checked-task evidence" cmd_checklist_audit || return $?
-  ci_local_job "registered static invariants" cmd_invariant_scan || return $?
-  ci_local_job "deferred evidence re-derivation" ci_deferred_evidence || return $?
-  ci_local_job "Python 3.11 floor byte-compile" ci_floor_compile || return $?
-  ci_local_job "ShellCheck presence and harness lint" ci_shellcheck || return $?
-  ci_local_job "workspace check (-D warnings)" ci_workspace_check || return $?
-  ci_local_job "workspace test (-D warnings)" ci_workspace_test || return $?
-  ci_local_job "net check (-D warnings)" ci_net_check || return $?
-  ci_local_job "net test (-D warnings)" ci_net_test || return $?
-  ci_local_job "clippy" ci_clippy || return $?
-  ci_local_job "rustfmt" ci_fmt || return $?
-  ci_local_job "Rust 1.78 locked check" ci_msrv_check || return $?
-  ci_local_job "Rust 1.78 locked test" ci_msrv_test || return $?
-  ci_local_job "shell pytest" ci_pytest || return $?
-  ci_local_job "golden E2E" cmd_golden || return $?
-  ci_local_job "protected artifacts" cmd_verify_artifacts || return $?
-  ci_local_job "persisted fingerprints" verify_fingerprint_fixture || return $?
-  ci_local_job "append-only progress record" cmd_progress_check || return $?
+  while IFS='|' read -r label target; do
+    ci_local_job "$label" "$target" || return $?
+  done < <(ci_local_jobs)
 
   ci_local_summary
   green "ci-local passed all ${#CI_LOCAL_RESULTS[@]} jobs."
@@ -509,8 +545,26 @@ cmd_audit_deferred() {
   return "$status"
 }
 
-cmd_build()     { need_cargo; cargo build -p cored --locked;               green "built target/debug/cored (offline)."; }
-cmd_build_net() { need_cargo; cargo build -p cored --features net --locked; green "built target/debug/cored (--features net)."; }
+cored_debug_bin() {
+  local target_dir="${CARGO_TARGET_DIR:-target}"
+  case "$target_dir" in
+    /*) ;;
+    *) target_dir="$PWD/$target_dir" ;;
+  esac
+  printf '%s/debug/cored\n' "$target_dir"
+}
+
+cmd_build() {
+  need_cargo
+  cargo build -p cored --locked
+  green "built $(cored_debug_bin) (offline)."
+}
+
+cmd_build_net() {
+  need_cargo
+  cargo build -p cored --features net --locked
+  green "built $(cored_debug_bin) (--features net)."
+}
 
 cmd_api() {
   ensure_venv
@@ -527,7 +581,7 @@ cmd_api() {
 # two clients, print the signals, tear down. One command, no leftovers.
 cmd_demo() {
   need_cargo; ensure_venv
-  CORED_BIN=target/debug/cored
+  CORED_BIN="$(cored_debug_bin)"
   cmd_build
   local DEMO_DIR; DEMO_DIR="$(mktemp -d)"
   local DEMO_DB="$DEMO_DIR/demo.db"
@@ -569,7 +623,7 @@ for s in v["signals"]:
 # directory; neither live database nor generated briefs under data/ are touched.
 cmd_golden() {
   need_cargo; ensure_venv
-  CORED_BIN=target/debug/cored
+  CORED_BIN="$(cored_debug_bin)"
   cmd_build
 
   local GOLDEN_DIR GOLDEN_DB GOLDEN_DATA
@@ -624,7 +678,7 @@ cmd_golden() {
 # --------------------------------------------------------------------------
 cmd_harvest_arxiv() {
   need_cargo; ensure_venv
-  CORED_BIN=target/debug/cored
+  CORED_BIN="$(cored_debug_bin)"
   local HARVEST_DB
   HARVEST_DB="$(harvest_db_path)"
   blue "LIVE harvest database: $HARVEST_DB"
@@ -844,6 +898,7 @@ cmd_models() {
 # lifecycle; callers no longer need to guess whether something is listening.
 cmd_verify_llm() {
   need_cargo; ensure_venv
+  CORED_BIN="$(cored_debug_bin)"
   case "${LLM_CHAT_PROFILE:-}" in
     ""|lan|online) ;;
     *) red "LLM_CHAT_PROFILE must be 'lan', 'online', or blank."; exit 2 ;;
@@ -895,7 +950,6 @@ print("1" if loopback else "0")
   step "resolved model configuration (keys redacted)"
   cmd_config
 
-  CORED_BIN=target/debug/cored
   cmd_build
   local VERIFY_DIR; VERIFY_DIR="$(mktemp -d)"
   local VERIFY_DB="$VERIFY_DIR/verify.db"
@@ -931,7 +985,7 @@ intel-platform — ./run <command>
 
   Offline (needs only Rust >= 1.78 + Python 3.11):
     test           verify protected artifacts, then run all Rust/Python tests
-    ci-local       execute the configured 19-job CI matrix, stopping on failure
+    ci-local       execute the configured ${CI_LOCAL_JOB_TOTAL}-job CI matrix, stopping on failure
     version-check  reconcile release files and an exact HEAD release tag
     cycle-check [--skip-local-tag-verification]
                    enforce active/open and historical/closed cycle identity
@@ -999,6 +1053,13 @@ EOF
 
 cmd="${1:-help}"; shift || true
 case "$cmd" in
+  __ci-local-job)
+    if [ "$#" -ne 1 ] || ! ci_local_target_is_declared "$1"; then
+      red "invalid internal ci-local target: ${1:-<missing>}"
+      exit 2
+    fi
+    "$1"
+    ;;
   test)          cmd_test "$@" ;;
   ci-local)      cmd_ci_local "$@" ;;
   version-check) cmd_version_check "$@" ;;
@@ -1016,7 +1077,7 @@ case "$cmd" in
   golden)        cmd_golden "$@" ;;
   build)         cmd_build "$@" ;;
   build-net)     cmd_build_net "$@" ;;
-  up)            need_cargo; ensure_venv; CORED_BIN=target/debug/cored; cmd_build; _start_cored; _start_mock_llm
+  up)            need_cargo; ensure_venv; CORED_BIN="$(cored_debug_bin)"; cmd_build; _start_cored; _start_mock_llm
                  green "cored on $CORE_URL, mock LLM on $MOCK_LLM_URL. Stop with ./run down." ;;
   down)          cmd_down ;;
   harvest-arxiv) cmd_harvest_arxiv "$@" ;;

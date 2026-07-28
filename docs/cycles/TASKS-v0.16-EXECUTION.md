@@ -295,8 +295,12 @@ same three retractions** as Step 1 measured · all 116 pins validate unchanged �
 **Objective.** Make it impossible for `ci-local` to report PASS for a job whose
 body failed, and make the runner's help describe what the runner does.
 
-**Gate.** `run`, `config/invariant-rules.json` (F5's control literal), and the
-shell tests that cover the harness.
+**Gate.** `run`, `config/invariant-rules.json` (F5's control literal), the shell
+tests that cover the harness, and `config/protected-artifacts.json` only for the
+required forward update to the changed `run` authorization-surface pin. The
+manifest path was added before implementation because leaving the old forward
+pin would make `verify-artifacts` and `ci-local` fail; no historical manifest,
+release commit, tag, evidence byte, or protected database changes.
 
 **Steps.**
 
@@ -537,7 +541,7 @@ all pins match · golden 11/11.
   bash; F2/F3/F5/F6 confirmed or refuted; hosted blast radius measured
 - [x] **DOC-LAYOUT** — every moved file byte-identical; one resolver, no second
   location rule; tool totals and retraction count unchanged; 116 pins validate
-- [ ] **JOB-PROPAGATION** — every derived job fails when its first command fails;
+- [x] **JOB-PROPAGATION** — every derived job fails when its first command fails;
   controls generated from the parsed list; F1b resolved; R10 literal updated;
   help true in both halves; `ci-local` still 20
 - [ ] **EXEMPT-DERIVE** — every exemption carries a criterion or a written reason;

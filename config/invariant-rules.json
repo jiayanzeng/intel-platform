@@ -312,17 +312,17 @@
       "id": "R10",
       "claim": "Every local ci-local check has a non-report-only hosted counterpart and every blocking hosted verification has a local counterpart; exemptions are explicit and counted.",
       "source": "ARCHITECTURE.md:210",
-      "scope": "All ci_local_job invocations in run and every step in non-report-only jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions. Runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database verification are explicit counted exemptions.",
+      "scope": "All entries produced by run's ci_local_jobs table and every step in non-report-only jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions. Runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database verification are explicit counted exemptions.",
       "fail_before": [
         {
           "file": "run",
-          "find": "  ci_local_job \"net test (-D warnings)\" ci_net_test || return $?\n",
+          "find": "net test (-D warnings)|ci_net_test\n",
           "replace_with": [
-            "  ci_local_job \"net test (-D warnings)\" true || return $?\n"
+            "net test (-D warnings)|true\n"
           ],
           "expected_fail": "local ci-local check 'net test (-D warnings)' target true is unclassified",
           "expected_file": "run",
-          "expected_line": 439
+          "expected_line": 352
         },
         {
           "file": ".github/workflows/ci.yml",
