@@ -233,3 +233,59 @@ Entries are append-only; corrections are new dated entries.
   all **116/116** manifest pins, and **2/2** databases remain exact. No product
   source, workflow, schema, public response, corpus, dependency, lockfile,
   release tag, or release commit changed.
+
+### 2026-07-28 · SEAM — gazetteer comparison is core-owned
+
+- owner: Codex
+- commit: 850d3ab
+- result: PASS. The operator selected Option B. The shell still extracts and
+  counts model candidates, but authenticated internal
+  `POST /entities/unknown` now compares those names against the gazetteer
+  loaded by core and returns only the unknown subset.
+- gate acceptance: PASS with one recorded late correction. Before product
+  implementation, Step 5's gate was widened to include shell enrichment/tests
+  and the invariant scanner, registry, and controls needed by the repo-wide
+  absence criterion. Pre-commit route-inventory review then found that the
+  gate had omitted `ARCHITECTURE.md` and `README.md`, both of which enumerate
+  the core contract. They were added to the gate and reconciled; the late
+  scope correction is recorded in `STATE.md` rather than leaving the
+  architectural authority stale.
+- ownership acceptance: PASS. The production shell has no filesystem read of
+  `config/entities.json`, `config/core.json`, `CORE_ENTITIES`, or
+  `CORE_CONFIG`. It sends only extracted names through `CoreClient`; core
+  compares case-insensitive names and aliases from its loaded `Gazetteer`.
+  Core receives strings but makes no model call, so HC3 is unchanged.
+- authentication/config acceptance: PASS. `/entities/unknown` refuses service
+  if `CORE_TOKEN` is not configured and uses the existing header guard when it
+  is. A live alternate-`CORE_ENTITIES` core returned **401** without the
+  configured token. With the token it treated `Only From Env` and `Env Alias`
+  as known and returned exactly
+  `{"unknown":["DeepSeek","Novel Entity"]}`. This proves the route and core
+  startup use the same selected gazetteer.
+- fail-before/fallback acceptance: PASS. R11 reported the removed production
+  read at `shell/intel_shell/pipeline.py:139` before the fix. Its registered
+  control now reintroduces `open("config/entities.json")` and fails at line
+  26. The pipeline test proves a comparison error returns status 1 and prints
+  the error instead of substituting demo names.
+- invariant/version acceptance: PASS. `invariant-scan --self-test` measures
+  **11/11 rules / 19/19 controls**. The **v0.15.0** trigger fired because the
+  authenticated internal route is a new observable core surface. Installed
+  version bytes remain v0.14.1 pending the release commit. No `/v1/*` body
+  changed. A4 remains open because config ownership is not the
+  untrusted-shell public-egress boundary.
+- matrix acceptance: PASS. Permitted
+  `CARGO_TARGET_DIR=/private/tmp/intel-v016-step5-ci-target ./run ci-local`
+  passed **20/20** with **126** workspace tests, **49** net tests (**23**
+  ingest + **26** cored), Python 3.11.4 shell **243/243**, warning-denied
+  builds, clippy/fmt/ShellCheck, locked Rust 1.78, and golden **11/11**.
+  Python 3.12.13 independently passed **243/243** with **21/21** constrained
+  packages.
+- test-delta acceptance: PASS. Shell **241 → 243** is exactly R11's new
+  parameterized rule case plus
+  `test_pipeline_uses_core_entity_comparison_and_fails_closed`. Workspace
+  **125 → 126** and net **48 → 49** are the single
+  `unknown_entity_comparison_uses_the_core_loaded_gazetteer` test.
+- golden/protected acceptance: PASS. The final standalone `./run golden`
+  remained **11/11**. All **116/116** pins and both protected databases remain
+  exact. No dependency, lockfile, corpus, public response, published tag,
+  release commit, or historical evidence byte changed.
