@@ -1,6 +1,41 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0, DOC-LAYOUT, and JOB-PROPAGATION complete. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The current v0.16 full matrix passes **20/20** from `CARGO_TARGET_DIR=/private/tmp/intel-v016-step3-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); current standalone shell passes **241/241** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains the published-cycle measurement of **236 passed / 1 skipped** per interpreter. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.14.1 is published, v0.15 is closed with release disposition `release (as of 2026-07-28)`, and v0.16 is active with E0, DOC-LAYOUT, JOB-PROPAGATION, and EXEMPT-DERIVE complete. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; `origin/main` contains publication-audit commit `0a25c50f9de6a020fa6a04b04847f6242b809f7e`, and publication CI run `30336006396` passed.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. The current v0.16 full matrix passes **20/20** from `CARGO_TARGET_DIR=/private/tmp/intel-v016-step3-ci-target` with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); current standalone shell passes **241/241** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains the published-cycle measurement of **236 passed / 1 skipped** per interpreter. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.16 EXEMPT-DERIVE is complete (measured 2026-07-28).** R10 no longer
+contains a list of action names or receipt-step names, and no test asserts an
+exemption total.
+
+- Four executable membership criteria replace the former enumerations:
+  a report-only job declares job-level `continue-on-error: true`; a runner
+  setup action is an unconditional `uses:` step before the job's first
+  command-bearing step; the shell environment setup is the command that
+  installs committed `shell/requirements.txt` under committed
+  `shell/constraints.txt`; and receipt/attestation persistence is the terminal
+  contiguous `always()` block whose steps reference the canonical
+  `CI_RECEIPT_PATH`.
+- The operator-local `evidence-artifacts:verify` check remains the sole named
+  residual. Its reason is environmental rather than structural: protected
+  database bytes are operator-local while hosted CI validates the manifest
+  schema. An invented class was not introduced for it.
+- The parser currently outputs **45** exemptions: **18** runner setup actions,
+  **24** receipt/attestation persistence steps, **1** constrained Python
+  install, **1** report-only job, and **1** named local residual. The total is
+  printed by R10 but not pinned by a test; each reported exemption now carries
+  either one of the four criteria or the explicit residual identity.
+- Coverage did not narrow. The derived audit compared every blocking hosted
+  step's normalized check set with its exemption decision: **zero** steps with
+  a parity check moved into an exemption, and every step without a parity
+  check matched a declared criterion. No prior exemption moved into coverage.
+  Synthetic new setup-action and terminal receipt steps classified without any
+  exemption-registry edit.
+- R10 passes with **20** local jobs / **24** local checks and **6** blocking
+  hosted jobs / **23** hosted checks. Full `--self-test` remains **10/10 rules
+  / 18/18 controls**. The focused invariant suite passed **20/20**; full shell
+  remained **241/241** on Python 3.11.4 and 3.12.13.
+- Golden remained **11/11**. The `run` pin, all **116/116** manifest pins,
+  protected databases, product source, workflow, schema, public response,
+  dependency graph, and lockfile are unchanged.
 
 **v0.16 JOB-PROPAGATION is complete (measured 2026-07-28).** The task Gate
 was widened before implementation to include only the required forward

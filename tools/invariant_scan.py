@@ -164,6 +164,8 @@ class WorkflowStep:
     run_line: int | None
     run: str | None
     uses: str | None
+    condition: str | None
+    source: str
 
 
 @dataclass(frozen=True)
@@ -198,6 +200,13 @@ class ParityReport:
     blocking_jobs: int
     hosted_checks: int
     exemptions: tuple[str, ...]
+    exemption_bases: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ExemptionDecision:
+    basis: str
+    reason: str
 
 
 JOB_HEADER = re.compile(r"^  (?P<id>[A-Za-z0-9_-]+):\s*$")
@@ -221,25 +230,27 @@ CARGO_INVOCATION = re.compile(
     r"\bcargo\s+(?P<verb>check|test|clippy|fmt|run)\s+"
     r"(?P<args>[^\n;&|]+)"
 )
-LOCAL_CHECK_EXEMPTIONS = {
+RESIDUAL_LOCAL_CHECK_EXEMPTIONS = {
     "evidence-artifacts:verify": (
         "protected database bytes are operator-local evidence and are absent "
         "from hosted runners; hosted CI validates the manifest schema"
     ),
 }
-HOSTED_ACTION_EXEMPTIONS = {
-    "actions/checkout@v4": "runner source checkout",
-    "actions/setup-python@v5": "runner interpreter setup",
-    "dtolnay/rust-toolchain@master": "runner Rust toolchain setup",
-    "Swatinem/rust-cache@v2": "runner build-cache setup",
-    "actions/attest-build-provenance@v4": "release-evidence attestation",
-    "actions/upload-artifact@v4": "release-evidence persistence",
-}
-HOSTED_STEP_EXEMPTIONS = {
-    "install": "runner Python environment setup",
-    "emit CI-runner receipt": "release-evidence receipt emission",
-    "persist CI-runner attestation bundle": (
-        "release-evidence bundle persistence"
+EXEMPTION_CRITERIA = {
+    "report-only-job": (
+        "the job declares job-level continue-on-error: true"
+    ),
+    "runner-setup-action": (
+        "the step is an unconditional uses: action before the job's first "
+        "command-bearing step"
+    ),
+    "constrained-python-install": (
+        "the command installs the committed shell requirements under the "
+        "committed constraints file"
+    ),
+    "receipt-attestation-persistence": (
+        "the step belongs to the terminal contiguous always() block and "
+        "references the canonical CI_RECEIPT_PATH"
     ),
 }
 
@@ -329,7 +340,11 @@ def parse_ci_workflow(path: Path) -> tuple[WorkflowJob, ...]:
             uses = value if field == "uses" else None
             run_text: str | None = None
             run_line: int | None = None
+            condition: str | None = None
             for offset, line in enumerate(step_block):
+                condition_match = re.match(r"^        if:\s*(.+?)\s*$", line)
+                if condition_match is not None:
+                    condition = condition_match.group(1)
                 scalar = re.match(r"^        run:\s*(.*?)\s*$", line)
                 if scalar is None:
                     nested_uses = re.match(r"^        uses:\s*(.+?)\s*$", line)
@@ -355,6 +370,8 @@ def parse_ci_workflow(path: Path) -> tuple[WorkflowJob, ...]:
                     run_line=run_line,
                     run=run_text,
                     uses=uses,
+                    condition=condition,
+                    source="\n".join(step_block),
                 )
             )
         jobs.append(
@@ -569,10 +586,64 @@ def _workflow_step_check_ids(
     return checks
 
 
-def _hosted_step_exemption(step: WorkflowStep) -> str | None:
-    if step.uses is not None:
-        return HOSTED_ACTION_EXEMPTIONS.get(step.uses)
-    return HOSTED_STEP_EXEMPTIONS.get(step.name)
+def _receipt_persistence_indices(job: WorkflowJob) -> frozenset[int]:
+    indices: set[int] = set()
+    for index in range(len(job.steps) - 1, -1, -1):
+        step = job.steps[index]
+        if (
+            step.condition
+            not in {
+                "always()",
+                "always() && inputs.publish_evidence == true",
+            }
+            or "CI_RECEIPT_PATH" not in step.source
+        ):
+            break
+        indices.add(index)
+    return frozenset(indices)
+
+
+def _is_constrained_python_install(step: WorkflowStep) -> bool:
+    if step.run is None:
+        return False
+    collapsed = " ".join(step.run.split())
+    return bool(
+        re.fullmatch(
+            r"pip install -c shell/constraints\.txt "
+            r"-r shell/requirements\.txt",
+            collapsed,
+        )
+    )
+
+
+def _hosted_step_exemption(
+    job: WorkflowJob,
+    index: int,
+) -> ExemptionDecision | None:
+    step = job.steps[index]
+    receipt_indices = _receipt_persistence_indices(job)
+    if index in receipt_indices:
+        basis = "receipt-attestation-persistence"
+    else:
+        first_command = next(
+            (
+                position
+                for position, candidate in enumerate(job.steps)
+                if candidate.run is not None
+            ),
+            len(job.steps),
+        )
+        if (
+            step.uses is not None
+            and step.condition is None
+            and index < first_command
+        ):
+            basis = "runner-setup-action"
+        elif _is_constrained_python_install(step):
+            basis = "constrained-python-install"
+        else:
+            return None
+    return ExemptionDecision(basis, EXEMPTION_CRITERIA[basis])
 
 
 def r10_report(root: Path) -> ParityReport:
@@ -590,6 +661,7 @@ def r10_report(root: Path) -> ParityReport:
             blocking_jobs=0,
             hosted_checks=0,
             exemptions=(),
+            exemption_bases=(),
         )
     dispatch = {
         match.group("command"): match.group("target")
@@ -608,6 +680,7 @@ def r10_report(root: Path) -> ParityReport:
             blocking_jobs=0,
             hosted_checks=0,
             exemptions=(),
+            exemption_bases=(),
         )
     for job in local_jobs:
         check_ids = _function_check_ids(job.target, functions)
@@ -623,24 +696,28 @@ def r10_report(root: Path) -> ParityReport:
         )
 
     exemptions: list[str] = []
+    exemption_bases: list[str] = []
     hosted_sites: list[CheckSite] = []
     blocking_jobs = 0
     for job in workflow:
         if job.report_only:
+            basis = "report-only-job"
             exemptions.append(
                 f".github/workflows/ci.yml:{job.line}: hosted job {job.id}: "
-                "job-level continue-on-error=true makes it report-only"
+                f"{EXEMPTION_CRITERIA[basis]}"
             )
+            exemption_bases.append(basis)
             continue
         blocking_jobs += 1
         job_checks = 0
-        for step in job.steps:
-            reason = _hosted_step_exemption(step)
-            if reason is not None:
+        for index, step in enumerate(job.steps):
+            decision = _hosted_step_exemption(job, index)
+            if decision is not None:
                 exemptions.append(
                     f".github/workflows/ci.yml:{step.line}: hosted step "
-                    f"{job.id}/{step.name}: {reason}"
+                    f"{job.id}/{step.name}: {decision.reason}"
                 )
+                exemption_bases.append(decision.basis)
                 continue
             check_ids = _workflow_step_check_ids(step, functions, dispatch)
             if not check_ids:
@@ -675,11 +752,12 @@ def r10_report(root: Path) -> ParityReport:
 
     for check_id in sorted(set(local_by_id) - set(hosted_by_id)):
         site = local_by_id[check_id]
-        reason = LOCAL_CHECK_EXEMPTIONS.get(check_id)
+        reason = RESIDUAL_LOCAL_CHECK_EXEMPTIONS.get(check_id)
         if reason is not None:
             exemptions.append(
                 f"{site.file}:{site.line}: local check {site.label}: {reason}"
             )
+            exemption_bases.append(f"named-local-check:{check_id}")
             continue
         findings.append(
             f"{site.file}:{site.line}: local check {site.label!r} "
@@ -699,6 +777,7 @@ def r10_report(root: Path) -> ParityReport:
         blocking_jobs=blocking_jobs,
         hosted_checks=len(hosted_by_id),
         exemptions=tuple(exemptions),
+        exemption_bases=tuple(exemption_bases),
     )
 
 

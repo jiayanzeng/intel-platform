@@ -544,7 +544,7 @@ all pins match · golden 11/11.
 - [x] **JOB-PROPAGATION** — every derived job fails when its first command fails;
   controls generated from the parsed list; F1b resolved; R10 literal updated;
   help true in both halves; `ci-local` still 20
-- [ ] **EXEMPT-DERIVE** — every exemption carries a criterion or a written reason;
+- [x] **EXEMPT-DERIVE** — every exemption carries a criterion or a written reason;
   count is measured not pinned; no check lost coverage
 - [ ] **SEAM** — no direct core-owned config read, or the residual stated as open;
   `CORE_ENTITIES` honoured; no silent fallback; version trigger recorded here;

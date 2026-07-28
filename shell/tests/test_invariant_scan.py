@@ -178,7 +178,7 @@ def test_rule_id_without_an_implemented_check_exits_two(
     assert "no implemented check for R99" in capsys.readouterr().out
 
 
-def test_r10_reports_derived_scope_and_counted_exemptions() -> None:
+def test_r10_derives_every_exemption_without_pinning_its_count() -> None:
     report = invariant_scan.r10_report(ROOT)
 
     assert report.findings == ()
@@ -186,14 +186,110 @@ def test_r10_reports_derived_scope_and_counted_exemptions() -> None:
     assert report.local_checks == 24
     assert report.blocking_jobs == 6
     assert report.hosted_checks == 23
-    assert len(report.exemptions) == 45
+    assert len(report.exemptions) == len(report.exemption_bases)
+    structural = set(invariant_scan.EXEMPTION_CRITERIA)
+    residual_prefix = "named-local-check:"
+    assert all(
+        basis in structural or basis.startswith(residual_prefix)
+        for basis in report.exemption_bases
+    )
+    assert {
+        basis.removeprefix(residual_prefix)
+        for basis in report.exemption_bases
+        if basis.startswith(residual_prefix)
+    } == set(invariant_scan.RESIDUAL_LOCAL_CHECK_EXEMPTIONS)
     assert any(
         "protected database bytes are operator-local evidence" in exemption
         for exemption in report.exemptions
     )
     assert any(
-        "continue-on-error=true makes it report-only" in exemption
+        invariant_scan.EXEMPTION_CRITERIA["report-only-job"] in exemption
         for exemption in report.exemptions
+    )
+
+    run_text = (ROOT / "run").read_text()
+    functions = invariant_scan._bash_functions(run_text)
+    dispatch = {
+        match.group("command"): match.group("target")
+        for match in invariant_scan.RUN_DISPATCH.finditer(run_text)
+    }
+    workflow = invariant_scan.parse_ci_workflow(
+        ROOT / ".github" / "workflows" / "ci.yml"
+    )
+    for job in workflow:
+        if job.report_only:
+            continue
+        for index, step in enumerate(job.steps):
+            decision = invariant_scan._hosted_step_exemption(job, index)
+            checks = invariant_scan._workflow_step_check_ids(
+                step,
+                functions,
+                dispatch,
+            )
+            assert not (decision is not None and checks), (
+                f"{job.id}/{step.name} moved a parity check into an "
+                f"exemption class: {sorted(checks)}"
+            )
+            assert decision is not None or checks, (
+                f"{job.id}/{step.name} is neither parity-covered nor exempt"
+            )
+
+    setup = invariant_scan.WorkflowStep(
+        job="control",
+        name="new setup action",
+        line=1,
+        run_line=None,
+        run=None,
+        uses="example/setup-runner@v1",
+        condition=None,
+        source="- uses: example/setup-runner@v1",
+    )
+    command = invariant_scan.WorkflowStep(
+        job="control",
+        name="check",
+        line=2,
+        run_line=2,
+        run="./run version-check",
+        uses=None,
+        condition=None,
+        source="- name: check\n  run: ./run version-check",
+    )
+    receipt = invariant_scan.WorkflowStep(
+        job="control",
+        name="new receipt persistence",
+        line=3,
+        run_line=3,
+        run='printf "%s\\n" "$CI_RECEIPT_PATH"',
+        uses=None,
+        condition="always()",
+        source=(
+            "- name: new receipt persistence\n"
+            "  if: always()\n"
+            '  run: printf "%s\\n" "$CI_RECEIPT_PATH"'
+        ),
+    )
+    control_job = invariant_scan.WorkflowJob(
+        id="control",
+        line=1,
+        report_only=False,
+        matrix=(),
+        steps=(setup, command, receipt),
+    )
+    assert invariant_scan._hosted_step_exemption(
+        control_job,
+        0,
+    ) == invariant_scan.ExemptionDecision(
+        "runner-setup-action",
+        invariant_scan.EXEMPTION_CRITERIA["runner-setup-action"],
+    )
+    assert invariant_scan._hosted_step_exemption(
+        control_job,
+        2,
+    ) == invariant_scan.ExemptionDecision(
+        "receipt-attestation-persistence",
+        invariant_scan.EXEMPTION_CRITERIA[
+            "receipt-attestation-persistence"
+        ],
     )
 
 
