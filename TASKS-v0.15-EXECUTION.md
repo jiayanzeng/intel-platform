@@ -78,9 +78,9 @@ public surface. Record the fired trigger in Step 4.
 
 | # | Location | Claim to verify |
 |---|---|---|
-| **H1** [P1] | `run` (20 `ci_local_job` calls); `.github/workflows/ci.yml` jobs `core:51`, `lint:139`, `net:205`, `msrv:296`, `shell:362`, `golden:466`, `drift:534` | **Nothing asserts local and hosted check parity.** A check may exist in `ci-local` and not hosted, or the reverse, and no tool reports it. This is the un-fixed class behind NET-TEST-EXEC, where a cargo invocation was absent from both. |
+| **H1** [P1] | `run` (20 `ci_local_job` calls); `.github/workflows/ci.yml` has six blocking jobs (`core:51`, `lint:139`, `net:205`, `msrv:296`, `shell:362`, `golden:472`) and one report-only job (`drift:540`, excluded by job-level `continue-on-error: true`); the shell matrix makes seven blocking identities | **Nothing asserts local and hosted check parity.** A check may exist in `ci-local` and not hosted, or the reverse, and no tool reports it. This is the un-fixed class behind NET-TEST-EXEC, where a cargo invocation was absent from both. |
 | **H2** [P2] | `tools/audit_deferred.py:55-65` | **`EXPECTED_RUNNER_JOB_IDENTITIES` is hardcoded**, never derived from `ci.yml`. Adding a blocking job without editing the constant fails loudly (safe direction); **removing one from both silently narrows coverage** (unsafe direction). The correspondence is unasserted either way. |
-| **H3** [P2] | `apps/cored/src/main.rs:558, 982, 987, 992`; `tools/benchmark_view.py:54-57` | **The four injectable stage names are declared twice across a language boundary.** Note precisely: `benchmark_view.py`'s map is a **superset** — it also carries `store-fingerprint-backfill` and `handler_total`, which are header-only and have no `diagnostic_delay` call site. The claim is about the four injectable names, not the whole map. Renaming one in Rust leaves Python asking for a stage that no longer exists. |
+| **H3** [P2] | `apps/cored/src/main.rs:558, 982, 987, 992`; `tools/benchmark_view.py:41-59` | **The four injectable stage names are declared twice across a language boundary.** Note precisely: `benchmark_view.py`'s 11-key map is a **superset** — seven entries are header-only and have no `diagnostic_delay` call site: `process_main_to_listener_ready`, `store_open`, `store_connection`, `store_schema_fts`, `store_cursor_migration`, `store_fingerprint_backfill`, and `handler_total`. The claim is about the four injectable names, not the whole map. Renaming one in Rust leaves Python asking for a stage that no longer exists. |
 | **H4** [P2] | v0.14 review record in `PROGRESS-v0.14.md` | **An acceptance criterion that cites a step's measured value goes stale** when a later step changes the quantity. v0.14's Step 8 required hosted counts to "match Step 2's recorded values" while Steps 4–5 deliberately raised them. This is the sibling of the deferral-row gap `TEMPLATE-REMEASURE` closed. |
 | **H5** [P3] | `AGENTS.md`; v0.14 review record | **Two review-discipline lessons are recorded but not binding.** (a) A claim about what a command does is verified at the command's **entry point**, not its caller — v0.14's false self-test finding came from reading `run`'s wrapper and not `invariant_scan.py`'s `main()`. (b) A closing record should state a disposition **as of a date**, so a later authorization supersedes rather than contradicts it. |
 
@@ -274,9 +274,25 @@ narrow coverage unnoticed.
 **Objective.** Give the four injectable `/view` stage names one source.
 
 **Gate.** `apps/cored/src/main.rs`, `tools/benchmark_view.py`,
-`shell/tests/test_benchmark_view.py`, and — if a generated or exported list is
-chosen — its output path. **🧑 One operator decision: whether any observable
-name changes, which sets the version.**
+`shell/tests/test_benchmark_view.py`, this active runbook's operator decision,
+authorized H1/H3/Step 7 corrections, gate/amendment/checklist record, and — if
+a generated or exported list is chosen — its output path. **🧑 One operator
+decision: whether any observable name changes, which sets the version.**
+
+**Operator decision and scope — 2026-07-28.** No observable name changes:
+the `x-intel-view-stage-*` header set and all stage strings remain identical to
+v0.14.0, so the **v0.14.1** trigger fires. The scoped set is derived only from
+the four `diagnostic_delay("…")` call sites; the seven header-only map entries
+remain outside the assertion and untouched. Current control flow confirms that
+`sector_load`, `analysis`, and `response_build` are injectable only on a cache
+miss because a hit returns before `compute_view_resp`; `serialization` remains
+injectable on both paths because `into_response` runs after either result.
+
+**Mechanism decision.** A Python test reads both source files, derives the Rust
+call-site set, and asserts it is a subset of `DIAGNOSTIC_HEADERS`. This avoids a
+build/export step and lets `benchmark_view.py` remain independently runnable.
+Equality is deliberately not asserted because it would fold the seven
+header-only measurements into the injectable scope.
 
 **Steps.**
 
@@ -374,7 +390,7 @@ status of rule (1) stated explicitly · closed runbooks unmodified · golden
 
 **Steps.**
 
-1. Push the candidate to `candidate/v0.15.0`. Record branch and commit.
+1. Push the candidate to `candidate/v0.14.1`. Record branch and commit.
 2. **Read the remote branch's `ci.yml` and confirm it contains every invocation
    you expect before dispatching.**
 3. Dispatch on that branch with `publish_evidence: true` and `audit_sha` set to
@@ -439,7 +455,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 - [x] **IDENTITY-DERIVE** — identity set derived from `ci.yml`; report-only
   exclusion is a criterion not a name list; all 101 pins validate unchanged;
   silent narrowing impossible
-- [ ] **STAGE-SOURCE** — scope limited to the four injectable names; Rust-side
+- [x] **STAGE-SOURCE** — scope limited to the four injectable names; Rust-side
   rename fails a test naming both files; header-only entries untouched; version
   trigger recorded here
 - [ ] **CRITERION-SHAPE** — step-value criterion rejected; heuristic limitation
@@ -489,3 +505,4 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 
 Step 1 — Add the governing E0 scope gate required by `AGENTS.md §5` — 2026-07-28
 Step 2 — Widen the R10 gate to contain its architecture claim and any required hosted counterpart — 2026-07-28
+Step 4 — Widen the gate for the operator decision and authorized H1/H3/Step 7 corrections; record the unchanged-name v0.14.1 trigger — 2026-07-28

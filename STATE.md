@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 IDENTITY-DERIVE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **231/231** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.0 (core-shell) · **Status:** **v0.14.0 is published at release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`. The dated `no-release` closing disposition remains historically accurate and is forward-superseded by the later operator authorization and measured publication below.** DIAGNOSTIC-KNOB option (b) selected identity v0.14.0. Authenticated release evidence remains workflow-dispatch run `30324186389` against candidate `ee9ee0f9ed96cb2cb7759c3c3e59fbf8f325ae1a`; the candidate branch is deleted. Both post-push confirmation runs succeeded but are not promoted or pinned. Published v0.13.0 and every earlier published release remain byte-identical and unmoved. At v0.15 STAGE-SOURCE, local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passed **233/233** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell remains **224 passed / 1 skipped** per interpreter in the retained v0.14 evidence by design because the on-site production measurement test skips without protected corpora and a built `cored`. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **101/101 pins**: **99/99** evidence plus **2/2** authorization surfaces. The five release authorities and exact tag agree at 0.14.0; `invariant-scan` is **10/10 rules / 18 site-specific controls**. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+
+**v0.15 STAGE-SOURCE is complete (measured 2026-07-28).** The operator
+directed that all observable stage names remain unchanged. A source diff
+confirmed no change to `apps/cored/src/main.rs` or
+`tools/benchmark_view.py`: the `x-intel-view-stage-*` header set and stage
+strings remain identical to v0.14.0, so the Step 4 release trigger is
+**v0.14.1**. The active cycle identifier remains v0.15.
+
+The correspondence test reads both source files. It derives
+`analysis`, `response_build`, `sector_load`, and `serialization` from Rust's
+four literal `diagnostic_delay("…")` call sites and requires that set to be a
+subset of Python's `DIAGNOSTIC_HEADERS`. It deliberately does not assert
+equality. The seven header-only entries remain untouched:
+`handler_total`, `process_main_to_listener_ready`, `store_connection`,
+`store_cursor_migration`, `store_fingerprint_backfill`, `store_open`, and
+`store_schema_fts`.
+
+The cache-path scope is confirmed from current code: a hit returns before
+`compute_view_resp`, so `sector_load`, `analysis`, and `response_build` are
+miss-only; `serialization` runs from `into_response` for both hits and misses.
+The Rust rename control produced:
+`apps/cored/src/main.rs:987: diagnostic_delay stage 'analysis_renamed' is
+absent from tools/benchmark_view.py:41: DIAGNOSTIC_HEADERS`. A Python-side
+deletion control also failed at the same cross-file seam.
+
+The focused benchmark module passes **6/6** on both interpreters. Full shell
+passes **233/233**, a delta of **+2** from IDENTITY-DERIVE, attributable to
+`test_rust_diagnostic_delay_stages_are_benchmark_headers` and
+`test_stage_correspondence_controls_name_both_files`. `./run ci-local` remains
+**20/20**, Rust remains **125** workspace / **48** net (**23 + 25**), all
+**101/101** pins and both protected databases remain exact, `invariant-scan`
+remains **10/10 rules / 18 controls**, and matrix plus mandatory standalone
+golden remain **11/11** byte-identical.
 
 **v0.15 IDENTITY-DERIVE is complete (measured 2026-07-28).** The deferred
 auditor no longer declares the current hosted receipt identities in Python.
