@@ -135,3 +135,41 @@ Entries are append-only; corrections are new dated entries.
   passed with `-D warnings`.
 - golden-E2E delta: **0**; the final mandatory standalone invocation passed
   **11/11**.
+
+### 2026-07-28 · LIVE-HARVEST — corrected gate reached real OAI-PMH pages
+
+- owner: Codex
+- commit: 4b99c65
+- result: PASS with one finding carried to WIRE-FINDINGS. One bare
+  `./run harvest-arxiv` launched one core (PID 13809) against fresh ignored
+  `data/live-20260728T141101Z-13711.db`; no pre-existing core or port-8788
+  listener existed and no concurrent harvester was started.
+- isolation acceptance: PASS. The fresh database is **10,166,272** bytes,
+  SHA-256
+  `11d2b6a6bdf15b27964eae2be971deb0b056d47546ea96dd47a6eb1e56e58d6a`,
+  integrity `ok`. It is an observation, not evidence. No harvested document
+  entered the golden/protected corpus. Preflight and post-run verification
+  both passed all **146/146** pins and protected databases **2/2** exact;
+  `./run down` left port 8788 free.
+- policy/politeness acceptance: PASS. The live gate observed Step 3's
+  404/`Unavailable(allow)` disposition on each page. No publisher
+  `Crawl-delay` existed; all three requests reported the **0.500-second**
+  operator floor.
+- paging acceptance: PASS. Three real XML pages committed with cumulative
+  counts **1,300**, **2,600**, and **2,692**. Two returned
+  `resumptionToken`s were followed and page 3 was naturally final. The final
+  persisted row is `cursor=NULL`, `high_water=2026-07-28`,
+  `pending_high_water=NULL`.
+- wire-shape acceptance: PASS. Exactly **3** page-request lines and **3**
+  robots-gate lines appeared. No redirect, 503/Retry-After, extra attempt,
+  status-error, parse-error, or unexpected XML-shape log appeared; source
+  result was `ok=true`. The database holds **2,692** rows in **2,550**
+  canonical groups, with **142** near-duplicate rows suppressed from analysis.
+- duration acceptance: PASS. Total command wall time, including artifact
+  preflight and the net build, was **46.38 seconds**.
+- finding: **F1** — the harness said `cored` remained running for inspection,
+  but after command exit PID 13809 was absent and `/health` refused connection.
+  Step 5 must give this finding exactly one disposition. No publisher
+  compliance, XML, paging, cursor, retry, redirect, or status defect was found.
+- golden-E2E delta: **0**; the mandatory standalone invocation passed
+  **11/11** after the harvest.
