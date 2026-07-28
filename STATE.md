@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; ROBOTS-PREVIEW returned HTTP 404 and the source's explicit absence policy gives LIVE-HARVEST a go verdict.** Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.15.1 (core-shell) · **Status:** **v0.18 is active; LIVE-HARVEST completed over 3 real OAI-PMH pages and WIRE-FINDINGS is next with one harness-lifecycle finding.** Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **131** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **244/244** on Python 3.11.4, `invariant-scan` **11/11 rules / 23 controls**, all **146/146** pins (**144/144** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The feature-gated preview suites additionally pass `intel-compliance` **40/40** and `intel-ingest` **30/30** plus preview binary **1/1**. Published `v0.15.1` remains annotated tag object `d6a71c1a2afabd7ce7b335756b7ae66ff36cf1ba` at release commit `a0ba69e0a3e8385287274bb404d5123f9a2b8ac7`; remote `main` remains `f13c6129d608ab9259f421dce6ed419ce469c225`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, and T7 robots single-flight remain open; L2 remains scheduled.
+
+**v0.18 LIVE-HARVEST is complete with one finding for Step 5 (measured
+2026-07-28).** Preflight validated artifact schema v2, all **146/146** pins,
+both protected databases exact, no listener on port 8788, and no existing
+`cored` process. One bare `./run harvest-arxiv` launched one core (PID 13809)
+against the default fresh
+`data/live-20260728T141101Z-13711.db`. The database is an ignored observation,
+not evidence: SHA-256
+`11d2b6a6bdf15b27964eae2be971deb0b056d47546ea96dd47a6eb1e56e58d6a`,
+**10,166,272** bytes, integrity `ok`.
+
+The run covered 2026-07-25 through 2026-07-28, at most three pages. The
+`Identify` reachability probe returned HTTP 200. The live gate observed the
+same publisher-policy 404/`Unavailable(allow)` disposition as Step 3 on every
+page. No publisher `Crawl-delay` existed; the effective operator floor was
+**0.500 seconds** on all three page requests.
+
+Three real OAI-PMH XML pages committed successfully: page 1 brought the
+cumulative count to **1,300**, page 2 to **2,600**, and the naturally final
+page 3 to **2,692**. Two real `resumptionToken`s were returned and followed.
+There were exactly three page-request lines and three robots-gate lines, with
+no redirect, 503/Retry-After, extra attempt, status-error, parse-error, or
+unexpected-shape log. The source result is `ok=true`, `fetched=2692`,
+`new=2692`. The store holds **2,692** rows in **2,550** canonical groups, so
+**142** near-duplicate rows are suppressed from analysis. The durable final
+cursor row is `cursor=NULL`, `high_water=2026-07-28`,
+`pending_high_water=NULL`. Total command wall time, including artifact
+preflight and the net build, was **46.38 seconds**.
+
+No harvested document entered the protected or golden corpus. Post-run
+`verify-artifacts` again reports all **146/146** pins and protected databases
+**2/2** exact; `./run down` left port 8788 free; standalone golden remains
+**11/11**, delta **0**.
+
+One surprise is open for Step 5 disposition: the harness printed that `cored`
+was still running for inspection, but immediately after command exit PID 13809
+was absent and loopback `/health` refused connection. No publisher XML, paging,
+cursor, redirect, retry, status, or politeness defect was observed.
 
 **v0.18 ROBOTS-PREVIEW is complete with a Step 4 go verdict (measured
 2026-07-28).** The sole configured network source, `arxiv-cs`, made exactly one

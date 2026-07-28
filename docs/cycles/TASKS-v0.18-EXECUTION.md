@@ -236,6 +236,11 @@ durability, real XML shapes, redirects, and adherence to a published
 `Crawl-delay`.
 
 **Gate.** 🧑 **Operator runs the harvest.** **Blocked on Step 3's go verdict.**
+That verdict is now recorded. Scope is limited to one bare
+`./run harvest-arxiv`, its default fresh `data/live-*.db`, transient `.run/`
+logs/configuration, `observations/v0.18/live-harvest/`, and the `STATE.md` /
+active-cycle status records. No protected artifact, evidence/receipt, source,
+fixture, dependency, schema, or public surface may change.
 
 **Steps.**
 
@@ -368,6 +373,10 @@ Step 3 — Widen ROBOTS-PREVIEW before its first implementation commit to contai
 the feature-gated diagnostic, offline test, observation, and status-record
 surfaces required by its acceptance criteria — 2026-07-28
 
+Step 4 — Widen LIVE-HARVEST before its network action to contain the fresh
+database, transient runtime files, observation report, and status-record
+surfaces required by its acceptance criteria — 2026-07-28
+
 ---
 
 ## Cycle checklist
@@ -381,7 +390,7 @@ surfaces required by its acceptance criteria — 2026-07-28
 - [x] **ROBOTS-PREVIEW** — real origin response fetched; the 404 absence
   disposition, lack of a matched group/rule, raw bytes and hash, and written go
   verdict recorded; nothing but `/robots.txt` requested
-- [ ] **LIVE-HARVEST** — isolated database, protected corpus hash-verified after;
+- [x] **LIVE-HARVEST** — isolated database, protected corpus hash-verified after;
   one process; `Crawl-delay` honoured; paging, `resumptionToken`, cursor,
   redirect, and XML observations recorded
 - [ ] **WIRE-FINDINGS** — every finding fixed with a regression or deferred with a
