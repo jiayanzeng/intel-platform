@@ -453,7 +453,7 @@ decision: publication.**
   messages captured; focused tests including a passing case; forward publication
   append with measured refs and the CI run's id/attempt/conclusion or its
   recorded absence; no closed record edited
-- [ ] **EXPORT-BUDGET** — ignores added; `STATE.md` archived losslessly with a
+- [x] **EXPORT-BUDGET** — ignores added; `STATE.md` archived losslessly with a
   hash-verified concatenation; export re-run from project root; before/after
   sizes recorded; `Cargo.lock` and the pin manifest still present; 161/161 exact
 - [ ] **NEGATIVE-CACHE** — fail-before captured; negative TTL named and applied
@@ -594,6 +594,41 @@ lockfile, schema, protected database, or public surface moved.
 - **Pass-after:** `cycle-check`, `checklist-audit`, `progress-check`,
   `version-check`, and the new reconciliation all pass. `invariant-scan`
   remains **11/11 rules / 23 controls**.
+- **Golden-E2E delta:** **0**; the mandatory standalone invocation passed
+  **11/11**.
+
+### 2026-07-29 · EXPORT-BUDGET
+
+PASS. Step 3's Gate contains every acceptance surface: only the Repomix
+selection, the byte-identical State archive and pointer, current status, this
+runbook, and its progress audit move. No production path, dependency, lockfile,
+schema, protected artifact, public surface, or repository file was deleted.
+
+- **Before/after:** root-run Repomix 1.17.0 moved from **4,887,220 bytes /
+  339 included files** (340 collected; one Rust source security-excluded) to
+  **2,640,795 bytes / 146 files**. The post-export contains `Cargo.lock`,
+  `config/protected-artifacts.json`, `AGENTS.md`, `run`, and all **89/89**
+  tracked files under `crates/`, `apps/`, `tools/`, and `shell/`. Its security
+  scan is disabled so a source cannot be silently omitted; registered
+  self-testing invariant R4 remains the credential control.
+- **Exact exclusions:** `evidence/**` and
+  `docs/cycles/{TASKS,PROGRESS}-v0.{8,9,10,11}*` are excluded from the review
+  export. The protected-artifact manifest remains included and continues to
+  pin the excluded evidence bytes.
+- **Lossless archive:** pre-split `STATE.md` was **535,858 bytes**, SHA-256
+  `9553fb682d04e1b2a925e90bd11ab2ae867bd0e6025193abde9a643c9239f3b6`.
+  The exact removed block is **297,739 bytes**, SHA-256
+  `3233af5b4c148f7a7f4700edba3238dc67245f28d83dc07cc53c26ebdca6a414`,
+  at `docs/state-archive/STATE-through-v0.13.md`. Replacing the retained
+  pointer once with those bytes reconstructed **535,858 bytes** at the exact
+  pre-split SHA-256.
+- **Integrity and status:** `evidence_artifacts.py validate` and
+  `verify-artifacts` passed **161/161** pins and protected databases **2/2**.
+  `cycle-check`, `progress-check`, `version-check`, and Step 2's reconciliation
+  pass after the split. The expected pre-audit `checklist-audit` refusal says
+  only that the checked box has no progress entry yet; it is rerun after that
+  entry cites the real implementation commit. `git diff --diff-filter=D` names
+  no deletion.
 - **Golden-E2E delta:** **0**; the mandatory standalone invocation passed
   **11/11**.
 
