@@ -260,3 +260,58 @@ Entries are append-only; corrections are new dated entries.
   pins plus both protected databases remained exact.
 - golden-E2E delta: **0**. Matrix and mandatory standalone golden both remained
   **11/11** byte-identical.
+
+### 2026-07-28 · RE-MEASURE — v0.14.1 candidate evidence admitted
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: c7ad619cb9aa55d84c14c4c8cfed371d958b2634
+- authorization acceptance: PASS. The operator authorized one non-`main`
+  candidate push. Evidence candidate
+  `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` was pushed to
+  `candidate/v0.14.1`; no tag, `main` advance, or publication occurred.
+  Final remote measurement kept `origin/main` at
+  `a75c9cf5defa42e985811b01f9905b6ac99797fd`, the candidate ref at the exact
+  evidence commit, and `v0.14.1` absent.
+- pre-dispatch acceptance: PASS. The remote candidate's
+  `.github/workflows/ci.yml` blob was
+  `96e85af978981b7af9bdd8e9e11069f158f35e57`, byte-identical to local, and
+  was read before dispatch. Its blocking scope was six jobs and seven
+  workflow-derived identities; drift remained report-only under job-level
+  `continue-on-error: true`.
+- hosted-run acceptance: PASS. Workflow-dispatch run `30333331839` attempt 1
+  completed successfully at the exact candidate. The seven authenticated
+  identities were `core`, `golden`, `lint`, `msrv`, `net`,
+  `shell/python=3.11`, and `shell/python=3.12`, matching the derived set.
+  Logs measured **125** workspace tests, **48** net tests (**23 + 25**),
+  `invariant-scan` **10/10 rules / 18 controls**, and golden **11/11**,
+  equal to local measurements at that commit.
+- shell-parity acceptance: PASS. Each hosted interpreter reported **236
+  passed / 1 skipped**; the collected total of **237** equals the local
+  candidate's **237 passed** on Python 3.11.4 and 3.12.13. The one hosted
+  skip was only the already-declared on-site production audit test.
+- release-audit acceptance: PASS. The release-grade audit used the clean
+  detached candidate, required attestations, accepted **7** receipts, rejected
+  **0**, and measured **5** deferred / **2** promoted dispositions.
+  `evidence/v0.14.1/deferred-audit/report.json` is SHA-256
+  `f46942dbec8cd258c5daac09bf336770866ef00ab4271539d1510067d5622ef2`,
+  **34238** bytes. Authenticated re-derivation passed with **7** rows, **5**
+  source dispositions, **7** triggers, release grade, and attestations
+  required. The first sandboxed re-derivation was a network-only non-result
+  (`no valid Sigstore verifiers could be initialized`); the permitted online
+  rerun is the recorded pass.
+- evidence-admission acceptance: PASS. Fourteen signed receipt/bundle files
+  and the release report were committed. `evidence_artifacts.py validate`,
+  `./run verify-artifacts`, and `./run evidence-report` passed at **116/116**
+  pins: **114/114** evidence plus **2/2** authorization surfaces. Both
+  protected databases remained exact **2/2**.
+- matrix acceptance: PASS. Post-admission `./run ci-local` passed **20/20**,
+  with **125** workspace Rust tests, **48** net tests (**23 + 25**), zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78 green, Python 3.11.4
+  **237/237**, and `invariant-scan` **10/10 rules / 18 controls**. Standalone
+  Python 3.12.13 passed **237/237** with **21/21** exact packages. The first
+  matrix start caught a malformed `STATE.md` version qualifier before later
+  jobs ran; restoring the parser-required bare `v0.14.0 (core-shell)` field
+  made the complete recorded run pass.
+- golden-E2E delta: **0**. Hosted, matrix, and mandatory standalone golden each
+  remained **11/11** byte-identical.
