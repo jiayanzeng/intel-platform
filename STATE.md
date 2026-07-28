@@ -1,8 +1,8 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **The operator selected release of v0.14.1 as of 2026-07-28. Release preparation is in progress; the exact release commit and annotated tag object will be recorded after those objects exist.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains separately authenticated by workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
+**As of:** 2026-07-28 · **Version:** v0.14.1 (core-shell) · **Status:** **v0.15 is locally closed with release disposition `release (as of 2026-07-28)`. Annotated tag `v0.14.1` resolves through tag object `deea217b8913ae42399a22424dcf91595ce80240` to release commit `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`; the authorized remote publication is the remaining action.** Evidence candidate `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` remains a separate authenticated subject under workflow-dispatch run `30333331839` attempt 1, with **7/7** derived blocking identities across **6** blocking jobs and zero rejected receipts. Local CI passes **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **125** Rust workspace tests, and **48** net tests (**23** `intel-ingest` + **25** `cored`); standalone shell passes **237/237** on Python 3.11.4 and 3.12.13 with **21/21** exact packages on both. Hosted shell reports **236 passed / 1 skipped** per interpreter; its collected **237** equals local, and the one on-site-only skip is the declared intended behavior. Golden is **11/11**, protected databases are exact **2/2**, and the manifest contains **116/116 pins**: **114/114** evidence plus **2/2** authorization surfaces. `invariant-scan` is **10/10 rules / 18 site-specific controls**. Published v0.14.0 remains release commit `4ad4c8d71075731dd87c360e8b0d3d91d80b5518` under unchanged annotated tag object `dddc1a52d28a1832727a8d8eb5e87fc7168511c6`; v0.13.0 and every earlier published release remain byte-identical and unmoved. Retractions remain **three**. R3 and R4 remain bounded open-bottom deny-lists; the active-runbook measured-value heuristic has a stated open limitation; A4 and the editable-L1 controller residual remain open; L2 remains scheduled.
 
-**v0.15 R-CLOSE release reconciliation is in progress (measured
+**v0.15 R-CLOSE release reconciliation is complete locally (measured
 2026-07-28).** The selected release is **v0.14.1** because Step 4 recorded
 that no observable name changed: the `x-intel-view-stage-*` header set and the
 four stage strings `analysis`, `response_build`, `sector_load`, and
@@ -11,11 +11,12 @@ R-CLOSE; the version is not a default chosen at closure.
 
 Evidence and release subjects remain deliberately separate. The authenticated
 evidence candidate is
-`6d197e562315b4fc6feb20c35b5fadc75b6b44a4`; the later release commit
-contains the admitted receipts, report, release authorities, classified diff,
-and release reconciliation and will be named by exact hash after it exists.
-The annotated tag will target that release commit, never the evidence
-candidate.
+`6d197e562315b4fc6feb20c35b5fadc75b6b44a4`. Release commit
+`5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba` is its descendant and contains
+the admitted receipts, report, release authorities, classified diff, and
+release reconciliation. Annotated tag object
+`deea217b8913ae42399a22424dcf91595ce80240` dereferences to that release
+commit, never the evidence candidate.
 
 The complete `v0.14.0..v0.14.1-local-release` diff contains **38 paths**, each
 classified exactly once:
@@ -93,8 +94,9 @@ Publication is selected because the prior withholding condition is discharged:
 release-grade evidence exists at the exact candidate, all seven identities
 authenticate with zero rejection, and every hosted count equals local at that
 commit. A no-release disposition has no remaining trigger. The exact release
-commit, annotated tag object, closed-cycle record, and remote mapping remain
-facts to measure and append after their objects exist.
+commit and annotated tag object are recorded above and in the canonical cycle
+closing record. The authorized remote `main`/tag mapping remains to be measured
+after publication.
 
 **v0.15 RE-MEASURE is complete (measured 2026-07-28).** The operator
 authorized only a non-`main` candidate push. Candidate

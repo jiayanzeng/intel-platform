@@ -476,7 +476,7 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
   disposition fails `cycle-check`; non-executable status stated
 - [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; identity set matches derived value; new pin count in three places
-- [ ] **R-CLOSE** — version cites Step 4; candidate and release commit separate;
+- [x] **R-CLOSE** — version cites Step 4; candidate and release commit separate;
   disposition dated; all four open items recorded open
 
 ---
@@ -513,30 +513,55 @@ open · `invariant-scan` 10 rules green · all pins match · golden 11/11.
 - Do not batch `STATE.md` / `PROGRESS-v0.15.md` updates or combine two tasks in
   one commit.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-28
-- **Release disposition:** pending the separate Step 8 operator publication
-  decision; no publication action is authorized by Step 7.
-- **Release version if authorized:** v0.14.1. Step 4 recorded that no
-  observable stage name changed and the patch trigger fired.
+- **Cycle closed:** 2026-07-28
+- **Release disposition:** release (as of 2026-07-28)
+- **Release:** `v0.14.1`
 - **Evidence candidate:** `6d197e562315b4fc6feb20c35b5fadc75b6b44a4`
-  on `candidate/v0.14.1`.
-- **Hosted evidence:** workflow-dispatch run `30333331839` attempt 1; all
-  **7/7** derived identities authenticated, zero rejected receipts, across
-  **6** blocking jobs. Hosted logs measured **125** workspace tests, **48**
-  net tests (**23 + 25**), shell **236 passed / 1 intended on-site-only
-  skipped** on each interpreter, `invariant-scan` **10/10 rules / 18
-  controls**, and golden **11/11**. Each hosted shell collected **237** tests,
-  equal to the local candidate's **237 passed**.
-- **Release-grade audit:** **5** deferred / **2** promoted; report SHA-256
-  `f46942dbec8cd258c5daac09bf336770866ef00ab4271539d1510067d5622ef2`,
-  **34238** bytes. Authenticated re-derivation passed.
-- **Evidence pins:** **116/116** total — **114/114** evidence plus **2/2**
+- **Hosted dispatch:** `30333331839`, attempt `1`
+- **Release commit:** `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba`
+- **Annotated tag object:** `deea217b8913ae42399a22424dcf91595ce80240`
+- **Protected pins:** **116/116** total — **114/114** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** pending Step 8's final R-CLOSE measurement and decision.
-- **Remote disposition:** `origin/main` remains
-  `a75c9cf5defa42e985811b01f9905b6ac99797fd`; no `v0.14.1` tag exists.
+
+Step 4's patch trigger fired because no observable name changed: the
+`x-intel-view-stage-*` header set and all four stage strings are identical to
+v0.14.0. The evidence candidate and release commit are separate subjects; the
+annotated tag resolves to the latter, a descendant of the former.
+
+Hosted evidence authenticated all **7/7** workflow-derived identities across
+**6** blocking jobs with zero rejected receipts. At the candidate, hosted logs
+measured **125** workspace tests, **48** net tests (**23 + 25**), shell **236
+passed / 1 intended on-site-only skipped** from **237 collected** on each
+interpreter, `invariant-scan` **10/10 rules / 18 controls**, and golden
+**11/11**, equal to local measurements at that same commit. The release-grade
+audit measured **5 deferred / 2 promoted**; its authenticated report is
+SHA-256
+`f46942dbec8cd258c5daac09bf336770866ef00ab4271539d1510067d5622ef2`,
+**34238** bytes.
+
+The exact release commit passed `./run ci-local` **20/20** with **125**
+workspace tests, **48** net tests (**23** `intel-ingest` + **25** `cored`),
+shell **237/237** on Python 3.11.4, `invariant-scan` **10/10 rules / 18
+controls**, all **116/116** pins and both protected databases exact, and golden
+**11/11**. The independently rebuilt Python 3.12.13 lane verified **21/21**
+pinned packages and passed **237/237**; standalone golden also passed
+**11/11**.
+
+`STATE.md` classifies all **38** release paths exactly once.
+`ARCHITECTURE.md` required no release edit: A4, the editable-L1 controller
+residual, the R3/R4 open-bottom limitations, and the active-runbook
+measured-value heuristic limitation all remain explicitly open.
+
+The proposed v0.16 subject is to make the verification apparatus smaller.
+R10's **45** enumerated exemptions include **18** runner
+source/toolchain/cache/interpreter setup steps and **24**
+signed-receipt/attestation persistence steps; those groups should be evaluated
+as derivable classes with parser-enforced membership criteria. Step 8 also
+found that `ci_net_test` does not preserve the first net command's failure if
+the second command passes. Both are recorded inputs for v0.16, not changes to
+this closed cycle.
 
 ## Runbook amendments
 

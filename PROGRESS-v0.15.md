@@ -315,3 +315,49 @@ Entries are append-only; corrections are new dated entries.
   made the complete recorded run pass.
 - golden-E2E delta: **0**. Hosted, matrix, and mandatory standalone golden each
   remained **11/11** byte-identical.
+
+### 2026-07-28 · R-CLOSE — v0.14.1 release recorded
+
+- runbook: `TASKS-v0.15-EXECUTION.md`
+- owner: Codex
+- commit: 5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba
+- gate acceptance: PASS. Steps 1–7 were boxed, the release worktree was clean,
+  and the operator selected publication of v0.14.1 as of 2026-07-28.
+- version acceptance: PASS. Step 4's trigger fired because no observable name
+  changed: the `x-intel-view-stage-*` header set and all four stage strings
+  remain identical to v0.14.0. The five release authorities agree on
+  **0.14.1**.
+- object-identity acceptance: PASS. Evidence candidate
+  `6d197e562315b4fc6feb20c35b5fadc75b6b44a4` and release commit
+  `5c3b6d7fddc30b4691e1e1ee0a6e42831626a1ba` are separate named fields; the
+  release commit is a descendant of the candidate. Annotated tag object
+  `deea217b8913ae42399a22424dcf91595ce80240` dereferences to the release
+  commit.
+- closing-record acceptance: PASS. The active runbook uses the validator's
+  exact dated form `Release disposition: release (as of 2026-07-28)`, checks
+  R-CLOSE, and contains one canonical cycle-closing heading.
+- diff acceptance: PASS. `STATE.md` classifies all **38** paths in the
+  v0.14.0-to-release diff exactly once. Before the release-authority bump, zero
+  paths under `crates/` or `apps/` changed; R-CLOSE changes only the
+  `apps/cored/Cargo.toml` package version there, with no product implementation
+  source or dependency-resolution change.
+- architecture acceptance: PASS. `ARCHITECTURE.md` already matches enforced
+  reality. A4, the editable-L1 controller residual, the R3/R4 open-bottom
+  limitations, and Step 5's measured-value heuristic limitation all remain
+  explicitly open.
+- release-commit matrix acceptance: PASS. The exact release commit passed
+  `./run ci-local` **20/20** with **125** workspace tests, **48** net tests
+  (**23 + 25**), zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78
+  green, Python 3.11.4 **237/237**, `invariant-scan` **10/10 rules / 18
+  controls**, **116/116** pins, and both protected databases exact.
+  Independently rebuilt Python 3.12.13 verified **21/21** pinned packages and
+  passed **237/237**.
+- publication acceptance: PASS. Release was selected because the authenticated
+  evidence condition that withheld v0.14.0 is discharged; no no-release
+  trigger remains. Remote publication follows this audit-record commit.
+- next-cycle acceptance: PASS. The closing record carries, without
+  implementation, the proposed v0.16 subject of deriving R10's two large
+  exemption classes and the adjacent `ci_net_test` first-failure
+  exit-propagation finding.
+- golden-E2E delta: **0**. The exact release commit's matrix and mandatory
+  standalone golden both passed **11/11** byte-identical.
