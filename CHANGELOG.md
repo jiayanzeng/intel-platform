@@ -4,6 +4,88 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.5 — 2026-07-29
+
+### Fixed
+
+- Publication reconciliation can no longer pass by examining no immutable-tag
+  assertion. The live status header must contain both the annotated tag object
+  and peeled release commit in the required narrow grammar; zero matches are a
+  named error, and every found value must equal the measured ref.
+- The fix deliberately preserves the ``[^`\n]`` capture boundary. Allowing
+  intervening backticks would let an unrelated hash satisfy the assertion and
+  recreate the same silent class after another rephrasing.
+- Registered invariant R12 invokes the real `check_publication_status` entry
+  point over nine planted cases. Seven independently reconstructible
+  `fail_before` mutations disable the mutable-ref prohibition, both
+  required/fresh immutable-ref families, pending-publication refusal, missing
+  tag ref, missing peeled target, and unavailable ancestry; all seven must be
+  detected.
+- Release-object mismatch continues to mask later derived publication findings
+  intentionally. Until the measured object and target agree with the closed
+  record, pending and freshness conclusions depend on an untrusted identity.
+  A focused combined case proves exactly one root-cause error.
+
+### Documentation and controls
+
+- This is the third member of one failure family: v0.19 specified an
+  unsatisfiable publication rule, v0.20 left two unavailable-input paths as
+  silent no-ops, and v0.21 found a live pattern that matched nothing. The
+  common cause was that the checker rules were not themselves subject to the
+  planted-failure discipline used elsewhere in the repository. R12 closes that
+  class for every current publication-status rule.
+- G6 remains an accepted bounded conservative refusal, not a reopened design
+  question. The 240-character live-header proximity expression may false-fire
+  loudly but cannot create a false pass.
+- The published-tree audit found that v0.20's closing record was absent from
+  its own release commit. Publishing v0.15.5 carries that forward correction,
+  but the same ordering reproduces the v0.21 instance: the post-push hosted run
+  cannot be recorded until after the release commit is published. The v0.22
+  subject is a two-phase close based first on already-existing candidate hosted
+  evidence, followed by a dated post-push confirmation.
+- The ordering defect originates in the v0.20 runbook's R-CLOSE sequence,
+  which required post-push hosted confirmation before checking the box and
+  writing the closing record. It is a runbook fixed point, not an
+  implementation defect in `cycle_check.py`.
+- Missing remote historical tags are a separate v0.22 release-identity item.
+  The v0.8, v0.8.1, and v0.10.2 records name annotated `v0.8.0` and `v0.10.2`
+  tags that remote inspection did not find. Before changing records or remote
+  refs, v0.22 must establish whether those tags exist locally, were deleted,
+  or were never created. Hosted CI cannot settle this because its lifecycle
+  check deliberately skips local tag verification.
+
+### Evidence and disposition
+
+- Authenticated run `30432249637` attempt 1 against evidence candidate
+  `3f61aed183e195ccaf952cbc7f4528712bab028d` passed all seven derived
+  identities with zero rejected receipts: workspace **133**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), invariant-scan **12/12 rules /
+  30 controls**, R10 **45** exemptions, and golden **11/11**. Both hosted shell
+  lanes collected **258** as **257 passed / 1 declared on-site-only skip**,
+  matching the local **258-test** inventory at the same commit.
+- The authenticated release-posture audit measured **5 deferred / 2 promoted /
+  0 deferred subsystems implemented**. Its report is SHA-256
+  `5e39cb000b08c6191d19f3ea91a90c6c89dc0680f0e76aed1e14523b2c06562a`
+  at **34,714** bytes. All **206** pins are exact: **204** evidence plus **2**
+  authorization surfaces.
+- Publication was explicitly selected as **release as of 2026-07-29**. No
+  publication trigger was visible at entry because published v0.15.4 was
+  green. The measured trigger emerged at E0: replacing the asserted tag object
+  with forty zeroes in the published header's own live phrasing still returned
+  `errors=[]`. The published artifact therefore claimed a passing control that
+  examined nothing; without this release, published `main` would continue to
+  ship that false capability and could not carry G3's forward correction.
+- No `/v1/*` route or body, schema, dependency, crate source, runtime behavior,
+  robots policy, configured source, or protected database changed, so v0.15.5
+  is patch-compatible.
+- Retractions remain three. A4, the editable-L1 controller residual, the R3/R4
+  bounded open-bottom scanners, the active-runbook measured-value heuristic,
+  T7 robots single-flight, and the last-known-good fallback remain open; L2
+  remains scheduled.
+- This platform still aggregates one publisher: `arxiv-cs` is real and three
+  of four configured sources are `example.org` fixture placeholders. Adding a
+  second publisher remains a separate product and compliance decision.
+
 ## v0.15.4 — 2026-07-29
 
 ### Fixed

@@ -295,11 +295,34 @@ Publication reconciliation is likewise a lifecycle control, not a new HC
 invariant. A live status header can carry immutable annotated-tag object and
 peeled-target facts, but it cannot truthfully predict a mutable branch ref whose
 value publishing that same commit creates. Exact branch measurements therefore
-live in dated body records. `cycle-check` still requires the immutable tag facts
-to agree with the newest closed release record and to be reachable from `HEAD`;
-missing tag, target, or ancestry inputs fail closed. The older rule that rejects
-a reachable release while the live header calls publication pending is
-unchanged.
+live in dated body records. `cycle-check` requires both immutable assertions to
+exist in the live header and to agree with the newest closed release record;
+zero matches are a defect, not a conditional skip. The tag must also be
+reachable from `HEAD`; missing tag, target, or ancestry inputs fail closed. The
+older rule that rejects a reachable release while the live header calls
+publication pending is unchanged. Registered R12 executes the actual
+publication-status entry point over planted cases and independently disables
+each current rule family, so a rule that examines nothing cannot report a clean
+result merely because its pattern found nothing.
+
+The current publication/closing rhythm remains explicitly two-phase evidence,
+not a self-contained release commit. A release commit can be locally complete
+and can carry already-existing candidate hosted evidence; the push-triggered
+hosted result does not exist until after that commit is published, so the dated
+cycle-closing audit that records it is a later append-only commit. This is the
+accepted G4 rhythm for v0.21, but it reproduces G3: a tag cannot contain its own
+later closing record. The v0.22 design subject is a real two-phase close that
+closes on the candidate's already-authenticated hosted evidence and appends
+post-push confirmation as a forward record, rather than making the closing
+claim depend on evidence that cannot yet exist.
+
+Hosted lifecycle checks deliberately use `--skip-local-tag-verification`; they
+can validate cycle structure without possessing every historical tag, but they
+cannot prove remote historical release identity. Missing remote `v0.8.0` and
+`v0.10.2` refs are therefore a separate v0.22 investigation boundary. Before
+changing either old records or remote refs, that investigation must establish
+whether the named annotated tags exist in another local repository, were
+deleted, or were never created.
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

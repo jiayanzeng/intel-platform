@@ -138,6 +138,8 @@ Rust 1.78 green.
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | none |
 | Second configured publisher | a separate compliance review per publisher | none — **do not add a source** |
 | CI-runner evidence | an authenticated receipt set with identified matrix legs, durably committed | **re-measure at the new release commit — discharged by Step 5** |
+| Cycle-close fixed point | v0.15.5 post-push confirmation reproduces G3 for v0.21 and the operator supplies the v0.22 runbook | none — v0.22 must close on already-existing candidate hosted evidence, then append post-push confirmation as a dated forward record |
+| Historical release-tag identity | a v0.22 investigation has access to repository-local clones/reflogs or backups plus the configured remote needed to classify `v0.8.0` and `v0.10.2` as local-only, deleted, or never created | none — do not create tags or rewrite historical records before that classification |
 
 ---
 
@@ -696,11 +698,47 @@ or protected database changed.
 
 ## Pending Cycle closing record
 
+- **Publication decision:** publish v0.15.5, operator-authorized 2026-07-29.
+- **Release disposition:** release (as of 2026-07-29).
+- **Publication trigger:** no trigger was visible at entry because published
+  v0.15.4 was green. E0 then replaced the tag-object assertion with forty
+  zeroes in the published header's own live phrasing and the published
+  `check_publication_status` returned `errors=[]`. The published artifact
+  therefore ships a control that claims pass while examining nothing.
+  Without publication, `main` would retain that false capability and G3's
+  forward correction could not land.
+- **Version identity:** v0.15.5. No `/v1/*` route or response body, schema,
+  dependency, crate source, runtime behavior, robots policy, configured
+  source, or protected database changed, so the measured release is
+  patch-compatible.
+- **G1 family:** this is the third instance of one cause. v0.19 specified an
+  unsatisfiable rule, v0.20 shipped two unavailable-input no-op paths, and
+  v0.21 exposed a vacuous live pattern. Each survived because the checker's own
+  rules were not subject to planted-failure controls. R12 corrects the class by
+  exercising the real entry point and independently disabling every current
+  rule family.
+- **G3 disposition:** publishing v0.15.5 corrects the v0.20 published-tree
+  omission by carrying v0.20's closing record into `main`, and simultaneously
+  reproduces G3 for v0.21 because the release commit necessarily precedes the
+  post-push hosted result and this canonical closing record. G3 is not closed.
+- **G3 origin and v0.22 trigger:** the fixed point originates in the v0.20
+  runbook's R-CLOSE ordering, authored by the operator: post-push hosted CI had
+  to be confirmed before the box and closing record could be written. The
+  v0.22 subject is a two-phase close: close on already-existing candidate
+  hosted evidence — run `30432249637` is the current proof — then append the
+  post-push confirmation as a dated forward record.
+- **G4 disposition:** Accept (as of 2026-07-29). The current final append-only
+  audit is locally verified when written and first becomes hosted-verified as
+  an ancestor of the following publication. The v0.22 two-phase correction
+  above is a separate forward subject.
+- **Historical-tag v0.22 item:** the v0.8, v0.8.1, and v0.10.2 records name
+  annotated `v0.8.0` and `v0.10.2` tags that independent remote inspection did
+  not find. Hosted CI cannot decide this because it runs
+  `cycle-check --skip-local-tag-verification`. Before changing records or
+  refs, v0.22 must establish whether those tags exist in a local-only clone,
+  were deleted, or were never created.
 - **Evidence candidate:** `3f61aed183e195ccaf952cbc7f4528712bab028d`
   on neutral branch `candidate/v0.15.4-v0.21`.
-- **Version identity:** current published product identity remains v0.15.4.
-  Step 6 has not decided publication and may legitimately close with no
-  release.
 - **Hosted evidence:** workflow-dispatch run `30432249637` attempt 1; all
   **7/7** derived identities authenticated, zero receipts rejected, across six
   blocking workflow definitions. Hosted logs measured **133** workspace tests,
@@ -715,8 +753,8 @@ or protected database changed.
   **34,714** bytes at `evidence/v0.21/deferred-audit/report.json`.
 - **Evidence pins:** **206/206** total — **204/204** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release or closing commit:** requires Step 6's complete definition of done
-  and separate operator publication decision.
+- **Release commit:** requires creation followed by the complete clean
+  definition-of-done measurement.
 - **Remote disposition:** `main` remains
   `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; the neutral candidate branch is
   exact at the evidence candidate; annotated `v0.15.4` is unchanged and no
