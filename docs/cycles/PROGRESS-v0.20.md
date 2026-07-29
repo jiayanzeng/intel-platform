@@ -251,3 +251,84 @@ Entries are append-only; corrections are new dated entries.
   progress entry; it is rerun after this hash-bearing append.
 - golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-29 · RE-MEASURE — v0.15.4 release evidence admitted
+
+- owner: Codex
+- commit: 5631e70
+- result: PASS. The operator authorized exactly the Step 6 Gate's
+  non-`main` candidate push and authenticated hosted dispatch. The
+  implementation commit contains the seven signed receipt/bundle pairs from
+  that run, its release-posture deferred-audit report, the 15 append-only
+  manifest admissions, `STATE.md`, and the v0.20 runbook status/pending-closing
+  records. No tag, `main` advance, publication, product path, public surface,
+  dependency, lockfile, schema, or protected database changed.
+- version/candidate acceptance: PASS. The runbook's mechanical patch default
+  selected `v0.15.4` because no `/v1/*` route or body and no crate changed.
+  Exact candidate
+  `8230d4f24f565afcde92931c987adff4339036af` was pushed to
+  `candidate/v0.15.4`.
+- workflow acceptance: PASS. Before dispatch, the remote candidate's
+  `.github/workflows/ci.yml` was read through both contents and raw paths and
+  confirmed to contain the expected core, lint, net, MSRV, two-shell, golden,
+  cycle/checklist, invariant/progress, receipt-signing, and artifact-upload
+  invocations. Remote and local workflow blobs are both
+  `96e85af978981b7af9bdd8e9e11069f158f35e57`.
+- hosted/count acceptance: PASS. Workflow-dispatch run `30423736121` attempt
+  **1** completed successfully at the exact candidate with all **6** blocking
+  jobs green. Hosted logs, not job labels, measured **133** workspace tests,
+  **55** net tests (**29 + 26**), `invariant-scan` **11/11 rules / 23
+  controls**, R10 **45** exemptions, and golden **11/11**, equal to local
+  `./run ci-local` at that same commit. Each hosted shell lane collected the
+  same **255** tests as local, with Linux reporting **254 passed + 1 declared
+  on-site-only protected-corpus skip** versus macOS **255 passed**. Hosted
+  Python 3.11.15 and 3.12.13 each resolved the exact **21-package**
+  constraints; constrained local Python 3.11.4 and 3.12.13 each passed
+  **255/255**.
+- corrected-control acceptance: PASS. Hosted `shell (Python 3.11)`, step
+  `active cycle and amendment consistency`, used `fetch-depth: 0` and reported
+  `cycle-check: PASS` with active v0.20 open, 17 closed execution runbooks,
+  three historical runbooks, and no requested local tag refs. The same job
+  reported checklist **163 checked / 3 retracted / 163 matched / 0
+  exemptions** and prior progress head `EXPORT-CONTRACT` at `15b7d48`.
+- authentication/re-derivation acceptance: PASS. All **7/7**
+  workflow-derived identities across the six jobs have successful Linux
+  receipts and persisted Sigstore bundles; zero receipts were rejected and the
+  single-run matrix is complete. The first committed re-derivation was a
+  restricted-network non-result during online attestation verification. The
+  permitted identical command passed **7** rows, **5** source dispositions,
+  and **7** triggers with release grade and attestations required.
+- deferred-audit acceptance: PASS. The first clean detached invocation was a
+  setup non-result because its subject lacked the intentionally untracked
+  protected databases and raised `FileNotFoundError` before producing a
+  report. The retry exposed the already verified read-only database bytes
+  through ignored links under `/private/tmp`; both hashes matched and detached
+  `git status` stayed clean. The resulting report records **5 deferred / 2
+  promoted / 0** deferred subsystems implemented. Exact-cosine p95 at the
+  largest **2,600-document** archive is **8.958167 ms**, below the
+  **16.264 ms** A3 request anchor.
+- artifact acceptance: PASS. Report
+  `evidence/v0.15.4/deferred-audit/report.json` is **34,608** bytes at
+  SHA-256
+  `b90b2f00d8129f17c09e48e2bdefb2d48d97f5d502e2723b8a5e2d0a5d25d00e`.
+  The **15** new records bring the protected manifest to **191/191** pins —
+  **189/189** evidence plus **2/2** authorization surfaces. Manifest schema
+  v2, `verify-artifacts`, and `evidence-report` pass with protected databases
+  **2/2** exact.
+- status/ref acceptance: PASS. A first status draft put the exact mutable
+  `origin/main` measurement back into the live header; the new SELF-REF guard
+  rejected it with its named structural diagnostic. Moving the exact
+  measurement to the dated body made `cycle-check` pass. A restricted final
+  ref query was a DNS non-result; the permitted identical read confirms
+  `origin/main` remains
+  `692069ead0b8823d6874d8f2fc0a593d9f26704f`, the candidate remains exact,
+  and no `v0.15.4` tag exists. The expected pre-audit `checklist-audit`
+  refusal named only this not-yet-possible hash-bearing progress entry; it is
+  rerun after this append.
+- shell supplemental acceptance: PASS. Restricted post-audit repeats of both
+  shell lanes were loopback/process-inspection permission non-results; the
+  identical permitted Python 3.11.4 and 3.12.13 commands each passed
+  **255/255**.
+- golden-E2E delta: **0**. The first final sandboxed `./run golden` was a
+  loopback-bind permission non-result; the identical permitted invocation
+  passed **11/11**.
