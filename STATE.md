@@ -1,21 +1,21 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.21 R-CLOSE publication of v0.15.5 is authorized and release reconciliation is in progress; the exact release commit still requires its clean definition-of-done measurement and published-head hosted result.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` is separate on neutral branch `candidate/v0.15.4-v0.21`. Candidate-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **258/258** on Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **258/258**. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Authenticated workflow-dispatch run `30432249637` passed all **7** executable job instances at the exact candidate; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.21 is closed and v0.15.5 is published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Exact-release `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **258/258** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **258/258**. `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. G3 remains open: v0.20 is corrected in the published tree, while v0.21 reproduces the same close-record fixed point. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
-**v0.21 R-CLOSE publication is authorized and v0.15.5 reconciliation is
-prepared (measured 2026-07-29).** Release disposition: release (as of
-2026-07-29). The release identity is v0.15.5 because no `/v1/*` route or
-response body, schema, dependency, crate source, runtime behavior, robots
-policy, configured source, or protected database changed.
+**v0.21 R-CLOSE publishes v0.15.5 and closes the cycle (measured
+2026-07-29).** Release disposition: release (as of 2026-07-29). The release
+identity is v0.15.5 because no `/v1/*` route or response body, schema,
+dependency, crate source, runtime behavior, robots policy, configured source,
+or protected database changed.
 
 No publication trigger was visible at entry: published v0.15.4 was green. The
 trigger emerged by measurement at E0. Replacing the tag-object assertion with
 forty zeroes in the published header's own live phrasing made the published
 `check_publication_status` return `errors=[]`. The published tree therefore
-ships a control that claims pass while examining nothing. Without publication,
-`main` would retain that false-capability claim and could not carry G3's
-forward correction. This measured defect, not the patch default, is the
-publication trigger.
+shipped a control that claimed pass while examining nothing. Without
+publication, `main` would have retained that false-capability claim and could
+not carry G3's forward correction. This measured defect, not the patch default,
+was the publication trigger.
 
 G1 is the third instance in one failure family, not an isolated pattern bug.
 v0.19 specified an unsatisfiable mutable-ref rule; v0.20 shipped two
@@ -27,25 +27,25 @@ entry point over nine planted cases and independently disables all seven
 current rule families. Both immutable assertions are total requirements, and
 the narrow ``[^`\n]`` boundary remains deliberate.
 
-G3 is corrected for v0.20 and reproduced for v0.21. Publishing v0.15.5 carries
-v0.20's closing audit into the published tree, but the v0.21 release commit
-again necessarily precedes its own post-push hosted result and canonical
-closing record. G3 therefore remains open. The fixed point originates in the
-v0.20 runbook's R-CLOSE ordering, authored by the operator: it required
-post-push hosted CI before checking the box and writing the closing record, so
-the record could not be in the tree that triggered that CI. The v0.22 subject
-is a true two-phase close: close on the candidate's already-existing
-authenticated hosted evidence — run `30432249637` is this cycle's proof — then
-append the post-push confirmation as a dated forward record.
+G3 is corrected for v0.20 and reproduced for v0.21. Published v0.15.5 carries
+v0.20's closing audit, but release commit
+`b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa` necessarily preceded push run
+`30435272303` and this canonical v0.21 closing record. G3 therefore remains
+open. The fixed point originates in the v0.20 runbook's R-CLOSE ordering,
+authored by the operator: it required post-push hosted CI before checking the
+box and writing the closing record, so the record could not be in the tree that
+triggered that CI. The v0.22 subject is a true two-phase close: close on the
+candidate's already-existing authenticated hosted evidence — run
+`30432249637` is this cycle's proof — then append the post-push confirmation as
+a dated forward record.
 
 The absent historical tags are a separate v0.22 release-identity item with a
 separate trigger. The v0.8, v0.8.1, and v0.10.2 runbooks record annotated
 `v0.8.0` and `v0.10.2` tags that independent remote inspection did not find.
 Hosted CI cannot settle this because it intentionally runs
-`cycle-check --skip-local-tag-verification`. When v0.22 has access to
-repository-local clones/reflogs or backups plus the configured remote, it must
-establish whether those tags are local-only, were deleted, or were never
-created before anyone changes either historical records or remote refs.
+`cycle-check --skip-local-tag-verification`. v0.22 must establish whether those
+tags are local-only, were deleted, or were never created before anyone changes
+either historical records or remote refs.
 
 G4 remains **Accept as of 2026-07-29**: under the current rhythm, a cycle's
 final append-only audit is locally verified when written and first becomes
@@ -53,7 +53,7 @@ hosted-verified as an ancestor of the next publication. The v0.22 two-phase
 correction above is a distinct forward subject; this release does not rewrite
 the accepted historical record.
 
-The intended release diff from annotated v0.15.4 contains exactly **33 paths**,
+The release diff from annotated v0.15.4 contains exactly **33 paths**,
 classified once each:
 
 - **Publication-status checker and failure controls (4):**
@@ -76,15 +76,34 @@ classified once each:
   `evidence/v0.21/deferred-audit/report.json`.
 
 Evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` on
-`candidate/v0.15.4-v0.21` and the release commit are separate named subjects.
-The release commit remains to be created and measured. Dated prepublication
-readback still places remote `main` at
-`8c1eff03ff3e67b18176e8bf533de0f9501e0257`, the neutral candidate at the
-evidence commit, and no `v0.15.5` tag. A4, editable L1, the R3/R4 open-bottom
-limits, active-runbook measured-value heuristic, T7, Decision B's
-last-known-good fallback, scheduled L2, and the one-real-publisher limitation
-remain open. `arxiv-cs` is still the sole real publisher; the other three
-configured sources remain `example.org` fixtures.
+`candidate/v0.15.4-v0.21` and release commit
+`b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa` are separate named subjects.
+Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to
+that release commit. Clean constrained Python 3.11.4 and 3.12.13 environments
+each resolved the same **21** packages and passed shell **258/258**.
+`./run ci-local` passed **20/20** with **133** workspace tests, **55** net
+tests (**29 + 26**), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck gates,
+`invariant-scan` **12/12 rules / 30 controls**, R10 **45** exemptions, all
+**206/206** pins, protected databases **2/2**, and embedded golden **11/11**.
+Release-posture re-derivation passed **7** rows, **5** source dispositions, and
+**7** triggers with attestations required. Project-root `export-check` passed
+**90/90** derived sources, **7/7** required paths, and **149** exported paths.
+Mandatory standalone golden passed **11/11**, delta **0**.
+The closing-record repeat also passed **11/11**.
+
+The release commit and annotated tag were atomically published. Dated remote
+readback measured `refs/heads/main` at the release commit, candidate branch
+`candidate/v0.15.4-v0.21` unchanged at the evidence candidate, tag object
+exact at `f2bfeacc1dc8207841430e3827e7babed5605b47`, and the peeled target exact
+at the release commit. Push run `30435272303` attempt **1** completed
+successfully at that exact head: core, clippy/fmt, net, Rust 1.78, shell Python
+3.11, shell Python 3.12, and golden — all **7** executable jobs — were green;
+the report-only dependency-drift job was skipped by its trigger.
+
+A4, editable L1, the R3/R4 open-bottom limits, active-runbook measured-value
+heuristic, T7, Decision B's last-known-good fallback, scheduled L2, and the
+one-real-publisher limitation remain open. `arxiv-cs` is still the sole real
+publisher; the other three configured sources remain `example.org` fixtures.
 
 **v0.21 RE-MEASURE admits authenticated release-posture evidence without
 prejudging publication (measured 2026-07-29).** The operator authorized the

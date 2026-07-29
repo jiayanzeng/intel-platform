@@ -696,10 +696,12 @@ or protected database changed.
   loopback-bind permission non-result; the identical permitted command passed
   **11/11**.
 
-## Pending Cycle closing record
+## Cycle closing record
 
+- **Cycle closed:** 2026-07-29
 - **Publication decision:** publish v0.15.5, operator-authorized 2026-07-29.
-- **Release disposition:** release (as of 2026-07-29).
+- **Release disposition:** release (as of 2026-07-29)
+- **Release:** v0.15.5
 - **Publication trigger:** no trigger was visible at entry because published
   v0.15.4 was green. E0 then replaced the tag-object assertion with forty
   zeroes in the published header's own live phrasing and the published
@@ -753,12 +755,38 @@ or protected database changed.
   **34,714** bytes at `evidence/v0.21/deferred-audit/report.json`.
 - **Evidence pins:** **206/206** total — **204/204** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** requires creation followed by the complete clean
-  definition-of-done measurement.
-- **Remote disposition:** `main` remains
-  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; the neutral candidate branch is
-  exact at the evidence candidate; annotated `v0.15.4` is unchanged and no
-  `v0.15.5` tag exists.
+- **Release commit:** `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`
+- **Annotated tag object:** `f2bfeacc1dc8207841430e3827e7babed5605b47`
+- **Tag target:** the annotated v0.15.5 tag peels to the release commit above.
+- **Exact release matrix:** clean constrained Python 3.11.4 and 3.12.13
+  environments each resolved the same **21** packages and passed shell
+  **258/258**. `./run ci-local` passed **20/20** with **133** workspace tests,
+  **55** net tests (**29 + 26**), locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck gates, `invariant-scan` **12/12 rules / 30
+  controls**, R10 **45** exemptions, all **206/206** pins, protected databases
+  **2/2**, and embedded golden **11/11**. Release-posture re-derivation passed
+  **7** rows, **5** source dispositions, and **7** triggers with attestations
+  required. `export-check` passed **90/90** derived sources, **7/7** required
+  paths, and **149** exported paths. Standalone golden passed **11/11**, delta
+  **0**; the closing-record repeat also passed **11/11**.
+- **Publication:** the release commit and annotated tag were atomically
+  published. Dated remote readback measured `refs/heads/main` at the release
+  commit, candidate branch `candidate/v0.15.4-v0.21` unchanged at the evidence
+  candidate, and the annotated tag at the object and peeled target above.
+- **Post-push hosted result:** push run `30435272303` attempt **1** completed
+  successfully at exact release head
+  `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`. Core, clippy/fmt, net, Rust
+  1.78, shell Python 3.11, shell Python 3.12, and golden — all **7**
+  executable jobs — were green; report-only dependency drift was skipped by
+  its declared trigger. The cycle did not close until this result existed.
+- **Release diff:** exactly **33** paths, each classified once in `STATE.md`.
+  `CHANGELOG.md`, `README.md`, all release authorities, and
+  `ARCHITECTURE.md` are reconciled.
+- **Open architecture/product scope:** G3 remains open as described above. A4,
+  editable L1, R3/R4's open-bottom scanners, the active-runbook measured-value
+  heuristic, T7 robots single-flight, Decision B's last-known-good fallback,
+  and scheduled L2 remain open. `arxiv-cs` is the sole real publisher and the
+  other three sources are fixtures.
 
 ---
 
@@ -781,7 +809,7 @@ or protected database changed.
 - [x] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
   hosted `invariant-scan` proves every registered rule and declared
   planted-failure control at that commit, with counts recorded
-- [ ] **R-CLOSE** — publication decided on a trigger, with no-release named as
+- [x] **R-CLOSE** — publication decided on a trigger, with no-release named as
   legitimate; G1 recorded as the third instance in a family with its common
   cause; G3 and G4 recorded as measured; all open items still open
 

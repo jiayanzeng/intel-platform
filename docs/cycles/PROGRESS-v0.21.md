@@ -285,3 +285,99 @@ Entries are append-only; corrections are new dated entries.
   not-yet-possible hash-bearing progress entry; `git diff --check` passed.
 - golden-E2E delta: **0**. The restricted final invocation was a loopback-bind
   permission non-result; the identical permitted command passed **11/11**.
+
+### 2026-07-29 · R-CLOSE — v0.15.5 published; v0.21 closed
+
+- owner: Codex
+- commit: b7c4b10
+- result: PASS. The operator authorized v0.15.5 publication. Release commit
+  `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa` and annotated tag object
+  `f2bfeacc1dc8207841430e3827e7babed5605b47` were atomically published; the
+  tag peels to that exact commit. This separate append-only audit checks
+  R-CLOSE and closes the runbook only after the published-head hosted gate
+  passed. Steps 1–5 were complete and boxed, and the worktree was clean at the
+  publication gate.
+- version/trigger acceptance: PASS. v0.15.5 is patch-compatible because no
+  `/v1/*` route or response body, schema, dependency, crate source, runtime
+  behavior, robots policy, configured source, or protected database changed.
+  No publication trigger was visible at entry. E0 then proved that published
+  v0.15.4 returned `errors=[]` after the tag-object assertion was replaced by
+  forty zeroes in the header's own live phrasing: a published control claimed
+  pass while examining nothing. This measured false capability, not the patch
+  default, fired publication. Release disposition: release (as of 2026-07-29).
+- subject acceptance: PASS. Evidence candidate
+  `3f61aed183e195ccaf952cbc7f4528712bab028d` on
+  `candidate/v0.15.4-v0.21` and the release commit are separate named subjects.
+  Dated remote readback measured `refs/heads/main` at the release commit, the
+  candidate branch unchanged at its candidate, and the tag object and peeled
+  target exact.
+- G1-family acceptance: PASS. v0.19's unsatisfiable mutable-ref rule, v0.20's
+  two unavailable-input no-op paths, and v0.21's vacuous live pattern are
+  recorded as three instances of one cause: the checker's own rules were not
+  themselves subject to planted-failure discipline. R12 corrects that class
+  by invoking the real entry point over nine planted cases and independently
+  disabling all seven rule families. Both immutable assertions are total
+  requirements; the narrow ``[^`\n]`` boundary remains deliberate.
+- G3 acceptance: PASS as a measured open finding, not a closure. v0.15.5
+  corrects v0.20 by publishing its closing audit and simultaneously reproduces
+  G3 for v0.21 because the release commit preceded push run `30435272303` and
+  this closing record. The fixed point originates in the operator-authored
+  v0.20 R-CLOSE ordering, which required the post-push result before the box
+  and record could be written. The v0.22 subject is a true two-phase close:
+  close on already-existing candidate hosted evidence — run `30432249637` is
+  the current proof — then append post-push confirmation as a dated forward
+  record.
+- G4 acceptance: PASS by dated acceptance. Accept (as of 2026-07-29): under
+  the current rhythm, the final append-only audit is locally verified when
+  written and first becomes hosted-verified in the following publication.
+  v0.22's two-phase correction is a separate forward subject.
+- historical-tag acceptance: DEFERRED to its distinct v0.22
+  release-identity item. The v0.8, v0.8.1, and v0.10.2 records name annotated
+  `v0.8.0` and `v0.10.2` tags absent from independent remote inspection;
+  hosted CI cannot settle that because it runs
+  `cycle-check --skip-local-tag-verification`. v0.22 must classify the tags as
+  local-only, deleted, or never created before changing records or refs.
+- release-matrix acceptance: PASS. The restricted Python 3.11 package install
+  was a DNS non-result; its permitted identical retry and the Python 3.12
+  rebuild resolved the same **21** constrained packages. Constraints checks
+  passed and both Python 3.11.4 and 3.12.13 shell lanes passed **258/258**.
+  The first restricted Python 3.11 test run exercised all 258 tests but had
+  eight environmental failures because loopback binds and `ps` were denied;
+  the identical permitted command passed **258/258**. `./run ci-local` passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**),
+  locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck gates,
+  `invariant-scan` **12/12 rules / 30 controls**, R10 **45** exemptions, all
+  **206/206** pins, protected databases **2/2**, and embedded golden **11/11**.
+- evidence/export acceptance: PASS. Online release-posture re-derivation
+  passed **7** rows, **5** source dispositions, and **7** triggers with release
+  grade and attestations required. Protected report
+  `evidence/v0.21/deferred-audit/report.json` remained **34,714** bytes at
+  SHA-256
+  `5e39cb000b08c6191d19f3ea91a90c6c89dc0680f0e76aed1e14523b2c06562a`.
+  Manifest schema v2 passes with **206/206** pins — **204/204** evidence plus
+  **2/2** authorization surfaces — and protected databases remain exact
+  **2/2**. Project-root `export-check` passed **90/90** derived sources,
+  **7/7** required paths, and **149** exported paths.
+- publication/hosted acceptance: PASS. Prepublication remote inspection found
+  prior `main` at `8c1eff03ff3e67b18176e8bf533de0f9501e0257`,
+  candidate exact, v0.15.4 unchanged, and no v0.15.5 tag. The atomic push
+  advanced `main` and created v0.15.5. Push run `30435272303` attempt **1**
+  completed successfully at exact release head: all **7** executable jobs
+  (core, clippy/fmt, net, Rust 1.78, shell Python 3.11, shell Python 3.12, and
+  golden) were green; report-only dependency drift was skipped. The cycle did
+  not close until this result existed.
+- status/documentation acceptance: PASS. The **33**-path release diff is
+  classified exactly once in `STATE.md`; `CHANGELOG.md`, `README.md`, all
+  release authorities, and `ARCHITECTURE.md` are reconciled. A4, editable L1,
+  R3/R4's open-bottom limits, the active-runbook measured-value heuristic, T7,
+  Decision B's last-known-good fallback, and scheduled L2 remain open.
+  `arxiv-cs` remains the sole real publisher; the other three sources remain
+  fixtures and a second publisher still requires a separate compliance
+  decision.
+- warning disposition: PASS with two non-blocking third-party warnings
+  recorded. Local shell tests emit one `StarletteDeprecationWarning`; hosted
+  CI emits one GitHub Actions Node-runtime deprecation annotation. Rust,
+  clippy, fmt, and ShellCheck remain clean.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11** after the exact release matrix, and the closing-record repeat after
+  all status edits also passed **11/11**.
