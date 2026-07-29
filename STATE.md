@@ -1,6 +1,77 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 MASKING is complete and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization) remain exact, protected databases remain **2/2**, and golden remains **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 RE-MEASURE is complete; Step 6 has not yet recorded a publication decision, and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` is separate on neutral branch `candidate/v0.15.4-v0.21`. Candidate-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **258/258** on Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **258/258**. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Authenticated workflow-dispatch run `30432249637` passed all **7** executable job instances at the exact candidate; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.21 RE-MEASURE admits authenticated release-posture evidence without
+prejudging publication (measured 2026-07-29).** The operator authorized the
+Gate's exact non-`main` branch push and authenticated hosted dispatch. Candidate
+`3f61aed183e195ccaf952cbc7f4528712bab028d` was pushed only to
+`candidate/v0.15.4-v0.21`. The branch name combines the unchanged current
+product identity with the active cycle so that Step 6 may still choose a
+legitimate no-release close. No tag, `main` advance, publication, product path,
+public surface, dependency, lockfile, schema, robots path, configured source,
+or protected database changed.
+
+Before dispatch, the remote candidate's `.github/workflows/ci.yml` was read
+through the GitHub contents endpoint. Its blob
+`96e85af978981b7af9bdd8e9e11069f158f35e57` exactly equals the local workflow
+blob and contains the expected core, lint, net, MSRV, two-shell, golden,
+cycle/checklist, invariant/progress, provenance-signing, and artifact-upload
+invocations. Workflow-dispatch run `30432249637` attempt **1** completed
+successfully at that exact candidate. All **7/7** executable job instances
+across the six blocking workflow job definitions were green; the report-only
+dependency-drift job was skipped by its declared trigger.
+
+Every count was read from the hosted log and reconciled with local execution at
+the same commit. Local `./run ci-local` passed **20/20** with **133** workspace
+tests, **55** net tests (**29 + 26**), locked Rust 1.78, zero
+rustc/clippy/fmt/ShellCheck failures, shell **258/258** on Python 3.11.4,
+`invariant-scan` **12/12 rules / 30 controls**, R10 **45** exemptions, and
+embedded golden **11/11**. Independently rebuilt Python 3.12.13 passed
+**258/258**. Hosted logs report the same **133**, **55**, **12/12 / 30**,
+**45**, and **11/11** counts. Hosted Python 3.11.15 and 3.12.13 each collected
+the same **258** shell tests as **257 passed + 1 declared on-site-only protected
+corpus skip**, after resolving the exact **21-package** constraints.
+
+Hosted R12 printed and passed every one of its seven registry fail-before
+controls: mutable-ref prohibition; required/fresh tag object; required/fresh
+peeled target; pending-publication refusal; missing tag ref; missing target;
+and unavailable ancestry. The hosted lifecycle checks also passed:
+`cycle-check` found active v0.21 open, eighteen closed execution runbooks, and
+three historical runbooks; checklist audit reported **169 checked / 3
+retracted / 169 matched / 0 exemptions**; and progress-check resolved
+`MASKING · f6708fb`. This is the required hosted proof of the new
+failure-capable publication rules, not an inference from local status.
+
+The seven successful Linux receipts — core, golden, lint, MSRV, net, and shell
+Python 3.11/3.12 — came from the one run and exact candidate. All seven
+persisted Sigstore bundles verify their receipt bytes, repository
+`jiayanzeng/intel-platform`, workflow signer, source digest, neutral candidate
+source ref, and GitHub-hosted runner identity. Zero receipts were rejected and
+the derived identity matrix is complete.
+
+The release-posture deferred audit measured a clean detached candidate with
+the already verified protected database bytes exposed through ignored
+read-only links. Detached `git status` remained clean. The final report records
+**5 deferred / 2 promoted / 0** deferred subsystems implemented; exact-cosine
+p95 at the largest **2,600-document** archive is **7.476416 ms**, below the
+**16.264 ms** A3 request anchor. Report
+`evidence/v0.21/deferred-audit/report.json` is **34,714 bytes** at SHA-256
+`5e39cb000b08c6191d19f3ea91a90c6c89dc0680f0e76aed1e14523b2c06562a`.
+A restricted re-derivation could not promote the CI-evidence row because
+online provenance was unavailable; the identical permitted command passed
+**7** rows, **5** source dispositions, and **7** triggers with release grade
+and attestations required.
+
+The **15** append-only admissions bring the schema-v2 manifest to
+**206/206** pins — **204/204** evidence plus **2/2** authorization surfaces.
+Manifest validation, `verify-artifacts`, and `evidence-report` pass; protected
+databases remain exact **2/2**. A restricted final golden attempt was a
+loopback-bind permission non-result; the identical permitted invocation passed
+**11/11**, delta **0**. Final remote readback measured `main` unchanged at
+`8c1eff03ff3e67b18176e8bf533de0f9501e0257`, candidate branch exact at
+`3f61aed183e195ccaf952cbc7f4528712bab028d`, annotated `v0.15.4` unchanged,
+and no `v0.15.5` tag.
 
 **v0.21 MASKING makes both statement-order decisions explicit (decided and
 measured 2026-07-29).** G5 retains intentional masking. A mismatch between the

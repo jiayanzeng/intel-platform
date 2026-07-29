@@ -620,6 +620,108 @@ status records only.
   existing complete scanner passes **12/12 rules / 30 controls**. Standalone
   golden passes **11/11**, delta **0**.
 
+### 2026-07-29 · RE-MEASURE
+
+PASS. The operator authorized exactly the Gate's non-`main` candidate push and
+authenticated hosted evidence dispatch. Repository admission contains only the
+seven signed receipt/bundle pairs from that run, the release-posture
+deferred-audit report, the append-only protected-artifact manifest records, and
+required status records. No tag, `main` advance, publication, product path,
+public surface, dependency, lockfile, schema, robots path, configured source,
+or protected database changed.
+
+- **Neutral candidate:** exact candidate
+  `3f61aed183e195ccaf952cbc7f4528712bab028d` is on
+  `candidate/v0.15.4-v0.21`. The name combines the unchanged current product
+  identity and active cycle; it deliberately leaves Step 6 free to choose a
+  no-release close. Final readback found the candidate exact, `main` unchanged
+  at `8c1eff03ff3e67b18176e8bf533de0f9501e0257`, annotated `v0.15.4`
+  unchanged, and no `v0.15.5` tag.
+- **Workflow acceptance:** before dispatch, the remote candidate workflow was
+  read through the GitHub contents endpoint and confirmed to contain the
+  expected core, lint, net, MSRV, two-shell, golden, cycle/checklist,
+  invariant/progress, provenance-signing, and artifact-upload invocations.
+  Remote and local blobs are both
+  `96e85af978981b7af9bdd8e9e11069f158f35e57`.
+- **Same-commit count acceptance:** local `./run ci-local` passed **20/20**
+  with **133** workspace tests, **55** net tests (**29 + 26**), locked Rust
+  1.78, shell **258/258** on Python 3.11.4, invariant **12/12 rules / 30
+  controls**, R10's **45** exemptions, and golden **11/11**; constrained
+  Python 3.12.13 independently passed **258/258**. Hosted run `30432249637`
+  attempt **1** reports the same **133**, **55**, **12/12 / 30**, **45**, and
+  **11/11** counts. Hosted Python 3.11.15 and 3.12.13 each collected **258**
+  shell tests as **257 passed + 1 declared on-site-only protected-corpus
+  skip**, after resolving the exact 21-package constraints.
+- **Hosted corrected-control acceptance:** all **7/7** executable job instances
+  across the six blocking workflow definitions were green. Hosted R12 emitted
+  all seven exact registry controls: mutable-ref prohibition; required/fresh
+  tag object; required/fresh peeled target; pending-publication refusal;
+  missing tag ref; missing target; and unavailable ancestry. The complete
+  hosted scanner reported **12/12 registered rules / 30 controls**.
+  `cycle-check` passed with v0.21 open, eighteen closed execution runbooks, and
+  three historical runbooks; checklist audit reported **169 checked / 3
+  retracted / 169 matched / 0 exemptions**; progress-check resolved
+  `MASKING · f6708fb`.
+- **Identity/authentication acceptance:** all **7/7** workflow-derived
+  identities — core, golden, lint, MSRV, net, and shell Python 3.11/3.12 —
+  have successful Linux receipts from one run and exact candidate. Every
+  persisted Sigstore bundle verifies its exact receipt bytes, repository,
+  workflow signer, source digest, neutral candidate source ref, and
+  GitHub-hosted runner identity. Zero receipts were rejected and the matrix is
+  complete.
+- **Deferred-audit acceptance:** a clean detached candidate used ignored
+  read-only links to the already verified protected database bytes; detached
+  `git status` remained clean. The attestations-required release report records
+  **5 deferred / 2 promoted / 0** deferred subsystems implemented.
+  Exact-cosine p95 at the largest **2,600-document** archive is
+  **7.476416 ms**, below the **16.264 ms** A3 request anchor. Report
+  `evidence/v0.21/deferred-audit/report.json` is **34,714 bytes** at SHA-256
+  `5e39cb000b08c6191d19f3ea91a90c6c89dc0680f0e76aed1e14523b2c06562a`.
+  Restricted online re-derivation was a network non-result; the identical
+  permitted command passed **7** rows, **5** source dispositions, and **7**
+  triggers with release grade and attestations required.
+- **Artifact acceptance:** the **15** append-only admissions bring the
+  schema-v2 manifest to **206/206** pins — **204/204** evidence plus **2/2**
+  authorization surfaces. Manifest validation, `verify-artifacts`, and
+  `evidence-report` pass with protected databases **2/2** exact.
+- **Lifecycle acceptance:** the first live-header draft said the Step 6
+  publication decision “remains pending”; G6's deliberately conservative
+  proximity rule rejected it. Rephrasing the true state as “has not yet
+  recorded” made `cycle-check` pass without weakening the rule. The expected
+  pre-audit checklist refusal names only RE-MEASURE's not-yet-possible
+  hash-bearing progress entry. `git diff --check` passes.
+- **Golden-E2E delta:** **0**. The restricted final invocation was a
+  loopback-bind permission non-result; the identical permitted command passed
+  **11/11**.
+
+## Pending Cycle closing record
+
+- **Evidence candidate:** `3f61aed183e195ccaf952cbc7f4528712bab028d`
+  on neutral branch `candidate/v0.15.4-v0.21`.
+- **Version identity:** current published product identity remains v0.15.4.
+  Step 6 has not decided publication and may legitimately close with no
+  release.
+- **Hosted evidence:** workflow-dispatch run `30432249637` attempt 1; all
+  **7/7** derived identities authenticated, zero receipts rejected, across six
+  blocking workflow definitions. Hosted logs measured **133** workspace tests,
+  **55** net tests (**29 + 26**), shell **257 passed + 1 declared on-site-only
+  skip** on each interpreter, `invariant-scan` **12/12 rules / 30 controls**,
+  R10's **45** exemptions, and golden **11/11**.
+- **Corrected control:** hosted R12 detected every one of its seven declared
+  fail-before mutations at the evidence candidate.
+- **Release-posture audit:** **5** deferred / **2** promoted / **0** deferred
+  subsystems implemented; report SHA-256
+  `5e39cb000b08c6191d19f3ea91a90c6c89dc0680f0e76aed1e14523b2c06562a`,
+  **34,714** bytes at `evidence/v0.21/deferred-audit/report.json`.
+- **Evidence pins:** **206/206** total — **204/204** evidence plus **2/2**
+  authorization surfaces; protected databases exact **2/2**.
+- **Release or closing commit:** requires Step 6's complete definition of done
+  and separate operator publication decision.
+- **Remote disposition:** `main` remains
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; the neutral candidate branch is
+  exact at the evidence candidate; annotated `v0.15.4` is unchanged and no
+  `v0.15.5` tag exists.
+
 ---
 
 ## Cycle checklist
@@ -638,7 +740,7 @@ status records only.
   here**; G4 recorded as accepted, corrected, or deferred, dated; no push
 - [x] **MASKING** — G5 decided and commented or tested; G6's disposition
   recorded with a date; refuted halves deleted
-- [ ] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
+- [x] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
   hosted `invariant-scan` proves every registered rule and declared
   planted-failure control at that commit, with counts recorded
 - [ ] **R-CLOSE** — publication decided on a trigger, with no-release named as
