@@ -6,6 +6,14 @@
 > been activated; the `## Runbook amendments` discipline begins at the activation
 > commit, not before it.
 
+## Runbook amendments
+
+- **2026-07-29 — activation deferral assignment.** The activation commit's
+  `Manifest retention/indexing` row said `re-measure only`, which
+  `cycle-check` correctly rejected because the action named no discharging
+  step. The row now assigns that unchanged measurement to Step 1. No Step
+  objective, gate, acceptance criterion, or done condition changed.
+
 v0.22 executed the tagged-close protocol for the first time. Release parent
 `a83db73…` is untagged, closing commit `15b6d289…` carries the record naming it,
 the annotated v0.15.6 object `47c5b314…` targets the child, and remote `main`
@@ -221,7 +229,7 @@ condition is an event rather than a quantity.
 | Second configured publisher | a separate compliance review per publisher | no review opened | none — **do not add a source** |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | not authorized | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | tags unpublished | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 step 6 | re-measure only |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 step 6 | Step 1 — re-measure only |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | literal present in production source | none — recorded, not acted on |
 
 ---
