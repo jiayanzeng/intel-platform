@@ -225,3 +225,47 @@ Entries are append-only; corrections are new dated entries.
   surface, or ref changed.
 - golden-E2E delta: **0**. The mandatory post-record standalone execution
   passed all **11** checks.
+
+### 2026-07-30 · HISTORY-BOUND — one false measurement corrected forward
+
+- owner: Codex
+- commit: 7b4f6ed
+- result: PASS. A dated `STATE.md` append supersedes the exact false v0.23
+  hosted measurement without editing its append-only progress entry or closed
+  execution record.
+- bounded-set acceptance: PASS. The affected class is **isolated**: exactly
+  **one** false RE-MEASURE measurement event, represented by the
+  `2026-07-29 · RE-MEASURE` progress entry and the same copied statement in the
+  closed runbook.
+- superseding-entry acceptance: PASS. The historical claim said each hosted
+  shell lane passed **275** tests with no skip and equalled local. Hosted run
+  `30459746825` attempt **1** instead collected **275**, passed **274**, and
+  skipped **1** named `on_site` test for the
+  protected-corpora-and-built-`cored` reason. The v0.23 POST-PUSH append for run
+  `30462710258` first recorded the correction; the new forward entry confirms
+  that exact boundary.
+- G4 operator acceptance: PASS. On 2026-07-30 the operator applied E0's
+  criterion and approved the dated-supersession classification. Retractions
+  govern later-falsified accepted product, invariant, or task properties;
+  incorrect append-only audit figures use a dated superseding entry when the
+  executed result remains valid. `config/checklist-retractions.json` remains
+  byte-identical and the retraction count remains **3**.
+- non-impact acceptance: PASS. The defect is in the recorded measurement only.
+  No published runtime, signed identity, protected pin, protected database,
+  green job conclusion, release graph, or public surface changed. The annotated
+  tag still peels to closing commit `e7715fb9…`, whose first parent is release
+  commit `8bb6a714…`; all **236** pins and both protected databases match.
+- fifth-instance acceptance: PASS by measurement against v0.23's criterion of
+  one distinct normative runbook requirement with no outcome satisfying both
+  requirement and governed action. The four prior members are v0.19
+  mutable-main freshness, v0.20 post-push-before-close ordering, v0.22's
+  closing field set, and v0.22's source prohibition. The bare equality rule
+  first authored in v0.21 Step 6 after dropping v0.19's skip clause is one new
+  member, producing **5** total. It is the first whose consequence was a false
+  published number rather than only an unmeetable criterion.
+- historical-immutability acceptance: PASS. The v0.23 runbook and progress
+  blobs remain `94745d8…` and `bea2851…`; the retraction-registry blob remains
+  `9e13d2d…`. `cycle-check` passed, and the pre-audit `checklist-audit`
+  correctly named HISTORY-BOUND as its sole unmatched checked task.
+- golden-E2E delta: **0**. Mandatory standalone execution passed all **11**
+  checks.
