@@ -279,6 +279,132 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
 
 ---
 
+## Execution records
+
+### 2026-07-29 · E0
+
+- **Entering matrix — PASS.** Repository-local environments were rebuilt from
+  empty trees. Python **3.11.4** and **3.12.13** each resolved the exact **21**
+  constrained packages and collected **275**, passed **275**, and skipped
+  **0** shell tests; the skip set was empty in both local environments. The
+  first sandboxed `./run ci-local` reached a denied loopback bind and was a
+  non-result. The identical permitted invocation passed all **20** jobs:
+  **133** workspace tests, **55** net tests (**29** ingest + **26** cored),
+  warning-denied current and locked Rust 1.78 lanes, clean
+  clippy/fmt/ShellCheck, `invariant-scan` **12/12 rules / 38 controls**, all
+  **236** pins, protected databases **2/2**, and embedded golden **11/11**.
+  Standalone golden passed **11/11**. Standalone `cycle-check`,
+  `checklist-audit` (**184 checked / 3 retracted / 184 matched / 0
+  exemptions**), `progress-check`, `version-check`, `invariant-scan`, manifest
+  validation, and `export-check` passed. The export contains **90** derived
+  sources, **7** required paths, and **155** exported paths; its first
+  sandboxed `npx` DNS failure was a network non-result.
+- **G1 — CONFIRMED.** `rg` found exactly **1**
+  `@pytest.mark.skipif` and **0** `pytest.skip(` calls under `shell/tests/**`.
+  The sole decorator guards
+  `test_on_site_production_measurements_match_committed_receipt`; its reason is
+  `on-site production audit requires protected corpora and built cored`.
+  Repository enumeration found **0** `pytest.ini`, `pyproject.toml`,
+  `setup.cfg`, `tox.ini`, or `conftest.py` files. `ci_pytest()` and the hosted
+  shell job both execute `pytest shell/tests -q`; no JUnit, JSON, report-log, or
+  other machine-readable output is requested or consumed.
+- **G2 — CONFIRMED.** v0.19's RE-MEASURE acceptance says that where a hosted
+  count differs by a declared on-site-only skip, the record must state the
+  skip. The corresponding v0.21, v0.22, and v0.23 acceptance criteria instead
+  say every count must be read from the log and equal to local, with no
+  environment clause. v0.22 resolved that impossible shell condition by
+  recording **266 collected / 265 passed / 1 declared on-site skip** per hosted
+  lane against **266 collected / 266 passed / 0 skipped** locally. v0.23
+  resolved the same condition in the opposite direction by claiming **275
+  collected / 275 passed / 0 skipped** for hosted and local even though the
+  hosted log says **275 collected / 274 passed / 1 skipped**. The divergent
+  resolutions, not either choice, confirm the authored defect.
+- **G3 — CONFIRMED and bounded.** `git log -S` places the conditional test's
+  introduction at commit `edd77a4835057fb0a0836b39600cbe54a88b5092`,
+  v0.10.1 PIN. That cycle's earlier G-RUN `30187058897` predates the test and
+  reports **120 collected / 120 passed / 0 skipped** in each hosted lane.
+  v0.10.2 PUBLISH run `30194678764`, which is outside the requested
+  RE-MEASURE/POST-PUSH record set, is the first hosted run to contain it and
+  reports **138 collected / 137 passed / 1 skipped**. Every requested retained
+  log was available; there is **no retention gap**:
+
+  | record | hosted run | each hosted Python lane: collected / passed / skipped | comparison with the record |
+  |---|---:|---:|---|
+  | v0.10.3 RE-MEASURE | `30202019640` | 187 / 186 / 1 on-site† | no hosted shell-number claim |
+  | v0.11 RE-MEASURE | `30236305375` | 191 / 190 / 1 on-site† | no hosted shell-number claim |
+  | v0.12 RE-MEASURE | `30253646597` | 205 / 204 / 1 on-site† | no hosted shell-number claim |
+  | v0.13 failed RE-MEASURE | `30274895522` | 216 / 215 / 1 on-site† | stopped on net; no shell-number pass claim |
+  | v0.13 RE-MEASURE retry | `30277584129` | 216 / 215 / 1 on-site† | no hosted shell-number claim |
+  | v0.14 RE-MEASURE | `30324186389` | 225 / 224 / 1 on-site† | matches |
+  | v0.15 RE-MEASURE | `30333331839` | 237 / 236 / 1 on-site† | matches |
+  | v0.16 RE-MEASURE | `30347262430` | 243 / 242 / 1 on-site† | matches |
+  | v0.17 RE-MEASURE | `30357365420` | 244 / 243 / 1 on-site† | matches |
+  | v0.18 RE-MEASURE | `30369139464` | 245 / 244 / 1 on-site† | matches |
+  | v0.19 RE-MEASURE | `30414648482` | 248 / 247 / 1 on-site† | matches |
+  | v0.20 RE-MEASURE | `30423736121` | 255 / 254 / 1 on-site† | matches |
+  | v0.21 RE-MEASURE | `30432249637` | 258 / 257 / 1 on-site† | matches |
+  | v0.22 RE-MEASURE | `30443692105` | 266 / 265 / 1 on-site† | matches |
+  | v0.22 POST-PUSH | `30446796322` | 266 / 265 / 1 on-site† | no hosted shell-number claim |
+  | v0.23 RE-MEASURE | `30459746825` | 275 / 274 / 1 on-site† | **false 275-passed/no-skip claim** |
+  | v0.23 POST-PUSH | `30462710258` | 275 / 274 / 1 on-site† | matches and supersedes the prior claim |
+
+  † The sole on-site member is
+  `test_on_site_production_measurements_match_committed_receipt`, skipped for
+  the declared protected-corpora-and-built-`cored` reason above. The exact
+  affected set is therefore **one record**:
+  `PROGRESS-v0.23.md`'s RE-MEASURE entry for run `30459746825` (and the same
+  false number copied into the v0.23 closed execution record). No other
+  RE-MEASURE or POST-PUSH progress claim in the measured range omitted a hosted
+  skip it purported to count.
+- **G4 — answered only after stating the criterion.** The existing registry
+  uses a retraction for a resolved checked task whose accepted
+  product/invariant or task-acceptance property was later proved false and
+  whose retraction and correction were explicitly accepted by the operator.
+  Its three entries each name the checked task, falsified acceptance property,
+  operator acceptance, and correcting task. An incorrect measurement inside
+  an append-only progress entry instead has an established instrument:
+  a dated superseding entry, demonstrated by v0.23 POST-PUSH. Applying that
+  existing distinction, this measurement correction does **not** itself meet
+  the checklist-retraction criterion and the registry remains at **three**;
+  Step 4 preserves the named operator decision on that application.
+- **G5 — CONFIRMED after a measured activation correction.** The first
+  activation attempt did not pass and did not exercise the static rule because
+  its YAML construction was outside the parser's Markdown schema; that result
+  remains recorded as NOT MEASURED. Correction commit `6c5ca4c` supplied the
+  accepted table, after which `cycle-check` passed the live `release` intent
+  with all **17** release-authority paths covered and exactly the declared
+  `shell/intel_shell/app.py` authority/forbid overlap. The focused
+  release-authority rejection construction and current-scope test both passed
+  (**2 tests**): the former detects missing authority coverage and the latter
+  verifies the current 17-path population. The static sub-rule therefore
+  examined and accepted this corrected live construction.
+- **G6 — CONFIRMED and named.** Both rebuilt local lanes report exactly one
+  `starlette.testclient.StarletteDeprecationWarning`: using `httpx` with
+  `starlette.testclient` is deprecated and `httpx2` is recommended. It is the
+  previously accepted warning, not a new warning. Neither trigger fired:
+  it remains a warning rather than an error/failure, and
+  `shell/constraints.txt` plus `shell/requirements.txt` are byte-unchanged from
+  `v0.15.7`.
+- **Manifest retention — unchanged.** The manifest is freshly measured at
+  **136,625 bytes**, below **1 MiB**. Two consecutive complete
+  `verify-artifacts` executions took **0.10 s** and **0.09 s** real, both below
+  **1.00 s**, and each verified all **236** pins and protected databases
+  **2/2**. Neither retention/indexing trigger fired.
+- **Published identity and repository immutability — PASS.** Annotated
+  `v0.15.7` object
+  `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels locally and remotely to
+  closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, whose first parent
+  is release parent `8bb6a71446b043b10ce16077499fdc07abb91b98`.
+  Remote `main` remains that closing commit. The working repository's
+  pre-implementation refs were unchanged; no auxiliary ref was created, moved,
+  or deleted. `STATE.md`, `run`, and `.github/workflows/ci.yml` remain entering
+  blobs `344d92a123cee58e81a6f6d7f159b8eb44748204`,
+  `daeace0bf5c652fd79ee08a6aff9d11e8904371e`, and
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
+
+---
+
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
 
 **Objective.** Make the environment-conditional population declarable,
@@ -542,7 +668,7 @@ publication.**
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with shell recorded as collected/passed/skipped;
+- [x] **E0** — entering matrix with shell recorded as collected/passed/skipped;
   G1 confirmed; G2's clause presence/absence and the two opposite resolutions
   recorded; **G3 bounded to an exact set** with retention gaps stated; G4's
   criterion stated before its answer; G5 recorded; G6 named or refuted; manifest
