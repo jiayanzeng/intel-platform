@@ -178,3 +178,50 @@ Entries are append-only; corrections are new dated entries.
   databases, configured sources, public surfaces, and refs are unchanged.
 - golden-E2E delta: **0**. The mandatory post-record standalone execution
   passed all **11** checks.
+
+### 2026-07-29 · POPULATION-COMPARE — equivalent populations derived
+
+- owner: Codex
+- commit: 4bb7df5
+- result: PASS. `tools/test_population.py` replaces transcribed local/hosted
+  equality with a validated, machine-readable population comparison whose
+  output names every allowed difference.
+- comparator acceptance: PASS. It accepts a summary or one summary embedded in
+  a log, validates exact schema and result accounting, rejects any failed test,
+  requires equal collected populations, and requires local passed to equal
+  hosted passed plus hosted `on_site` skips. Each skip must name a node id and
+  non-empty reason, carry `on_site`, and belong to the declared conditional
+  set. Its result is stable sorted JSON.
+- RE-MEASURE-contract acceptance: PASS. `AGENTS.md` now requires the summaries
+  and comparator for every local/hosted shell comparison, defines population
+  equivalence, makes unnamed or unmarked skips failures, and requires records
+  to use comparator-derived output rather than hand-transcribed log figures.
+- three-fail-before acceptance: PASS. Focused executions rejected an unmarked
+  hosted skip with `is not marked on_site`, unequal collection with `collected
+  mismatch`, and an empty skip reason with `reason must be present`.
+- v0.23 replay acceptance: PASS. Comparator output derived collected **275**,
+  equivalent passed **275**, local passed **275**, hosted passed **274**, and
+  hosted `on_site` skips **1**, naming
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  and its protected-corpora-and-built-`cored` reason. Claim verification
+  rejected hosted passed **275** / skipped **0** because the comparator derived
+  passed **274** / skipped **1**, and accepted the derived result.
+- planted-control acceptance: PASS. R12 calls the real parser/comparator with
+  an unmarked hosted skip. Its sixteenth mutation disables that guard, and
+  self-test detects
+  `test-population planted controls were not detected: unmarked-skip`.
+  `invariant-scan` passes **12 rules / 39 controls**, including R12 **16**.
+- test acceptance: PASS. The focused comparator/invariant suite passed **30**
+  tests. Local Python 3.11.4 and 3.12.13 each collected **283**, passed **283**,
+  failed **0**, and skipped **0**, retaining one accepted
+  `StarletteDeprecationWarning`. Full `./run ci-local` passed all **20** jobs:
+  workspace **133**, net **55** (**29 + 26**), warning-denied current and Rust
+  1.78 lanes, clean clippy/fmt/ShellCheck, all **236** pins, protected
+  databases **2**, and embedded golden **11 checks**.
+- lifecycle/scope acceptance: PASS. `cycle-check` accepts the active diff.
+  Before this append existed, `checklist-audit` correctly named
+  POPULATION-COMPARE as its sole unmatched checked task. No runtime source,
+  crate, dependency, schema, protected database, configured source, public
+  surface, or ref changed.
+- golden-E2E delta: **0**. The mandatory post-record standalone execution
+  passed all **11** checks.
