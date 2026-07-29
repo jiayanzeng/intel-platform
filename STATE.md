@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 through HISTORY-BOUND are complete, and the one-record result makes PUBLISHER-REVIEW eligible for its separate operator judgements.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. HISTORY-BOUND measures this as one isolated false-measurement record, with the same claim copied into the closed execution record. On 2026-07-30 the operator approved the established dated-supersession instrument, so checklist retractions remain **3**. Current local Python 3.11.4 and 3.12.13 lanes each collected **283**, passed **283**, and skipped **0**. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus is unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 through PUBLISHER-REVIEW are complete. SEC EDGAR's official US GAAP structured-disclosure RSS path is conditionally admissible for a separate v0.25 operator decision; no source was added.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. HISTORY-BOUND measures this as one isolated false-measurement record, with the same claim copied into the closed execution record. On 2026-07-30 the operator approved the established dated-supersession instrument, so checklist retractions remain **3**. PUBLISHER-REVIEW fetched SEC's **2,622-byte** policy through the shipped matcher; SHA-256 `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`, wildcard-group verdict **allow** for `/Archives/edgar/usgaap.rss.xml`, no matching rule or `Crawl-delay`, and a contact-bearing `intel-platform/0.15.7` identity. The separate latest-filings Atom path was denied by `Disallow: /cgi-bin`. Current local Python 3.11.4 and 3.12.13 lanes each collected **283**, passed **283**, and skipped **0**. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus is unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
 test population (measured 2026-07-29).**
@@ -131,6 +131,56 @@ The preserved historical blobs are
 `bea2851a059dcd5f73c501f657b3c0a844fb5296` for its progress log. The unchanged
 retraction registry blob is
 `9e13d2d89276eaf9279ec66bc4955313b117557d`.
+
+**v0.24 PUBLISHER-REVIEW conditionally admits a review, not a source
+(measured and operator-authorized 2026-07-30).**
+
+The operator selected SEC EDGAR filings feeds for the `finance` sector after
+measuring `config/core.json`: its three RSS sources all carry fixtures, its
+`technology` and `finance` publishers are `example.org`, and its configured
+`CcBy` and `PublicDomain` branches have no real-content observation. v0.18
+`arxiv-cs` remains the sole live-publisher corpus and is `IndexOnly`; its
+`robots.txt` result was 404 and supplied no real policy group. The reviewed SEC
+endpoint is the official US GAAP structured-disclosure RSS feed,
+`https://www.sec.gov/Archives/edgar/usgaap.rss.xml`.
+
+At **2026-07-29T16:41Z**, a robots-only preview ran the shipped
+`HttpRobotsFetcher`, installed crawler identity, `RobotsCache`, and
+`RobotsGate`. Its one final request was
+`GET https://www.sec.gov/robots.txt`, with no redirect and no feed or document
+request. The served policy is **2,622 UTF-8 bytes**, SHA-256
+`72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`,
+preserved under `observations/v0.24/publisher-review/`. `User-agent: *`
+applied; no rule matched `/Archives/edgar/usgaap.rss.xml`, no `Allow`
+exception was used, no `Crawl-delay` existed, and the matcher returned
+**allow**. An earlier robots-only pass in the same review excluded
+`/cgi-bin/browse-edgar?action=getcurrent&output=atom`: it matched
+`Disallow: /cgi-bin` and returned **deny**. The two processes requested only
+`/robots.txt`; no feed was fetched.
+
+The actual identity was
+`intel-platform/0.15.7 (research prototype; contact: [operator contact
+redacted])`, with a monitored contact present. This contradicts the prior
+expectation that the versioned identity carried no contact; current production
+construction requires one. The report cites the publisher's exact reuse and
+automated-access statements by SEC URL and 2026-07-30 read date. In particular,
+the SEC expressly states reuse permission for EDGAR public filing content; the
+review does not substitute the broader claim that every issuer-authored filing
+is a government-authored work.
+
+The reviewed recommendation is **admissible, conditional**: a later admission
+must use `/Archives/edgar/usgaap.rss.xml`, preserve the existing
+monitored-contact identity, and keep total automated traffic at or below the
+SEC's then-current published ceiling. The deferral trigger carries these
+conditions and still requires a separate v0.25 operator admission decision.
+`config/core.json` remains blob
+`0ef1dcb4dde5f3cbd7b9112a405efb64d80e4914`; no source was added.
+
+This review establishes neither multi-origin robots-cache/per-host-limiter
+behaviour nor the **live RSS wire path**. Because it fetched no feed, it proves
+nothing about live RSS fetching, feed parsing, or cursor durability against a
+real server. No production source, tool, workflow, schema, protected artifact,
+public surface, protected corpus, or golden-corpus fact changed.
 
 **v0.15.7 post-push confirmation and v0.23 exact-count correction (measured
 2026-07-29).**

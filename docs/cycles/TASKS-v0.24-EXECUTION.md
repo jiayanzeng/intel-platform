@@ -2,8 +2,16 @@
 
 ## Runbook amendments
 
+Step 5 — Extend the non-establishment acceptance to the live RSS wire path — 2026-07-30
+
 Step 6 — Acceptance criteria corrected to a same-commit population-rule relation — 2026-07-29
 
+- **2026-07-30 — operator-directed Step 5 acceptance amendment.** Step 5's
+  non-establishment clause and acceptance criterion now state that the review
+  establishes nothing about the live RSS wire path: live fetching, feed
+  parsing, and cursor durability against a real server remain untested until
+  admission. The original clause named only the multi-origin robots cache and
+  per-host limiter. No objective, gate, or done condition changed.
 - **2026-07-29 — activation validation correction.** The activation commit
   exposed four defects and they are corrected forward here. The declared scope
   now uses the checker's required Markdown-table schema; its Python-source
@@ -213,7 +221,7 @@ may be a dated negative statement where the condition is an event.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | one first-party shell; no such claim made | none |
 | L2 forced-command wrapper | an operator server session | no operator server session has occurred | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | none observed | none |
-| Second configured publisher | a completed compliance review per publisher, then a separate admission decision | no review completed | **Step 5 opens the review only; it does not admit a source** |
+| Second configured publisher | a completed review with an admissible recommendation for `/Archives/edgar/usgaap.rss.xml`, preserving the monitored-contact crawler identity and a total automated rate at or below the SEC's then-current published ceiling, then a separate operator admission decision | review completed 2026-07-30 with that conditional recommendation; no admission decision made | **Step 5 completed the review only; admission remains a v0.25 operator decision** |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | not authorized | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | tags unpublished | none — **the flag stays** |
 | Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 | **Step 1 — re-measure only** |
@@ -524,6 +532,59 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
   `9e13d2d…`. No closed runbook or historical progress entry was edited.
   Mandatory standalone golden passed all **11** checks; delta **0**.
 
+### 2026-07-30 · PUBLISHER-REVIEW
+
+- **Gate and operator judgement — PASS.** Step 4's affected set is one record,
+  so the conditional step is eligible. The operator selected SEC EDGAR filings
+  feeds for `finance`, authorized the review outcomes, and kept admission
+  explicitly separate. The review changes only `observations/v0.24/**` and
+  status records; no configured source is added.
+- **Candidate reason — PASS by configuration and retained wire evidence.**
+  `config/core.json` contains three RSS sources and all three carry fixtures;
+  the two `technology` sources and one `finance` source point to `example.org`.
+  The sole live-publisher corpus is v0.18 `arxiv-cs` under `IndexOnly`; the
+  configured `CcBy` and `PublicDomain` cases remain fixture-only. arXiv's
+  `robots.txt` result was 404 and exercised no real policy group. The reviewed
+  endpoint is SEC's official US GAAP structured-disclosure RSS feed,
+  `/Archives/edgar/usgaap.rss.xml`.
+- **Robots wire evidence — PASS.** A robots-only preview used the shipped
+  `HttpRobotsFetcher`, installed crawler identity, `RobotsCache`, and
+  `RobotsGate`. Its one final request was
+  `GET https://www.sec.gov/robots.txt`, with zero redirects and no feed or
+  document request. The served policy is **2,622 UTF-8 bytes**, SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`.
+  The wildcard group applied, no rule matched the RSS path, no `Allow`
+  exception applied, no `Crawl-delay` existed, and the shipped verdict was
+  **allow**. An earlier robots-only pass excluded the latest-filings Atom path:
+  `/cgi-bin/browse-edgar?action=getcurrent&output=atom` matched
+  `Disallow: /cgi-bin` and was denied.
+- **Identity finding — PASS and contradicts the prior expectation.** The actual
+  request used
+  `intel-platform/0.15.7 (research prototype; contact: [operator contact
+  redacted])`; a monitored contact was present. Current production construction
+  refuses a missing contact, so the review does not claim that contact needs to
+  be newly added.
+- **Licence and terms — PASS.** The observation cites the SEC Webmaster FAQ,
+  Developer Resources, and Privacy Information by URL and **2026-07-30** read
+  date, with the publisher's exact statements for EDGAR reuse, declared User
+  Agent, the 10-request-per-second ceiling, and unclassified automated tools.
+  It distinguishes the SEC's express reuse permission for EDGAR public filing
+  content from the broader, unsupported claim that every issuer-authored filing
+  is government-authored.
+- **Recommendation — admissible, conditional.** Any later admission must use
+  `/Archives/edgar/usgaap.rss.xml`, preserve the existing monitored-contact
+  crawler identity, and remain at or below the SEC's then-current published
+  total request ceiling. The deferral trigger now carries those conditions and
+  still requires a separate v0.25 operator admission decision.
+- **Non-establishment and non-impact — PASS.** The review establishes neither
+  multi-origin robots-cache/per-host-limiter behaviour nor the **live RSS wire
+  path**. No feed was requested, so live RSS fetching, parsing, and cursor
+  durability remain untested. `config/core.json` remains byte-unchanged at blob
+  `0ef1dcb4dde5f3cbd7b9112a405efb64d80e4914`; no source, production code,
+  tool, workflow, schema, protected artifact, public surface, or ref changed.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed all **11**
+  checks.
+
 ---
 
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
@@ -686,7 +747,10 @@ The admission decision is **explicitly deferred to v0.25**.
    outcome.**
 5. **Record what this review does not establish**: nothing about the multi-origin
    behaviour of the origin-keyed robots cache or the per-host limiter, which have
-   never seen two origins and will not until a source is admitted.
+   never seen two origins and will not until a source is admitted; and nothing
+   about the **live RSS wire path**, because no real feed is fetched and live
+   fetching, feed parsing, and cursor durability against a real server remain
+   untested until admission.
 6. Update the deferral row: the trigger for admission becomes "a completed review
    with an admissible recommendation, plus a separate operator admission
    decision."
@@ -694,9 +758,10 @@ The admission decision is **explicitly deferred to v0.25**.
 **Acceptance criteria.** One candidate named with its reason · policy fetched
 through the shipped matcher with bytes, hash, verdict, and identity recorded ·
 licence and terms cited by URL and date · one recommendation recorded, including
-undetermined as a complete outcome · non-establishment stated explicitly · no
-source added and `config/core.json` unchanged · deferral row updated · golden
-11/11.
+undetermined as a complete outcome · non-establishment of the multi-origin
+cache/limiter and the **live RSS wire path** (live fetching, parsing, and cursor
+durability) stated explicitly · no source added and `config/core.json`
+unchanged · deferral row updated · golden 11/11.
 
 ---
 
@@ -805,7 +870,7 @@ publication.**
 - [x] **HISTORY-BOUND** — one dated superseding entry per affected record; class
   size stated with a supported adjective; G4 decided with its criterion; scope of
   non-impact stated; fifth-instance count measured; no closed record edited
-- [ ] **PUBLISHER-REVIEW** — complete, or deleted with the measurement that made
+- [x] **PUBLISHER-REVIEW** — complete, or deleted with the measurement that made
   it conditional. Candidate named; policy fetched through the shipped matcher;
   licence cited by URL and date; one recommendation; no source added
 - [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator output cited,
