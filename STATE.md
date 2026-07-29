@@ -1,9 +1,12 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Status:** **v0.24 R-CLOSE publication of v0.15.8 is operator-authorized; the untagged release parent is being prepared while v0.15.7 remains published.** Published v0.15.7 release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` still resolves to it. The separate v0.24 evidence candidate is `a73c042068a367aea22e63e28dfd2f754b65ef9c` on neutral branch `codex/v0.24-evidence-a73c042`; authenticated hosted run `30472740314` attempt **1** passed all seven executable jobs. Its release-grade audit accepted **7** signed identities, rejected **0**, required attestations, and found the complete job/matrix set. The comparator derived equivalent populations for both Python lanes: local collected **283**, passed **283**, and skipped **0**; hosted collected **283**, passed **282**, and skipped one named `on_site` test. All **251** protected pins and both protected databases match. The exact candidate's full `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. SEC EDGAR's reviewed US GAAP RSS path is conditionally admissible only for a separate v0.25 operator decision; no source was added. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Status:** **v0.24 is closed locally under R-CLOSE and v0.15.8 is operator-authorized for atomic publication; v0.15.7 remains published until that ref movement.** Untagged release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` is the immediate parent of this closing tree; the annotated v0.15.8 tag must target the closing tree, not its parent. The separate v0.24 evidence candidate is `a73c042068a367aea22e63e28dfd2f754b65ef9c` on neutral branch `codex/v0.24-evidence-a73c042`; authenticated hosted run `30472740314` attempt **1** passed all seven executable jobs. Its release-grade audit accepted **7** signed identities, rejected **0**, required attestations, and found the complete job/matrix set. The comparator derived equivalent populations for both Python lanes: local collected **283**, passed **283**, and skipped **0**; hosted collected **283**, passed **282**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, embedded golden **11 checks**, and clean Rust, clippy, fmt, and ShellCheck gates. The independently rebuilt Python 3.12 lane also collected **283**, passed **283**, and skipped **0**. All **251** protected pins and both protected databases match. SEC EDGAR's reviewed US GAAP RSS path is conditionally admissible only for a separate v0.25 operator decision; no source was added. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
-**v0.24 R-CLOSE selects v0.15.8 and prepares release assembly (operator
-decision 2026-07-30).** Release disposition: release (as of 2026-07-30). The
+**v0.24 R-CLOSE selects v0.15.8 and closes on authenticated candidate evidence
+(operator decision and measurement 2026-07-30).** Release disposition: release
+(as of 2026-07-30). Untagged release commit
+`696c0863ea684d590970902bcbbd13a7a3ccb610` is the immediate parent of the
+closing tree. The
 patch identity applies because the cycle changes test-comparison apparatus,
 documentation, evidence, and lifecycle records without adding, removing,
 renaming, or incompatibly reshaping any `/v1/*` route or response body, schema,
@@ -18,15 +21,17 @@ an inherited patch default.
 
 Authenticated run `30472740314` attempt **1** at exact candidate
 `a73c042068a367aea22e63e28dfd2f754b65ef9c` is the closing evidence. The
-candidate is deliberately separate from the release parent being assembled.
+candidate is deliberately separate from release parent
+`696c0863ea684d590970902bcbbd13a7a3ccb610`.
 All seven executable hosted jobs passed, and the release-grade verifier
 accepted **7 / rejected 0** signed identities with attestations required.
 For both Python lanes, the exact comparator output already recorded under
 RE-MEASURE derives equivalent populations from local collected **283**, passed
 **283**, skipped **0** and hosted collected **283**, passed **282**, plus the
 one named `on_site` skip. The release-parent definition of done, exact release
-commit, closing commit, annotated tag object, and post-push run remain to be
-measured at their protocol-defined points rather than predicted here.
+commit, and closing evidence are measured. The closing commit, annotated tag
+object, and post-push run are recorded only at their protocol-defined forward
+points rather than predicted in this tree.
 
 The false-measurement class is **isolated** under HISTORY-BOUND's measured
 criterion: exactly one hosted RE-MEASURE event was false, represented once in
@@ -54,8 +59,9 @@ ceiling. No feed was fetched and no source was configured, so live RSS
 fetching, parsing, cursor durability, multi-origin robots-cache behavior, and
 multi-host limiter behavior remain unestablished.
 
-The release-parent changed-path classification is prepared in seven disjoint
-groups and will be reconciled against the committed `v0.15.7..R` path set:
+The exact `v0.15.7..696c0863ea684d590970902bcbbd13a7a3ccb610`
+release-parent changed-path set contains **38** paths, each classified exactly
+once in seven disjoint groups:
 
 - **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
   `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
@@ -74,6 +80,19 @@ groups and will be reconciled against the committed `v0.15.7..R` path set:
 - **Authenticated evidence:** all fourteen files under
   `evidence/ci-runs/30472740314-1/` and
   `evidence/v0.24/deferred-audit/report.json`.
+
+The exact release parent passed the complete definition of done:
+`./run ci-local` passed all **20** jobs with **133** workspace tests, **55**
+net tests (**29** `intel-ingest` + **26** `cored`), warning-denied current and
+locked Rust 1.78 builds, clean clippy/fmt/ShellCheck gates, both Python 3.11
+and independently rebuilt Python 3.12 populations collected **283**, passed
+**283**, failed **0**, and skipped **0**, `invariant-scan` **12/12 rules / 39
+controls** with R12 control **16** and R10 **45** exemptions, and embedded
+golden **11/11**. The separately invoked mandatory golden also passed all
+**11** checks. Root `export-check` passed **94** derived sources, **7**
+required, and **161** exported. Release-posture deferred-evidence
+re-derivation required attestations and accepted all **7** rows. All **251**
+protected pins and both protected databases remained exact.
 
 The product boundary remains unchanged: `arxiv-cs` is the sole configured real
 publisher and the other three sources remain fixtures. The SEC review is a

@@ -648,6 +648,61 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed all **11**
   checks.
 
+### 2026-07-30 · R-CLOSE
+
+- Gate: PASS. Steps 1–6 were complete and boxed, the worktree was clean, and
+  the operator authorized publication. The publication trigger is the false
+  hosted shell count in the published v0.15.7 tree; the correction and its
+  executable population comparator exist only in unpublished descendants.
+- Version and graph: release disposition is release (as of 2026-07-30).
+  v0.15.8 is a patch because no public route, response, schema, dependency,
+  configured source, robots outcome, runtime behavior, or protected database
+  changed. Untagged release commit
+  `696c0863ea684d590970902bcbbd13a7a3ccb610` is the immediate parent of the
+  closing tree. The annotated tag targets the closing tree; its object and the
+  closing commit are intentionally not predicted in this record.
+- Closing evidence: authenticated candidate
+  `a73c042068a367aea22e63e28dfd2f754b65ef9c` and run `30472740314` attempt
+  **1** remain separate from the release parent. All seven executable hosted
+  jobs passed. Release-posture verification required attestations and accepted
+  **7**, rejected **0**, with the complete job/matrix set.
+- Population acceptance: PASS. Both fresh local lanes collected **283**, passed
+  **283**, failed **0**, and skipped **0**. Both hosted lanes collected **283**,
+  passed **282**, failed **0**, and skipped the one named `on_site` test. The
+  byte-identical comparator output cited in RE-MEASURE derived equivalent
+  populations; the hosted-zero-skip stop condition did not fire.
+- Release-parent acceptance: PASS. `./run ci-local` passed all **20** jobs with
+  workspace **133**, net **55** (**29 + 26**), warning-denied current and
+  locked Rust 1.78 builds, clean clippy/fmt/ShellCheck, `invariant-scan`
+  **12/12 rules / 39 controls** with R12 control **16** and R10 **45**
+  exemptions, and embedded golden **11/11**. The independently rebuilt Python
+  3.12.13 lane had the same collected/passed/skipped population as Python
+  3.11.4. The mandatory standalone golden passed **11/11**.
+- Evidence acceptance: PASS. All **251** pins and both protected databases
+  remained exact. Root `export-check` passed **94** derived sources, **7**
+  required, and **161** exported. Release-posture re-derivation accepted all
+  **7** deferred rows with attestations required.
+- History acceptance: PASS. HISTORY-BOUND measured an **isolated** class of
+  exactly **1** false hosted RE-MEASURE event. The author-side criterion has
+  **5** members; this fifth instance is the first whose consequence was a false
+  number in a published record rather than an unmeetable criterion. Closed
+  records remain unchanged.
+- Publisher acceptance: CONDITIONAL, complete without admission. The shipped
+  matcher allowed the reviewed SEC US GAAP RSS path under the fetched
+  2,622-byte policy, SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`.
+  Admission requires a separate v0.25 operator decision, preservation of the
+  reviewed path, monitored-contact crawler identity, and the then-current rate
+  ceiling. No source was added; `arxiv-cs` remains the sole configured real
+  publisher.
+- Scope and residual acceptance: PASS. The exact **38** release-parent paths
+  are classified once in seven disjoint groups in `STATE.md`. A4, editable L1,
+  the R3/R4 bounded open-bottom limits, the measured-value heuristic, T7,
+  NEGATIVE-CACHE Decision B, scheduled L2, and the FastAPI version-literal
+  relocation remain open. The A/A/E disposition and
+  `--skip-local-tag-verification` trigger are unchanged.
+- Golden-E2E delta: **0**.
+
 ---
 
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
@@ -938,10 +993,29 @@ publication.**
   licence cited by URL and date; one recommendation; no source added
 - [x] **RE-MEASURE** — hosted run on a neutral branch; comparator output cited,
   never transcribed; other counts equal at the same commit; run id recorded
-- [ ] **R-CLOSE** — tagged close followed; publication trigger named as the
+- [x] **R-CLOSE** — tagged close followed; publication trigger named as the
   published false count; class size and fifth-instance count recorded as
   measured; Step 5's outcome or deferral recorded; post-push in a dated forward
   append
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-30
+- **Release disposition:** release (as of 2026-07-30)
+- **Release:** `v0.15.8`
+- **Release commit:** `696c0863ea684d590970902bcbbd13a7a3ccb610`
+- **Evidence candidate:** `a73c042068a367aea22e63e28dfd2f754b65ef9c`
+- **Candidate hosted run:** `30472740314` attempt 1
+- **Publication trigger:** the published v0.15.7 tree contains the false hosted
+  shell count; its correction and the executable population comparator are
+  present only in unpublished descendants.
+- **Closing evidence:** all 7 executable hosted jobs green at the exact
+  candidate; 7 accepted / 0 rejected signed identities with attestations
+  required; comparator-derived equivalence in both Python lanes; release-parent
+  local definition of done all 20 jobs; invariant 12/12 rules / 39 controls;
+  golden 11/11; protected evidence 251/251.
 
 ---
 

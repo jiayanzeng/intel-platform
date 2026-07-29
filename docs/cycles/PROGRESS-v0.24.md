@@ -390,3 +390,63 @@ Entries are append-only; corrections are new dated entries.
   task.
 - golden-E2E delta: **0**. Mandatory standalone execution passed all **11**
   checks.
+
+### 2026-07-30 · R-CLOSE — v0.15.8 tagged close
+
+- owner: Codex
+- commit: 696c0863ea684d590970902bcbbd13a7a3ccb610
+- result: PASS. Release implementation commit
+  `696c0863ea684d590970902bcbbd13a7a3ccb610` prepares v0.15.8 and is the
+  untagged immediate parent of the closing tree. The publication trigger is
+  the false hosted shell count in the published v0.15.7 tree; the correction
+  and executable population comparator live only in unpublished descendants.
+- closing-evidence acceptance: PASS. Authenticated candidate
+  `a73c042068a367aea22e63e28dfd2f754b65ef9c` and run `30472740314` attempt
+  **1** remain separate from the release parent. All seven executable hosted
+  jobs passed. The release-grade verifier required attestations and accepted
+  **7 / rejected 0** signed identities with the complete job/matrix set.
+- population acceptance: PASS. Fresh local Python 3.11.4 and independently
+  rebuilt Python 3.12.13 each collected **283**, passed **283**, failed **0**,
+  and skipped **0**. Both hosted summaries collected **283**, passed **282**,
+  failed **0**, and skipped the one named `on_site` test. The byte-identical
+  comparator output recorded under RE-MEASURE derived equivalent populations;
+  the hosted-zero-skip stop condition did not fire.
+- release-parent acceptance: PASS. `./run ci-local` passed all **20** jobs with
+  workspace **133**, net **55** (**29 + 26**), warning-denied current and
+  locked Rust 1.78 builds, clean rustc/clippy/fmt/ShellCheck gates,
+  `invariant-scan` **12/12 rules / 39 controls** with R12 control **16** and
+  R10 **45** exemptions, and embedded golden **11/11**. The mandatory
+  standalone golden passed all **11** checks.
+- evidence acceptance: PASS. All **251** protected pins and both protected
+  databases remained exact. Root `export-check` passed **94** derived sources,
+  **7** required, and **161** exported. Release-posture deferred-evidence
+  re-derivation required attestations and accepted all **7** rows.
+- release-identity acceptance: PASS. v0.15.8 is a patch because no public
+  route, response, schema, dependency, configured source, robots outcome,
+  runtime behavior, or protected database changed. The exact **38**
+  `v0.15.7..696c0863ea684d590970902bcbbd13a7a3ccb610` paths are classified
+  once in seven disjoint groups in `STATE.md`.
+- history acceptance: PASS. HISTORY-BOUND measured an **isolated** class of
+  exactly **1** false hosted event. The author-side criterion has **5** members;
+  this fifth instance is the first whose consequence was a false number in a
+  published record rather than an unmeetable criterion. Closed records remain
+  unchanged.
+- publisher acceptance: CONDITIONAL, complete without admission. The shipped
+  matcher allowed the reviewed SEC US GAAP RSS path under the fetched
+  2,622-byte policy, SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`.
+  Admission requires a separate v0.25 operator decision, preservation of the
+  reviewed path, monitored-contact crawler identity, and the then-current rate
+  ceiling. No source was added; `arxiv-cs` remains the sole configured real
+  publisher. Live RSS fetching, parsing, cursor durability, multi-origin cache
+  behavior, and multi-host limiter behavior remain unestablished.
+- protocol acceptance: PASS. The closed record names the existing release
+  parent and candidate evidence, omits the not-yet-knowable tag-object field,
+  and requires the annotated v0.15.8 tag to target this immediate child and
+  move with `main` atomically. Exact tag, closing-commit, and post-push-run
+  identities belong only in the first dated forward append.
+- residual acceptance: PASS. A4, editable L1, R3/R4, the measured-value
+  heuristic, T7, NEGATIVE-CACHE Decision B, scheduled L2, and the FastAPI
+  version-literal relocation remain open. The A/A/E disposition and
+  `--skip-local-tag-verification` trigger remain unchanged.
+- golden-E2E delta: **0**.
