@@ -426,7 +426,7 @@ decision: publication.**
 
 ## Cycle checklist
 
-- [ ] **E0** — local matrix with both interpreters; hosted failure recorded with
+- [x] **E0** — local matrix with both interpreters; hosted failure recorded with
   run id, job, and error text; G1 shown as a fixed point in three measurements;
   G2 reproduced as a zero-error silent return; G3/G4 measured; G5 confirmed or
   refuted; 88-versus-89 reconciled
@@ -445,6 +445,90 @@ decision: publication.**
 - [ ] **R-CLOSE** — version cites its trigger; publication trigger stated as the
   red published head; G1 recorded as a specification defect; post-push hosted CI
   confirmed green with its run id; all open items still open
+
+---
+
+## Execution records
+
+### 2026-07-29 · E0
+
+PASS. The read-only Gate contains every acceptance surface: only this status
+record, the E0 checklist box, and the append-only v0.20 progress record move.
+`STATE.md` remains blob
+`fb996dc34c41b81da8418946896898c3125a3ad7`, byte-identical to the entering
+tree.
+
+- **Local matrix:** the first sandboxed `./run ci-local` was a permission
+  non-result when its loopback wire fixture could not bind. The identical
+  permitted command passed **20/20** with **133** workspace tests, **55** net
+  tests (**29** `intel-ingest` + **26** `cored`), shell **248/248** on Python
+  3.11.4, zero rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78,
+  `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins,
+  protected databases **2/2**, and golden **11/11**. A clean constrained
+  Python 3.12.13 rebuild resolved **21/21** packages and independently passed
+  shell **248/248**. Its first restricted package-resolution attempt was a DNS
+  permission non-result; the permitted retry resolved the exact constraints.
+  Standalone `./run golden` passed **11/11**, delta **0**. Standalone
+  `verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+  `version-check`, and `invariant-scan` all passed.
+- **Hosted red state:** GitHub run `30417274925` is still **failure** at exact
+  remote head `692069ead0b8823d6874d8f2fc0a593d9f26704f`. The runbook draft
+  recorded attempt 1; E0 found that the same run had since been rerun and
+  measured attempt **2**. Six blocking job instances succeeded. The sole
+  failure is job `shell (Python 3.11)`, step
+  `active cycle and amendment consistency`, whose exact checker finding is:
+
+  > `cycle-check: ERROR: STATE.md: publication assertion freshness: origin/main asserts 344124819cb3c554f851d0cac3f0f1ed08d1aa10, but the measured ref is 692069ead0b8823d6874d8f2fc0a593d9f26704f`
+
+  The next line is `cycle-check: FAIL (1 defect(s))`; the process exited 1.
+  This is a hosted failure, not part of a green entering matrix.
+- **G1 — CONFIRMED as a fixed point.** In a disposable full-history clone,
+  exact commit `72b6f425114e06b1e148e0aa360e280a690e4f0c` passed
+  `cycle-check` while `origin/main` remained the header's asserted
+  `692069ead0b8823d6874d8f2fc0a593d9f26704f`. Moving only the simulated
+  post-push tracking ref to `72b6f42…` made the same immutable content fail,
+  reporting asserted `692069e…` versus measured `72b6f42…`. The construction
+  then evaluated the only two candidate ref literals plus a third value:
+  the pre-push literal passes only before the push, the post-push literal
+  passes only afterward, and neither state accepts a third value. Because the
+  two refs differ, the reported satisfiable result is **false**. No literal
+  header content can satisfy both states of its own push.
+- **G2 — CONFIRMED in both silent paths.** Against the full-history clone and
+  deliberately stale header, `check_publication_status` returned one error.
+  Removing only the `v0.15.3` tag made the same function return exit **0** with
+  `errors=[]`. A separate depth-1 clone fetched the tag object and target but
+  not the connecting history; `git merge-base --is-ancestor` exited **1**,
+  while `check_publication_status` again returned exit **0** with `errors=[]`
+  despite the stale literal `origin/main`. Both unavailable-input paths can
+  therefore make the control silently decorative.
+- **G3 — CONFIRMED with corrected quantities.** Root-run Repomix 1.17.0
+  produced **2,713,184 characters / 147 files** and a **2,718,308-byte** XML
+  export. The current pattern excludes **17** cycle files totaling **657,725
+  bytes** and retains **20** cycle files totaling **633,876 bytes**. The
+  retained set includes `TASKS-v0.6.md` (**14,972 bytes**) and
+  `TASKS-v0.7.md` (**16,175 bytes**), totaling **31,147 bytes** rather than the
+  draft's **30,842**. Every v0.12+ cycle file is retained.
+- **G4 — CONFIRMED and the source-count drift reconciled.** `./run help`
+  contains no export command, and repository search finds no `repomix` or
+  `export-check` reference in either `run` or `AGENTS.md`. The set derived from
+  `git ls-files` under `crates/`, `apps/`, `tools/`, and `shell/` is **88**,
+  and the export contains all **88/88**. The EXPORT-BUDGET audit commit had
+  **89**; the sole tracked deletion from that set is
+  `crates/ingest/src/bin/robots_preview.rs`, retired by
+  PREVIEW-DISPOSITION. The difference is fully drift-absorbed.
+- **G5 — CONFIRMED and accepted as bounded looseness.** The constructed header
+  `publication is complete and exact. An unrelated export review has
+  outstanding documentation` matched from `publication` through the unrelated
+  `outstanding`. The false positive is accepted for this cycle because the
+  expression is bounded to the live header paragraph and can only cause a loud
+  conservative refusal, not a false pass; this cycle does not expand into a
+  fifth tool change.
+- **Final integrity:** remote inspection re-read `main` at
+  `692069ead0b8823d6874d8f2fc0a593d9f26704f`, annotated `v0.15.3` at object
+  `2039e01475b43285ecbbf2739f788b7f855a5603`, peeled to exact release commit
+  `dbff27d559193847dd2028c435c686ba656dac85`. All **176/176** pins and both
+  protected databases remain exact. No production path, tool, configuration,
+  dependency, protected artifact, public surface, or `STATE.md` byte changed.
 
 ---
 
