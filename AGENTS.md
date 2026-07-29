@@ -278,6 +278,16 @@ weakens the production-source prohibition for exactly
 human classification. Closed runbooks before v0.23 are immutable and are never
 retrofitted with a scope table.
 
+Beginning with v0.23, trigger freshness is executable over exactly two live
+tables: `ARCHITECTURE.md`'s **Dated operational-residual dispositions** and the
+active runbook's **Deferred means deferred** table. Only rows whose trigger cell
+is neither empty nor `none` are governed. Each such row must carry a valid
+ISO-date in its measured-observation cell or that column's header. A dated
+negative observation is sufficient for an event-shaped condition (for example,
+no operator server session occurred); the checker verifies the presence and
+date of the measurement, not the truth of an external event. This rule is
+v0.23-forward and never retrofits closed historical runbooks.
+
 Every active runbook's **Deferred means deferred** table must assign each
 non-`none` action to a named, existing `Step N`; an asserted action without its
 discharging step is invalid. Every runbook that changes the release commit must

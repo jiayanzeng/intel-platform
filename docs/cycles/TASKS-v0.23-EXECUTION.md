@@ -227,7 +227,7 @@ condition is an event rather than a quantity.
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | not authorized | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | tags unpublished | none — **the flag stays** |
 | Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 step 6 | Step 1 — re-measure only |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | literal present in production source | none — recorded, not acted on |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | Step 4 declared `app.py` as the sole release-authority/production-source overlap; trigger fired | Step 5 — assign relocation evaluation to v0.24; do not implement it here |
 
 ---
 
@@ -516,6 +516,49 @@ changed in the working repository · published objects and 221 pins re-verified 
   R12 passes **14/14** mutations. Focused suites pass lifecycle **39/39** and
   invariant **22/22**; the full constrained Python 3.11 shell lane passes
   **271/271** with the one accepted third-party warning.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · TRIGGER-FRESHNESS
+
+- **Result — PASS.** The executable document set is exactly the live
+  `ARCHITECTURE.md` dated-dispositions table and this active runbook's deferral
+  table, v0.23-forward. Closed historical runbooks remain immutable.
+- **Row-scope acceptance — PASS.** Only a row whose trigger cell is nonempty
+  and not `none` is governed. Every such row requires a valid ISO date in its
+  measured-observation cell or that column's header. The final live tables
+  contain **2** governed architecture rows and **11** governed deferral rows,
+  all **13/13** accepted; completed and refuted rows with trigger `none` are
+  explicitly out of scope.
+- **Event acceptance — PASS.** The active table's dated column validates
+  negative event observations such as “no operator server session has
+  occurred.” The checker tests only that the measurement clause and valid date
+  exist, not whether an external event statement is true.
+- **Fresh-value acceptance — PASS.** E0's architecture measurements are dated
+  in the live table: manifest **221 pins / 127,982 bytes / 0.10 s and 0.09 s
+  real**, and both constrained shell lanes **266/266** with one warning and no
+  relevant refresh. The active deferral table's 2026-07-29 measured column
+  carries all eleven current observations and validates as its own first
+  subject.
+- **Exact re-evaluation counts.** The governed population re-evaluated was
+  **14** rows: E0's **3** trigger-bearing architecture dispositions plus this
+  runbook's **11** deferrals. Exactly **2** had fired: the Node-runtime trigger,
+  discharged by Step 3, and the `app.py` source-scope trigger exposed by Step
+  4. Exactly **1** additional action was assigned forward here: evaluate
+  relocating that literal in **v0.24**; no production source change was
+  absorbed into v0.23.
+- **Fail-before acceptance — PASS.** A planted trigger-bearing row without a
+  valid date is examined as one row and rejected. R12 mutation **15** disables
+  that rejection; `invariant-scan --self-test` detects
+  `missing-trigger-measurement-date` at `tools/cycle_check.py:1474`.
+- **Contract and test acceptance — PASS.** `AGENTS.md` names the exact document
+  set, v0.23-forward boundary, governed-row predicate, valid-date rule, negative
+  event semantics, and presence/date-only limit. Focused lifecycle tests pass
+  **43/43**, invariant tests **22/22**, and their combined run passes
+  **65/65**. The identical permitted full Python 3.11 shell command passes
+  **275/275** with one accepted warning after the sandbox-denied loopback/`ps`
+  attempt was classified as a non-result.
+- **Measured counts.** `cycle-check` passes. `invariant-scan` passes **12/12
+  rules / 38 controls**, with R12 **15/15**.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
 
 ---
@@ -865,10 +908,13 @@ decision: publication.**
 
 ### Pending closing record inputs
 
-- Step 4 invariant measurement: **12/12 rules / 37 controls**, including R12
-  **14/14** planted mutations.
+- Step 5 invariant measurement: **12/12 rules / 38 controls**, including R12
+  **15/15** planted mutations.
 - Activation scope result: correction required for one omitted Step 3 test path
   and one over-broad shell-source glob; the corrected table validates.
+- Trigger re-evaluation: **14** governed rows, **2** fired overall, **1**
+  additional forward assignment to v0.24; the final live tables validate
+  **13/13** trigger-bearing rows.
 
 - [x] **E0** — entering matrix with both interpreters; G1 settled by the
   forced-identity construction with clone provenance and full messages;
@@ -893,7 +939,7 @@ decision: publication.**
   resolved with the weakening stated; v0.23-forward boundary; fixture fail-before
   with no closed runbook edited; activation block validated and its correctness
   recorded; interpretive rule in `AGENTS.md`
-- [ ] **TRIGGER-FRESHNESS** — document set named and bounded; only triggered rows
+- [x] **TRIGGER-FRESHNESS** — document set named and bounded; only triggered rows
   in scope; dated negative observations accepted; rule checks presence and date,
   not truth; every row backfilled; this runbook's table validated; additionally
   fired triggers assigned forward; counts exact

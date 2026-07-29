@@ -1370,6 +1370,146 @@ def check_declared_scope(
     )
 
 
+TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (0, 23)
+DATED_DISPOSITIONS_HEADING = "### Dated operational-residual dispositions"
+ISO_DATE_TOKEN_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
+
+
+def check_trigger_table(
+    path: Path,
+    text: str,
+    heading: str,
+    subject_header: str,
+    root: Path,
+    errors: list[str],
+) -> int:
+    heading_matches = list(
+        re.finditer(rf"^{re.escape(heading)}$", text, re.MULTILINE)
+    )
+    if len(heading_matches) != 1:
+        errors.append(
+            f"{shown(path, root)}: expected exactly one {heading!r}; "
+            f"found {len(heading_matches)}"
+        )
+        return 0
+
+    heading_level = len(heading) - len(heading.lstrip("#"))
+    section_start = heading_matches[0].end()
+    section = text[section_start:]
+    next_heading = re.search(
+        rf"^#{{1,{heading_level}}} ",
+        section,
+        re.MULTILINE,
+    )
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+
+    lines = section.splitlines()
+    header_index: int | None = None
+    trigger_index: int | None = None
+    measured_index: int | None = None
+    expected_subject = subject_header.casefold()
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if expected_subject not in normalized:
+            continue
+        header_index = index
+        trigger_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "trigger" in cell
+            ),
+            None,
+        )
+        measured_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "measured" in cell
+            ),
+            None,
+        )
+        break
+    if (
+        header_index is None
+        or trigger_index is None
+        or measured_index is None
+    ):
+        errors.append(
+            f"{shown(path, root)}: {heading!r} must contain a markdown "
+            f"table with {subject_header}, trigger, and measured columns"
+        )
+        return 0
+
+    header_measurement = markdown_table_cells(lines[header_index])[measured_index]
+    trigger_rows = 0
+    for offset, line in enumerate(lines[header_index + 1 :], header_index + 1):
+        cells = markdown_table_cells(line)
+        if not cells:
+            if trigger_rows:
+                break
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        if max(trigger_index, measured_index) >= len(normalized):
+            continue
+        trigger = normalized[trigger_index].casefold()
+        if trigger in {"", "none", "n/a", "not applicable"}:
+            continue
+        trigger_rows += 1
+        measured = normalized[measured_index]
+        valid_dates = [
+            raw
+            for raw in ISO_DATE_TOKEN_RE.findall(
+                f"{header_measurement} {measured}"
+            )
+            if valid_iso_date(raw)
+        ]
+        line_number = text[:section_start].count("\n") + offset + 1
+        # Invariant R12 control site: trigger freshness.
+        if not valid_dates:
+            item = normalized[0] if normalized else "<unnamed>"
+            errors.append(
+                f"{shown(path, root)}:{line_number}: trigger-bearing row "
+                f"{item!r} requires a valid dated measured observation"
+            )
+    return trigger_rows
+
+
+def check_trigger_freshness(
+    path: Path,
+    active_text: str,
+    root: Path,
+    errors: list[str],
+) -> tuple[int, int]:
+    architecture = root / "ARCHITECTURE.md"
+    architecture_text = (
+        architecture.read_text() if architecture.is_file() else ""
+    )
+    architecture_rows = check_trigger_table(
+        architecture,
+        architecture_text,
+        DATED_DISPOSITIONS_HEADING,
+        "subject",
+        root,
+        errors,
+    )
+    deferral_rows = check_trigger_table(
+        path,
+        active_text,
+        DEFERRED_HEADING,
+        "Deferred item",
+        root,
+        errors,
+    )
+    return architecture_rows, deferral_rows
+
+
 def check_active_deferral_assignments(
     path: Path,
     text: str,
@@ -1544,6 +1684,16 @@ def run(
         if declared_scope_cycle_version(identity.name) >= SCOPE_FORWARD_BOUNDARY:
             check_declared_scope(
                 identity,
+                identity.runbook,
+                active_text,
+                root,
+                errors,
+            )
+        if (
+            declared_scope_cycle_version(identity.name)
+            >= TRIGGER_FRESHNESS_FORWARD_BOUNDARY
+        ):
+            check_trigger_freshness(
                 identity.runbook,
                 active_text,
                 root,

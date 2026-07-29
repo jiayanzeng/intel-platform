@@ -33,6 +33,13 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "## 0. Contract\n\n"
         f"{contract_tail}"
     )
+    (root / "ARCHITECTURE.md").write_text(
+        "# Architecture\n\n"
+        "### Dated operational-residual dispositions\n\n"
+        "| subject | disposition | trigger | dated measured observation |\n"
+        "|---|---|---|---|\n"
+        "| baseline | refuted | none | no measurement required |\n"
+    )
     _runbook(root).write_text(
         "# Open cycle\n\n"
         "## Declared scope\n\n"
@@ -47,6 +54,11 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| `release_authority` | `CHANGELOG.md` |\n"
         "| `release_authority` | `shell/intel_shell/__init__.py` |\n"
         "| `release_authority` | `shell/intel_shell/app.py` |\n\n"
+        "## Deferred means deferred\n\n"
+        "| Deferred item | Unchanged trigger | Measured 2026-07-29 | "
+        "v1.2.3 action |\n"
+        "|---|---|---|---|\n"
+        "| Baseline item | none | no measurement required | none |\n\n"
         "## Step 1 · CHECK\n\n"
         "**Objective.** Preserve the contract.\n\n"
         "**Acceptance criteria.** Original criterion.\n\n"
@@ -995,13 +1007,9 @@ def test_cycle_check_rejects_unassigned_active_deferral_row(
     runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
-            "## Step 1 · CHECK",
-            "## Deferred means deferred\n\n"
-            "| Deferred item | Unchanged trigger | v1.2.3 action |\n"
-            "|---|---|---|\n"
-            "| Runner evidence | release changes | "
-            "re-measure at the new release commit |\n\n"
-            "## Step 1 · CHECK",
+            "| Baseline item | none | no measurement required | none |",
+            "| Runner evidence | release changes | no release yet | "
+            "re-measure at the new release commit |",
         )
     )
 
@@ -1019,13 +1027,9 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
     runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
-            "## Step 1 · CHECK",
-            "## Deferred means deferred\n\n"
-            "| Deferred item | Unchanged trigger | v1.2.3 action |\n"
-            "|---|---|---|\n"
-            "| Runner evidence | release changes | "
-            "re-measure — discharged by Step 2 |\n\n"
-            "## Step 1 · CHECK",
+            "| Baseline item | none | no measurement required | none |",
+            "| Runner evidence | release changes | no release yet | "
+            "re-measure — discharged by Step 2 |",
         )
         + "\n## Step 2 · RE-MEASURE\n\n"
         "**Objective.** Re-measure the release commit.\n\n"
@@ -1034,6 +1038,77 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
     )
 
     assert cycle_check.run(root) == 0
+
+
+def test_cycle_check_accepts_dated_negative_trigger_observation(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "| Baseline item | none | no measurement required | none |",
+            "| L2 wrapper | an operator server session | "
+            "no operator server session has occurred | none |",
+        )
+    )
+
+    assert cycle_check.run(root) == 0
+
+
+def test_cycle_check_rejects_trigger_observation_without_valid_date(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text()
+        .replace("Measured 2026-07-29", "Measured 2026-02-30")
+        .replace(
+            "| Baseline item | none | no measurement required | none |",
+            "| L2 wrapper | an operator server session | "
+            "no operator server session has occurred | none |",
+        )
+    )
+
+    assert cycle_check.run(root) == 1
+    assert (
+        "trigger-bearing row 'L2 wrapper' requires a valid dated measured "
+        "observation"
+        in capsys.readouterr().err
+    )
+
+
+def test_cycle_check_ignores_rows_without_a_trigger(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "Measured 2026-07-29",
+            "Measured observation",
+        )
+    )
+
+    assert cycle_check.run(root) == 0
+
+
+def test_current_trigger_freshness_tables_are_complete() -> None:
+    root = Path(__file__).resolve().parents[2]
+    identity = resolve_cycle(root)
+    errors: list[str] = []
+
+    counts = cycle_check.check_trigger_freshness(
+        identity.runbook,
+        identity.runbook.read_text(),
+        root,
+        errors,
+    )
+
+    assert counts == (2, 11)
+    assert errors == []
 
 
 def test_cycle_check_rejects_cross_step_recorded_quantity(

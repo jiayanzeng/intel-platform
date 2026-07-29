@@ -1474,6 +1474,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "declared-scope": (
         "Invariant R12 control site: declared cycle scope."
     ),
+    "trigger-freshness": (
+        "Invariant R12 control site: trigger freshness."
+    ),
 }
 
 
@@ -1904,6 +1907,35 @@ def r12_findings(root: Path) -> list[str]:
         ):
             missed.setdefault("declared-scope", []).append(
                 "v0.22-release-paths"
+            )
+
+        trigger_path = fixture / "trigger-control.md"
+        trigger_text = (
+            "# Trigger control\n\n"
+            "### Dated operational-residual dispositions\n\n"
+            "| subject | disposition | trigger | measured observation |\n"
+            "|---|---|---|---|\n"
+            "| planted event | deferred | an operator session | "
+            "no operator session occurred |\n"
+        )
+        errors = []
+        trigger_rows = cycle_check.check_trigger_table(
+            trigger_path,
+            trigger_text,
+            cycle_check.DATED_DISPOSITIONS_HEADING,
+            "subject",
+            fixture,
+            errors,
+        )
+        expected_trigger_failure = (
+            "trigger-bearing row 'planted event' requires a valid dated "
+            "measured observation"
+        )
+        if trigger_rows != 1 or not any(
+            expected_trigger_failure in error for error in errors
+        ):
+            missed.setdefault("trigger-freshness", []).append(
+                "missing-trigger-measurement-date"
             )
 
     source_path = root / "tools" / "cycle_check.py"

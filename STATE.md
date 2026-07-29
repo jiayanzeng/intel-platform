@@ -1,6 +1,42 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 SCOPE-DECLARED is complete, the cycle remains open, and v0.15.6 remains published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Step 3 candidate `81ca6498c825e52c2c2604eec169bd4a4898b6e3` exists only on `codex/v0.23-action-migration`; hosted run `30456330833` attempt **1** passed all **7/7** executable jobs and its new authenticated set verified **7 accepted / 0 rejected** with a complete identity matrix. That set is verification-only and was not admitted to the manifest. Exact v0.15.6 closing evidence remains candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**; forward-confirmation run `30446796322` also passed **7/7**. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. The post-SCOPE Python 3.11 shell suite passes **271/271**. `invariant-scan` passes **12/12 rules / 37 controls**, including all **14** R12 mutations; R10 retains **45** exemptions. All **221/221** existing pins (**219/219** evidence + **2/2** authorization) remain exact static bytes, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 TRIGGER-FRESHNESS is complete, the cycle remains open, and v0.15.6 remains published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Step 3 candidate `81ca6498c825e52c2c2604eec169bd4a4898b6e3` exists only on `codex/v0.23-action-migration`; hosted run `30456330833` attempt **1** passed all **7/7** executable jobs and its new authenticated set verified **7 accepted / 0 rejected** with a complete identity matrix. That set is verification-only and was not admitted to the manifest. Exact v0.15.6 closing evidence remains candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**; forward-confirmation run `30446796322` also passed **7/7**. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. The post-TRIGGER Python 3.11 shell suite passes **275/275**. `invariant-scan` passes **12/12 rules / 38 controls**, including all **15** R12 mutations; R10 retains **45** exemptions. All **221/221** existing pins (**219/219** evidence + **2/2** authorization) remain exact static bytes, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.23 TRIGGER-FRESHNESS makes dated re-evaluation executable over a bounded
+live document set (measured 2026-07-29).** The rule applies only to
+`ARCHITECTURE.md`'s live dated operational-residual dispositions and the active
+runbook's **Deferred means deferred** table, v0.23-forward. A row is governed
+only when its trigger cell is neither empty nor `none`. A valid ISO date may
+live in its measured-observation cell or that column's header. This admits
+event-shaped negative evidence such as “no operator server session has
+occurred”; the checker establishes that the dated measurement clause exists,
+not that the external statement is true.
+
+E0 re-evaluated **3** trigger-bearing architecture dispositions. Step 5
+re-evaluated the active table's **11** trigger-bearing deferrals, for exactly
+**14** governed rows. Exactly **2** triggers had fired: the Node-runtime
+condition discharged by Step 3 and the `app.py` scope condition exposed by Step
+4. The latter produced the one additional forward assignment: evaluate moving
+the version literal in **v0.24**, without absorbing a production-source change
+into v0.23. After the completed Node row changed to trigger `none`, the two live
+tables contain **2 + 11 = 13** governed rows and `cycle-check` accepts all
+**13/13**. Architecture observations are freshly dated at **221 pins**,
+**127,982 bytes**, two clean verification times of **0.10 s / 0.09 s real**,
+and constrained Python 3.11.4/3.12.13 at **266/266** with one warning and no
+relevant constraints refresh.
+
+The planted construction was examined as one trigger-bearing row and rejected
+for lacking a valid date. Registered R12 mutation **15** disables that exact
+conditional and is detected as `missing-trigger-measurement-date` at
+`tools/cycle_check.py:1474`. `AGENTS.md` now records the exact two-document
+scope, row predicate, date placement, negative-event semantics, presence/date
+limit, and forward boundary. Measured `invariant-scan` is **12/12 rules / 38
+controls**, R12 **15/15**. Focused lifecycle tests pass **43/43**, invariant
+tests **22/22**, and the combined run passes **65/65**. The first full shell
+attempt was a sandbox permission non-result for loopback and `ps`; the
+identical permitted Python 3.11 command passes **275/275** with one accepted
+third-party warning. Mandatory standalone golden remains **11/11**, delta
+**0**.
 
 **v0.23 SCOPE-DECLARED makes cycle scope executable at two distinct firing
 times (measured 2026-07-29).** The small schema is one markdown row per scope
