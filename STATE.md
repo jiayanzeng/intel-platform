@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; CLOSE-FIELDS is complete under Option C, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact v0.15.5 release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. G3 remains open: v0.20 is corrected in the published tree, while v0.21 reproduces the same close-record fixed point. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; CLOSE-FIELDS and TAG-IDENTITY are complete, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact v0.15.5 release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. G3 remains open: v0.20 is corrected in the published tree, while v0.21 reproduces the same close-record fixed point. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.22 CLOSE-FIELDS adopts tagged-closing Option C (operator decision and
 measurement 2026-07-29).** The operator answered `C`, accepting its stated
@@ -43,6 +43,37 @@ and locked Rust lanes, and clean clippy/fmt/ShellCheck gates; the independent
 Python 3.12.13 shell lane also passes **266/266**. Golden passes **11/11** with
 delta **0**. No ref, closed runbook, published tree, crate, dependency, schema,
 protected artifact, database, or public surface changed.
+
+**v0.22 TAG-IDENTITY retains both historical release claims and gives hosted
+tag verification a removal trigger (operator decision and measurement
+2026-07-29).** The operator accepted the recommended `A / A / E`
+disposition. The record is right and the remote is incomplete for both tags:
+
+- Local `refs/tags/v0.8.0` is annotated tag object
+  `314c1dd914a3d8e9193445874a419ed762581e6e`, which targets existing commit
+  `bfc8c5af85734583f966ee70d2ec521155432205`.
+- Local `refs/tags/v0.10.2` is annotated tag object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, which targets existing commit
+  `7d127abac0b993c9e98294ee1c03ff01153de9d0`.
+
+Fresh local type checks return `tag` for both objects and `commit` for both
+targets. Fresh complete remote enumeration returns neither tag name nor any of
+the four object ids. These are therefore valid local-only release identities,
+not false historical publication records. Publishing the exact existing tags
+is the eventual corrective action, but it is a separate operator-authorized
+ref operation and was not performed here.
+
+The retraction count remains **three**: neither release record is retracted and
+no closed runbook or retraction registry changes. Hosted CI deliberately
+retains `cycle-check --skip-local-tag-verification` for now because the remote
+does not supply the two historical refs. The removal trigger is concrete:
+remove the flag only after either the exact existing annotated objects are
+published under both recorded tag names and a hosted full-history checkout
+passes `cycle-check` without the flag, or contrary evidence causes both
+tag identities and all affected release claims to be forward-corrected through
+the existing closed-cycle correction mechanism. No tag, remote ref, closed runbook,
+published tree, crate, dependency, schema, protected artifact, database, or
+public surface changed. Golden remains **11/11**, delta **0**.
 
 **v0.21 R-CLOSE publishes v0.15.5 and closes the cycle (measured
 2026-07-29).** Release disposition: release (as of 2026-07-29). The release

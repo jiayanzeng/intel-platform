@@ -590,6 +590,43 @@ confirmation rather than the event that closes the cycle.
   into the final closing record.
 - **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
 
+### 2026-07-29 · TAG-IDENTITY — A / A / E
+
+PASS. The operator accepted the recommended decisions: the record is right and
+the remote is incomplete for both `v0.8.0` and `v0.10.2`; hosted
+`--skip-local-tag-verification` remains in place with a removal trigger.
+
+- **`v0.8.0` decision:** record right, remote incomplete. Fresh local
+  measurement resolves annotated object
+  `314c1dd914a3d8e9193445874a419ed762581e6e` to existing commit
+  `bfc8c5af85734583f966ee70d2ec521155432205`; object types are `tag` and
+  `commit`. Complete remote enumeration contains neither the tag name nor
+  either object id.
+- **`v0.10.2` decision:** record right, remote incomplete. Fresh local
+  measurement resolves annotated object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` to existing commit
+  `7d127abac0b993c9e98294ee1c03ff01153de9d0`; object types are `tag` and
+  `commit`. Complete remote enumeration contains neither the tag name nor
+  either object id.
+- **Claim and eventual action:** both historical release identities are valid
+  local-only tags. Publishing those exact existing tag objects is the eventual
+  correction, but ref publication is a separate operator-authorized action and
+  is not part of this task.
+- **Retractions:** unchanged at **three**. Neither release claim is retracted;
+  no closed runbook, historical banner, or
+  `config/checklist-retractions.json` entry changes.
+- **Hosted-skip decision:** retain the flag now. Remove it only after either
+  both exact annotated objects are published under their recorded names and a
+  hosted full-history checkout passes `cycle-check` without the flag, or
+  contrary evidence causes both tag identities and all affected claims to be
+  forward-corrected through the existing closed-cycle correction mechanism.
+  The flag was not removed.
+- **Scope and identity:** no tag or remote ref was created, moved, or deleted;
+  no closed runbook or dated historical record changed. The published v0.15.5
+  tag and tree remain untouched. No crate, dependency, schema, protected
+  database, or public surface changed.
+- **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
+
 ---
 
 ## Cycle checklist
@@ -603,7 +640,7 @@ confirmation rather than the event that closes the cycle.
   cost in the operator's terms; fail-before captured; every changed rule has a
   detected planted failure; `AGENTS.md`'s R-CLOSE contract matches the checker;
   no published tree repaired
-- [ ] **TAG-IDENTITY** — per-tag decision with its claim stated; retraction count
+- [x] **TAG-IDENTITY** — per-tag decision with its claim stated; retraction count
   addressed; `--skip-local-tag-verification` recorded or given a trigger and not
   removed; no ref touched by 🤖
 - [ ] **RESIDUALS** — G3, G4, G5 each carry one dated disposition or are deleted
