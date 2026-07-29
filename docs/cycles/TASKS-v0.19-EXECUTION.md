@@ -467,7 +467,7 @@ decision: publication.**
   named, or deletion complete; `ARCHITECTURE.md` matches
 - [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; branch named after the decided version
-- [ ] **R-CLOSE** — version cites its trigger; G1's severity recorded as
+- [x] **R-CLOSE** — version cites its trigger; G1's severity recorded as
   fail-closed and neither inflated nor minimised; export before/after recorded;
   all open items still open
 
@@ -775,12 +775,11 @@ lockfile, schema, or protected database moved.
   loopback-bind permission non-result; the identical permitted invocation
   passed **11/11**.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-29
-- **Release disposition:** release (as of 2026-07-29). The operator authorized
-  publication; the exact release commit still requires Step 7's clean
-  definition-of-done measurement.
+- **Cycle closed:** 2026-07-29
+- **Release disposition:** release (as of 2026-07-29)
+- **Release:** v0.15.3
 - **Release version:** v0.15.3. Step 4's measured negative-cache correctness
   defect is the patch trigger: transient unreachable state occupied the
   successful-policy cache's full day and discarded a good policy while
@@ -807,16 +806,45 @@ lockfile, schema, or protected database moved.
   **34,530** bytes at `evidence/v0.15.3/deferred-audit/report.json`.
 - **Evidence pins:** **176/176** total — **174/174** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
+- **Release commit:** `dbff27d559193847dd2028c435c686ba656dac85`
+- **Annotated tag object:** `2039e01475b43285ecbbf2739f788b7f855a5603`
+- **Exact release matrix:** clean-tree `./run ci-local` passes **20/20** with
+  **133** workspace tests, **55** net tests (**29 + 26**), locked Rust 1.78,
+  zero rustc/clippy/fmt/ShellCheck failures, Python 3.11.4 **248/248**,
+  independently rebuilt Python 3.12.13 **248/248**, `invariant-scan`
+  **11/11 rules / 23 controls**, all **176/176** pins, protected databases
+  **2/2**, and golden **11/11**. Supplemental all-features tests pass
+  `intel-compliance` **40/40** and `intel-ingest` **29/29**; both retired
+  feature commands exit **101** with Cargo's `does not contain this feature`.
+  Authenticated re-derivation passes **7** rows in release posture. The
+  mandatory standalone post-matrix golden passes **11/11**, delta **0**.
+- **Export budget:** the comparable Repomix summary moved from **4,887,220
+  characters / 339 files** to **2,669,764 characters / 145 files** at the
+  release commit; the latter serialized XML is **2,674,706 bytes**. The
+  losslessly moved historical state lives at
+  `docs/state-archive/STATE-through-v0.13.md`. All **88/88** derived source
+  files and the named release-critical files and fixtures are present.
+- **Epistemic correction:** before STATUS-TRUE, a false remote-main/tag status
+  passed every project check. `cycle-check` now executes that reconciliation
+  and its fail-before was captured before the forward correction.
 - **v0.20 opener:** the export exclusion misses
   `docs/cycles/TASKS-v0.6.md` and `TASKS-v0.7.md`; no `export-check` derives
   the expected source set from `git ls-files`; and `AGENTS.md` does not yet
   require a project-root Repomix run or preserve why
   `enableSecurityCheck` must remain disabled. None is repaired in R-CLOSE.
+- **Open architecture/product scope:** A4, editable L1, R3/R4's bounded
+  open-bottom scanners, the active-runbook measured-value heuristic, T7
+  robots single-flight, Decision B's last-known-good fallback, and scheduled
+  L2 remain open. `arxiv-cs` is the sole real publisher and the other three
+  sources are fixture placeholders; adding a second publisher remains a
+  separate compliance decision.
+- **Publication:** the local annotated tag object peels exactly to the release
+  commit. The closing audit commit and tag are authorized for one atomic push
+  to `origin/main`.
 - **Remote disposition:** `origin/main` remains
   `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; candidate branch
-  `candidate/v0.15.3` is exact at the evidence candidate; no `v0.15.3` tag
-  exists.
+  `candidate/v0.15.3` is exact at the evidence candidate; no remote
+  `v0.15.3` tag existed before the authorized atomic publication.
 
 ---
 

@@ -248,3 +248,69 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The first post-admission sandboxed invocation was a
   loopback-bind permission non-result; the identical permitted invocation
   passed **11/11**.
+
+### 2026-07-29 · R-CLOSE — v0.15.3 release measured and locally tagged
+
+- owner: Codex
+- commit: dbff27d
+- result: PASS. Release disposition is **release (as of 2026-07-29)**. The
+  operator authorized publication because Step 4 changes production behavior
+  received by an artifact consumer: `cached()` selects TTL by exhaustive
+  policy variant and `cored` wires a **300-second** negative TTL. The patch
+  default classifies the compatible identity; it is not the trigger.
+- gate acceptance: PASS. Steps 1–6 were complete and boxed, the worktree was
+  clean, and the publication decision was explicit before release mutation.
+  R-CLOSE changed only its declared release reconciliation surfaces; it did
+  not alter `repomix.config.json` or repair the v0.20 export findings.
+- severity/retry acceptance: PASS. The pre-fix result was fail-closed
+  availability loss: it denied access and never allowed a publisher-refused
+  request. The correction deliberately permits another `/robots.txt` attempt
+  at most once per **300 seconds** instead of once per **24 hours**, bounded by
+  ingest frequency and the shared limiter acquired by `policy_for`.
+  `Unreachable` still denies while cached and overwrites expired good policy;
+  Decision B remains deferred under its live-outage and authorization trigger.
+- identity/removal acceptance: PASS. v0.15.3 is patch-compatible because no
+  `/v1/*` name, response body, or schema changed. The unsupported
+  `diagnostics` and `robots-preview` features and preview binary that shipped
+  in v0.15.2 are explicitly recorded as removed. Evidence candidate
+  `197e93effe9a6abf9c59488a9849c6dcda47646c` and exact release commit
+  `dbff27d559193847dd2028c435c686ba656dac85` are separate subjects. Local
+  annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603`
+  peels exactly to the release commit.
+- exact-release acceptance: PASS. Clean-tree `./run ci-local` passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**),
+  locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures, Python 3.11.4
+  **248/248**, `invariant-scan` **11/11 rules / 23 controls**, **176/176**
+  pins, protected databases **2/2**, and golden **11/11**. The first sandboxed
+  invocation was a loopback-bind non-result; the identical permitted
+  invocation passed. A clean constrained Python 3.12.13 rebuild resolved
+  **21/21** packages and passed **248/248**.
+- supplemental/evidence acceptance: PASS. All-features suites passed
+  `intel-compliance` **40/40** and `intel-ingest` **29/29**; both retired
+  feature commands exited **101** with Cargo's `does not contain this
+  feature`. The documented release-posture re-derivation authenticated **7**
+  rows, **5** source dispositions, and **7** triggers. One over-specified
+  rederive invocation exited **2** because production-only flags are forbidden
+  in rederive mode; it changed no file and the documented invocation passed.
+- export acceptance: PASS with three named v0.20 omissions. Root-run Repomix
+  1.17.0 reports **2,669,764 characters / 145 files** at the release commit;
+  its serialized XML is **2,674,706 bytes**. All **88/88** paths derived from
+  `git ls-files crates apps tools shell`, all four fixtures named by
+  `config/core.json`, and every named release-critical file are present. The
+  comparable E0 summary was **4,887,220 characters / 339 files**. The missed
+  v0.6/v0.7 tasks, missing derived `export-check`, and missing AGENTS rules are
+  carried to v0.20 without a config change here.
+- epistemic/diff/architecture acceptance: PASS. The close records that a false
+  publication status previously passed every project check. All **39** diff
+  paths are classified once in `STATE.md`; `CHANGELOG.md` includes the retry
+  trade and `Removed` heading. `ARCHITECTURE.md` keeps A4, editable L1,
+  R3/R4, the measured-value heuristic, T7, Decision B, the export omissions,
+  and scheduled L2 open.
+- product/publication acceptance: PASS locally. `arxiv-cs` remains the sole
+  real publisher and three sources remain fixture placeholders. Before local
+  tagging, remote inspection found `origin/main`
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10`, the candidate exact, and no
+  remote `v0.15.3` tag. The closing audit commit and tag are authorized for one
+  atomic push.
+- golden-E2E delta: **0**. The mandatory standalone release invocation passed
+  **11/11**.
