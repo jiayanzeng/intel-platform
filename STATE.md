@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Status:** **v0.24 is closed locally under R-CLOSE and v0.15.8 is operator-authorized for atomic publication; v0.15.7 remains published until that ref movement.** Untagged release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` is the immediate parent of this closing tree; the annotated v0.15.8 tag must target the closing tree, not its parent. The separate v0.24 evidence candidate is `a73c042068a367aea22e63e28dfd2f754b65ef9c` on neutral branch `codex/v0.24-evidence-a73c042`; authenticated hosted run `30472740314` attempt **1** passed all seven executable jobs. Its release-grade audit accepted **7** signed identities, rejected **0**, required attestations, and found the complete job/matrix set. The comparator derived equivalent populations for both Python lanes: local collected **283**, passed **283**, and skipped **0**; hosted collected **283**, passed **282**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, embedded golden **11 checks**, and clean Rust, clippy, fmt, and ShellCheck gates. The independently rebuilt Python 3.12 lane also collected **283**, passed **283**, and skipped **0**. All **251** protected pins and both protected databases match. SEC EDGAR's reviewed US GAAP RSS path is conditionally admissible only for a separate v0.25 operator decision; no source was added. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Status:** **v0.24 is closed and v0.15.8 is published under R-CLOSE.** Remote `main` and the peeled v0.15.8 tag resolve to closing commit `64002678672a601804e5f67886c73fffb4d212c8`; annotated tag object `dc5abe0690e77cef671896102382427721d97321` targets that closing tree, whose first parent is release commit `696c0863ea684d590970902bcbbd13a7a3ccb610`. Published-head run `30475988050` attempt **1** passed all seven executable jobs. Fresh comparator executions derived equivalent populations for both Python lanes: local collected **283**, passed **283**, and skipped **0**; hosted collected **283**, passed **282**, and skipped the one named `on_site` test. The separate authenticated v0.24 evidence candidate is `a73c042068a367aea22e63e28dfd2f754b65ef9c`; run `30472740314` attempt **1** accepted **7** signed identities, rejected **0**, required attestations, and found the complete job/matrix set. The exact release parent passed all **20** local jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, embedded golden **11 checks**, and clean Rust, clippy, fmt, and ShellCheck gates. All **251** protected pins and both protected databases match. SEC EDGAR's reviewed US GAAP RSS path is conditionally admissible only for a separate v0.25 operator decision; no source was added. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.24 R-CLOSE selects v0.15.8 and closes on authenticated candidate evidence
 (operator decision and measurement 2026-07-30).** Release disposition: release
@@ -101,6 +101,49 @@ active-runbook measured-value heuristic, T7 robots single-flight, robots
 negative-cache Decision B, scheduled L2, and the FastAPI version-literal
 relocation remain open. The A/A/E disposition and hosted
 `--skip-local-tag-verification` trigger remain unchanged.
+
+**v0.15.8 post-push confirmation (measured 2026-07-30).**
+
+- **Post-push verification date:** 2026-07-30
+- **Post-push release:** `v0.15.8`
+- **Post-push annotated tag object:** `dc5abe0690e77cef671896102382427721d97321`
+- **Post-push closing commit:** `64002678672a601804e5f67886c73fffb4d212c8`
+- **Post-push hosted run:** `30475988050`
+
+Atomic remote readback resolves `main` and the peeled v0.15.8 tag to closing
+commit `64002678672a601804e5f67886c73fffb4d212c8`; its first parent is release
+commit `696c0863ea684d590970902bcbbd13a7a3ccb610`, and the tag ref resolves to
+annotated object `dc5abe0690e77cef671896102382427721d97321`.
+Push run `30475988050` attempt **1** completed successfully at that exact
+closing commit. All seven executable jobs passed: core, lint, MSRV, net, shell
+Python 3.11, shell Python 3.12, and golden; report-only dependency drift was
+skipped by its declared trigger.
+
+Fresh local Python 3.11.4 and 3.12.13 summaries each collected **283**, passed
+**283**, failed **0**, and skipped **0**. Both hosted summaries collected
+**283**, passed **282**, failed **0**, and skipped the one
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+node, marked `on_site` and `skipif`, for
+`on-site production audit requires protected corpora and built cored`.
+`tools/test_population.py` verified the claimed hosted counts and emitted this
+byte-identical result for both lanes:
+
+`test-population-compare: {"collected":283,"equivalent":true,"equivalent_passed":283,"hosted":{"on_site_skipped":1,"passed":282,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":283,"skipped":0},"schema_version":1}`
+
+The hosted-zero-skip stop condition did not fire. Hosted measurements were
+workspace **133**, net **55** (**29 + 26**), lifecycle **191** checked / **3**
+retracted / **191** matched / **0** exemptions, `invariant-scan` **12/12
+rules / 39 controls** with all **16** R12 planted failures detected, protected
+pins **251**, and golden **11/11**. Ordinary push verification did not request
+attestations; candidate run `30472740314` remains the authenticated closing
+evidence. The published result confirms rather than creates the already-valid
+close.
+
+This first descendant carries the protocol-required post-push fields. Per the
+accepted cycle-ending audit rhythm, it is locally verified and remains
+hosted-unverified until the following publication. No manifest, evidence file,
+source, schema, dependency, protected database, public surface, or configured
+publisher changed.
 
 **v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
 test population (measured 2026-07-29).**

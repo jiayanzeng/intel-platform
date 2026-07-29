@@ -450,3 +450,44 @@ Entries are append-only; corrections are new dated entries.
   version-literal relocation remain open. The A/A/E disposition and
   `--skip-local-tag-verification` trigger remain unchanged.
 - golden-E2E delta: **0**.
+
+### 2026-07-30 · POST-PUSH — v0.15.8 forward confirmation
+
+- owner: Codex
+- commit: 64002678672a601804e5f67886c73fffb4d212c8
+- result: PASS. Closing commit
+  `64002678672a601804e5f67886c73fffb4d212c8` and annotated v0.15.8 object
+  `dc5abe0690e77cef671896102382427721d97321` were published atomically.
+  Remote readback resolves `main` and the peeled tag to the closing commit; its
+  first parent is release commit
+  `696c0863ea684d590970902bcbbd13a7a3ccb610`.
+- hosted-forward acceptance: PASS. Push run `30475988050` attempt **1**
+  executed at the exact closing commit. All seven executable jobs passed:
+  core, lint, MSRV, net, shell Python 3.11, shell Python 3.12, and golden.
+  Report-only dependency drift was skipped by its declared trigger.
+- population acceptance: PASS. Fresh local Python 3.11.4 and 3.12.13 each
+  collected **283**, passed **283**, failed **0**, and skipped **0**. Both
+  hosted summaries collected **283**, passed **282**, failed **0**, and skipped
+  the one named `on_site` test. The comparator verified the claimed hosted
+  counts and emitted this byte-identical result for both lanes:
+
+  `test-population-compare: {"collected":283,"equivalent":true,"equivalent_passed":283,"hosted":{"on_site_skipped":1,"passed":282,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":283,"skipped":0},"schema_version":1}`
+
+  The hosted-zero-skip stop condition did not fire.
+- hosted-count acceptance: PASS. Hosted measurements were workspace **133**,
+  net **55** (**29 + 26**), lifecycle **191** checked / **3** retracted /
+  **191** matched / **0** exemptions, `invariant-scan` **12/12 rules / 39
+  controls** with all **16** R12 mutations detected, protected pins **251**,
+  and golden **11/11**.
+- closure-semantics acceptance: PASS. Candidate run `30472740314` remains the
+  authenticated closing evidence. Run `30475988050` is dated forward
+  confirmation; ordinary push verification did not request attestations, and
+  its result neither created nor retroactively conditioned the already-valid
+  close.
+- audit-rhythm acceptance: PASS. This first post-tag commit carries the exact
+  contiguous `STATE.md` fields required by R-CLOSE. It is locally verified now
+  and will become hosted-verified at the following publication.
+- scope acceptance: PASS. No manifest, evidence file, source, schema,
+  dependency, protected database, public surface, configured publisher, or
+  golden-corpus fact changed.
+- golden-E2E delta: **0**. Published-head golden passed all **11** checks.
