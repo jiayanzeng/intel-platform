@@ -81,3 +81,47 @@ Entries are append-only; corrections are new dated entries.
   `03053b14137161423a4f1bca617b8bc85d91e86b`.
 - golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** after
   the E0 status edit.
+
+### 2026-07-29 · CLOSE-FIELDS — tagged-closing Option C
+
+- owner: Codex
+- commit: 72b9d8f
+- result: PASS. The operator answered `C`; implementation commit
+  `72b9d8f06c650fafd4d6f3d4216128997a1ffd0b` adopts the two-commit
+  tagged-closing protocol. Release commit `R` remains untagged, immediate child
+  `C` records `R` without an annotated-tag-object field, and the annotated tag
+  targets `C`.
+- decision acceptance: PASS. The recorded cost is the option the operator
+  selected: the runbook no longer stores the tag-object hash, and closure cites
+  authenticated candidate evidence rather than published-head evidence. This
+  is accepted because the closing tree contains only values knowable when
+  committed, Git binds the tag to that tree and release parent, and a dated
+  forward append pins the later tag object, closing commit, and hosted run.
+  Published-head CI is forward confirmation, not the closing event.
+- fail-before acceptance: PASS. The old checker rejected the selected shape
+  with `closing record must contain exactly one annotated tag object; found 0`.
+  The corrected checker rejected the pre-change active shape with
+  `declared closed cycle must use the tagged-closing protocol and omit the
+  Annotated tag object field; record that object in the dated post-push append`.
+- failure-control acceptance: PASS. R12 has **13** registered fail-before
+  mutations covering the active protocol, annotated-tag type, release parent,
+  tagged tree, header assertions, pending status, unavailable refs and
+  ancestry, and the complete dated post-push record. Every mutation detects its
+  planted failures; the repository passes **12/12 rules / 36 controls**.
+- contract acceptance: PASS. `AGENTS.md` and `cycle_check.py` describe the same
+  sequence, tagged-tree checks, and required forward-record fields. Legacy
+  release records through v0.15.5 retain their existing semantics.
+- scope acceptance: PASS. No ref, closed runbook, published tree, crate,
+  dependency, schema, protected artifact, database, or public surface changed.
+  Only the declared checker, focused tests, invariant registry/harness,
+  operating contract, active runbook, and status record changed.
+- test acceptance: PASS. Focused `cycle_check` tests passed **34/34** on
+  constrained Python 3.11.4 and 3.12.13. `./run ci-local` passed **20/20** with
+  **133** workspace tests, **55** net tests (**29 + 26**), shell **266/266**,
+  warning-denied current and locked Rust lanes, and clean
+  clippy/fmt/ShellCheck gates. The independent Python 3.12.13 shell lane also
+  passed **266/266**.
+- golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** after
+  the status and runbook edits.
+- protected artifact delta: **0**. All **206/206** pins and protected databases
+  remain unchanged; no protected manifest or artifact path moved.
