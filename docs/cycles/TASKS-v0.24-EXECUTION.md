@@ -403,6 +403,44 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
   `48ea726b798f1049e0b29cce1f0c64588861c2dd`.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
 
+### 2026-07-29 · POPULATION-EXPLICIT
+
+- **Gate — PASS.** E0 confirmed the sole existing conditional test and the
+  absence of pytest population configuration. Changes are confined to the
+  declared pytest/test, `run` authorization-pin, manifest, and status paths;
+  `.github/workflows/ci.yml` remains byte-unchanged.
+- **Marker and enumeration — PASS.** The registered `on_site` marker sits
+  immediately alongside the existing, unchanged `skipif`.
+  `pytest shell/tests --collect-only -m on_site -q` enumerated exactly
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`.
+- **Machine summary and population preservation — PASS.** Both full-suite
+  invocations retain the exact `pytest shell/tests -q` command and obtain the
+  same option from `shell/pytest.ini`. The stable JSON record contains
+  collected, passed, failed, the enumerated `on_site` set, and every skip's
+  node id, markers, and reason. Local Python 3.11.4 and 3.12.13 each collected
+  **275**, passed **275**, failed **0**, and skipped **0**. A disposable clean
+  checkout under each interpreter collected **275**, passed **274**, failed
+  **0**, and skipped **1**: the enumerated node, marked `on_site` and `skipif`,
+  for `on-site production audit requires protected corpora and built cored`.
+  These are the same populations and results measured at E0.
+- **Planted command-shape failure — PASS.** A construction that added an
+  explicit pytest option to `run` and the workflow was rejected by the
+  authorization pin and R10's hosted-command classifier. The accepted
+  configuration preserves the command shape. `run` changes by one explanatory
+  comment only; its pin moves from
+  `0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779`
+  (**43,044 bytes**) to
+  `44314ddfc182de68d4aaa444f2c6bd074fe08858d8d46f98aafa461dd6672397`
+  (**43,125 bytes**). Its commands, dispatch, model-profile functions, and
+  authorization boundary are unchanged.
+- **Acceptance — PASS.** Full `./run ci-local` passed all **20** jobs with
+  workspace **133**, net **55** (**29 + 26**), both warning-denied Rust lanes,
+  clean clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 38 controls**, all
+  **236** pins, protected databases **2**, and embedded golden **11 checks**.
+  Standalone golden passed all **11** checks; delta **0**. No test selection,
+  runtime source, dependency, schema, protected database, configured source, or
+  public surface changed.
+
 ---
 
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
@@ -673,7 +711,7 @@ publication.**
   recorded; **G3 bounded to an exact set** with retention gaps stated; G4's
   criterion stated before its answer; G5 recorded; G6 named or refuted; manifest
   and verify time freshly measured
-- [ ] **POPULATION-EXPLICIT** — marker registered alongside the `skipif`, not
+- [x] **POPULATION-EXPLICIT** — marker registered alongside the `skipif`, not
   replacing it; `--collect-only -m on_site` enumeration recorded; identical
   machine-readable summary from both lanes; no change to which tests run, shown;
   `run` pin updated

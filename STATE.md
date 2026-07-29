@@ -1,6 +1,46 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.23 is closed and v0.15.7 is published under R-CLOSE; published-head CI is green, with one exact-count audit finding carried forward.** Release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; annotated v0.15.7 object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The separate v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. Forward-confirmation run `30462710258` at the published closing commit also passed all **7/7** executable jobs; report-only dependency drift was skipped. Both hosted shell lanes passed **274** tests, skipped the one explicitly on-site-only production-measurement test, and retained one third-party warning. The prior v0.23 closing evidence incorrectly recorded those hosted lanes as **275/275** and equal to local; the dated correction below supersedes that claim and is a v0.24 apparatus input. All **236/236** pins (**234/234** evidence + **2/2** authorization) match. At the exact release parent, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275** on Python 3.11.4, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; an independently rebuilt Python 3.12.13 lane also passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Protected databases remain **2/2**, root-level review export passes **90** derived sources / **7** required / **153** exported, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, hosted/local test-population equivalence, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 and POPULATION-EXPLICIT are complete, and the hosted/local population comparator is next.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT now emits one stable JSON record from the unchanged local and hosted full-suite command shape. Current local Python 3.11.4 and 3.12.13 lanes each collected **275**, passed **275**, and skipped **0**; a clean checkout under each interpreter collected **275**, passed **274**, and skipped the one marked `on_site` test for its named protected-corpora-and-built-`cored` reason. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 38 controls**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**; standalone golden also passed all **11** checks. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus and three retractions are unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, hosted/local test-population equivalence, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
+test population (measured 2026-07-29).**
+
+The sole conditional test,
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+now carries the registered `on_site` marker immediately alongside its unchanged
+`skipif`. `pytest shell/tests --collect-only -m on_site -q` enumerated exactly
+that one node. The full-suite plugin emits a stable, sorted JSON object containing
+`schema_version`, `collected`, `passed`, `failed`, the complete `on_site` node
+set, and each skip's node id, marker set, and reason.
+
+Repository-local Python 3.11.4 and 3.12.13 each collected **275**, passed
+**275**, failed **0**, and skipped **0**. A disposable clean checkout without
+the protected databases or built `cored` produced the same format in both
+lanes: collected **275**, passed **274**, failed **0**, and skipped **1**. The
+skip was the exact node above, carried markers `on_site` and `skipif`, and named
+the reason `on-site production audit requires protected corpora and built
+cored`. The selected test populations and outcomes are unchanged from E0; this
+task only makes the distinction explicit and machine-readable.
+
+An initial construction that added an explicit pytest CLI option to `run` and
+the workflow was rejected by the authorization pin and R10's hosted-command
+classification. The accepted construction instead places the shared option in
+`shell/pytest.ini`, leaving both invocations as
+`pytest shell/tests -q`. `run` changed only by one explanatory comment, from
+SHA-256 `0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779`
+at **43,044 bytes** to
+`44314ddfc182de68d4aaa444f2c6bd074fe08858d8d46f98aafa461dd6672397`
+at **43,125 bytes**. Its commands, dispatch, model-profile functions, and
+authorization boundary are unchanged; `tools/model_profiles.py` and
+`.github/workflows/ci.yml` are byte-unchanged.
+
+The complete current `./run ci-local` passed all **20** jobs: workspace
+**133**, net **55** (**29 + 26**), both warning-denied Rust lanes, clean
+clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 38 controls**, all **236**
+pins, protected databases **2**, and embedded golden **11 checks**. Standalone
+golden passed all **11** checks with delta **0**. No runtime source, crate,
+dependency, schema, protected database, configured source, or public surface
+changed.
 
 **v0.15.7 post-push confirmation and v0.23 exact-count correction (measured
 2026-07-29).**

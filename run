@@ -458,6 +458,7 @@ ci_msrv_test() {
 
 ci_pytest() {
   verify_python_constraints
+  # shell/pytest.ini emits the same machine-readable summary locally and hosted.
   PYTHONPATH=shell py -m pytest shell/tests -q
 }
 

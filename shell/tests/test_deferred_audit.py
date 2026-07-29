@@ -1270,6 +1270,7 @@ def test_source_rederivation_rejects_planted_disposition(
     assert '"T7 robots single-flight": "promote"' in result.stderr
 
 
+@pytest.mark.on_site
 @pytest.mark.skipif(
     not (
         (ROOT / "data" / "core.db").is_file()
