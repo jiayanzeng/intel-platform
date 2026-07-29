@@ -535,8 +535,10 @@ floating one.
 
 **Gate.** 🧑 **One narrow authorization: a non-`main` branch push for hosted
 verification.** Scope is `.github/workflows/ci.yml` and status records. No crate,
-Rust or Python source, dependency-graph, schema, protected-database, or public
-surface changes. **The `--skip-local-tag-verification` flag is not removed.**
+Rust or Python production source, dependency-graph, schema, protected-database,
+or public surface changes. The one permitted test change is the receipt-control
+assertion that names the upgraded `actions/upload-artifact` major.
+**The `--skip-local-tag-verification` flag is not removed.**
 
 **This is the highest-risk step in the cycle.** `attest-build-provenance`
 produces the attestations backing 219 evidence pins.

@@ -1183,7 +1183,7 @@ def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
         == workflow_job_count
     )
     assert (
-        workflow.count("uses: actions/upload-artifact@v4")
+        workflow.count("uses: actions/upload-artifact@v6")
         == workflow_job_count
     )
     assert (

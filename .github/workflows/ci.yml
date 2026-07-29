@@ -52,13 +52,13 @@ jobs:
     name: core (pinned toolchain)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
 
       # rust-toolchain.toml pins the channel; this action honors it, so the
       # version lives in exactly one place.
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
           toolchain: "1.91"
 
@@ -116,7 +116,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: |
@@ -141,10 +141,10 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
           toolchain: "1.91"
           components: clippy, rustfmt
@@ -184,7 +184,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: |
@@ -206,10 +206,10 @@ jobs:
     name: live-fetch path (--features net)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
           toolchain: "1.91"
       - uses: Swatinem/rust-cache@v2
@@ -255,7 +255,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: |
@@ -297,10 +297,10 @@ jobs:
     name: MSRV floor (offline builds on 1.78)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
           toolchain: "1.78"
       - uses: Swatinem/rust-cache@v2
@@ -347,7 +347,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: |
@@ -367,13 +367,13 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
           # version-check compares the nearest release tag. A depth-1 checkout
           # ahead of that tag would reduce the check to an avoidable warning.
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: release version consistency
@@ -455,7 +455,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-py${{ matrix.python-version }}
           path: |
@@ -474,14 +474,14 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
           toolchain: "1.91"
       - uses: Swatinem/rust-cache@v2
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: assert the golden end-to-end
@@ -517,7 +517,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: |
@@ -543,10 +543,10 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.audit_sha || github.sha }}
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
           toolchain: "1.91"
 
@@ -599,7 +599,7 @@ jobs:
         run: cp "${{ steps.attest.outputs.bundle-path }}" "$CI_RECEIPT_PATH.sigstore"
       - name: persist CI-runner receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ci-receipt-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: |
