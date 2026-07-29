@@ -220,3 +220,34 @@ Entries are append-only; corrections are new dated entries.
   permitted identical retry passed.
 - golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-29 · EXPORT-CONTRACT — measured operating rules recorded
+
+- owner: Codex
+- commit: 15b7d48
+- result: PASS. The implementation commit contains only `AGENTS.md`,
+  `ARCHITECTURE.md`'s stale review-export paragraph, `STATE.md`, and the
+  v0.20 runbook's status/checklist record. No tool, crate, configuration,
+  dependency, protected artifact, database, or public surface changed.
+- root-rule acceptance: PASS. `AGENTS.md` requires project-root generation and
+  records why: the measured non-root invocation did not load the project
+  configuration and silently dropped `Cargo.lock`. It points at
+  `./run export-check`, which generates at the root and derives tracked source
+  paths with `git ls-files`.
+- security-rule acceptance: PASS. `AGENTS.md` requires
+  `enableSecurityCheck=false`, records the **340 collected / 339 included**
+  measurement and omitted `crates/ingest/src/lib.rs`, retains registered
+  self-testing R4 as the credential control, and points at
+  `./run export-check`.
+- architectural-scope acceptance: PASS. No HC was added or renumbered.
+  `ARCHITECTURE.md` now correctly describes the check as an executable
+  operator-local contract, not a hosted repository invariant. It also records
+  why the multi-megabyte, potentially network-fetching check remains outside
+  local/hosted CI.
+- executable acceptance: PASS. `./run export-check` found **90/90** derived
+  sources and **7/7** required paths in **147** exported paths.
+  `cycle-check` and `git diff --check` passed. The expected pre-audit
+  `checklist-audit` refusal named only EXPORT-CONTRACT's not-yet-possible
+  progress entry; it is rerun after this hash-bearing append.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11**.
