@@ -39,3 +39,28 @@ Entries are append-only; corrections are new dated entries.
   entering matrix and drafted-gate measurements.
 - golden-E2E delta: NOT MEASURED; no claim.
 - protected artifact delta: NOT MEASURED; no protected or pinned file changed.
+
+### 2026-07-29 · ACTIVATE-CORRECTION — live contract made valid
+
+- owner: Codex
+- commit: 6c5ca4c
+- result: PASS. The active runbook carries a dated amendment and now uses the
+  checker's Markdown declared-scope table, assigns manifest re-measurement to
+  Step 1, and states Step 6's invariant-count acceptance as a same-candidate
+  relation with the population-equivalence rule executing.
+- scope acceptance: PASS. `./run cycle-check` accepts the `release` intent and
+  all declared release-authority coverage. The Python forbid is
+  `shell/intel_shell/[a-z]*.py`, leaving
+  `shell/intel_shell/app.py` as the sole release-authority overlap described by
+  the runbook.
+- amendment acceptance: PASS. The machine-readable
+  `Step 6 — … — 2026-07-29` disclosure matches the one changed acceptance
+  block; `cycle-check` reports no undisclosed objective, acceptance, or
+  done-condition edit.
+- lifecycle acceptance: PASS. `cycle-check` reports active v0.24 open with
+  twenty-one closed execution runbooks and three historical runbooks;
+  `checklist-audit` passes **184 checked / 3 retracted / 184 matched / 0
+  exemptions**; `progress-check` passes at the preceding ACTIVATE record.
+- scope delta: only the active runbook changed. No source, workflow, tool,
+  dependency, schema, protected artifact, public surface, or ref changed.
+- golden-E2E delta: NOT MEASURED; no claim.
