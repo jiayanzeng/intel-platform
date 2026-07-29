@@ -440,7 +440,7 @@ decision: publication.**
   hash; hosted-versus-local status stated; `run` pin updated
 - [x] **EXPORT-CONTRACT** — both rules in `AGENTS.md` with measured reasons and
   pointed at the executing check
-- [ ] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
+- [x] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
   corrected `cycle-check` green in the hosted job with job and depth named
 - [ ] **R-CLOSE** — version cites its trigger; publication trigger stated as the
   red published head; G1 recorded as a specification defect; post-push hosted CI
@@ -686,6 +686,92 @@ protected artifact, database, or public surface changed.
   derived sources, **7/7** required paths, and **147** exported paths.
   `checklist-audit`, `cycle-check`, and `git diff --check` pass. Mandatory
   standalone `./run golden` passes **11/11**, delta **0**.
+
+### 2026-07-29 · RE-MEASURE
+
+PASS. The operator authorized exactly the Gate's non-`main` candidate push and
+authenticated hosted dispatch. The patch identity is `v0.15.4`: the runbook's
+default applies because no `/v1/*` route or body and no crate changed.
+Repository admission contains only that run's seven signed receipt/bundle
+pairs, its release-posture deferred-audit report, the protected-artifact
+manifest, and required status records. No tag, `main` advance, publication,
+product path, public surface, dependency, lockfile, schema, or protected
+database moved.
+
+- **Candidate/workflow acceptance:** PASS. `candidate/v0.15.4` is exact at
+  `8230d4f24f565afcde92931c987adff4339036af`. Before dispatch, the remote
+  candidate workflow was read and confirmed to contain the expected core,
+  lint, net, MSRV, two-shell, golden, cycle/checklist, invariant/progress,
+  receipt-signing, and artifact-upload invocations. Its blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` equals the local workflow blob.
+- **Same-commit count acceptance:** PASS. Local `./run ci-local` passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**),
+  shell **255/255** on Python 3.11.4, Rust 1.78, invariant **11/11 rules / 23
+  controls**, R10's **45** exemptions, and golden **11/11**; constrained
+  Python 3.12.13 independently passed **255/255**. Hosted run
+  `30423736121` attempt 1 reports the same **133**, **55**, **11/11 / 23**,
+  **45**, and **11/11** counts. Both hosted shell lanes collected the same
+  **255** tests as **254 passed + 1 declared on-site-only protected-corpus
+  skip**.
+- **Corrected-control acceptance:** PASS. Hosted `shell (Python 3.11)`, step
+  `active cycle and amendment consistency`, ran at `fetch-depth: 0` and
+  reported `cycle-check: PASS` with active v0.20 open, 17 closed execution
+  runbooks, three historical runbooks, and no requested local tag refs.
+- **Identity/authentication acceptance:** PASS. All **7/7** workflow-derived
+  identities across **6** blocking jobs are successful Linux receipts with
+  verified Sigstore bundles; zero receipts were rejected and the single-run
+  matrix is complete.
+- **Deferred-audit acceptance:** PASS. The first detached invocation was a
+  non-result because the clean subject worktree lacked the intentionally
+  untracked protected databases and raised `FileNotFoundError` before a report
+  existed. The clean retry used ignored read-only links under `/private/tmp`;
+  both protected hashes matched and detached `git status` stayed clean. The
+  attestations-required release report records **5 deferred / 2 promoted / 0**
+  deferred subsystems implemented. Exact-cosine p95 at the largest
+  **2,600-document** archive is **8.958167 ms**, below the **16.264 ms** A3
+  request anchor. The report is **34,608 bytes** at SHA-256
+  `b90b2f00d8129f17c09e48e2bdefb2d48d97f5d502e2723b8a5e2d0a5d25d00e`.
+- **Admission/ref acceptance:** PASS. The **15** new records bring the
+  protected manifest to **191/191** pins — **189/189** evidence plus **2/2**
+  authorization surfaces. Manifest schema v2, `verify-artifacts`, and
+  `evidence-report` pass with protected databases **2/2** exact.
+  `origin/main` remains
+  `692069ead0b8823d6874d8f2fc0a593d9f26704f`; the candidate remains exact;
+  no `v0.15.4` tag exists.
+- **Golden-E2E delta:** **0**. The first final sandboxed `./run golden` was a
+  loopback-bind permission non-result; the identical permitted invocation
+  passed **11/11**.
+
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-29.
+- **Version identity:** v0.15.4. The mechanical patch default applies because
+  no `/v1/*` route or body and no crate changed. The separate Step 7 release
+  decision has not been authorized.
+- **Evidence candidate:** `8230d4f24f565afcde92931c987adff4339036af`
+  on `candidate/v0.15.4`.
+- **Hosted evidence:** workflow-dispatch run `30423736121` attempt 1; all
+  **7/7** derived identities authenticated, zero rejected receipts, across
+  **6** blocking jobs. Hosted logs measured **133** workspace tests, **55**
+  net tests (**29 + 26**), shell **254 passed + 1 declared on-site-only skip**
+  on each interpreter, `invariant-scan` **11/11 rules / 23 controls**, R10's
+  **45** exemptions, and golden **11/11**. Each hosted shell collected
+  **255** tests, equal to the local candidate's **255 passed**.
+- **Corrected control:** hosted `shell (Python 3.11)`, step
+  `active cycle and amendment consistency`, passed `cycle-check` from a
+  `fetch-depth: 0` checkout.
+- **Release-grade audit:** **5** deferred / **2** promoted / **0** deferred
+  subsystems implemented; report SHA-256
+  `b90b2f00d8129f17c09e48e2bdefb2d48d97f5d502e2723b8a5e2d0a5d25d00e`,
+  **34,608** bytes at `evidence/v0.15.4/deferred-audit/report.json`.
+- **Evidence pins:** **191/191** total — **189/189** evidence plus **2/2**
+  authorization surfaces; protected databases exact **2/2**.
+- **Release commit:** requires Step 7's final R-CLOSE measurement and separate
+  operator publication decision.
+- **Remote disposition:** `origin/main` remains
+  `692069ead0b8823d6874d8f2fc0a593d9f26704f`; candidate branch
+  `candidate/v0.15.4` is exact at the evidence candidate; no `v0.15.4` tag
+  exists.
 
 ---
 
