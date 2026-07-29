@@ -125,3 +125,41 @@ Entries are append-only; corrections are new dated entries.
   the status and runbook edits.
 - protected artifact delta: **0**. All **206/206** pins and protected databases
   remain unchanged; no protected manifest or artifact path moved.
+
+### 2026-07-29 · TAG-IDENTITY — A / A / E
+
+- owner: Codex
+- commit: d7268d4
+- result: PASS. Implementation commit
+  `d7268d48c58eed02c769238ba1e804234df4ffe2` records the operator's
+  `A / A / E` decision: both historical records are right and the remote is
+  incomplete; the hosted local-tag-verification skip remains with a removal
+  trigger.
+- `v0.8.0` acceptance: PASS. Fresh local measurement resolves annotated object
+  `314c1dd914a3d8e9193445874a419ed762581e6e` to existing commit
+  `bfc8c5af85734583f966ee70d2ec521155432205`; Git reports types `tag` and
+  `commit`. Complete remote enumeration contains neither the tag name nor
+  either object id.
+- `v0.10.2` acceptance: PASS. Fresh local measurement resolves annotated object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba` to existing commit
+  `7d127abac0b993c9e98294ee1c03ff01153de9d0`; Git reports types `tag` and
+  `commit`. Complete remote enumeration contains neither the tag name nor
+  either object id.
+- claim acceptance: PASS. Both identities are classified as valid local-only
+  annotated tags. Publishing the exact objects is an eventual separate
+  operator-authorized action; it was not performed in this task.
+- retraction acceptance: PASS. The count remains **three**. No release claim,
+  closed runbook, historical banner, or checklist retraction changed.
+- hosted-skip acceptance: PASS. The flag remains present in hosted CI. Its
+  removal trigger is either publication of both exact annotated objects plus a
+  passing hosted full-history `cycle-check` without the flag, or forward
+  correction of both tag identities and all affected claims if contrary
+  evidence emerges.
+- scope acceptance: PASS. No tag or remote ref was created, moved, or deleted;
+  no closed runbook, dated historical record, published tree, crate,
+  dependency, schema, protected database, or public surface changed.
+  `cycle-check`, `version-check`, and `git diff --check` passed.
+- golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** after
+  the status and active-runbook edits.
+- protected artifact delta: **0**. All **206/206** pins and protected databases
+  remain unchanged.
