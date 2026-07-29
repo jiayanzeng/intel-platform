@@ -1,6 +1,81 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.20 R-CLOSE publication is authorized and release reconciliation is in progress; the exact release commit still requires its clean definition-of-done measurement and published-head hosted result.** Remote annotated `v0.15.3` tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to published release commit `dbff27d559193847dd2028c435c686ba656dac85`; exact v0.15.4 evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Candidate CI passed locally **20/20** and hosted run `30423736121` attempt **1** authenticated all **7/7** derived identities across **6** blocking jobs: **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell inventory **255** on Python 3.11 and 3.12, `invariant-scan` **11/11 rules / 23 controls**, R10 **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The corrected `cycle-check` passed in hosted `shell (Python 3.11)` with `fetch-depth: 0`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.20 is closed and v0.15.4 is published; post-push hosted CI is green.** Remote annotated `v0.15.4` tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` peels to release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, R10 **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.20 R-CLOSE publishes v0.15.4 and closes the cycle (measured
+2026-07-29).** Release disposition: release (as of 2026-07-29). The release
+identity is v0.15.4 because no `/v1/*` route or response body, schema,
+dependency, crate source, or runtime behavior changed. The independent
+publication trigger fired because published `main` was failing CI on the
+status control this cycle corrects. A tooling-only cycle could otherwise
+legitimately close without a release, as v0.14 did; the red published head made
+that disposition false here.
+
+G1 was a specification defect in the v0.19 runbook, not an implementation
+defect in `tools/cycle_check.py`. The runbook required freshness for a mutable
+ref whose value the act of recording changes, and the implementation followed
+that requirement faithfully. Adding the control was correct: before exposing
+its own fixed point, it caught a real false publication status. The repaired
+rule structurally prohibits a literal mutable-ref hash in the live header,
+keeps immutable annotated-tag object and peeled-target reconciliation, and
+fails closed when a ref or ancestry input is unavailable. Retractions remain
+three.
+
+Forward publication audit
+`72b6f425114e06b1e148e0aa360e280a690e4f0c`, intentionally held after
+v0.15.3, landed in this cycle's publication history rather than through an
+out-of-band push. Evidence candidate
+`8230d4f24f565afcde92931c987adff4339036af` and release commit
+`8c1eff03ff3e67b18176e8bf533de0f9501e0257` are separate named subjects.
+Atomic publication created annotated tag object
+`7a5c9f7396c043f2b89974585fdd4e5146180e86`, whose peeled target is the
+release commit. The dated remote readback measured `refs/heads/main` at
+`8c1eff03ff3e67b18176e8bf533de0f9501e0257`,
+`refs/heads/candidate/v0.15.4` at
+`8230d4f24f565afcde92931c987adff4339036af`, and the same tag object and
+target.
+
+The exact release-commit definition of done passed:
+
+- clean constrained Python environments resolved the same **21** pinned
+  packages on Python 3.11.4 and 3.12.13; shell tests passed **255/255** on
+  each;
+- `./run ci-local` passed **20/20** with **133** workspace tests, **55** net
+  tests (**29 + 26**), locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+  controls**, R10 **45** exemptions, all **191/191** pins, protected
+  databases **2/2**, and its embedded golden **11/11**;
+- authenticated release re-derivation passed **7** rows, **5** source
+  dispositions, and **7** triggers with release grade and attestations
+  required; `export-check` passed **90/90** derived sources, **7/7** required
+  paths, and **147** exported paths;
+- the mandatory standalone golden passed **11/11**, delta **0**; manifest
+  schema v2, `verify-artifacts`, `evidence-report`, version/cycle/checklist/
+  progress status, and `git diff --check` passed.
+
+The first concurrent attempt to clear the parent `.venv` while building its
+nested Python 3.12 environment was a setup non-result; the environments were
+then rebuilt sequentially. Restricted package installs and the root export
+were DNS-permission non-results, restricted `ci-local` was a loopback-bind
+permission non-result, and restricted online Sigstore re-derivation was a
+network non-result. Each identical permitted retry produced the passing
+measurements above.
+
+The release commit and annotated tag were atomically published. Push-triggered
+hosted run `30425601829` at exact head
+`8c1eff03ff3e67b18176e8bf533de0f9501e0257` completed successfully: core,
+clippy/fmt, net, Rust 1.78, shell Python 3.11, shell Python 3.12, and golden
+were all green; the report-only dependency-drift job was skipped by its
+declared trigger. This green published-head run is the cycle's product.
+
+The release diff from annotated v0.15.3 contains exactly **35 paths**, each
+classified once in the immediately following preparatory record. A4, the
+editable-L1 controller residual, R3/R4's bounded open-bottom limits, the
+active-runbook measured-value heuristic, T7 robots single-flight, Decision
+B's last-known-good fallback, and the one-real-publisher limitation remain
+open; L2 remains scheduled. `arxiv-cs` is still the sole real publisher, the
+other three configured sources remain `example.org` fixtures, and adding a
+second publisher remains a separate compliance decision.
 
 **v0.20 R-CLOSE publication is authorized and release reconciliation is
 prepared (measured 2026-07-29).** Release disposition: release (as of

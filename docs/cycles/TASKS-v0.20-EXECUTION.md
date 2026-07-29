@@ -442,7 +442,7 @@ decision: publication.**
   pointed at the executing check
 - [x] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
   corrected `cycle-check` green in the hosted job with job and depth named
-- [ ] **R-CLOSE** — version cites its trigger; publication trigger stated as the
+- [x] **R-CLOSE** — version cites its trigger; publication trigger stated as the
   red published head; G1 recorded as a specification defect; post-push hosted CI
   confirmed green with its run id; all open items still open
 
@@ -742,18 +742,18 @@ database moved.
   loopback-bind permission non-result; the identical permitted invocation
   passed **11/11**.
 
-## Pending Cycle closing record
+## Cycle closing record
 
-- **Candidate recorded:** 2026-07-29.
+- **Cycle closed:** 2026-07-29
+- **Release disposition:** release (as of 2026-07-29)
+- **Release:** v0.15.4
 - **Version identity:** v0.15.4. The mechanical patch default applies because
   no `/v1/*` route or body, schema, dependency, crate source, or runtime
   behavior changed.
-- **Release disposition:** release (as of 2026-07-29). The operator separately
-  authorized Step 7 publication.
-- **Publication trigger:** published `main` is failing CI on the status control
-  this cycle corrects. A tooling-only cycle would otherwise be eligible for
-  no release; the red published head is the trigger, while the patch default
-  only classifies the compatible identity.
+- **Publication trigger:** published `main` was failing CI on the status control
+  this cycle corrects. A tooling-only cycle would otherwise have been eligible
+  for no release; the red published head is the fired trigger, while the patch
+  default only classifies the compatible identity.
 - **G1 disposition:** the v0.19 runbook specified a freshness rule for a
   mutable ref whose value the act of recording changes.
   `tools/cycle_check.py` implemented that specification faithfully. Adding the
@@ -780,12 +780,36 @@ database moved.
   **34,608** bytes at `evidence/v0.15.4/deferred-audit/report.json`.
 - **Evidence pins:** **191/191** total — **189/189** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** requires Step 7's final R-CLOSE implementation commit and
-  clean definition-of-done measurement.
-- **Remote disposition:** `origin/main` remains
-  `692069ead0b8823d6874d8f2fc0a593d9f26704f`; candidate branch
-  `candidate/v0.15.4` is exact at the evidence candidate; no `v0.15.4` tag
-  exists.
+- **Release commit:** `8c1eff03ff3e67b18176e8bf533de0f9501e0257`
+- **Annotated tag object:** `7a5c9f7396c043f2b89974585fdd4e5146180e86`
+- **Tag target:** the annotated tag peels to the release commit above.
+- **Exact release matrix:** clean constrained Python 3.11.4 and 3.12.13
+  environments each resolved the same **21** packages and passed shell
+  **255/255**. `./run ci-local` passed **20/20** with **133** workspace tests,
+  **55** net tests (**29 + 26**), locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+  controls**, R10 **45** exemptions, all **191/191** pins, protected
+  databases **2/2**, and golden **11/11**. Authenticated re-derivation passed
+  **7** rows, **5** source dispositions, and **7** triggers in release
+  posture. `export-check` passed **90/90** derived sources, **7/7** required
+  paths, and **147** exported paths. Mandatory standalone golden passed
+  **11/11**, delta **0**.
+- **Publication:** the release commit and annotated tag were atomically
+  published. Dated remote readback measured `refs/heads/main` at
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`, candidate branch
+  `candidate/v0.15.4` at the separate evidence candidate, and the annotated
+  tag at the object and peeled target above. Forward audit `72b6f42` is in the
+  published release history.
+- **Post-push hosted result:** push run `30425601829` at exact release head
+  completed successfully. Core, clippy/fmt, net, Rust 1.78, shell Python 3.11,
+  shell Python 3.12, and golden — all **7** executable jobs — were green; the
+  report-only dependency-drift job was skipped by its declared trigger.
+- **Open architecture/product scope:** A4, editable L1, R3/R4's bounded
+  open-bottom scanners, the active-runbook measured-value heuristic, T7
+  robots single-flight, Decision B's last-known-good fallback, and scheduled
+  L2 remain open. `arxiv-cs` is the sole real publisher and the other three
+  sources are fixture placeholders; adding a second publisher remains a
+  separate compliance decision.
 
 ---
 

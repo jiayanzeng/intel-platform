@@ -332,3 +332,80 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The first final sandboxed `./run golden` was a
   loopback-bind permission non-result; the identical permitted invocation
   passed **11/11**.
+
+### 2026-07-29 · R-CLOSE — v0.15.4 published; v0.20 closed
+
+- owner: Codex
+- commit: 8c1eff0
+- result: PASS. The operator authorized Step 7 publication. Release commit
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257` and annotated v0.15.4 tag object
+  `7a5c9f7396c043f2b89974585fdd4e5146180e86` were atomically published; the
+  tag peels to that exact commit. This separate append-only audit record checks
+  R-CLOSE and closes the runbook only after the published-head hosted gate
+  passed. Steps 1–6 were complete and boxed, and the worktree was clean at the
+  publication gate.
+- version/trigger acceptance: PASS. v0.15.4 follows the mechanical patch
+  default because no `/v1/*` route or response body, schema, dependency, crate
+  source, or runtime behavior changed. The independent publication trigger
+  fired because published `main` was failing CI on the status control this
+  cycle corrects. A tooling-only cycle could otherwise close without a
+  release; the red published head made that disposition false. Release
+  disposition: release (as of 2026-07-29).
+- subject acceptance: PASS. Evidence candidate
+  `8230d4f24f565afcde92931c987adff4339036af` on
+  `candidate/v0.15.4` and release commit
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257` are separate named subjects.
+  Dated remote readback measured `refs/heads/main` at the release commit,
+  candidate branch exact at its candidate, and tag object and peeled target
+  exact. Forward audit `72b6f425114e06b1e148e0aa360e280a690e4f0c`,
+  intentionally held after v0.15.3, landed in this publication history rather
+  than through an out-of-band push.
+- G1 acceptance: PASS. G1 is recorded as a v0.19 runbook specification defect,
+  not a `tools/cycle_check.py` implementation defect: the runbook required
+  freshness for a mutable ref whose value the act of recording changes, and
+  the implementation followed it faithfully. Adding the control was correct
+  because it first caught a real false status before exposing its own fixed
+  point. The corrected control prohibits the impossible literal in the live
+  header, keeps immutable tag-object and peeled-target reconciliation, and
+  fails closed on unavailable inputs. Retractions remain three.
+- release-matrix acceptance: PASS. A first concurrent attempt to clear the
+  parent `.venv` while constructing nested `.venv/py312` was a setup
+  non-result; rebuilding sequentially succeeded. Restricted package installs
+  were DNS non-results; permitted identical installs resolved the same **21**
+  constrained packages on Python 3.11.4 and 3.12.13. Constraints checks passed
+  and both shell lanes passed **255/255**. Restricted `./run ci-local` was a
+  loopback-bind permission non-result; the identical permitted command passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**),
+  locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures,
+  `invariant-scan` **11/11 rules / 23 controls**, R10 **45** exemptions, all
+  **191/191** pins, protected databases **2/2**, and embedded golden **11/11**.
+- evidence/export acceptance: PASS. Restricted online Sigstore
+  re-derivation was a network non-result; the permitted identical command
+  passed **7** rows, **5** source dispositions, and **7** triggers with release
+  grade and attestations required. The protected report remained
+  `b90b2f00d8129f17c09e48e2bdefb2d48d97f5d502e2723b8a5e2d0a5d25d00e`
+  / **34,608** bytes. Manifest schema v2 passes with **191/191** pins —
+  **189/189** evidence plus **2/2** authorization surfaces — and protected
+  databases remain exact **2/2**. A restricted project-root export was a DNS
+  non-result; the permitted retry passed **90/90** derived sources, **7/7**
+  required paths, and **147** exported paths.
+- publication/hosted acceptance: PASS. Prepublication remote inspection found
+  prior `main` at `692069ead0b8823d6874d8f2fc0a593d9f26704f`, candidate
+  exact, and no v0.15.4 tag. The atomic push advanced `main` to the release
+  commit and created the annotated tag. Push-triggered hosted run
+  `30425601829` completed successfully at exact head
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`: all **7** executable jobs
+  (core, clippy/fmt, net, Rust 1.78, shell Python 3.11, shell Python 3.12, and
+  golden) were green; report-only dependency drift was skipped by its trigger.
+  The cycle did not close until this result existed.
+- status/documentation acceptance: PASS. The 35-path release diff is
+  classified exactly once in `STATE.md`; `CHANGELOG.md`, `README.md`, all
+  release authorities, and `ARCHITECTURE.md` are reconciled. A4, editable L1,
+  R3/R4's open-bottom limits, the active-runbook measured-value heuristic, T7,
+  Decision B's last-known-good fallback, and scheduled L2 remain open.
+  `arxiv-cs` remains the sole real publisher; the other three sources remain
+  fixtures and a second publisher still requires a separate compliance
+  decision.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11** after the full release matrix, and the closing-record repeat after
+  all status edits also passed **11/11**.
