@@ -36,3 +36,56 @@ Entries are append-only; corrections are new dated entries.
   entering matrix and G1–G6 measurements.
 - golden-E2E delta: NOT MEASURED; no claim.
 - protected artifact delta: NOT MEASURED; no protected or pinned file changed.
+
+### 2026-07-29 · E0 — entering state and six gates measured
+
+- owner: Codex
+- commit: 5527d23
+- result: PASS. The read-only Gate contained every acceptance surface; only
+  runbook status and this append-only entry moved. `STATE.md` remained blob
+  `7db364ad67d27b2c0aa7cf448ef7db45e1a29ec0`.
+- entering-matrix acceptance: PASS. Clean constrained Python 3.11.4 and 3.12.13
+  environments each resolved **21** packages and passed shell **255/255**.
+  `./run ci-local` passed **20/20** with **133** workspace tests, **55** net
+  tests (**29 + 26**), locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+  controls**, **191/191** pins, protected databases **2/2**, and embedded
+  golden **11/11**. Standalone golden passed **11/11**. Project-root
+  `export-check` passed **90/90** derived sources, **7/7** required paths, and
+  **149** exported paths.
+- G1 acceptance: PASS and CONFIRMED. The tag-object pattern returned `[]`; the
+  tag-target pattern returned the release commit; the header's unexamined tag
+  object was `7a5c9f7396c043f2b89974585fdd4e5146180e86`. A forty-zero tag-object
+  assertion in the live phrasing produced zero errors.
+- G2 acceptance: PASS and CONFIRMED, count **4**. The four
+  zero-match-is-success publication regex rules are the `origin/main`
+  prohibition, pending-publication prohibition, tag-object freshness, and
+  tag-target freshness. None has a registered planted failure. Required
+  checklist evidence fails when a checked box lacks an entry or commit, and
+  `progress-check` fails on absent headers, owners, or commits.
+- G3 acceptance: PASS as a recorded forward-correction finding. In a disposable
+  full-history published clone at `v0.15.4`, `cycle-check` exited **1** with six
+  missing-remote-tag messages for `v0.8.0` and `v0.10.2`;
+  `checklist-audit`, `progress-check`, `version-check`, and `invariant-scan`
+  each exited **0**. The tree has v0.20 R-CLOSE unchecked, no closing record,
+  no R-CLOSE progress entry, and a header that still describes publication in
+  progress. E0 did not repair it.
+- G4 acceptance: PASS and CONFIRMED. Held commits
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10` and
+  `72b6f425114e06b1e148e0aa360e280a690e4f0c` were first hosted-verified
+  **9:51:54** and **2:20:18** later, respectively; current closing audit
+  `8fc21813763c19a90ee17e7b95d1e87330a916b8` is on no remote branch and has
+  never been hosted-verified.
+- G5 acceptance: PASS and CONFIRMED. The wrong-object/pending construction
+  produced exactly one error. With a mismatched measured ref, early return
+  reported release-object agreement and masked pending-publication.
+- G6 acceptance: PASS and CONFIRMED from v0.20's record. The 240-character
+  header-only proximity window was explicitly accepted as conservative bounded
+  looseness because it can refuse loudly but cannot create a false pass.
+- object/pin acceptance: PASS. Remote `main`, tag object, and peeled target are
+  unchanged; manifest validation passed **191/191** and protected databases
+  remain **2/2** exact.
+- lifecycle acceptance: PASS. `cycle-check` passed after the status update; the
+  expected pre-audit `checklist-audit` failure named only E0's not-yet-appended
+  progress entry.
+- golden-E2E delta: **0**. The post-status standalone run passed **11/11**.
