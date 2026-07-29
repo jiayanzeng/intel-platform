@@ -127,3 +127,45 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: **0**. No pin, protected database, crate, app,
   dependency, schema, robots surface, configured source, or public response
   changed.
+
+### 2026-07-29 · PUBLISHED-HEAD — shipped tree measured, rhythm accepted
+
+- owner: Codex
+- commit: a01b6e4
+- result: PASS with G3 recorded as a forward-correction subject. The Gate was
+  limited to a fresh disposable clone, `STATE.md`, `AGENTS.md`, and status
+  records; the published tree was not repaired or mutated.
+- published-suite acceptance: PASS as a measurement. Fresh clone tag
+  `v0.15.4` resolved to object
+  `7a5c9f7396c043f2b89974585fdd4e5146180e86` and exact target
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`. The corrected current cycle
+  checker exited **1** with the six recorded missing historical tag-ref
+  messages for `v0.10.2` and `v0.8.0`, plus the newly exposed required
+  tag-object-assertion message. Every exact message is preserved in the
+  runbook execution record.
+- remaining-suite acceptance: PASS. Current `checklist-audit` against the
+  published root exited **0** with **164/164**; current `progress-check` exited
+  **0** at `RE-MEASURE · 5631e70`; published `version-check` exited **0** at
+  exact v0.15.4; and current `invariant-scan` against the published registry
+  exited **0** with **11/11 rules / 23 controls**.
+- G3 acceptance: PASS as a finding, not as a clean tree. Published v0.20 has
+  R-CLOSE unchecked, no cycle closing record, no R-CLOSE progress entry, and
+  a header describing publication preparation. It was not repaired here.
+  Trigger: the next operator-authorized `main` publication after v0.15.4; a
+  no-release close leaves the finding open until a later publication.
+- G4 acceptance: **Accept**, operator decision dated 2026-07-29. `AGENTS.md`
+  now records that a cycle's final append-only audit record is
+  hosted-unverified when written after publication and is verified at the
+  following publication. Required local gates and append-only evidence support
+  it until then.
+- no-push acceptance: PASS. Final remote readback left `main` and the peeled
+  tag target at `8c1eff03ff3e67b18176e8bf533de0f9501e0257` and tag object at
+  `7a5c9f7396c043f2b89974585fdd4e5146180e86`.
+- lifecycle acceptance: PASS. Local `cycle-check`, `invariant-scan` **12/12 /
+  30**, and `git diff --check` passed. The expected pre-audit
+  `checklist-audit` failure named only this checked task's not-yet-appended
+  progress entry.
+- golden-E2E delta: **0**. Standalone golden passed **11/11**.
+- protected artifact delta: **0**. No pin, protected database, crate,
+  dependency, schema, robots surface, configured source, or public response
+  changed.
