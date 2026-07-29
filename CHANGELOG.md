@@ -4,6 +4,78 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.7 — 2026-07-29
+
+### Fixed
+
+- GitHub Actions now uses Node-24-capable majors: checkout v5,
+  upload-artifact v6, and setup-python v6. The existing rust-cache v2 and
+  provenance v4 declarations remain on their measured Node 24
+  implementations.
+- All six `dtolnay/rust-toolchain` uses are pinned to immutable commit
+  `2c7215f132e9ebf062739d9130488b56d53c060c`. The pin is re-resolved on a
+  toolchain change, an applicable upstream security/correctness fix, or the
+  next authorized workflow-maintenance pass.
+- Release-tag mechanics now have one prose authority: `AGENTS.md` defines the
+  two-commit tagged close from v0.15.6 onward, while `ARCHITECTURE.md` retains
+  only release-version semantics and points to that contract.
+- Active runbooks from v0.23 onward declare machine-readable path scope.
+  `cycle-check` separately enforces release-authority coverage at activation
+  and the activation-exclusive through HEAD-inclusive changed-path set.
+- Trigger-bearing architecture and active-runbook dispositions now require a
+  dated measured observation. Registered R12 planted failures exercise both
+  the declared-scope and trigger-freshness rules, taking the invariant total to
+  **12 rules / 38 controls** with R12 **15/15**.
+
+### Documentation and controls
+
+- E0 measured the stale release prose as P2 by forcing the recorded release
+  identity onto `R` in a disposable local clone. The existing checker rejected
+  all four parent/tree agreement violations, so duplicate mechanics were
+  deleted without adding a redundant literal-scan rule.
+- The measured checker-obligation and author-side defect populations are each
+  **4**, with **2** overlapping members. The author-side population includes
+  v0.22's unsatisfiable prose scope, the first member found only by v0.23 human
+  review; the new declared-scope control closes that asymmetry forward.
+- Validation corrected the activation scope draft: it had omitted the Step 3
+  deferred-audit test path and used an over-broad shell-source glob. The final
+  declaration covers the full diff and leaves exactly one named weakening,
+  `shell/intel_shell/app.py`, because it is both a production source and a
+  release authority. Relocating its version literal is recorded as a v0.24
+  option rather than absorbed into this cycle.
+- Fourteen trigger-bearing rows were freshly re-evaluated. Two had fired: the
+  Node-runtime migration completed here, while the `app.py` scope overlap
+  produced the one additional v0.24 assignment. The final live tables validate
+  all **13/13** remaining trigger-bearing rows.
+
+### Evidence and disposition
+
+- Authenticated candidate run `30459746825` attempt 1 passed all seven
+  executable jobs at exact candidate
+  `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`: workspace **133**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), shell **275/275** on Python 3.11
+  and 3.12, invariant-scan **12/12 rules / 38 controls**, and golden **11/11**.
+- The migrated signing path produced seven new receipts and seven Sigstore
+  bundles. Release-posture verification required attestations, accepted all
+  **7**, rejected **0**, and derived the complete expected job/matrix identity
+  set. The earlier Step 3 set remains verification-only.
+- The release-grade deferred audit measured **5 deferred / 2 promoted / 0**
+  implemented deferred subsystems. At the largest evidenced corpus of **2,600**
+  documents, exact-cosine p95 was **7.777583 ms**, below the A3 **16.264 ms**
+  request anchor. The manifest now verifies **236/236** pins: **234** evidence
+  plus **2** authorization.
+- Publication was explicitly selected as **release as of 2026-07-29**. Both
+  entry triggers fired: published `main` still runs action versions whose
+  declared runtime is obsolete, and its published architecture still directs a
+  future releaser to tag `R`. Publishing v0.15.7 carries both corrections.
+- No `/v1/*` route or response body, schema, dependency graph, runtime
+  behavior, robots policy, configured source, or protected database changed,
+  so v0.15.7 is patch-compatible.
+- A4, editable L1, the R3/R4 open-bottom limits, active-runbook measured-value
+  heuristic, T7, negative-cache Decision B, and L2 remain open. `arxiv-cs`
+  remains the sole real publisher; the other three configured sources remain
+  fixtures.
+
 ## v0.15.6 — 2026-07-29
 
 ### Fixed

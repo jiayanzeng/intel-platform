@@ -1,6 +1,120 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 RE-MEASURE is complete, the cycle remains open, and publication awaits the separate Step 7 operator decision.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` still resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. The first v0.23 admission adds those **7 receipt / 7 bundle** pairs plus the audit report: all **236/236** pins (**234/234** evidence + **2/2** authorization) now match. At the exact candidate, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275**, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; the hosted Python 3.11 and 3.12 lanes each passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Exact v0.15.6 closing evidence remains candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**; forward-confirmation run `30446796322` also passed **7/7**. Protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.23 R-CLOSE publication of v0.15.7 is operator-authorized; the untagged release parent is being prepared while v0.15.6 remains published.** The published v0.15.6 release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` still resolves to it. The separate v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. All **236/236** pins (**234/234** evidence + **2/2** authorization) match. At the exact candidate, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275**, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; hosted Python 3.11 and 3.12 each passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.23 R-CLOSE selects v0.15.7 and prepares release assembly (operator
+decision 2026-07-29).** Release disposition: release (as of 2026-07-29). The
+patch identity applies because the cycle changes workflow operations,
+documentation, evidence, and lifecycle controls without changing any `/v1/*`
+route or response body, schema, dependency graph, runtime behavior, robots
+policy, configured source, or protected database.
+
+Both publication triggers visible at entry fired. Published `main` still uses
+checkout v4, upload-artifact v4, and setup-python v5, whose action declarations
+target the obsolete Node 20 runtime even though hosted runners force Node 24.
+Published `ARCHITECTURE.md` also still instructs a future releaser to map the
+annotated tag to release parent `R`, while the executed R-CLOSE protocol tags
+closing child `C`. Publishing v0.15.7 carries both measured corrections; a
+no-release close would leave the stale operating workflow and stale release
+instruction published.
+
+Authenticated run `30459746825` attempt **1** at exact candidate
+`5b075dfc87e789aa34c07b94a9a80f2f10af89f2` is the closing evidence. The
+candidate is deliberately separate from the release parent being assembled.
+All **7/7** executable hosted jobs passed, and the release-grade verifier
+accepted **7 / rejected 0** signed identities with attestations required. The
+release-parent definition of done, exact release commit, closing commit,
+annotated tag object, and post-push run remain to be measured at their
+protocol-defined points rather than predicted here.
+
+G1 is settled at **P2 by construction**, not by argument. E0 cloned the local
+repository with its local tag namespace, forcibly retagged recorded v0.15.6
+over release parent `a83db73aac3d5ef1e9a427662340eb1eb8a49df1`, and ran the
+real `cycle-check` entry point. It rejected all four parent/tree agreement
+violations against the constructed identity. The stale duplicate prose could
+misdirect a releaser, but the executable checker already rejects the resulting
+state; Step 2 therefore deleted the duplicate mechanics without adding a
+redundant literal-scan rule.
+
+G6 measured two populations under separate criteria, each **4**, with **2**
+overlapping members:
+
+- A checker-obligation member is one distinct accepted checker behavior family
+  that can falsely pass, falsely fail, or omit a required result despite a
+  completed invocation. The four are: v0.19 mutable-`origin/main` freshness,
+  exposed by hosted run `30417274925` and the fixed-point construction in
+  `PROGRESS-v0.20.md` E0; v0.20 unavailable tag/ancestry inputs silently
+  succeeding, constructed in `PROGRESS-v0.20.md` E0; v0.21's vacuous
+  tag-object pattern, constructed in `PROGRESS-v0.21.md` E0; and v0.22's
+  self-referential closing field set, constructed in
+  `PROGRESS-v0.22.md` E0.
+- An author-side member is one normative runbook requirement for which no
+  sequence can satisfy both the requirement and its governed release action.
+  The four are: v0.19 `STATUS-TRUE` mutable-main freshness in v0.19 Step 2,
+  exposed by the v0.20 hosted firing and E0 construction; v0.20's
+  post-push-before-close ordering in v0.20 Step 7, found after publication and
+  recorded by v0.21 R-CLOSE; v0.22's release-commit/tag-object field set in
+  v0.22 G1, found by v0.22 E0's field enumeration; and v0.22's no-`crates/`/
+  `apps/` prohibition, found by independent human review of the v0.23 draft and
+  reproduced by v0.23 G4.
+
+The exact overlap is v0.19 mutable-main freshness and v0.22's closing field
+set. The unavailable-input and vacuous-pattern members are checker-only; the
+R-CLOSE ordering and crate prohibition are author-only. The scope prohibition
+is the first author-side member found only by human review because no tool read
+prose scope. Step 4's declared-scope control is this cycle's product response
+to that asymmetry.
+
+The activation-committed scope block itself required correction: it omitted
+`shell/tests/test_deferred_audit.py`, which Step 3 necessarily changed, and
+its `shell/intel_shell/**` forbid overlapped two Python release authorities.
+The final table adds the test path, uses `shell/intel_shell/[a-z]*.py`, and
+names the exact Step 6 evidence locations. Its only authority/forbid overlap is
+`shell/intel_shell/app.py`; moving that version literal to `__init__.py` is the
+recorded v0.24 option, not a production-source edit hidden in this release.
+
+Step 3 exercised the upgraded signing chain rather than inferring from old
+pins. Hosted run `30456330833` produced **7 receipts / 7 Sigstore bundles**
+under the migrated actions; the release-grade verifier accepted **7 / rejected
+0** with the complete identity matrix. The same GitHub CLI also re-derived the
+prior v0.22 set, so there was no action-side or CLI-side failure to classify
+and no pin was reverted. That set remained verification-only. Step 6 separately
+produced and admitted the authenticated closing set from run `30459746825`.
+
+Step 5 freshly re-evaluated **14** trigger-bearing rows: **3** architecture
+rows from E0 and **11** active deferrals. Exactly **2** had fired. The
+Node-runtime condition was discharged by Step 3; the `app.py` scope overlap
+created exactly **1** additional v0.24 assignment. No production-source work
+was absorbed. The remaining live tables validate all **13/13** governed rows,
+and `invariant-scan` passes **12/12 rules / 38 controls** with R12 **15/15**.
+
+The release-parent changed-path classification is prepared in seven disjoint
+groups and will be reconciled against the committed `v0.15.6..R` path set:
+
+- **Workflow:** `.github/workflows/ci.yml`.
+- **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
+- **Release version authorities:** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Cycle records:** `docs/cycles/PROGRESS-v0.22.md`,
+  `docs/cycles/PROGRESS-v0.23.md`, and
+  `docs/cycles/TASKS-v0.23-EXECUTION.md`.
+- **Lifecycle controls and tests:** `config/invariant-rules.json`,
+  `tools/cycle_check.py`, `tools/invariant_scan.py`,
+  `shell/tests/test_cycle_check.py`, and
+  `shell/tests/test_deferred_audit.py`.
+- **Append-only provenance authority:** `config/protected-artifacts.json`.
+- **Authenticated evidence:** all fourteen files under
+  `evidence/ci-runs/30459746825-1/` and
+  `evidence/v0.23/deferred-audit/report.json`.
+
+The product boundary remains unchanged: `arxiv-cs` is the sole real publisher
+and the other three configured sources remain fixtures. A4, editable L1, the
+R3/R4 open-bottom limits, active-runbook measured-value heuristic, T7, and
+NEGATIVE-CACHE Decision B remain open. After three consecutive cycles whose
+entire defect population lived in the apparatus, the scheduled apparatus queue
+is empty; v0.24 is the natural place to observe whether that debt repayment
+makes product work cheap. This is a forward observation, not a scheduled task.
 
 **v0.23 RE-MEASURE produced release-grade hosted evidence without publishing
 (measured 2026-07-29).** Candidate
