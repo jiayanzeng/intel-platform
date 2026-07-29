@@ -163,3 +163,42 @@ Entries are append-only; corrections are new dated entries.
   the status and active-runbook edits.
 - protected artifact delta: **0**. All **206/206** pins and protected databases
   remain unchanged.
+
+### 2026-07-29 · RESIDUALS — G3, G4, G5 dispositions
+
+- owner: Codex
+- commit: d38030e
+- result: PASS. Implementation commit
+  `d38030ef4a8a213cd1b0d8c35516e64937ee339c` gives every confirmed
+  operational residual a dated disposition in `ARCHITECTURE.md`; refuted G3
+  receives no workaround.
+- G3 acceptance: **REFUTED**. Contributor-facing `ARCHITECTURE.md` and
+  `AGENTS.md` already state that `./run export-check` is operator-local, what it
+  verifies, and why local/hosted CI omit it. No duplicate rule, CI job, or
+  hosted trigger was added.
+- G4 acceptance: **accepted with bounds**. The manifest measures **119,353
+  bytes** at **206** pins; release totals are **161 → 176 → 191 → 206**,
+  exactly **+15 per cycle**, and E0 measured full verification at **0.10 s real
+  / 0.05 s user / 0.04 s sys**. Retention/indexing becomes work at **1 MiB** or
+  after two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s
+  real**, whichever comes first.
+- G5 shell-warning acceptance: **accepted until trigger**. The
+  `StarletteDeprecationWarning` becomes work if it becomes an error/failure or
+  at the next authorized constraints refresh touching FastAPI, Starlette,
+  `httpx`, or `httpx2`; both constrained Python lanes must then be re-measured.
+- G5 hosted-warning acceptance: **accepted until trigger**. The GitHub Actions
+  Node-runtime annotation becomes work when GitHub names an enforcement date,
+  a blocking job warns as an error or fails for that runtime, or an affected
+  `actions/*` pin changes; the action must then be upgraded or replaced and
+  hosted CI re-measured.
+- architecture acceptance: PASS. The operational-residual table contains all
+  dated outcomes, and the publication section now describes selected Option C
+  instead of a future design subject.
+- lifecycle acceptance: PASS. Manifest validation passes all **206/206** pins;
+  `cycle-check`, `checklist-audit`, and `progress-check` pass.
+- scope acceptance: PASS. No tool logic, crate, dependency, schema, protected
+  artifact, database, public surface, or release ref changed.
+- golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** after
+  the architecture, status, and active-runbook edits.
+- protected artifact delta: **0**. No manifest or protected artifact changed;
+  protected databases remain **2/2**.
