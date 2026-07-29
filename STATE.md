@@ -1,6 +1,53 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header, and EXPORT-PATTERN now excludes every closed cycle from v0.6 through v0.11.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the two remaining export-control omissions, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header, EXPORT-PATTERN excludes every closed cycle from v0.6 through v0.11, and EXPORT-CHECK derives and verifies the review export's source set.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the one remaining export-contract omission, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+
+**v0.20 EXPORT-CHECK makes review-export source completeness executable
+(measured 2026-07-29).** `./run export-check` writes a fresh project-root
+export with pinned Repomix 1.17.0, derives the expected tracked source set from
+`git ls-files` under `crates/`, `apps/`, `tools/`, and `shell/`, and requires
+the seven root/control paths named by the runbook. It pins no count. At the
+task candidate it found all **90/90** derived source paths and all **7/7**
+required paths in a **147-file** export.
+
+Both known silent-omission controls fail loudly. A disposable invocation from
+`crates/` exited **1**, named missing required path `Cargo.lock`, and reported
+**95** total missing paths. A project-root invocation using a disposable
+configuration with only `enableSecurityCheck` restored to `true` made Repomix
+exclude exactly `crates/ingest/src/lib.rs`; the checker exited **1** and named
+that missing derived source. The real configuration was never changed:
+`repomix.config.json` remained SHA-256
+`0470cb2ba232a549e94a95ece5e337f025cde2fb17cd37a330af6a3d5e35b2ee`
+and `git diff --exit-code -- repomix.config.json` passed afterward.
+
+This is explicitly an **operator-local** check. It is intentionally absent
+from `ci-local` and `.github/workflows/ci.yml` because each invocation writes
+a multi-megabyte export and `npx` may fetch the pinned tool. The first final
+sandboxed invocation was therefore a DNS-permission non-result; the permitted
+identical retry passed with the counts above.
+
+The `run` authorization pin moves from
+`caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678`
+at **42,056 bytes** to
+`0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779`
+at **43,044 bytes**. The model-profile functions and dispatch, mirrored
+authorization policy, and `tools/model_profiles.py` pin
+`1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`
+at **28,297 bytes** are unchanged; R6 passes. A pre-final placement briefly
+shifted R10's line-addressed mutation and made that self-test fail; relocating
+the new function after `cmd_verify_llm` restored the original line and the
+final `invariant-scan` passes **11/11 rules / 23 controls**.
+
+Focused export-check tests pass **3/3**. The full permitted local matrix passes
+**20/20** with **133** workspace tests, **55** net tests (**29 + 26**), shell
+**255/255** on Python 3.11.4, zero rustc/clippy/fmt/ShellCheck failures,
+locked Rust 1.78, all **176/176** pins, protected databases **2/2**, and
+golden **11/11**. Python 3.12.13 independently passes shell **255/255**; its
+first restricted attempt was a loopback/process-inspection permission
+non-result, and the permitted identical retry passed. Manifest validation and
+`verify-artifacts` are green. Standalone golden remains **11/11**, delta
+**0**. No crate, dependency, schema, protected database, evidence artifact,
+or public surface changed.
 
 **v0.20 EXPORT-PATTERN makes the closed-cycle exclusion complete (measured
 2026-07-29).** The former enumerated `v0.{8,9,10,11}*` pattern is replaced by

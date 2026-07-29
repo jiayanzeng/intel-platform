@@ -435,7 +435,7 @@ decision: publication.**
   retained; every unavailable-input path reports; rule 1 unchanged and re-proven
 - [x] **EXPORT-PATTERN** — `TASKS-v0.6.md` and `TASKS-v0.7.md` excluded; v0.12+
   retained; before/after sizes recorded; no file deleted
-- [ ] **EXPORT-CHECK** — expected set derived from `git ls-files`, no pinned
+- [x] **EXPORT-CHECK** — expected set derived from `git ls-files`, no pinned
   count; both silent-omission fail-befores captured; configuration restored by
   hash; hosted-versus-local status stated; `run` pin updated
 - [ ] **EXPORT-CONTRACT** — both rules in `AGENTS.md` with measured reasons and
@@ -604,6 +604,60 @@ database, or public surface was deleted or modified.
 - **Integrity and regression:** `verify-artifacts` passed all **176/176** pins
   and both protected databases **2/2**. Mandatory standalone `./run golden`
   passed **11/11**, delta **0**.
+
+### 2026-07-29 · EXPORT-CHECK
+
+PASS. Step 3 was complete before implementation. The Gate contains every
+changed path: `run`, `tools/export_check.py`, its focused shell test,
+`config/protected-artifacts.json`'s `run` authorization-pin record, `STATE.md`,
+and this runbook's status/checklist record. No crate, dependency, schema,
+protected database, evidence artifact, or public surface changed.
+
+- **Derived contract:** `./run export-check` writes a fresh project-root export
+  with pinned Repomix 1.17.0, derives every tracked path under `crates/`,
+  `apps/`, `tools/`, and `shell/` with `git ls-files`, and separately requires
+  `Cargo.lock`, `config/protected-artifacts.json`, `AGENTS.md`, `run`,
+  `Cargo.toml`, `rust-toolchain.toml`, and `.github/workflows/ci.yml`. It pins
+  no source count. The final candidate passed with **90/90** derived source
+  paths, **7/7** required paths, and **147** exported paths.
+- **Subdirectory fail-before:** pinned Repomix was deliberately invoked from
+  `crates/` against the real relative configuration. The checker exited **1**,
+  named `export-check: ERROR: missing required path: Cargo.lock`, and reported
+  **95** missing paths total. This recreates the silent non-root omission.
+- **Security fail-before and restoration:** a disposable copy of the real
+  configuration began at SHA-256
+  `0470cb2ba232a549e94a95ece5e337f025cde2fb17cd37a330af6a3d5e35b2ee`;
+  only its `enableSecurityCheck` value was changed to `true`. Repomix then
+  excluded exactly `crates/ingest/src/lib.rs`, and the checker exited **1**
+  naming that missing derived source. The real `repomix.config.json` was never
+  modified, retained the same `0470cb2…` hash afterward, and
+  `git diff --exit-code -- repomix.config.json` passed.
+- **Execution posture:** the new command and help text state
+  **operator-local**. It is intentionally absent from `ci-local` and
+  `.github/workflows/ci.yml` because it writes a multi-megabyte file and
+  `npx` may fetch the pinned package. The first final restricted invocation
+  was a DNS-permission non-result; the permitted identical retry passed.
+- **Authorization scope:** the `run` pin moves from
+  `caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678`
+  at **42,056 bytes** to
+  `0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779`
+  at **43,044 bytes**. The model-profile functions, dispatch, and mirrored
+  authorization policy are byte-unchanged. `tools/model_profiles.py` remains
+  pinned at
+  `1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`,
+  **28,297 bytes**, and R6 passes. A pre-final command placement shifted R10's
+  line-addressed mutation; its self-test caught that integration hazard, and
+  relocating the function restored the original line. Final
+  `invariant-scan` passes **11/11 rules / 23 controls**.
+- **Acceptance and regression:** focused tests pass **3/3**. The permitted
+  full local matrix passes **20/20** with **133** workspace tests, **55** net
+  tests (**29 + 26**), shell **255/255** on Python 3.11.4, zero
+  rustc/clippy/fmt/ShellCheck failures, locked Rust 1.78, all **176/176** pins,
+  protected databases **2/2**, and golden **11/11**. Python 3.12.13
+  independently passes shell **255/255**; its restricted first attempt was a
+  loopback/process-inspection permission non-result, and the permitted retry
+  passed. Manifest validation and `verify-artifacts` pass. Mandatory standalone
+  `./run golden` passes **11/11**, delta **0**.
 
 ---
 

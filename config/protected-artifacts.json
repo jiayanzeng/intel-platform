@@ -537,10 +537,10 @@
     {
       "path": "run",
       "grade": "authorization",
-      "sha256": "caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678",
-      "bytes": 42056,
+      "sha256": "0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779",
+      "bytes": 43044,
       "purpose": "Hash-pinned entry point for the operator-authorized model-profile command surface.",
-      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary. Operator-directed v0.17 HARVEST-PREFLIGHT on 2026-07-28 replaced v0.16's forward run hash f62a5d4f0b8f07d48c194e2d8e3959b5bfe82a3e61a45413452a284ab4dd348d (41862 bytes) after adding the protected-artifact verification call only at cmd_harvest_arxiv before environment setup and reachability. v0.18 WIRE-FINDINGS on 2026-07-28 replaced v0.17's hash 7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455 (41959 bytes) after making cmd_harvest_arxiv stop its managed core before returning and correcting its lifecycle output; the model-profile functions, dispatch, tools/model_profiles.py, and authorization policy remain unchanged, and every historical manifest remains unchanged."
+      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary. Operator-directed v0.17 HARVEST-PREFLIGHT on 2026-07-28 replaced v0.16's forward run hash f62a5d4f0b8f07d48c194e2d8e3959b5bfe82a3e61a45413452a284ab4dd348d (41862 bytes) after adding the protected-artifact verification call only at cmd_harvest_arxiv before environment setup and reachability. v0.18 WIRE-FINDINGS on 2026-07-28 replaced v0.17's hash 7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455 (41959 bytes) after making cmd_harvest_arxiv stop its managed core before returning and correcting its lifecycle output. Operator-directed v0.20 EXPORT-CHECK on 2026-07-29 replaced v0.18's hash caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678 (42056 bytes) after adding only the operator-local derived export check, its help text, and its dispatch; the model-profile functions, models dispatch, tools/model_profiles.py, authorization policy, and every historical manifest remain unchanged."
     },
     {
       "path": "tools/model_profiles.py",

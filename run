@@ -985,6 +985,33 @@ if d.get("fetched") != 13 or d.get("new") != 13:
   green "real-model verification complete."
 }
 
+cmd_export_check() {
+  if [ "$#" -ne 0 ]; then
+    red "usage: ./run export-check"
+    return 2
+  fi
+  if ! command -v npx >/dev/null 2>&1; then
+    red "npx not found on PATH; export-check needs pinned Repomix 1.17.0."
+    return 2
+  fi
+
+  local export_dir export_file status cleanup_status
+  export_dir="$(mktemp -d)"
+  export_file="$export_dir/review.xml"
+  status=0
+  step "writing fresh project-root review export (operator-local)"
+  npx --yes repomix@1.17.0 --quiet --output "$export_file" || status=$?
+  if [ "$status" -eq 0 ]; then
+    python3 tools/export_check.py "$export_file" || status=$?
+  fi
+  cleanup_status=0
+  rm -rf "$export_dir" || cleanup_status=$?
+  if [ "$cleanup_status" -ne 0 ]; then
+    [ "$status" -ne 0 ] || status=$cleanup_status
+  fi
+  return "$status"
+}
+
 usage() {
   cat <<EOF
 intel-platform — ./run <command>
@@ -1000,6 +1027,8 @@ intel-platform — ./run <command>
     progress-check validate the newest append-only progress entry
     invariant-scan
                    execute registered source/config/git invariants
+    export-check   operator-local only: write a fresh project-root export with
+                   pinned Repomix 1.17.0, then derive and verify required paths
     python-env-check
                    require the active venv to match shell/constraints.txt
     verify-fingerprints <db> [reference-db]
@@ -1073,6 +1102,7 @@ case "$cmd" in
   checklist-audit) cmd_checklist_audit "$@" ;;
   invariant-scan) cmd_invariant_scan "$@" ;;
   progress-check) cmd_progress_check "$@" ;;
+  export-check)   cmd_export_check "$@" ;;
   python-env-check) cmd_python_env_check "$@" ;;
   verify-fingerprints) cmd_verify_fingerprints "$@" ;;
   verify-artifacts) cmd_verify_artifacts "$@" ;;
