@@ -1,6 +1,45 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 TRIGGER-FRESHNESS is complete, the cycle remains open, and v0.15.6 remains published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Step 3 candidate `81ca6498c825e52c2c2604eec169bd4a4898b6e3` exists only on `codex/v0.23-action-migration`; hosted run `30456330833` attempt **1** passed all **7/7** executable jobs and its new authenticated set verified **7 accepted / 0 rejected** with a complete identity matrix. That set is verification-only and was not admitted to the manifest. Exact v0.15.6 closing evidence remains candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**; forward-confirmation run `30446796322` also passed **7/7**. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. The post-TRIGGER Python 3.11 shell suite passes **275/275**. `invariant-scan` passes **12/12 rules / 38 controls**, including all **15** R12 mutations; R10 retains **45** exemptions. All **221/221** existing pins (**219/219** evidence + **2/2** authorization) remain exact static bytes, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 RE-MEASURE is complete, the cycle remains open, and publication awaits the separate Step 7 operator decision.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` still resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. The first v0.23 admission adds those **7 receipt / 7 bundle** pairs plus the audit report: all **236/236** pins (**234/234** evidence + **2/2** authorization) now match. At the exact candidate, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275**, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; the hosted Python 3.11 and 3.12 lanes each passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Exact v0.15.6 closing evidence remains candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**; forward-confirmation run `30446796322` also passed **7/7**. Protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.23 RE-MEASURE produced release-grade hosted evidence without publishing
+(measured 2026-07-29).** Candidate
+`5b075dfc87e789aa34c07b94a9a80f2f10af89f2` was pushed only to the neutral
+branch `candidate/v0.23-remeasure`. Before dispatch, remote and local
+`.github/workflows/ci.yml` both resolved to Git blob
+`48ea726b798f1049e0b29cce1f0c64588861c2dd`. Workflow-dispatch run
+`30459746825` attempt **1** used `audit_sha` equal to the candidate and
+`publish_evidence: true`.
+
+Every executable hosted job passed: core, golden, lint, MSRV, net, and shell
+Python 3.11/3.12. Counts read from the hosted logs matched the exact-candidate
+local run: **133** workspace tests; **55** net tests (**29 + 26**); shell
+**275/275** on both hosted interpreters and **275/275** locally on Python 3.11;
+`invariant-scan` **12/12 rules / 38 controls** with R12 **15/15** and R10
+**45** exemptions; lifecycle **182** checked, **3** retracted, **182**
+matched, **0** exemptions; golden **11/11**. Local `./run ci-local` passed all
+**20/20** stages, including warning-denied Rust, locked MSRV, clippy, fmt, and
+ShellCheck.
+
+The hosted run produced exactly **7** receipt artifacts containing **7**
+receipts and **7** Sigstore bundles. Release-posture verification required
+attestations and accepted **7 / rejected 0**, with the complete job/matrix set
+and exact bindings to repository `jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, candidate digest, neutral
+source ref, and GitHub-hosted runner identity. The clean detached audit subject
+was the exact candidate with an empty worktree. Its deferred result was **5
+deferred / 2 promoted / 0 implemented**; exact cosine at the largest evidenced
+corpus of **2,600** documents measured p95 **7.777583 ms**, below the A3
+**16.264 ms** request anchor. The report is pinned at SHA-256
+`850fcefa7314d1b31bf85f3939275c89aa9d0d48ebedf38ae7d49309590a1317`,
+**34,825 bytes**.
+
+The manifest grew for the first time in v0.23, from **221** to **236** pins:
+**234** evidence plus the unchanged **2** authorization pins. Manifest schema
+validation, `verify-artifacts`, and `evidence-report` passed; both protected
+databases remained byte-exact and integrity-clean. Remote `main` remained
+`15b6d28973058c833a77e9600741d29eda02cdc1`, and no tag or publication ref was
+created or moved. Mandatory standalone golden remains **11/11**, delta **0**.
 
 **v0.23 TRIGGER-FRESHNESS makes dated re-evaluation executable over a bounded
 live document set (measured 2026-07-29).** The rule applies only to

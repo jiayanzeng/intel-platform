@@ -85,6 +85,9 @@ path or glob.
 | `allow` | `shell/tests/test_deferred_audit.py` |
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
+| `allow` | `config/protected-artifacts.json` |
+| `allow` | `evidence/ci-runs/30459746825-1/**` |
+| `allow` | `evidence/v0.23/deferred-audit/report.json` |
 | `release_authority` | `Cargo.toml` |
 | `release_authority` | `Cargo.lock` |
 | `release_authority` | `crates/*/Cargo.toml` |
@@ -561,6 +564,51 @@ changed in the working repository · published objects and 221 pins re-verified 
   rules / 38 controls**, with R12 **15/15**.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
 
+### 2026-07-29 · RE-MEASURE
+
+- **Result — PASS within the authorized Gate.** Exact candidate
+  `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` was pushed only to neutral branch
+  `candidate/v0.23-remeasure`. Remote `main` remained
+  `15b6d28973058c833a77e9600741d29eda02cdc1`; no tag, publication ref, source,
+  public surface, dependency, lockfile, schema, or protected database changed.
+- **Workflow-identity acceptance — PASS.** Before dispatch, remote and local
+  `.github/workflows/ci.yml` both resolved to Git blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`. Workflow-dispatch run
+  `30459746825` attempt **1** used `audit_sha` equal to the candidate and
+  `publish_evidence: true`.
+- **Hosted/local acceptance — PASS.** All **7/7** executable hosted jobs passed.
+  Counts read from their logs matched local `./run ci-local` at the exact
+  candidate: **133** workspace tests; **55** net tests (**29** ingest + **26**
+  cored); shell **275/275** on hosted Python 3.11 and 3.12 and local Python
+  3.11; lifecycle **182** checked, **3** retracted, **182** matched, **0**
+  exemptions; `invariant-scan` **12/12 rules / 38 controls**, R12 **15/15**,
+  R10 **45** exemptions; golden **11/11**. The local aggregate passed
+  **20/20**, including warning-denied Rust, locked MSRV, clippy, fmt, and
+  ShellCheck.
+- **Authenticated-evidence acceptance — PASS.** The run produced exactly **7**
+  receipt artifacts containing **7 receipts / 7 Sigstore bundles**.
+  Release-posture verification required attestations and accepted **7 /
+  rejected 0**, with the complete core/golden/lint/MSRV/net/shell-3.11/
+  shell-3.12 identity matrix. Every item binds the expected repository,
+  workflow signer, candidate digest, neutral source ref, and GitHub-hosted
+  runner.
+- **Deferred-audit acceptance — PASS.** A clean detached exact-candidate
+  worktree with an empty status produced the pinned release-grade report. It
+  measured **5 deferred / 2 promoted / 0 implemented**. At the largest
+  evidenced corpus of **2,600** documents, exact-cosine p95 was
+  **7.777583 ms**, below the A3 **16.264 ms** request anchor. The report is
+  SHA-256
+  `850fcefa7314d1b31bf85f3939275c89aa9d0d48ebedf38ae7d49309590a1317`,
+  **34,825 bytes**.
+- **Admission acceptance — PASS.** This cycle's first pin growth admitted only
+  the authorized **14** hosted receipt/bundle files plus the audit report.
+  The manifest now validates **236/236** pins: **234** evidence and **2**
+  authorization. `verify-artifacts` and `evidence-report` pass; protected
+  databases remain **2/2** byte-exact and integrity-clean. Before commit, the
+  declared-scope table was extended only with the manifest and these two exact
+  evidence locations, matching this task's predeclared Gate.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
+
 ---
 
 ## Step 2 · RELEASE-PROSE (G1) — Delete the duplicate, not just the stale copy 🤖
@@ -915,6 +963,16 @@ decision: publication.**
 - Trigger re-evaluation: **14** governed rows, **2** fired overall, **1**
   additional forward assignment to v0.24; the final live tables validate
   **13/13** trigger-bearing rows.
+- Evidence candidate:
+  `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch
+  `candidate/v0.23-remeasure`; remote/local workflow blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`.
+- Closing hosted evidence: run `30459746825` attempt **1**, **7/7** executable
+  jobs successful, **7 accepted / 0 rejected** signed identities, complete
+  matrix, attestations required.
+- Evidence admission: **236/236** pins (**234** evidence + **2**
+  authorization), protected databases **2/2**, release audit **5 deferred / 2
+  promoted / 0 implemented**, exact-cosine largest-corpus p95 **7.777583 ms**.
 
 - [x] **E0** — entering matrix with both interpreters; G1 settled by the
   forced-identity construction with clone provenance and full messages;
@@ -943,7 +1001,7 @@ decision: publication.**
   in scope; dated negative observations accepted; rule checks presence and date,
   not truth; every row backfilled; this runbook's table validated; additionally
   fired triggers assigned forward; counts exact
-- [ ] **RE-MEASURE** — hosted run on a neutral branch; remote `ci.yml` blob
+- [x] **RE-MEASURE** — hosted run on a neutral branch; remote `ci.yml` blob
   confirmed before dispatch; counts equal local; run id recorded as closing
   evidence; first pins of the cycle admitted here
 - [ ] **R-CLOSE** — tagged-close protocol followed; publication trigger named;
