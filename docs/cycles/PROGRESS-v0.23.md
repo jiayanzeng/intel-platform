@@ -324,3 +324,61 @@ Entries are append-only; corrections are new dated entries.
   `checklist-audit` named exactly TRIGGER-FRESHNESS as missing; this append
   supplies that audit record.
 - golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · RE-MEASURE — release-grade candidate evidence admitted
+
+- owner: Codex
+- commit: 2abe76b2b651378a32269e835e4d962815961801
+- result: PASS. Implementation commit
+  `2abe76b2b651378a32269e835e4d962815961801` admits only the authorized signed
+  evidence set, release-grade deferred-audit report, manifest entries, and
+  status records. No tag, `main` advance, publication, source, public surface,
+  dependency, lockfile, schema, or protected database changed.
+- candidate acceptance: PASS. Exact candidate
+  `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` was pushed only to neutral branch
+  `candidate/v0.23-remeasure`. Before dispatch, remote and local
+  `.github/workflows/ci.yml` both resolved to Git blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`. The dispatch used that candidate
+  as `audit_sha` with `publish_evidence: true`.
+- hosted acceptance: PASS. Run `30459746825` attempt **1** passed all **7/7**
+  executable jobs: core, golden, lint, MSRV, net, and shell Python 3.11/3.12;
+  report-only dependency drift was skipped.
+- exact-count acceptance: PASS. Counts read from hosted logs matched local
+  `./run ci-local` at the same candidate: **133** workspace tests; **55** net
+  tests (**29** ingest + **26** cored); shell **275/275** on each hosted
+  interpreter and local Python 3.11; lifecycle **182** checked, **3**
+  retracted, **182** matched, **0** exemptions; `invariant-scan` **12/12 rules
+  / 38 controls**, R12 **15/15**, R10 **45** exemptions; golden **11/11**.
+  The local aggregate passed **20/20**, including warning-denied Rust, locked
+  MSRV, clippy, fmt, and ShellCheck.
+- authenticated-set acceptance: PASS. Exactly **7** artifacts supplied **7
+  receipts / 7 Sigstore bundles**. Release-posture verification required
+  attestations and accepted **7 / rejected 0**, deriving the complete expected
+  matrix and binding every item to repository
+  `jiayanzeng/intel-platform`, workflow
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml`, the candidate digest,
+  neutral source ref `refs/heads/candidate/v0.23-remeasure`, and GitHub-hosted
+  runner policy.
+- deferred-audit acceptance: PASS. The subject was a clean detached worktree
+  at the exact candidate with empty status. The release-grade report measured
+  **5 deferred / 2 promoted / 0 implemented**. Exact cosine at the largest
+  evidenced corpus of **2,600** documents measured p95 **7.777583 ms**, below
+  the A3 **16.264 ms** request anchor. The report is SHA-256
+  `850fcefa7314d1b31bf85f3939275c89aa9d0d48ebedf38ae7d49309590a1317`,
+  **34,825 bytes**.
+- admission acceptance: PASS. The first v0.23 pin growth added the authorized
+  **14** receipt/bundle files and one audit report, taking the manifest from
+  **221** to **236** exact pins: **234** evidence and **2** authorization.
+  Manifest validation, `verify-artifacts`, and `evidence-report` pass;
+  protected databases remain **2/2** byte-exact and integrity-clean. The
+  declared-scope table names only the manifest and the two exact Step 6
+  evidence locations added by this Gate.
+- lifecycle acceptance: PASS. Post-implementation `cycle-check` accepted the
+  activation-exclusive through implementation-inclusive diff.
+  `progress-check` passed, and `checklist-audit` named exactly RE-MEASURE as
+  missing before this required append.
+- ref acceptance: PASS. A final authenticated read found remote `main` still at
+  `15b6d28973058c833a77e9600741d29eda02cdc1` and the neutral candidate branch
+  at the exact candidate; no `v0.15.7` tag exists. Step 7 publication remains
+  unstarted and requires its separate operator decision.
+- golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
