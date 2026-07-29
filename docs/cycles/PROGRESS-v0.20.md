@@ -137,3 +137,32 @@ Entries are append-only; corrections are new dated entries.
   it is rerun after this append.
 - golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
   **11/11** on the exact implementation candidate.
+
+### 2026-07-29 · EXPORT-PATTERN — closed-cycle range completed
+
+- owner: Codex
+- commit: ba1b4e7
+- result: PASS. The implementation commit contains only the one-line
+  `repomix.config.json` pattern and the required `STATE.md` / runbook status
+  records. No repository file, tool, crate, dependency, protected artifact,
+  database, or public surface was deleted or modified.
+- pattern acceptance: PASS. The former enumerated
+  `v0.{8,9,10,11}*` expression is now the range-shaped
+  `v0.{[6-9],1[01]}{.md,.*.md,-*.md}` under the existing
+  `{TASKS,PROGRESS}` prefix. The numeric classes cover every cycle v0.6
+  through v0.11; the suffix alternatives cover base records, point cycles,
+  and execution runbooks without matching v0.12. Repomix 1.17.0 executed the
+  expression successfully, and JSON validation passed.
+- size acceptance: PASS. Immediate project-root exports before and after the
+  one-line change measured **147 → 145 files**, **2,735,717 → 2,704,779
+  characters**, and **2,740,883 → 2,709,638 serialized bytes**.
+- inclusion acceptance: PASS. The complete path-set diff removed exactly
+  `docs/cycles/TASKS-v0.6.md` and `docs/cycles/TASKS-v0.7.md`. All **18/18**
+  task/progress files from v0.12 through active v0.20 remained. No
+  non-`docs/cycles/` inclusion changed, and `git status` confirmed neither
+  historical source file was deleted.
+- integrity acceptance: PASS. `verify-artifacts` passed all **176/176** pins
+  and both protected databases **2/2**. `cycle-check`, `version-check`,
+  JSON validation, and `git diff --check` passed.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11**.
