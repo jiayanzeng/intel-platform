@@ -778,12 +778,20 @@ lockfile, schema, or protected database moved.
 ## Pending Cycle closing record
 
 - **Candidate recorded:** 2026-07-29
-- **Release disposition:** pending the one Step 7 operator publication
-  decision.
+- **Release disposition:** release (as of 2026-07-29). The operator authorized
+  publication; the exact release commit still requires Step 7's clean
+  definition-of-done measurement.
 - **Release version:** v0.15.3. Step 4's measured negative-cache correctness
   defect is the patch trigger: transient unreachable state occupied the
   successful-policy cache's full day and discarded a good policy while
-  remaining fail-closed.
+  remaining fail-closed. The patch default classifies the identity but is not
+  the trigger. The correction makes a failing origin eligible for another
+  `/robots.txt` attempt at most once per 300 seconds instead of once per 24
+  hours, bounded by ingest frequency and the shared politeness limiter that
+  `policy_for` acquires; it never permits a publisher-refused request.
+- **Removed surface:** the unsupported `diagnostics` and `robots-preview`
+  features and preview binary shipped in v0.15.2 are retired. Consumers that
+  selected either feature must remove it; no `/v1/*` surface changed.
 - **Evidence candidate:** `197e93effe9a6abf9c59488a9849c6dcda47646c`
   on `candidate/v0.15.3`.
 - **Hosted evidence:** workflow-dispatch run `30414648482` attempt 1; all
@@ -800,6 +808,11 @@ lockfile, schema, or protected database moved.
 - **Evidence pins:** **176/176** total — **174/174** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
 - **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
+- **v0.20 opener:** the export exclusion misses
+  `docs/cycles/TASKS-v0.6.md` and `TASKS-v0.7.md`; no `export-check` derives
+  the expected source set from `git ls-files`; and `AGENTS.md` does not yet
+  require a project-root Repomix run or preserve why
+  `enableSecurityCheck` must remain disabled. None is repaired in R-CLOSE.
 - **Remote disposition:** `origin/main` remains
   `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; candidate branch
   `candidate/v0.15.3` is exact at the evidence candidate; no `v0.15.3` tag

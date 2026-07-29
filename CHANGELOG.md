@@ -4,6 +4,73 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.3 — 2026-07-29
+
+### Fixed
+
+- `RobotsCache` now selects cache lifetime by exhaustive `Policy` variant:
+  successful `Gate(_)` and definitive `Unavailable` results retain the
+  24-hour policy TTL, while transient `Unreachable` results use the production
+  five-minute negative TTL wired by `cored`.
+- The gate remains fail-closed while an unreachable result is cached. This
+  correction deliberately makes a failing origin eligible for another
+  `/robots.txt` request at most once per 300 seconds instead of once per 24
+  hours, bounded by ingest frequency and by the shared politeness limiter that
+  `policy_for` acquires. A day-long denial caused by one dropped packet was
+  arbitrary rather than conservative.
+- An unreachable refresh still overwrites an expired last-known-good policy.
+  Reusing stale policy remains deferred until a measured live transient outage
+  affects an admitted publisher while a usable last-known-good policy exists,
+  followed by explicit operator authorization.
+
+### Removed
+
+- The unsupported `diagnostics` and `robots-preview` Cargo features and the
+  robots-only preview binary have been retired. They shipped inside v0.15.2,
+  so consumers that selected either feature must remove it; the public
+  `/v1/*` API is unchanged, and the behavior correction remains patch-scoped.
+
+### Documentation and controls
+
+- Publication status is now reconciled by `cycle-check`; its executing
+  fail-before proved that the project's prior false remote-main/tag status had
+  passed every existing check.
+- The review export excludes evidence bodies and the selected closed-cycle
+  records, archives old `STATE.md` history losslessly, and disables Repomix's
+  security scan because it silently omitted a Rust source. Registered,
+  self-testing invariant R4 remains the credential control.
+- Three export-control omissions remain explicit v0.20 work: the exclusion
+  pattern misses `TASKS-v0.6.md` and `TASKS-v0.7.md`; no derived
+  `export-check` executes the expected `git ls-files` source set; and
+  `AGENTS.md` does not yet require root execution or preserve the reason
+  `enableSecurityCheck` must remain off.
+
+### Evidence and disposition
+
+- Authenticated run 30414648482 attempt 1 against evidence candidate
+  `197e93effe9a6abf9c59488a9849c6dcda47646c` passed all seven derived
+  identities with zero rejected receipts: workspace **133**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), invariant-scan **11/11 rules /
+  23 controls**, and golden **11/11**. Both hosted shell lanes collected
+  **248** as **247 passed / 1 declared on-site-only skip**, matching local
+  **248/248** at the same commit.
+- The authenticated release-posture audit measured **5 deferred / 2 promoted /
+  0 deferred subsystems implemented**. Its report is SHA-256
+  `3006f9ed8641cbc6483a2a1608c65da52ff008e59837218997f207a7cf588b2e`
+  at **34,530** bytes. All **176** pins remain exact: **174** evidence plus
+  **2** authorization surfaces.
+- Publication was explicitly selected as **release as of 2026-07-29** because
+  the negative-cache correctness defect changes production behavior received
+  by a consumer of the artifact. The defect was bounded fail-closed
+  availability loss, not a publisher-policy violation and not cosmetic;
+  retractions remain three.
+- This platform still aggregates one publisher: `arxiv-cs` is real and three
+  of four configured sources are `example.org` fixture placeholders. Adding a
+  second publisher remains a separate product and compliance decision.
+- A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom
+  scanners, the measured-value heuristic, T7 robots single-flight, and the
+  last-known-good fallback remain open; L2 remains scheduled.
+
 ## v0.15.2 — 2026-07-28
 
 ### Fixed

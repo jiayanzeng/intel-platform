@@ -127,8 +127,10 @@ Condensed from `STATE.md §2`.
 ## 4. The robots subsystem (two gates, one direction)
 
 - **Publisher policy** — fetched from the real `/robots.txt` (`RobotsCache`,
-  `crates/compliance`): per-origin, TTL 24h, bounded to 512 origins, and the fetch
-  itself goes through the per-host politeness limiter.
+  `crates/compliance`): per-origin, bounded to 512 origins, and the fetch itself
+  goes through the per-host politeness limiter. Successful `Gate(_)` and
+  definitive `Unavailable` results use the 24-hour policy TTL; transient
+  `Unreachable` results use the production five-minute negative TTL.
 - **Operator deny-list** — `RobotsGate::new(&["/private","/admin"])`, applied on
   top; can only ever refuse **more**.
 
@@ -156,6 +158,15 @@ Pinned dispositions:
   construction call precedes the sole `TcpListener::bind`; with the `net`
   feature enabled, this installs the process-scoped identity before the
   listener can accept a request.
+
+The shorter negative TTL deliberately permits more `/robots.txt` attempts
+against a failing origin: at most one attempt per 300 seconds instead of one
+per 24 hours, bounded by ingest frequency and the same process-scoped
+politeness limiter acquired by `policy_for`. The cached verdict remains
+fail-closed throughout. An unreachable refresh still overwrites an expired
+successful policy; retaining a last-known-good policy is Decision B, deferred
+until a measured transient robots outage affects an admitted publisher while a
+usable stale policy exists and the operator explicitly authorizes that change.
 
 **v0.18 wire / v0.19 support boundary.** v0.18 changed no default-build
 compliance verdict or robots-policy behavior. ORIGIN-CASE shipped nothing
@@ -268,6 +279,15 @@ value/count/number/quantity/total term. A paraphrase outside that vocabulary or
 split across clauses can escape it, while an unusual intentional sentence may
 need rephrasing. Closed runbooks remain historical evidence and are not
 retroactively evaluated by this check.
+
+The review-export budget is not yet an executable repository invariant.
+Repomix's v0.19 exclusion names v0.8 through v0.11 but misses the differently
+named closed `TASKS-v0.6.md` and `TASKS-v0.7.md`; no `export-check` currently
+derives the expected source set from `git ls-files`; and `AGENTS.md` does not
+yet require root execution or preserve why Repomix's security scan must stay
+disabled after it silently omitted a Rust source. Those three omissions are
+the v0.20 opener. They do not widen v0.19 R-CLOSE into an export-configuration
+change.
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

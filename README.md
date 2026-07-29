@@ -1,4 +1,4 @@
-# intel-platform (v0.15.2 — core-shell)
+# intel-platform (v0.15.3 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,17 +7,17 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.15.2` is the selected release identity. Its release-grade hosted evidence
-is workflow-dispatch run `30369139464`, attempt 1, against exact evidence
-candidate `2ce912dca181e5e7b949a4b2e6fd8487412388f9` on
-`candidate/v0.15.2`. Signed receipts pin that candidate and source ref; the
+`v0.15.3` is the selected release identity. Its release-grade hosted evidence
+is workflow-dispatch run `30414648482`, attempt 1, against exact evidence
+candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` on
+`candidate/v0.15.3`. Signed receipts pin that candidate and source ref; the
 cycle closing record separately identifies the later release commit. The
-annotated `v0.15.2` tag targets the release commit, not the candidate.
+annotated `v0.15.3` tag targets the release commit, not the candidate.
 
 Current and historical execution runbooks and their append-only progress logs
-live under [`docs/cycles/`](docs/cycles/). The active pair is
-[`TASKS-v0.18-EXECUTION.md`](docs/cycles/TASKS-v0.18-EXECUTION.md) and
-[`PROGRESS-v0.18.md`](docs/cycles/PROGRESS-v0.18.md).
+live under [`docs/cycles/`](docs/cycles/). The declared pair is
+[`TASKS-v0.19-EXECUTION.md`](docs/cycles/TASKS-v0.19-EXECUTION.md) and
+[`PROGRESS-v0.19.md`](docs/cycles/PROGRESS-v0.19.md).
 
 **Current source scope is one real publisher.** `arxiv-cs` is the only
 configured network source; the other three configured sources are

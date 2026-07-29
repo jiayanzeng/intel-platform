@@ -1,6 +1,105 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 RE-MEASURE is complete at the v0.15.3 candidate; the operator publication decision gates R-CLOSE.** `origin/main` remains `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; the published annotated `v0.15.2` tag object remains `22beef8e023e52024cfe9614273e2d82b39f4956` at release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Candidate branch `candidate/v0.15.3` is exact at `197e93effe9a6abf9c59488a9849c6dcda47646c`; no `v0.15.3` tag exists. Exact-candidate local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, protected databases exact **2/2**, and golden **11/11**. The admitted manifest separately passes all **176/176** pins (**174/174** evidence + **2/2** authorization); the status suite reruns after the separate audit entry names the implementation commit. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.19 R-CLOSE publication is authorized and release reconciliation is in progress; the exact release commit still requires its clean definition-of-done measurement.** `origin/main` remains `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; the published annotated `v0.15.2` tag object remains `22beef8e023e52024cfe9614273e2d82b39f4956` at release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Candidate branch `candidate/v0.15.3` is exact at `197e93effe9a6abf9c59488a9849c6dcda47646c`; no `v0.15.3` tag exists. Exact-candidate local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, protected databases exact **2/2**, and golden **11/11**. The admitted manifest separately passes all **176/176** pins (**174/174** evidence + **2/2** authorization). The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, all three v0.20 export-control omissions, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.19 R-CLOSE publication is authorized and release reconciliation is
+prepared (measured 2026-07-29).** Release disposition: release (as of
+2026-07-29). The operator selected v0.15.3 because Step 4 changed production
+behavior received by a consumer of the artifact: `cached()` now selects TTL by
+exhaustive policy variant and `cored` wires `ROBOTS_NEGATIVE_TTL` at **300
+seconds**. The runbook's mechanical patch default classifies the compatible
+identity; it is not the trigger.
+
+G1 was a bounded fail-closed availability defect. While an origin was
+unreachable, the system denied access and never permitted a request the
+publisher had refused; the defect discarded a good policy and could preserve
+one transient denial for a full day. The correction deliberately makes a
+failing origin eligible for another `/robots.txt` request at most once per
+**300 seconds** instead of once per **24 hours**, bounded by ingest frequency
+and the shared politeness limiter that `policy_for` already acquires. That
+trade is correct because a 24-hour denial caused by one dropped packet was
+arbitrary rather than conservative. It is neither a compliance violation nor
+cosmetic. `Unreachable` still denies while cached and still overwrites an
+expired last-known-good policy; Decision B remains deferred under its recorded
+live-outage and operator-authorization trigger.
+
+The release also removes the unsupported `diagnostics` and `robots-preview`
+Cargo features and preview binary that shipped in v0.15.2. A consumer that
+selected either feature must remove it. No `/v1/*` name, response shape, or
+schema changed, so the production correctness fix and explicit unsupported
+feature retirement remain compatible with the patch identity.
+
+Step 2 changed the project's own epistemics: before v0.19, a false assertion
+about `origin/main` and the published tag passed every check the project ran.
+The new `cycle-check` reconciliation first failed against that known-false
+status, then passed only after a forward status audit recorded the measured
+refs and exact hosted publication run.
+
+The export budget remains materially smaller but its control is incomplete.
+The comparable Repomix summary moved from **4,887,220 characters / 339 files**
+at E0 to **2,640,795 characters / 146 files** at EXPORT-BUDGET. At clean
+pre-release audit commit `1fad40f`, root-run Repomix 1.17.0 reports
+**2,658,161 characters / 145 files**; the serialized XML is **2,663,093
+bytes**. This forward record corrects the earlier use of “bytes” for
+Repomix's `Total Chars` metric. The export retains `Cargo.lock`,
+`config/protected-artifacts.json`, `AGENTS.md`, `run`,
+`.github/workflows/ci.yml`, all four fixtures named by `config/core.json`, and
+all **88/88** tracked files under `crates/`, `apps/`, `tools/`, and `shell/`.
+The moved historical state remains at
+`docs/state-archive/STATE-through-v0.13.md`.
+
+Three omissions are the v0.20 opener and are not repaired inside R-CLOSE's
+Gate:
+
+1. The configured “closed cycles through v0.11” exclusion names only v0.8
+   through v0.11. `docs/cycles/TASKS-v0.6.md` and
+   `docs/cycles/TASKS-v0.7.md` remain exported and currently total **31,147
+   bytes**.
+2. Nothing executes the export budget. The required `export-check` must derive
+   the expected set from `git ls-files`, not pin a count; the current derived
+   source set is **88**, after preview retirement reduced the former **89**.
+3. `AGENTS.md` does not yet require Repomix to run from the project root or
+   preserve why `enableSecurityCheck` must stay off after it silently omitted
+   a Rust source.
+
+The intended release diff from annotated v0.15.2 contains exactly **39 paths**,
+classified once each:
+
+- **Production cache behavior (2):** `apps/cored/src/main.rs` and
+  `crates/compliance/src/lib.rs`.
+- **Unsupported feature retirement (4):**
+  `crates/compliance/Cargo.toml`, `crates/ingest/Cargo.toml`,
+  `crates/ingest/src/bin/robots_preview.rs`, and
+  `crates/ingest/src/net.rs`.
+- **Version authorities (4):** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Executable lifecycle/export/status controls (4):** `AGENTS.md`,
+  `repomix.config.json`, `tools/cycle_check.py`, and
+  `shell/tests/test_cycle_check.py`.
+- **Architecture, status, and release documentation (4):**
+  `ARCHITECTURE.md`, `STATE.md`, `README.md`, and `CHANGELOG.md`.
+- **Cycle records (4):** `docs/cycles/PROGRESS-v0.18.md`,
+  `docs/cycles/PROGRESS-v0.19.md`,
+  `docs/cycles/TASKS-v0.18-EXECUTION.md`, and
+  `docs/cycles/TASKS-v0.19-EXECUTION.md`.
+- **Lossless state archive (1):**
+  `docs/state-archive/STATE-through-v0.13.md`.
+- **Protected admission manifest (1):**
+  `config/protected-artifacts.json`.
+- **Authenticated evidence (15):** the seven JSON receipts and seven
+  `.sigstore` bundles under `evidence/ci-runs/30414648482-1/`, plus
+  `evidence/v0.15.3/deferred-audit/report.json`.
+
+Evidence candidate
+`197e93effe9a6abf9c59488a9849c6dcda47646c` on
+`candidate/v0.15.3` and the release commit are separate named subjects. The
+release commit remains pending the clean post-commit definition-of-done
+measurement. A4, the editable-L1 controller residual, R3/R4's bounded
+open-bottom limits, the active-runbook measured-value heuristic, T7 robots
+single-flight, Decision B's last-known-good fallback, the three export-control
+omissions above, and the one-real-publisher limitation remain open; L2 remains
+scheduled. Three of four configured sources are still `example.org`
+placeholders, and a second publisher remains a separate compliance decision.
 
 **v0.19 RE-MEASURE is complete at the v0.15.3 candidate (measured
 2026-07-29).** Step 4's negative-cache correctness change is the version
