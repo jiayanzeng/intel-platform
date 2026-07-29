@@ -446,9 +446,108 @@ decision: publication.**
 
 ---
 
+## Execution records
+
+### 2026-07-29 · E0
+
+PASS. The Gate contained every acceptance surface: only this runbook's status
+record and the append-only progress record move. `STATE.md` remained blob
+`03053b14137161423a4f1bca617b8bc85d91e86b`, byte-identical to the entering
+tree. No ref was created, moved, or deleted.
+
+- **Entering matrix:** clean constrained Python **3.11.4** and **3.12.13**
+  environments each resolved the same **21** packages and passed shell
+  **258/258**, with the same third-party `StarletteDeprecationWarning`.
+  `./run ci-local` passed all **20/20** jobs with **133** workspace tests,
+  **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78,
+  zero rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **12/12 rules /
+  30 controls**, all **206/206** pins, protected databases **2/2**, and embedded
+  golden **11/11**. Standalone golden passed **11/11**, delta **0**.
+  `verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+  `version-check`, and `invariant-scan` passed locally. Project-root
+  `export-check` passed **90** derived sources, **7** required paths, and
+  **151** exported paths; the two-path increase from the entering assertion's
+  149 is exactly the newly admitted v0.22 runbook and progress log.
+- **G1 — CONFIRMED as a field constraint.** For a closed release,
+  `newest_closed_release` first needs a release disposition of `release`, then
+  requires exactly one `Release`, `Release commit`, and `Annotated tag object`.
+  The dated disposition and release name are knowable before the containing
+  commit; the containing commit hash is not, because its tree includes the
+  record; the annotated-tag object is not, because it includes the target
+  commit hash. A disposable construction made placeholder commit
+  `d50c598f53c81482794f75aba0cfd471e73919ff`; inserting that value into the
+  record produced containing commit
+  `5ef5015d176f4741fdef750ca2e080b0bc65977c`, not the named commit. Tagging
+  that commit produced object
+  `b8ec441f82330cf222a07f58229d7411a2091567`; inserting the commit and tag
+  values produced containing commit
+  `e85e97b997ff0e8facb2828c677a4ce07b13ea78`, while the tag over that new
+  commit became `3eb5dcc719b10e41478af4176ba9f8b1f902c935`. Both constructed
+  fixed-point comparisons were `no`. Committing the record changes the commit
+  value; tagging that new commit changes the tag-object value. Reordering the
+  same operations cannot break either dependency, so candidate evidence solves
+  the hosted-evidence ordering problem but not these self-referential fields.
+- **Early-close control — PASS.** A disposable full-history clone with every
+  v0.22 box checked and a syntactically complete `v0.15.6` closing record,
+  while no such tag existed, exited 1 with this exact output:
+
+  ```
+  cycle-check: ERROR: docs/cycles/TASKS-v0.22-EXECUTION.md: annotated tag 'v0.15.6' does not resolve to recorded tag object f2bfeacc1dc8207841430e3827e7babed5605b47
+  cycle-check: ERROR: docs/cycles/TASKS-v0.22-EXECUTION.md: release 'v0.15.6' does not dereference to recorded commit b9f617664578a3bb5e29892c512a3dda8e991c24
+  cycle-check: ERROR: STATE.md: publication verification unavailable: annotated tag ref 'v0.15.6' cannot be resolved
+  cycle-check: FAIL (3 defect(s))
+  ```
+
+  This is correct unavailable-input behavior. Step 2's selected design must
+  avoid requiring a not-yet-created local tag to validate an early close.
+- **G2 — CONFIRMED and classified LOCAL-ONLY for both tags.** Exhaustive
+  inspection covered **45** local refs, **803** reflog entries, all **40**
+  remote refs, and the recorded objects. Local `refs/tags/v0.8.0` points at
+  annotated tag object
+  `314c1dd914a3d8e9193445874a419ed762581e6e`, whose payload targets existing
+  commit `bfc8c5af85734583f966ee70d2ec521155432205`. Local
+  `refs/tags/v0.10.2` points at annotated tag object
+  `d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`, whose payload targets existing
+  commit `7d127abac0b993c9e98294ee1c03ff01153de9d0`. Both tag objects have type
+  `tag`; both targets have type `commit`; the two release commits appear in
+  local `main`'s reflog. Remote enumeration found neither tag name nor any of
+  the four recorded object ids. No ref or closed runbook changed.
+- **G3 — REFUTED.** The omission hypothesis is false. Contributor-facing
+  `ARCHITECTURE.md` already states that the review-export budget is an
+  executable **operator-local contract**, that `./run export-check` derives the
+  tracked set from `git ls-files`, and that the check is intentionally absent
+  from local/hosted CI because it writes a multi-megabyte export and `npx` may
+  fetch its pinned toolchain. `AGENTS.md` carries both measured operating rules
+  and points contributors at the command. `.github/workflows/ci.yml` contains
+  no `export-check`, `export_check`, or Repomix invocation, as documented.
+- **G4 — CONFIRMED as an unexamined default.** The manifest is **119,353
+  bytes/characters**, not the draft's 119,354, and contains **206** pins.
+  Release-tag snapshots measure total pins **161 → 176 → 191 → 206** for
+  v0.15.2 through v0.15.5, exactly **+15 per cycle**; the draft's 159 first
+  value was v0.15.2's evidence-only subtotal, excluding the two authorization
+  pins. `/usr/bin/time -p ./run verify-artifacts` at 206 pins measured
+  **0.10 s real / 0.05 s user / 0.04 s sys**. The repository states
+  `immutable_evidence` and append-only admission, which explains why existing
+  evidence cannot be silently rewritten, but it contains no dated acceptance
+  of unbounded pin growth, no retention bound, and no trigger for revisiting
+  the full re-hash cost. Step 4 therefore must give this behavior a disposition.
+- **G5 — CONFIRMED.** The record repeatedly calls the
+  `StarletteDeprecationWarning` and hosted GitHub Actions Node-runtime
+  deprecation annotation third-party and non-blocking. Neither warning has a
+  named work trigger or a permanent-acceptance decision. “Non-blocking” is the
+  repeated absence of a disposition, so Step 4 must disposition each warning.
+- **Final identity and integrity:** local and remote annotated `v0.15.5` object
+  `f2bfeacc1dc8207841430e3827e7babed5605b47` both peel to release commit
+  `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; remote `main` remains that
+  commit. Manifest schema-v2 validation and final `verify-artifacts` pass all
+  **206/206** pins and protected databases **2/2**. Final standalone golden
+  passes **11/11**, delta **0**.
+
+---
+
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with both interpreters; G1 established as a field
+- [x] **E0** — entering matrix with both interpreters; G1 established as a field
   constraint with the no-permutation demonstration; early-close message recorded
   verbatim; G2 classified per tag with evidence and no ref touched; G3 confirmed
   or refuted; G4 measured with growth rate and verify cost; G5 answered from the
