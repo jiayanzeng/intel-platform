@@ -130,3 +130,51 @@ Entries are append-only; corrections are new dated entries.
   E0.
 - golden-E2E delta: **0**. The post-record standalone invocation passed
   **11/11**.
+
+### 2026-07-29 · POPULATION-EXPLICIT — conditional set named and reported
+
+- owner: Codex
+- commit: df92e4b
+- result: PASS. The sole environment-conditional shell test now carries the
+  registered `on_site` marker alongside its unchanged `skipif`, and both
+  unchanged full-suite command shapes emit one stable JSON population summary.
+- marker/enumeration acceptance: PASS.
+  `pytest shell/tests --collect-only -m on_site -q` enumerated exactly
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`.
+  The marker declares membership while the existing condition still decides
+  execution.
+- machine-summary acceptance: PASS. The sorted schema reports
+  `schema_version`, collected, passed, failed, the full `on_site` node set, and
+  each skip's node id, marker set, and reason. The targeted hosted test command
+  emits no second summary; the local and hosted full-suite invocations obtain
+  the same option from `shell/pytest.ini`.
+- population-preservation acceptance: PASS. Local Python 3.11.4 and 3.12.13
+  each collected **275**, passed **275**, failed **0**, and skipped **0**. A
+  disposable clean checkout under each interpreter collected **275**, passed
+  **274**, failed **0**, and skipped **1**. That skip is the enumerated node,
+  marked `on_site` and `skipif`, for
+  `on-site production audit requires protected corpora and built cored`.
+  These populations and outcomes equal E0's before-state measurements.
+- command-shape/pin acceptance: PASS. An initial explicit-option construction
+  was rejected by the authorization pin and R10 classifier. The accepted
+  construction preserves both `pytest shell/tests -q` commands. `run` changes
+  by one explanatory comment only, from SHA-256
+  `0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779`
+  at **43,044 bytes** to
+  `44314ddfc182de68d4aaa444f2c6bd074fe08858d8d46f98aafa461dd6672397`
+  at **43,125 bytes**; its dispatch, authorization policy, and model-profile
+  functions are unchanged.
+- full acceptance: PASS. `./run ci-local` passed all **20** jobs with workspace
+  **133**, net **55** (**29 + 26**), warning-denied current and Rust 1.78 lanes,
+  clean clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 38 controls**, all
+  **236** pins, protected databases **2**, and embedded golden **11 checks**.
+  Manifest validation, `verify-artifacts`, `cycle-check`, ShellCheck, and diff
+  checks passed. The pre-audit `checklist-audit` correctly named this checked
+  task as its sole unmatched progress entry.
+- scope acceptance: PASS. The implementation changes only `STATE.md`,
+  `config/protected-artifacts.json`, the active runbook, `run`,
+  `shell/pytest.ini`, `shell/tests/conftest.py`, and the one marked test.
+  `.github/workflows/ci.yml`, runtime source, dependencies, schemas, protected
+  databases, configured sources, public surfaces, and refs are unchanged.
+- golden-E2E delta: **0**. The mandatory post-record standalone execution
+  passed all **11** checks.
