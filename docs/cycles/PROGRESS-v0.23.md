@@ -201,3 +201,70 @@ Entries are append-only; corrections are new dated entries.
   artifact, or manifest entry changed.
 - golden-E2E delta: **0**. The sandboxed bind attempt was a non-result; the
   identical permitted standalone run passed **11/11**.
+
+### 2026-07-29 · SCOPE-DECLARED — active-cycle scope made executable
+
+- owner: Codex
+- commit: ab79aaa
+- result: PASS. Implementation commit
+  `ab79aaa87027825c9a07fe5cd9cdff48fba7ef12` adds the v0.23-forward
+  declared-scope parser and both enforcement phases, corrects the active
+  declaration, registers its planted failure, and changes no workflow,
+  production source, dependency, schema, protected artifact, or public
+  surface.
+- schema acceptance: PASS. One two-column markdown table carries
+  `scope_version`, `disposition_intent`, `allow`, `release_authority`, and
+  `forbid` rows. Parsing reuses the deferral checker's markdown-cell,
+  normalization, and separator conventions; repository-relative Git-style
+  globs preserve `*`, `**`, `?`, and character classes in values.
+- firing-time acceptance: PASS. The static sub-rule fires at activation for a
+  declared or recorded release and requires coverage of all **17** enumerated
+  release authorities. The diff sub-rule fires after later commits over
+  activation commit `09cb119ba4237f99f652327d8babd51d95517cd7`
+  **exclusive** through `HEAD` **inclusive**. A disposable Git fixture passed
+  at activation, then rejected `outside.txt` in its next commit.
+- standing-set acceptance: PASS. The checker owns the exact standing set:
+  `STATE.md`, the active runbook, and the active progress record. A direct
+  fixture accepted those three and rejected `AGENTS.md`; the contract file is
+  allowed in v0.23 only because the table declares it.
+- draft-validation acceptance: CORRECTION REQUIRED and completed. The
+  activation YAML draft fit the schema's classes but omitted
+  `shell/tests/test_deferred_audit.py`, already changed under Step 3's widened
+  Gate, and its `shell/intel_shell/**` forbid overlapped both Python release
+  authorities rather than the asserted one. The corrected table adds the test
+  and uses `shell/intel_shell/[a-z]*.py`.
+- glob/overlap acceptance: PASS with the required weakening. The lower-case
+  module glob does not swallow `shell/tests/**` or version-only
+  `__init__.py`. Across the **17** authorities, the exact forbid intersection
+  is `shell/intel_shell/app.py` alone. Release-authority precedence permits its
+  R-CLOSE version edit and weakens path enforcement for exactly that file;
+  human diff classification remains required. Literal relocation to
+  `__init__.py` is the recorded forward option.
+- boundary/contract acceptance: PASS. `AGENTS.md` names the two firing times,
+  the exclusive/inclusive endpoints, exact standing paths, glob and precedence
+  rules, v0.23-forward boundary, and the interpretive rule that exit 0 from an
+  unexamined construction is `not measured`. No pre-v0.23 closed runbook was
+  edited or required to carry a scope table.
+- fixture acceptance: PASS. The v0.22-shaped scope fixture emitted four exact
+  rejections: its release-authority set and changed-path set each rejected
+  `apps/cored/Cargo.toml` and `Cargo.lock`. It was an in-memory/temporary
+  fixture, not an edit to v0.22.
+- planted-failure acceptance: PASS. R12 mutation **14** replaces the shared
+  static/diff rejection conditional with false; self-test detected
+  `v0.22-release-paths` at `tools/cycle_check.py:1204`.
+- committed-diff acceptance: PASS. After the implementation commit,
+  `cycle-check` accepted all paths in
+  `09cb119ba4237f99f652327d8babd51d95517cd7..HEAD`; the set includes the
+  declared workflow, contract, architecture, checker, invariant registry and
+  tests plus the three standing status paths.
+- measured-count acceptance: PASS in all three required records.
+  `invariant-scan` passes **12/12 rules / 37 controls**, with R12
+  **14/14**; the same counts appear in `STATE.md`, the active runbook's
+  execution/pending-close records, and this progress entry.
+- test acceptance: PASS. Focused lifecycle tests pass **39/39**, invariant
+  tests **22/22**, and the full constrained Python 3.11 shell suite passes
+  **271/271** with the one accepted third-party warning. `cycle-check` passes
+  at the committed task gate.
+- ref acceptance: PASS. No tag or branch was created, moved, or deleted in
+  Step 4; the existing Step 3 candidate branch was not pushed again.
+- golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
