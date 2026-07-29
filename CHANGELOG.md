@@ -4,6 +4,61 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.8 — 2026-07-30
+
+### Fixed
+
+- The shell test population is now explicit. The protected-corpus production
+  audit retains its environment `skipif` and also carries the registered
+  `on_site` marker; both Python lanes emit one stable machine-readable summary.
+- `tools/test_population.py` compares local and hosted populations instead of
+  trusting transcribed totals. It requires equal collection, derives
+  local-passed equivalence from hosted passes plus named `on_site` skips, and
+  rejects failed, unmarked, or unnamed differences.
+- Registered R12 control 16 executes the real comparator against an unmarked
+  hosted skip. The invariant population is now **12 rules / 39 controls**.
+- The v0.23 hosted-shell count is corrected forward without rewriting its
+  closed record. Historical measurement found one affected event, so the
+  defect is classified as isolated and checklist retractions remain three.
+
+### Publisher review
+
+- SEC EDGAR's official US GAAP structured-disclosure RSS path was reviewed
+  against the `finance` sector. The shipped matcher fetched and evaluated the
+  publisher's real 2,622-byte policy; the intended path was allowed, while the
+  separate latest-filings Atom path was denied by `/cgi-bin`.
+- The recommendation is conditional on retaining the monitored-contact crawler
+  identity, using only the reviewed RSS path, and keeping total automated
+  traffic within the publisher's then-current ceiling. No source was added:
+  `arxiv-cs` remains the sole configured real publisher, and live RSS fetching,
+  parsing, and cursor durability remain untested until a separate v0.25
+  admission decision.
+
+### Evidence and disposition
+
+- Authenticated candidate run `30472740314` attempt 1 passed all seven
+  executable jobs at exact candidate
+  `a73c042068a367aea22e63e28dfd2f754b65ef9c`. For both Python versions, the
+  population comparator derived equivalence between local collection **283**,
+  passes **283**, skips **0**, and hosted collection **283**, passes **282**,
+  plus the one named `on_site` skip.
+- Release-posture verification required attestations and accepted all seven
+  signed job identities with zero rejected. The deferred audit measured
+  **5 deferred / 2 promoted / 0 implemented** and retained the largest-corpus
+  exact-cosine p95 below its request anchor.
+- The manifest verifies **251** exact pins, including the fourteen signed
+  receipt/bundle files and release-grade v0.24 deferred-audit report. Both
+  protected databases remain byte-exact.
+- Publication was explicitly selected as **release as of 2026-07-30**. The
+  trigger is the false hosted count in the published v0.15.7 tree; its dated
+  correction exists only in unpublished descendants.
+- No `/v1/*` route or response body, schema, dependency graph, runtime
+  behavior, robots policy, configured source, or protected database changed,
+  so v0.15.8 is patch-compatible.
+- A4, editable L1, the R3/R4 open-bottom limits, active-runbook measured-value
+  heuristic, T7, negative-cache Decision B, and L2 remain open. The FastAPI
+  version-literal relocation also remains an unimplemented forward option.
+
 ## v0.15.7 — 2026-07-29
 
 ### Fixed

@@ -1,6 +1,87 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 through RE-MEASURE are complete. SEC EDGAR's official US GAAP structured-disclosure RSS path is conditionally admissible for a separate v0.25 operator decision; no source was added.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. HISTORY-BOUND measures this as one isolated false-measurement record, with the same claim copied into the closed execution record. On 2026-07-30 the operator approved the established dated-supersession instrument, so checklist retractions remain **3**. PUBLISHER-REVIEW fetched SEC's **2,622-byte** policy through the shipped matcher; SHA-256 `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`, wildcard-group verdict **allow** for `/Archives/edgar/usgaap.rss.xml`, no matching rule or `Crawl-delay`, and a contact-bearing `intel-platform/0.15.7` identity. The separate latest-filings Atom path was denied by `Disallow: /cgi-bin`. RE-MEASURE candidate `a73c042068a367aea22e63e28dfd2f754b65ef9c` passed hosted run **`30472740314`** on neutral branch `codex/v0.24-evidence-a73c042`; both hosted shell lanes collected **283**, passed **282**, and skipped the one named `on_site` test, while local Python 3.11.4 and 3.12.13 each collected **283**, passed **283**, and skipped **0**. The comparator derived equivalent populations in both lanes. The exact candidate's full `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, the then-current **236** protected pins, protected databases **2**, and embedded golden **11 checks**. The authenticated seven-receipt/seven-bundle set and release audit are now **251** protected pins; all are exact. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus is unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Status:** **v0.24 R-CLOSE publication of v0.15.8 is operator-authorized; the untagged release parent is being prepared while v0.15.7 remains published.** Published v0.15.7 release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` still resolves to it. The separate v0.24 evidence candidate is `a73c042068a367aea22e63e28dfd2f754b65ef9c` on neutral branch `codex/v0.24-evidence-a73c042`; authenticated hosted run `30472740314` attempt **1** passed all seven executable jobs. Its release-grade audit accepted **7** signed identities, rejected **0**, required attestations, and found the complete job/matrix set. The comparator derived equivalent populations for both Python lanes: local collected **283**, passed **283**, and skipped **0**; hosted collected **283**, passed **282**, and skipped one named `on_site` test. All **251** protected pins and both protected databases match. The exact candidate's full `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. SEC EDGAR's reviewed US GAAP RSS path is conditionally admissible only for a separate v0.25 operator decision; no source was added. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.24 R-CLOSE selects v0.15.8 and prepares release assembly (operator
+decision 2026-07-30).** Release disposition: release (as of 2026-07-30). The
+patch identity applies because the cycle changes test-comparison apparatus,
+documentation, evidence, and lifecycle records without adding, removing,
+renaming, or incompatibly reshaping any `/v1/*` route or response body, schema,
+dependency, configured source, robots-policy behavior, runtime behavior, or
+protected database.
+
+The publication trigger is the false hosted shell count in the published
+v0.15.7 tree. Its correction is present only in unpublished descendants of the
+tagged closing commit. Publishing v0.15.8 makes the correction and the
+executable population comparator visible together; the release identity is not
+an inherited patch default.
+
+Authenticated run `30472740314` attempt **1** at exact candidate
+`a73c042068a367aea22e63e28dfd2f754b65ef9c` is the closing evidence. The
+candidate is deliberately separate from the release parent being assembled.
+All seven executable hosted jobs passed, and the release-grade verifier
+accepted **7 / rejected 0** signed identities with attestations required.
+For both Python lanes, the exact comparator output already recorded under
+RE-MEASURE derives equivalent populations from local collected **283**, passed
+**283**, skipped **0** and hosted collected **283**, passed **282**, plus the
+one named `on_site` skip. The release-parent definition of done, exact release
+commit, closing commit, annotated tag object, and post-push run remain to be
+measured at their protocol-defined points rather than predicted here.
+
+The false-measurement class is **isolated** under HISTORY-BOUND's measured
+criterion: exactly one hosted RE-MEASURE event was false, represented once in
+the v0.23 progress entry and copied into its closed execution record. The
+v0.23 POST-PUSH entry and this cycle correct that measurement forward without
+rewriting either historical record.
+
+The author-side population contains **5** members under v0.23's criterion of
+one distinct normative runbook requirement with no outcome satisfying both the
+requirement and its governed action. The measured members are v0.19 mutable-main
+freshness, v0.20 post-push-before-close ordering, v0.22's closing field set,
+v0.22's source prohibition, and the bare local/hosted equality requirement
+first authored in v0.21. This fifth member is the first whose consequence was a
+false number in a published record; the earlier four produced unmeetable
+criteria without that published measurement consequence.
+
+PUBLISHER-REVIEW completed with a conditional recommendation rather than an
+admission. The shipped matcher fetched SEC's **2,622-byte** policy, SHA-256
+`72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`,
+and allowed `/Archives/edgar/usgaap.rss.xml` under the wildcard group; the
+separate latest-filings Atom path matched `Disallow: /cgi-bin`. Admission
+requires a separate v0.25 operator decision and preservation of the reviewed
+RSS path, monitored-contact crawler identity, and then-current publisher rate
+ceiling. No feed was fetched and no source was configured, so live RSS
+fetching, parsing, cursor durability, multi-origin robots-cache behavior, and
+multi-host limiter behavior remain unestablished.
+
+The release-parent changed-path classification is prepared in seven disjoint
+groups and will be reconciled against the committed `v0.15.7..R` path set:
+
+- **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
+- **Release version authorities:** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Lifecycle controls and tests:** `config/invariant-rules.json`, `run`,
+  `tools/invariant_scan.py`, `tools/test_population.py`, `shell/pytest.ini`,
+  `shell/tests/conftest.py`, `shell/tests/test_deferred_audit.py`, and
+  `shell/tests/test_test_population.py`.
+- **Cycle records:** `docs/cycles/PROGRESS-v0.23.md`,
+  `docs/cycles/PROGRESS-v0.24.md`, and
+  `docs/cycles/TASKS-v0.24-EXECUTION.md`.
+- **Append-only provenance authority:** `config/protected-artifacts.json`.
+- **Publisher-review observations:** both files under
+  `observations/v0.24/publisher-review/`.
+- **Authenticated evidence:** all fourteen files under
+  `evidence/ci-runs/30472740314-1/` and
+  `evidence/v0.24/deferred-audit/report.json`.
+
+The product boundary remains unchanged: `arxiv-cs` is the sole configured real
+publisher and the other three sources remain fixtures. The SEC review is a
+document, not an admission. A4, editable L1, the R3/R4 open-bottom limits, the
+active-runbook measured-value heuristic, T7 robots single-flight, robots
+negative-cache Decision B, scheduled L2, and the FastAPI version-literal
+relocation remain open. The A/A/E disposition and hosted
+`--skip-local-tag-verification` trigger remain unchanged.
 
 **v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
 test population (measured 2026-07-29).**
