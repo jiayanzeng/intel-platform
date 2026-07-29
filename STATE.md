@@ -1,6 +1,74 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; CLOSE-FIELDS, TAG-IDENTITY, and RESIDUALS are complete, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact v0.15.5 release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; Steps 1–5 are complete, R-CLOSE awaits the publication decision, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.22 evidence candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` is separate on neutral branch `candidate/v0.15.5-v0.22`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Candidate run `30443692105` passed all **7** executable jobs at the exact evidence candidate; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The hosted Node-runtime annotation now proves that G5's named-enforcement-date trigger had already fired: GitHub's linked announcement names 2026-06-16, and the runner forced Node 24 for actions still targeting Node 20. No workflow pin changed in Step 5 because that would change the measured candidate; R-CLOSE must reconcile this finding rather than repeat the expired acceptance. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.22 RE-MEASURE admits authenticated release-posture evidence without
+prejudging publication (measured 2026-07-29).** The operator authorized the
+Gate's exact non-`main` branch push and authenticated hosted dispatch. Candidate
+`10c78119cd10eeb17a01152de6b6f0c322b2b91e` was pushed only to
+`candidate/v0.15.5-v0.22`; remote `main` remained
+`b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`. No tag, publication, product
+path, public surface, dependency, lockfile, schema, protected database, or
+release authority changed.
+
+Before dispatch, the remote candidate's `.github/workflows/ci.yml` was read
+through the GitHub contents endpoint. Its blob
+`96e85af978981b7af9bdd8e9e11069f158f35e57` exactly equals the local workflow
+blob and contains the expected core, lint, net, MSRV, two-shell, lifecycle,
+invariant, golden, receipt, provenance-signing, and artifact-upload invocations.
+Workflow-dispatch run `30443692105` attempt **1** completed successfully at
+that exact candidate. All **7/7** executable job instances were green; the
+report-only dependency-drift job was skipped by its declared trigger. This is
+the authenticated candidate evidence that Option C's Step 6 closing record
+must cite.
+
+Every count was read from the hosted log and reconciled with local execution at
+the same commit. Local `./run ci-local` passed **20/20** with **133** workspace
+tests, **55** net tests (**29 + 26**), locked Rust 1.78, zero
+rustc/clippy/fmt/ShellCheck failures, shell **266/266** on Python 3.11.4,
+`invariant-scan` **12/12 rules / 36 controls**, R10 **45** exemptions, and
+embedded golden **11/11**. The independently rebuilt Python 3.12.13 lane also
+passed **266/266**. Hosted logs report the same **133**, **55**, **12/12 / 36**,
+**45**, and **11/11** counts. Hosted Python 3.11.15 and 3.12.13 each collected
+the same **266** shell tests as **265 passed + 1 declared on-site-only protected
+corpus skip**, after resolving the exact **21-package** constraints.
+
+Hosted lifecycle output found active v0.22 open with **19** closed execution
+runbooks and **3** historical runbooks; checklist audit reported **175 checked /
+3 retracted / 175 matched / 0 exemptions**; progress-check resolved
+`RESIDUALS · d38030e`. The hosted **12/12 rules / 36 controls** measurement is
+the required proof that Step 2's expanded R12 planted failures execute outside
+the local harness.
+
+The seven successful Linux receipts — core, golden, lint, MSRV, net, and shell
+Python 3.11/3.12 — came from the one run and exact candidate. All seven
+persisted Sigstore bundles verify their receipt bytes, repository
+`jiayanzeng/intel-platform`, workflow signer, source digest, neutral candidate
+source ref, and GitHub-hosted runner identity. Zero receipts were rejected and
+the derived identity matrix is complete.
+
+The release-posture deferred audit measured a clean detached candidate with
+byte-identical ignored protected databases. It records **5 deferred / 2
+promoted / 0** deferred subsystems implemented; exact-cosine p95 at the largest
+**2,600-document** archive is **6.966708 ms**, below the **16.264 ms** A3
+request anchor. Report `evidence/v0.22/deferred-audit/report.json` is **34,816
+bytes** at SHA-256
+`7fc1b09004d1cb8e835cf90bd3d11bf68e856c4d56bb2c9564a7fdbf77abced0`.
+
+The **15** append-only admissions bring the schema-v2 manifest to **221/221**
+pins — **219/219** evidence plus **2/2** authorization surfaces. Manifest
+validation, `verify-artifacts`, and `evidence-report` pass; protected databases
+remain exact **2/2**. Standalone golden remains **11/11**, delta **0**.
+
+The hosted logs also repeat one annotation in every executable job: pinned
+actions still target Node 20 and are being forced to run on Node 24. The linked
+GitHub announcement names **2026-06-16** as the migration date and says Node 20
+removal follows in fall 2026. Step 4's “when GitHub names an enforcement date”
+trigger was therefore already true when that disposition was written. Step 5
+does not silently upgrade action pins because doing so would change the exact
+candidate whose evidence it admits. This is a measured forward-correction
+subject for Step 6's required `ARCHITECTURE.md` reconciliation, not a renewed
+acceptance of the expired trigger.
 
 **v0.22 CLOSE-FIELDS adopts tagged-closing Option C (operator decision and
 measurement 2026-07-29).** The operator answered `C`, accepting its stated

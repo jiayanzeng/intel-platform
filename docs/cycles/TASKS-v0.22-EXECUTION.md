@@ -662,6 +662,69 @@ workaround.
   pass.
 - **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
 
+### 2026-07-29 · RE-MEASURE
+
+PASS. The operator authorized the exact candidate branch push and authenticated
+hosted evidence dispatch. Candidate
+`10c78119cd10eeb17a01152de6b6f0c322b2b91e` was pushed only to neutral branch
+`candidate/v0.15.5-v0.22`; remote `main` remained
+`b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`, and no tag was created or moved.
+
+- **Remote workflow preflight:** PASS. The remote candidate's
+  `.github/workflows/ci.yml` blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` exactly equals the local blob.
+  Direct inspection found the expected core, lint, net, MSRV, two-shell,
+  lifecycle, invariant, golden, receipt, provenance-signing, and artifact-upload
+  invocations before dispatch.
+- **Hosted identity:** PASS. Workflow-dispatch run `30443692105`, attempt **1**,
+  used `publish_evidence=true` and
+  `audit_sha=10c78119cd10eeb17a01152de6b6f0c322b2b91e`. All **7/7** executable
+  Linux job instances were green; report-only dependency drift was skipped.
+  Option C's closing record must cite this candidate and run as its
+  already-existing authenticated evidence.
+- **Hosted/local count equality:** PASS. At the exact candidate, local
+  `./run ci-local` passed **20/20** with **133** workspace tests, **55** net
+  tests (**29 + 26**), shell **266/266** on Python 3.11.4, locked Rust 1.78,
+  clean rustc/clippy/fmt/ShellCheck gates, R10 **45** exemptions, and embedded
+  golden **11/11**. Independent Python 3.12.13 passed **266/266**. Hosted logs,
+  not job status, report the same **133**, **55**, **45**, and **11/11**;
+  Python 3.11.15 and 3.12.13 each collected **266** as **265 passed + 1**
+  declared on-site-only protected-corpus skip after resolving **21** exact
+  packages.
+- **Hosted planted-failure acceptance:** PASS. Hosted `invariant-scan` reports
+  **12/12 rules / 36 controls**, proving Step 2's enlarged R12 executes on the
+  hosted runner. Hosted lifecycle output also reports active v0.22 open,
+  **19** closed execution runbooks, **3** historical runbooks, checklist
+  **175 checked / 3 retracted / 175 matched / 0 exemptions**, and
+  `progress-check` at `RESIDUALS · d38030e`.
+- **Authenticated evidence:** PASS. Seven successful receipts and their seven
+  Sigstore bundles came from run `30443692105` attempt 1 at the exact candidate
+  and neutral source ref. Every bundle verifies the receipt bytes, repository,
+  workflow identity, source digest/ref, and GitHub-hosted runner identity;
+  rejected receipts **0**, matrix complete.
+- **Deferred audit:** PASS. Release-grade audit with attestations required
+  records **5 deferred / 2 promoted / 0** implemented deferred subsystems and
+  exact-cosine p95 **6.966708 ms** over **2,600** documents against the
+  **16.264 ms** A3 anchor. The **34,816-byte** report SHA-256 is
+  `7fc1b09004d1cb8e835cf90bd3d11bf68e856c4d56bb2c9564a7fdbf77abced0`.
+- **Protected evidence:** PASS. The fourteen signed files plus the audit report
+  add **15** append-only pins. Schema-v2 validation, `verify-artifacts`, and
+  `evidence-report` pass at **221/221** pins — **219/219** evidence plus
+  **2/2** authorization — with protected databases exact **2/2**.
+- **New finding:** every executable hosted job says pinned actions targeting
+  Node 20 are being forced onto Node 24. Its linked GitHub announcement names
+  **2026-06-16** as the migration date and fall 2026 for Node 20 removal, so
+  Step 4's named-date trigger was already true. Step 5 leaves the measured
+  workflow untouched; Step 6's required architecture reconciliation must
+  correct the expired disposition rather than repeat it.
+- **Pending closing-record carry-forward:** evidence candidate
+  `10c78119cd10eeb17a01152de6b6f0c322b2b91e`; candidate run
+  `30443692105` attempt **1**; `invariant-scan` **12/12 rules / 36 controls**;
+  manifest **221/221** pins (**219/219** evidence + **2/2** authorization);
+  Node-warning named-date trigger fired and requires an explicit Step 6
+  disposition.
+- **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
+
 ---
 
 ## Cycle checklist
@@ -681,7 +744,7 @@ workaround.
 - [x] **RESIDUALS** — G3, G4, G5 each carry one dated disposition or are deleted
   as refuted; G4's acceptance states growth rate and verify cost; all appear in
   the residual table
-- [ ] **RE-MEASURE** — hosted run pinned on a neutral branch; counts equal local
+- [x] **RE-MEASURE** — hosted run pinned on a neutral branch; counts equal local
   at the same commit; candidate run id recorded as citable evidence if required
 - [ ] **R-CLOSE** — Step 2's procedure followed rather than the habitual one;
   publication decided on a trigger with no-release named as legitimate; G1
