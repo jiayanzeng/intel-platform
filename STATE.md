@@ -1,6 +1,24 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 PUBLISHED-HEAD is complete and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization) remain exact, protected databases remain **2/2**, and golden remains **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 MASKING is complete and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization) remain exact, protected databases remain **2/2**, and golden remains **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.21 MASKING makes both statement-order decisions explicit (decided and
+measured 2026-07-29).** G5 retains intentional masking. A mismatch between the
+measured and recorded release object or peeled target is the root-cause
+identity defect; until it is resolved, pending-publication and header-freshness
+conclusions depend on an untrusted release premise. The checker therefore
+reports the agreement defect and returns. An inline comment records that
+boundary, and the combined wrong-object plus pending-publication focused test
+proves exactly one release-object-agreement error appears.
+
+G6 restates v0.20's recorded acceptance without changing the expression. The
+240-character `publication` to `pending|outstanding` proximity window can
+conservatively false-fire on unrelated header prose, but it scans only the live
+header paragraph and can produce a loud refusal, not a false pass. That bounded
+looseness remains accepted as of 2026-07-29. No new invariant rule was created.
+Focused `cycle_check` tests pass **26/26** on Python 3.11.4 and independently
+**26/26** on Python 3.12.13; the full invariant scanner remains **12/12 rules /
+30 controls**, and standalone golden passes **11/11**, delta **0**.
 
 **v0.21 PUBLISHED-HEAD records the shipped tree and accepts the audit rhythm
 (measured and decided 2026-07-29).** A fresh full-history clone of the configured

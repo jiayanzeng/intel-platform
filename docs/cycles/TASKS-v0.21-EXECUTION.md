@@ -592,6 +592,34 @@ was pushed.
   `7a5c9f7396c043f2b89974585fdd4e5146180e86`. Standalone golden passed
   **11/11**, delta **0**.
 
+### 2026-07-29 · MASKING
+
+PASS. E0 confirmed both G5 and G6, so neither half was deleted. The Gate
+contains the implementation: `tools/cycle_check.py`, its focused tests, and
+status records only.
+
+- **G5 — intentional masking, 2026-07-29:** release-object agreement is the
+  root-cause boundary. If the measured annotated object or peeled target
+  differs from the closed runbook, later pending-publication and
+  header-freshness conclusions rely on an untrusted release identity. The two
+  early returns remain, and an inline comment records that they mask derived
+  rules intentionally.
+- **G5 control:** a header asserting pending publication with otherwise fresh
+  immutable hashes was combined with a measured tag object of forty `f`
+  characters. The focused test receives exactly one error,
+  `publication release-object agreement`; it receives no derived disposition
+  error. This proves the chosen order rather than merely documenting it.
+- **G6 — accepted bounded looseness restated, 2026-07-29:** v0.20's execution
+  record constructed `publication is complete and exact. An unrelated export
+  review has outstanding documentation` and observed a match. It accepted that
+  false positive because the 240-character expression is scoped to the live
+  header paragraph and can cause only a loud conservative refusal, never a
+  false pass. The expression and that disposition are unchanged.
+- **Acceptance:** focused `cycle_check` tests pass **26/26** on Python 3.11.4
+  and independently **26/26** on Python 3.12.13. No new rule was added, and the
+  existing complete scanner passes **12/12 rules / 30 controls**. Standalone
+  golden passes **11/11**, delta **0**.
+
 ---
 
 ## Cycle checklist
@@ -608,7 +636,7 @@ was pushed.
 - [x] **PUBLISHED-HEAD** — published-tag suite re-run under corrected checkers;
   G3 closed clean or recorded as a forward-correction subject and **not repaired
   here**; G4 recorded as accepted, corrected, or deferred, dated; no push
-- [ ] **MASKING** — G5 decided and commented or tested; G6's disposition
+- [x] **MASKING** — G5 decided and commented or tested; G6's disposition
   recorded with a date; refuted halves deleted
 - [ ] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
   hosted `invariant-scan` proves every registered rule and declared

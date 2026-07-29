@@ -455,14 +455,14 @@ def check_publication_status(
             f"annotated tag target {tag!r} cannot be resolved"
         )
         return
-    if measured_object != recorded_object:
+    if measured_object != recorded_object:  # Root cause; mask derived rules.
         errors.append(
             f"{shown(state_path, root)}: publication release-object agreement: "
             f"{tag} resolves to tag object {measured_object}, but "
             f"{shown(runbook, root)} records {recorded_object}"
         )
         return
-    if measured_target != recorded_target:
+    if measured_target != recorded_target:  # Same identity-agreement boundary.
         errors.append(
             f"{shown(state_path, root)}: publication release-object agreement: "
             f"{tag} peels to {measured_target}, but "

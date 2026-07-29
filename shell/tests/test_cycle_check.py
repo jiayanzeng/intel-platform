@@ -144,6 +144,34 @@ def test_publication_status_rejects_pending_reachable_release(
     assert "publication disposition agreement" in errors[0]
 
 
+def test_release_object_mismatch_intentionally_masks_pending_publication(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        "**As of:** publication is pending. "
+        f"Annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n"
+    )
+    real_git_output = cycle_check.git_output
+    wrong_object = "f" * 40
+
+    def mismatched_object(repo: Path, *args: str) -> str | None:
+        if args == ("rev-parse", "v1.1.0"):
+            return wrong_object
+        return real_git_output(repo, *args)
+
+    monkeypatch.setattr(cycle_check, "git_output", mismatched_object)
+
+    assert _publication_errors(root) == [
+        "STATE.md: publication release-object agreement: v1.1.0 resolves to "
+        f"tag object {wrong_object}, but docs/cycles/"
+        f"TASKS-v1.1.0-EXECUTION.md records {tag_object}"
+    ]
+
+
 def test_publication_status_rejects_mutable_ref_literal_in_header(
     tmp_path: Path,
 ) -> None:
