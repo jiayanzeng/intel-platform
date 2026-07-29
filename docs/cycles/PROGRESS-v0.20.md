@@ -88,3 +88,52 @@ Entries are append-only; corrections are new dated entries.
   green; the expected pre-audit `checklist-audit` refusal named only E0's
   missing progress entry and is rerun after this append.
 - golden-E2E delta: **0**; mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · SELF-REF — publication fixed point removed
+
+- owner: Codex
+- commit: b365f8a
+- result: PASS. E0 confirmed G1 and G2 before implementation. The implementation
+  commit contains only `tools/cycle_check.py`, its focused test file,
+  `STATE.md`, and the v0.20 runbook's SELF-REF status/checklist record. No
+  closed runbook, historical append, crate, dependency, schema, protected
+  artifact, database, or public surface changed.
+- fail-before acceptance: PASS. With the corrected checker and the entering
+  header still intact, `./run cycle-check` exited **1** and reported exactly
+  `STATE.md: publication status header must not assert a literal origin/main
+  hash; publishing the asserting commit moves that ref, so record mutable-ref
+  measurements in a dated body append`.
+- structural-prohibition acceptance: PASS. `origin/main` is absent from the
+  freshness comparison and a live-header literal is structurally refused in
+  both the historical formatted wording and an unformatted assignment. The
+  implementation comment records why publishing moves this one mutable ref.
+  The live `STATE.md` header carries publication disposition, version,
+  annotated tag object, and peeled release commit with no `origin/main` hash;
+  E0's exact branch measurement is preserved in the dated 2026-07-29 body
+  append.
+- immutable/unavailable acceptance: PASS. Both tag-object and tag-target
+  freshness labels still fire on wrong values. Missing tag ref, missing peeled
+  target, and unavailable ancestry now each append a named error; no
+  unavailable input silently returns or continues without a report.
+- rule-1 acceptance: PASS. The original focused control still proves that a
+  reachable annotated release cannot coexist with a live header calling
+  publication pending. The rule's implementation is unchanged.
+- focused-test acceptance: PASS. `shell/tests/test_cycle_check.py` passed
+  **24/24**, covering the prohibition, passing header, both retained freshness
+  labels, every unavailable-input report, unchanged rule 1, and body-only
+  historical ref tolerance.
+- full-matrix acceptance: PASS. On the exact implementation candidate,
+  permitted `./run ci-local` passed **20/20** with **133** workspace tests,
+  **55** net tests (**29 + 26**), shell **252/252** on Python 3.11.4, locked
+  Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures, `invariant-scan`
+  unchanged at **11/11 rules / 23 controls**, all **176/176** pins, protected
+  databases **2/2**, and golden **11/11**. Python 3.12.13 independently passed
+  shell **252/252** against the exact **21-package** constraints.
+- status acceptance: PASS before the implementation commit:
+  `cycle-check`, `checklist-audit`, `progress-check`, `version-check`,
+  `invariant-scan`, manifest validation, and `verify-artifacts` were green.
+  After checking SELF-REF and before this legally hash-bearing append, the
+  expected checklist refusal named only the missing SELF-REF progress entry;
+  it is rerun after this append.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11** on the exact implementation candidate.
