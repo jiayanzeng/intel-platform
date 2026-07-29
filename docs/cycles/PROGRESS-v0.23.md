@@ -445,3 +445,51 @@ Entries are append-only; corrections are new dated entries.
   the other three configured sources remain fixtures.
 - golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** at the
   release parent.
+
+### 2026-07-29 · POST-PUSH — v0.15.7 forward confirmation and count correction
+
+- owner: Codex
+- commit: e7715fb97b86b91a2a58bc7b73bf99308c2aae9b
+- result: PASS with one audit finding. Closing commit
+  `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b` and annotated v0.15.7 object
+  `b579c2c18e4eeb549617ea20a9175b0c26dc621d` were published atomically.
+  Remote readback resolves `main` and the peeled tag to the closing commit; its
+  first parent is release commit
+  `8bb6a71446b043b10ce16077499fdc07abb91b98`.
+- hosted-forward acceptance: PASS. Push run `30462710258` attempt **1**
+  executed at the exact closing commit. All **7/7** executable jobs passed:
+  core, lint, MSRV, net, shell Python 3.11, shell Python 3.12, and golden.
+  Report-only dependency drift was skipped by its declared trigger.
+- hosted-count acceptance: FINDING. Hosted measurements were workspace
+  **133**, net **55** (**29 + 26**), lifecycle **184** checked / **3**
+  retracted / **184** matched / **0** exemptions, `invariant-scan` **12/12
+  rules / 38 controls**, protected pins **236**, and golden **11/11**. Both
+  hosted shell lanes reported **274 passed / 1 skipped / 1 warning**.
+- prior-claim correction: Candidate run `30459746825` reports the same **274
+  passed / 1 skipped / 1 warning** on both Python lanes, not the **275/275**
+  asserted in the RE-MEASURE entry and closed execution record. The skipped
+  test is `test_on_site_production_measurements_match_committed_receipt`; its
+  declared condition requires the protected databases and a built local
+  `cored`, which are deliberately absent from a clean hosted checkout. Local
+  release-parent Python 3.11.4 and 3.12.13 each ran it and passed **275/275**.
+- disposition: The green job conclusions, signed candidate identities, and
+  R-CLOSE Git graph remain valid. Step 6's literal criterion that every hosted
+  count equal local was nevertheless not met, and its exact-count PASS claim
+  was false. The append-only prior entry and tagged runbook remain preserved;
+  this dated entry supersedes that count claim.
+- forward finding: v0.24 must make environment-specific test populations
+  explicit or compare only equivalent populations. This new apparatus input
+  supersedes the close-time observation that the scheduled apparatus queue was
+  empty; it does not expand or alter the published v0.15.7 runtime.
+- closure-semantics acceptance: PASS. Candidate run `30459746825` remains the
+  closing evidence. Run `30462710258` is dated forward confirmation; its result
+  neither created nor retroactively conditioned the already-valid close.
+- provenance acceptance: ordinary push verification did not request receipt
+  attestations. The authenticated candidate set remains **236/236** protected
+  pins; no manifest or evidence file changed.
+- audit-rhythm acceptance: this first post-tag commit carries the required
+  exact contiguous `STATE.md` record. Per the accepted cycle-ending rhythm it
+  is locally verified now and will become hosted-verified at the following
+  publication.
+- golden-E2E delta: **0**. The mandatory post-closing standalone golden passed
+  **11/11** before publication; published-head golden also passed **11/11**.

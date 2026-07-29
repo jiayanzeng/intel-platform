@@ -1,6 +1,47 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.23 is closed locally under R-CLOSE and v0.15.7 is authorized for atomic publication.** Release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of the closing tree; the annotated v0.15.7 tag targets that closing tree. The separate v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. All **236/236** pins (**234/234** evidence + **2/2** authorization) match. At the exact release parent, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275** on Python 3.11.4, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; an independently rebuilt Python 3.12.13 lane also passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Protected databases remain **2/2**, root-level review export passes **90** derived sources / **7** required / **153** exported, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.23 is closed and v0.15.7 is published under R-CLOSE; published-head CI is green, with one exact-count audit finding carried forward.** Release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; annotated v0.15.7 object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The separate v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. Forward-confirmation run `30462710258` at the published closing commit also passed all **7/7** executable jobs; report-only dependency drift was skipped. Both hosted shell lanes passed **274** tests, skipped the one explicitly on-site-only production-measurement test, and retained one third-party warning. The prior v0.23 closing evidence incorrectly recorded those hosted lanes as **275/275** and equal to local; the dated correction below supersedes that claim and is a v0.24 apparatus input. All **236/236** pins (**234/234** evidence + **2/2** authorization) match. At the exact release parent, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275** on Python 3.11.4, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; an independently rebuilt Python 3.12.13 lane also passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Protected databases remain **2/2**, root-level review export passes **90** derived sources / **7** required / **153** exported, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, hosted/local test-population equivalence, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.15.7 post-push confirmation and v0.23 exact-count correction (measured
+2026-07-29).**
+
+- **Post-push verification date:** 2026-07-29
+- **Post-push release:** `v0.15.7`
+- **Post-push annotated tag object:** `b579c2c18e4eeb549617ea20a9175b0c26dc621d`
+- **Post-push closing commit:** `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`
+- **Post-push hosted run:** `30462710258`
+
+Atomic remote readback resolves `main` and the peeled v0.15.7 tag to closing
+commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; its first parent is release
+commit `8bb6a71446b043b10ce16077499fdc07abb91b98`, and tag ref v0.15.7 resolves
+to annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d`.
+Push run `30462710258` attempt **1** completed successfully at that exact
+closing commit. All **7/7** executable jobs passed: core, lint, MSRV, net,
+shell Python 3.11, shell Python 3.12, and golden; report-only dependency drift
+was skipped. Hosted measurements include workspace **133**, net **55** (**29 +
+26**), lifecycle **184** checked / **3** retracted / **184** matched /
+**0** exemptions, `invariant-scan` **12/12 rules / 38 controls**, protected
+pins **236**, and golden **11/11**.
+
+The hosted shell logs expose a correction to the closing record. Candidate run
+`30459746825` and forward run `30462710258` each report **274 passed / 1
+skipped / 1 warning** on both Python lanes, not the recorded hosted
+**275/275**. The skipped test is
+`test_on_site_production_measurements_match_committed_receipt`, whose declared
+condition requires the protected databases and a built local `cored`; those
+on-site inputs are deliberately absent from a clean GitHub checkout. Local
+release-parent Python 3.11.4 and 3.12.13 each did run and pass that test,
+yielding **275/275**.
+
+The candidate's seven job conclusions and authenticated identities remain
+valid, and the published-head result is green, so this does not retroactively
+invalidate the R-CLOSE Git graph or release. It does mean Step 6's literal
+acceptance that every hosted count equal local was not met, and its runbook and
+append-only progress claims of hosted **275/275** were false. Those historical
+records remain preserved; this dated correction supersedes the count claim.
+The new v0.24 apparatus input is to make environment-specific test populations
+explicit or compare only equivalent populations. It also supersedes the
+close-time observation that the scheduled apparatus queue was empty.
 
 **v0.23 R-CLOSE selects v0.15.7 and closes on authenticated candidate evidence
 (operator decision and measurement 2026-07-29).** Release disposition: release
@@ -138,14 +179,15 @@ branch `candidate/v0.23-remeasure`. Before dispatch, remote and local
 `publish_evidence: true`.
 
 Every executable hosted job passed: core, golden, lint, MSRV, net, and shell
-Python 3.11/3.12. Counts read from the hosted logs matched the exact-candidate
-local run: **133** workspace tests; **55** net tests (**29 + 26**); shell
-**275/275** on both hosted interpreters and **275/275** locally on Python 3.11;
+Python 3.11/3.12. Counts read from the hosted logs were **133** workspace
+tests; **55** net tests (**29 + 26**); shell **274 passed / 1 on-site-only
+skip** on both hosted interpreters and **275/275** locally on Python 3.11;
 `invariant-scan` **12/12 rules / 38 controls** with R12 **15/15** and R10
 **45** exemptions; lifecycle **182** checked, **3** retracted, **182**
-matched, **0** exemptions; golden **11/11**. Local `./run ci-local` passed all
-**20/20** stages, including warning-denied Rust, locked MSRV, clippy, fmt, and
-ShellCheck.
+matched, **0** exemptions; golden **11/11**. The hosted/local shell totals
+therefore did not match; the dated post-push correction above records the
+false closing claim. Local `./run ci-local` passed all **20/20** stages,
+including warning-denied Rust, locked MSRV, clippy, fmt, and ShellCheck.
 
 The hosted run produced exactly **7** receipt artifacts containing **7**
 receipts and **7** Sigstore bundles. Release-posture verification required
