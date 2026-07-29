@@ -1,6 +1,33 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.20 is closed and v0.15.4 is published; post-push hosted CI is green.** Remote annotated `v0.15.4` tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` peels to release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, R10 **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 MATCH-PROOF is complete and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization) remain exact, protected databases remain **2/2**, and golden remains **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.21 MATCH-PROOF removes the vacuous publication-rule class (measured
+2026-07-29).** The corrected total requirement was first run against the
+unchanged entering header and exited **1** with exactly:
+`STATE.md: publication assertion required: status header must assert the
+annotated tag object in the required unambiguous phrasing`. Only then was the
+header rewritten to assert both immutable refs in the narrow grammar.
+`STATE_REF_ASSERTIONS` still excludes intervening backticks: widening that
+class was explicitly rejected because an unrelated intervening hash could
+satisfy the rule and recreate the same silent gap at the next rephrasing.
+
+Registered R12 drives the actual `check_publication_status` entry point through
+nine planted cases: mutable `origin/main`, missing and stale tag-object
+assertions, missing and stale target assertions, pending publication, missing
+annotated-tag ref, missing peeled target, and unavailable ancestry. Seven
+independent fail-before mutations disable each rule family and are all
+detected. The complete scanner therefore passes **12/12 registered rules / 30
+controls**, up from **11/11 / 23**. The `origin/main` prohibition and
+pending-publication rule 1 retain their conditions and error behavior; their
+R12 mutations prove each still fails closed.
+
+Focused `cycle_check` plus `invariant_scan` tests pass **47/47** on Python
+3.11.4 and independently on Python 3.12.13. `cycle-check` passes with the
+rewritten header. The first restricted golden attempt was a loopback-bind
+permission non-result; the identical permitted invocation passed **11/11**,
+delta **0**. No crate, app, dependency, schema, protected artifact, robots
+surface, configured source, or public response changed.
 
 **v0.20 R-CLOSE publishes v0.15.4 and closes the cycle (measured
 2026-07-29).** Release disposition: release (as of 2026-07-29). The release

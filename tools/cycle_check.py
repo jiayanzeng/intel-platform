@@ -115,6 +115,10 @@ ORIGIN_MAIN_LITERAL_RE = re.compile(
     re.IGNORECASE,
 )
 STATE_REF_ASSERTIONS = (
+    # These required header assertions deliberately use a phrasing in which no
+    # backtick appears between the named ref and its hash. Do not widen
+    # ``[^`\n]`` to admit backticks: that would let an unrelated intervening
+    # hash satisfy the assertion instead of making a missing assertion fail.
     (
         "annotated tag object",
         re.compile(
@@ -426,6 +430,7 @@ def check_publication_status(
     # publication moves that same ref. Mutable-ref measurements belong in
     # dated body appends. The annotated tag object and target are immutable and
     # retain their freshness checks below.
+    # Invariant R12 control site: origin-main prohibition.
     if ORIGIN_MAIN_LITERAL_RE.search(header) is not None:
         errors.append(
             f"{shown(state_path, root)}: publication status header must not "
@@ -435,6 +440,7 @@ def check_publication_status(
         )
 
     measured_object = git_output(root, "rev-parse", tag)
+    # Invariant R12 control site: unavailable annotated-tag ref.
     if measured_object is None:
         errors.append(
             f"{shown(state_path, root)}: publication verification unavailable: "
@@ -442,6 +448,7 @@ def check_publication_status(
         )
         return
     measured_target = git_output(root, "rev-parse", f"{tag}^{{}}")
+    # Invariant R12 control site: unavailable annotated-tag target.
     if measured_target is None:
         errors.append(
             f"{shown(state_path, root)}: publication verification unavailable: "
@@ -466,6 +473,7 @@ def check_publication_status(
     ancestry_status, ancestry_error = git_status(
         root, "merge-base", "--is-ancestor", recorded_target, "HEAD"
     )
+    # Invariant R12 control site: unavailable publication ancestry.
     if ancestry_status != 0:
         detail = (
             f": {ancestry_error}"
@@ -481,6 +489,7 @@ def check_publication_status(
 
     # Rule 1: a reachable annotated release cannot coexist with a header that
     # still calls its publication pending or outstanding.
+    # Invariant R12 control site: pending-publication prohibition.
     if PENDING_PUBLICATION_RE.search(header) is not None:
         errors.append(
             f"{shown(state_path, root)}: publication disposition agreement: "
@@ -489,16 +498,25 @@ def check_publication_status(
             "publication is pending or outstanding"
         )
 
-    # Rule 2: immutable tag hashes asserted in the live header must equal the
-    # refs this checkout measures. Historical body appends are deliberately out
-    # of scope.
+    # Rule 2: the live header must assert both immutable tag hashes, and each
+    # must equal the refs this checkout measures. Historical body appends are
+    # deliberately out of scope.
     expected = {
         "annotated tag object": measured_object,
         "tag target": measured_target,
     }
+    # Invariant R12 control site: required and fresh immutable assertions.
     for label, pattern in STATE_REF_ASSERTIONS:
         measured = expected[label]
-        for assertion in pattern.finditer(header):
+        assertions = list(pattern.finditer(header))
+        if not assertions:
+            errors.append(
+                f"{shown(state_path, root)}: publication assertion required: "
+                f"status header must assert the {label} in the required "
+                "unambiguous phrasing"
+            )
+            continue
+        for assertion in assertions:
             asserted = assertion.group(1)
             if asserted != measured:
                 errors.append(

@@ -189,6 +189,32 @@ def test_publication_status_rejects_every_stale_immutable_header_ref(
     assert any("tag target" in error for error in errors)
 
 
+def test_publication_status_requires_every_immutable_header_ref(
+    tmp_path: Path,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. Remote annotated `v1.1.0` tag object "
+        f"`{tag_object}`; release commit `{commit}`.\n"
+    )
+
+    errors = _publication_errors(root)
+    assert errors == [
+        "STATE.md: publication assertion required: status header must assert "
+        "the annotated tag object in the required unambiguous phrasing"
+    ]
+
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. Annotated tag object is `{tag_object}`.\n"
+    )
+    assert _publication_errors(root) == [
+        "STATE.md: publication assertion required: status header must assert "
+        "the tag target in the required unambiguous phrasing"
+    ]
+
+
 def test_publication_status_accepts_current_header_and_ignores_body(
     tmp_path: Path,
 ) -> None:

@@ -418,6 +418,91 @@
         }
       ],
       "fail_before_note": "invariant-scan: R11 FAIL: production shell read core-owned configuration directly"
+    },
+    {
+      "id": "R12",
+      "claim": "Every publication-status rule rejects its planted failure, and both immutable tag assertions are required as well as fresh.",
+      "source": "docs/cycles/TASKS-v0.21-EXECUTION.md:225-244",
+      "scope": "The actual tools/cycle_check.py check_publication_status entry point, exercised with planted origin/main, missing and stale immutable assertions, pending-publication, missing annotated-tag ref, missing peeled target, and unavailable-ancestry inputs. The assertion grammar remains deliberately narrow: no intervening backtick is admitted between the named ref and hash.",
+      "fail_before": [
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if ORIGIN_MAIN_LITERAL_RE.search(header) is not None:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: origin-main",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 433
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    for label, pattern in STATE_REF_ASSERTIONS:\n        measured = expected[label]\n",
+          "replace_with": [
+            "    for label, pattern in STATE_REF_ASSERTIONS:\n",
+            "        if label == \"annotated tag object\":\n",
+            "            continue\n",
+            "        measured = expected[label]\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tag-object-required, tag-object-freshness",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 508
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    for label, pattern in STATE_REF_ASSERTIONS:\n        measured = expected[label]\n",
+          "replace_with": [
+            "    for label, pattern in STATE_REF_ASSERTIONS:\n",
+            "        if label == \"tag target\":\n",
+            "            continue\n",
+            "        measured = expected[label]\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tag-target-required, tag-target-freshness",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 508
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if PENDING_PUBLICATION_RE.search(header) is not None:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: pending-publication",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 492
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if measured_object is None:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tag-ref-unavailable",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 443
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if measured_target is None:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tag-target-unavailable",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 451
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if ancestry_status != 0:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: ancestry-unavailable",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 476
+        }
+      ],
+      "fail_before_note": "invariant-scan: R12 FAIL: publication-status planted failure was not detected"
     }
   ]
 }

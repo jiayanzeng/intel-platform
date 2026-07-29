@@ -492,6 +492,45 @@ tree.
   `7a5c9f7396c043f2b89974585fdd4e5146180e86`. Manifest validation passed
   **191/191** pins; protected databases remain **2/2** exact.
 
+### 2026-07-29 · MATCH-PROOF
+
+PASS. E0 confirmed G1 and G2, so the Gate opened. The implementation changes
+only `cycle_check`, its focused tests, `invariant_scan` and its registry, plus
+the permitted status records. No closed runbook, historical append, crate,
+dependency, schema, protected database, robots path, configured source, or
+public surface changed.
+
+- **Required, not conditional:** the corrected check converts zero matches for
+  either immutable assertion into `publication assertion required`; found
+  assertions must still equal the measured refs. Before editing `STATE.md`, the
+  corrected command exited **1** against the entering header with exactly
+  `STATE.md: publication assertion required: status header must assert the
+  annotated tag object in the required unambiguous phrasing`.
+- **Narrow grammar retained:** the live header now names the release before the
+  assertion and phrases the assertions as `annotated tag object <hash>` and
+  `release commit <hash>`. The pattern's `[^`\n]` class was deliberately not
+  widened: admitting intervening backticks would allow an unrelated hash to
+  satisfy the assertion and reintroduce the silent class after a rephrasing.
+- **Executable controls:** new registered R12 invokes the actual
+  `check_publication_status` entry point with nine planted cases: mutable
+  `origin/main`, missing and stale tag-object assertions, missing and stale
+  target assertions, pending publication, missing annotated-tag ref, missing
+  peeled target, and unavailable ancestry. Its seven registry fail-before
+  mutations independently disable the seven rule families; all seven produce
+  their exact expected findings. Pending closing count: `invariant-scan`
+  **12/12 registered rules / 30 controls**, up from **11/11 / 23**.
+- **Existing prohibitions re-proven:** the `origin/main` condition and pending
+  rule 1 are unchanged apart from R12 site comments. Their focused cases pass,
+  and R12 controls that replace either condition with `False` are detected.
+- **Acceptance:** `cycle-check` passes. Focused `cycle_check` and
+  `invariant_scan` tests pass **47/47** under Python 3.11.4 and independently
+  **47/47** under Python 3.12.13. The complete scanner passes **12/12 / 30**.
+  The first restricted golden invocation was a loopback-bind permission
+  non-result; the identical permitted invocation passed **11/11**, delta
+  **0**. `git diff --check` passes. An early synthetic control name shaped like
+  a real cycle literal was rejected by `cycle-check`; neutral control names
+  replaced it before acceptance.
+
 ---
 
 ## Cycle checklist
@@ -501,7 +540,7 @@ tree.
   measured at published tag `v0.15.4` with every exit code and message; G4 stated
   as a property with named commits; G5 confirmed or refuted by error count; G6
   answered from the record; `STATE.md` unedited
-- [ ] **MATCH-PROOF** — both tag assertions required rather than conditional;
+- [x] **MATCH-PROOF** — both tag assertions required rather than conditional;
   fail-before captured at the entering header; backtick-widening explicitly
   rejected with its reason; every publication-status rule has a detected planted
   failure; new counts in three places

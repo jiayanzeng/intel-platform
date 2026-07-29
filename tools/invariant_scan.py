@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import ast
 import contextlib
+import importlib.util
 import io
 import json
 import os
@@ -1432,6 +1433,210 @@ def r11_findings(root: Path) -> list[str]:
     return findings
 
 
+PUBLICATION_CONTROL_MARKERS = {
+    "origin-main": "Invariant R12 control site: origin-main prohibition.",
+    "tag-ref-unavailable": (
+        "Invariant R12 control site: unavailable annotated-tag ref."
+    ),
+    "tag-target-unavailable": (
+        "Invariant R12 control site: unavailable annotated-tag target."
+    ),
+    "ancestry-unavailable": (
+        "Invariant R12 control site: unavailable publication ancestry."
+    ),
+    "pending-publication": (
+        "Invariant R12 control site: pending-publication prohibition."
+    ),
+    "tag-object-assertion": (
+        "Invariant R12 control site: required and fresh immutable assertions."
+    ),
+    "tag-target-assertion": (
+        "Invariant R12 control site: required and fresh immutable assertions."
+    ),
+}
+
+
+def _load_cycle_check_for_control(root: Path):
+    path = root / "tools" / "cycle_check.py"
+    spec = importlib.util.spec_from_file_location(
+        "_invariant_scan_cycle_check",
+        path,
+    )
+    if spec is None or spec.loader is None:
+        raise ConfigError(f"{path.relative_to(root)}: cannot load cycle checker")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except (OSError, SyntaxError) as error:
+        raise ConfigError(
+            f"{path.relative_to(root)}: cannot execute cycle checker: {error}"
+        ) from error
+    return module
+
+
+def r12_findings(root: Path) -> list[str]:
+    """Exercise every publication-status rule against a planted failure."""
+    cycle_check = _load_cycle_check_for_control(root)
+    tag = "publication-control-tag"
+    tag_object = "a" * 40
+    tag_target = "b" * 40
+    stale_object = "c" * 40
+    stale_target = "d" * 40
+    valid_header = (
+        "**As of:** published. Annotated tag object is "
+        f"`{tag_object}`; release commit is `{tag_target}`.\n"
+    )
+    scenarios = (
+        (
+            "origin-main",
+            "origin-main",
+            valid_header.replace(
+                "**As of:** published.",
+                f"**As of:** published. origin/main is `{tag_target}`.",
+            ),
+            tag_object,
+            tag_target,
+            (0, ""),
+            "publication status header must not assert a literal origin/main hash",
+        ),
+        (
+            "tag-object-required",
+            "tag-object-assertion",
+            f"**As of:** published. Release commit is `{tag_target}`.\n",
+            tag_object,
+            tag_target,
+            (0, ""),
+            "publication assertion required: status header must assert the "
+            "annotated tag object",
+        ),
+        (
+            "tag-object-freshness",
+            "tag-object-assertion",
+            valid_header.replace(tag_object, stale_object),
+            tag_object,
+            tag_target,
+            (0, ""),
+            "publication assertion freshness: annotated tag object asserts",
+        ),
+        (
+            "tag-target-required",
+            "tag-target-assertion",
+            f"**As of:** published. Annotated tag object is `{tag_object}`.\n",
+            tag_object,
+            tag_target,
+            (0, ""),
+            "publication assertion required: status header must assert the "
+            "tag target",
+        ),
+        (
+            "tag-target-freshness",
+            "tag-target-assertion",
+            valid_header.replace(tag_target, stale_target),
+            tag_object,
+            tag_target,
+            (0, ""),
+            "publication assertion freshness: tag target asserts",
+        ),
+        (
+            "pending-publication",
+            "pending-publication",
+            valid_header.replace(
+                "**As of:** published.",
+                "**As of:** publication is pending.",
+            ),
+            tag_object,
+            tag_target,
+            (0, ""),
+            "publication disposition agreement",
+        ),
+        (
+            "tag-ref-unavailable",
+            "tag-ref-unavailable",
+            valid_header,
+            None,
+            tag_target,
+            (0, ""),
+            "publication verification unavailable: annotated tag ref",
+        ),
+        (
+            "tag-target-unavailable",
+            "tag-target-unavailable",
+            valid_header,
+            tag_object,
+            None,
+            (0, ""),
+            "publication verification unavailable: annotated tag target",
+        ),
+        (
+            "ancestry-unavailable",
+            "ancestry-unavailable",
+            valid_header,
+            tag_object,
+            tag_target,
+            (128, "fatal: planted shallow-history control"),
+            "publication ancestry verification unavailable",
+        ),
+    )
+
+    missed: dict[str, list[str]] = {}
+    with tempfile.TemporaryDirectory(prefix="invariant-scan-R12-status-") as raw:
+        fixture = Path(raw)
+        state_path = fixture / "STATE.md"
+        runbook = fixture / "publication-control-runbook.md"
+        runbook.write_text("# planted publication control\n")
+        cycle_check.newest_closed_release = lambda _files: (
+            runbook,
+            tag,
+            tag_target,
+            tag_object,
+        )
+
+        for (
+            name,
+            group,
+            header,
+            measured_object,
+            measured_target,
+            ancestry,
+            expected,
+        ) in scenarios:
+            state_path.write_text(f"# State\n\n{header}\n")
+
+            def measured_ref(_root: Path, *args: str) -> str | None:
+                if args == ("rev-parse", tag):
+                    return measured_object
+                if args == ("rev-parse", f"{tag}^{{}}"):
+                    return measured_target
+                raise AssertionError(f"unexpected planted git query: {args}")
+
+            cycle_check.git_output = measured_ref
+            cycle_check.git_status = lambda _root, *_args: ancestry
+            errors: list[str] = []
+            cycle_check.check_publication_status(
+                fixture,
+                [runbook],
+                errors,
+            )
+            if not any(expected in error for error in errors):
+                missed.setdefault(group, []).append(name)
+
+    source_path = root / "tools" / "cycle_check.py"
+    source = source_path.read_text()
+    findings: list[str] = []
+    for group, names in missed.items():
+        marker = PUBLICATION_CONTROL_MARKERS[group]
+        if source.count(marker) != 1:
+            raise ConfigError(
+                f"tools/cycle_check.py: R12 marker {marker!r} must occur once"
+            )
+        line = source.count("\n", 0, source.index(marker)) + 1
+        findings.append(
+            f"tools/cycle_check.py:{line}: publication planted controls "
+            f"were not detected: {', '.join(names)}"
+        )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -1444,6 +1649,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R9": r9_findings,
     "R10": r10_findings,
     "R11": r11_findings,
+    "R12": r12_findings,
 }
 
 
