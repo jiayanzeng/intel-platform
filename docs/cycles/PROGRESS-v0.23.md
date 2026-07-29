@@ -133,3 +133,71 @@ Entries are append-only; corrections are new dated entries.
   entry. `STATE.md`'s live header records the active open cycle without
   changing the exact published v0.15.6 identity or measured gate counts.
 - golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · ACTION-MIGRATION — Node 24 actions and immutable toolchain pin
+
+- owner: Codex
+- commit: 81ca649
+- result: PASS. Implementation commit
+  `81ca6498c825e52c2c2604eec169bd4a4898b6e3` changes the workflow as one
+  attributable edit, updates its receipt-control assertion, and narrowly
+  corrects the Step 3 Gate before hosted measurement.
+- gate-width acceptance: PASS. The original workflow/status-only Gate omitted
+  a shell control that required `actions/upload-artifact@v4` once per hosted
+  job. Before implementation, the Gate was widened only for that version
+  assertion. No production Python or Rust source, dependency, schema, protected
+  database, or public surface changed.
+- action-major acceptance: PASS. E0's recorded sources selected checkout
+  **v5** (**7/7** uses), upload-artifact **v6** (**7/7**), and setup-python
+  **v6** (**2/2**). Rust-cache v2 and attest-build-provenance v4 remained
+  because E0 measured their Node 24 implementations. For inputs and outputs
+  used here, the three migrations are unchanged; the release-note migration
+  fact is their Node 24 runtime and required Actions Runner **v2.327.1**.
+- immutable-pin acceptance: PASS. All **6/6**
+  `dtolnay/rust-toolchain@master` uses now name full commit
+  `2c7215f132e9ebf062739d9130488b56d53c060c`, obtained by primary
+  `git ls-remote` and dated **2026-07-16T09:35:07-07:00** in E0's disposable
+  clone. The pin receives no fixes automatically; revisit on a
+  `rust-toolchain.toml` change, an applicable upstream security/correctness
+  fix, or the next authorized workflow-maintenance pass, whichever occurs
+  first.
+- existing-evidence acceptance: PASS with the required boundary. Static
+  `verify-artifacts` matched **221/221** existing pins and protected databases
+  **2/2**; that proves manifest/byte integrity and says nothing about the new
+  signer. Separately, GitHub CLI **2.96.0 (2026-07-02)** re-derived the prior
+  v0.22 release-grade set as **7** authenticated identities before verifying
+  the new set.
+- hosted-signing acceptance: PASS. Candidate
+  `81ca6498c825e52c2c2604eec169bd4a4898b6e3` was pushed only to
+  `codex/v0.23-action-migration`; remote and local workflow blobs both resolved
+  to `48ea726b798f1049e0b29cce1f0c64588861c2dd`. Workflow-dispatch run
+  `30456330833` attempt **1** passed all **7/7** executable jobs; report-only
+  dependency drift was skipped. Its new **7-receipt / 7-bundle** set verified
+  **7 accepted / 0 rejected** with attestations required and the complete
+  expected identity set: core, golden, lint, MSRV, net, and shell Python
+  3.11/3.12.
+- identity acceptance: PASS. Every new bundle binds repository
+  `jiayanzeng/intel-platform`, workflow signer
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest
+  `81ca6498c825e52c2c2604eec169bd4a4898b6e3`, neutral source ref
+  `refs/heads/codex/v0.23-action-migration`, and a GitHub-hosted runner. The
+  set and temporary report remained under `/private/tmp`; they are
+  verification-only and were not admitted to the manifest.
+- failure/revert acceptance: NOT APPLICABLE after success. The same
+  `gh` **2.96.0** verified the prior and new authenticated sets, so no
+  action-side or CLI-side failure exists to classify and no action pin was
+  reverted or worked around.
+- annotation acceptance: PASS. Direct GitHub check-run inspection reported
+  annotation count **0** for all seven successful jobs and the skipped
+  report-only job. The Node-runtime annotation is absent and no replacement
+  annotation exists.
+- local-control acceptance: PASS. Targeted receipt control passed **1/1**;
+  the full constrained Python 3.11 shell suite passed **266/266** with the one
+  accepted third-party warning; `cycle-check` passed; `invariant-scan` passed
+  **12/12 rules / 36 controls**. Sandbox-denied loopback/process attempts were
+  non-results and identical permitted runs passed.
+- ref/scope acceptance: PASS. Remote `main` remained
+  `15b6d28973058c833a77e9600741d29eda02cdc1`; no tag, release, protected
+  artifact, or manifest entry changed.
+- golden-E2E delta: **0**. The sandboxed bind attempt was a non-result; the
+  identical permitted standalone run passed **11/11**.

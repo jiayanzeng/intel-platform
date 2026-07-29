@@ -1,6 +1,55 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 RELEASE-PROSE is complete, the cycle remains open, and v0.15.6 remains published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Exact closing evidence is candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**, where all **7/7** executable jobs passed. Forward-confirmation run `30446796322` at the published closing commit also passed all **7/7** executable jobs; report-only dependency drift was skipped. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**, including all **13** R12 mutations; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The already-fired Node-runtime trigger, fully floating `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline are promoted together to v0.23; the measured workflow remains unchanged here. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 ACTION-MIGRATION is complete, the cycle remains open, and v0.15.6 remains published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Step 3 candidate `81ca6498c825e52c2c2604eec169bd4a4898b6e3` exists only on `codex/v0.23-action-migration`; hosted run `30456330833` attempt **1** passed all **7/7** executable jobs and its new authenticated set verified **7 accepted / 0 rejected** with a complete identity matrix. That set is verification-only and was not admitted to the manifest. Exact v0.15.6 closing evidence remains candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**; forward-confirmation run `30446796322` also passed **7/7**. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. The post-migration Python 3.11 shell suite again passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**, including all **13** R12 mutations; R10 retains **45** exemptions. All **221/221** existing pins (**219/219** evidence + **2/2** authorization) remain exact static bytes, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.23 ACTION-MIGRATION moves the evidence workflow to Node 24 and verifies
+the new signing path (measured 2026-07-29).** Before implementation, the Gate
+was widened narrowly because
+`test_every_workflow_job_emits_and_persists_a_receipt` named
+`actions/upload-artifact@v4`; without its one version-string update, the
+mandated v6 migration would make the repository's receipt control false. No
+production source was admitted. The one attributable workflow edit changed all
+**7** checkout uses from v4 to v5, all **7** upload-artifact uses from v4 to v6,
+and both setup-python uses from v5 to v6. E0 already measured rust-cache v2 and
+attest-build-provenance v4 on Node 24 implementations, so their majors did not
+move. The three upgraded majors preserve the inputs and outputs this workflow
+uses; their migration note is the internal Node 24 runtime and minimum Actions
+Runner **v2.327.1**.
+
+Primary `git ls-remote` resolution pinned all **6** composite
+`dtolnay/rust-toolchain` uses to
+`2c7215f132e9ebf062739d9130488b56d53c060c`; E0's disposable clone dated that
+commit **2026-07-16T09:35:07-07:00**. The cost and revisit rule are coupled:
+an immutable pin receives no upstream fixes automatically, so re-resolve and
+re-measure it when `rust-toolchain.toml` changes or upstream publishes an
+applicable security or correctness fix, and at the next authorized workflow
+maintenance pass if neither occurs first.
+
+Static verification found all existing **221/221** pins and both protected
+databases byte-exact. This proves only that the manifest and recorded bytes are
+intact; it does **not** exercise the upgraded signer. Separately, GitHub CLI
+**2.96.0 (2026-07-02)** re-derived the prior v0.22 release-grade evidence as
+**7** authenticated receipts, then verified Step 3's newly produced set from
+run `30456330833` attempt 1. That disposable set contains **7** receipts and
+**7** Sigstore bundles; the release-grade verifier accepted **7**, rejected
+**0**, required attestations, denied self-hosted runners, and derived exactly
+`core`, `golden`, `lint`, `msrv`, `net`, `shell/python=3.11`, and
+`shell/python=3.12`. Every item binds repository
+`jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest
+`81ca6498c825e52c2c2604eec169bd4a4898b6e3`, and source ref
+`refs/heads/codex/v0.23-action-migration`. Verification succeeded, so there is
+no action-side or CLI-side failure to classify and no pin to revert.
+
+Direct check-run inspection found annotation count **0** on all seven
+successful executable jobs and the one skipped report-only job. The old Node
+runtime annotation is absent and no replacement annotation exists. The hosted
+set and its temporary audit report stayed under `/private/tmp`; neither the
+repository nor `config/protected-artifacts.json` contains them. Local
+`cycle-check`, the targeted receipt control, shell **266/266**, and
+`invariant-scan` **12/12 rules / 36 controls** passed. The first sandboxed
+shell and golden attempts were permission non-results; identical permitted
+runs passed, with standalone golden **11/11**, delta **0**.
 
 **v0.23 RELEASE-PROSE makes R-CLOSE mechanics single-source (measured
 2026-07-29).** E0 forced the recorded `v0.15.6` identity onto the wrong commit

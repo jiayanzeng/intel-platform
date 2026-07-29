@@ -839,7 +839,7 @@ decision: publication.**
   the other; pre-v0.15.6 boundary stated; `ARCHITECTURE.md` grep returns zero
   mechanical mapping sentences; rule added only if E0 found P1; grep-versus-rule
   distinction recorded honestly
-- [ ] **ACTION-MIGRATION** — every action on a Node-24 major from E0's sources;
+- [x] **ACTION-MIGRATION** — every action on a Node-24 major from E0's sources;
   `dtolnay/rust-toolchain` SHA-pinned with a revisit trigger; a **new** hosted
   authenticated set produced and verified as verification-only; failure
   classified action-side or CLI-side with `gh --version`; annotation gone; any
