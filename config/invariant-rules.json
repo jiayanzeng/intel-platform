@@ -421,9 +421,9 @@
     },
     {
       "id": "R12",
-      "claim": "Every closing/publication-status, v0.23-forward declared-scope, and v0.23-forward trigger-freshness rule rejects its planted failure; legacy immutable assertions remain required and fresh, tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants, an unsatisfiable release scope rejects its changed paths, and every trigger-bearing governed row carries a valid dated measured observation.",
-      "source": "docs/cycles/TASKS-v0.23-EXECUTION.md:594-756",
-      "scope": "The actual tools/cycle_check.py check_release_record, check_publication_status, validate_declared_scope, and check_trigger_table entry points, exercised with planted legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, missing or stale post-push records, a v0.22-shaped release scope that rejects apps/cored/Cargo.toml and Cargo.lock, and a trigger-bearing governed row without a valid date. Scope and trigger-freshness declarations apply only to the active v0.23-forward runbook; trigger freshness governs the live ARCHITECTURE.md dated-dispositions table and active runbook deferral table, while assertion grammar remains deliberately narrow.",
+      "claim": "Every closing/publication-status, v0.23-forward declared-scope, v0.23-forward trigger-freshness, and shell test-population equivalence rule rejects its planted failure; legacy immutable assertions remain required and fresh, tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants, an unsatisfiable release scope rejects its changed paths, every trigger-bearing governed row carries a valid dated measured observation, and an unmarked hosted skip cannot be classified as an allowed population difference.",
+      "source": "docs/cycles/TASKS-v0.24-EXECUTION.md:540-568",
+      "scope": "The actual tools/cycle_check.py check_release_record, check_publication_status, validate_declared_scope, and check_trigger_table entry points plus tools/test_population.py parse_summary and compare_populations entry points, exercised with planted legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, missing or stale post-push records, a v0.22-shaped release scope that rejects apps/cored/Cargo.toml and Cargo.lock, a trigger-bearing governed row without a valid date, and an unmarked hosted skip. Scope and trigger-freshness declarations apply only to the active v0.23-forward runbook; trigger freshness governs the live ARCHITECTURE.md dated-dispositions table and active runbook deferral table, while assertion grammar remains deliberately narrow.",
       "fail_before": [
         {
           "file": "tools/cycle_check.py",
@@ -583,6 +583,16 @@
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
           "expected_line": 1474
+        },
+        {
+          "file": "tools/test_population.py",
+          "find": "        if \"on_site\" not in markers:\n",
+          "replace_with": [
+            "        if False:\n"
+          ],
+          "expected_fail": "test-population planted controls were not detected: unmarked-skip",
+          "expected_file": "tools/test_population.py",
+          "expected_line": 99
         }
       ],
       "fail_before_note": "invariant-scan: R12 FAIL: closing/publication planted failure was not detected"

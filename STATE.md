@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 and POPULATION-EXPLICIT are complete, and the hosted/local population comparator is next.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT now emits one stable JSON record from the unchanged local and hosted full-suite command shape. Current local Python 3.11.4 and 3.12.13 lanes each collected **275**, passed **275**, and skipped **0**; a clean checkout under each interpreter collected **275**, passed **274**, and skipped the one marked `on_site` test for its named protected-corpora-and-built-`cored` reason. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 38 controls**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**; standalone golden also passed all **11** checks. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus and three retractions are unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, hosted/local test-population equivalence, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0, POPULATION-EXPLICIT, and POPULATION-COMPARE are complete, and HISTORY-BOUND awaits its named operator decision.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` now derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. Current local Python 3.11.4 and 3.12.13 lanes each collected **283**, passed **283**, and skipped **0**. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus and three retractions are unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
 test population (measured 2026-07-29).**
@@ -41,6 +41,44 @@ pins, protected databases **2**, and embedded golden **11 checks**. Standalone
 golden passed all **11** checks with delta **0**. No runtime source, crate,
 dependency, schema, protected database, configured source, or public surface
 changed.
+
+**v0.24 POPULATION-COMPARE derives equivalent populations and rejects
+unclassified differences (measured 2026-07-29).**
+
+`tools/test_population.py` reads either the JSON summary itself or exactly one
+summary embedded in a pytest log. It validates the schema and accounting, then
+requires equal collected populations, zero failures, and local passed equal to
+hosted passed plus hosted `on_site` skips. Every skip must name its node id and
+non-empty reason, carry the `on_site` marker, and belong to the declared
+`on_site` population. Its output is stable sorted JSON, including the raw local
+and hosted passed values, the named hosted skip set, and the derived equivalent
+passed population.
+
+All three fail-before constructions were executed and rejected: an unmarked
+hosted skip with `is not marked on_site`, a collected difference with
+`collected mismatch`, and an empty reason with `reason must be present`. The
+v0.23 replay produced comparator output with collected **275**, equivalent
+passed **275**, local passed **275**, hosted passed **274**, and hosted
+`on_site` skips **1**, naming the conditional node and protected-input reason.
+Claim verification rejected passed **275** / skipped **0** because the
+comparator derived passed **274** / skipped **1**, then accepted the latter.
+
+`AGENTS.md` now requires every local/hosted shell comparison in RE-MEASURE to
+use these summaries and this comparator, and forbids numbers transcribed from a
+log. R12 exercises the real parser and comparator with an unmarked-skip
+construction. Its registered mutation removes that rejection; self-test then
+detects `test-population planted controls were not detected: unmarked-skip` at
+the comparator's control site. The invariant result is **12 rules / 39
+controls**, with R12 **16** controls.
+
+The focused comparator and invariant tests passed **30** tests. Full local
+Python 3.11.4 and 3.12.13 each collected **283**, passed **283**, failed **0**,
+and skipped **0**, retaining the one accepted
+`StarletteDeprecationWarning`. `./run ci-local` passed all **20** jobs with
+workspace **133**, net **55** (**29 + 26**), clean warning-denied Rust,
+clippy/fmt/ShellCheck, all **236** pins, protected databases **2**, and embedded
+golden **11 checks**. No runtime source, crate, dependency, schema, protected
+database, configured source, public surface, or ref changed.
 
 **v0.15.7 post-push confirmation and v0.23 exact-count correction (measured
 2026-07-29).**

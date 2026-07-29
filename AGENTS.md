@@ -293,6 +293,14 @@ non-`none` action to a named, existing `Step N`; an asserted action without its
 discharging step is invalid. Every runbook that changes the release commit must
 contain a **RE-MEASURE** step that measures that release commit.
 
+Every RE-MEASURE comparison between local and hosted shell tests uses the
+machine-readable population summaries and `tools/test_population.py`.
+Equivalence means equal collected populations, local passed equal to hosted
+passed plus hosted `on_site` skips, and every skip named with its node id,
+declared reason, and `on_site` marker. An unmarked or unnamed skip is a failure.
+The number written in a record must be the comparator's derived output, never a
+figure transcribed from a log.
+
 1. **Read** the task's objective and decision gate in
    the active cycle's execution runbook named in the declaration above.
 2. **Check the gate first.** If it trips, record and stop (§1).

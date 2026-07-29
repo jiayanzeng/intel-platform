@@ -441,6 +441,47 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
   runtime source, dependency, schema, protected database, configured source, or
   public surface changed.
 
+### 2026-07-29 · POPULATION-COMPARE
+
+- **Gate — PASS.** POPULATION-EXPLICIT is committed and audited. Changes stay
+  within the comparator, invariant tooling/registry/tests, `AGENTS.md`, and
+  status paths declared for this task; no runtime source, crate, dependency,
+  schema, protected database, configured source, public surface, or ref
+  changed.
+- **Comparator — PASS.** The tool accepts a JSON summary or one summary
+  embedded in a log, validates exact schema and result accounting, requires
+  equal collected populations and zero failures, and derives equivalence only
+  when local passed equals hosted passed plus hosted `on_site` skips. Every
+  skip must have a node id, non-empty reason, `on_site` marker, and membership
+  in the declared conditional set. Output is stable sorted JSON.
+- **RE-MEASURE contract — PASS.** `AGENTS.md` now requires local/hosted shell
+  comparisons to use the machine summaries and comparator, defines the same
+  population-equivalence relation, treats unnamed or unmarked skips as
+  failures, and requires the record's number to be comparator-derived rather
+  than transcribed from a log.
+- **Three fail-befores — PASS.** The focused tests captured all required
+  rejections: unmarked hosted skip (`is not marked on_site`), collected
+  mismatch (`collected mismatch`), and absent reason (`reason must be
+  present`).
+- **v0.23 replay — PASS.** The comparator derived collected **275**,
+  equivalent passed **275**, local passed **275**, hosted passed **274**, and
+  hosted `on_site` skips **1**, naming the conditional node and protected-input
+  reason. Claim verification rejected the false hosted passed **275** /
+  skipped **0** assertion because it derived passed **274** / skipped **1**,
+  and accepted the measured assertion.
+- **R12 mutation — PASS.** R12 now exercises the real parser/comparator with an
+  unmarked skip. Mutating away that exact guard produced
+  `test-population planted controls were not detected: unmarked-skip`.
+  `invariant-scan` passes **12 rules / 39 controls**, with R12 **16**
+  controls. The focused comparator/invariant suite passed **30** tests.
+- **Full acceptance — PASS.** Local Python 3.11.4 and 3.12.13 each collected
+  **283**, passed **283**, failed **0**, and skipped **0**, retaining the one
+  accepted third-party warning. Full `./run ci-local` passed all **20** jobs:
+  workspace **133**, net **55** (**29 + 26**), both warning-denied Rust lanes,
+  clean clippy/fmt/ShellCheck, all **236** pins, protected databases **2**, and
+  embedded golden **11 checks**. Mandatory standalone golden passed all **11**
+  checks; delta **0**.
+
 ---
 
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
@@ -715,7 +756,7 @@ publication.**
   replacing it; `--collect-only -m on_site` enumeration recorded; identical
   machine-readable summary from both lanes; no change to which tests run, shown;
   `run` pin updated
-- [ ] **POPULATION-COMPARE** — comparator asserts collected equality, passed +
+- [x] **POPULATION-COMPARE** — comparator asserts collected equality, passed +
   marked-skip equivalence, and named reasons; unmarked skip is a failure; three
   fail-befores; **v0.23's figures replayed with the false claim rejected**;
   `AGENTS.md` acceptance rewritten; planted failure detected

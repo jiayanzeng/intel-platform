@@ -1477,6 +1477,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
+    "test-population": (
+        "Invariant R12 control site: test-population equivalence."
+    ),
 }
 
 
@@ -1498,9 +1501,31 @@ def _load_cycle_check_for_control(root: Path):
     return module
 
 
+def _load_test_population_for_control(root: Path):
+    path = root / "tools" / "test_population.py"
+    spec = importlib.util.spec_from_file_location(
+        "_invariant_scan_test_population",
+        path,
+    )
+    if spec is None or spec.loader is None:
+        raise ConfigError(
+            f"{path.relative_to(root)}: cannot load test-population comparator"
+        )
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except (OSError, SyntaxError) as error:
+        raise ConfigError(
+            f"{path.relative_to(root)}: cannot execute test-population "
+            f"comparator: {error}"
+        ) from error
+    return module
+
+
 def r12_findings(root: Path) -> list[str]:
     """Exercise every closing/publication rule against a planted failure."""
     cycle_check = _load_cycle_check_for_control(root)
+    test_population = _load_test_population_for_control(root)
     tag = "publication-control-tag"
     tag_object = "a" * 40
     tag_target = "b" * 40
@@ -1938,18 +1963,66 @@ def r12_findings(root: Path) -> list[str]:
                 "missing-trigger-measurement-date"
             )
 
-    source_path = root / "tools" / "cycle_check.py"
-    source = source_path.read_text()
+    population_node = "tests/test_population.py::test_on_site"
+    local_population = {
+        "schema_version": 1,
+        "collected": 1,
+        "passed": 1,
+        "failed": 0,
+        "on_site": [population_node],
+        "skipped": [],
+    }
+    unmarked_hosted_population = {
+        "schema_version": 1,
+        "collected": 1,
+        "passed": 0,
+        "failed": 0,
+        "on_site": [population_node],
+        "skipped": [
+            {
+                "node_id": population_node,
+                "reason": "planted on-site environment difference",
+                "markers": ["skipif"],
+            }
+        ],
+    }
+    try:
+        local_summary = test_population.parse_summary(
+            local_population,
+            "local planted control",
+        )
+        hosted_summary = test_population.parse_summary(
+            unmarked_hosted_population,
+            "hosted planted control",
+        )
+        test_population.compare_populations(local_summary, hosted_summary)
+    except test_population.PopulationError:
+        pass
+    else:
+        missed.setdefault("test-population", []).append("unmarked-skip")
+
     findings: list[str] = []
     for group, names in missed.items():
         marker = PUBLICATION_CONTROL_MARKERS[group]
+        source_relative = (
+            "tools/test_population.py"
+            if group == "test-population"
+            else "tools/cycle_check.py"
+        )
+        source_path = root / source_relative
+        source = source_path.read_text()
         if source.count(marker) != 1:
             raise ConfigError(
-                f"tools/cycle_check.py: R12 marker {marker!r} must occur once"
+                f"{source_relative}: R12 marker {marker!r} must occur once"
             )
         line = source.count("\n", 0, source.index(marker)) + 1
+        finding_kind = (
+            "test-population planted controls"
+            if group == "test-population"
+            else "publication planted controls"
+        )
         findings.append(
-            f"tools/cycle_check.py:{line}: publication planted controls "
+            f"{source_relative}:{line}: {finding_kind} "
             f"were not detected: {', '.join(names)}"
         )
     return findings
