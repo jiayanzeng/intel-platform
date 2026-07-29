@@ -105,3 +105,31 @@ Entries are append-only; corrections are new dated entries.
   not-yet-appended progress entry.
 - golden-E2E delta: **0**. The first sandboxed post-status run was a loopback
   permission non-result; the identical permitted run passed **11/11**.
+
+### 2026-07-29 · RELEASE-PROSE — release mechanics single-sourced
+
+- owner: Codex
+- commit: 0f7cb32
+- result: PASS. E0 measured G1 at P2, so the implementation stayed within the
+  documentation-only Gate: `AGENTS.md`, `ARCHITECTURE.md`, `STATE.md`, and the
+  active runbook. No checker, test, invariant registry, workflow, crate, source,
+  dependency, schema, protected artifact, public surface, or ref changed.
+- authority acceptance: PASS. `ARCHITECTURE.md` retains architectural release
+  classification and version-authority agreement, removes both mechanical
+  restatements, and delegates mechanics to `AGENTS.md` R-CLOSE. The sole
+  mechanical authority explicitly says releases through v0.15.5 retain the
+  prior validation shape and v0.15.6 onward uses the tagged close.
+- zero-grep acceptance: PASS. The recorded mechanical-mapping grep over
+  `ARCHITECTURE.md` returned exit **1** with empty stdout. No tag-to-commit
+  mapping sentence remains there.
+- control-scope acceptance: PASS. No literal-scan rule was added because E0's
+  forced recorded-identity test made the existing checker reject all four
+  wrong parent/tree agreements. The record states honestly that a one-time
+  grep reduces rather than deletes the duplicate-prose class and names a
+  registered literal scan with detected R12 failure as the recurrence option.
+- lifecycle acceptance: PASS. Before the implementation commit, `cycle-check`,
+  `progress-check`, `version-check`, and `invariant-scan` passed; the expected
+  pre-audit `checklist-audit` refusal named only RELEASE-PROSE's missing progress
+  entry. `STATE.md`'s live header records the active open cycle without
+  changing the exact published v0.15.6 identity or measured gate counts.
+- golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
