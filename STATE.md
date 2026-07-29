@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0, POPULATION-EXPLICIT, and POPULATION-COMPARE are complete, and HISTORY-BOUND awaits its named operator decision.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` now derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. Current local Python 3.11.4 and 3.12.13 lanes each collected **283**, passed **283**, and skipped **0**. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus and three retractions are unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 through HISTORY-BOUND are complete, and the one-record result makes PUBLISHER-REVIEW eligible for its separate operator judgements.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. HISTORY-BOUND measures this as one isolated false-measurement record, with the same claim copied into the closed execution record. On 2026-07-30 the operator approved the established dated-supersession instrument, so checklist retractions remain **3**. Current local Python 3.11.4 and 3.12.13 lanes each collected **283**, passed **283**, and skipped **0**. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus is unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
 test population (measured 2026-07-29).**
@@ -79,6 +79,58 @@ workspace **133**, net **55** (**29 + 26**), clean warning-denied Rust,
 clippy/fmt/ShellCheck, all **236** pins, protected databases **2**, and embedded
 golden **11 checks**. No runtime source, crate, dependency, schema, protected
 database, configured source, public surface, or ref changed.
+
+**v0.24 HISTORY-BOUND corrects one isolated measurement record forward
+(measured and operator-decided 2026-07-30).**
+
+This is the dated superseding entry for the exact affected measurement event.
+The `2026-07-29 · RE-MEASURE` entry in
+`docs/cycles/PROGRESS-v0.23.md`, with the same figure copied into v0.23's closed
+execution record, claimed each hosted shell lane passed **275** tests with no
+skip and equalled local. Hosted run `30459746825` attempt **1** instead
+collected **275**, passed **274**, and skipped **1**, retaining one accepted
+warning in each lane. The skipped node was
+`test_on_site_production_measurements_match_committed_receipt`, for the declared
+protected-corpora-and-built-`cored` reason. The v0.23 POST-PUSH append for run
+`30462710258` first recorded that correction; this entry confirms its exact
+scope without rewriting either historical location.
+
+The affected class is **isolated**: measurement found exactly **one** false
+RE-MEASURE record, represented by its append-only progress entry and the same
+copied statement in the closed runbook. The operator applied E0's existing
+criterion on 2026-07-30: checklist retractions govern a resolved checked task's
+later-falsified accepted product, invariant, or task property, while an
+incorrect figure inside an append-only audit record uses a dated superseding
+entry when the underlying executed result remains valid. The operator selected
+the latter classification, so `config/checklist-retractions.json` remains
+byte-identical and the retraction count remains **3**.
+
+The defect is specifically the recorded hosted measurement. It changed no
+published runtime, signed identity, protected pin, protected database, green
+job conclusion, release graph, or public surface. Readback still finds the
+annotated tag object peeling to closing commit
+`e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, whose first parent is release
+commit `8bb6a71446b043b10ce16077499fdc07abb91b98`, and all **236** pins plus both
+protected databases remain exact.
+
+The fifth-instance count is measured against v0.23's criterion: one distinct
+normative runbook requirement for which no sequence or outcome can satisfy
+both the requirement and its governed task or release action. v0.23 enumerated
+**4** prior members: v0.19 mutable-main freshness, v0.20
+post-push-before-close ordering, v0.22's release-commit/tag-object field set,
+and v0.22's no-`crates/`/`apps/` prohibition. The bare hosted/local equality
+criterion first authored into v0.21 Step 6 by dropping v0.19's declared
+on-site-skip clause is one distinct additional member: the clean hosted
+checkout must skip the protected-input test while the on-site local checkout
+runs it. The measured author-side population is therefore **5**. This fifth
+member is the first in that population whose consequence was a false number in
+a published record rather than only an unmeetable criterion.
+
+The preserved historical blobs are
+`94745d813072ded5f04ad4193d91c23c040b5232` for the v0.23 closed runbook and
+`bea2851a059dcd5f73c501f657b3c0a844fb5296` for its progress log. The unchanged
+retraction registry blob is
+`9e13d2d89276eaf9279ec66bc4955313b117557d`.
 
 **v0.15.7 post-push confirmation and v0.23 exact-count correction (measured
 2026-07-29).**

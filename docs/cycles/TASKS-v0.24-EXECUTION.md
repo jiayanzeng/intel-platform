@@ -482,6 +482,48 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
   embedded golden **11 checks**. Mandatory standalone golden passed all **11**
   checks; delta **0**.
 
+### 2026-07-30 · HISTORY-BOUND
+
+- **Gate and operator decision — PASS.** E0 bounded the affected set to one
+  false RE-MEASURE record, with the same figure copied into the closed
+  execution record; POPULATION-COMPARE is committed and audited. On 2026-07-30
+  the operator approved applying the established dated-supersession instrument
+  rather than adding a checklist retraction.
+- **Dated supersession — PASS.** The v0.23 `2026-07-29 · RE-MEASURE` progress
+  entry and its closed-runbook copy claimed each hosted shell lane passed
+  **275** tests with no skip and equalled local. Run `30459746825` attempt
+  **1** actually collected **275**, passed **274**, and skipped **1** named
+  `on_site` node for the protected-corpora-and-built-`cored` reason. The
+  v0.23 POST-PUSH append for run `30462710258` already introduced this
+  correction; the new dated forward entry confirms the exact boundary.
+- **Class size — PASS.** The class is **isolated**: exactly **one** false
+  RE-MEASURE record, represented in two historical locations by the progress
+  entry and copied closed-runbook statement.
+- **G4 criterion — DECIDED.** Retractions govern later-falsified accepted
+  product, invariant, or task properties of resolved checked tasks. An
+  incorrect append-only audit figure instead uses a dated superseding entry
+  when the underlying execution remains valid. The operator classified this
+  event as the latter; `config/checklist-retractions.json` stays byte-identical
+  and the count remains **3**.
+- **Non-impact — PASS.** The defect is the recorded measurement only. It
+  changed no runtime, signed identity, protected pin, protected database, green
+  job conclusion, release graph, or public surface. The annotated tag still
+  peels to closing commit `e7715fb9…`, whose first parent is release commit
+  `8bb6a714…`; all **236** pins and both protected databases match.
+- **Fifth instance — PASS by measurement.** v0.23's author-side criterion is
+  one distinct normative runbook requirement for which no sequence or outcome
+  can satisfy the requirement and governed action. Its measured four members
+  are v0.19 mutable-main freshness, v0.20 post-push-before-close ordering,
+  v0.22's closing field set, and v0.22's source prohibition. The bare equality
+  requirement first authored in v0.21 Step 6 after v0.19's skip clause was
+  dropped is one distinct additional member, for **5** total. This is the first
+  whose consequence was a false published number rather than only an
+  unmeetable criterion.
+- **Historical immutability — PASS.** The v0.23 runbook and progress blobs
+  remain `94745d8…` and `bea2851…`; the unchanged retraction-registry blob is
+  `9e13d2d…`. No closed runbook or historical progress entry was edited.
+  Mandatory standalone golden passed all **11** checks; delta **0**.
+
 ---
 
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
@@ -760,7 +802,7 @@ publication.**
   marked-skip equivalence, and named reasons; unmarked skip is a failure; three
   fail-befores; **v0.23's figures replayed with the false claim rejected**;
   `AGENTS.md` acceptance rewritten; planted failure detected
-- [ ] **HISTORY-BOUND** — one dated superseding entry per affected record; class
+- [x] **HISTORY-BOUND** — one dated superseding entry per affected record; class
   size stated with a supported adjective; G4 decided with its criterion; scope of
   non-impact stated; fifth-instance count measured; no closed record edited
 - [ ] **PUBLISHER-REVIEW** — complete, or deleted with the measurement that made
