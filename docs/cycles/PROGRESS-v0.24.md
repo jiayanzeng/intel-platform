@@ -328,3 +328,65 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The first sandboxed invocation was a loopback-bind
   non-result; the identical permitted mandatory standalone execution passed
   all **11** checks.
+
+### 2026-07-30 · RE-MEASURE — hosted populations equivalent, evidence admitted
+
+- owner: Codex
+- commit: 76e1ecf
+- result: PASS. Exact candidate
+  `a73c042068a367aea22e63e28dfd2f754b65ef9c` passed authenticated hosted
+  workflow-dispatch run **`30472740314`**, attempt **1**, on neutral branch
+  `codex/v0.24-evidence-a73c042`; all seven executable jobs succeeded and the
+  report-only drift job was skipped.
+- dispatch acceptance: PASS. Before dispatch, the remote branch and local
+  `.github/workflows/ci.yml` each resolved to Git blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`. The dispatch set
+  `audit_sha` to the exact candidate and `publish_evidence: true`.
+- population acceptance: PASS in both lanes. Fresh local Python 3.11.4 and
+  3.12.13 each collected **283**, passed **283**, failed **0**, and skipped
+  **0**. Both hosted summaries collected **283**, passed **282**, failed **0**,
+  and skipped **1**. The sole skip was
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+  marked `on_site` and `skipif`, for
+  `on-site production audit requires protected corpora and built cored`.
+  `tools/test_population.py` emitted this byte-identical result for each lane:
+
+  `test-population-compare: {"collected":283,"equivalent":true,"equivalent_passed":283,"hosted":{"on_site_skipped":1,"passed":282,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":283,"skipped":0},"schema_version":1}`
+
+  The operator's hosted-zero-skip stop condition did not fire.
+- same-candidate acceptance: PASS. Hosted logs reported workspace **133**, net
+  **55** (**29 + 26**), lifecycle **189 checked / 3 retracted / 189 matched /
+  0 exemptions**, `invariant-scan` **12/12 rules / 39 controls** with R12
+  control **16** and R10 **45** exemptions, and golden **11/11**. Fresh local
+  `./run ci-local` at the exact candidate passed all **20** jobs with those
+  same non-shell and invariant populations, warning-denied current and Rust
+  1.78 lanes, and clean clippy/fmt/ShellCheck.
+- authenticated-evidence acceptance: PASS. Seven receipt artifacts yielded
+  **7 receipts / 7 Sigstore bundles**. Release-posture verification required
+  attestations and accepted **7 / rejected 0**, covering the complete
+  job/matrix set with exact repository, workflow, candidate digest, neutral
+  source ref, and GitHub-hosted runner bindings. The clean detached audit
+  subject was the exact candidate with an empty worktree.
+- deferred-audit acceptance: PASS. Release-posture `audit-deferred` measured
+  **5 deferred / 2 promoted / 0 implemented**. Exact cosine over the largest
+  protected corpus of **2,600** documents measured p95 **8.955917 ms**, below
+  the A3 **16.264 ms** request anchor. Re-derivation accepted all seven rows
+  with release-grade evidence and attestations required.
+- retention acceptance: PASS. The fourteen signed files under
+  `evidence/ci-runs/30472740314-1/` and
+  `evidence/v0.24/deferred-audit/report.json` are committed and pinned.
+  The report is **34,899 bytes**, SHA-256
+  `8bcd4136c15619b554f2eae292d1de81c694d38b10bf48be382194173ebce0e7`.
+  Manifest validation, `verify-artifacts`, `evidence-report`, and report
+  re-derivation passed; the protected manifest increased from **236** to
+  **251** exact pins and both protected databases remained exact.
+- publication/scope acceptance: PASS. Remote `main` remained
+  `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, no v0.15.8 or v0.15.9 release
+  tag existed, and `config/core.json` remained byte-identical at blob
+  `0ef1dcb4dde5f3cbd7b9112a405efb64d80e4914`. No source, public surface,
+  dependency, lockfile, schema, protected database, or golden-corpus fact
+  changed. `cycle-check` passed. Before this append existed,
+  `checklist-audit` correctly named RE-MEASURE as its sole unmatched checked
+  task.
+- golden-E2E delta: **0**. Mandatory standalone execution passed all **11**
+  checks.
