@@ -134,8 +134,8 @@ def test_publication_status_rejects_pending_reachable_release(
     (root / "STATE.md").write_text(
         "# State\n\n"
         "**As of:** publication is pending. "
-        f"`origin/main` is `{commit}`; annotated tag object is "
-        f"`{tag_object}`; tag target is `{commit}`.\n\n"
+        f"Annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n\n"
         "Historical body may say publication was pending.\n"
     )
 
@@ -144,22 +144,47 @@ def test_publication_status_rejects_pending_reachable_release(
     assert "publication disposition agreement" in errors[0]
 
 
-def test_publication_status_rejects_every_stale_header_ref(
+def test_publication_status_rejects_mutable_ref_literal_in_header(
+    tmp_path: Path,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. `origin/main` and remote `main` are `{commit}`; "
+        f"annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n"
+    )
+
+    errors = _publication_errors(root)
+    assert errors == [
+        "STATE.md: publication status header must not assert a literal "
+        "origin/main hash; publishing the asserting commit moves that ref, "
+        "so record mutable-ref measurements in a dated body append"
+    ]
+
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. origin/main is {commit}; "
+        f"annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n"
+    )
+    assert _publication_errors(root) == errors
+
+
+def test_publication_status_rejects_every_stale_immutable_header_ref(
     tmp_path: Path,
 ) -> None:
     root, _, _ = _publication_root(tmp_path)
     (root / "STATE.md").write_text(
         "# State\n\n"
-        f"**As of:** published. `origin/main` is `{'0' * 40}`; "
-        f"annotated tag object is `{'1' * 40}`; "
+        f"**As of:** published. Annotated tag object is `{'1' * 40}`; "
         f"tag target is `{'2' * 40}`.\n\n"
         "Historical body.\n"
     )
 
     errors = _publication_errors(root)
-    assert len(errors) == 3
+    assert len(errors) == 2
     assert all("publication assertion freshness" in error for error in errors)
-    assert any("origin/main" in error for error in errors)
     assert any("annotated tag object" in error for error in errors)
     assert any("tag target" in error for error in errors)
 
@@ -170,14 +195,75 @@ def test_publication_status_accepts_current_header_and_ignores_body(
     root, commit, tag_object = _publication_root(tmp_path)
     (root / "STATE.md").write_text(
         "# State\n\n"
-        f"**As of:** published. `origin/main` is `{commit}`; "
-        f"annotated tag object is `{tag_object}`; "
+        f"**As of:** published. Annotated tag object is `{tag_object}`; "
         f"tag target is `{commit}`.\n\n"
         "Historical body: publication is pending; "
         f"`origin/main` was `{'0' * 40}`.\n"
     )
 
     assert _publication_errors(root) == []
+
+
+def test_publication_status_reports_missing_tag_ref(tmp_path: Path) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. Annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n"
+    )
+    subprocess.run(["git", "tag", "-d", "v1.1.0"], cwd=root, check=True)
+
+    errors = _publication_errors(root)
+    assert len(errors) == 1
+    assert "publication verification unavailable" in errors[0]
+    assert "annotated tag ref 'v1.1.0' cannot be resolved" in errors[0]
+
+
+def test_publication_status_reports_missing_tag_target(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. Annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n"
+    )
+    real_git_output = cycle_check.git_output
+
+    def missing_target(repo: Path, *args: str) -> str | None:
+        if args == ("rev-parse", "v1.1.0^{}"):
+            return None
+        return real_git_output(repo, *args)
+
+    monkeypatch.setattr(cycle_check, "git_output", missing_target)
+
+    errors = _publication_errors(root)
+    assert len(errors) == 1
+    assert "publication verification unavailable" in errors[0]
+    assert "annotated tag target 'v1.1.0' cannot be resolved" in errors[0]
+
+
+def test_publication_status_reports_unavailable_ancestry(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. Annotated tag object is `{tag_object}`; "
+        f"tag target is `{commit}`.\n"
+    )
+    monkeypatch.setattr(
+        cycle_check,
+        "git_status",
+        lambda _root, *_args: (128, "fatal: shallow history"),
+    )
+
+    errors = _publication_errors(root)
+    assert len(errors) == 1
+    assert "publication ancestry verification unavailable" in errors[0]
+    assert "fatal: shallow history" in errors[0]
 
 
 def test_cycle_check_accepts_cycle_paths_only_in_declaration(

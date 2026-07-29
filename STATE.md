@@ -1,6 +1,41 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; exact-head publication CI exposed a STATUS-TRUE self-reference defect that v0.20 must correct before another release.** `origin/main` and remote `main` are `692069ead0b8823d6874d8f2fc0a593d9f26704f`. Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **1**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the three export-control omissions, the publication-freshness self-reference defect, and the one-real-publisher product limitation are the v0.20 open set; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header while retaining executable immutable-tag and disposition checks.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the three export-control omissions, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+
+**v0.20 SELF-REF corrects the publication fixed-point defect (measured
+2026-07-29).** The mutable measurement remains a dated fact in this body:
+local `origin/main` and remote `main` were both
+`692069ead0b8823d6874d8f2fc0a593d9f26704f` at E0. It is deliberately not an
+immutable assertion in the live status header.
+
+The repaired entry-point checker first ran against the unchanged header and
+failed with exactly one defect:
+
+> `STATE.md: publication status header must not assert a literal origin/main hash; publishing the asserting commit moves that ref, so record mutable-ref measurements in a dated body append`
+
+The live header may assert only the immutable annotated-tag object and peeled
+release target. The checker independently resolves both, verifies their
+agreement with the newest closed release record, and requires the recorded
+target to be reachable from `HEAD` before evaluating the existing
+pending-publication rule. Missing tag, missing peeled target, and unavailable
+ancestry each produce a named fail-closed diagnostic instead of silently
+skipping the check. Focused tests pass **24/24**, including a live-header
+origin literal that fires the structural refusal, both immutable freshness
+failures, all three unavailable-input paths, the unchanged pending-versus-
+published rule, and a passing header whose dated body retains a stale
+historical branch measurement.
+
+The full permitted local matrix passes **20/20** after the change: **133**
+workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`),
+shell **252/252** on Python 3.11.4, zero rustc/clippy/fmt/ShellCheck failures,
+locked Rust 1.78, `invariant-scan` unchanged at **11/11 rules / 23 controls**,
+all **176/176** pins, protected databases **2/2**, and golden **11/11**.
+Python 3.12.13 independently passes the exact **21-package** constraint check
+and shell **252/252**. Standalone golden is **11/11**, delta **0**.
+`cycle-check`, `checklist-audit`, `progress-check`, `version-check`,
+`invariant-scan`, manifest validation, and `verify-artifacts` are green. No
+crate, dependency, schema, protected artifact, public surface, closed runbook,
+or historical append changed.
 
 **v0.19 post-publication audit records a tripped status-control gate (measured
 2026-07-29).** The authorized atomic push succeeded: remote main is exact at

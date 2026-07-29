@@ -107,15 +107,14 @@ PENDING_PUBLICATION_RE = re.compile(
     r"\bpublication\b[^\n]{0,240}?\b(?:pending|outstanding)\b",
     re.IGNORECASE,
 )
+ORIGIN_MAIN_LITERAL_RE = re.compile(
+    r"(?:`origin/main`|(?<!`)origin/main(?!`)|Remote `main`)"
+    r"(?:\s+and\s+(?:remote\s+)?`?main`?)?\s*"
+    r"(?:is|are|was|were|remains?|points?\s+to|resolves?\s+to|at|=|:)"
+    r"\s*`?([0-9a-f]{40})`?",
+    re.IGNORECASE,
+)
 STATE_REF_ASSERTIONS = (
-    (
-        "origin/main",
-        re.compile(
-            r"(?:`origin/main`|origin/main|Remote `main`)[^`\n]{0,120}"
-            r"`([0-9a-f]{40})`",
-            re.IGNORECASE,
-        ),
-    ),
     (
         "annotated tag object",
         re.compile(
@@ -162,6 +161,17 @@ def git_output(root: Path, *args: str) -> str | None:
     if result.returncode != 0:
         return None
     return result.stdout.strip()
+
+
+def git_status(root: Path, *args: str) -> tuple[int, str]:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    return result.returncode, result.stderr.strip()
 
 
 def valid_iso_date(raw: str) -> bool:
@@ -404,18 +414,6 @@ def check_publication_status(
     if release is None:
         return
     runbook, tag, recorded_target, recorded_object = release
-    measured_object = git_output(root, "rev-parse", tag)
-    measured_target = git_output(root, "rev-parse", f"{tag}^{{}}")
-    reachable = git_output(
-        root, "merge-base", "--is-ancestor", recorded_target, "HEAD"
-    )
-    if (
-        measured_object != recorded_object
-        or measured_target != recorded_target
-        or reachable is None
-    ):
-        return
-
     state_path = root / "STATE.md"
     if not state_path.is_file():
         return
@@ -423,6 +421,63 @@ def check_publication_status(
     if header_match is None:
         return
     header = header_match.group(0)
+
+    # A mutable ref cannot be truthfully pinned in the immutable commit whose
+    # publication moves that same ref. Mutable-ref measurements belong in
+    # dated body appends. The annotated tag object and target are immutable and
+    # retain their freshness checks below.
+    if ORIGIN_MAIN_LITERAL_RE.search(header) is not None:
+        errors.append(
+            f"{shown(state_path, root)}: publication status header must not "
+            "assert a literal origin/main hash; publishing the asserting "
+            "commit moves that ref, so record mutable-ref measurements in a "
+            "dated body append"
+        )
+
+    measured_object = git_output(root, "rev-parse", tag)
+    if measured_object is None:
+        errors.append(
+            f"{shown(state_path, root)}: publication verification unavailable: "
+            f"annotated tag ref {tag!r} cannot be resolved"
+        )
+        return
+    measured_target = git_output(root, "rev-parse", f"{tag}^{{}}")
+    if measured_target is None:
+        errors.append(
+            f"{shown(state_path, root)}: publication verification unavailable: "
+            f"annotated tag target {tag!r} cannot be resolved"
+        )
+        return
+    if measured_object != recorded_object:
+        errors.append(
+            f"{shown(state_path, root)}: publication release-object agreement: "
+            f"{tag} resolves to tag object {measured_object}, but "
+            f"{shown(runbook, root)} records {recorded_object}"
+        )
+        return
+    if measured_target != recorded_target:
+        errors.append(
+            f"{shown(state_path, root)}: publication release-object agreement: "
+            f"{tag} peels to {measured_target}, but "
+            f"{shown(runbook, root)} records {recorded_target}"
+        )
+        return
+
+    ancestry_status, ancestry_error = git_status(
+        root, "merge-base", "--is-ancestor", recorded_target, "HEAD"
+    )
+    if ancestry_status != 0:
+        detail = (
+            f": {ancestry_error}"
+            if ancestry_error
+            else f" (git exited {ancestry_status})"
+        )
+        errors.append(
+            f"{shown(state_path, root)}: publication ancestry verification "
+            f"unavailable: cannot prove recorded release {recorded_target} "
+            f"is reachable from HEAD{detail}"
+        )
+        return
 
     # Rule 1: a reachable annotated release cannot coexist with a header that
     # still calls its publication pending or outstanding.
@@ -434,17 +489,15 @@ def check_publication_status(
             "publication is pending or outstanding"
         )
 
-    # Rule 2: ref hashes asserted in the live header must equal the refs this
-    # checkout measures. Historical body appends are deliberately out of scope.
+    # Rule 2: immutable tag hashes asserted in the live header must equal the
+    # refs this checkout measures. Historical body appends are deliberately out
+    # of scope.
     expected = {
-        "origin/main": git_output(root, "rev-parse", "origin/main"),
         "annotated tag object": measured_object,
         "tag target": measured_target,
     }
     for label, pattern in STATE_REF_ASSERTIONS:
         measured = expected[label]
-        if measured is None:
-            continue
         for assertion in pattern.finditer(header):
             asserted = assertion.group(1)
             if asserted != measured:

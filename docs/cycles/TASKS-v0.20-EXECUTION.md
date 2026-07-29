@@ -430,7 +430,7 @@ decision: publication.**
   run id, job, and error text; G1 shown as a fixed point in three measurements;
   G2 reproduced as a zero-error silent return; G3/G4 measured; G5 confirmed or
   refuted; 88-versus-89 reconciled
-- [ ] **SELF-REF** — corrected check fails at the entering content; literal
+- [x] **SELF-REF** — corrected check fails at the entering content; literal
   `origin/main` prohibited in the header; tag-object and tag-target freshness
   retained; every unavailable-input path reports; rule 1 unchanged and re-proven
 - [ ] **EXPORT-PATTERN** — `TASKS-v0.6.md` and `TASKS-v0.7.md` excluded; v0.12+
@@ -529,6 +529,54 @@ tree.
   `dbff27d559193847dd2028c435c686ba656dac85`. All **176/176** pins and both
   protected databases remain exact. No production path, tool, configuration,
   dependency, protected artifact, public surface, or `STATE.md` byte changed.
+
+### 2026-07-29 · SELF-REF
+
+PASS. E0 confirmed both blocking gates before implementation. The Gate contains
+every changed path: `tools/cycle_check.py`, its focused test file, `STATE.md`'s
+live header and dated status append, and this runbook's status/checklist record.
+No closed runbook, historical append, crate, dependency, schema, protected
+artifact, database, or public surface changed.
+
+- **Structural correction and fail-before:** the freshness comparison no
+  longer contains `origin/main`. The live `STATE.md` header instead rejects any
+  literal 40-hex assertion for that mutable ref. The reason is recorded beside
+  the implementation: publishing the asserting commit moves that same ref,
+  while tag object and peeled tag target are immutable at write time. Before
+  rewriting the header, the corrected entry point exited **1** with exactly:
+
+  > `cycle-check: ERROR: STATE.md: publication status header must not assert a literal origin/main hash; publishing the asserting commit moves that ref, so record mutable-ref measurements in a dated body append`
+
+  The next line was `cycle-check: FAIL (1 defect(s))`. After the header rewrite,
+  `cycle-check` passes with the annotated release refs verified. The live header
+  retains version, publication disposition, annotated tag object, and peeled
+  release commit, with no `origin/main` hash. The E0 branch measurement now
+  appears only in the dated 2026-07-29 body append.
+- **Unavailable inputs are loud:** tag object resolution, peeled-target
+  resolution, release-record agreement, and `merge-base --is-ancestor` are
+  checked before the disposition/freshness rules. A missing tag ref reports
+  `publication verification unavailable`; a missing peeled target reports its
+  own named unavailable error; and an unanswerable ancestry query reports
+  `publication ancestry verification unavailable` with the Git diagnostic or
+  exit status. No unresolvable-input `return` or `continue` silently leaves the
+  check looking exercised.
+- **Focused controls:** `shell/tests/test_cycle_check.py` passes **24/24**. It
+  proves the header prohibition fires, a header without the mutable literal
+  passes, both retained immutable freshness labels fire on wrong values, and
+  all three unavailable-input paths report. The original pending-publication
+  test remains and passes, re-proving unchanged rule 1; a dated body containing
+  a stale historical branch hash is deliberately ignored.
+- **Full matrix and status:** the permitted `./run ci-local` passed **20/20**
+  with **133** workspace tests, **55** net tests (**29 + 26**), shell
+  **252/252** on Python 3.11.4, zero rustc/clippy/fmt/ShellCheck failures,
+  locked Rust 1.78, `invariant-scan` unchanged at **11/11 rules / 23 controls**,
+  all **176/176** pins, protected databases **2/2**, and golden **11/11**.
+  Python 3.12.13 independently passed the **21-package** constraint check and
+  shell **252/252**. `cycle-check`, `checklist-audit`, `progress-check`,
+  `version-check`, `invariant-scan`, manifest validation, and
+  `verify-artifacts` all passed.
+- **Regression anchor:** the mandatory standalone `./run golden` passed
+  **11/11**, delta **0**.
 
 ---
 
