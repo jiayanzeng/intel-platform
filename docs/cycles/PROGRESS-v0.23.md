@@ -268,3 +268,59 @@ Entries are append-only; corrections are new dated entries.
 - ref acceptance: PASS. No tag or branch was created, moved, or deleted in
   Step 4; the existing Step 3 candidate branch was not pushed again.
 - golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · TRIGGER-FRESHNESS — dated observations enforced
+
+- owner: Codex
+- commit: ce3a8dadc5bf5970a37cab5a8a336c9c52f17bcf
+- result: PASS. Implementation commit
+  `ce3a8dadc5bf5970a37cab5a8a336c9c52f17bcf` adds the v0.23-forward
+  trigger-freshness checker, backfills both live tables, registers and executes
+  its planted failure, and assigns the one additional fired trigger to v0.24.
+  No workflow, crate, production source, dependency, schema, protected
+  artifact, public surface, branch, tag, or remote ref changed.
+- document-set acceptance: PASS. The executable set is exactly
+  `ARCHITECTURE.md`'s live dated operational-residual dispositions and the
+  active runbook's **Deferred means deferred** table. The boundary is
+  v0.23-forward; no closed historical runbook was edited or retrofitted.
+- row-scope acceptance: PASS. Only rows with a nonempty trigger other than
+  `none` are governed. A valid ISO date may be in the measured-observation cell
+  or its column header. The final live population is **2** architecture plus
+  **11** deferral rows, and `cycle-check` accepts all **13/13**.
+- event acceptance: PASS. A fixture and the live L2 row prove that a dated
+  negative observation such as “no operator server session has occurred” is a
+  satisfying assignment. The checker verifies measurement presence and date,
+  not the truth of an external event.
+- backfill acceptance: PASS. The architecture rows carry E0's dated fresh
+  values: **221 pins**, **127,982 bytes**, clean verification at **0.10 s /
+  0.09 s real**, and constrained Python 3.11.4/3.12.13 at **266/266** with one
+  warning and no relevant refresh. The active table's dated measured column
+  supplies all eleven deferral observations and validates as its own first
+  subject.
+- fired-trigger acceptance: PASS. Exactly **14** trigger-bearing rows were
+  re-evaluated: E0's **3** architecture triggers and the active table's **11**
+  deferrals. Exactly **2** fired overall. Step 3 discharged the Node-runtime
+  trigger; Step 4 exposed the `app.py` source-scope trigger, and Step 5 made the
+  one additional forward assignment to evaluate literal relocation in
+  **v0.24**. It did not absorb a production-source edit.
+- planted-failure acceptance: PASS. The checker examined one planted
+  trigger-bearing row without a valid date and rejected it. R12 mutation
+  **15** disables that rejection and self-test detects
+  `missing-trigger-measurement-date` at `tools/cycle_check.py:1474`.
+- contract acceptance: PASS. `AGENTS.md` records the exact document set,
+  forward boundary, governed-row predicate, date placement, negative-event
+  semantics, and presence/date-only limit.
+- count acceptance: PASS. `cycle-check` passes; `invariant-scan` passes
+  **12/12 rules / 38 controls**, with R12 **15/15**. Focused lifecycle tests
+  pass **43/43**, invariant tests **22/22**, and the combined focused run passes
+  **65/65**.
+- full-test acceptance: PASS after a classified non-result. The sandboxed
+  Python 3.11 shell run passed **267** tests but denied loopback binds and `ps`
+  to eight tests, so it was not accepted. The identical permitted command
+  passed **275/275** with the one accepted third-party warning.
+- lifecycle acceptance: PASS at the implementation commit. `cycle-check`
+  accepted the activation-exclusive through implementation-inclusive diff.
+  Before this required post-commit entry existed, `progress-check` passed and
+  `checklist-audit` named exactly TRIGGER-FRESHNESS as missing; this append
+  supplies that audit record.
+- golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
