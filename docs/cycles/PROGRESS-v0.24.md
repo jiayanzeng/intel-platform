@@ -64,3 +64,69 @@ Entries are append-only; corrections are new dated entries.
 - scope delta: only the active runbook changed. No source, workflow, tool,
   dependency, schema, protected artifact, public surface, or ref changed.
 - golden-E2E delta: NOT MEASURED; no claim.
+
+### 2026-07-29 · E0 — entering state rebuilt and six gates settled
+
+- owner: Codex
+- commit: 4b08552
+- result: PASS. The implementation commit changes only the active runbook,
+  records the complete measured E0 result, and checks E0. `STATE.md`, `run`,
+  and `.github/workflows/ci.yml` remain unedited.
+- entering-matrix acceptance: PASS after two classified environment
+  non-results. Empty Python 3.11.4 and 3.12.13 environments each resolved 21
+  constrained packages and collected 275, passed 275, and skipped 0 shell
+  tests; both skip sets were empty. The permitted `./run ci-local` passed all
+  20 jobs with 133 workspace tests, 55 net tests (29 ingest + 26 cored),
+  warning-denied current and Rust 1.78 lanes, clean
+  clippy/fmt/ShellCheck, `invariant-scan` 12/12 rules / 38 controls, all 236
+  pins, protected databases 2/2, and embedded golden 11/11. Standalone golden
+  passed 11/11. The first sandboxed matrix loopback-bind failure and first
+  sandboxed export DNS failure were non-results; the identical permitted
+  commands passed.
+- standalone acceptance: PASS. `cycle-check`, `progress-check`,
+  `version-check`, `invariant-scan`, manifest validation, and project-root
+  `export-check` passed. `checklist-audit` passed before E0 was checked and,
+  after the implementation commit but before this required append existed,
+  correctly named E0 as the sole unmatched checked task.
+- G1 acceptance: CONFIRMED. The suite contains one `skipif`, zero
+  `pytest.skip(` calls, zero pytest configuration files, and no structured
+  report producer or consumer. The one conditional node and its
+  protected-corpora-and-built-`cored` reason are named in the runbook record.
+- G2 acceptance: CONFIRMED. Grep reproduced v0.19's on-site-skip clause and its
+  absence from v0.21, v0.22, and v0.23. The record places v0.22's honest
+  266-collected / 265-passed / 1-skipped hosted result beside v0.23's false
+  275-collected / 275-passed / 0-skipped hosted claim and measured
+  275-collected / 274-passed / 1-skipped result.
+- G3 acceptance: CONFIRMED and exactly bounded. Commit `edd77a4` introduced the
+  conditional test during v0.10.1. All seventeen applicable retained
+  RE-MEASURE and POST-PUSH run logs were read, with no retention gap. The exact
+  affected set contains one progress record: v0.23 RE-MEASURE for hosted run
+  `30459746825`, plus the same copied false number in the closed execution
+  record. The v0.23 POST-PUSH entry for run `30462710258` already supersedes
+  it with 275 collected / 274 passed / 1 named on-site skip.
+- G4 acceptance: answered after stating the criterion. The three existing
+  retractions concern later-falsified product/invariant or task-acceptance
+  properties of resolved checked tasks, with explicit operator acceptance and
+  correction. Repository practice uses a dated superseding append for an
+  incorrect progress measurement. Applying that distinction leaves the count
+  at three, subject to Step 4's named operator decision.
+- G5 acceptance: CONFIRMED after the preserved activation defect. The original
+  YAML construction was not parsed and therefore not measured. Correction
+  commit `6c5ca4c` passed the live release intent with all 17 release
+  authorities covered and one declared authority/forbid overlap. Two focused
+  tests passed: a missing-authority construction was detected and the current
+  population/overlap was verified.
+- G6 acceptance: CONFIRMED. Both clean local lanes named the sole warning as
+  `starlette.testclient.StarletteDeprecationWarning` for the deprecated
+  Starlette `httpx` path. It is the accepted warning; neither its error/failure
+  nor dependency-refresh trigger fired.
+- retention acceptance: PASS. The manifest is 136,625 bytes. Consecutive full
+  verifications took 0.10 s and 0.09 s and matched all 236 pins and protected
+  databases 2/2, so neither retention threshold fired.
+- published-object/ref acceptance: PASS. Annotated object `b579c2c1…` peels
+  locally and remotely to closing commit `e7715fb9…`, whose first parent is
+  release parent `8bb6a714…`; remote `main` remains at the closing commit.
+  No auxiliary working-repository ref was created, moved, or deleted during
+  E0.
+- golden-E2E delta: **0**. The post-record standalone invocation passed
+  **11/11**.
