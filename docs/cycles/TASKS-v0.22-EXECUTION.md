@@ -438,11 +438,25 @@ decision: publication.**
 11. Reconcile `ARCHITECTURE.md`. **A4, the L1 controller residual, the R3/R4
     open-bottom limitations, the measured-value heuristic, T7, and
     NEGATIVE-CACHE Decision B must all still read as open.**
-12. If a release is published, confirm afterward that hosted CI at the new remote
-    head is **green** and record the run id. **If it is not green, that is the
-    finding and the cycle does not close on a claim.**
+12. If a release is published, confirm afterward whether hosted CI at the new
+    remote head is green and record the run id in the dated forward append.
+    Under selected Option C, authenticated candidate run `30443692105` is the
+    closing evidence; published-head CI is forward confirmation. A red
+    post-push run is a v0.23 finding and does not retroactively invalidate the
+    close.
 13. **Carry the one-publisher fact forward unchanged.** `arxiv-cs` remains the
     sole real publisher; the other three configured sources remain fixtures.
+
+---
+
+## Runbook amendments
+
+Step 6 — Step 12 restated for selected Option C — 2026-07-29
+
+The operator clarified that candidate evidence closes the cycle and post-push
+CI is forward confirmation, matching the coverage cost already accepted in Step
+2 and the executable protocol in `AGENTS.md`. The prior sentence incorrectly
+retained the superseded habitual-close condition.
 
 ---
 

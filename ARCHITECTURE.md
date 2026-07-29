@@ -292,18 +292,20 @@ because it writes a multi-megabyte export and `npx` may fetch its pinned
 toolchain. This does not add or renumber an HC invariant.
 
 Publication reconciliation is likewise a lifecycle control, not a new HC
-invariant. A live status header can carry immutable annotated-tag object and
-peeled-target facts, but it cannot truthfully predict a mutable branch ref whose
-value publishing that same commit creates. Exact branch measurements therefore
-live in dated body records. `cycle-check` requires both immutable assertions to
-exist in the live header and to agree with the newest closed release record;
-zero matches are a defect, not a conditional skip. The tag must also be
-reachable from `HEAD`; missing tag, target, or ancestry inputs fail closed. The
-older rule that rejects a reachable release while the live header calls
-publication pending is unchanged. Registered R12 executes the actual
-publication-status entry point over planted cases and independently disables
-each current rule family, so a rule that examines nothing cannot report a clean
-result merely because its pattern found nothing.
+invariant. Legacy release headers through v0.15.5 carry immutable annotated-tag
+object and peeled-target facts; a tagged-closing header carries the already
+known release-commit parent and leaves the later tag object and closing target
+to its dated forward record. Neither form predicts a mutable branch ref whose
+value publishing the same commit creates. Exact branch measurements therefore
+live in dated body records. `cycle-check` requires the applicable immutable
+assertions to exist and agree with the newest closed release record; zero
+matches are a defect, not a conditional skip. The tag must also be reachable
+from `HEAD`; missing tag, target, or ancestry inputs fail closed. The older rule
+that rejects a reachable release while the live header calls publication
+pending is unchanged. Registered R12 executes the actual publication-status
+entry point over planted cases and independently disables each current rule
+family, so a rule that examines nothing cannot report a clean result merely
+because its pattern found nothing.
 
 The publication/closing rhythm selected in v0.22 is a two-commit tagged close,
 not a self-contained release commit. Release commit `R` carries the release
@@ -313,15 +315,20 @@ hash or the later annotated-tag object. The annotated release tag targets `C`.
 The post-push hosted result, tag object, and closing-commit identity are
 recorded in a dated forward append because none exists when `C` is written.
 Historical releases through v0.15.5 retain their prior record shape and
-validation semantics.
+validation semantics. Candidate run `30443692105` is the v0.22 closing
+evidence. Published-head CI is forward confirmation: a red result is a new
+finding and does not retroactively erase the already-authenticated candidate
+evidence on which `C` closed.
 
 Hosted lifecycle checks deliberately use `--skip-local-tag-verification`; they
 can validate cycle structure without possessing every historical tag, but they
-cannot prove remote historical release identity. Missing remote `v0.8.0` and
-`v0.10.2` refs are therefore a separate v0.22 investigation boundary. Before
-changing either old records or remote refs, that investigation must establish
-whether the named annotated tags exist in another local repository, were
-deleted, or were never created.
+cannot prove remote historical release identity. v0.22 established that local
+`v0.8.0` and `v0.10.2` resolve to valid annotated tag objects and existing
+commit targets while complete remote enumeration contains neither name nor
+object. The records are therefore correct and the remote is incomplete.
+Remove the hosted skip only after both exact objects are published and a
+full-history hosted `cycle-check` passes without it, or after contrary evidence
+causes the identities and affected claims to be forward-corrected.
 
 ### Dated operational-residual dispositions
 
@@ -330,7 +337,9 @@ deleted, or were never created.
 | review-export operator-local status (v0.22 G3) | **REFUTED as a missing-contract claim — 2026-07-29** | The contributor-facing paragraph above and `AGENTS.md` already state that `./run export-check` is operator-local, why it is absent from local/hosted CI, and what it verifies. No duplicate rule or hosted workaround is added. |
 | protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-29** | Total pins measured **161 → 176 → 191 → 206**, exactly **+15 per cycle**; the current manifest is **119,353 bytes**, and full verification costs **0.10 s real / 0.05 s user / 0.04 s sys** on the operator Mac. Immutable append-only provenance is worth that currently negligible full re-hash. Revisit retention/indexing when the manifest first reaches **1 MiB** or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real**, whichever happens first. |
 | shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-29** | Both constrained Python lanes pass **266/266** and emit the same one third-party warning from FastAPI's `TestClient`. It becomes work if it becomes an error/failure, or at the next authorized constraints refresh that changes FastAPI, Starlette, `httpx`, or `httpx2`; that refresh must re-measure both lanes and either remove the warning or record why compatibility still requires it. |
-| hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Accepted until trigger — 2026-07-29** | All seven executable hosted jobs remain green. It becomes work when GitHub names an enforcement date, a blocking job warns as an error or fails for that runtime, or any affected `actions/*` pin is otherwise changed; that work must upgrade or replace the affected action and re-measure the hosted matrix. |
+| hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Trigger already fired; promoted to v0.23 — corrected 2026-07-29** | Run `30443692105` showed all seven jobs green while GitHub forced Node 24 for actions targeting Node 20. The linked announcement was published **2025-09-19** and had already named **2026-06-16** as the migration date, so the pending-trigger claim was false when written. v0.23 must upgrade or replace the affected actions and re-measure the hosted matrix; the finding does not mutate the already-authenticated v0.22 candidate. |
+| hosted action immutability (`dtolnay/rust-toolchain@master`) | **Promoted to the v0.23 workflow-maintenance pass — 2026-07-29** | The workflow that produces signed provenance uses a fully floating ref while dependency resolution and evidence bytes are pinned elsewhere. Resolve it in the same authorized pass as the Node migration, then re-measure hosted provenance once rather than opening the workflow twice. |
+| recorded-trigger freshness discipline | **Promoted to v0.23 operating-contract work — 2026-07-29** | G4 recorded both sides of its bounds (**119,353 bytes vs 1 MiB; 0.10 s vs 1.00 s**), while G5 recorded a date trigger without checking the already-public date. v0.23 must require every new trigger record to include the measurement showing it has not already fired. |
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

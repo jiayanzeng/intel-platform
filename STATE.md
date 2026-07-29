@@ -1,6 +1,38 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; Steps 1–5 are complete, R-CLOSE awaits the publication decision, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.22 evidence candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` is separate on neutral branch `candidate/v0.15.5-v0.22`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Candidate run `30443692105` passed all **7** executable jobs at the exact evidence candidate; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The hosted Node-runtime annotation now proves that G5's named-enforcement-date trigger had already fired: GitHub's linked announcement names 2026-06-16, and the runner forced Node 24 for actions still targeting Node 20. No workflow pin changed in Step 5 because that would change the measured candidate; R-CLOSE must reconcile this finding rather than repeat the expired acceptance. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.22 R-CLOSE publication of v0.15.6 is operator-authorized under Option C; the untagged release parent is being prepared, while v0.15.5 remains the published release.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` for v0.15.5 peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.22 evidence candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` is separate on neutral branch `candidate/v0.15.5-v0.22`. Candidate `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Candidate run `30443692105` passed all **7** executable jobs at the exact evidence candidate; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is promoted to v0.23 with the fully floating `dtolnay/rust-toolchain@master` ref and trigger-freshness discipline; this authorized release does not change the measured workflow. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.22 R-CLOSE publication is selected and v0.15.6 release assembly is
+prepared (operator decision 2026-07-29).** Release disposition: release (as of
+2026-07-29). The patch identity is v0.15.6 because no `/v1/*` route or response
+body, schema, dependency, runtime behavior, robots policy, configured source,
+or protected database changed.
+
+The publication trigger is Option C itself. Its **13** R12 mutations within
+**12/12 rules / 36 controls** prove the checker detects violations, but they do
+not prove the new two-commit shape can be followed against a real remote. Only
+creating release commit `R`, making its immediate closing child `C`, tagging
+`C`, atomically publishing `C` and the annotated tag, and recording the dated
+forward append exercises the claimed protocol. Without publication, the
+protocol and G3 correction would remain unexecuted and no published tree would
+contain its own closed current-cycle runbook.
+
+Authenticated candidate run `30443692105` attempt **1** at exact candidate
+`10c78119cd10eeb17a01152de6b6f0c322b2b91e` is the closing evidence.
+Published-head CI will be recorded afterward as forward confirmation; it is
+not the event that closes the cycle. The exact release commit, closing commit,
+annotated tag object, post-push run, and complete release matrix remain to be
+measured at their protocol-defined points rather than predicted here.
+
+The hosted Node warning is a finding about its disposition, not a release
+blocker. GitHub published the announcement on 2025-09-19, named 2026-06-16,
+and the v0.22 hosted run showed all seven jobs green while forcing Node 24.
+The trigger was already satisfied when RESIDUALS called it pending. v0.23 must
+upgrade the affected actions, replace the fully floating
+`dtolnay/rust-toolchain@master` ref in the same workflow pass, re-measure
+hosted provenance, and add the operating-contract rule that a recorded trigger
+states the measurement proving it has not already fired. The measured v0.22
+candidate and its **221** authenticated pins remain unchanged.
 
 **v0.22 RE-MEASURE admits authenticated release-posture evidence without
 prejudging publication (measured 2026-07-29).** The operator authorized the

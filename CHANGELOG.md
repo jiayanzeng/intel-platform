@@ -4,6 +4,75 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.6 — 2026-07-29
+
+### Fixed
+
+- Release closing now uses the executable two-commit protocol selected in
+  v0.22. Release commit `R` carries release edits, immediate child `C` carries
+  the complete closed-cycle record naming `R`, and the annotated release tag
+  targets `C`. The record no longer predicts its own commit or later tag-object
+  hash.
+- `cycle-check` verifies the annotated tag type, `R` as `C`'s immediate parent,
+  and the closed runbook in the tagged tree. Descendants require one dated
+  forward record pinning the tag object, closing commit, and hosted run.
+- R12 now has thirteen reconstructible fail-before mutations within the
+  repository's **12 rules / 36 controls**. They cover the tagged-close shape,
+  tag type, parent and tree agreement, live-header release assertion, and
+  complete fresh post-push record in addition to the legacy publication rules.
+
+### Documentation and controls
+
+- v0.22 records the fourth member of one publication-control failure family:
+  v0.19's unsatisfiable rule, v0.20's two silent unavailable-input paths,
+  v0.21's vacuous pattern, and v0.22's self-referential closing fields. E0's
+  field enumeration corrects the v0.21 record's narrower diagnosis as a step
+  ordering problem.
+- Local annotated `v0.8.0` and `v0.10.2` tags and their commit targets are
+  valid; complete remote enumeration lacks both. The historical records remain
+  correct, retractions remain three, and hosted local-tag verification stays
+  skipped until both exact objects are published and a full hosted check passes
+  or contrary evidence drives a forward correction.
+- Manifest growth remains accepted with bounds: v0.22 adds the expected
+  fifteen authenticated evidence pins, bringing the manifest to **221** total
+  (**219** evidence plus **2** authorization), still far below its 1 MiB
+  retention trigger.
+- The hosted Node-runtime disposition is forward-corrected. GitHub's
+  2025-09-19 announcement had already named 2026-06-16 before the disposition
+  was written, so its supposed pending trigger was already satisfied. The
+  migration is scheduled for v0.23 rather than changing the measured v0.22
+  candidate; all seven current jobs are green while the runner forces Node 24.
+- The same v0.23 workflow-maintenance pass must replace the fully floating
+  `dtolnay/rust-toolchain@master` ref and add an operating-contract rule that a
+  recorded trigger includes the measurement showing it has not already fired.
+
+### Evidence and disposition
+
+- Authenticated candidate run `30443692105` attempt 1 passed all seven
+  executable jobs at exact candidate
+  `10c78119cd10eeb17a01152de6b6f0c322b2b91e`: workspace **133**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), invariant-scan **12/12 rules / 36
+  controls**, R10 **45** exemptions, and golden **11/11**. Each hosted shell
+  lane collected **266** as **265 passed / 1** declared on-site-only skip,
+  matching the local 266-test inventory.
+- The release-grade deferred audit accepted seven authenticated receipts with
+  zero rejected, and measured **5 deferred / 2 promoted / 0** implemented
+  deferred subsystems. Its 34,816-byte report is pinned at SHA-256
+  `7fc1b09004d1cb8e835cf90bd3d11bf68e856c4d56bb2c9564a7fdbf77abced0`.
+- Publication was explicitly selected as **release as of 2026-07-29**. The
+  trigger is Option C itself: planted failures prove the checker rejects
+  violations, but only a real two-commit close, annotated tag over `C`, atomic
+  publication, and dated forward append prove the protocol composes. Without
+  publication, the claimed protocol and G3 correction would remain
+  unexecuted.
+- No `/v1/*` route or response body, schema, dependency, runtime behavior,
+  robots policy, configured source, or protected database changed, so v0.15.6
+  is patch-compatible.
+- A4, editable L1, the R3/R4 open-bottom limits, active-runbook measured-value
+  heuristic, T7, negative-cache Decision B, and L2 remain open. `arxiv-cs`
+  remains the sole real publisher; the other three configured sources remain
+  fixtures.
+
 ## v0.15.5 — 2026-07-29
 
 ### Fixed
