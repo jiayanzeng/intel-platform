@@ -269,3 +269,62 @@ Entries are append-only; corrections are new dated entries.
   correctly named HISTORY-BOUND as its sole unmatched checked task.
 - golden-E2E delta: **0**. Mandatory standalone execution passed all **11**
   checks.
+
+### 2026-07-30 · PUBLISHER-REVIEW — SEC EDGAR reviewed, no source admitted
+
+- owner: Codex
+- commit: ec0a3e7
+- result: PASS. The review recommends SEC's official US GAAP
+  structured-disclosure RSS path as admissible under named conditions, while
+  leaving admission to a separate v0.25 operator decision.
+- gate/operator acceptance: PASS. HISTORY-BOUND measured one affected record,
+  so the conditional step was eligible. The operator selected SEC EDGAR
+  filings feeds against `finance`, authorized the complete review outcomes,
+  and prohibited any source or `config/core.json` change.
+- candidate-reason acceptance: PASS. Measured `config/core.json` inventory is
+  four sources: all three `rss` sources carry fixtures; the two `technology`
+  sources and one `finance` source point to `example.org`; the configured
+  `CcBy` and `PublicDomain` branches have no real-content observation.
+  v0.18 `arxiv-cs` remains the sole live-publisher corpus under `IndexOnly`,
+  and its 404 `robots.txt` response supplied no real policy group. The reviewed
+  endpoint is `/Archives/edgar/usgaap.rss.xml`.
+- robots acceptance: PASS. The final robots-only preview made one
+  `GET https://www.sec.gov/robots.txt` through the shipped
+  `HttpRobotsFetcher`, installed identity, `RobotsCache`, and `RobotsGate`,
+  with zero redirects and no feed or document request. The preserved body is
+  **2,622 UTF-8 bytes**, SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`.
+  `User-agent: *` applied; no rule matched the intended RSS path, no `Allow`
+  exception applied, no `Crawl-delay` existed, and the shipped verdict was
+  **allow**. The earlier latest-filings Atom path matched
+  `Disallow: /cgi-bin` and was recorded as a denied exclusion.
+- identity acceptance: PASS. The actual request used
+  `intel-platform/0.15.7 (research prototype; contact: [operator contact
+  redacted])`, with a monitored contact present. This contradicts the prior
+  expectation of a contact-free identity; current production construction
+  refuses missing contact, so no absent-contact finding was manufactured.
+- licence/terms acceptance: PASS. The observation cites the SEC Webmaster FAQ,
+  Developer Resources, and Privacy Information by URL and **2026-07-30** read
+  date, preserving exact publisher text for EDGAR reuse, User-Agent
+  declaration, the 10-request-per-second ceiling, and unclassified automated
+  access. It does not misclassify every issuer-authored filing as a
+  government-authored work.
+- recommendation/deferral acceptance: PASS. The recommendation is
+  **admissible, conditional** on the reviewed RSS path, preservation of the
+  monitored-contact identity, and total automated traffic no higher than the
+  SEC's then-current published ceiling. The active deferral row contains those
+  conditions and still requires a separate operator admission decision.
+- amendment/non-establishment acceptance: PASS. The same implementation commit
+  carries the dated Step 5 amendment. The record says explicitly that neither
+  multi-origin robots-cache/per-host-limiter behavior nor the **live RSS wire
+  path** was established. No feed was fetched, so live fetching, parsing, and
+  cursor durability against a real server remain untested until admission.
+- scope/lifecycle acceptance: PASS. `config/core.json` remains byte-identical
+  at blob `0ef1dcb4dde5f3cbd7b9112a405efb64d80e4914`; no source, production
+  code, tool, workflow, schema, protected artifact, public surface, or ref
+  changed. `cycle-check` passed. Before this append existed,
+  `checklist-audit` correctly named PUBLISHER-REVIEW as the sole unmatched
+  checked task.
+- golden-E2E delta: **0**. The first sandboxed invocation was a loopback-bind
+  non-result; the identical permitted mandatory standalone execution passed
+  all **11** checks.
