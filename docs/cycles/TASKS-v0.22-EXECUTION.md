@@ -739,6 +739,62 @@ hosted evidence dispatch. Candidate
   disposition.
 - **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
 
+### 2026-07-29 · R-CLOSE — v0.15.6 tagged close
+
+PASS. The operator selected publication under Option C because the tagged-close
+protocol itself was still an unexecuted property. Release commit
+`a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of
+this closing tree. The closing event is authenticated candidate run
+`30443692105` attempt **1** at
+`10c78119cd10eeb17a01152de6b6f0c322b2b91e`; published-head CI is forward
+confirmation under the amended Step 12.
+
+- **Gate:** PASS. Steps 1–5 are complete, boxed, and separately audited. The
+  worktree was clean before release assembly, and the operator explicitly
+  authorized v0.15.6 publication. No decision gate tripped.
+- **Tagged-close shape:** PASS. The selected Option C record contains the
+  already-known release parent and candidate evidence, omits the unknowable
+  tag-object field, and is the immediate child of the release parent. The
+  annotated tag must target this closing tree and move with `main` in one atomic
+  remote operation.
+- **Publication trigger:** PASS. R12's **13** planted failures establish
+  detection, not executability. Publication is required to exercise the
+  two-commit shape, annotated tag over `C`, atomic push, and dated forward
+  append, and to make G3's corrected closed-runbook publication real. A
+  no-release close was a legitimate outcome but would leave that property
+  unexecuted.
+- **Release-parent definition of done:** PASS. `./run ci-local` passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**), shell
+  **266/266** on constrained Python 3.11.4, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck gates, R10 **45**, and embedded golden **11/11**.
+  Independent Python 3.12.13 passed **266/266**. `invariant-scan` passed
+  **12/12 rules / 36 controls** with all **13** R12 mutations detected;
+  protected evidence passed **221/221**, protected databases **2/2**, and
+  root-level `export-check` passed **90** derived / **7** required / **151**
+  exported.
+- **Golden-E2E delta:** **0**. Mandatory standalone golden passed **11/11** at
+  the release parent.
+- **G1:** recorded as the fourth failure-family instance and second fixed
+  point. v0.19 was unsatisfiable, v0.20 had two silent no-op inputs, v0.21 had a
+  vacuous pattern, and v0.22 had a self-referential field set. E0's enumeration
+  corrected v0.21's incomplete ordering diagnosis.
+- **G2:** remains **A / A / E**. Both historical annotated identities are valid
+  locally and missing remotely; the hosted skip remains under its recorded
+  trigger, neither historical tag moved, and retractions remain **three**.
+- **Step 4 dispositions:** G3 remains refuted; G4 remains accepted at its
+  measured bounds; the shell warning remains accepted until its measured
+  trigger. The hosted Node warning is forward-corrected: its named-date trigger
+  had already fired, so action upgrades, the floating
+  `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline are
+  promoted together to v0.23 without changing this cycle's measured workflow.
+- **Scope:** PASS. Every `v0.15.5..C` path is classified once in `STATE.md`.
+  No CI workflow, dependency graph, runtime behavior, schema, protected
+  database, robots policy, configured source, or public API surface changed.
+  A4, editable L1, R3/R4, the measured-value heuristic, T7, and
+  NEGATIVE-CACHE Decision B remain open.
+- **Publisher boundary:** unchanged. `arxiv-cs` remains the sole real
+  publisher; the other three configured sources remain fixtures.
+
 ---
 
 ## Cycle checklist
@@ -760,10 +816,26 @@ hosted evidence dispatch. Candidate
   the residual table
 - [x] **RE-MEASURE** — hosted run pinned on a neutral branch; counts equal local
   at the same commit; candidate run id recorded as citable evidence if required
-- [ ] **R-CLOSE** — Step 2's procedure followed rather than the habitual one;
+- [x] **R-CLOSE** — Step 2's procedure followed rather than the habitual one;
   publication decided on a trigger with no-release named as legitimate; G1
   recorded as the fourth instance and the v0.21 misdiagnosis corrected; G2's
   classification recorded; all open items still open
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-29
+- **Release disposition:** release (as of 2026-07-29)
+- **Release:** `v0.15.6`
+- **Release commit:** `a83db73aac3d5ef1e9a427662340eb1eb8a49df1`
+- **Evidence candidate:** `10c78119cd10eeb17a01152de6b6f0c322b2b91e`
+- **Candidate hosted run:** `30443692105` attempt 1
+- **Publication trigger:** execute Option C's two-commit, annotated-tag, atomic
+  publication, and dated-forward-append protocol against the real remote.
+- **Closing evidence:** all 7 executable hosted jobs green at the exact
+  candidate; release-parent local definition of done 20/20; invariant 12/12
+  rules / 36 controls; golden 11/11; protected evidence 221/221.
 
 ---
 

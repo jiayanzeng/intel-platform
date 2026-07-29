@@ -259,3 +259,55 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. A restricted loopback-bind attempt was a non-result;
   the identical permitted mandatory standalone golden passed **11/11** after
   the status and runbook edits.
+
+### 2026-07-29 · R-CLOSE — v0.15.6 tagged close
+
+- owner: Codex
+- commit: a83db73
+- result: PASS. Release implementation commit
+  `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` prepares v0.15.6 and is the
+  untagged immediate parent of the closing tree. The operator selected Option C
+  publication because executing the tagged-close protocol is itself the
+  trigger.
+- closing-evidence acceptance: PASS. Authenticated candidate
+  `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and run `30443692105` attempt
+  **1** remain separate from the release parent. All **7/7** executable hosted
+  jobs passed at that exact candidate. Candidate evidence closes the cycle;
+  published-head CI is forward confirmation under the dated Step 12 amendment.
+- release-parent acceptance: PASS. `./run ci-local` passed **20/20** with
+  **133** workspace tests, **55** net tests (**29 + 26**), shell **266/266** on
+  Python 3.11.4, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck gates, R10
+  **45**, and embedded golden **11/11**. Independent Python 3.12.13 passed
+  **266/266**. `invariant-scan` passed **12/12 rules / 36 controls** and
+  detected all **13** R12 mutations.
+- evidence acceptance: PASS. All **221/221** pins (**219/219** evidence +
+  **2/2** authorization) and protected databases **2/2** remain exact.
+  Root-level `export-check` passed **90** derived sources, **7** required, and
+  **151** exported.
+- protocol acceptance: PASS. The closed record names the already-existing
+  release parent and candidate evidence, omits the not-yet-knowable tag-object
+  field, and requires the annotated v0.15.6 tag to target this immediate child
+  and move with `main` atomically. Exact tag, closing-commit, and post-push-run
+  identities belong only in the first dated forward append.
+- publication acceptance: PASS. A no-release close was legitimate but rejected
+  because it would leave Option C and G3 unexecuted. Publishing makes the
+  closed v0.22 runbook part of the published tree.
+- G1 acceptance: PASS. The record identifies v0.22 as the fourth instance of
+  the unsatisfiable/no-op/vacuous/self-referential failure family and its second
+  fixed point, and corrects v0.21's incomplete ordering diagnosis using E0's
+  field enumeration.
+- G2 acceptance: PASS. The disposition remains **A / A / E**; historical tags
+  remain valid local-only identities, the hosted skip retains its trigger, no
+  historical ref moved, and retractions remain **three**.
+- residual acceptance: PASS. G3 remains refuted; G4 and the shell warning keep
+  their dated measured bounds. The hosted Node trigger is recorded as already
+  fired and promoted to v0.23 with the affected actions, fully floating
+  `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline. No
+  workflow edit enters v0.22.
+- scope acceptance: PASS. Every release diff path is classified exactly once
+  in `STATE.md`. No CI workflow, dependency graph, runtime behavior, schema,
+  protected database, robots policy, configured source, or public API surface
+  changed. All named architectural residuals and the one-real-publisher
+  limitation remain open.
+- golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** at the
+  release parent.
