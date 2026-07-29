@@ -280,14 +280,16 @@ split across clauses can escape it, while an unusual intentional sentence may
 need rephrasing. Closed runbooks remain historical evidence and are not
 retroactively evaluated by this check.
 
-The review-export budget is not yet an executable repository invariant.
-Repomix's v0.19 exclusion names v0.8 through v0.11 but misses the differently
-named closed `TASKS-v0.6.md` and `TASKS-v0.7.md`; no `export-check` currently
-derives the expected source set from `git ls-files`; and `AGENTS.md` does not
-yet require root execution or preserve why Repomix's security scan must stay
-disabled after it silently omitted a Rust source. Those three omissions are
-the v0.20 opener. They do not widen v0.19 R-CLOSE into an export-configuration
-change.
+The review-export budget is an executable **operator-local contract**, not a
+hosted repository invariant. `./run export-check` writes the export from the
+project root, derives its tracked source set from `git ls-files`, and checks the
+required root/control paths without pinning a count. `AGENTS.md` records the two
+measured operating rules: non-root generation silently dropped `Cargo.lock`,
+and Repomix's security pass included 339 of 340 collected files while omitting
+`crates/ingest/src/lib.rs`; registered self-testing invariant R4 remains the
+credential control. The check is intentionally absent from local/hosted CI
+because it writes a multi-megabyte export and `npx` may fetch its pinned
+toolchain. This does not add or renumber an HC invariant.
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

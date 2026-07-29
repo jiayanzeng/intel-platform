@@ -1,6 +1,26 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header, EXPORT-PATTERN excludes every closed cycle from v0.6 through v0.11, and EXPORT-CHECK derives and verifies the review export's source set.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the one remaining export-contract omission, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header, and the review export now has a complete exclusion pattern, a derived executing check, and measured operating rules.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+
+**v0.20 EXPORT-CONTRACT records the measured review-export operating rules
+(measured 2026-07-29).** `AGENTS.md` now requires every Repomix review export
+to be written from the project root because the Step 4 non-root control
+silently lost `Cargo.lock`. It also requires `enableSecurityCheck` to stay
+`false`: the triggering measurement was **340 files collected, 339 included**,
+with `crates/ingest/src/lib.rs` silently omitted, while registered self-testing
+invariant R4 is the repository's credential control. Both rules point at
+`./run export-check`.
+
+These are operating rules, not new hard constraints; the HC series is
+unchanged. `ARCHITECTURE.md` replaces its now-false v0.20 opener paragraph
+with the current boundary: the check is an operator-local contract, derives
+its set without pinning a count, and is intentionally outside local/hosted CI
+because it writes a multi-megabyte export and `npx` may fetch Repomix.
+`./run export-check` passes with **90/90** derived sources, **7/7** required
+paths, and **147** exported paths. `checklist-audit`, `cycle-check`, and
+`git diff --check` pass. Mandatory standalone golden remains **11/11**, delta
+**0**. No tool, crate, configuration, dependency, protected artifact,
+database, or public surface changed.
 
 **v0.20 EXPORT-CHECK makes review-export source completeness executable
 (measured 2026-07-29).** `./run export-check` writes a fresh project-root

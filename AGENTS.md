@@ -230,6 +230,21 @@ uvicorn==0.51.0
 **0 warnings is a gate, not an aspiration.** ("0 warnings" means *rustc*
 warnings; clippy is an independent blocking gate.)
 
+### Review-export operating rules
+
+- **Write every Repomix review export from the project root.** A measured
+  non-root invocation did not load `repomix.config.json` and silently dropped
+  `Cargo.lock`, recreating the lockfile-review gap this project has already paid
+  for. Use `./run export-check`; it generates from the root and derives the
+  expected source set from `git ls-files`.
+- **Keep Repomix `enableSecurityCheck` set to `false`.** The measured security
+  pass reported **340 files collected, 339 included** and silently omitted
+  `crates/ingest/src/lib.rs`. Registered, self-testing invariant R4 is this
+  repository's credential control. `./run export-check` fails if the omitted
+  source is absent from the generated review export.
+
+These are review-export operating rules, not additions to the HC series.
+
 ## 5. The per-task workflow — status is updated in real time
 
 You do **not** batch status updates. After each task, in order, before starting

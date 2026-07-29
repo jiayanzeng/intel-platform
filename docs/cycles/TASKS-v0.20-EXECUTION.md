@@ -438,7 +438,7 @@ decision: publication.**
 - [x] **EXPORT-CHECK** — expected set derived from `git ls-files`, no pinned
   count; both silent-omission fail-befores captured; configuration restored by
   hash; hosted-versus-local status stated; `run` pin updated
-- [ ] **EXPORT-CONTRACT** — both rules in `AGENTS.md` with measured reasons and
+- [x] **EXPORT-CONTRACT** — both rules in `AGENTS.md` with measured reasons and
   pointed at the executing check
 - [ ] **RE-MEASURE** — hosted run pinned; counts equal local at the same commit;
   corrected `cycle-check` green in the hosted job with job and depth named
@@ -658,6 +658,34 @@ protected database, evidence artifact, or public surface changed.
   loopback/process-inspection permission non-result, and the permitted retry
   passed. Manifest validation and `verify-artifacts` pass. Mandatory standalone
   `./run golden` passes **11/11**, delta **0**.
+
+### 2026-07-29 · EXPORT-CONTRACT
+
+PASS. The Gate contains every acceptance surface: `AGENTS.md`,
+`ARCHITECTURE.md`'s now-stale review-export paragraph, `STATE.md`, and this
+runbook's status/checklist record. No tool, crate, configuration, dependency,
+protected artifact, database, or public surface changed.
+
+- **Root operating rule:** `AGENTS.md` now requires every Repomix review
+  export to be written from the project root. It names the measured reason: a
+  non-root invocation did not load `repomix.config.json` and silently dropped
+  `Cargo.lock`, recreating the prior lockfile-review gap. The rule points at
+  `./run export-check`, which generates at the root and derives the source set
+  from `git ls-files`.
+- **Security operating rule:** `AGENTS.md` keeps
+  `enableSecurityCheck=false`, records the triggering measurement of **340
+  files collected / 339 included**, and names the silently omitted
+  `crates/ingest/src/lib.rs`. It preserves registered, self-testing invariant
+  R4 as the credential control and points at `./run export-check`, which fails
+  if the source is absent.
+- **Architectural placement:** neither rule is added to or renumbers the HC
+  series. `ARCHITECTURE.md` replaces its now-false v0.20 opener paragraph with
+  the current boundary: this is an executable operator-local contract, not a
+  hosted repository invariant, and its absence from CI is explicit.
+- **Acceptance and regression:** `./run export-check` passes with **90/90**
+  derived sources, **7/7** required paths, and **147** exported paths.
+  `checklist-audit`, `cycle-check`, and `git diff --check` pass. Mandatory
+  standalone `./run golden` passes **11/11**, delta **0**.
 
 ---
 
