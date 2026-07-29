@@ -200,3 +200,51 @@ Entries are append-only; corrections are new dated entries.
 - status acceptance: PASS. Cycle, checklist, progress, and version checks are
   green after this append names the real implementation commit.
 - golden-E2E delta: **0**; standalone and full-matrix runs passed **11/11**.
+
+### 2026-07-29 · RE-MEASURE — v0.15.3 release evidence admitted
+
+- owner: Codex
+- commit: 907f661
+- result: PASS. The authorized candidate is
+  `197e93effe9a6abf9c59488a9849c6dcda47646c` on
+  `candidate/v0.15.3`; hosted workflow-dispatch run `30414648482` attempt 1
+  completed successfully at that exact SHA.
+- gate acceptance: PASS. Remote mutation was limited to the candidate branch
+  and authenticated dispatch. Admission commit `907f661` contains only seven
+  signed receipt/bundle pairs, the release-grade deferred-audit report,
+  `config/protected-artifacts.json`, and required status records. No tag,
+  `main` advance, publication, product path, public surface, dependency,
+  lockfile, schema, or protected database moved.
+- workflow acceptance: PASS. The remote candidate workflow was read before
+  dispatch and contained every expected core, lint, net, MSRV, two-shell,
+  golden, signing, and upload invocation. Its blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` equals the local workflow blob.
+- same-commit count acceptance: PASS. Local `./run ci-local` passed **20/20**
+  with **133** workspace tests, **55** net tests (**29 + 26**), shell
+  **248/248** on Python 3.11.4, Rust 1.78, invariant **11/11 rules / 23
+  controls**, R10's **45** exemptions, and golden **11/11**; constrained
+  Python 3.12.13 independently passed **248/248**. Hosted logs report the same
+  **133**, **55**, **11/11 / 23**, **45**, and **11/11** counts. Each hosted
+  shell collected **248** as **247 passed + 1 declared on-site-only
+  protected-corpus skip**, exactly equal to local collection.
+- authentication/re-derivation acceptance: PASS. All **7/7** derived
+  identities across **6** blocking jobs have successful Linux receipts and
+  verified Sigstore bundles; zero receipts were rejected. The clean detached
+  report records **5 deferred / 2 promoted / 0** deferred subsystems
+  implemented. Post-commit authenticated re-derivation passes **7** rows,
+  **5** source dispositions, and **7** triggers with release grade and
+  attestations required.
+- artifact acceptance: PASS. Report
+  `evidence/v0.15.3/deferred-audit/report.json` is **34,530** bytes at
+  SHA-256
+  `3006f9ed8641cbc6483a2a1608c65da52ff008e59837218997f207a7cf588b2e`.
+  Post-commit `verify-artifacts` and `evidence-report` pass all **176/176**
+  pins — **174/174** evidence plus **2/2** authorization surfaces — and both
+  protected databases exact. Exact cosine at the largest **2,600-document**
+  archive measured p95 **6.786459 ms**, below the **16.264 ms** A3 anchor.
+- remote acceptance: PASS. Final read-only inspection found `origin/main`
+  unchanged at `344124819cb3c554f851d0cac3f0f1ed08d1aa10`, candidate branch
+  exact at the evidence SHA, and no `v0.15.3` tag.
+- golden-E2E delta: **0**. The first post-admission sandboxed invocation was a
+  loopback-bind permission non-result; the identical permitted invocation
+  passed **11/11**.
