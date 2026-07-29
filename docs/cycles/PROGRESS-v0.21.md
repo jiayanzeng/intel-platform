@@ -200,3 +200,88 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: **0**. No pin, protected database, crate, app,
   dependency, schema, robots surface, configured source, or public response
   changed.
+
+### 2026-07-29 · RE-MEASURE — v0.21 candidate evidence admitted
+
+- owner: Codex
+- commit: 90d6f07
+- result: PASS. The implementation commit contains the seven signed
+  receipt/bundle pairs from the authorized hosted run, its release-posture
+  deferred-audit report, the 15 append-only manifest admissions, `STATE.md`,
+  and the v0.21 runbook status and pending-closing records. No tag, `main`
+  advance, publication, product path, public surface, dependency, lockfile,
+  schema, robots path, configured source, or protected database changed.
+- authorization/candidate acceptance: PASS. The operator authorized exactly
+  the Gate's non-`main` push and authenticated hosted dispatch. Candidate
+  `3f61aed183e195ccaf952cbc7f4528712bab028d` was pushed only to neutral branch
+  `candidate/v0.15.4-v0.21`; its current-version-plus-cycle name leaves Step 6
+  free to choose a legitimate no-release close.
+- workflow acceptance: PASS. Before dispatch, the remote candidate's
+  `.github/workflows/ci.yml` was read through the GitHub contents endpoint and
+  confirmed to contain the expected core, lint, net, MSRV, two-shell, golden,
+  cycle/checklist, invariant/progress, provenance-signing, and artifact-upload
+  invocations. Remote and local workflow blobs are both
+  `96e85af978981b7af9bdd8e9e11069f158f35e57`.
+- hosted/count acceptance: PASS. Workflow-dispatch run `30432249637` attempt
+  **1** completed successfully at the exact candidate with all **7/7**
+  executable job instances green across the six blocking workflow
+  definitions. Hosted logs, not job labels, measured **133** workspace tests,
+  **55** net tests (**29 + 26**), `invariant-scan` **12/12 rules / 30
+  controls**, R10 **45** exemptions, and golden **11/11**, equal to local
+  `./run ci-local` at that same commit. Each hosted shell lane collected
+  **258** tests as **257 passed + 1 declared on-site-only protected-corpus
+  skip**, versus local **258/258** on constrained Python 3.11.4 and
+  independently rebuilt Python 3.12.13. Hosted Python 3.11.15 and 3.12.13
+  each resolved the exact 21-package constraints.
+- corrected-control acceptance: PASS. Hosted R12 emitted and detected every
+  declared fail-before control: mutable-ref prohibition; required/fresh tag
+  object; required/fresh peeled target; pending-publication refusal; missing
+  tag ref; missing target; and unavailable ancestry. Hosted `cycle-check`
+  passed with v0.21 open, eighteen closed execution runbooks, and three
+  historical runbooks. Checklist audit reported **169 checked / 3 retracted /
+  169 matched / 0 exemptions**; progress-check resolved
+  `MASKING · f6708fb`.
+- identity/authentication acceptance: PASS. All **7/7** workflow-derived
+  identities — core, golden, lint, MSRV, net, and shell Python 3.11/3.12 —
+  have successful Linux receipts from one exact run and candidate. Every
+  persisted Sigstore bundle verifies its receipt bytes, repository, workflow
+  signer, source digest, neutral candidate ref, and GitHub-hosted runner
+  identity. Zero receipts were rejected and the single-run matrix is complete.
+- deferred-audit acceptance: PASS. The clean detached subject exposed the two
+  already verified protected database bytes through ignored read-only links;
+  both hashes matched and detached `git status` remained clean. The final
+  release-posture report records **5 deferred / 2 promoted / 0** deferred
+  subsystems implemented. Exact-cosine p95 at the largest **2,600-document**
+  archive is **7.476416 ms**, below the **16.264 ms** A3 request anchor.
+  Report `evidence/v0.21/deferred-audit/report.json` is **34,714** bytes at
+  SHA-256
+  `5e39cb000b08c6191d19f3ea91a90c6c89dc0680f0e76aed1e14523b2c06562a`.
+- audit-process disposition: the asynchronous command boundary returned
+  before the first wrapped audit process had completed, so immediate
+  inspection saw no report and an identical direct invocation overlapped it.
+  Pre-admission manifest validation rejected the transient first-sampled hash
+  after the later writer completed. After all audit processes exited, the
+  stable final bytes above were pinned and validated. No transient bytes were
+  committed.
+- authentication/re-derivation acceptance: PASS. Restricted provenance
+  re-derivation was a network non-result. The permitted identical command
+  passed **7** rows, **5** source dispositions, and **7** triggers with release
+  grade and attestations required. After implementation commit `90d6f07`
+  existed, the same online re-derivation passed again against the committed
+  receipt and bundle paths.
+- artifact acceptance: PASS. The **15** new append-only records bring the
+  protected manifest to **206/206** pins — **204/204** evidence plus **2/2**
+  authorization surfaces. Manifest schema v2, `verify-artifacts`, and
+  `evidence-report` pass after the implementation commit; protected databases
+  remain exact **2/2**.
+- remote acceptance: PASS. Final readback reports candidate branch exact at
+  `3f61aed183e195ccaf952cbc7f4528712bab028d`, `main` unchanged at
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`, annotated `v0.15.4`
+  unchanged, and no `v0.15.5` tag.
+- lifecycle acceptance: PASS. The first header draft's phrase “publication
+  decision remains pending” triggered G6's accepted conservative refusal.
+  The true rephrasing “has not yet recorded” made `cycle-check` pass without
+  weakening the rule. The pre-commit checklist refusal named only this
+  not-yet-possible hash-bearing progress entry; `git diff --check` passed.
+- golden-E2E delta: **0**. The restricted final invocation was a loopback-bind
+  permission non-result; the identical permitted command passed **11/11**.
