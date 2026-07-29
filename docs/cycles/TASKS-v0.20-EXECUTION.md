@@ -433,7 +433,7 @@ decision: publication.**
 - [x] **SELF-REF** — corrected check fails at the entering content; literal
   `origin/main` prohibited in the header; tag-object and tag-target freshness
   retained; every unavailable-input path reports; rule 1 unchanged and re-proven
-- [ ] **EXPORT-PATTERN** — `TASKS-v0.6.md` and `TASKS-v0.7.md` excluded; v0.12+
+- [x] **EXPORT-PATTERN** — `TASKS-v0.6.md` and `TASKS-v0.7.md` excluded; v0.12+
   retained; before/after sizes recorded; no file deleted
 - [ ] **EXPORT-CHECK** — expected set derived from `git ls-files`, no pinned
   count; both silent-omission fail-befores captured; configuration restored by
@@ -577,6 +577,33 @@ artifact, database, or public surface changed.
   `verify-artifacts` all passed.
 - **Regression anchor:** the mandatory standalone `./run golden` passed
   **11/11**, delta **0**.
+
+### 2026-07-29 · EXPORT-PATTERN
+
+PASS. The Gate contains every changed path: the one-line
+`repomix.config.json` pattern, `STATE.md`, and this runbook's status/checklist
+record. No repository file, tool, crate, dependency, protected artifact,
+database, or public surface was deleted or modified.
+
+- **Range rule:** the enumerated `v0.{8,9,10,11}*` expression is replaced by
+  `v0.{[6-9],1[01]}{.md,.*.md,-*.md}` under the existing
+  `{TASKS,PROGRESS}` prefix. The two numeric character classes express the
+  complete v0.6-through-v0.11 range; the bounded suffix alternatives cover
+  base records, point cycles, and execution runbooks without matching v0.12.
+  Repomix 1.17.0 exercised the pattern successfully.
+- **Root export before/after:** the immediate pre-change export contained
+  **147 files / 2,735,717 characters / 2,740,883 serialized bytes**. The
+  post-change export contained **145 files / 2,704,779 characters /
+  2,709,638 serialized bytes**. Both commands ran from the project root with
+  the pinned Repomix 1.17.0 release and security checking still disabled.
+- **Inclusion diff:** the complete 147-versus-145 path-set diff has exactly two
+  removals: `docs/cycles/TASKS-v0.6.md` and
+  `docs/cycles/TASKS-v0.7.md`. All **18/18** task/progress files from v0.12
+  through active v0.20 remain. Therefore no non-`docs/cycles/` inclusion
+  changed, and neither underlying historical file was deleted.
+- **Integrity and regression:** `verify-artifacts` passed all **176/176** pins
+  and both protected databases **2/2**. Mandatory standalone `./run golden`
+  passed **11/11**, delta **0**.
 
 ---
 

@@ -16,7 +16,7 @@
       "**/__pycache__/**",
       "**/*.pyc",
       "evidence/**",
-      "docs/cycles/{TASKS,PROGRESS}-v0.{8,9,10,11}*",
+      "docs/cycles/{TASKS,PROGRESS}-v0.{[6-9],1[01]}{.md,.*.md,-*.md}",
       "repomix-output-*.xml"
     ]
   },

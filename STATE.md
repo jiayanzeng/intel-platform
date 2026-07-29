@@ -1,6 +1,25 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header while retaining executable immutable-tag and disposition checks.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the three export-control omissions, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 SELF-REF removes the impossible mutable-ref assertion from the live publication header, and EXPORT-PATTERN now excludes every closed cycle from v0.6 through v0.11.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **2**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the two remaining export-control omissions, and the one-real-publisher product limitation are the remaining v0.20 open set; L2 remains scheduled.
+
+**v0.20 EXPORT-PATTERN makes the closed-cycle exclusion complete (measured
+2026-07-29).** The former enumerated `v0.{8,9,10,11}*` pattern is replaced by
+the bounded range rule
+`v0.{[6-9],1[01]}{.md,.*.md,-*.md}` for `TASKS` and `PROGRESS`. Its numeric
+classes express v0.6 through v0.11, while the suffix alternatives preserve the
+base, point-cycle, and execution-runbook filename forms without spilling into
+v0.12.
+
+Pinned Repomix 1.17.0 ran from the project root immediately before and after
+the one-line configuration change. The export moved from **147 files /
+2,735,717 characters / 2,740,883 serialized bytes** to **145 files /
+2,704,779 characters / 2,709,638 serialized bytes**. The complete path-set
+diff removes exactly `docs/cycles/TASKS-v0.6.md` and
+`docs/cycles/TASKS-v0.7.md`; every **18/18** task/progress files from v0.12
+through active v0.20 remain, and no non-`docs/cycles/` inclusion changes.
+Neither source file was deleted. `verify-artifacts` passes all **176/176**
+pins and both protected databases **2/2**; standalone golden remains
+**11/11**, delta **0**.
 
 **v0.20 SELF-REF corrects the publication fixed-point defect (measured
 2026-07-29).** The mutable measurement remains a dated fact in this body:
