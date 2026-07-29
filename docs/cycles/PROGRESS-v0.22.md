@@ -202,3 +202,60 @@ Entries are append-only; corrections are new dated entries.
   the architecture, status, and active-runbook edits.
 - protected artifact delta: **0**. No manifest or protected artifact changed;
   protected databases remain **2/2**.
+
+### 2026-07-29 · RE-MEASURE — authenticated v0.22 candidate evidence
+
+- owner: Codex
+- commit: 9426ebc
+- result: PASS. Implementation commit
+  `9426ebcdeead36999fc1c71ce0687557b1f485ce` admits the authenticated Step 5
+  evidence without prejudging Step 6 publication.
+- hosted-identity acceptance: PASS. Exact candidate
+  `10c78119cd10eeb17a01152de6b6f0c322b2b91e` was pushed only to neutral branch
+  `candidate/v0.15.5-v0.22`. Before dispatch, remote `ci.yml` blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` equaled the local blob and direct
+  inspection found every expected invocation. Workflow-dispatch run
+  `30443692105` attempt **1** used the exact candidate and produced **7/7**
+  green executable Linux jobs; report-only dependency drift was skipped.
+- count-equality acceptance: PASS. Hosted logs, not job status, report **133**
+  workspace tests, **55** net tests (**29 + 26**), `invariant-scan` **12/12
+  rules / 36 controls**, R10 **45** exemptions, and golden **11/11**, equal to
+  local execution at the same candidate. Hosted Python 3.11.15 and 3.12.13
+  each collected **266** shell tests as **265 passed + 1** declared on-site
+  protected-corpus skip after resolving **21** packages; local constrained
+  Python 3.11.4 and independently rebuilt Python 3.12.13 each passed
+  **266/266**. Local `./run ci-local` passed **20/20**.
+- hosted-control acceptance: PASS. The hosted **12/12 / 36** result proves Step
+  2's expanded R12 planted failures execute on the runner. Hosted lifecycle
+  output reports active v0.22 open, **19** closed execution runbooks, **3**
+  historical runbooks, checklist **175 checked / 3 retracted / 175 matched / 0
+  exemptions**, and progress at `RESIDUALS · d38030e`.
+- signed-set acceptance: PASS. Seven receipts and seven Sigstore bundles from
+  run `30443692105` attempt 1 verify exact bytes, source digest, neutral source
+  ref, repository, workflow signer, and GitHub-hosted runner identity. Rejected
+  receipts are **0** and the matrix is complete.
+- deferred-audit acceptance: PASS. The required `./run audit-deferred` release
+  posture with attestations required passed **5 deferred / 2 promoted / 0**
+  implemented deferred subsystems. The committed 34,816-byte report has
+  SHA-256
+  `7fc1b09004d1cb8e835cf90bd3d11bf68e856c4d56bb2c9564a7fdbf77abced0`;
+  its measured exact-cosine p95 is **6.966708 ms** for **2,600** documents
+  against the **16.264 ms** A3 anchor.
+- protected-evidence acceptance: PASS. The fourteen signed files plus report
+  add **15** append-only records, bringing the manifest to **221/221** pins —
+  **219/219** evidence plus **2/2** authorization. Schema-v2 validation,
+  `verify-artifacts`, and `evidence-report` pass; protected databases remain
+  **2/2** exact.
+- ref-scope acceptance: PASS. Final readback before the implementation commit
+  found remote `main` unchanged at
+  `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`, candidate exact, annotated
+  `v0.15.5` unchanged, and no `v0.15.6` tag. No publication or product surface
+  changed.
+- new finding: every executable hosted job reports that actions targeting Node
+  20 are forced onto Node 24. The linked GitHub announcement names
+  **2026-06-16** as the migration date, so Step 4's named-date trigger had
+  already fired. The measured workflow was not changed in Step 5; Step 6 must
+  reconcile the expired architecture disposition explicitly.
+- golden-E2E delta: **0**. A restricted loopback-bind attempt was a non-result;
+  the identical permitted mandatory standalone golden passed **11/11** after
+  the status and runbook edits.
