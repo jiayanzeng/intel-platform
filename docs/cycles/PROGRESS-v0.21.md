@@ -169,3 +169,34 @@ Entries are append-only; corrections are new dated entries.
 - protected artifact delta: **0**. No pin, protected database, crate,
   dependency, schema, robots surface, configured source, or public response
   changed.
+
+### 2026-07-29 · MASKING — statement order made intentional
+
+- owner: Codex
+- commit: f6708fb
+- result: PASS. E0 confirmed G5 and G6, and the implementation stayed within
+  `cycle_check`, its focused tests, and status records.
+- G5 acceptance: PASS by choosing intentional masking. Release-object
+  agreement is the root-cause boundary; pending-publication and
+  header-freshness findings would be derived from an untrusted release identity
+  until the measured object and target agree with the closed runbook. Inline
+  comments now state that both early returns mask derived rules intentionally.
+- G5 control acceptance: PASS. A combined pending-publication header and
+  forty-`f` measured tag-object mismatch produces exactly one
+  `publication release-object agreement` error and no disposition error.
+- G6 acceptance: PASS by dated restatement. As of 2026-07-29, v0.20's
+  240-character proximity window remains accepted bounded looseness: it can
+  false-fire only within the live header paragraph and can cause a loud
+  conservative refusal, never a false pass. The expression is unchanged.
+- focused-test acceptance: PASS. `shell/tests/test_cycle_check.py` passed
+  **26/26** under Python 3.11.4 and independently **26/26** under Python
+  3.12.13.
+- invariant acceptance: PASS. No new rule was introduced; the complete scanner
+  remains **12/12 rules / 30 controls**.
+- lifecycle acceptance: PASS. `cycle-check` and `git diff --check` passed. The
+  expected pre-audit `checklist-audit` failure named only this checked task's
+  not-yet-appended progress entry.
+- golden-E2E delta: **0**. Standalone golden passed **11/11**.
+- protected artifact delta: **0**. No pin, protected database, crate, app,
+  dependency, schema, robots surface, configured source, or public response
+  changed.
