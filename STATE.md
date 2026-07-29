@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.22 is closed under tagged-closing Option C; this closed tree and v0.15.6 are ready for the authorized atomic main/tag publication.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of the closing tree. Exact closing evidence is candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**, where all **7/7** executable jobs passed. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**, including all **13** R12 mutations; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The already-fired Node-runtime trigger, fully floating `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline are promoted together to v0.23; the measured workflow remains unchanged here. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.22 is closed and v0.15.6 is published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Exact closing evidence is candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**, where all **7/7** executable jobs passed. Forward-confirmation run `30446796322` at the published closing commit also passed all **7/7** executable jobs; report-only dependency drift was skipped. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**, including all **13** R12 mutations; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The already-fired Node-runtime trigger, fully floating `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline are promoted together to v0.23; the measured workflow remains unchanged here. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.22 R-CLOSE selects release v0.15.6 and closes on authenticated candidate
 evidence (operator decision and measurement 2026-07-29).** Release disposition:
@@ -96,6 +96,34 @@ The product boundary is unchanged: `arxiv-cs` remains the sole real publisher;
 the other three configured sources remain fixtures. No crate source under
 `crates/` or `apps/`, dependency graph, CI workflow, schema, protected
 database, robots behavior, configured source, or public API surface changed.
+
+- **Post-push verification date:** 2026-07-29
+- **Post-push release:** `v0.15.6`
+- **Post-push annotated tag object:** `47c5b314acd6f7fb42bba2f90312bf1185277c5c`
+- **Post-push closing commit:** `15b6d28973058c833a77e9600741d29eda02cdc1`
+- **Post-push hosted run:** `30446796322`
+
+**v0.15.6 post-push forward confirmation passes (measured 2026-07-29).**
+The atomic remote operation moved `main` from
+`b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa` to closing commit
+`15b6d28973058c833a77e9600741d29eda02cdc1` and created annotated v0.15.6
+object `47c5b314acd6f7fb42bba2f90312bf1185277c5c`, which peels to that same
+commit. The closing commit's first parent is release commit
+`a83db73aac3d5ef1e9a427662340eb1eb8a49df1`. Remote readback confirmed all
+three identities after the atomic push.
+
+Push run `30446796322` executed at the exact closing commit and passed all
+**7/7** executable jobs: core, lint, net, MSRV, shell Python 3.11, shell Python
+3.12, and golden. The report-only dependency-drift job was skipped by its
+declared trigger. Receipt attestations were intentionally absent because this
+ordinary push was forward confirmation, not the evidence-publishing candidate
+dispatch. The Node runtime annotations repeated without causing a failure and
+remain the measured v0.23 finding already recorded above.
+
+This dated append is the first commit after the tag target. Under the accepted
+cycle-ending hosted-verification rhythm it is locally gate-backed and remains
+hosted-unverified until the following publication; that is the protocol's
+recorded cost, not a missing v0.22 release check.
 
 **v0.22 RE-MEASURE admits authenticated release-posture evidence without
 prejudging publication (measured 2026-07-29).** The operator authorized the

@@ -311,3 +311,34 @@ Entries are append-only; corrections are new dated entries.
   limitation remain open.
 - golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** at the
   release parent.
+
+### 2026-07-29 · POST-PUSH — v0.15.6 forward confirmation
+
+- owner: Codex
+- commit: 15b6d28
+- result: PASS. Closing commit
+  `15b6d28973058c833a77e9600741d29eda02cdc1` and annotated v0.15.6 object
+  `47c5b314acd6f7fb42bba2f90312bf1185277c5c` were published atomically.
+  Remote readback resolves `main` and the peeled tag to the closing commit; its
+  first parent is release commit
+  `a83db73aac3d5ef1e9a427662340eb1eb8a49df1`.
+- hosted-forward acceptance: PASS. Push run `30446796322` executed at the exact
+  closing commit. All **7/7** executable jobs passed: core, lint, net, MSRV,
+  shell Python 3.11, shell Python 3.12, and golden. Report-only dependency drift
+  was skipped by its declared trigger.
+- closure-semantics acceptance: PASS. Candidate run `30443692105` remains the
+  closing evidence. Run `30446796322` is dated forward confirmation; its result
+  neither created nor retroactively conditioned the already-valid close.
+- annotation finding: unchanged. Hosted jobs again reported that Node-20
+  actions were forced onto Node 24. The run remained green, and the affected
+  actions, fully floating `dtolnay/rust-toolchain@master` ref, and
+  trigger-freshness discipline remain scheduled together for v0.23.
+- provenance acceptance: ordinary push verification did not request receipt
+  attestations. The authenticated candidate set remains **221/221** protected
+  pins; no manifest or evidence file changed.
+- audit-rhythm acceptance: this first post-tag commit carries the required
+  exact contiguous `STATE.md` record. Per the accepted cycle-ending rhythm it
+  is locally verified now and will become hosted-verified at the following
+  publication.
+- golden-E2E delta: **0**. The mandatory post-closing standalone golden passed
+  **11/11** before publication; published-head golden also passed.
