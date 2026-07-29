@@ -286,6 +286,16 @@ contain a **RE-MEASURE** step that measures that release commit.
    contain its own commit hash: changing commit contents changes the hash, so
    that proposed self-reference cannot be true.
 
+### Cycle-ending hosted-verification rhythm — accepted 2026-07-29
+
+The operator accepts that the final append-only audit record of each cycle is
+written after publication and therefore is hosted-unverified when written. It
+is verified at the following publication, when it becomes an ancestor of the
+candidate and release commit exercised by hosted CI. This is the intended
+rhythm, not a defect to route around; the consequence is that the latest
+cycle-ending audit commit remains supported by its required local gates and
+append-only evidence until that following publication occurs.
+
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
 The v0.10 golden pipeline is the regression anchor. **`./run golden` is the

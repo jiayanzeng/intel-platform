@@ -531,6 +531,67 @@ public surface changed.
   a real cycle literal was rejected by `cycle-check`; neutral control names
   replaced it before acceptance.
 
+### 2026-07-29 · PUBLISHED-HEAD
+
+PASS with G3 recorded as a forward-correction subject. The Gate contained every
+acceptance surface: one fresh disposable clone, `STATE.md`, `AGENTS.md`, and
+this task's status records. The published tree was not modified, and nothing
+was pushed.
+
+- **Identity:** the fresh full-history SSH clone checked out exact tag target
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; `v0.15.4` resolved to annotated
+  tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and peeled to that same target.
+  The unauthenticated HTTPS spelling attempted first returned `Repository not
+  found`; the configured SSH remote produced the measured clone.
+- **Corrected cycle checker:** current `cycle_check.run(<published-root>)`
+  exited **1** with these seven messages:
+  1. `docs/cycles/TASKS-v0.10.2-EXECUTION.md: annotated tag 'v0.10.2' does not
+     resolve to recorded tag object d821f8b2eb6f39fe4a7d06a88cd61de771c7b0ba`
+  2. `docs/cycles/TASKS-v0.10.2-EXECUTION.md: release 'v0.10.2' does not
+     dereference to recorded commit 7d127abac0b993c9e98294ee1c03ff01153de9d0`
+  3. `docs/cycles/TASKS-v0.8-EXECUTION.md: annotated tag 'v0.8.0' does not
+     resolve to recorded tag object 314c1dd914a3d8e9193445874a419ed762581e6e`
+  4. `docs/cycles/TASKS-v0.8-EXECUTION.md: release 'v0.8.0' does not
+     dereference to recorded commit bfc8c5af85734583f966ee70d2ec521155432205`
+  5. `docs/cycles/TASKS-v0.8.1-EXECUTION.md: annotated tag 'v0.8.0' does not
+     resolve to recorded tag object 314c1dd914a3d8e9193445874a419ed762581e6e`
+  6. `docs/cycles/TASKS-v0.8.1-EXECUTION.md: release 'v0.8.0' does not
+     dereference to recorded commit bfc8c5af85734583f966ee70d2ec521155432205`
+  7. `STATE.md: publication assertion required: status header must assert the
+     annotated tag object in the required unambiguous phrasing`
+
+  The final message is the Step 2 differential: the published checker emitted
+  only the first six, while the corrected total rule exposes the header
+  assertion it previously examined zero times.
+- **Remaining corrected suite:** current `checklist_audit.run` exited **0**,
+  emitting one clean line for each of eighteen published runbooks and
+  `PASS (checked=164, retracted=3, entries_matched=164,
+  commits_resolved=164, exemptions=0)`. Current `progress_check` exited **0**
+  with `PASS (2026-07-29 · RE-MEASURE · 5631e70)`. Published
+  `version-check` exited **0**, reported version **0.15.4** for
+  `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`,
+  `shell/intel_shell/app.py`, `STATE.md`, and `CHANGELOG.md`, then reported
+  exact HEAD tag **0.15.4** and `PASS (0.15.4)`. Current `invariant_scan`
+  against the published registry exited **0**, emitted PASS for R1–R11 and
+  each of their 23 exact fail-before sites, then
+  `SELF-TEST PASS (11/11 rules, 23 controls)`.
+- **G3 disposition:** the published tree has v0.20 R-CLOSE unchecked, no v0.20
+  cycle closing record, no R-CLOSE progress entry, and a header describing
+  publication preparation rather than a closed cycle. It is a
+  forward-correction subject. It was not repaired here. Trigger: the next
+  operator-authorized `main` publication after v0.15.4; a no-release close
+  leaves it open until a later publication.
+- **G4 decision — Accept, 2026-07-29:** the operator accepts the intended
+  rhythm and its consequence. `AGENTS.md` now states that each cycle's final
+  append-only audit record is hosted-unverified when written after publication
+  and is verified at the following publication. Required local gates and
+  append-only evidence support it until then.
+- **No-push acceptance:** final `git ls-remote` still reported `main` and the
+  peeled `v0.15.4` target at
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257` and annotated tag object
+  `7a5c9f7396c043f2b89974585fdd4e5146180e86`. Standalone golden passed
+  **11/11**, delta **0**.
+
 ---
 
 ## Cycle checklist
@@ -544,7 +605,7 @@ public surface changed.
   fail-before captured at the entering header; backtick-widening explicitly
   rejected with its reason; every publication-status rule has a detected planted
   failure; new counts in three places
-- [ ] **PUBLISHED-HEAD** — published-tag suite re-run under corrected checkers;
+- [x] **PUBLISHED-HEAD** — published-tag suite re-run under corrected checkers;
   G3 closed clean or recorded as a forward-correction subject and **not repaired
   here**; G4 recorded as accepted, corrected, or deferred, dated; no push
 - [ ] **MASKING** — G5 decided and commented or tested; G6's disposition

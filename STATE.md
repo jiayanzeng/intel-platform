@@ -1,6 +1,38 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 MATCH-PROOF is complete and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization) remain exact, protected databases remain **2/2**, and golden remains **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.21 PUBLISHED-HEAD is complete and v0.15.4 remains published.** Remote release `v0.15.4` has annotated tag object `7a5c9f7396c043f2b89974585fdd4e5146180e86` and release commit `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; exact evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Release-commit `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **255/255** on Python 3.11.4 and independently rebuilt Python 3.12.13. The current `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization) remain exact, protected databases remain **2/2**, and golden remains **11/11**. Push-triggered hosted run `30425601829` passed all **7** executable jobs at the exact release commit; the report-only dependency-drift job was skipped as designed. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.21 PUBLISHED-HEAD records the shipped tree and accepts the audit rhythm
+(measured and decided 2026-07-29).** A fresh full-history clone of the configured
+remote resolved annotated `v0.15.4` to object
+`7a5c9f7396c043f2b89974585fdd4e5146180e86` and exact target
+`8c1eff03ff3e67b18176e8bf533de0f9501e0257`. The corrected current
+`cycle_check.run` against that untouched root exited **1** with seven defects:
+six missing historical tag-object/target ref reports for `v0.10.2` and
+`v0.8.0`, plus the newly visible required tag-object assertion failure.
+`checklist-audit` exited **0** with **164/164**, `progress-check` exited **0**
+at `RE-MEASURE · 5631e70`, `version-check` exited **0** at exact v0.15.4, and
+the current invariant implementation against the published registry exited
+**0** with the published tree's **11/11 rules / 23 controls**.
+
+G3 is therefore a forward-correction subject, not a clean published-tree
+result. The shipped v0.20 runbook has R-CLOSE unchecked, no cycle closing
+record, and no resolving R-CLOSE progress entry; its header describes
+publication preparation rather than a closed v0.20 state. Step 3 did not alter
+that immutable tree or conceal the finding. Its trigger is the next
+operator-authorized publication of `main` after v0.15.4; if this cycle selects
+a legitimate no-release disposition, the finding remains open until a later
+publication.
+
+For G4, the operator chose **Accept** on 2026-07-29. The intended rhythm is now
+recorded in `AGENTS.md`: the final append-only audit record is hosted-unverified
+when written after publication and is verified when it becomes an ancestor of
+the following publication candidate. Until then it is supported by the
+required local gates and append-only audit evidence. No push, tag, remote-ref,
+crate, dependency, schema, protected artifact, or public surface changed.
+Final remote readback still placed `main` and the peeled tag at
+`8c1eff03ff3e67b18176e8bf533de0f9501e0257` and the annotated tag object at
+`7a5c9f7396c043f2b89974585fdd4e5146180e86`.
 
 **v0.21 MATCH-PROOF removes the vacuous publication-rule class (measured
 2026-07-29).** The corrected total requirement was first run against the
