@@ -1,6 +1,28 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.22 is closed and v0.15.6 is published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Exact closing evidence is candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**, where all **7/7** executable jobs passed. Forward-confirmation run `30446796322` at the published closing commit also passed all **7/7** executable jobs; report-only dependency drift was skipped. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**, including all **13** R12 mutations; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The already-fired Node-runtime trigger, fully floating `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline are promoted together to v0.23; the measured workflow remains unchanged here. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.6 (core-shell) · **Status:** **v0.23 RELEASE-PROSE is complete, the cycle remains open, and v0.15.6 remains published under tagged-closing Option C.** Release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the untagged immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated v0.15.6 object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` resolves to it. Exact closing evidence is candidate `10c78119cd10eeb17a01152de6b6f0c322b2b91e` and authenticated run `30443692105` attempt **1**, where all **7/7** executable jobs passed. Forward-confirmation run `30446796322` at the published closing commit also passed all **7/7** executable jobs; report-only dependency drift was skipped. At the release parent, `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; independently rebuilt Python 3.12.13 also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**, including all **13** R12 mutations; R10 retains **45** exemptions, all **221/221** pins (**219/219** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The already-fired Node-runtime trigger, fully floating `dtolnay/rust-toolchain@master` ref, and trigger-freshness discipline are promoted together to v0.23; the measured workflow remains unchanged here. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.23 RELEASE-PROSE makes R-CLOSE mechanics single-source (measured
+2026-07-29).** E0 forced the recorded `v0.15.6` identity onto the wrong commit
+and the existing checker rejected all four parent/tree agreement violations;
+G1 is therefore P2 by construction, and no duplicate literal-scan rule was
+added. `ARCHITECTURE.md` §8 retains the minor/patch/no-release classification
+and version-agreement semantics, then points to `AGENTS.md` as the sole
+authority for tag creation, target selection, closing order, historical
+boundary, and forward evidence. `AGENTS.md` now states the boundary directly:
+releases through v0.15.5 keep the prior validation shape, while v0.15.6 onward
+uses the two-commit tagged close.
+
+The one-time mechanical-mapping scan
+`grep -Eni 'tag (targets|points|maps)( to)? (the )?(release|closing|tagged)? ?commit|mapping is the annotated Git tag|tagged commit' ARCHITECTURE.md`
+returned exit **1** with empty stdout: zero mapping sentences remain. This grep
+reduces the duplicate-prose class but is not a persistent invariant. If a
+duplicate mechanical mapping recurs, the forward option is a registered
+literal-scan rule with a detected R12 planted failure; adding that apparatus
+now would duplicate a checker that E0 measured clean. `cycle-check`,
+`progress-check`, and the pre-box `checklist-audit` passed; the mandatory
+standalone golden remained **11/11**, delta **0**. No workflow, crate, source,
+dependency, schema, protected artifact, public surface, or ref changed.
 
 **v0.22 R-CLOSE selects release v0.15.6 and closes on authenticated candidate
 evidence (operator decision and measurement 2026-07-29).** Release disposition:

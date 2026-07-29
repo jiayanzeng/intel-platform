@@ -307,19 +307,6 @@ entry point over planted cases and independently disables each current rule
 family, so a rule that examines nothing cannot report a clean result merely
 because its pattern found nothing.
 
-The publication/closing rhythm selected in v0.22 is a two-commit tagged close,
-not a self-contained release commit. Release commit `R` carries the release
-edits and already-existing authenticated candidate evidence. Its immediate
-child `C` closes the cycle, records `R`, and contains no prediction of its own
-hash or the later annotated-tag object. The annotated release tag targets `C`.
-The post-push hosted result, tag object, and closing-commit identity are
-recorded in a dated forward append because none exists when `C` is written.
-Historical releases through v0.15.5 retain their prior record shape and
-validation semantics. Candidate run `30443692105` is the v0.22 closing
-evidence. Published-head CI is forward confirmation: a red result is a new
-finding and does not retroactively erase the already-authenticated candidate
-evidence on which `C` closed.
-
 Hosted lifecycle checks deliberately use `--skip-local-tag-verification`; they
 can validate cycle structure without possessing every historical tag, but they
 cannot prove remote historical release identity. v0.22 established that local
@@ -376,10 +363,9 @@ the measured diff is classified:
 - operations and evidence-only changes may also use a patch release;
 - a cycle with no shipped change may close with no release.
 
-For an actual release, the authoritative mapping is the annotated Git tag to
-its exact release commit. The Rust package, Python package, public FastAPI
-literal, `STATE.md` header, and newest `CHANGELOG.md` release must agree with
-that tag. A separate append-only progress audit may follow the tagged commit;
-it records the release commit hash and does not move the tag. A no-release
-close instead names the intentionally unreleased commits and leaves every
-version source and tag unchanged.
+For an actual release, the Rust package, Python package, public FastAPI literal,
+`STATE.md` header, and newest `CHANGELOG.md` release must agree on the chosen
+version. A no-release close instead names the intentionally unreleased commits
+and leaves every version source and tag unchanged. Tag creation, target
+selection, closing-record sequencing, the historical boundary, and post-push
+evidence are defined only by `AGENTS.md`'s R-CLOSE contract.

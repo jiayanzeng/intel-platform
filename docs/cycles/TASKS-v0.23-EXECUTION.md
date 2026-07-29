@@ -455,6 +455,33 @@ changed in the working repository · published objects and 221 pins re-verified 
   `e36cdc672eeac110c71632ca434f446b1c26a97c`; neither was edited.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
 
+### 2026-07-29 · RELEASE-PROSE
+
+- **Result — PASS.** E0 measured G1 at P2, so this step changed only
+  `ARCHITECTURE.md`, `AGENTS.md`, `STATE.md`, and this active runbook's status
+  record. No checker, test, invariant registry, workflow, crate, source,
+  dependency, schema, protected artifact, public surface, or ref changed.
+- **Single-authority acceptance — PASS.** `ARCHITECTURE.md` retains the
+  release-version classification and authority-agreement semantics, removes
+  both mechanical restatements, and points to `AGENTS.md` R-CLOSE as the sole
+  authority for tag mechanics. `AGENTS.md` states the boundary without a date
+  inference: releases through v0.15.5 retain the prior shape; v0.15.6 onward
+  uses the two-commit tagged close.
+- **Zero-grep acceptance — PASS.** The exact command
+  `grep -Eni 'tag (targets|points|maps)( to)? (the )?(release|closing|tagged)? ?commit|mapping is the annotated Git tag|tagged commit' ARCHITECTURE.md`
+  returned exit **1** and no output. Zero mechanical tag-to-commit mapping
+  sentences remain in the architecture document.
+- **Control-scope acceptance — PASS.** No literal-scan rule was added because
+  E0's forced recorded-identity construction made the existing checker reject
+  all four wrong parent/tree agreements. The one-time grep reduces the class;
+  it does not delete it. A registered literal scan with a detected R12
+  planted failure is the named forward option if duplicate mechanics recur.
+- **Lifecycle acceptance — PASS before the audit append.** `cycle-check` and
+  `progress-check` passed; `checklist-audit` passed before this box moved and is
+  expected to name only the missing post-implementation progress entry after
+  it moves.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
+
 ---
 
 ## Step 2 · RELEASE-PROSE (G1) — Delete the duplicate, not just the stale copy 🤖
@@ -806,7 +833,7 @@ decision: publication.**
   undefined count asserted; triggered rows re-evaluated with fresh measurements;
   both G6 populations enumerated with criteria and discovery sites; no working-
   repository ref changed
-- [ ] **RELEASE-PROSE** — mechanics in exactly one document with a pointer from
+- [x] **RELEASE-PROSE** — mechanics in exactly one document with a pointer from
   the other; pre-v0.15.6 boundary stated; `ARCHITECTURE.md` grep returns zero
   mechanical mapping sentences; rule added only if E0 found P1; grep-versus-rule
   distinction recorded honestly

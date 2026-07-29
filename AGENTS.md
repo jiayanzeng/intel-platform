@@ -298,13 +298,15 @@ append-only evidence until that following publication occurs.
 
 ### R-CLOSE — tagged-closing release protocol selected 2026-07-29
 
-For every release after v0.15.5, R-CLOSE is a two-commit protocol. The release
-commit `R` carries the release edits and version authorities but is not tagged.
-Its immediate child `C` checks R-CLOSE's box and carries the complete closing
-record. That record names `Cycle closed`, the dated `Release disposition`,
-`Release`, and `Release commit: R`; it must not contain an `Annotated tag
-object` field. The closing record cites already-authenticated candidate hosted
-evidence, because evidence from publishing `C` cannot exist in `C`.
+Releases through v0.15.5 used the prior closing-record shape and retain its
+historical validation semantics. v0.15.6 and every later release use R-CLOSE's
+two-commit tagged-closing protocol. The release commit `R` carries the release
+edits and version authorities but is not tagged. Its immediate child `C` checks
+R-CLOSE's box and carries the complete closing record. That record names
+`Cycle closed`, the dated `Release disposition`, `Release`, and `Release commit:
+R`; it must not contain an `Annotated tag object` field. The closing record
+cites already-authenticated candidate hosted evidence, because evidence from
+publishing `C` cannot exist in `C`.
 
 The annotated release tag targets `C`, not `R`. Before any ref movement,
 `cycle-check` verifies that `R` is `C`'s immediate parent and that `C`'s tree
@@ -329,8 +331,7 @@ while directly verifying the annotated tag, parent, and tagged tree. On every
 descendant of `C`, it additionally requires exactly one complete post-push
 record for that release and checks the recorded tag object and closing commit
 against Git. The post-push run confirms the published head; it is forward
-evidence and is not what closes the cycle. Historical release records through
-v0.15.5 retain their prior tag-object fields and validation semantics.
+evidence and is not what closes the cycle.
 
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
