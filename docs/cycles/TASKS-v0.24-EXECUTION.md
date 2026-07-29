@@ -4,6 +4,8 @@
 
 Step 5 — Extend the non-establishment acceptance to the live RSS wire path — 2026-07-30
 
+Step 6 — Declare the exact admitted evidence locations — 2026-07-30
+
 Step 6 — Acceptance criteria corrected to a same-commit population-rule relation — 2026-07-29
 
 - **2026-07-30 — operator-directed Step 5 acceptance amendment.** Step 5's
@@ -12,6 +14,13 @@ Step 6 — Acceptance criteria corrected to a same-commit population-rule relati
   parsing, and cursor durability against a real server remain untested until
   admission. The original clause named only the multi-origin robots cache and
   per-host limiter. No objective, gate, or done condition changed.
+- **2026-07-30 — Step 6 declared-scope completion.** The exact authenticated
+  run and audit-report paths are now known and are declared before their
+  repository admission:
+  `evidence/ci-runs/30472740314-1/**` and
+  `evidence/v0.24/deferred-audit/report.json`. This completes the already
+  authorized Gate; no objective, acceptance criterion, or done condition
+  changed.
 - **2026-07-29 — activation validation correction.** The activation commit
   exposed four defects and they are corrected forward here. The declared scope
   now uses the checker's required Markdown-table schema; its Python-source
@@ -88,6 +97,8 @@ under `crates/`, `apps/`, or `shell/intel_shell/` is modified.**
 | `allow` | `.github/workflows/ci.yml` |
 | `allow` | `run` |
 | `allow` | `observations/**` |
+| `allow` | `evidence/ci-runs/30472740314-1/**` |
+| `allow` | `evidence/v0.24/deferred-audit/report.json` |
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `release_authority` | `Cargo.toml` |
@@ -585,6 +596,58 @@ changed · `STATE.md`, `run`, `ci.yml` unedited · golden 11/11.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed all **11**
   checks.
 
+### 2026-07-30 · RE-MEASURE
+
+- **Candidate and dispatch — PASS.** Exact candidate
+  `a73c042068a367aea22e63e28dfd2f754b65ef9c` was pushed only to neutral
+  branch `codex/v0.24-evidence-a73c042`. Before dispatch, remote and local
+  `.github/workflows/ci.yml` both resolved to Git blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`. Workflow-dispatch run
+  **`30472740314`**, attempt **1**, used the candidate as `audit_sha` with
+  `publish_evidence: true` and passed all seven executable jobs.
+- **Population comparison — PASS in both lanes.** Fresh local Python 3.11.4
+  and 3.12.13 summaries each reported collected **283**, passed **283**,
+  failed **0**, and skipped **0**. Both hosted summaries reported collected
+  **283**, passed **282**, failed **0**, and skipped **1**. The sole skip was
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+  marked `on_site` and `skipif`, for
+  `on-site production audit requires protected corpora and built cored`.
+  `tools/test_population.py` produced this byte-identical result for each
+  interpreter:
+
+  `test-population-compare: {"collected":283,"equivalent":true,"equivalent_passed":283,"hosted":{"on_site_skipped":1,"passed":282,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":283,"skipped":0},"schema_version":1}`
+
+  The hosted zero-skip stop condition did not fire.
+- **Same-candidate counts — PASS.** Hosted logs at that exact candidate report
+  workspace **133**, net **55** (**29** ingest + **26** cored), lifecycle
+  **189 checked / 3 retracted / 189 matched / 0 exemptions**,
+  `invariant-scan` **12/12 rules / 39 controls** with R12 control **16** and
+  R10 **45** exemptions, and golden **11/11**. Fresh local `./run ci-local`
+  passed all **20** jobs with the same non-shell counts and invariant
+  population, warning-denied current and Rust 1.78 lanes, and clean
+  clippy/fmt/ShellCheck.
+- **Authenticated evidence — PASS.** The run produced seven receipt artifacts,
+  each containing one receipt and one Sigstore bundle. Release-posture
+  verification required attestations and accepted **7 / rejected 0** with the
+  complete job/matrix set and exact repository, workflow, candidate digest,
+  neutral source ref, and GitHub-hosted runner identity. The clean disposable
+  audit subject was the exact candidate with an empty worktree. The deferred
+  result was **5 deferred / 2 promoted / 0 implemented**; exact cosine over the
+  largest protected corpus of **2,600** documents measured p95 **8.955917 ms**,
+  below the A3 **16.264 ms** request anchor.
+- **Evidence retention — PASS.** The fourteen signed files under
+  `evidence/ci-runs/30472740314-1/` and
+  `evidence/v0.24/deferred-audit/report.json` are admitted, increasing the
+  protected manifest from **236** to **251** pins. The audit report is **34,899
+  bytes**, SHA-256
+  `8bcd4136c15619b554f2eae292d1de81c694d38b10bf48be382194173ebce0e7`.
+- **Publication boundary — PASS.** Remote `main` remains
+  `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; no release tag, publication
+  ref, source, public surface, dependency, lockfile, schema, or protected
+  database changed.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed all **11**
+  checks.
+
 ---
 
 ## Step 2 · POPULATION-EXPLICIT (G1) — Name the conditional set 🤖
@@ -873,7 +936,7 @@ publication.**
 - [x] **PUBLISHER-REVIEW** — complete, or deleted with the measurement that made
   it conditional. Candidate named; policy fetched through the shipped matcher;
   licence cited by URL and date; one recommendation; no source added
-- [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator output cited,
+- [x] **RE-MEASURE** — hosted run on a neutral branch; comparator output cited,
   never transcribed; other counts equal at the same commit; run id recorded
 - [ ] **R-CLOSE** — tagged close followed; publication trigger named as the
   published false count; class size and fifth-instance count recorded as

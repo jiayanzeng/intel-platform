@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 through PUBLISHER-REVIEW are complete. SEC EDGAR's official US GAAP structured-disclosure RSS path is conditionally admissible for a separate v0.25 operator decision; no source was added.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. HISTORY-BOUND measures this as one isolated false-measurement record, with the same claim copied into the closed execution record. On 2026-07-30 the operator approved the established dated-supersession instrument, so checklist retractions remain **3**. PUBLISHER-REVIEW fetched SEC's **2,622-byte** policy through the shipped matcher; SHA-256 `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`, wildcard-group verdict **allow** for `/Archives/edgar/usgaap.rss.xml`, no matching rule or `Crawl-delay`, and a contact-bearing `intel-platform/0.15.7` identity. The separate latest-filings Atom path was denied by `Disallow: /cgi-bin`. Current local Python 3.11.4 and 3.12.13 lanes each collected **283**, passed **283**, and skipped **0**. The full current `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, all **236** protected pins, protected databases **2**, and embedded golden **11 checks**. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus is unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.24 is active; E0 through RE-MEASURE are complete. SEC EDGAR's official US GAAP structured-disclosure RSS path is conditionally admissible for a separate v0.25 operator decision; no source was added.** v0.15.7 remains published under R-CLOSE: release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of closing commit `e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`, annotated object `b579c2c18e4eeb549617ea20a9175b0c26dc621d` peels to that closing commit, and remote `main` resolves to it. The v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`; authenticated candidate run `30459746825` and forward-confirmation run `30462710258` each passed all **7** executable jobs. Their hosted shell lanes actually collected **275**, passed **274**, and skipped **1** named on-site test; the dated correction below supersedes v0.23's false passed-count claim. POPULATION-EXPLICIT emits one stable JSON record from the unchanged local and hosted full-suite command shape, and `tools/test_population.py` derives equivalence rather than trusting transcribed integers. Its v0.23 replay derives collected **275**, local passed **275**, hosted passed **274**, and hosted named `on_site` skips **1**; it rejects the false hosted claim of passed **275** / skipped **0** and accepts the measured claim. HISTORY-BOUND measures this as one isolated false-measurement record, with the same claim copied into the closed execution record. On 2026-07-30 the operator approved the established dated-supersession instrument, so checklist retractions remain **3**. PUBLISHER-REVIEW fetched SEC's **2,622-byte** policy through the shipped matcher; SHA-256 `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`, wildcard-group verdict **allow** for `/Archives/edgar/usgaap.rss.xml`, no matching rule or `Crawl-delay`, and a contact-bearing `intel-platform/0.15.7` identity. The separate latest-filings Atom path was denied by `Disallow: /cgi-bin`. RE-MEASURE candidate `a73c042068a367aea22e63e28dfd2f754b65ef9c` passed hosted run **`30472740314`** on neutral branch `codex/v0.24-evidence-a73c042`; both hosted shell lanes collected **283**, passed **282**, and skipped the one named `on_site` test, while local Python 3.11.4 and 3.12.13 each collected **283**, passed **283**, and skipped **0**. The comparator derived equivalent populations in both lanes. The exact candidate's full `./run ci-local` passed all **20** jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, the then-current **236** protected pins, protected databases **2**, and embedded golden **11 checks**. The authenticated seven-receipt/seven-bundle set and release audit are now **251** protected pins; all are exact. Rust, clippy, fmt, and ShellCheck gates are clean. The Node-runtime trigger remains discharged. The protected corpus is unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.24 POPULATION-EXPLICIT names and reports the environment-conditional
 test population (measured 2026-07-29).**
@@ -181,6 +181,59 @@ behaviour nor the **live RSS wire path**. Because it fetched no feed, it proves
 nothing about live RSS fetching, feed parsing, or cursor durability against a
 real server. No production source, tool, workflow, schema, protected artifact,
 public surface, protected corpus, or golden-corpus fact changed.
+
+**v0.24 RE-MEASURE admits authenticated release-posture evidence without
+publishing (measured 2026-07-30).**
+
+Exact candidate `a73c042068a367aea22e63e28dfd2f754b65ef9c` was pushed only
+to neutral branch `codex/v0.24-evidence-a73c042`. Before dispatch, the remote
+and local `.github/workflows/ci.yml` both resolved to Git blob
+`48ea726b798f1049e0b29cce1f0c64588861c2dd`. Workflow-dispatch run
+**`30472740314`**, attempt **1**, used the candidate as `audit_sha` with
+`publish_evidence: true`. All seven executable jobs passed; report-only
+dependency drift was skipped.
+
+Both fresh local Python summaries reported collected **283**, passed **283**,
+failed **0**, and skipped **0**. Both hosted summaries reported collected
+**283**, passed **282**, failed **0**, and skipped **1**. The sole skip was
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+marked `on_site` and `skipif`, for
+`on-site production audit requires protected corpora and built cored`.
+`tools/test_population.py` produced this same result for Python 3.11 and 3.12:
+
+`test-population-compare: {"collected":283,"equivalent":true,"equivalent_passed":283,"hosted":{"on_site_skipped":1,"passed":282,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":283,"skipped":0},"schema_version":1}`
+
+The operator's hosted-zero-skip stop condition therefore did not fire. Counts
+read directly from the same hosted logs were workspace **133**, net **55**
+(**29 + 26**), lifecycle **189 checked / 3 retracted / 189 matched / 0
+exemptions**, `invariant-scan` **12/12 rules / 39 controls** with R12 control
+**16** and R10 **45** exemptions, and golden **11/11**. Fresh local
+`./run ci-local` passed all **20** jobs with the same non-shell and invariant
+counts, warning-denied current and Rust 1.78 lanes, and clean
+clippy/fmt/ShellCheck.
+
+The hosted run produced seven receipt artifacts containing **7 receipts / 7
+Sigstore bundles**. Release-posture verification required attestations and
+accepted **7 / rejected 0**, with the complete job/matrix set and exact
+bindings to repository `jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, candidate digest,
+neutral source ref, and GitHub-hosted runner identity. The clean disposable
+audit subject was the exact candidate with an empty worktree. Its deferred
+result was **5 deferred / 2 promoted / 0 implemented**; exact cosine at the
+largest protected corpus of **2,600** documents measured p95 **8.955917 ms**,
+below the A3 **16.264 ms** request anchor.
+
+The fourteen signed files under `evidence/ci-runs/30472740314-1/` and
+release report `evidence/v0.24/deferred-audit/report.json` increase the
+protected manifest from **236** to **251** pins. The report is **34,899
+bytes**, SHA-256
+`8bcd4136c15619b554f2eae292d1de81c694d38b10bf48be382194173ebce0e7`.
+Manifest validation, `verify-artifacts`, `evidence-report`, and report
+re-derivation pass with all new and prior bytes exact. Remote `main` remains
+`e7715fb97b86b91a2a58bc7b73bf99308c2aae9b`; no release tag or publication
+ref was created. No source, public surface, dependency, lockfile, schema,
+protected database, or golden-corpus fact changed. Mandatory standalone golden
+remains **11/11**, delta **0**.
 
 **v0.15.7 post-push confirmation and v0.23 exact-count correction (measured
 2026-07-29).**
