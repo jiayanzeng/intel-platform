@@ -1,6 +1,66 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; v0.20 RE-MEASURE is complete with authenticated release-grade evidence for exact candidate `8230d4f24f565afcde92931c987adff4339036af` on `candidate/v0.15.4`. Step 7 remains unchecked and requires a separate operator authorization.** Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact published release commit `dbff27d559193847dd2028c435c686ba656dac85`. Candidate CI passed locally **20/20** and hosted run `30423736121` attempt **1** authenticated all **7/7** derived identities across **6** blocking jobs: **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell inventory **255** on Python 3.11 and 3.12, `invariant-scan` **11/11 rules / 23 controls**, R10 **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The corrected `cycle-check` passed in hosted `shell (Python 3.11)` with `fetch-depth: 0`. Remote main remains unchanged at the dated measurement recorded below, and no `v0.15.4` tag exists. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.4 (core-shell) · **Status:** **v0.20 R-CLOSE publication is authorized and release reconciliation is in progress; the exact release commit still requires its clean definition-of-done measurement and published-head hosted result.** Remote annotated `v0.15.3` tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to published release commit `dbff27d559193847dd2028c435c686ba656dac85`; exact v0.15.4 evidence candidate `8230d4f24f565afcde92931c987adff4339036af` remains separate on `candidate/v0.15.4`. Candidate CI passed locally **20/20** and hosted run `30423736121` attempt **1** authenticated all **7/7** derived identities across **6** blocking jobs: **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell inventory **255** on Python 3.11 and 3.12, `invariant-scan` **11/11 rules / 23 controls**, R10 **45** exemptions, all **191/191** pins (**189/189** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. The corrected `cycle-check` passed in hosted `shell (Python 3.11)` with `fetch-depth: 0`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.20 R-CLOSE publication is authorized and release reconciliation is
+prepared (measured 2026-07-29).** Release disposition: release (as of
+2026-07-29). The release version is v0.15.4. The mechanical patch default
+classifies the identity because no `/v1/*` route or response body, schema,
+dependency, crate source, or runtime behavior changed.
+
+The publication trigger is separate and explicit: published `main` is failing
+CI on the status control this cycle corrects. A tooling-only cycle would
+otherwise be eligible for a no-release disposition, as v0.14 was; this cycle is
+not, because publishing the correction is what turns the public repository's
+required CI green.
+
+G1 was a specification defect in the v0.19 runbook, not an implementation
+defect in `tools/cycle_check.py`. The runbook required a header freshness rule
+for a mutable ref whose value the act of recording changes, and the tool
+implemented that requirement faithfully. Adding the control was still correct:
+it first caught the repository's real false remote-main/tag status before its
+own fixed point appeared. The repaired control removes the impossible literal
+from the live header, retains immutable tag-object and peeled-target freshness,
+and fails closed for missing refs or unavailable ancestry. Retractions remain
+three.
+
+Forward publication audit `72b6f425114e06b1e148e0aa360e280a690e4f0c`
+was intentionally held unpushed after v0.15.3. It is present in this release's
+history and will land in this cycle's authorized publication rather than as an
+out-of-band push.
+
+The intended release diff from annotated v0.15.3 contains exactly **35 paths**,
+classified once each:
+
+- **Publication-status control (2):** `tools/cycle_check.py` and
+  `shell/tests/test_cycle_check.py`.
+- **Review-export control (4):** `repomix.config.json`, `run`,
+  `tools/export_check.py`, and `shell/tests/test_export_check.py`.
+- **Operating and architecture contract (2):** `AGENTS.md` and
+  `ARCHITECTURE.md`.
+- **Version authorities (4):** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Release documentation and status (3):** `README.md`, `CHANGELOG.md`, and
+  `STATE.md`.
+- **Cycle records (4):** `docs/cycles/PROGRESS-v0.19.md`,
+  `docs/cycles/PROGRESS-v0.20.md`,
+  `docs/cycles/TASKS-v0.19-EXECUTION.md`, and
+  `docs/cycles/TASKS-v0.20-EXECUTION.md`.
+- **Protected admission manifest (1):**
+  `config/protected-artifacts.json`.
+- **Authenticated evidence (15):** the seven JSON receipts and seven
+  `.sigstore` bundles under `evidence/ci-runs/30423736121-1/`, plus
+  `evidence/v0.15.4/deferred-audit/report.json`.
+
+Evidence candidate `8230d4f24f565afcde92931c987adff4339036af`
+on `candidate/v0.15.4` and the release commit are separate named subjects. The
+release commit remains to be created and measured. A4, the editable-L1
+controller residual, R3/R4's bounded open-bottom limits, the active-runbook
+measured-value heuristic, T7 robots single-flight, Decision B's
+last-known-good fallback, and the one-real-publisher limitation remain open;
+L2 remains scheduled. `arxiv-cs` is still the sole real publisher, the other
+three configured sources remain `example.org` fixtures, and adding a second
+publisher remains a separate compliance decision.
 
 **v0.20 RE-MEASURE admits authenticated release-grade candidate evidence
 (measured 2026-07-29).** The operator authorized exactly the Step 6 Gate:

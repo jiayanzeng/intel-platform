@@ -4,6 +4,69 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.15.4 — 2026-07-29
+
+### Fixed
+
+- Publication status no longer requires a commit to predict the mutable
+  `origin/main` value that publishing that same commit creates. The live
+  status header carries only immutable annotated-tag object and peeled-target
+  facts; dated body records retain exact mutable-ref measurements.
+- The correction fails closed when its inputs are unavailable. Missing tag
+  refs, missing peeled targets, and unavailable ancestry each produce a named
+  `cycle-check` defect. The existing rule that rejects a reachable release
+  while the live header calls publication pending is unchanged.
+- This was a specification defect in the v0.19 runbook, not an implementation
+  defect in `tools/cycle_check.py`: the tool faithfully implemented the
+  requested self-referential rule. Adding the v0.19 control was still correct;
+  it first caught the repository's real false publication status before its
+  own fixed point appeared.
+
+### Documentation and controls
+
+- The closed-cycle Repomix exclusion now covers v0.6 through v0.11. The
+  measured inclusion diff removed only `TASKS-v0.6.md` and
+  `TASKS-v0.7.md`; no repository source file was deleted.
+- `./run export-check` generates from the project root, derives the tracked
+  source set from `git ls-files`, and requires the release-control roots
+  without pinning a count. Failure-capable controls prove that a non-root run
+  loses `Cargo.lock` and that enabling Repomix's security pass silently omits
+  `crates/ingest/src/lib.rs`.
+- `AGENTS.md` now preserves both measured operating rules: review exports run
+  from the project root and `enableSecurityCheck` remains `false`. Registered,
+  self-testing invariant R4 remains the credential control.
+- Forward publication audit `72b6f42` was intentionally held after v0.15.3
+  and is included in this cycle's publication history rather than pushed out
+  of band.
+
+### Evidence and disposition
+
+- Authenticated run 30423736121 attempt 1 against evidence candidate
+  `8230d4f24f565afcde92931c987adff4339036af` passed all seven derived
+  identities with zero rejected receipts: workspace **133**, net **55**
+  (**29** `intel-ingest` + **26** `cored`), invariant-scan **11/11 rules /
+  23 controls**, R10 **45** exemptions, and golden **11/11**. Both hosted
+  shell lanes collected **255** as **254 passed / 1 declared on-site-only
+  skip**, matching the local **255-test** inventory at the same commit.
+- The authenticated release-posture audit measured **5 deferred / 2 promoted /
+  0 deferred subsystems implemented**. Its report is SHA-256
+  `b90b2f00d8129f17c09e48e2bdefb2d48d97f5d502e2723b8a5e2d0a5d25d00e`
+  at **34,608** bytes. All **191** pins remain exact: **189** evidence plus
+  **2** authorization surfaces.
+- Publication was explicitly selected as **release as of 2026-07-29** because
+  published `main` was failing CI on the status control this release corrects.
+  A tooling-only cycle would otherwise have been eligible for no release; the
+  red published head is the release trigger. No `/v1/*` route or body, schema,
+  dependency, crate source, or runtime behavior changed, so v0.15.4 is
+  patch-compatible.
+- Retractions remain three. A4, the editable-L1 controller residual, the R3/R4
+  bounded open-bottom scanners, the active-runbook measured-value heuristic,
+  T7 robots single-flight, and the last-known-good fallback remain open; L2
+  remains scheduled.
+- This platform still aggregates one publisher: `arxiv-cs` is real and three
+  of four configured sources are `example.org` fixture placeholders. Adding a
+  second publisher remains a separate product and compliance decision.
+
 ## v0.15.3 — 2026-07-29
 
 ### Fixed

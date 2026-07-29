@@ -746,8 +746,22 @@ database moved.
 
 - **Candidate recorded:** 2026-07-29.
 - **Version identity:** v0.15.4. The mechanical patch default applies because
-  no `/v1/*` route or body and no crate changed. The separate Step 7 release
-  decision has not been authorized.
+  no `/v1/*` route or body, schema, dependency, crate source, or runtime
+  behavior changed.
+- **Release disposition:** release (as of 2026-07-29). The operator separately
+  authorized Step 7 publication.
+- **Publication trigger:** published `main` is failing CI on the status control
+  this cycle corrects. A tooling-only cycle would otherwise be eligible for
+  no release; the red published head is the trigger, while the patch default
+  only classifies the compatible identity.
+- **G1 disposition:** the v0.19 runbook specified a freshness rule for a
+  mutable ref whose value the act of recording changes.
+  `tools/cycle_check.py` implemented that specification faithfully. Adding the
+  control was still correct because it first caught a real false publication
+  status; retractions remain three.
+- **Forward audit:** `72b6f42` was intentionally held unpushed after v0.15.3
+  and is included in this cycle's publication history rather than pushed out
+  of band.
 - **Evidence candidate:** `8230d4f24f565afcde92931c987adff4339036af`
   on `candidate/v0.15.4`.
 - **Hosted evidence:** workflow-dispatch run `30423736121` attempt 1; all
@@ -766,8 +780,8 @@ database moved.
   **34,608** bytes at `evidence/v0.15.4/deferred-audit/report.json`.
 - **Evidence pins:** **191/191** total — **189/189** evidence plus **2/2**
   authorization surfaces; protected databases exact **2/2**.
-- **Release commit:** requires Step 7's final R-CLOSE measurement and separate
-  operator publication decision.
+- **Release commit:** requires Step 7's final R-CLOSE implementation commit and
+  clean definition-of-done measurement.
 - **Remote disposition:** `origin/main` remains
   `692069ead0b8823d6874d8f2fc0a593d9f26704f`; candidate branch
   `candidate/v0.15.4` is exact at the evidence candidate; no `v0.15.4` tag

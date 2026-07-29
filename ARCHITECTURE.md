@@ -291,10 +291,23 @@ credential control. The check is intentionally absent from local/hosted CI
 because it writes a multi-megabyte export and `npx` may fetch its pinned
 toolchain. This does not add or renumber an HC invariant.
 
+Publication reconciliation is likewise a lifecycle control, not a new HC
+invariant. A live status header can carry immutable annotated-tag object and
+peeled-target facts, but it cannot truthfully predict a mutable branch ref whose
+value publishing that same commit creates. Exact branch measurements therefore
+live in dated body records. `cycle-check` still requires the immutable tag facts
+to agree with the newest closed release record and to be reachable from `HEAD`;
+missing tag, target, or ancestry inputs fail closed. The older rule that rejects
+a reachable release while the live header calls publication pending is
+unchanged.
+
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;
 an edited controller can still rewrite the L1 command construction, so the
-server-enforced L2 forced-command wrapper remains open and scheduled.
+server-enforced L2 forced-command wrapper remains open and scheduled. The R3/R4
+open-bottom limits, active-runbook measured-value heuristic, T7 robots
+single-flight, and robots negative-cache Decision B also remain open. The
+single real-publisher boundary remains unchanged.
 
 ## 7. The decision-log discipline
 
