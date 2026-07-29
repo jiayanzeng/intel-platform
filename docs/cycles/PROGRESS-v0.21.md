@@ -89,3 +89,41 @@ Entries are append-only; corrections are new dated entries.
   expected pre-audit `checklist-audit` failure named only E0's not-yet-appended
   progress entry.
 - golden-E2E delta: **0**. The post-status standalone run passed **11/11**.
+
+### 2026-07-29 · MATCH-PROOF — publication rules made failure-capable
+
+- owner: Codex
+- commit: e260169
+- result: PASS. E0 confirmed G1 and G2, and the implementation stayed within
+  the declared Gate: publication checkers, their focused tests and executable
+  control registry, and status records only.
+- total-assertion acceptance: PASS. Both annotated-tag object and peeled-target
+  assertions are required; a zero-match header is an error, and every found
+  assertion must equal the measured ref. Before the header edit, the corrected
+  command exited **1** with exactly `STATE.md: publication assertion required:
+  status header must assert the annotated tag object in the required
+  unambiguous phrasing`.
+- narrow-pattern acceptance: PASS. `[^`\n]` remains unchanged. The rejected
+  alternative of admitting intervening backticks would allow an unrelated hash
+  to satisfy the assertion and reproduce the silent class after rephrasing.
+- planted-failure acceptance: PASS. New R12 invokes the actual
+  `check_publication_status` entry point over nine planted cases. Seven
+  independent registry mutations disable the mutable-ref prohibition, each
+  required/fresh immutable-ref family, pending-publication, missing tag ref,
+  missing peeled target, and unavailable ancestry. All seven exact findings
+  fired; the full command passed **12/12 registered rules / 30 controls**.
+- existing-rule acceptance: PASS. The `origin/main` prohibition and pending
+  rule 1 retain their conditions and error behavior. Their focused examples
+  pass, and R12 detects a mutation that disables each.
+- interpreter acceptance: PASS. Focused `cycle_check` plus `invariant_scan`
+  tests passed **47/47** under Python 3.11.4 and independently **47/47** under
+  Python 3.12.13.
+- lifecycle acceptance: PASS. `cycle-check` passed after the header and status
+  updates. The expected pre-audit `checklist-audit` failure named only this
+  checked task's not-yet-appended progress entry. `git diff --check` passed.
+- golden-E2E delta: **0**. The restricted attempt was a loopback-bind permission
+  non-result; the identical permitted run passed **11/11**, and the final
+  post-status invocation again passed **11/11**.
+- protected artifact delta: **0**. No pin, protected database, crate, app,
+  dependency, schema, robots surface, configured source, or public response
+  changed.
