@@ -305,16 +305,15 @@ publication-status entry point over planted cases and independently disables
 each current rule family, so a rule that examines nothing cannot report a clean
 result merely because its pattern found nothing.
 
-The current publication/closing rhythm remains explicitly two-phase evidence,
-not a self-contained release commit. A release commit can be locally complete
-and can carry already-existing candidate hosted evidence; the push-triggered
-hosted result does not exist until after that commit is published, so the dated
-cycle-closing audit that records it is a later append-only commit. This is the
-accepted G4 rhythm for v0.21, but it reproduces G3: a tag cannot contain its own
-later closing record. The v0.22 design subject is a real two-phase close that
-closes on the candidate's already-authenticated hosted evidence and appends
-post-push confirmation as a forward record, rather than making the closing
-claim depend on evidence that cannot yet exist.
+The publication/closing rhythm selected in v0.22 is a two-commit tagged close,
+not a self-contained release commit. Release commit `R` carries the release
+edits and already-existing authenticated candidate evidence. Its immediate
+child `C` closes the cycle, records `R`, and contains no prediction of its own
+hash or the later annotated-tag object. The annotated release tag targets `C`.
+The post-push hosted result, tag object, and closing-commit identity are
+recorded in a dated forward append because none exists when `C` is written.
+Historical releases through v0.15.5 retain their prior record shape and
+validation semantics.
 
 Hosted lifecycle checks deliberately use `--skip-local-tag-verification`; they
 can validate cycle structure without possessing every historical tag, but they
@@ -323,6 +322,15 @@ cannot prove remote historical release identity. Missing remote `v0.8.0` and
 changing either old records or remote refs, that investigation must establish
 whether the named annotated tags exist in another local repository, were
 deleted, or were never created.
+
+### Dated operational-residual dispositions
+
+| subject | disposition | measurement, reason, and trigger |
+|---|---|---|
+| review-export operator-local status (v0.22 G3) | **REFUTED as a missing-contract claim — 2026-07-29** | The contributor-facing paragraph above and `AGENTS.md` already state that `./run export-check` is operator-local, why it is absent from local/hosted CI, and what it verifies. No duplicate rule or hosted workaround is added. |
+| protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-29** | Total pins measured **161 → 176 → 191 → 206**, exactly **+15 per cycle**; the current manifest is **119,353 bytes**, and full verification costs **0.10 s real / 0.05 s user / 0.04 s sys** on the operator Mac. Immutable append-only provenance is worth that currently negligible full re-hash. Revisit retention/indexing when the manifest first reaches **1 MiB** or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real**, whichever happens first. |
+| shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-29** | Both constrained Python lanes pass **266/266** and emit the same one third-party warning from FastAPI's `TestClient`. It becomes work if it becomes an error/failure, or at the next authorized constraints refresh that changes FastAPI, Starlette, `httpx`, or `httpx2`; that refresh must re-measure both lanes and either remove the warning or record why compatibility still requires it. |
+| hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Accepted until trigger — 2026-07-29** | All seven executable hosted jobs remain green. It becomes work when GitHub names an enforcement date, a blocking job warns as an error or fails for that runtime, or any affected `actions/*` pin is otherwise changed; that work must upgrade or replace the affected action and re-measure the hosted matrix. |
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;

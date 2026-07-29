@@ -627,6 +627,41 @@ the remote is incomplete for both `v0.8.0` and `v0.10.2`; hosted
   database, or public surface changed.
 - **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
 
+### 2026-07-29 · RESIDUALS — G3, G4, G5 dispositions
+
+PASS. Each confirmed residual now has one dated disposition in
+`ARCHITECTURE.md`'s operational-residual table; refuted G3 received no
+workaround.
+
+- **G3:** **REFUTED.** The supposed missing operator-local contract already
+  exists in contributor-facing `ARCHITECTURE.md` and `AGENTS.md`, including
+  what `./run export-check` verifies and why local/hosted CI omit it. The
+  implementation half is deleted: no duplicate rule, CI job, or hosted trigger
+  is added.
+- **G4:** **accepted with bounds.** The manifest measures **119,353 bytes** at
+  **206** pins; release totals are **161 → 176 → 191 → 206**, exactly **+15 per
+  cycle**, and E0 measured full verification at **0.10 s real / 0.05 s user /
+  0.04 s sys**. Immutable append-only provenance justifies the current cost.
+  Retention/indexing becomes work at **1 MiB** or after two consecutive clean
+  `./run verify-artifacts` runs each take **≥1.00 s real**, whichever comes
+  first.
+- **G5 — shell warning:** **accepted until trigger.** The one
+  `StarletteDeprecationWarning` becomes work if it becomes an error/failure or
+  at the next authorized constraints refresh touching FastAPI, Starlette,
+  `httpx`, or `httpx2`; both constrained Python lanes must then be re-measured.
+- **G5 — hosted warning:** **accepted until trigger.** The GitHub Actions
+  Node-runtime annotation becomes work when GitHub names an enforcement date,
+  a blocking job warns as an error or fails for that runtime, or an affected
+  `actions/*` pin changes; the affected action must then be upgraded or
+  replaced and hosted CI re-measured.
+- **Architecture and scope:** Option C's selected two-commit close replaces the
+  prior v0.22 design-subject wording. No tool logic, crate, dependency, schema,
+  protected artifact, database, or public surface changed. Manifest validation
+  still passes **206/206** pins.
+- **Lifecycle checks:** `cycle-check`, `checklist-audit`, and `progress-check`
+  pass.
+- **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
+
 ---
 
 ## Cycle checklist
@@ -643,7 +678,7 @@ the remote is incomplete for both `v0.8.0` and `v0.10.2`; hosted
 - [x] **TAG-IDENTITY** — per-tag decision with its claim stated; retraction count
   addressed; `--skip-local-tag-verification` recorded or given a trigger and not
   removed; no ref touched by 🤖
-- [ ] **RESIDUALS** — G3, G4, G5 each carry one dated disposition or are deleted
+- [x] **RESIDUALS** — G3, G4, G5 each carry one dated disposition or are deleted
   as refuted; G4's acceptance states growth rate and verify cost; all appear in
   the residual table
 - [ ] **RE-MEASURE** — hosted run pinned on a neutral branch; counts equal local

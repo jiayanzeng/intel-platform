@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; CLOSE-FIELDS and TAG-IDENTITY are complete, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact v0.15.5 release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. G3 remains open: v0.20 is corrected in the published tree, while v0.21 reproduces the same close-record fixed point. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; CLOSE-FIELDS, TAG-IDENTITY, and RESIDUALS are complete, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact v0.15.5 release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
 **v0.22 CLOSE-FIELDS adopts tagged-closing Option C (operator decision and
 measurement 2026-07-29).** The operator answered `C`, accepting its stated
@@ -71,9 +71,39 @@ remove the flag only after either the exact existing annotated objects are
 published under both recorded tag names and a hosted full-history checkout
 passes `cycle-check` without the flag, or contrary evidence causes both
 tag identities and all affected release claims to be forward-corrected through
-the existing closed-cycle correction mechanism. No tag, remote ref, closed runbook,
-published tree, crate, dependency, schema, protected artifact, database, or
-public surface changed. Golden remains **11/11**, delta **0**.
+the existing closed-cycle correction mechanism. No tag, remote ref, closed
+runbook, published tree, crate, dependency, schema, protected artifact,
+database, or public surface changed. Golden remains **11/11**, delta **0**.
+
+**v0.22 RESIDUALS gives G3, G4, and both G5 warnings one dated disposition
+(decided and measured 2026-07-29).** G3 is **REFUTED** and its implementation
+half is deleted: `ARCHITECTURE.md` and `AGENTS.md` already say
+`./run export-check` is operator-local, what it checks, why local and hosted CI
+omit it, and what an operator invocation catches. No duplicate rule, CI job, or
+hosted-workaround trigger is added.
+
+G4 is **accepted with bounds**. The protected manifest is **119,353 bytes** at
+**206** pins; release totals are **161 → 176 → 191 → 206**, exactly **+15 per
+cycle**. E0 measured the complete re-hash at **0.10 s real / 0.05 s user / 0.04
+s sys**. Immutable append-only provenance is worth that currently negligible
+cost. Retention/indexing becomes work when the manifest first reaches **1 MiB**
+or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s
+real**, whichever occurs first.
+
+G5 is **accepted until named triggers**, separately per warning. The one
+third-party `StarletteDeprecationWarning` becomes work if it becomes an
+error/failure or at the next authorized constraints refresh touching FastAPI,
+Starlette, `httpx`, or `httpx2`; both constrained lanes must then be
+re-measured. The hosted GitHub Actions Node-runtime annotation becomes work
+when GitHub names an enforcement date, a blocking job warns as an error or
+fails for that runtime, or an affected `actions/*` pin changes; that work must
+upgrade or replace the action and re-measure hosted CI.
+
+All three dated outcomes are in `ARCHITECTURE.md`'s operational-residual table.
+Manifest validation still passes **206/206** pins. `cycle-check`,
+`checklist-audit`, and `progress-check` pass; golden remains **11/11**, delta
+**0**. No tool logic, crate, dependency, schema, protected artifact, database,
+or public surface changed.
 
 **v0.21 R-CLOSE publishes v0.15.5 and closes the cycle (measured
 2026-07-29).** Release disposition: release (as of 2026-07-29). The release
