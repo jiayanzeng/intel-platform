@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.19 R-CLOSE is locally complete; v0.15.3 and its closing audit are authorized for atomic publication.** `origin/main` remains `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; remote `v0.15.3` is absent. Local annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, all three v0.20 export-control omissions, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.3 (core-shell) · **Status:** **v0.15.3 is published; exact-head publication CI exposed a STATUS-TRUE self-reference defect that v0.20 must correct before another release.** `origin/main` and remote `main` are `692069ead0b8823d6874d8f2fc0a593d9f26704f`. Remote annotated tag object `2039e01475b43285ecbbf2739f788b7f855a5603` peels to exact release commit `dbff27d559193847dd2028c435c686ba656dac85`; evidence candidate `197e93effe9a6abf9c59488a9849c6dcda47646c` remains separate on `candidate/v0.15.3`. Exact-release local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on clean Python 3.11.4 and Python 3.12.13 environments, `invariant-scan` **11/11 rules / 23 controls**, all **176/176** pins (**174/174** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**. Authenticated re-derivation passes **7** rows in release posture. Publication CI run `30417274925`, attempt **1**, exact head `692069e…`, completed with conclusion **failure** only because its Python 3.11 `cycle-check` measured the just-published main while the immutable closing commit necessarily recorded the pre-publication main; six other job instances succeeded. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the three export-control omissions, the publication-freshness self-reference defect, and the one-real-publisher product limitation are the v0.20 open set; L2 remains scheduled.
+
+**v0.19 post-publication audit records a tripped status-control gate (measured
+2026-07-29).** The authorized atomic push succeeded: remote main is exact at
+closing audit `692069ead0b8823d6874d8f2fc0a593d9f26704f`; annotated
+`v0.15.3` is object `2039e01475b43285ecbbf2739f788b7f855a5603`,
+peeled to release commit `dbff27d559193847dd2028c435c686ba656dac85`.
+
+Exact-head [publication CI run 30417274925 attempt
+1](https://github.com/jiayanzeng/intel-platform/actions/runs/30417274925)
+was event `push`, created 2026-07-29T02:36:08Z, completed
+2026-07-29T02:36:58Z, and concluded **failure**. Golden, clippy/fmt, core,
+Rust 1.78 MSRV, net, and Python 3.12 job instances all succeeded. Python 3.11
+passed version consistency, then stopped at the active-cycle step with the
+exact executable finding:
+
+> `STATE.md: publication assertion freshness: origin/main asserts 344124819cb3c554f851d0cac3f0f1ed08d1aa10, but the measured ref is 692069ead0b8823d6874d8f2fc0a593d9f26704f`
+
+The cause is the new STATUS-TRUE control's same-commit self-reference. The
+closing audit can truthfully record only the remote main measured before its
+atomic push; once that immutable commit becomes remote main, the hosted
+checker compares it with the newly advanced ref. Re-running the same commit
+cannot change either operand, and pushing a forward status commit would move
+remote main again. Therefore the gate is not silenced or retried. v0.20 must
+make publication freshness executable across the pre-publication and
+post-publication states, with a failure-capable control for both, before
+another release.
+
+The published artifact's exact local matrix and candidate-hosted release
+evidence remain valid measurements, but they are not relabeled as a passing
+publication run. Python 3.11 steps after `cycle-check` were skipped in that
+run. No release object was rolled back, no closed runbook or closing record
+was edited, and the three operator-identified export omissions remain open
+alongside this newly observed fourth v0.20 finding.
 
 **v0.19 R-CLOSE is locally complete (measured 2026-07-29).** Release
 disposition: release (as of

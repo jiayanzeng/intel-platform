@@ -314,3 +314,33 @@ Entries are append-only; corrections are new dated entries.
   atomic push.
 - golden-E2E delta: **0**. The mandatory standalone release invocation passed
   **11/11**.
+
+### 2026-07-29 · POST-PUBLICATION — status self-reference gate tripped
+
+- owner: Codex
+- commit: 692069e
+- result: BLOCKED for a green publication run; publication itself succeeded.
+  The authorized atomic push advanced remote main exactly to closing audit
+  `692069ead0b8823d6874d8f2fc0a593d9f26704f` and created annotated tag object
+  `2039e01475b43285ecbbf2739f788b7f855a5603`, peeled to release commit
+  `dbff27d559193847dd2028c435c686ba656dac85`.
+- hosted acceptance: FAIL. Push run `30417274925` attempt **1**, exact head
+  `692069e…`, completed with conclusion **failure**. Golden, clippy/fmt, core,
+  Rust 1.78 MSRV, net, and Python 3.12 job instances succeeded. Python 3.11
+  passed version consistency and then `cycle-check` exited **1** because
+  `STATE.md` asserted pre-publication main `3441248…` while the hosted checkout
+  correctly measured newly published main `692069e…`; every later Python 3.11
+  step was skipped.
+- gate disposition: STOP and record. The immutable closing commit can contain
+  only the ref measured before its own atomic publication. Re-running it
+  cannot change that value, while pushing a forward correction moves main
+  again. The checker is not weakened and the failed run is not called a pass.
+  v0.20 must add a failure-capable design that makes publication freshness
+  satisfiable across both pre- and post-publication states.
+- scope acceptance: PASS for evidence preservation. The release tag, release
+  commit, protected artifacts, admitted evidence, and closing record remain
+  unchanged. `STATE.md` receives a forward publication audit; no historical
+  append is rewritten. The three export-control omissions remain open and the
+  newly exposed status self-reference is a fourth v0.20 finding.
+- golden-E2E delta: **0**. The publication run's golden job succeeded, and the
+  exact release commit's mandatory standalone golden was already **11/11**.
