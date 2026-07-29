@@ -315,6 +315,148 @@ changed in the working repository · published objects and 221 pins re-verified 
 
 ---
 
+## Execution records
+
+### 2026-07-29 · E0
+
+- **Entering matrix — PASS.** Python was rebuilt from empty repository-local
+  environments, not inherited: Python **3.11.4** and **3.12.13** each resolved
+  the exact **21** constrained packages and passed shell **266/266**, with the
+  same one third-party `StarletteDeprecationWarning`. The first sandboxed
+  `./run ci-local` was a loopback-bind permission non-result (**28/29** in the
+  affected net lane); the identical permitted invocation passed **20/20**:
+  **133** workspace tests, **55** net tests (**29 + 26**), warning-denied
+  current and locked Rust 1.78 lanes, clean clippy/fmt/ShellCheck,
+  `invariant-scan` **12/12 rules / 36 controls** with all **13** R12 mutations,
+  protected pins **221/221**, databases **2/2**, and embedded golden **11/11**.
+  Standalone `./run golden` passed **11/11**. Standalone `cycle-check`,
+  `checklist-audit` (**177/177**, three retractions), `progress-check`,
+  `version-check`, and `invariant-scan` passed. Project-root `export-check`
+  passed with **90** derived sources, **7** required paths, and **153** exported
+  paths; its first sandboxed `npx` DNS failure was a network non-result.
+- **G1 — CONFIRMED at P2 by measurement, not argument.** A disposable clone of
+  the **local repository** was made with its local tag namespace, then
+  `v0.15.6` was forcibly retagged over recorded release parent
+  `a83db73aac3d5ef1e9a427662340eb1eb8a49df1`. The constructed annotated object
+  was `52b6e4c373a70e0a28338be083198197ba128a06`; the tag peeled to the forced
+  parent, proving that the checker read the constructed recorded identity.
+  `./run cycle-check` exited **1** and emitted every following defect:
+
+  ```text
+  docs/cycles/TASKS-v0.22-EXECUTION.md: tagged-closing parent agreement: 'v0.15.6' peels to a83db73aac3d5ef1e9a427662340eb1eb8a49df1, whose first parent is 'b7f1a5e0a92228fd0338645be9c2ab83d90958d7', not recorded release commit a83db73aac3d5ef1e9a427662340eb1eb8a49df1
+  docs/cycles/TASKS-v0.22-EXECUTION.md: tagged-closing tree agreement: 'v0.15.6' target a83db73aac3d5ef1e9a427662340eb1eb8a49df1 does not contain the closed runbook with its recorded release commit and no tag-object field
+  STATE.md: tagged-closing parent agreement: 'v0.15.6' peels to a83db73aac3d5ef1e9a427662340eb1eb8a49df1, whose first parent is 'b7f1a5e0a92228fd0338645be9c2ab83d90958d7', not recorded release commit a83db73aac3d5ef1e9a427662340eb1eb8a49df1
+  STATE.md: tagged-closing tree agreement: 'v0.15.6' target a83db73aac3d5ef1e9a427662340eb1eb8a49df1 does not contain the closed runbook with its recorded release commit and no tag-object field
+  cycle-check: FAIL (4 defect(s))
+  ```
+
+  The stale prose directs a releaser to create a recorded wrong identity, and
+  the checker rejects exactly that state on parent and tagged-tree agreement.
+  The defect is therefore bounded to misleading duplicate prose rather than an
+  unenforced identity rule. The clone was deleted; a before/after comparison of
+  the working repository's complete `show-ref` output was byte-identical.
+- **G2 — CONFIRMED, primary sources read 2026-07-29.** GitHub's
+  [Node 20 deprecation announcement](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/)
+  was published 2025-09-19 and its 2026-05-19 update set the Node 24 default
+  migration at 2026-06-16. The six workflow action families measured as:
+
+  | workflow pin | current declaration | lowest Node 24 major | primary evidence |
+  |---|---|---|---|
+  | `actions/checkout@v4` | `node20` | `v5` | [`v4/action.yml`](https://raw.githubusercontent.com/actions/checkout/v4/action.yml), [`v5/action.yml`](https://raw.githubusercontent.com/actions/checkout/v5/action.yml) |
+  | `actions/upload-artifact@v4` | `node20` | `v6` (`v5` retained a Node 20 default) | [`v4/action.yml`](https://raw.githubusercontent.com/actions/upload-artifact/v4/action.yml), [`v6/action.yml`](https://raw.githubusercontent.com/actions/upload-artifact/v6/action.yml), [releases](https://github.com/actions/upload-artifact/releases) |
+  | `actions/setup-python@v5` | `node20` | `v6` | [`v5/action.yml`](https://raw.githubusercontent.com/actions/setup-python/v5/action.yml), [`v6/action.yml`](https://raw.githubusercontent.com/actions/setup-python/v6/action.yml) |
+  | `Swatinem/rust-cache@v2` | the moving `v2` tag now declares `node24`; `v2.8.2` declared `node20` and `v2.9.0` changed it | `v2` | [`v2/action.yml`](https://raw.githubusercontent.com/Swatinem/rust-cache/v2/action.yml), [`v2.8.2/action.yml`](https://raw.githubusercontent.com/Swatinem/rust-cache/v2.8.2/action.yml), [`v2.9.0/action.yml`](https://raw.githubusercontent.com/Swatinem/rust-cache/v2.9.0/action.yml) |
+  | `actions/attest-build-provenance@v4` | composite; its pinned `actions/attest@v4.1.1` child declares `node24` | `v3` is the first provenance major delegating to a Node 24 `actions/attest` major | [`v4/action.yml`](https://raw.githubusercontent.com/actions/attest-build-provenance/v4/action.yml), [`v3/action.yml`](https://raw.githubusercontent.com/actions/attest-build-provenance/v3/action.yml), [`actions/attest@v4/action.yml`](https://raw.githubusercontent.com/actions/attest/v4/action.yml), [`v3.0.0` release](https://github.com/actions/attest-build-provenance/releases/tag/v3.0.0) |
+  | `dtolnay/rust-toolchain@master` | composite shell action; no JavaScript `runs.using` runtime | not applicable | [`master/action.yml`](https://raw.githubusercontent.com/dtolnay/rust-toolchain/master/action.yml) |
+
+  The required migration is therefore checkout **v4 → v5**, upload-artifact
+  **v4 → v6**, and setup-python **v5 → v6**. `rust-cache@v2` and
+  `attest-build-provenance@v4` already resolve to Node 24 implementations;
+  the composite Rust toolchain action has no Node runtime.
+- **G3 — CONFIRMED.** A primary `git ls-remote` read resolved
+  `dtolnay/rust-toolchain@master` to
+  `2c7215f132e9ebf062739d9130488b56d53c060c`. A disposable shallow clone
+  measured author and committer date **2026-07-16T09:35:07-07:00** and subject
+  `Add 1.97.1 patch release`; the clone was deleted. The
+  [exact commit](https://github.com/dtolnay/rust-toolchain/commit/2c7215f132e9ebf062739d9130488b56d53c060c)
+  is the immutable replacement. All **6/6** workflow usages occur before
+  `actions/attest-build-provenance` in their jobs.
+- **G4 — CONFIRMED.** `grep -i scope tools/cycle_check.py` returned exit **1**
+  with **zero lines**. The exact release-authority set is **17 paths**:
+  `CHANGELOG.md`, `Cargo.lock`, root `Cargo.toml`, `README.md`,
+  `apps/cored/Cargo.toml`, the ten `Cargo.toml` files under
+  `crates/{analyze,compliance,core,enrich,extract,ingest,registry,retrieve,store,view}`,
+  and `shell/intel_shell/{__init__.py,app.py}`. No undefined function or
+  entry-point count is asserted. The v0.22 prohibition says
+  `Do not modify any crate under crates/ or apps/`; release commit
+  `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` changed
+  `apps/cored/Cargo.toml`, reproducing the literal contradiction.
+  `Cargo.lock` also changed as the version-authority rewrite required, although
+  that path is not itself covered by the quoted `crates/`/`apps/` prohibition.
+- **G5 — CONFIRMED with fresh values.** All six dated-disposition rows were
+  reviewed. Three carry event triggers:
+  - evidence-manifest retention: **127,982 bytes** versus **1 MiB**; two clean
+    full verifications took **0.10 s** and **0.09 s** real versus **1.00 s**.
+    Neither bound fired;
+  - shell warning: both freshly rebuilt lanes passed **266/266** with one
+    warning, and no FastAPI/Starlette/`httpx`/`httpx2` constraint changed since
+    `v0.15.6`. Neither error/failure nor refresh trigger fired;
+  - hosted Node runtime: the dated migration condition remains **fired** and the
+    primary action measurements above identify the three stale majors.
+
+  The REFUTED review-export row has no trigger and is out of trigger scope.
+  The action-immutability and trigger-freshness rows are promoted obligations,
+  not event predicates: the former persists at the measured floating SHA and
+  the latter is being discharged by these dated fresh measurements.
+- **G6 — CONFIRMED as two populations, each 4, overlap 2.** The checker
+  population criterion is one distinct accepted checker obligation or behavior
+  family that can emit a false result or omit a required result despite a
+  completed invocation; multiple branches implementing one obligation count as
+  one member. Its members and discovery sites are:
+  1. v0.19's mutable `origin/main` freshness obligation — a false checker
+     failure in hosted run `30417274925`, then the fixed-point construction in
+     `PROGRESS-v0.20.md` **E0**;
+  2. v0.20's unavailable-input silent-success obligation — the missing-tag and
+     unavailable-ancestry zero-error constructions in
+     `PROGRESS-v0.20.md` **E0** (the two no-op paths are one obligation);
+  3. v0.21's vacuous tag-object pattern — the zero-match and forty-zero
+     constructions in `PROGRESS-v0.21.md` **E0**;
+  4. v0.22's self-referential closing-field requirement — the field and object
+     construction in `PROGRESS-v0.22.md` **E0**.
+
+  The author-side population criterion is one distinct normative runbook
+  requirement for which no sequence or outcome can satisfy both the requirement
+  and the governed task/release action, independent of checker implementation;
+  repeated statements of one requirement count once. Its members and discovery
+  sites are:
+  1. v0.19 `STATUS-TRUE`'s authored `origin/main` freshness requirement —
+     `TASKS-v0.19-EXECUTION.md` **Step 2**, exposed by the v0.20 hosted firing
+     and E0 fixed-point construction;
+  2. v0.20 R-CLOSE's post-push-before-close ordering —
+     `TASKS-v0.20-EXECUTION.md` **Step 7**, found after publication and recorded
+     in `PROGRESS-v0.21.md` **R-CLOSE**;
+  3. v0.22's release-commit/tag-object closing field set —
+     `TASKS-v0.22-EXECUTION.md` **G1**, found by its E0 field enumeration;
+  4. v0.22's no-`crates/`/`apps/` prohibition —
+     `TASKS-v0.22-EXECUTION.md` **Standing prohibitions**, found by independent
+     v0.23 draft review and reproduced by G4's release-diff measurement.
+
+  The exact overlap is v0.19 mutable-ref freshness and v0.22's closing field
+  set. The unavailable-input and vacuous-pattern members are checker-only; the
+  R-CLOSE ordering and crate prohibition are author-only. The earlier members
+  were therefore not all “found by the checkers.”
+- **Published identity and immutability — PASS.** Local and remote annotated
+  `v0.15.6` object
+  `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peel to closing commit
+  `15b6d28973058c833a77e9600741d29eda02cdc1`, whose first parent is release
+  parent `a83db73aac3d5ef1e9a427662340eb1eb8a49df1`. All **221/221** pins and
+  protected databases **2/2** re-verified. The workflow and `STATE.md` remained
+  entering blobs `96e85af978981b7af9bdd8e9e11069f158f35e57` and
+  `e36cdc672eeac110c71632ca434f446b1c26a97c`; neither was edited.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
+
+---
+
 ## Step 2 · RELEASE-PROSE (G1) — Delete the duplicate, not just the stale copy 🤖
 
 **Objective.** Give the release protocol's mechanics exactly one prose home.
@@ -656,7 +798,7 @@ decision: publication.**
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with both interpreters; G1 settled by the
+- [x] **E0** — entering matrix with both interpreters; G1 settled by the
   forced-identity construction with clone provenance and full messages;
   interpretive rule applied to any zero exit; action runtimes from admissible
   sources with URL and date; `@master` SHA recorded; G4's zero-grep recorded with
