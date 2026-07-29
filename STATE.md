@@ -1,6 +1,48 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.21 is closed and v0.15.5 is published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Exact-release `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **258/258** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **258/258**. `invariant-scan` passes **12/12 rules / 30 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. G3 remains open: v0.20 is corrected in the published tree, while v0.21 reproduces the same close-record fixed point. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.5 (core-shell) · **Status:** **v0.22 is open; CLOSE-FIELDS is complete under Option C, and v0.15.5 remains published.** Annotated tag object `f2bfeacc1dc8207841430e3827e7babed5605b47` peels to release commit `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`; exact v0.21 evidence candidate `3f61aed183e195ccaf952cbc7f4528712bab028d` remains separate on neutral branch `candidate/v0.15.4-v0.21`. Current `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and shell **266/266** on constrained Python 3.11.4; the independently rebuilt Python 3.12.13 lane also passed **266/266**. `invariant-scan` passes **12/12 rules / 36 controls**; R10 retains **45** exemptions, all **206/206** pins (**204/204** evidence + **2/2** authorization) are exact, protected databases remain **2/2**, and golden remains **11/11**. Push run `30435272303` passed all **7** executable jobs at the exact v0.15.5 release commit; report-only dependency drift was skipped. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`, and hosted CI reported one GitHub Actions Node-runtime deprecation annotation. The protected corpus and three retractions remain unchanged. G3 remains open: v0.20 is corrected in the published tree, while v0.21 reproduces the same close-record fixed point. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.22 CLOSE-FIELDS adopts tagged-closing Option C (operator decision and
+measurement 2026-07-29).** The operator answered `C`, accepting its stated
+coverage cost: the annotated-tag object is no longer stored in the runbook, and
+the closing record cites authenticated candidate evidence rather than a
+published-head run. That cost is acceptable because the closing tree can now
+state only facts that exist when it is committed, while Git identity checks
+bind the later annotated tag to that tree and the next dated `STATE.md` append
+pins the tag object, closing commit, and post-push hosted run. Published-head CI
+is therefore forward confirmation, not the event that closes the cycle.
+
+The implemented two-commit protocol leaves release commit `R` untagged. Its
+immediate child `C` checks R-CLOSE and records `R` with no annotated-tag-object
+field; the annotated release tag targets `C`. At the tagged checkout,
+`cycle-check` requires an annotated tag, verifies `R` as `C`'s first parent,
+and reads `C`'s runbook tree to confirm the closed release record. After `HEAD`
+advances beyond `C`, the checker requires one exact dated forward record and
+reconciles its tag object and closing commit with Git. Legacy releases through
+v0.15.5 retain their prior validation semantics.
+
+The corrected checker rejects the pre-change active closing shape verbatim:
+
+```
+docs/cycles/TASKS-v0.22-EXECUTION.md: declared closed cycle must use the tagged-closing protocol and omit the Annotated tag object field; record that object in the dated post-push append
+```
+
+The old checker also rejected the selected no-tag-object shape with
+`closing record must contain exactly one annotated tag object; found 0`,
+establishing fail-before on both sides of the protocol change. R12 now has
+**13** registered fail-before mutations covering the active protocol shape,
+annotated-tag type, release parent, tagged tree, three legacy publication
+families, release-commit header assertion, pending status, unavailable tag and
+target, ancestry, and the complete dated post-push record. All are detected;
+the repository total is **12/12 rules / 36 controls**.
+
+Focused `cycle_check` tests pass **34/34** on constrained Python 3.11.4 and
+3.12.13. The complete local matrix passes **20/20** with **133** workspace
+tests, **55** net tests (**29 + 26**), shell **266/266**, warning-denied current
+and locked Rust lanes, and clean clippy/fmt/ShellCheck gates; the independent
+Python 3.12.13 shell lane also passes **266/266**. Golden passes **11/11** with
+delta **0**. No ref, closed runbook, published tree, crate, dependency, schema,
+protected artifact, database, or public surface changed.
 
 **v0.21 R-CLOSE publishes v0.15.5 and closes the cycle (measured
 2026-07-29).** Release disposition: release (as of 2026-07-29). The release

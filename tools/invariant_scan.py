@@ -1434,6 +1434,18 @@ def r11_findings(root: Path) -> list[str]:
 
 
 PUBLICATION_CONTROL_MARKERS = {
+    "tagged-closing-protocol": (
+        "Invariant R12 control site: tagged-closing protocol."
+    ),
+    "tag-type": (
+        "Invariant R12 control site: annotated closing-tag type."
+    ),
+    "tagged-closing-parent": (
+        "Invariant R12 control site: tagged-closing parent agreement."
+    ),
+    "tagged-closing-tree": (
+        "Invariant R12 control site: tagged-closing tree agreement."
+    ),
     "origin-main": "Invariant R12 control site: origin-main prohibition.",
     "tag-ref-unavailable": (
         "Invariant R12 control site: unavailable annotated-tag ref."
@@ -1452,6 +1464,12 @@ PUBLICATION_CONTROL_MARKERS = {
     ),
     "tag-target-assertion": (
         "Invariant R12 control site: required and fresh immutable assertions."
+    ),
+    "release-commit-assertion": (
+        "Invariant R12 control site: required and fresh immutable assertions."
+    ),
+    "post-push-record": (
+        "Invariant R12 control site: required and fresh post-push record."
     ),
 }
 
@@ -1475,22 +1493,24 @@ def _load_cycle_check_for_control(root: Path):
 
 
 def r12_findings(root: Path) -> list[str]:
-    """Exercise every publication-status rule against a planted failure."""
+    """Exercise every closing/publication rule against a planted failure."""
     cycle_check = _load_cycle_check_for_control(root)
     tag = "publication-control-tag"
     tag_object = "a" * 40
     tag_target = "b" * 40
     stale_object = "c" * 40
     stale_target = "d" * 40
-    valid_header = (
+    release_commit = "e" * 40
+    descendant = "f" * 40
+    valid_legacy_header = (
         "**As of:** published. Annotated tag object is "
         f"`{tag_object}`; release commit is `{tag_target}`.\n"
     )
-    scenarios = (
+    legacy_scenarios = (
         (
             "origin-main",
             "origin-main",
-            valid_header.replace(
+            valid_legacy_header.replace(
                 "**As of:** published.",
                 f"**As of:** published. origin/main is `{tag_target}`.",
             ),
@@ -1512,7 +1532,7 @@ def r12_findings(root: Path) -> list[str]:
         (
             "tag-object-freshness",
             "tag-object-assertion",
-            valid_header.replace(tag_object, stale_object),
+            valid_legacy_header.replace(tag_object, stale_object),
             tag_object,
             tag_target,
             (0, ""),
@@ -1531,7 +1551,7 @@ def r12_findings(root: Path) -> list[str]:
         (
             "tag-target-freshness",
             "tag-target-assertion",
-            valid_header.replace(tag_target, stale_target),
+            valid_legacy_header.replace(tag_target, stale_target),
             tag_object,
             tag_target,
             (0, ""),
@@ -1540,7 +1560,7 @@ def r12_findings(root: Path) -> list[str]:
         (
             "pending-publication",
             "pending-publication",
-            valid_header.replace(
+            valid_legacy_header.replace(
                 "**As of:** published.",
                 "**As of:** publication is pending.",
             ),
@@ -1552,7 +1572,7 @@ def r12_findings(root: Path) -> list[str]:
         (
             "tag-ref-unavailable",
             "tag-ref-unavailable",
-            valid_header,
+            valid_legacy_header,
             None,
             tag_target,
             (0, ""),
@@ -1561,7 +1581,7 @@ def r12_findings(root: Path) -> list[str]:
         (
             "tag-target-unavailable",
             "tag-target-unavailable",
-            valid_header,
+            valid_legacy_header,
             tag_object,
             None,
             (0, ""),
@@ -1570,11 +1590,146 @@ def r12_findings(root: Path) -> list[str]:
         (
             "ancestry-unavailable",
             "ancestry-unavailable",
-            valid_header,
+            valid_legacy_header,
             tag_object,
             tag_target,
             (128, "fatal: planted shallow-history control"),
             "publication ancestry verification unavailable",
+        ),
+    )
+    tagged_runbook_text = (
+        "# Closed cycle\n\n"
+        "- [x] completed task\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** release (as of 2026-07-29)\n"
+        f"- **Release:** `{tag}`\n"
+        f"- **Release commit:** `{release_commit}`\n"
+    )
+    valid_tagged_header = (
+        f"**As of:** published. Release commit is `{release_commit}`.\n"
+    )
+    valid_post_push = (
+        "- **Post-push verification date:** 2026-07-29\n"
+        f"- **Post-push release:** `{tag}`\n"
+        f"- **Post-push annotated tag object:** `{tag_object}`\n"
+        f"- **Post-push closing commit:** `{tag_target}`\n"
+        "- **Post-push hosted run:** `123456`\n"
+    )
+    tagged_scenarios = (
+        (
+            "release-commit-required",
+            "release-commit-assertion",
+            "**As of:** published.\n",
+            "",
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            tag_target,
+            "publication assertion required: status header must assert the "
+            "release commit",
+        ),
+        (
+            "release-commit-freshness",
+            "release-commit-assertion",
+            valid_tagged_header.replace(release_commit, stale_target),
+            "",
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            tag_target,
+            "publication assertion freshness: release commit asserts",
+        ),
+        (
+            "tag-type",
+            "tag-type",
+            valid_tagged_header,
+            "",
+            "commit",
+            release_commit,
+            tagged_runbook_text,
+            tag_target,
+            "must resolve to an annotated tag object",
+        ),
+        (
+            "tagged-closing-parent",
+            "tagged-closing-parent",
+            valid_tagged_header,
+            "",
+            "tag",
+            stale_target,
+            tagged_runbook_text,
+            tag_target,
+            "tagged-closing parent agreement",
+        ),
+        (
+            "tagged-closing-tree",
+            "tagged-closing-tree",
+            valid_tagged_header,
+            "",
+            "tag",
+            release_commit,
+            "# Open cycle\n\n- [ ] unfinished\n",
+            tag_target,
+            "tagged-closing tree agreement",
+        ),
+        (
+            "post-push-required",
+            "post-push-record",
+            valid_tagged_header,
+            "",
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            descendant,
+            "publication post-push record required",
+        ),
+        (
+            "post-push-date-invalid",
+            "post-push-record",
+            valid_tagged_header,
+            valid_post_push.replace("2026-07-29", "2026-02-30"),
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            descendant,
+            "invalid post-push verification date",
+        ),
+        (
+            "post-push-object-freshness",
+            "post-push-record",
+            valid_tagged_header,
+            valid_post_push.replace(tag_object, stale_object),
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            descendant,
+            "publication post-push freshness: annotated tag object",
+        ),
+        (
+            "post-push-target-freshness",
+            "post-push-record",
+            valid_tagged_header,
+            valid_post_push.replace(tag_target, stale_target),
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            descendant,
+            "publication post-push freshness: closing commit",
+        ),
+        (
+            "post-push-run-required",
+            "post-push-record",
+            valid_tagged_header,
+            valid_post_push.replace(
+                "- **Post-push hosted run:** `123456`\n",
+                "",
+            ),
+            "tag",
+            release_commit,
+            tagged_runbook_text,
+            descendant,
+            "publication post-push record required",
         ),
     )
 
@@ -1584,13 +1739,15 @@ def r12_findings(root: Path) -> list[str]:
         state_path = fixture / "STATE.md"
         runbook = fixture / "publication-control-runbook.md"
         runbook.write_text("# planted publication control\n")
-        cycle_check.newest_closed_release = lambda _files: (
-            runbook,
-            tag,
-            tag_target,
-            tag_object,
-        )
 
+        cycle_check.newest_closed_release = lambda _files: (
+            cycle_check.ClosedRelease(
+                runbook=runbook,
+                tag=tag,
+                release_commit=tag_target,
+                recorded_tag_object=tag_object,
+            )
+        )
         for (
             name,
             group,
@@ -1599,17 +1756,22 @@ def r12_findings(root: Path) -> list[str]:
             measured_target,
             ancestry,
             expected,
-        ) in scenarios:
+        ) in legacy_scenarios:
             state_path.write_text(f"# State\n\n{header}\n")
 
-            def measured_ref(_root: Path, *args: str) -> str | None:
+            def measured_legacy_ref(
+                _root: Path,
+                *args: str,
+            ) -> str | None:
                 if args == ("rev-parse", tag):
                     return measured_object
                 if args == ("rev-parse", f"{tag}^{{}}"):
                     return measured_target
+                if args == ("cat-file", "-t", tag_object):
+                    return "tag"
                 raise AssertionError(f"unexpected planted git query: {args}")
 
-            cycle_check.git_output = measured_ref
+            cycle_check.git_output = measured_legacy_ref
             cycle_check.git_status = lambda _root, *_args: ancestry
             errors: list[str] = []
             cycle_check.check_publication_status(
@@ -1619,6 +1781,87 @@ def r12_findings(root: Path) -> list[str]:
             )
             if not any(expected in error for error in errors):
                 missed.setdefault(group, []).append(name)
+
+        cycle_check.newest_closed_release = lambda _files: (
+            cycle_check.ClosedRelease(
+                runbook=runbook,
+                tag=tag,
+                release_commit=release_commit,
+                recorded_tag_object=None,
+            )
+        )
+        for (
+            name,
+            group,
+            header,
+            body,
+            measured_type,
+            measured_parent,
+            target_text,
+            head,
+            expected,
+        ) in tagged_scenarios:
+            state_path.write_text(f"# State\n\n{header}\n{body}")
+
+            def measured_tagged_ref(
+                _root: Path,
+                *args: str,
+            ) -> str | None:
+                if args == ("rev-parse", tag):
+                    return tag_object
+                if args == ("rev-parse", f"{tag}^{{}}"):
+                    return tag_target
+                if args == ("cat-file", "-t", tag_object):
+                    return measured_type
+                if args == ("rev-parse", f"{tag_target}^"):
+                    return measured_parent
+                if args == ("show", f"{tag_target}:{runbook.name}"):
+                    return target_text
+                if args == ("rev-parse", "HEAD"):
+                    return head
+                raise AssertionError(f"unexpected planted git query: {args}")
+
+            cycle_check.git_output = measured_tagged_ref
+            cycle_check.git_status = lambda _root, *_args: (0, "")
+            errors = []
+            cycle_check.check_publication_status(
+                fixture,
+                [runbook],
+                errors,
+            )
+            if not any(expected in error for error in errors):
+                missed.setdefault(group, []).append(name)
+
+        legacy_section = (
+            "\n- **Cycle closed:** 2026-07-29\n"
+            "- **Release disposition:** release (as of 2026-07-29)\n"
+            f"- **Release:** `{tag}`\n"
+            f"- **Release commit:** `{release_commit}`\n"
+            f"- **Annotated tag object:** `{tag_object}`\n"
+        )
+
+        def recorded_commit_type(_root: Path, *args: str) -> str | None:
+            if args == ("cat-file", "-t", release_commit):
+                return "commit"
+            raise AssertionError(f"unexpected planted git query: {args}")
+
+        cycle_check.git_output = recorded_commit_type
+        errors = []
+        cycle_check.check_release_record(
+            runbook,
+            legacy_section,
+            fixture,
+            1,
+            errors,
+            verify_local_tag_refs=False,
+            require_dated_disposition=True,
+            require_tagged_closing_commit=True,
+        )
+        expected = "declared closed cycle must use the tagged-closing protocol"
+        if not any(expected in error for error in errors):
+            missed.setdefault("tagged-closing-protocol", []).append(
+                "prechange-active-tag-object"
+            )
 
     source_path = root / "tools" / "cycle_check.py"
     source = source_path.read_text()

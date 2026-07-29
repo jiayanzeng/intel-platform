@@ -421,10 +421,50 @@
     },
     {
       "id": "R12",
-      "claim": "Every publication-status rule rejects its planted failure, and both immutable tag assertions are required as well as fresh.",
-      "source": "docs/cycles/TASKS-v0.21-EXECUTION.md:225-244",
-      "scope": "The actual tools/cycle_check.py check_publication_status entry point, exercised with planted origin/main, missing and stale immutable assertions, pending-publication, missing annotated-tag ref, missing peeled target, and unavailable-ancestry inputs. The assertion grammar remains deliberately narrow: no intervening backtick is admitted between the named ref and hash.",
+      "claim": "Every closing/publication-status rule rejects its planted failure; legacy immutable assertions remain required and fresh, while tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants.",
+      "source": "docs/cycles/TASKS-v0.22-EXECUTION.md:207-276",
+      "scope": "The actual tools/cycle_check.py check_release_record and check_publication_status entry points, exercised with planted legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, and missing or stale post-push records. Assertion grammar remains deliberately narrow: no intervening backtick is admitted between a named ref and hash.",
       "fail_before": [
+        {
+          "file": "tools/cycle_check.py",
+          "find": "        if require_tagged_closing_commit and tag_matches:\n",
+          "replace_with": [
+            "        if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: prechange-active-tag-object",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 405
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if tag_type != \"tag\":\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tag-type",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 271
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if parent != release_commit:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tagged-closing-parent",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 300
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if target_text is None or not tagged_closing_record_matches(\n        target_text,\n        release,\n        release_commit,\n    ):\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: tagged-closing-tree",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 314
+        },
         {
           "file": "tools/cycle_check.py",
           "find": "    if ORIGIN_MAIN_LITERAL_RE.search(header) is not None:\n",
@@ -433,33 +473,46 @@
           ],
           "expected_fail": "publication planted controls were not detected: origin-main",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 433
+          "expected_line": 594
         },
         {
           "file": "tools/cycle_check.py",
-          "find": "    for label, pattern in STATE_REF_ASSERTIONS:\n        measured = expected[label]\n",
+          "find": "    for label, pattern in assertions_to_check:\n        measured = expected[label]\n",
           "replace_with": [
-            "    for label, pattern in STATE_REF_ASSERTIONS:\n",
+            "    for label, pattern in assertions_to_check:\n",
             "        if label == \"annotated tag object\":\n",
             "            continue\n",
             "        measured = expected[label]\n"
           ],
           "expected_fail": "publication planted controls were not detected: tag-object-required, tag-object-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 508
+          "expected_line": 707
         },
         {
           "file": "tools/cycle_check.py",
-          "find": "    for label, pattern in STATE_REF_ASSERTIONS:\n        measured = expected[label]\n",
+          "find": "    for label, pattern in assertions_to_check:\n        measured = expected[label]\n",
           "replace_with": [
-            "    for label, pattern in STATE_REF_ASSERTIONS:\n",
+            "    for label, pattern in assertions_to_check:\n",
             "        if label == \"tag target\":\n",
             "            continue\n",
             "        measured = expected[label]\n"
           ],
           "expected_fail": "publication planted controls were not detected: tag-target-required, tag-target-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 508
+          "expected_line": 707
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    for label, pattern in assertions_to_check:\n        measured = expected[label]\n",
+          "replace_with": [
+            "    for label, pattern in assertions_to_check:\n",
+            "        if label == \"release commit\":\n",
+            "            continue\n",
+            "        measured = expected[label]\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: release-commit-required, release-commit-freshness",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 707
         },
         {
           "file": "tools/cycle_check.py",
@@ -469,7 +522,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: pending-publication",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 492
+          "expected_line": 685
         },
         {
           "file": "tools/cycle_check.py",
@@ -479,7 +532,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-ref-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 443
+          "expected_line": 604
         },
         {
           "file": "tools/cycle_check.py",
@@ -489,7 +542,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-target-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 451
+          "expected_line": 612
         },
         {
           "file": "tools/cycle_check.py",
@@ -499,10 +552,20 @@
           ],
           "expected_fail": "publication planted controls were not detected: ancestry-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 476
+          "expected_line": 669
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if head != measured_target:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: post-push-required, post-push-date-invalid, post-push-object-freshness, post-push-target-freshness, post-push-run-required",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 739
         }
       ],
-      "fail_before_note": "invariant-scan: R12 FAIL: publication-status planted failure was not detected"
+      "fail_before_note": "invariant-scan: R12 FAIL: closing/publication planted failure was not detected"
     }
   ]
 }

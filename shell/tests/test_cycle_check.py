@@ -68,6 +68,31 @@ def _commit_cycle_root(root: Path) -> None:
     )
 
 
+def _commit_all(root: Path, message: str) -> str:
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Cycle Check",
+            "-c",
+            "user.email=cycle-check@example.invalid",
+            "commit",
+            "-qm",
+            message,
+        ],
+        cwd=root,
+        check=True,
+    )
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+
+
 def _publication_root(tmp_path: Path) -> tuple[Path, str, str]:
     root = _cycle_root(tmp_path)
     _commit_cycle_root(root)
@@ -117,6 +142,64 @@ def _publication_root(tmp_path: Path) -> tuple[Path, str, str]:
         f"- **Annotated tag object:** `{tag_object}`\n"
     )
     return root, commit, tag_object
+
+
+def _tagged_closing_root(
+    tmp_path: Path,
+) -> tuple[Path, str, str, str]:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    release_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "- [ ] unfinished task",
+            "- [x] finished task",
+        )
+        + "\n## Runbook amendments\n\n"
+        "Step 1 — Record the closing checklist — 2026-07-29\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** release (as of 2026-07-29)\n"
+        "- **Release:** `v1.2.3`\n"
+        f"- **Release commit:** `{release_commit}`\n"
+    )
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        "**As of:** v1.2.3 is published. "
+        f"Release commit is `{release_commit}`.\n"
+    )
+    closing_commit = _commit_all(root, "close cycle")
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Cycle Check",
+            "-c",
+            "user.email=cycle-check@example.invalid",
+            "tag",
+            "-a",
+            "v1.2.3",
+            "-m",
+            "release",
+        ],
+        cwd=root,
+        check=True,
+    )
+    tag_object = subprocess.run(
+        ["git", "rev-parse", "v1.2.3"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    return root, release_commit, closing_commit, tag_object
 
 
 def _publication_errors(root: Path) -> list[str]:
@@ -318,6 +401,244 @@ def test_publication_status_reports_unavailable_ancestry(
     assert len(errors) == 1
     assert "publication ancestry verification unavailable" in errors[0]
     assert "fatal: shallow history" in errors[0]
+
+
+def test_cycle_check_accepts_tagged_closing_commit_protocol(
+    tmp_path: Path,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+
+    assert cycle_check.run(root) == 0
+
+
+def test_cycle_check_rejects_prechange_active_tag_object_field(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    release_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "- [ ] unfinished task",
+            "- [x] finished task",
+        )
+        + "\n## Runbook amendments\n\n"
+        "Step 1 — Record the closing checklist — 2026-07-29\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** release (as of 2026-07-29)\n"
+        "- **Release:** `v1.2.3`\n"
+        f"- **Release commit:** `{release_commit}`\n"
+        f"- **Annotated tag object:** `{'0' * 40}`\n"
+    )
+
+    assert cycle_check.run(root, verify_local_tag_refs=False) == 1
+    assert (
+        "TASKS-v1.2.3-EXECUTION.md: declared closed cycle must use the "
+        "tagged-closing protocol and omit the Annotated tag object field; "
+        "record that object in the dated post-push append"
+        in capsys.readouterr().err
+    )
+
+
+def test_tagged_closing_protocol_requires_annotated_tag(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, _, closing_commit, _ = _tagged_closing_root(tmp_path)
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+    subprocess.run(
+        ["git", "tag", "v1.2.3", closing_commit],
+        cwd=root,
+        check=True,
+    )
+
+    assert cycle_check.run(root) == 1
+    assert (
+        "must resolve to an annotated tag object"
+        in capsys.readouterr().err
+    )
+
+
+def test_tagged_closing_protocol_requires_release_parent(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, release_commit, _, _ = _tagged_closing_root(tmp_path)
+    (root / "after-close.txt").write_text("intervening commit\n")
+    later_commit = _commit_all(root, "intervening commit")
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Cycle Check",
+            "-c",
+            "user.email=cycle-check@example.invalid",
+            "tag",
+            "-a",
+            "v1.2.3",
+            later_commit,
+            "-m",
+            "moved release",
+        ],
+        cwd=root,
+        check=True,
+    )
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "tagged-closing parent agreement" in error
+    assert f"not recorded release commit {release_commit}" in error
+
+
+def test_tagged_closing_protocol_requires_closed_tag_tree(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    release_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    (root / "pre-close.txt").write_text("tagged before close\n")
+    open_target = _commit_all(root, "open tag target")
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Cycle Check",
+            "-c",
+            "user.email=cycle-check@example.invalid",
+            "tag",
+            "-a",
+            "v1.2.3",
+            open_target,
+            "-m",
+            "premature release",
+        ],
+        cwd=root,
+        check=True,
+    )
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "- [ ] unfinished task",
+            "- [x] finished task",
+        )
+        + "\n## Runbook amendments\n\n"
+        "Step 1 — Record the closing checklist — 2026-07-29\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** release (as of 2026-07-29)\n"
+        "- **Release:** `v1.2.3`\n"
+        f"- **Release commit:** `{release_commit}`\n"
+    )
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        "**As of:** v1.2.3 is published. "
+        f"Release commit is `{release_commit}`.\n"
+    )
+    _commit_all(root, "actual close")
+
+    assert cycle_check.run(root) == 1
+    assert "tagged-closing tree agreement" in capsys.readouterr().err
+
+
+def test_tagged_closing_header_requires_fresh_release_commit(
+    tmp_path: Path,
+) -> None:
+    root, release_commit, _, _ = _tagged_closing_root(tmp_path)
+    (root / "STATE.md").write_text("# State\n\n**As of:** published.\n")
+
+    assert _publication_errors(root) == [
+        "STATE.md: publication assertion required: status header must assert "
+        "the release commit in the required unambiguous phrasing"
+    ]
+
+    stale_commit = "f" * 40
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        f"**As of:** published. Release commit is `{stale_commit}`.\n"
+    )
+    assert _publication_errors(root) == [
+        "STATE.md: publication assertion freshness: release commit asserts "
+        f"{stale_commit}, but the measured ref is {release_commit}"
+    ]
+
+
+def test_tagged_closing_descendant_requires_post_push_record(
+    tmp_path: Path,
+) -> None:
+    root, _, closing_commit, tag_object = _tagged_closing_root(tmp_path)
+    (root / "post-push.txt").write_text("after tagged close\n")
+    _commit_all(root, "post-push descendant")
+
+    assert _publication_errors(root) == [
+        "STATE.md: publication post-push record required: expected exactly "
+        "one complete record for v1.2.3; found 0"
+    ]
+
+    state = root / "STATE.md"
+    state.write_text(
+        state.read_text()
+        + "\n- **Post-push verification date:** 2026-02-30\n"
+        "- **Post-push release:** `v1.2.3`\n"
+        f"- **Post-push annotated tag object:** `{tag_object}`\n"
+        f"- **Post-push closing commit:** `{closing_commit}`\n"
+        "- **Post-push hosted run:** `123456`\n"
+    )
+    assert _publication_errors(root) == [
+        "STATE.md: invalid post-push verification date '2026-02-30'"
+    ]
+
+    state.write_text(
+        state.read_text().replace("2026-02-30", "2026-07-29")
+    )
+    assert _publication_errors(root) == []
+
+
+def test_tagged_closing_post_push_record_must_be_fresh(
+    tmp_path: Path,
+) -> None:
+    root, _, closing_commit, _ = _tagged_closing_root(tmp_path)
+    (root / "post-push.txt").write_text("after tagged close\n")
+    _commit_all(root, "post-push descendant")
+    stale_object = "e" * 40
+    stale_target = "f" * 40
+    state = root / "STATE.md"
+    state.write_text(
+        state.read_text()
+        + "\n- **Post-push verification date:** 2026-07-29\n"
+        "- **Post-push release:** `v1.2.3`\n"
+        f"- **Post-push annotated tag object:** `{stale_object}`\n"
+        f"- **Post-push closing commit:** `{stale_target}`\n"
+        "- **Post-push hosted run:** `123456`\n"
+    )
+
+    errors = _publication_errors(root)
+    assert len(errors) == 2
+    assert any(
+        "publication post-push freshness: annotated tag object" in error
+        for error in errors
+    )
+    assert any(
+        "publication post-push freshness: closing commit" in error
+        for error in errors
+    )
+    assert closing_commit not in {stale_object, stale_target}
 
 
 def test_cycle_check_accepts_cycle_paths_only_in_declaration(

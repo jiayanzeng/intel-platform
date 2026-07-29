@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from typing import NamedTuple
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -114,7 +115,7 @@ ORIGIN_MAIN_LITERAL_RE = re.compile(
     r"\s*`?([0-9a-f]{40})`?",
     re.IGNORECASE,
 )
-STATE_REF_ASSERTIONS = (
+LEGACY_STATE_REF_ASSERTIONS = (
     # These required header assertions deliberately use a phrasing in which no
     # backtick appears between the named ref and its hash. Do not widen
     # ``[^`\n]`` to admit backticks: that would let an unrelated intervening
@@ -136,6 +137,35 @@ STATE_REF_ASSERTIONS = (
         ),
     ),
 )
+TAGGED_CLOSING_STATE_REF_ASSERTIONS = (
+    (
+        "release commit",
+        re.compile(
+            r"release commit[^`\n]{0,120}`([0-9a-f]{40})`",
+            re.IGNORECASE,
+        ),
+    ),
+)
+POST_PUSH_RECORD_RE = re.compile(
+    r"^- \*\*Post-push verification date:\*\* "
+    r"([0-9]{4}-[0-9]{2}-[0-9]{2})\n"
+    r"- \*\*Post-push release:\*\* (`?)([^`\n]+)\2\n"
+    r"- \*\*Post-push annotated tag object:\*\* `([0-9a-f]{40})`\n"
+    r"- \*\*Post-push closing commit:\*\* `([0-9a-f]{40})`\n"
+    r"- \*\*Post-push hosted run:\*\* `([0-9]+)`$",
+    re.MULTILINE,
+)
+
+
+class ClosedRelease(NamedTuple):
+    runbook: Path
+    tag: str
+    release_commit: str
+    recorded_tag_object: str | None
+
+    @property
+    def uses_tagged_closing_commit(self) -> bool:
+        return self.recorded_tag_object is None
 
 
 def shown(path: Path, root: Path) -> str:
@@ -203,6 +233,99 @@ def exactly_one(
     return matches[0]
 
 
+def tagged_closing_record_matches(
+    text: str,
+    release: str,
+    release_commit: str,
+) -> bool:
+    if UNCHECKED_RE.search(text) is not None:
+        return False
+    if text.count(CLOSING_HEADING) != 1:
+        return False
+    section = text.split(CLOSING_HEADING, 1)[1]
+    releases = list(RELEASE_RE.finditer(section))
+    commits = list(RELEASE_COMMIT_RE.finditer(section))
+    dispositions = (
+        list(DATED_DISPOSITION_RE.finditer(section))
+        + list(LEGACY_DISPOSITION_RE.finditer(section))
+    )
+    return (
+        len(releases) == 1
+        and releases[0].group(2) == release
+        and len(commits) == 1
+        and commits[0].group(1) == release_commit
+        and len(TAG_OBJECT_RE.findall(section)) == 0
+        and len(dispositions) == 1
+        and dispositions[0].group(1) == "release"
+    )
+
+
+def check_annotated_tag_type(
+    root: Path,
+    path: Path,
+    release: str,
+    tag_object: str,
+    errors: list[str],
+) -> bool:
+    tag_type = git_output(root, "cat-file", "-t", tag_object)
+    # Invariant R12 control site: annotated closing-tag type.
+    if tag_type != "tag":
+        errors.append(
+            f"{shown(path, root)}: release {release!r} must resolve to an "
+            f"annotated tag object; measured object {tag_object} has type "
+            f"{tag_type!r}"
+        )
+        return False
+    return True
+
+
+def check_tagged_closing_identity(
+    root: Path,
+    path: Path,
+    release: str,
+    release_commit: str,
+    tag_object: str,
+    closing_commit: str,
+    errors: list[str],
+) -> bool:
+    valid = check_annotated_tag_type(
+        root,
+        path,
+        release,
+        tag_object,
+        errors,
+    )
+
+    parent = git_output(root, "rev-parse", f"{closing_commit}^")
+    # Invariant R12 control site: tagged-closing parent agreement.
+    if parent != release_commit:
+        errors.append(
+            f"{shown(path, root)}: tagged-closing parent agreement: "
+            f"{release!r} peels to {closing_commit}, whose first parent is "
+            f"{parent!r}, not recorded release commit {release_commit}"
+        )
+        valid = False
+
+    target_text = git_output(
+        root,
+        "show",
+        f"{closing_commit}:{shown(path, root)}",
+    )
+    # Invariant R12 control site: tagged-closing tree agreement.
+    if target_text is None or not tagged_closing_record_matches(
+        target_text,
+        release,
+        release_commit,
+    ):
+        errors.append(
+            f"{shown(path, root)}: tagged-closing tree agreement: "
+            f"{release!r} target {closing_commit} does not contain the closed "
+            "runbook with its recorded release commit and no tag-object field"
+        )
+        valid = False
+    return valid
+
+
 def check_release_record(
     path: Path,
     section: str,
@@ -211,6 +334,7 @@ def check_release_record(
     errors: list[str],
     verify_local_tag_refs: bool = True,
     require_dated_disposition: bool = False,
+    require_tagged_closing_commit: bool = False,
 ) -> None:
     date_match = exactly_one(
         DATE_RE, section, path, root, "cycle-close date", errors
@@ -277,19 +401,25 @@ def check_release_record(
             "release commit",
             errors,
         )
-        tag_match = exactly_one(
-            TAG_OBJECT_RE,
-            section,
-            path,
-            root,
-            "annotated tag object",
-            errors,
-        )
-        if release_match is None or commit_match is None or tag_match is None:
+        tag_matches = list(TAG_OBJECT_RE.finditer(section))
+        # Invariant R12 control site: tagged-closing protocol.
+        if require_tagged_closing_commit and tag_matches:
+            errors.append(
+                f"{shown(path, root)}: declared closed cycle must use the "
+                "tagged-closing protocol and omit the Annotated tag object "
+                "field; record that object in the dated post-push append"
+            )
+            return
+        if len(tag_matches) > 1:
+            errors.append(
+                f"{shown(path, root)}: closing record must contain at most one "
+                f"annotated tag object; found {len(tag_matches)}"
+            )
+            return
+        if release_match is None or commit_match is None:
             return
         release = release_match.group(2)
         commit = commit_match.group(1)
-        tag_object = tag_match.group(1)
         commit_type = git_output(root, "cat-file", "-t", commit)
         if commit_type != "commit":
             errors.append(
@@ -299,17 +429,41 @@ def check_release_record(
         if verify_local_tag_refs:
             resolved_tag = git_output(root, "rev-parse", release)
             resolved_commit = git_output(root, "rev-parse", f"{release}^{{}}")
-            object_type = git_output(root, "cat-file", "-t", tag_object)
-            if resolved_tag != tag_object or object_type != "tag":
+            if len(tag_matches) == 1:
+                tag_object = tag_matches[0].group(1)
+                object_type = git_output(root, "cat-file", "-t", tag_object)
+                if resolved_tag != tag_object or object_type != "tag":
+                    errors.append(
+                        f"{shown(path, root)}: annotated tag {release!r} does "
+                        f"not resolve to recorded tag object {tag_object}"
+                    )
+                if resolved_commit != commit:
+                    errors.append(
+                        f"{shown(path, root)}: release {release!r} does not "
+                        f"dereference to recorded commit {commit}"
+                    )
+                return
+            if resolved_tag is None:
                 errors.append(
-                    f"{shown(path, root)}: annotated tag {release!r} does not "
-                    f"resolve to recorded tag object {tag_object}"
+                    f"{shown(path, root)}: annotated tag {release!r} cannot "
+                    "be resolved for the tagged-closing protocol"
                 )
-            if resolved_commit != commit:
+                return
+            if resolved_commit is None:
                 errors.append(
-                    f"{shown(path, root)}: release {release!r} does not "
-                    f"dereference to recorded commit {commit}"
+                    f"{shown(path, root)}: annotated tag target {release!r} "
+                    "cannot be resolved for the tagged-closing protocol"
                 )
+                return
+            check_tagged_closing_identity(
+                root,
+                path,
+                release,
+                commit,
+                resolved_tag,
+                resolved_commit,
+                errors,
+            )
         return
 
     if "Intentionally unreleased implementation commits:" not in section:
@@ -338,6 +492,7 @@ def check_closed_execution(
     errors: list[str],
     verify_local_tag_refs: bool = True,
     require_dated_disposition: bool = False,
+    require_tagged_closing_commit: bool = False,
 ) -> None:
     checked = len(CHECKED_RE.findall(text))
     unchecked = len(UNCHECKED_RE.findall(text))
@@ -361,6 +516,7 @@ def check_closed_execution(
         errors,
         verify_local_tag_refs,
         require_dated_disposition,
+        require_tagged_closing_commit,
     )
 
 
@@ -373,7 +529,7 @@ def cycle_version(path: Path) -> tuple[int, ...] | None:
 
 def newest_closed_release(
     execution_files: list[Path],
-) -> tuple[Path, str, str, str] | None:
+) -> ClosedRelease | None:
     closed: list[tuple[tuple[int, ...], Path, str]] = []
     for path in execution_files:
         text = path.read_text()
@@ -397,14 +553,16 @@ def newest_closed_release(
         return None
     release = RELEASE_RE.search(section)
     commit = RELEASE_COMMIT_RE.search(section)
-    tag_object = TAG_OBJECT_RE.search(section)
-    if release is None or commit is None or tag_object is None:
+    tag_objects = list(TAG_OBJECT_RE.finditer(section))
+    if release is None or commit is None or len(tag_objects) > 1:
         return None
-    return (
-        path,
-        release.group(2),
-        commit.group(1),
-        tag_object.group(1),
+    return ClosedRelease(
+        runbook=path,
+        tag=release.group(2),
+        release_commit=commit.group(1),
+        recorded_tag_object=(
+            tag_objects[0].group(1) if tag_objects else None
+        ),
     )
 
 
@@ -417,19 +575,22 @@ def check_publication_status(
     release = newest_closed_release(execution_files)
     if release is None:
         return
-    runbook, tag, recorded_target, recorded_object = release
+    runbook = release.runbook
+    tag = release.tag
+    release_commit = release.release_commit
+    recorded_object = release.recorded_tag_object
     state_path = root / "STATE.md"
     if not state_path.is_file():
         return
-    header_match = STATE_HEADER_RE.search(state_path.read_text())
+    state_text = state_path.read_text()
+    header_match = STATE_HEADER_RE.search(state_text)
     if header_match is None:
         return
     header = header_match.group(0)
 
     # A mutable ref cannot be truthfully pinned in the immutable commit whose
     # publication moves that same ref. Mutable-ref measurements belong in
-    # dated body appends. The annotated tag object and target are immutable and
-    # retain their freshness checks below.
+    # dated body appends.
     # Invariant R12 control site: origin-main prohibition.
     if ORIGIN_MAIN_LITERAL_RE.search(header) is not None:
         errors.append(
@@ -455,23 +616,55 @@ def check_publication_status(
             f"annotated tag target {tag!r} cannot be resolved"
         )
         return
-    if measured_object != recorded_object:  # Root cause; mask derived rules.
+    if (
+        recorded_object is not None
+        and measured_object != recorded_object
+    ):  # Root cause; mask derived rules.
         errors.append(
             f"{shown(state_path, root)}: publication release-object agreement: "
             f"{tag} resolves to tag object {measured_object}, but "
             f"{shown(runbook, root)} records {recorded_object}"
         )
         return
-    if measured_target != recorded_target:  # Same identity-agreement boundary.
+    if not check_annotated_tag_type(
+        root,
+        state_path,
+        tag,
+        measured_object,
+        errors,
+    ):
+        return
+    if release.uses_tagged_closing_commit:
+        identity_errors: list[str] = []
+        check_tagged_closing_identity(
+            root,
+            runbook,
+            tag,
+            release_commit,
+            measured_object,
+            measured_target,
+            identity_errors,
+        )
+        if identity_errors:
+            errors.extend(
+                error.replace(
+                    f"{shown(runbook, root)}:",
+                    f"{shown(state_path, root)}:",
+                    1,
+                )
+                for error in identity_errors
+            )
+            return
+    elif measured_target != release_commit:
         errors.append(
             f"{shown(state_path, root)}: publication release-object agreement: "
             f"{tag} peels to {measured_target}, but "
-            f"{shown(runbook, root)} records {recorded_target}"
+            f"{shown(runbook, root)} records {release_commit}"
         )
         return
 
     ancestry_status, ancestry_error = git_status(
-        root, "merge-base", "--is-ancestor", recorded_target, "HEAD"
+        root, "merge-base", "--is-ancestor", measured_target, "HEAD"
     )
     # Invariant R12 control site: unavailable publication ancestry.
     if ancestry_status != 0:
@@ -482,8 +675,8 @@ def check_publication_status(
         )
         errors.append(
             f"{shown(state_path, root)}: publication ancestry verification "
-            f"unavailable: cannot prove recorded release {recorded_target} "
-            f"is reachable from HEAD{detail}"
+            f"unavailable: cannot prove tagged closing commit "
+            f"{measured_target} is reachable from HEAD{detail}"
         )
         return
 
@@ -498,15 +691,21 @@ def check_publication_status(
             "publication is pending or outstanding"
         )
 
-    # Rule 2: the live header must assert both immutable tag hashes, and each
-    # must equal the refs this checkout measures. Historical body appends are
-    # deliberately out of scope.
-    expected = {
-        "annotated tag object": measured_object,
-        "tag target": measured_target,
-    }
+    # Rule 2: a legacy release header retains both immutable tag hashes. A
+    # tagged-closing release instead asserts the already-known release commit;
+    # its tag object and closing target cannot exist until after that tree is
+    # committed and therefore belong to the dated post-push record below.
+    if release.uses_tagged_closing_commit:
+        assertions_to_check = TAGGED_CLOSING_STATE_REF_ASSERTIONS
+        expected = {"release commit": release_commit}
+    else:
+        assertions_to_check = LEGACY_STATE_REF_ASSERTIONS
+        expected = {
+            "annotated tag object": measured_object,
+            "tag target": measured_target,
+        }
     # Invariant R12 control site: required and fresh immutable assertions.
-    for label, pattern in STATE_REF_ASSERTIONS:
+    for label, pattern in assertions_to_check:
         measured = expected[label]
         assertions = list(pattern.finditer(header))
         if not assertions:
@@ -524,6 +723,54 @@ def check_publication_status(
                     f"freshness: {label} asserts {asserted}, but the measured "
                     f"ref is {measured}"
                 )
+
+    if not release.uses_tagged_closing_commit:
+        return
+    head = git_output(root, "rev-parse", "HEAD")
+    if head is None:
+        errors.append(
+            f"{shown(state_path, root)}: publication verification unavailable: "
+            "HEAD cannot be resolved"
+        )
+        return
+    # The tagged closing commit is allowed to carry only the already-known
+    # release commit. Once HEAD advances, the dated forward record is mandatory
+    # and pins the values that came into existence after that commit.
+    # Invariant R12 control site: required and fresh post-push record.
+    if head != measured_target:
+        records = [
+            match
+            for match in POST_PUSH_RECORD_RE.finditer(state_text)
+            if match.group(3) == tag
+        ]
+        if len(records) != 1:
+            errors.append(
+                f"{shown(state_path, root)}: publication post-push record "
+                f"required: expected exactly one complete record for {tag}; "
+                f"found {len(records)}"
+            )
+            return
+        record = records[0]
+        if not valid_iso_date(record.group(1)):
+            errors.append(
+                f"{shown(state_path, root)}: invalid post-push verification "
+                f"date {record.group(1)!r}"
+            )
+        recorded_post_push_object = record.group(4)
+        if recorded_post_push_object != measured_object:
+            errors.append(
+                f"{shown(state_path, root)}: publication post-push freshness: "
+                "annotated tag object records "
+                f"{recorded_post_push_object}, but the measured ref is "
+                f"{measured_object}"
+            )
+        recorded_post_push_target = record.group(5)
+        if recorded_post_push_target != measured_target:
+            errors.append(
+                f"{shown(state_path, root)}: publication post-push freshness: "
+                f"closing commit records {recorded_post_push_target}, but the "
+                f"measured ref is {measured_target}"
+            )
 
 
 def check_authority(
@@ -922,6 +1169,7 @@ def run(
                 errors,
                 verify_local_tag_refs,
                 require_dated_disposition=True,
+                require_tagged_closing_commit=True,
             )
         elif unchecked < 1:
             errors.append(

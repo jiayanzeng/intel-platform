@@ -543,6 +543,53 @@ tree. No ref was created, moved, or deleted.
   **206/206** pins and protected databases **2/2**. Final standalone golden
   passes **11/11**, delta **0**.
 
+### 2026-07-29 · CLOSE-FIELDS — Option C
+
+PASS. The operator answered `C`. That choice accepts Option C's stated coverage
+cost: the tag-object hash is absent from the runbook, and the closing record
+cites authenticated candidate evidence rather than published-head evidence.
+The cost is acceptable because the committed closing tree now contains only
+knowable values, Git directly binds the annotated tag to that tree and its
+release parent, and the next dated `STATE.md` append pins the tag object,
+closing commit, and post-push hosted run. Published-head CI becomes forward
+confirmation rather than the event that closes the cycle.
+
+- **Gate and scope:** PASS. The Gate contains every acceptance surface. Changed
+  paths are limited to `tools/cycle_check.py`, its focused tests,
+  `tools/invariant_scan.py`, `config/invariant-rules.json`, `AGENTS.md`, this
+  active runbook, and `STATE.md`. No ref, closed runbook, published tree, crate,
+  dependency, schema, protected database, or public surface changed.
+- **Fail-before:** PASS. The old checker rejected the selected shape with
+  `closing record must contain exactly one annotated tag object; found 0`.
+  The corrected checker rejects the pre-change active shape verbatim:
+
+  ```
+  docs/cycles/TASKS-v0.22-EXECUTION.md: declared closed cycle must use the tagged-closing protocol and omit the Annotated tag object field; record that object in the dated post-push append
+  ```
+
+- **Executable protocol:** PASS. Release commit `R` carries release edits
+  untagged. Immediate child `C` checks R-CLOSE and records `R` without an
+  annotated-tag-object field. The annotated tag targets `C`; the checker
+  verifies annotated-tag type, `R` as `C`'s first parent, and the closed
+  runbook in `C`'s tree. Descendants of `C` require one exact dated forward
+  record with fresh tag-object and closing-commit hashes plus a hosted run id.
+  Historical releases through v0.15.5 retain their prior semantics.
+  `AGENTS.md`'s R-CLOSE sequence states the same enforceable procedure.
+- **Failure-capable controls:** PASS. R12 has **13** registered mutations and
+  detects every planted failure, including invalid forward-record dates and
+  missing or stale post-push fields. The repository passes **12/12 rules / 36
+  controls**.
+- **Focused and complete verification:** PASS. Focused `cycle_check` tests pass
+  **34/34** on constrained Python 3.11.4 and 3.12.13. `./run ci-local` passes
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**), shell
+  **266/266**, warning-denied current and locked Rust lanes, and clean
+  clippy/fmt/ShellCheck gates. The independent Python 3.12.13 shell lane also
+  passes **266/266**.
+- **Pending closing-record carry-forward:** R12 is **12/12 rules / 36
+  controls**; this count must be re-measured at the Step 5 candidate and carried
+  into the final closing record.
+- **Golden-E2E delta:** **0**. Standalone golden passes **11/11**.
+
 ---
 
 ## Cycle checklist
@@ -552,7 +599,7 @@ tree. No ref was created, moved, or deleted.
   verbatim; G2 classified per tag with evidence and no ref touched; G3 confirmed
   or refuted; G4 measured with growth rate and verify cost; G5 answered from the
   record; `STATE.md` unedited
-- [ ] **CLOSE-FIELDS** — exactly one option chosen and dated with its coverage
+- [x] **CLOSE-FIELDS** — exactly one option chosen and dated with its coverage
   cost in the operator's terms; fail-before captured; every changed rule has a
   detected planted failure; `AGENTS.md`'s R-CLOSE contract matches the checker;
   no published tree repaired

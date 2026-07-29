@@ -296,6 +296,42 @@ rhythm, not a defect to route around; the consequence is that the latest
 cycle-ending audit commit remains supported by its required local gates and
 append-only evidence until that following publication occurs.
 
+### R-CLOSE — tagged-closing release protocol selected 2026-07-29
+
+For every release after v0.15.5, R-CLOSE is a two-commit protocol. The release
+commit `R` carries the release edits and version authorities but is not tagged.
+Its immediate child `C` checks R-CLOSE's box and carries the complete closing
+record. That record names `Cycle closed`, the dated `Release disposition`,
+`Release`, and `Release commit: R`; it must not contain an `Annotated tag
+object` field. The closing record cites already-authenticated candidate hosted
+evidence, because evidence from publishing `C` cannot exist in `C`.
+
+The annotated release tag targets `C`, not `R`. Before any ref movement,
+`cycle-check` verifies that `R` is `C`'s immediate parent and that `C`'s tree
+contains the closed runbook with the same release name and release-commit hash
+and no tag-object field. `STATE.md`'s live header in `C` asserts the knowable
+release commit `R`; neither the tag-object hash nor `C`'s own hash may be
+required in that tree. `C` and its annotated tag are pushed atomically.
+
+The first commit after `C` records the post-push result in a dated `STATE.md`
+body append with these exact contiguous fields:
+
+```
+- **Post-push verification date:** YYYY-MM-DD
+- **Post-push release:** `vX.Y.Z`
+- **Post-push annotated tag object:** `<40 hex>`
+- **Post-push closing commit:** `<40 hex>`
+- **Post-push hosted run:** `<digits>`
+```
+
+At the tagged `C` checkout, `cycle-check` accepts the release-commit assertion
+while directly verifying the annotated tag, parent, and tagged tree. On every
+descendant of `C`, it additionally requires exactly one complete post-push
+record for that release and checks the recorded tag object and closing commit
+against Git. The post-push run confirms the published head; it is forward
+evidence and is not what closes the cycle. Historical release records through
+v0.15.5 retain their prior tag-object fields and validation semantics.
+
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
 The v0.10 golden pipeline is the regression anchor. **`./run golden` is the
