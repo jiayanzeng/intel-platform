@@ -465,7 +465,7 @@ decision: publication.**
   ratchet untouched
 - [x] **PREVIEW-DISPOSITION** — exactly one disposition; owner named, or trigger
   named, or deletion complete; `ARCHITECTURE.md` matches
-- [ ] **RE-MEASURE** — hosted run pinned; every count equals local at the same
+- [x] **RE-MEASURE** — hosted run pinned; every count equals local at the same
   commit; branch named after the decided version
 - [ ] **R-CLOSE** — version cites its trigger; G1's severity recorded as
   fail-closed and neither inflated nor minimised; export before/after recorded;
@@ -728,6 +728,82 @@ tests, and diagnostics-only parser/matcher provenance bookkeeping.
   passed **248/248**.
 - **Golden-E2E delta:** **0**; standalone and full-matrix runs passed
   **11/11**.
+
+### 2026-07-29 · RE-MEASURE
+
+PASS. The operator authorized exactly the Gate's non-`main` candidate push and
+authenticated hosted dispatch. Repository admission contains only that run's
+seven signed receipt/bundle pairs, its release-posture deferred-audit report,
+the protected-artifact manifest, and required status records. No tag,
+`main` advance, publication, product path, public surface, dependency,
+lockfile, schema, or protected database moved.
+
+- **Candidate/workflow acceptance:** PASS. `candidate/v0.15.3` is exact at
+  `197e93effe9a6abf9c59488a9849c6dcda47646c`. Before dispatch, the remote
+  candidate's workflow was read and confirmed to contain the expected core,
+  lint, net, MSRV, two-shell, golden, receipt-signing, and artifact-upload
+  invocations. Its blob
+  `96e85af978981b7af9bdd8e9e11069f158f35e57` equals the local workflow blob.
+- **Same-commit count acceptance:** PASS. Local `./run ci-local` passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**),
+  shell **248/248** on Python 3.11.4, Rust 1.78, invariant **11/11 rules / 23
+  controls**, R10's **45** exemptions, and golden **11/11**; constrained
+  Python 3.12.13 independently passed **248/248**. Hosted run
+  `30414648482` attempt 1 reports the same **133**, **55**, **11/11 / 23**,
+  **45**, and **11/11** counts. Both hosted shell lanes collected **248** as
+  **247 passed + 1 declared on-site-only protected-corpus skip**, exactly
+  equal to local collection.
+- **Identity/authentication acceptance:** PASS. All **7/7** workflow-derived
+  identities across **6** blocking jobs are successful Linux receipts with
+  verified Sigstore bundles; zero receipts were rejected. Authenticated
+  re-derivation passes **7** rows in release posture.
+- **Deferred audit acceptance:** PASS. The clean detached candidate report
+  records **5 deferred / 2 promoted / 0** deferred subsystems implemented.
+  Exact-cosine p95 at the largest **2,600-document** archive is
+  **6.786459 ms**, below the **16.264 ms** A3 request anchor. Report
+  `evidence/v0.15.3/deferred-audit/report.json` is **34,530** bytes at
+  SHA-256
+  `3006f9ed8641cbc6483a2a1608c65da52ff008e59837218997f207a7cf588b2e`.
+- **Admission/ref acceptance:** PASS. The **15** new records bring the
+  protected manifest to **176/176** pins — **174/174** evidence plus **2/2**
+  authorization surfaces. Manifest schema v2, `verify-artifacts`, and
+  `evidence-report` pass with protected databases **2/2** exact.
+  `origin/main` remains
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; the candidate remains exact;
+  no `v0.15.3` tag exists.
+- **Golden-E2E delta:** **0**. The first sandboxed invocation was a
+  loopback-bind permission non-result; the identical permitted invocation
+  passed **11/11**.
+
+## Pending Cycle closing record
+
+- **Candidate recorded:** 2026-07-29
+- **Release disposition:** pending the one Step 7 operator publication
+  decision.
+- **Release version:** v0.15.3. Step 4's measured negative-cache correctness
+  defect is the patch trigger: transient unreachable state occupied the
+  successful-policy cache's full day and discarded a good policy while
+  remaining fail-closed.
+- **Evidence candidate:** `197e93effe9a6abf9c59488a9849c6dcda47646c`
+  on `candidate/v0.15.3`.
+- **Hosted evidence:** workflow-dispatch run `30414648482` attempt 1; all
+  **7/7** derived identities authenticated, zero rejected receipts, across
+  **6** blocking jobs. Hosted logs measured **133** workspace tests, **55**
+  net tests (**29 + 26**), shell **247 passed + 1 declared on-site-only
+  skip** on each interpreter, `invariant-scan` **11/11 rules / 23 controls**,
+  R10's **45** exemptions, and golden **11/11**. Each hosted shell collected
+  **248** tests, equal to the local candidate's **248 passed**.
+- **Release-grade audit:** **5** deferred / **2** promoted / **0** deferred
+  subsystems implemented; report SHA-256
+  `3006f9ed8641cbc6483a2a1608c65da52ff008e59837218997f207a7cf588b2e`,
+  **34,530** bytes at `evidence/v0.15.3/deferred-audit/report.json`.
+- **Evidence pins:** **176/176** total — **174/174** evidence plus **2/2**
+  authorization surfaces; protected databases exact **2/2**.
+- **Release commit:** pending Step 7's final R-CLOSE measurement and decision.
+- **Remote disposition:** `origin/main` remains
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; candidate branch
+  `candidate/v0.15.3` is exact at the evidence candidate; no `v0.15.3` tag
+  exists.
 
 ---
 

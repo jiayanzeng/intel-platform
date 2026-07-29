@@ -1,6 +1,68 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 PREVIEW-DISPOSITION is complete; RE-MEASURE awaits its narrow candidate-branch authorization.** `origin/main` is `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; annotated tag object is `22beef8e023e52024cfe9614273e2d82b39f4956`; tag target is release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Publication CI run `30375179895` attempt 1 completed with conclusion `success` for that exact main commit. The measured implementation tree passed local CI **20/20** before its status box, with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, all **161/161** pins (**159/159** evidence + **2/2** authorization), protected databases exact **2/2**, and golden **11/11**; the status suite reruns after the separate audit entry names the implementation commit. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.2 (core-shell) · **Status:** **v0.19 RE-MEASURE is complete at the v0.15.3 candidate; the operator publication decision gates R-CLOSE.** `origin/main` remains `344124819cb3c554f851d0cac3f0f1ed08d1aa10`; the published annotated `v0.15.2` tag object remains `22beef8e023e52024cfe9614273e2d82b39f4956` at release commit `b3c4c4d3b695ceff27a9d4a2ec610fc851939324`. Candidate branch `candidate/v0.15.3` is exact at `197e93effe9a6abf9c59488a9849c6dcda47646c`; no `v0.15.3` tag exists. Exact-candidate local CI passed **20/20** with zero rustc/clippy/fmt/ShellCheck failures, **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **248/248** on Python 3.11.4 and Python 3.12.13, `invariant-scan` **11/11 rules / 23 controls**, protected databases exact **2/2**, and golden **11/11**. The admitted manifest separately passes all **176/176** pins (**174/174** evidence + **2/2** authorization); the status suite reruns after the separate audit entry names the implementation commit. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.19 RE-MEASURE is complete at the v0.15.3 candidate (measured
+2026-07-29).** Step 4's negative-cache correctness change is the version
+trigger: a transient unreachable result previously occupied the successful
+policy's full-day cache and discarded a good policy. That was a bounded
+fail-closed availability defect, so the compatible release identity is
+v0.15.3. The clean evidence candidate is
+`197e93effe9a6abf9c59488a9849c6dcda47646c` on
+`candidate/v0.15.3`; release publication and the final release commit remain
+the Step 7 operator decision.
+
+Before dispatch, the remote candidate workflow was read through GitHub and
+confirmed to contain the expected core, lint, net, MSRV, two-shell, golden,
+receipt-signing, and artifact-upload invocations. Its remote Git blob
+`96e85af978981b7af9bdd8e9e11069f158f35e57` equals the local workflow blob.
+Exact-candidate local `./run ci-local` passed **20/20** with **133** workspace
+tests, **55** net tests (**29 + 26**), shell **248/248** under Python 3.11.4,
+locked Rust 1.78, zero rustc/clippy/fmt/ShellCheck failures,
+`invariant-scan` **11/11 rules / 23 controls**, R10's **45** derived
+exemptions, protected databases **2/2**, and golden **11/11**. The constrained
+Python 3.12.13 lane independently resolved **21/21** packages and passed
+**248/248**.
+
+Authenticated workflow-dispatch
+[run 30414648482 attempt 1](https://github.com/jiayanzeng/intel-platform/actions/runs/30414648482)
+completed successfully at that same candidate. Every count was read from the
+hosted logs rather than inferred from job status: core and MSRV each report
+**133** workspace tests; net reports **55** tests (**29 + 26**); both shell
+lanes collected **248** tests as **247 passed + 1 declared on-site-only
+skip**; the Python 3.11 lane reports `invariant-scan` **11/11 rules / 23
+controls** and R10's **45** exemptions; both constrained interpreters resolved
+**21/21** packages; and golden reports **11/11**. The hosted collection counts
+therefore equal the local same-commit counts exactly. The only result-shape
+difference is the declared hosted skip for the protected corpus that is absent
+from hosted runners.
+
+All **7/7** workflow-derived identities across the **6** blocking jobs have
+successful Linux receipts and persisted Sigstore bundles; zero receipts were
+rejected. Release-posture `audit-deferred` authenticated every bundle against
+repository `jiayanzeng/intel-platform`, the CI workflow signer, source digest
+`197e93effe9a6abf9c59488a9849c6dcda47646c`, and source ref
+`refs/heads/candidate/v0.15.3`. Network-enabled re-derivation passes all
+**7** rows with release grade and attestations required. The report records
+**5 deferred / 2 promoted / 0 deferred subsystems implemented**. The largest
+evidenced archive remains **2,600** documents; exact-cosine p95 measured
+**6.786459 ms**, below the recorded **16.264 ms** A3 request anchor.
+
+The admitted audit report is
+`evidence/v0.15.3/deferred-audit/report.json`, SHA-256
+`3006f9ed8641cbc6483a2a1608c65da52ff008e59837218997f207a7cf588b2e`,
+**34,530** bytes. Its seven receipts, seven bundles, and one report add
+**15** records, bringing the protected manifest to **176/176** pins:
+**174/174** evidence plus **2/2** authorization surfaces. Manifest schema v2
+validation, `./run verify-artifacts`, and `./run evidence-report` pass; both
+protected databases remain byte-exact. Remote reinspection found
+`origin/main` unchanged at
+`344124819cb3c554f851d0cac3f0f1ed08d1aa10`, the candidate branch exact, and
+no `v0.15.3` tag. No publication, product path, public surface, dependency,
+lockfile, schema, protected database, harvested observation, or golden-corpus
+change occurred. The first post-admission golden invocation was a
+loopback-bind permission non-result; the identical permitted invocation passed
+**11/11**, delta **0**.
 
 **v0.19 PREVIEW-DISPOSITION is complete (measured 2026-07-29).**
 The operator selected **retire**. The current tree deletes the coupled
