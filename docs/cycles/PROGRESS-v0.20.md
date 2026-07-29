@@ -166,3 +166,57 @@ Entries are append-only; corrections are new dated entries.
   JSON validation, and `git diff --check` passed.
 - golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-29 · EXPORT-CHECK — derived source completeness enforced
+
+- owner: Codex
+- commit: 36e47b4
+- result: PASS. Step 3 was complete before implementation. The implementation
+  commit contains `run`, `tools/export_check.py`, its focused shell test, the
+  updated `run` authorization pin, `STATE.md`, and the v0.20 runbook's
+  status/checklist record. No crate, dependency, schema, protected database,
+  evidence artifact, or public surface changed.
+- derived-set acceptance: PASS. `./run export-check` uses pinned Repomix
+  1.17.0 from the project root, derives all tracked `crates/`, `apps/`,
+  `tools/`, and `shell/` paths with `git ls-files`, and separately requires
+  the seven named root/control paths. No source count is pinned. The final
+  candidate contained all **90/90** derived source paths and **7/7** required
+  paths in its **147-file** export.
+- fail-before acceptance: PASS. A disposable invocation from `crates/` exited
+  **1**, explicitly named missing required path `Cargo.lock`, and reported 95
+  missing paths. A root invocation with only a disposable config's
+  `enableSecurityCheck` changed to `true` made Repomix omit exactly
+  `crates/ingest/src/lib.rs`; the checker exited **1** and named that missing
+  derived source.
+- restoration acceptance: PASS. The real `repomix.config.json` was never
+  changed, remained SHA-256
+  `0470cb2ba232a549e94a95ece5e337f025cde2fb17cd37a330af6a3d5e35b2ee`,
+  and `git diff --exit-code -- repomix.config.json` passed after both controls.
+- execution-posture acceptance: PASS. The command and help text say
+  **operator-local**. The check is absent from both `ci-local` and hosted CI
+  because it writes a multi-megabyte export and `npx` may fetch its pinned
+  tool. The final restricted invocation's DNS refusal was a non-result; the
+  permitted identical retry passed.
+- authorization-pin acceptance: PASS. `run` moved from
+  `caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678`
+  / **42,056 bytes** to
+  `0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779`
+  / **43,044 bytes**. The model-profile functions, models dispatch, mirrored
+  authorization policy, and `tools/model_profiles.py`
+  (`1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`,
+  **28,297 bytes**) are unchanged. Manifest validation, all **176/176** pins,
+  protected databases **2/2**, and R6 pass.
+- failure-capable-test acceptance: PASS. Focused tests pass **3/3**, including
+  a newly tracked source that fails without changing a count and a named
+  missing-`Cargo.lock` failure. Final `invariant-scan` passes **11/11 rules /
+  23 controls**; a pre-final R10 line-shift was caught and corrected before
+  the implementation candidate.
+- full-matrix acceptance: PASS. The permitted `./run ci-local` passed
+  **20/20** with **133** workspace tests, **55** net tests (**29 + 26**),
+  shell **255/255** on Python 3.11.4, locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, all pins and databases exact, and
+  golden **11/11**. Python 3.12.13 independently passed shell **255/255**;
+  its first restricted invocation was a permission non-result and the
+  permitted identical retry passed.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11**.
