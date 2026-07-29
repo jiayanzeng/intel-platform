@@ -950,6 +950,44 @@ decision: publication.**
 16. **Carry the one-publisher fact forward unchanged.** `arxiv-cs` remains the
     sole real publisher; the other three configured sources remain fixtures.
 
+**Execution record (2026-07-29).** The operator authorized publication after
+Steps 1–6 were complete and boxed. Release implementation commit
+`8bb6a71446b043b10ce16077499fdc07abb91b98` prepares v0.15.7 and is the
+untagged immediate parent of this closing tree. The evidence candidate remains
+separate: `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`, authenticated hosted run
+`30459746825` attempt **1**, with **7/7** executable jobs green and **7
+accepted / 0 rejected** signed identities under required attestations.
+
+The release-parent definition of done passed **20/20**: workspace **133**, net
+**55** (**29 + 26**), shell **275/275** on independently rebuilt Python 3.11.4
+and 3.12.13 lanes, warning-denied current and Rust 1.78 builds, clean clippy,
+fmt, and ShellCheck, `invariant-scan` **12/12 rules / 38 controls** with R12
+**15/15** and R10 **45**, **236/236** protected pins, **2/2** protected
+databases, root export **90** derived / **7** required / **153** exported, and
+standalone golden **11/11**.
+
+Both publication triggers fired: the published workflow still declares Node 20
+action runtimes despite forcing Node 24, and published `ARCHITECTURE.md` still
+maps the tag to `R` instead of closing child `C`. G1 is **P2 by construction**:
+E0's clone-provenance forced-retag experiment exercised the real checker and
+rejected all four parent/tree mismatches. G6 measures two four-member
+populations under explicit criteria with two overlaps; every member and its
+discovery site is recorded in `STATE.md`. The scope defect is author-side and
+the first member found only by human review. Step 4's activation table was not
+correct as committed: it omitted one Step 3 test path and used one over-broad
+shell-source glob; both are corrected in the closed table.
+
+Step 3 produced and verified a new **7-receipt / 7-bundle** authenticated set
+under the upgraded signing chain; the verifier accepted **7 / rejected 0**, so
+there was no action-side or CLI-side failure and that set remained
+verification-only. Step 5 re-evaluated **14** trigger-bearing rows, found **2**
+fired, and made exactly **1** additional v0.24 assignment. Every release-parent
+diff path is classified once in `STATE.md`; all named residuals and the
+one-real-publisher boundary remain open. Three consecutive apparatus-only
+cycles leave the scheduled apparatus queue empty; v0.24 is the natural place
+to observe whether product work is now cheap, but this record does not schedule
+it.
+
 ---
 
 ## Cycle checklist
@@ -1004,11 +1042,29 @@ decision: publication.**
 - [x] **RE-MEASURE** — hosted run on a neutral branch; remote `ci.yml` blob
   confirmed before dispatch; counts equal local; run id recorded as closing
   evidence; first pins of the cycle admitted here
-- [ ] **R-CLOSE** — tagged-close protocol followed; publication trigger named;
+- [x] **R-CLOSE** — tagged-close protocol followed; publication trigger named;
   G1's severity and its measuring construction recorded; G6's populations
   measured with per-member discovery sites; evidence-chain result stated;
   post-push result in a dated forward append; v0.24 observation recorded as an
   observation
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-29
+- **Release disposition:** release (as of 2026-07-29)
+- **Release:** `v0.15.7`
+- **Release commit:** `8bb6a71446b043b10ce16077499fdc07abb91b98`
+- **Evidence candidate:** `5b075dfc87e789aa34c07b94a9a80f2f10af89f2`
+- **Candidate hosted run:** `30459746825` attempt 1
+- **Publication trigger:** both the obsolete declared Node 20 action runtimes
+  in the published workflow and the stale published instruction mapping the
+  annotated tag to release parent `R`.
+- **Closing evidence:** all 7 executable hosted jobs green at the exact
+  candidate; 7 accepted / 0 rejected signed identities with attestations
+  required; release-parent local definition of done 20/20; invariant 12/12
+  rules / 38 controls; golden 11/11; protected evidence 236/236.
 
 ---
 

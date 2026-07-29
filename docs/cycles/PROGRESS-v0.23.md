@@ -382,3 +382,66 @@ Entries are append-only; corrections are new dated entries.
   at the exact candidate; no `v0.15.7` tag exists. Step 7 publication remains
   unstarted and requires its separate operator decision.
 - golden-E2E delta: **0**. Mandatory standalone execution passed **11/11**.
+
+### 2026-07-29 · R-CLOSE — v0.15.7 tagged close
+
+- owner: Codex
+- commit: 8bb6a71446b043b10ce16077499fdc07abb91b98
+- result: PASS. Release implementation commit
+  `8bb6a71446b043b10ce16077499fdc07abb91b98` prepares v0.15.7 and is the
+  untagged immediate parent of the closing tree. Both publication triggers
+  fired: the published workflow's action declarations still target Node 20,
+  and published `ARCHITECTURE.md` still maps the annotated tag to release
+  parent `R` instead of closing child `C`.
+- closing-evidence acceptance: PASS. Authenticated candidate
+  `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` and run `30459746825` attempt
+  **1** remain separate from the release parent. All **7/7** executable hosted
+  jobs passed, and the verifier accepted **7 / rejected 0** signed identities
+  with attestations required. Candidate evidence closes the cycle; the
+  published-head run is dated forward confirmation.
+- release-parent acceptance: PASS. `./run ci-local` passed **20/20** with
+  **133** workspace tests, **55** net tests (**29 + 26**), shell **275/275** on
+  constrained Python 3.11.4, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck gates, R10 **45**, and embedded golden **11/11**.
+  The independently rebuilt Python 3.12.13 lane passed **275/275**.
+  `invariant-scan` passed **12/12 rules / 38 controls** and detected all
+  **15** R12 mutations.
+- evidence acceptance: PASS. All **236/236** pins (**234/234** evidence +
+  **2/2** authorization) and protected databases **2/2** remain exact.
+  Root-level `export-check` passed **90** derived sources, **7** required, and
+  **153** exported.
+- protocol acceptance: PASS. The closed record names the already-existing
+  release parent and candidate evidence, omits the not-yet-knowable tag-object
+  field, and requires the annotated v0.15.7 tag to target this immediate child
+  and move with `main` atomically. Exact tag, closing-commit, and post-push-run
+  identities belong only in the first dated forward append.
+- G1 acceptance: PASS at **P2 by construction**. E0 cloned the local repository
+  with clone provenance, forcibly mapped recorded v0.15.6 onto its release
+  parent, and the real checker rejected all four parent/tree agreement
+  violations. Step 2 removed the stale duplicate mechanics without adding a
+  redundant literal scan.
+- G6 acceptance: PASS. The checker-obligation and author-side populations each
+  contain **4** members under explicit criteria and overlap on **2**. Every
+  member and its discovery site is recorded in `STATE.md`; the prose-scope
+  defect is the first author-side member found only by human review.
+- action-chain acceptance: PASS. Step 3 produced **7 receipts / 7 bundles**
+  under the upgraded signing action and the verifier accepted **7 / rejected
+  0** with the complete identity matrix. The same CLI re-derived the prior set,
+  so there was no action-side or CLI-side failure and no pin was reverted.
+- scope-and-trigger acceptance: PASS with the required findings. The activation
+  table was not correct as committed: one Step 3 test path was omitted and one
+  source glob was over-broad. The closed table corrects both. Step 5
+  re-evaluated **14** trigger-bearing rows, found **2** fired, and made exactly
+  **1** additional v0.24 assignment.
+- scope acceptance: PASS. The exact **34** release-parent paths are classified
+  once in seven disjoint groups in `STATE.md`. No dependency graph, runtime
+  behavior, schema, protected database, robots policy, configured source, or
+  public API surface changed. A4, editable L1, R3/R4, the measured-value
+  heuristic, T7, and NEGATIVE-CACHE Decision B remain open.
+- observation acceptance: PASS. Three consecutive apparatus-only cycles leave
+  the scheduled apparatus queue empty. v0.24 is the natural place to observe
+  whether product work is now cheap; this is not a scheduled task.
+- publisher acceptance: unchanged. `arxiv-cs` remains the sole real publisher;
+  the other three configured sources remain fixtures.
+- golden-E2E delta: **0**. Mandatory standalone golden passed **11/11** at the
+  release parent.

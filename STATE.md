@@ -1,9 +1,10 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.23 R-CLOSE publication of v0.15.7 is operator-authorized; the untagged release parent is being prepared while v0.15.6 remains published.** The published v0.15.6 release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1` is the immediate parent of closing commit `15b6d28973058c833a77e9600741d29eda02cdc1`; annotated object `47c5b314acd6f7fb42bba2f90312bf1185277c5c` peels to that closing commit, and remote `main` still resolves to it. The separate v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. All **236/236** pins (**234/234** evidence + **2/2** authorization) match. At the exact candidate, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275**, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; hosted Python 3.11 and 3.12 each passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Protected databases remain **2/2**, root-level review export passes, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-29 · **Version:** v0.15.7 (core-shell) · **Status:** **v0.23 is closed locally under R-CLOSE and v0.15.7 is authorized for atomic publication.** Release commit `8bb6a71446b043b10ce16077499fdc07abb91b98` is the untagged immediate parent of the closing tree; the annotated v0.15.7 tag targets that closing tree. The separate v0.23 evidence candidate is `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` on neutral branch `candidate/v0.23-remeasure`; authenticated hosted run `30459746825` attempt **1** passed all **7/7** executable jobs. Its release-grade audit accepted **7** signed receipts, rejected **0**, required attestations, and found the complete identity matrix. All **236/236** pins (**234/234** evidence + **2/2** authorization) match. At the exact release parent, local `./run ci-local` passed **20/20** with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, shell **275/275** on Python 3.11.4, `invariant-scan` **12/12 rules / 38 controls**, and embedded golden **11/11**; an independently rebuilt Python 3.12.13 lane also passed **275/275**. Step 3's earlier run `30456330833` remains verification-only and unpinned. Protected databases remain **2/2**, root-level review export passes **90** derived sources / **7** required / **153** exported, and standalone golden remains **11/11**. Rust, clippy, fmt, and ShellCheck gates are clean; the shell lanes retain one third-party `StarletteDeprecationWarning`. The Node-runtime trigger is discharged: checkout is v5, upload-artifact v6, setup-python v6, the already-Node-24 rust-cache v2 and provenance v4 remain, and all six `dtolnay/rust-toolchain` uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, and the one-real-publisher product limitation remain open; L2 remains scheduled.
 
-**v0.23 R-CLOSE selects v0.15.7 and prepares release assembly (operator
-decision 2026-07-29).** Release disposition: release (as of 2026-07-29). The
+**v0.23 R-CLOSE selects v0.15.7 and closes on authenticated candidate evidence
+(operator decision and measurement 2026-07-29).** Release disposition: release
+(as of 2026-07-29). The
 patch identity applies because the cycle changes workflow operations,
 documentation, evidence, and lifecycle controls without changing any `/v1/*`
 route or response body, schema, dependency graph, runtime behavior, robots
@@ -20,12 +21,22 @@ instruction published.
 
 Authenticated run `30459746825` attempt **1** at exact candidate
 `5b075dfc87e789aa34c07b94a9a80f2f10af89f2` is the closing evidence. The
-candidate is deliberately separate from the release parent being assembled.
+candidate is deliberately separate from release parent
+`8bb6a71446b043b10ce16077499fdc07abb91b98`.
 All **7/7** executable hosted jobs passed, and the release-grade verifier
 accepted **7 / rejected 0** signed identities with attestations required. The
-release-parent definition of done, exact release commit, closing commit,
-annotated tag object, and post-push run remain to be measured at their
-protocol-defined points rather than predicted here.
+release parent is the untagged immediate parent of this closing tree. The
+post-push hosted run is forward confirmation and belongs in the first dated
+append after publication; a red result there would be a v0.24 finding, not
+retroactive invalidation of this close.
+
+The release-parent definition of done passed exactly: `./run ci-local`
+**20/20**; workspace **133**; net **55** (**29 + 26**); shell **275/275** on
+Python 3.11.4 and independently on Python 3.12.13; warning-denied current and
+Rust 1.78 lanes; clean clippy, fmt, and ShellCheck; `invariant-scan` **12/12
+rules / 38 controls** with R12 **15/15** and R10 **45**; protected evidence
+**236/236** and databases **2/2**; root review export **90** derived sources,
+**7** required, **153** exported; standalone golden **11/11**, delta **0**.
 
 G1 is settled at **P2 by construction**, not by argument. E0 cloned the local
 repository with its local tag namespace, forcibly retagged recorded v0.15.6
@@ -88,8 +99,9 @@ created exactly **1** additional v0.24 assignment. No production-source work
 was absorbed. The remaining live tables validate all **13/13** governed rows,
 and `invariant-scan` passes **12/12 rules / 38 controls** with R12 **15/15**.
 
-The release-parent changed-path classification is prepared in seven disjoint
-groups and will be reconciled against the committed `v0.15.6..R` path set:
+The exact committed `v0.15.6..8bb6a71446b043b10ce16077499fdc07abb91b98`
+release-parent diff contains **34** paths classified once in seven disjoint
+groups:
 
 - **Workflow:** `.github/workflows/ci.yml`.
 - **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
