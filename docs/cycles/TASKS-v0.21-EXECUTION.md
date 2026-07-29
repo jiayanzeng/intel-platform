@@ -408,9 +408,95 @@ decision: publication.**
 
 ---
 
+## Execution records
+
+### 2026-07-29 · E0
+
+PASS. The read-only Gate contains every acceptance surface: only this runbook
+status record and the append-only progress record move. `STATE.md` remained
+blob `7db364ad67d27b2c0aa7cf448ef7db45e1a29ec0`, byte-identical to the entering
+tree.
+
+- **Entering matrix:** clean constrained Python 3.11.4 and 3.12.13
+  environments each resolved the same **21** packages and passed shell
+  **255/255** with the same third-party `StarletteDeprecationWarning`.
+  `./run ci-local` passed **20/20** with **133** workspace tests, **55** net
+  tests (**29 + 26**), locked Rust 1.78, zero
+  rustc/clippy/fmt/ShellCheck failures, `invariant-scan` **11/11 rules / 23
+  controls**, all **191/191** pins, protected databases **2/2**, and embedded
+  golden **11/11**. Standalone golden passed **11/11**, delta **0**.
+  `verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+  `version-check`, and `invariant-scan` passed locally. Project-root
+  `export-check` passed **90/90** derived sources, **7/7** required paths, and
+  **149** exported paths; the two-path increase from the entering draft's 147
+  is exactly the newly admitted v0.21 runbook and progress log.
+- **G1 — CONFIRMED.** `STATE_HEADER_RE` extracted the live header verbatim.
+  `STATE_REF_ASSERTIONS[0]` returned `[]`; assertion 1 returned
+  `['8c1eff03ff3e67b18176e8bf533de0f9501e0257']`. The header nevertheless
+  contains tag object
+  `7a5c9f7396c043f2b89974585fdd4e5146180e86`. Replacing that object with forty
+  zeroes in the same live phrasing produced `errors=[]`: the rule cannot fail
+  on the phrasing it claims to check.
+- **G2 — CONFIRMED, count 4.** Entry-point inspection across
+  `cycle_check.py`, `checklist_audit.py`, and `progress_check.py` found four
+  publication-status regex rules for which zero matches is interpreted as
+  success, all in `check_publication_status`: the `origin/main` prohibition,
+  pending-publication prohibition, annotated-tag-object freshness, and
+  tag-target freshness. The first two are negative scanners and have focused
+  examples, but none of the four has an `invariant-scan` planted-failure
+  control. Both freshness rules iterate matches without a cardinality
+  requirement: tag object is vacuous now; tag target currently finds one match
+  but a rephrasing to zero would be silent. `checklist_audit` has no equivalent
+  silent required-pattern pass once a checked box exists: missing entry or
+  commit evidence is an error, while zero checked boxes makes no audit claim
+  and active lifecycle is owned by `cycle-check`. `progress_check` explicitly
+  errors on zero dated headers, owners, or commits. No existing command notices
+  G1's zero-match state.
+- **G3 — CONFIRMED as a forward-correction subject.** A disposable
+  full-history clone of the published remote at exact tag target
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257` measured:
+  `cycle-check` exit **1**, with six messages saying remote-missing historical
+  tags `v0.8.0` and `v0.10.2` do not resolve to the tag objects and commits
+  recorded by three closed runbooks; `checklist-audit` exit **0**, **164/164**
+  checked tasks resolved; `progress-check` exit **0**, latest
+  `RE-MEASURE · 5631e70`; `version-check` exit **0**, exact `v0.15.4`;
+  `invariant-scan` exit **0**, **11/11 rules / 23 controls**. The published
+  tree has R-CLOSE unchecked, no cycle closing record, and no R-CLOSE progress
+  entry. Its header says publication is still in progress, so it is not a
+  header consistent with a closed v0.20 record. Remote inspection independently
+  found no `v0.8.0` or `v0.10.2` refs. This task records the defect and does not
+  repair it.
+- **G4 — CONFIRMED as a property.** The last three held commits are:
+  v0.18 closing audit
+  `344124819cb3c554f851d0cac3f0f1ed08d1aa10`, first hosted-verified **9:51:54**
+  later by successful candidate run `30414648482` at descendant
+  `197e93effe9a6abf9c59488a9849c6dcda47646c`; v0.19 publication finding
+  `72b6f425114e06b1e148e0aa360e280a690e4f0c`, first hosted-verified **2:20:18**
+  later by successful candidate run `30423736121` at descendant
+  `8230d4f24f565afcde92931c987adff4339036af`; and v0.20 closing audit
+  `8fc21813763c19a90ee17e7b95d1e87330a916b8`, which remains on no remote branch
+  and has no hosted verification.
+- **G5 — CONFIRMED.** With correct refs, a wrong tag-object assertion in the
+  live phrasing plus a pending-publication claim produced one error — pending
+  only, because G1 hid the wrong object. With the measured tag ref itself
+  changed to forty zeroes, the same pending header again produced exactly one
+  error: release-object agreement. The early return masked the applicable
+  pending-publication rule.
+- **G6 — CONFIRMED as already recorded, not a new gap.** v0.20 accepted the
+  240-character proximity window as bounded looseness because it scans only the
+  live header and can cause only a loud conservative refusal, never a false
+  pass. The decision is present in both the v0.20 execution record and progress
+  log.
+- **Objects and pins:** remote `main` and the peeled `v0.15.4` target remain
+  `8c1eff03ff3e67b18176e8bf533de0f9501e0257`; annotated tag object remains
+  `7a5c9f7396c043f2b89974585fdd4e5146180e86`. Manifest validation passed
+  **191/191** pins; protected databases remain **2/2** exact.
+
+---
+
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with both interpreters; G1 shown as a rule that
+- [x] **E0** — entering matrix with both interpreters; G1 shown as a rule that
   cannot fail, with the unexamined hash reported; G2 enumerated with a count; G3
   measured at published tag `v0.15.4` with every exit code and message; G4 stated
   as a property with named commits; G5 confirmed or refuted by error count; G6
