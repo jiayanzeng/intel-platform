@@ -1,5 +1,20 @@
 # TASKS-v0.24-EXECUTION.md — the population, not the number
 
+## Runbook amendments
+
+Step 6 — Acceptance criteria corrected to a same-commit population-rule relation — 2026-07-29
+
+- **2026-07-29 — activation validation correction.** The activation commit
+  exposed four defects and they are corrected forward here. The declared scope
+  now uses the checker's required Markdown-table schema; its Python-source
+  forbid uses the v0.23-established lower-case-module glob so the only
+  release-authority overlap is `shell/intel_shell/app.py`; the unchanged
+  manifest re-measurement is assigned to Step 1; and Step 6's acceptance
+  criterion now states same-commit invariant-count equality and execution of
+  the population-equivalence rule rather than citing Step 3's measured
+  increase. The last change amends one acceptance criterion; no objective,
+  gate, or done condition changed.
+
 v0.23 closed and v0.15.7 published atomically. Release parent
 `8bb6a714…`, closing commit and tag target `e7715fb9…`, annotated object
 `b579c2c1…`, published-head run `30462710258` green on all seven executable
@@ -51,38 +66,35 @@ under `crates/`, `apps/`, or `shell/intel_shell/` is modified.**
 
 ## Declared scope
 
-```yaml
-scope_version: 1
-disposition_intent: release
-allow:
-  - shell/tests/**
-  - shell/pytest.ini
-  - tools/test_population.py
-  - tools/cycle_check.py
-  - tools/invariant_scan.py
-  - config/invariant-rules.json
-  - config/protected-artifacts.json
-  - .github/workflows/ci.yml
-  - run
-  - observations/**
-  - AGENTS.md
-  - ARCHITECTURE.md
-release_authorities:
-  - Cargo.toml
-  - Cargo.lock
-  - crates/*/Cargo.toml
-  - apps/*/Cargo.toml
-  - shell/intel_shell/__init__.py
-  - shell/intel_shell/app.py
-  - CHANGELOG.md
-  - README.md
-forbid:
-  - crates/**/*.rs
-  - apps/**/*.rs
-  - shell/intel_shell/**
-  - config/core.json
-  - config/subscriptions*.json
-```
+| Scope class | Path or value |
+|---|---|
+| `scope_version` | `1` |
+| `disposition_intent` | `release` |
+| `allow` | `shell/tests/**` |
+| `allow` | `shell/pytest.ini` |
+| `allow` | `tools/test_population.py` |
+| `allow` | `tools/cycle_check.py` |
+| `allow` | `tools/invariant_scan.py` |
+| `allow` | `config/invariant-rules.json` |
+| `allow` | `config/protected-artifacts.json` |
+| `allow` | `.github/workflows/ci.yml` |
+| `allow` | `run` |
+| `allow` | `observations/**` |
+| `allow` | `AGENTS.md` |
+| `allow` | `ARCHITECTURE.md` |
+| `release_authority` | `Cargo.toml` |
+| `release_authority` | `Cargo.lock` |
+| `release_authority` | `crates/*/Cargo.toml` |
+| `release_authority` | `apps/*/Cargo.toml` |
+| `release_authority` | `shell/intel_shell/__init__.py` |
+| `release_authority` | `shell/intel_shell/app.py` |
+| `release_authority` | `CHANGELOG.md` |
+| `release_authority` | `README.md` |
+| `forbid` | `crates/**/*.rs` |
+| `forbid` | `apps/**/*.rs` |
+| `forbid` | `shell/intel_shell/[a-z]*.py` |
+| `forbid` | `config/core.json` |
+| `forbid` | `config/subscriptions*.json` |
 
 `run` and `.github/workflows/ci.yml` are in `allow` because Step 2 changes how
 the shell suite is invoked; `run` is a pinned authorization surface, so its pin
@@ -204,7 +216,7 @@ may be a dated negative statement where the condition is an event.
 | Second configured publisher | a completed compliance review per publisher, then a separate admission decision | no review completed | **Step 5 opens the review only; it does not admit a source** |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | not authorized | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | tags unpublished | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 | re-measure only |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 | **Step 1 — re-measure only** |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | literal present in production source | none — recorded, not acted on |
 
 ---
@@ -476,7 +488,8 @@ database changes.
 **Acceptance criteria.** Hosted run pinned on a neutral branch · remote `ci.yml`
 blob confirmed before dispatch · shell lanes compared by the comparator with its
 output cited, never transcribed · every other count read from the log and equal
-at that commit · hosted `invariant-scan` counts recorded and increased by Step 3 ·
+at that commit · hosted `invariant-scan` counts recorded and equal to local at
+the same candidate commit, with the population-equivalence rule executing ·
 run id recorded as citable closing evidence · signed set committed and
 re-derived · pin count in three places · `origin/main` unchanged, no tag · golden
 11/11.
