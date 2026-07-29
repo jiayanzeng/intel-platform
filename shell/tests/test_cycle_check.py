@@ -8,6 +8,7 @@ from tools.cycle_identity import (
     cycle_progress_path,
     cycle_runbook_path,
     execution_runbooks,
+    resolve_cycle,
 )
 
 
@@ -34,6 +35,18 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     )
     _runbook(root).write_text(
         "# Open cycle\n\n"
+        "## Declared scope\n\n"
+        "| Scope class | Path or value |\n"
+        "|---|---|\n"
+        "| `scope_version` | `1` |\n"
+        "| `disposition_intent` | `release` |\n"
+        "| `allow` | `**` |\n"
+        "| `release_authority` | `Cargo.toml` |\n"
+        "| `release_authority` | `Cargo.lock` |\n"
+        "| `release_authority` | `README.md` |\n"
+        "| `release_authority` | `CHANGELOG.md` |\n"
+        "| `release_authority` | `shell/intel_shell/__init__.py` |\n"
+        "| `release_authority` | `shell/intel_shell/app.py` |\n\n"
         "## Step 1 · CHECK\n\n"
         "**Objective.** Preserve the contract.\n\n"
         "**Acceptance criteria.** Original criterion.\n\n"
@@ -812,6 +825,166 @@ def test_cycle_check_accepts_disclosed_acceptance_edit(
     )
 
     assert cycle_check.run(root) == 0
+
+
+def test_declared_scope_uses_repository_relative_globs() -> None:
+    assert cycle_check.scope_pattern_matches(
+        "shell/intel_shell/**",
+        "shell/intel_shell/app.py",
+    )
+    assert not cycle_check.scope_pattern_matches(
+        "shell/intel_shell/**",
+        "shell/tests/test_cycle_check.py",
+    )
+    assert cycle_check.scope_pattern_matches(
+        "crates/**/*.rs",
+        "crates/store/src/sqlite.rs",
+    )
+    assert not cycle_check.scope_pattern_matches(
+        "crates/*/Cargo.toml",
+        "crates/store/src/Cargo.toml",
+    )
+
+
+def test_v022_scope_fixture_rejects_both_release_paths(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path
+    runbook = root / "TASKS-v0.22-EXECUTION.md"
+    text = (
+        "# Scope fixture\n\n"
+        "## Declared scope\n\n"
+        "| Scope class | Path or value |\n"
+        "|---|---|\n"
+        "| `scope_version` | `1` |\n"
+        "| `disposition_intent` | `release` |\n"
+        "| `allow` | `AGENTS.md` |\n"
+        "| `release_authority` | `Cargo.toml` |\n"
+        "| `forbid` | `apps/**` |\n"
+        "| `forbid` | `Cargo.lock` |\n"
+    )
+    errors: list[str] = []
+    declaration = cycle_check.parse_declared_scope(
+        runbook,
+        text,
+        root,
+        errors,
+    )
+    assert declaration is not None
+    assert errors == []
+
+    cycle_check.validate_declared_scope(
+        declaration,
+        (
+            "Cargo.toml",
+            "apps/cored/Cargo.toml",
+            "Cargo.lock",
+        ),
+        (
+            "apps/cored/Cargo.toml",
+            "Cargo.lock",
+        ),
+        set(),
+        False,
+        runbook,
+        root,
+        errors,
+    )
+
+    assert any(
+        "release-authority set rejects apps/cored/Cargo.toml" in error
+        for error in errors
+    )
+    assert any(
+        "release-authority set rejects Cargo.lock" in error
+        for error in errors
+    )
+    assert any(
+        "diff rejects apps/cored/Cargo.toml" in error
+        for error in errors
+    )
+    assert any("diff rejects Cargo.lock" in error for error in errors)
+
+
+def test_declared_scope_standing_status_paths_exclude_agents(
+    tmp_path: Path,
+) -> None:
+    declaration = cycle_check.ScopeDeclaration(
+        version=1,
+        disposition_intent="no-release",
+        allow=(".github/workflows/ci.yml",),
+        release_authorities=(),
+        forbid=(),
+    )
+    runbook = tmp_path / "TASKS-v0.23-EXECUTION.md"
+    errors: list[str] = []
+
+    cycle_check.validate_declared_scope(
+        declaration,
+        (),
+        (
+            "STATE.md",
+            "docs/cycles/PROGRESS-v0.23.md",
+            "docs/cycles/TASKS-v0.23-EXECUTION.md",
+            "AGENTS.md",
+        ),
+        {
+            "STATE.md",
+            "docs/cycles/PROGRESS-v0.23.md",
+            "docs/cycles/TASKS-v0.23-EXECUTION.md",
+        },
+        False,
+        runbook,
+        tmp_path,
+        errors,
+    )
+
+    assert len(errors) == 1
+    assert "diff rejects AGENTS.md" in errors[0]
+
+
+def test_current_scope_has_exactly_one_release_forbid_overlap() -> None:
+    root = Path(__file__).resolve().parents[2]
+    identity = resolve_cycle(root)
+    errors: list[str] = []
+    declaration = cycle_check.parse_declared_scope(
+        identity.runbook,
+        identity.runbook.read_text(),
+        root,
+        errors,
+    )
+
+    assert declaration is not None
+    assert errors == []
+    authorities = cycle_check.release_authority_paths(root)
+    assert len(authorities) == 17
+    assert cycle_check.scope_release_forbid_overlaps(
+        declaration,
+        authorities,
+    ) == ("shell/intel_shell/app.py",)
+
+
+def test_activation_anchor_is_exclusive_and_next_commit_is_checked(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "| `allow` | `**` |",
+            "| `allow` | `AGENTS.md` |",
+        )
+    )
+    _commit_cycle_root(root)
+
+    assert cycle_check.run(root) == 0
+
+    (root / "outside.txt").write_text("outside declared scope\n")
+    _commit_all(root, "outside scope")
+
+    assert cycle_check.run(root) == 1
+    assert "declared scope diff rejects outside.txt" in capsys.readouterr().err
 
 
 def test_cycle_check_rejects_unassigned_active_deferral_row(

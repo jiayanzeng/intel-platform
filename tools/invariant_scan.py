@@ -1471,6 +1471,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "post-push-record": (
         "Invariant R12 control site: required and fresh post-push record."
     ),
+    "declared-scope": (
+        "Invariant R12 control site: declared cycle scope."
+    ),
 }
 
 
@@ -1861,6 +1864,46 @@ def r12_findings(root: Path) -> list[str]:
         if not any(expected in error for error in errors):
             missed.setdefault("tagged-closing-protocol", []).append(
                 "prechange-active-tag-object"
+            )
+
+        scope_path = fixture / "scope-control-runbook.md"
+        declaration = cycle_check.ScopeDeclaration(
+            version=1,
+            disposition_intent="release",
+            allow=("AGENTS.md",),
+            release_authorities=("Cargo.toml",),
+            forbid=("apps/**", "Cargo.lock"),
+        )
+        errors = []
+        cycle_check.validate_declared_scope(
+            declaration,
+            (
+                "Cargo.toml",
+                "apps/cored/Cargo.toml",
+                "Cargo.lock",
+            ),
+            (
+                "apps/cored/Cargo.toml",
+                "Cargo.lock",
+            ),
+            set(),
+            False,
+            scope_path,
+            fixture,
+            errors,
+        )
+        expected_scope_failures = (
+            "release-authority set rejects apps/cored/Cargo.toml",
+            "release-authority set rejects Cargo.lock",
+            "diff rejects apps/cored/Cargo.toml",
+            "diff rejects Cargo.lock",
+        )
+        if not all(
+            any(expected in error for error in errors)
+            for expected in expected_scope_failures
+        ):
+            missed.setdefault("declared-scope", []).append(
+                "v0.22-release-paths"
             )
 
     source_path = root / "tools" / "cycle_check.py"

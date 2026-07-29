@@ -9,7 +9,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -785,6 +785,20 @@ def check_authority(
                 )
 
 
+SCOPE_HEADING_RE = re.compile(
+    r"^## Declared scope(?:[^\n]*)$",
+    re.MULTILINE,
+)
+SCOPE_FORWARD_BOUNDARY = (0, 23)
+SCOPE_CLASSES = {
+    "scope_version",
+    "disposition_intent",
+    "allow",
+    "release_authority",
+    "forbid",
+}
+
+
 def check_contract_cycle_paths(
     identity,
     root: Path,
@@ -985,6 +999,377 @@ def normalized_table_cell(cell: str) -> str:
     return re.sub(r"\s+", " ", cell.replace("*", "").replace("`", "")).strip()
 
 
+class ScopeDeclaration(NamedTuple):
+    version: int
+    disposition_intent: str
+    allow: tuple[str, ...]
+    release_authorities: tuple[str, ...]
+    forbid: tuple[str, ...]
+
+
+def literal_table_cell(cell: str) -> str:
+    value = cell.strip()
+    if value.startswith("`") and value.endswith("`") and len(value) >= 2:
+        return value[1:-1]
+    return value
+
+
+def declared_scope_cycle_version(name: str) -> tuple[int, ...]:
+    match = re.fullmatch(r"v([0-9]+(?:\.[0-9]+)*)", name)
+    if match is None:
+        return ()
+    return tuple(int(part) for part in match.group(1).split("."))
+
+
+def scope_pattern_regex(pattern: str) -> re.Pattern[str]:
+    if (
+        not pattern
+        or pattern.startswith("/")
+        or any(part == ".." for part in pattern.split("/"))
+    ):
+        raise ValueError(f"invalid repository-relative scope pattern {pattern!r}")
+    translated: list[str] = ["^"]
+    index = 0
+    while index < len(pattern):
+        if pattern.startswith("**/", index):
+            translated.append("(?:[^/]+/)*")
+            index += 3
+        elif pattern.startswith("**", index):
+            translated.append(".*")
+            index += 2
+        elif pattern[index] == "*":
+            translated.append("[^/]*")
+            index += 1
+        elif pattern[index] == "?":
+            translated.append("[^/]")
+            index += 1
+        elif pattern[index] == "[":
+            end = pattern.find("]", index + 1)
+            if end == -1:
+                translated.append(r"\[")
+                index += 1
+                continue
+            character_class = pattern[index + 1 : end]
+            if character_class.startswith("!"):
+                character_class = "^" + character_class[1:]
+            translated.append("[" + character_class.replace("\\", r"\\") + "]")
+            index = end + 1
+        else:
+            translated.append(re.escape(pattern[index]))
+            index += 1
+    translated.append("$")
+    return re.compile("".join(translated))
+
+
+def scope_pattern_matches(pattern: str, candidate: str) -> bool:
+    return scope_pattern_regex(pattern).fullmatch(candidate) is not None
+
+
+def parse_declared_scope(
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> ScopeDeclaration | None:
+    headings = list(SCOPE_HEADING_RE.finditer(text))
+    if len(headings) != 1:
+        errors.append(
+            f"{shown(path, root)}: v0.23-forward runbook must contain exactly "
+            f"one declared-scope heading; found {len(headings)}"
+        )
+        return None
+    section = text[headings[0].end():]
+    next_heading = re.search(r"^## ", section, re.MULTILINE)
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+    lines = section.splitlines()
+    header_index: int | None = None
+    class_index: int | None = None
+    value_index: int | None = None
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if "scope class" not in normalized or "path or value" not in normalized:
+            continue
+        header_index = index
+        class_index = normalized.index("scope class")
+        value_index = normalized.index("path or value")
+        break
+    if header_index is None or class_index is None or value_index is None:
+        errors.append(
+            f"{shown(path, root)}: declared scope must contain a markdown "
+            "table with Scope class and Path or value columns"
+        )
+        return None
+
+    values: dict[str, list[str]] = {scope_class: [] for scope_class in SCOPE_CLASSES}
+    for offset, line in enumerate(lines[header_index + 1 :], header_index + 1):
+        cells = markdown_table_cells(line)
+        if not cells or max(class_index, value_index) >= len(cells):
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        scope_class = literal_table_cell(cells[class_index]).casefold()
+        value = literal_table_cell(cells[value_index])
+        line_number = text[: headings[0].end()].count("\n") + offset + 1
+        if scope_class not in SCOPE_CLASSES:
+            errors.append(
+                f"{shown(path, root)}:{line_number}: unknown declared-scope "
+                f"class {scope_class!r}"
+            )
+            continue
+        if not value:
+            errors.append(
+                f"{shown(path, root)}:{line_number}: declared-scope "
+                f"{scope_class!r} value is empty"
+            )
+            continue
+        values[scope_class].append(value)
+
+    if values["scope_version"] != ["1"]:
+        errors.append(
+            f"{shown(path, root)}: declared scope requires exactly one "
+            "scope_version row with value 1"
+        )
+    if (
+        len(values["disposition_intent"]) != 1
+        or values["disposition_intent"][0] not in {"release", "no-release"}
+    ):
+        errors.append(
+            f"{shown(path, root)}: declared scope requires exactly one "
+            "disposition_intent row with release or no-release"
+        )
+    patterns_valid = True
+    for scope_class in ("allow", "release_authority", "forbid"):
+        for pattern in values[scope_class]:
+            try:
+                scope_pattern_regex(pattern)
+            except ValueError as error:
+                errors.append(f"{shown(path, root)}: {error}")
+                patterns_valid = False
+    if errors and (
+        values["scope_version"] != ["1"]
+        or len(values["disposition_intent"]) != 1
+        or values["disposition_intent"][0] not in {"release", "no-release"}
+    ):
+        return None
+    if not values["allow"]:
+        errors.append(
+            f"{shown(path, root)}: declared scope requires at least one allow row"
+        )
+    if not patterns_valid:
+        return None
+    return ScopeDeclaration(
+        version=1,
+        disposition_intent=values["disposition_intent"][0],
+        allow=tuple(values["allow"]),
+        release_authorities=tuple(values["release_authority"]),
+        forbid=tuple(values["forbid"]),
+    )
+
+
+def release_authority_paths(root: Path) -> tuple[str, ...]:
+    manifests = [
+        shown(path, root)
+        for parent in ("crates", "apps")
+        for path in sorted((root / parent).glob("*/Cargo.toml"))
+    ]
+    return tuple(
+        sorted(
+            {
+                "Cargo.toml",
+                "Cargo.lock",
+                "README.md",
+                "CHANGELOG.md",
+                "shell/intel_shell/__init__.py",
+                "shell/intel_shell/app.py",
+                *manifests,
+            }
+        )
+    )
+
+
+def report_unpermitted_scope_paths(
+    candidates: tuple[str, ...],
+    permitted: Callable[[str], bool],
+    label: str,
+    path: Path,
+    root: Path,
+    errors: list[str],
+) -> None:
+    for candidate in candidates:
+        # Invariant R12 control site: declared cycle scope.
+        if not permitted(candidate):
+            errors.append(
+                f"{shown(path, root)}: declared scope {label} rejects "
+                f"{candidate}"
+            )
+
+
+def scope_changed_path_allowed(
+    candidate: str,
+    declaration: ScopeDeclaration,
+    standing_status_paths: set[str],
+) -> bool:
+    if candidate in standing_status_paths:
+        return True
+    if any(
+        scope_pattern_matches(pattern, candidate)
+        for pattern in declaration.release_authorities
+    ):
+        return True
+    if any(
+        scope_pattern_matches(pattern, candidate)
+        for pattern in declaration.forbid
+    ):
+        return False
+    return any(
+        scope_pattern_matches(pattern, candidate)
+        for pattern in declaration.allow
+    )
+
+
+def scope_release_forbid_overlaps(
+    declaration: ScopeDeclaration,
+    authorities: tuple[str, ...],
+) -> tuple[str, ...]:
+    return tuple(
+        authority
+        for authority in authorities
+        if any(
+            scope_pattern_matches(pattern, authority)
+            for pattern in declaration.release_authorities
+        )
+        and any(
+            scope_pattern_matches(pattern, authority)
+            for pattern in declaration.forbid
+        )
+    )
+
+
+def validate_declared_scope(
+    declaration: ScopeDeclaration,
+    authorities: tuple[str, ...],
+    changed_paths: tuple[str, ...],
+    standing_status_paths: set[str],
+    recorded_release: bool,
+    path: Path,
+    root: Path,
+    errors: list[str],
+) -> None:
+    if declaration.disposition_intent == "release" or recorded_release:
+        report_unpermitted_scope_paths(
+            authorities,
+            lambda candidate: any(
+                scope_pattern_matches(pattern, candidate)
+                for pattern in declaration.release_authorities
+            ),
+            "release-authority set",
+            path,
+            root,
+            errors,
+        )
+    report_unpermitted_scope_paths(
+        changed_paths,
+        lambda candidate: scope_changed_path_allowed(
+            candidate,
+            declaration,
+            standing_status_paths,
+        ),
+        "diff",
+        path,
+        root,
+        errors,
+    )
+
+
+def activation_anchor(root: Path, path: Path) -> str | None:
+    relative = shown(path, root)
+    history_path = relative
+    staged = git_output(root, "diff", "--cached", "--name-status", "-M", "--")
+    if staged:
+        for line in staged.splitlines():
+            fields = line.split("\t")
+            if (
+                len(fields) == 3
+                and fields[0].startswith("R")
+                and fields[2] == relative
+            ):
+                history_path = fields[1]
+                break
+    additions = git_output(
+        root,
+        "log",
+        "--follow",
+        "--diff-filter=A",
+        "--format=%H",
+        "--",
+        history_path,
+    )
+    if not additions:
+        return None
+    return additions.splitlines()[-1]
+
+
+def check_declared_scope(
+    identity,
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> None:
+    declaration = parse_declared_scope(path, text, root, errors)
+    if declaration is None:
+        return
+    recorded_release = any(
+        match.group(1) == "release"
+        for match in DATED_DISPOSITION_RE.finditer(text)
+    )
+    changed_paths: tuple[str, ...] = ()
+    if (root / ".git").exists():
+        anchor = activation_anchor(root, path)
+        if anchor is None:
+            errors.append(
+                f"{shown(path, root)}: cannot resolve activation anchor from "
+                "the runbook-add commit"
+            )
+            return
+        changed = git_output(
+            root,
+            "diff",
+            "--name-only",
+            f"{anchor}..HEAD",
+            "--",
+        )
+        if changed is None:
+            errors.append(
+                f"{shown(path, root)}: cannot measure declared-scope diff "
+                f"{anchor}..HEAD"
+            )
+            return
+        changed_paths = tuple(
+            line for line in changed.splitlines() if line
+        )
+    standing = {
+        "STATE.md",
+        shown(identity.progress, root),
+        shown(identity.runbook, root),
+    }
+    validate_declared_scope(
+        declaration,
+        release_authority_paths(root),
+        changed_paths,
+        standing,
+        recorded_release,
+        path,
+        root,
+        errors,
+    )
+
+
 def check_active_deferral_assignments(
     path: Path,
     text: str,
@@ -1156,6 +1541,14 @@ def run(
             root,
             errors,
         )
+        if declared_scope_cycle_version(identity.name) >= SCOPE_FORWARD_BOUNDARY:
+            check_declared_scope(
+                identity,
+                identity.runbook,
+                active_text,
+                root,
+                errors,
+            )
         unchecked = len(UNCHECKED_RE.findall(active_text))
         closing = active_text.count(CLOSING_HEADING)
         if unchecked >= 1 and closing == 0:

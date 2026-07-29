@@ -40,6 +40,10 @@ Corollaries, each earned:
   Every registered invariant rule carries a reconstructible `fail_before`
   mutation whose expected failure is executed by `invariant-scan --self-test`;
   prose saying a rule fired is not a control.
+- **A zero exit on a construction the checked entry point did not examine is
+  not a negative result.** It is `not measured`. Before interpreting a planted
+  construction's success, demonstrate that the rule under test read that
+  construction; this is the v0.21 vacuous-pattern lesson applied to controls.
 - **Fixtures prove the state machine, not the wire (HC13).** A green fixture test
   is evidence about parsing and control flow, never about what a real server
   does. Live-path claims require a live run.
@@ -253,6 +257,26 @@ the next:
 Before implementation, verify that the task's Gate contains the scope of every
 acceptance criterion. A Gate may not be narrower than its criteria: widen the
 Gate or move an out-of-scope criterion to a task whose Gate contains it.
+
+Beginning with v0.23, every active execution runbook carries one
+machine-readable declared-scope table. `cycle-check` applies two distinct
+sub-rules and their evidence must not be conflated:
+
+- The **static sub-rule fires at activation**. A release disposition must
+  declare patterns covering every enumerated release-authority path.
+- The **diff sub-rule first fires at the per-task gate after a changed commit**.
+  Its range is the activation commit **exclusive** through `HEAD` **inclusive**
+  (`activation..HEAD`), so the activation diff itself is empty. The exact
+  standing always-allowed set is `STATE.md`, the active progress record, and
+  the active runbook. `AGENTS.md` is deliberately not standing and must be
+  declared by any cycle that changes it.
+
+The matcher is repository-relative and glob-based. A declared release authority
+wins over `forbid` so R-CLOSE can change version authorities; in v0.23 this
+weakens the production-source prohibition for exactly
+`shell/intel_shell/app.py`, whose non-version diff therefore still requires
+human classification. Closed runbooks before v0.23 are immutable and are never
+retrofitted with a scope table.
 
 Every active runbook's **Deferred means deferred** table must assign each
 non-`none` action to a named, existing `Step N`; an asserted action without its

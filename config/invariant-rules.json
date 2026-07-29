@@ -421,9 +421,9 @@
     },
     {
       "id": "R12",
-      "claim": "Every closing/publication-status rule rejects its planted failure; legacy immutable assertions remain required and fresh, while tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants.",
-      "source": "docs/cycles/TASKS-v0.22-EXECUTION.md:207-276",
-      "scope": "The actual tools/cycle_check.py check_release_record and check_publication_status entry points, exercised with planted legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, and missing or stale post-push records. Assertion grammar remains deliberately narrow: no intervening backtick is admitted between a named ref and hash.",
+      "claim": "Every closing/publication-status and v0.23-forward declared-scope rule rejects its planted failure; legacy immutable assertions remain required and fresh, tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants, and an unsatisfiable release scope rejects its changed paths.",
+      "source": "docs/cycles/TASKS-v0.23-EXECUTION.md:594-665",
+      "scope": "The actual tools/cycle_check.py check_release_record, check_publication_status, and validate_declared_scope entry points, exercised with planted legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, missing or stale post-push records, and a v0.22-shaped release scope that rejects apps/cored/Cargo.toml and Cargo.lock. Scope declarations apply only to the active v0.23-forward runbook; assertion grammar remains deliberately narrow.",
       "fail_before": [
         {
           "file": "tools/cycle_check.py",
@@ -563,6 +563,16 @@
           "expected_fail": "publication planted controls were not detected: post-push-required, post-push-date-invalid, post-push-object-freshness, post-push-target-freshness, post-push-run-required",
           "expected_file": "tools/cycle_check.py",
           "expected_line": 739
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "        if not permitted(candidate):\n",
+          "replace_with": [
+            "        if False:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: v0.22-release-paths",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 1204
         }
       ],
       "fail_before_note": "invariant-scan: R12 FAIL: closing/publication planted failure was not detected"

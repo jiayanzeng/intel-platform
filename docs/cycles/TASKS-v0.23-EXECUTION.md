@@ -61,56 +61,53 @@ are unchanged. Golden stays 11/11 byte-identical through every task.**
 
 ---
 
-## Declared scope (draft — Step 4 validates and, if wrong, corrects it)
+## Declared scope (validated and corrected by Step 4)
 
-This block is committed at activation as the first subject of the rule Step 4
-builds. **It is a draft: nothing validates it until Step 4 lands, and Step 4 must
-record whether it needed correction.** An unvalidated block that turns out wrong
-is itself a measurement.
+The activation-committed YAML draft was deliberately unvalidated. Step 4 found
+that its intended classes fit the existing markdown-table dialect, but it
+needed two corrections: the draft omitted
+`shell/tests/test_deferred_audit.py`, which Step 3 had necessarily changed with
+its action major, and `shell/intel_shell/**` overlapped both Python release
+authorities rather than the asserted one. This table is the corrected
+machine-readable form; one row carries one class and one repository-relative
+path or glob.
 
-```yaml
-scope_version: 1
-disposition_intent: release
-allow:
-  - .github/workflows/ci.yml
-  - tools/cycle_check.py
-  - tools/invariant_scan.py
-  - config/invariant-rules.json
-  - shell/tests/test_cycle_check.py
-  - shell/tests/test_invariant_scan.py
-  - AGENTS.md
-  - ARCHITECTURE.md
-release_authorities:
-  - Cargo.toml
-  - Cargo.lock
-  - crates/*/Cargo.toml
-  - apps/*/Cargo.toml
-  - shell/intel_shell/__init__.py
-  - shell/intel_shell/app.py
-  - CHANGELOG.md
-  - README.md
-forbid:
-  - crates/**/*.rs
-  - apps/**/*.rs
-  - shell/intel_shell/**
-  - config/core.json
-  - config/subscriptions*.json
-```
+| Scope class | Path or value |
+|---|---|
+| `scope_version` | `1` |
+| `disposition_intent` | `release` |
+| `allow` | `.github/workflows/ci.yml` |
+| `allow` | `tools/cycle_check.py` |
+| `allow` | `tools/invariant_scan.py` |
+| `allow` | `config/invariant-rules.json` |
+| `allow` | `shell/tests/test_cycle_check.py` |
+| `allow` | `shell/tests/test_invariant_scan.py` |
+| `allow` | `shell/tests/test_deferred_audit.py` |
+| `allow` | `AGENTS.md` |
+| `allow` | `ARCHITECTURE.md` |
+| `release_authority` | `Cargo.toml` |
+| `release_authority` | `Cargo.lock` |
+| `release_authority` | `crates/*/Cargo.toml` |
+| `release_authority` | `apps/*/Cargo.toml` |
+| `release_authority` | `shell/intel_shell/__init__.py` |
+| `release_authority` | `shell/intel_shell/app.py` |
+| `release_authority` | `CHANGELOG.md` |
+| `release_authority` | `README.md` |
+| `forbid` | `crates/**/*.rs` |
+| `forbid` | `apps/**/*.rs` |
+| `forbid` | `shell/intel_shell/[a-z]*.py` |
+| `forbid` | `config/core.json` |
+| `forbid` | `config/subscriptions*.json` |
 
-**Two conflicts this block already exposes, both for Step 4 to resolve rather
-than paper over:**
-
-- `shell/intel_shell/app.py` carries the public FastAPI version literal **and**
-  is production source. It is therefore in `release_authorities` and matched by
-  `forbid`. A path-glob scope cannot express "the version line only." Step 4's
-  default resolution is that `release_authorities` wins over `forbid` at R-CLOSE
-  and human diff classification in `STATE.md` covers the rest — **and Step 4 must
-  state that this weakens the rule for exactly one file.** Moving the literal
-  into `__init__.py` and importing it would remove the overlap; that is a source
-  change, out of scope here, and belongs in the forward record.
-- `shell/tests/**` sits under `shell/` but is not production source, which is why
-  `forbid` names `shell/intel_shell/**` rather than `shell/**`. If Step 4's
-  matcher is prefix-based rather than glob-based this distinction collapses.
+The matcher is glob-based:
+`shell/intel_shell/[a-z]*.py` matches the lower-case production modules but
+neither `shell/tests/**` nor the version-only `__init__.py`.
+Release-authority precedence over `forbid` permits the R-CLOSE version edit in
+`shell/intel_shell/app.py`; the measured authority/forbid intersection is
+exactly that one file. This weakens path-level enforcement for that file, so
+the release record must classify its diff. Relocating the FastAPI version
+literal into `__init__.py` remains the forward option for restoring
+line-independent enforcement and is out of scope here.
 
 **Standing always-allowed status paths** are defined inside the checker, not
 re-enumerated per cycle: `STATE.md`, the active `docs/cycles/PROGRESS-vX.Y.md`,
@@ -482,6 +479,45 @@ changed in the working repository · published objects and 221 pins re-verified 
   it moves.
 - **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
 
+### 2026-07-29 · SCOPE-DECLARED
+
+- **Result — PASS.** The active runbook now carries the small two-column scope
+  table parsed with the same markdown-cell helpers as the deferral table.
+  Closed pre-v0.23 runbooks remain untouched.
+- **Draft validation — CORRECTION REQUIRED.** The activation YAML draft fit the
+  schema semantically but omitted
+  `shell/tests/test_deferred_audit.py`, changed by Step 3's necessary receipt
+  assertion, and its `shell/intel_shell/**` forbid overlapped both Python
+  release authorities rather than the asserted one. The corrected table adds
+  the test path and uses `shell/intel_shell/[a-z]*.py`; the exact
+  authority/forbid overlap is now only `shell/intel_shell/app.py`.
+- **Two-rule acceptance — PASS.** The static release-authority check fires at
+  activation. The committed-diff check uses activation commit
+  `09cb119ba4237f99f652327d8babd51d95517cd7` **exclusive** through `HEAD`
+  **inclusive**, so activation's own diff is empty and the next offending
+  commit is visible. Exact standing paths are `STATE.md`, this runbook, and
+  `PROGRESS-v0.23.md`; `AGENTS.md` is not standing.
+- **Glob/precedence acceptance — PASS with one named weakening.** Repository-
+  relative glob matching keeps `shell/tests/**` outside the production-shell
+  forbid. Release-authority precedence permits `app.py` at R-CLOSE, weakening
+  path-level enforcement for exactly that file; human diff classification is
+  therefore still required. Moving its FastAPI version literal into
+  `__init__.py` is the forward option, not work absorbed here.
+- **Fail-before acceptance — PASS.** The v0.22-shaped fixture rejected
+  `apps/cored/Cargo.toml` and `Cargo.lock` under both the release-authority and
+  changed-path checks without editing the closed runbook. R12 mutation 14
+  disables their shared rejection point; `invariant-scan --self-test` detected
+  it.
+- **Contract acceptance — PASS.** `AGENTS.md` states the static/diff firing
+  times, exclusive/inclusive endpoints, exact standing set, v0.23-forward
+  boundary, glob semantics, `app.py` weakening, and the rule that zero from an
+  unexamined construction means `not measured`.
+- **Measured counts.** `invariant-scan` passes **12/12 rules / 37 controls**;
+  R12 passes **14/14** mutations. Focused suites pass lifecycle **39/39** and
+  invariant **22/22**; the full constrained Python 3.11 shell lane passes
+  **271/271** with the one accepted third-party warning.
+- **Golden-E2E delta: 0.** Mandatory standalone execution passed **11/11**.
+
 ---
 
 ## Step 2 · RELEASE-PROSE (G1) — Delete the duplicate, not just the stale copy 🤖
@@ -827,6 +863,13 @@ decision: publication.**
 
 ## Cycle checklist
 
+### Pending closing record inputs
+
+- Step 4 invariant measurement: **12/12 rules / 37 controls**, including R12
+  **14/14** planted mutations.
+- Activation scope result: correction required for one omitted Step 3 test path
+  and one over-broad shell-source glob; the corrected table validates.
+
 - [x] **E0** — entering matrix with both interpreters; G1 settled by the
   forced-identity construction with clone provenance and full messages;
   interpretive rule applied to any zero exit; action runtimes from admissible
@@ -844,7 +887,7 @@ decision: publication.**
   authenticated set produced and verified as verification-only; failure
   classified action-side or CLI-side with `gh --version`; annotation gone; any
   failing upgrade reverted rather than worked around
-- [ ] **SCOPE-DECLARED** — schema small and reusing the existing table dialect;
+- [x] **SCOPE-DECLARED** — schema small and reusing the existing table dialect;
   both sub-rules with firing times stated separately; standing status set inside
   the checker with `AGENTS.md` excluded; diff endpoints defined; `app.py` overlap
   resolved with the weakening stated; v0.23-forward boundary; fixture fail-before
