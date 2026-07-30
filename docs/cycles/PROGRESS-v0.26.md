@@ -454,3 +454,49 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; mandatory golden passed 11/11 with byte-identical
   assertions.
 - publisher-request acceptance: PASS. No publisher request was made.
+
+### 2026-07-30 · IDENTITY-DECISION — radius guarded by measured feature floor
+
+- owner: Codex
+- commit: 1a48542c798d145ce9e02564aaa4e5c707e343f0
+- result: PASS. The operator selected Option 1. Radius 16 is now eligible only
+  when both documents have at least 26 three-token SimHash features.
+- decision/claim acceptance: PASS. Twenty-six is the smallest feature count
+  measured in the calibrated golden news corpus. The SEC maximum is 10, so
+  11–25 remains deliberately ineligible rather than extrapolated. Sparse
+  documents, including identical ones, remain distinct; that cost is stated in
+  the runbook, `STATE.md`, and `ARCHITECTURE.md`.
+- authority acceptance: PASS. Step 4A's two boundary-local radius declarations
+  remain 16. `intel-extract` owns the one compiled `DEDUP_MIN_FEATURES` and
+  shared two-sided guard; both store `assign_canonical_ids_tx` and view
+  `dedup_near` invoke it. R1 remains unchanged because no identity caller was
+  added.
+- false-positive acceptance: PASS. The parser-produced 201-document finance
+  test made both shipped paths keep 201 and drop 0. All 200 SEC documents
+  remained distinct, eliminating all 20 previously measured cross-issuer
+  collapses. Sparse-identical tests separately prove that distance zero is
+  refused below the floor.
+- true-positive acceptance: PASS. Golden remained byte-identical at 11/11 and
+  still dropped `techwire::tw-004` for `osdaily::osd-004` at hamming 12.
+- invariant acceptance: PASS. R5 now also observes the floor fixed at 26, both
+  sides of the shared guard, and the store/view guard call sites. Four new
+  planted mutations independently changed the floor, severed one guard side,
+  removed the view call, and removed the store call; all four were detected.
+  Counts remain **12 rules** and rise from 40 to **44 controls**, matching
+  `STATE.md` and the active execution record.
+- test acceptance: PASS. The `-D warnings` workspace passed **139** tests;
+  both constrained Python lanes passed **289/289**; both focused invariant
+  suites passed 22/22; full self-test passed 12/12 rules / 44 controls; clippy
+  and fmt were clean. Initial sandboxed golden and shell runs could not bind
+  loopback ports (and the shell audit could not inspect `ps`); their approved
+  reruns executed those controls and passed.
+- lifecycle acceptance: PASS. `cycle-check`, `progress-check`, and
+  `version-check` passed before this append; `git diff --check` was clean.
+- scope acceptance: PASS. The decision used the extract, store, and view
+  permissions and their tests plus the declared invariant, architecture, and
+  status paths. `config/core.json` and `config/schedule.json` were untouched.
+  No ingest, compliance, shell source, dependency, protected database, fixture,
+  golden input, or ref changed.
+- golden-E2E delta: **0**; mandatory golden passed 11/11 with the hamming-12
+  true-positive collapse intact.
+- publisher-request acceptance: PASS. No publisher request was made.
