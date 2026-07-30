@@ -44,6 +44,13 @@
           "url": "https://example.org/filings/feed.xml",
           "fixture": "fixtures/finance.xml",
           "license": "PublicDomain"
+        },
+        {
+          "type": "rss",
+          "id": "sec-edgar-usgaap",
+          "url": "https://www.sec.gov/Archives/edgar/usgaap.rss.xml",
+          "license": "PublisherPermitted",
+          "robots_on_missing": "deny"
         }
       ]
     }

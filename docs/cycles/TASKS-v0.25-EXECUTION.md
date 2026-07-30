@@ -30,6 +30,21 @@ Declared scope — crate-wide forbids corrected to source-tree forbids — 2026-
   scope already allowed it, so this correction adds no repository permission
   and changes no objective, implementation condition, acceptance criterion, or
   done condition.
+- **2026-07-30 — Step 5 deferral-row label correction.** Before admission, the
+  active deferral row was found to say “Third configured publisher” while its
+  trigger, measured state, and inherited v0.24 provenance all describe the
+  reviewed **second** publisher. The row now carries its correct subject and is
+  closed by Step 5; the separately deferred first live RSS harvest is added as
+  Step 5 requires. No trigger, permission, objective, acceptance criterion, or
+  done condition changed.
+- **2026-07-30 — Step 5 trigger-test scope correction.** The first complete
+  shell lanes executed the deferral-table acceptance and found the governed
+  runbook-row population correctly increased from 11 to 12. Step 5 requires
+  that new live-RSS deferral row but its gate did not name
+  `shell/tests/test_cycle_check.py`, whose executable expectation counts it.
+  The gate now names that exact test. Declared scope already permits
+  `shell/tests/**`; no production, objective, acceptance, or done-condition
+  permission changed.
 
 v0.24 closed and v0.15.8 published. Release parent `696c0863…`, closing commit
 `64002678…`, annotated object `dc5abe06…`, hosted run `30475988050` green on all
@@ -231,7 +246,8 @@ ShellCheck, floor byte-compilation, and locked Rust 1.78 green.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | one first-party shell; no such claim made | none |
 | L2 forced-command wrapper | an operator server session | no operator server session has occurred | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | none observed | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | one review completed, none pending | none |
+| Second configured publisher | a completed compliance review, then a separate admission decision | review complete; licence, terms, and shape gates affirmative; admission approved | **Completed by Step 5 — 2026-07-30: `sec-edgar-usgaap` admitted under `finance` without a harvest** |
+| First live RSS harvest | an operator-authorized v0.26 runbook with declared live-RSS scope and fresh publisher gates | no live RSS harvest has occurred; Step 4 was observation-only | none — deferred to v0.26 |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | not authorized | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | tags unpublished | none — **the flag stays** |
 | Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | re-measure at E0 | **Step 1 — re-measure only** |
@@ -669,6 +685,63 @@ live ingest. No code, config, schema, protected artifact, database, public
 surface, or ref changed. Mandatory standalone `./run golden` passed **11/11**,
 delta **0**.
 
+### ADMIT measured result — 2026-07-30
+
+**Admission decision and binding conditions.** The operator approved
+`sec-edgar-usgaap` under `finance`, at the reviewed
+`https://www.sec.gov/Archives/edgar/usgaap.rss.xml` path, classified
+`PublisherPermitted`. The source remains bound to the reviewed path, the
+monitored-contact crawler identity, fresh publisher-robots plus operator
+deny-list enforcement, and total automated traffic at or below the SEC's
+then-current published ceiling.
+
+`robots_on_missing` is explicitly `"deny"`. SEC serves a policy today, so
+policy absence is not the reviewed condition and fails closed; arXiv's
+publisher-specific 404 exception was not copied. The focused config control
+pins the exact sector, id, RSS type, URL, licence, conservative missing-policy
+value, and global source-id uniqueness. Its fail-before run found no matching
+source and failed; after admission it passed.
+
+**No live harvest and exact limits.** Step 5 made no publisher request.
+Admission proves that two publisher origins are configured and that the exact
+SEC declaration is controlled. Only `arxiv-cs` has ever been harvested. The
+production origin-keyed robots cache and per-host limiter have never handled
+both origins in one runtime. Live RSS fetching, repository parsing of the
+observed SEC body, paging, repeated-fetch behavior, near-duplicate behavior,
+and cursor durability remain unmeasured. The first live RSS harvest is a new
+deferral row whose trigger requires an operator-authorized v0.26 runbook with
+declared live-RSS scope; the second-publisher admission row closed on
+2026-07-30.
+
+**Shell population and scope finding.** The first complete rebuilt shell lanes
+each collected **284**, passed **283**, and failed the same trigger-freshness
+control because the Step 5-required deferral row correctly increased the
+governed runbook-row population from 11 to 12. That acceptance criterion
+therefore required `shell/tests/test_cycle_check.py`, which the original Step 5
+gate did not name. The dated amendment above widened the gate to that exact
+already-declared test path before its expected count changed. Focused config and
+trigger controls passed **2/2**; clean Python 3.11 and 3.12 lanes then each
+passed **284/284**, with zero skips and the same one accepted third-party
+warning. `python3 tools/test_population.py
+/private/tmp/intel-v025-admit-py311.log
+/private/tmp/intel-v025-admit-py312.log` derived `collected=284`,
+`equivalent=true`, `equivalent_passed=284`, local passed 284/skipped 0 and
+comparison passed 284/`on_site` skipped 0. The machine field is named `hosted`,
+but the second input here is the local Python 3.12 lane, not hosted evidence.
+The draft command's nonexistent `compare` subcommand failed argument parsing;
+the recorded successful invocation is the tool's actual entry point.
+
+**Regression and protected evidence.** Mandatory standalone `./run golden`
+passed **11/11**, delta **0**, as E0 predicted for the finance-only source.
+Manifest schema 2 validated; `./run verify-artifacts` found all **251** pins and
+both protected databases exact. `invariant-scan` remains **12/12 rules and
+39/39 planted controls**. The complete `./run ci-local` passed all **20** jobs
+at the admitted configuration: workspace 135, net 55 (ingest 29 + cored 26),
+warning-denied current and locked Rust 1.78 lanes, clean
+clippy/fmt/ShellCheck, shell 284/284, and embedded golden 11/11. No protected
+corpus, pin, database, schema, dependency, lockfile, ingest source, compliance
+source, shell production source, public response, tag, or branch moved.
+
 ---
 
 ## Step 2 · LICENSE-SEMANTICS (G1, G4) — Say only what the evidence supports 🧑🤖
@@ -822,8 +895,9 @@ determinations — which is a complete outcome.**
 **Objective.** Add the first second publisher this system has ever configured.
 
 **Gate.** 🧑 **One operator admission decision.** Scope is `config/core.json`,
-tests covering the new source's configuration, `ARCHITECTURE.md`, and status
-records. **No ingest, compliance, or shell source change. No live harvest.**
+tests covering the new source's configuration,
+`shell/tests/test_cycle_check.py`, `ARCHITECTURE.md`, and status records. **No
+ingest, compliance, or shell source change. No live harvest.**
 
 **Steps.**
 
@@ -960,7 +1034,7 @@ publication.**
 - [x] **FEED-SHAPE** — robots re-evaluated fresh with hash compared; exactly one
   feed request evidenced by count; shape and per-field presence recorded; parser
   behaviour derived not executed; body kept out of fixtures, corpus, and golden
-- [ ] **ADMIT** — complete, or deleted with the determination that deferred it.
+- [x] **ADMIT** — complete, or deleted with the determination that deferred it.
   Decision recorded; `robots_on_missing` explicitly reasoned; **no live harvest**;
   non-exercise stated; deferral table updated both ways
 - [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; **no

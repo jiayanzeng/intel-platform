@@ -1107,7 +1107,7 @@ def test_current_trigger_freshness_tables_are_complete() -> None:
         errors,
     )
 
-    assert counts == (2, 11)
+    assert counts == (2, 12)
     assert errors == []
 
 

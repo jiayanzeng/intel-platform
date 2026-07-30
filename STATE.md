@@ -1,6 +1,55 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell; v0.16.0 selected, not yet released) · **Status:** **v0.25 FEED-SHAPE is affirmatively complete; ADMIT awaits its separate operator decision.** Fresh shipped-matcher evaluation found SEC's policy byte-identical and still allowing; exactly one authorized feed GET returned HTTP 200, `text/xml`, 892,641 bytes, and 200 items. E0's mandatory-field list is empty; five optional fields occur in all 200 items and optional `author` in none. The repository parser was not run against the body. No source is configured with `PublisherPermitted`, and `config/core.json` remains unchanged. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, Python 3.11 and 3.12 each at **283 collected / 283 passed / 0 skipped**, embedded golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates; Step 4's fresh standalone golden also passed **11/11**. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Selected release:** v0.16.0 (not yet released) · **Status:** **v0.25 ADMIT is complete without a live harvest.** The operator admitted `sec-edgar-usgaap` under `finance` at the reviewed RSS path as `PublisherPermitted`, with explicit `robots_on_missing: "deny"`. Two publisher origins are now configured; only `arxiv-cs` has ever been harvested. Admission made no publisher request and did not execute live RSS fetching, the repository parser against the observed SEC body, runtime multi-origin caching/limiting, paging, or cursor durability. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and clean rustc, clippy, fmt, and ShellCheck gates. Rebuilt Python 3.11 and 3.12 lanes each passed **284 collected / 284 passed / 0 skipped**; the comparator derived **284** equivalent passes. `invariant-scan` remains **12 rules / 39 controls**, and both embedded and fresh standalone golden runs remain **11/11**, delta **0**. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.25 ADMIT configures the reviewed SEC source without claiming a harvest
+(operator decision and measurement 2026-07-30).**
+
+The operator approved admission of `sec-edgar-usgaap` in the `finance` sector
+at `https://www.sec.gov/Archives/edgar/usgaap.rss.xml`, classified
+`PublisherPermitted`. The binding review conditions are unchanged: use that
+exact path; preserve the monitored-contact crawler identity; re-evaluate and
+obey the publisher's current `robots.txt` plus the operator deny-list before
+requests; and keep total automated traffic at or below the SEC's then-current
+published ceiling. `robots_on_missing` is explicitly `"deny"` because SEC
+serves a policy today: absence is not the reviewed condition and must fail
+closed rather than borrowing arXiv's publisher-specific 404 exception.
+
+The admission test reads the release configuration and pins the source's exact
+sector, id, type, URL, licence, conservative missing-policy value, and global id
+uniqueness. Its fail-before execution found no matching source and failed; after
+the config change it passed. The first complete rebuilt shell lanes exposed one
+runbook-control count that correctly rose with the required new deferral row:
+both initially collected **284**, passed **283**, and failed the exact
+trigger-freshness population assertion. The Step 5 gate was corrected to name
+that already-declared test path, its expected governed runbook-row count moved
+from 11 to 12, and focused controls passed **2/2**. Clean Python 3.11 and 3.12
+lanes then each passed **284/284** with zero skips and the same one accepted
+third-party warning. `tools/test_population.py` derived
+`collected=284`, `equivalent=true`, and `equivalent_passed=284`; its second
+input was the local Python 3.12 lane, not a hosted run.
+
+Admission performed no live harvest and made no publisher request. It proves
+only that two reviewed publisher origins are now represented in configuration
+and that the exact new source declaration is controlled. Only `arxiv-cs` has
+ever been harvested. The origin-keyed robots cache and per-host limiter have
+never handled the two origins in one production runtime, and live RSS fetching,
+repository parsing of the observed SEC body, paging, repeated-fetch behavior,
+near-duplicate behavior, and cursor durability remain unmeasured. The first
+live RSS harvest is explicitly deferred to an operator-authorized v0.26
+runbook with its own declared scope.
+
+The mandatory standalone `./run golden` passed **11/11**, delta **0**, matching
+E0's finding that its science-and-technology selection excludes this finance
+source. `python3 tools/evidence_artifacts.py validate` passed; `./run
+verify-artifacts` found all **251** pins and both protected databases exact.
+The complete `./run ci-local` then passed all **20** jobs at the admitted
+configuration, including 135 workspace tests, 55 net tests, the locked Rust
+1.78 lanes, clean warning/lint/format gates, 284 shell tests, and embedded
+golden **11/11**. No protected corpus, pin, database, schema, dependency,
+lockfile, ingest source, compliance source, shell production source, public
+response, tag, or branch moved. Counts remain **12 invariant rules / 39
+controls**.
 
 **v0.25 FEED-SHAPE observes 200 SEC items in one authorized request without
 claiming parser execution (wire and offline measurement 2026-07-30).**
@@ -4549,6 +4598,22 @@ test. Step 4 deliberately did not run the parser against the body. Its behavior
 record is conditional and derived from the already-measured source branches;
 parser execution belongs to admission testing. Keeping those claims separate
 preserves HC13's distinction between observed wire shape and program behavior.
+
+### 6l. Why the admitted SEC source fails closed when robots policy is absent (v0.25/ADMIT)
+
+**Decision: admit with `robots_on_missing: "deny"`, selected by the operator
+on 2026-07-30.** The reviewed publisher serves a `robots.txt`, and both v0.24
+and the fresh v0.25 Step 4 request measured the intended path as allowed.
+Admission therefore binds to the presence and evaluation of that policy.
+Treating a future 404 as permission would introduce a new condition never
+reviewed; it does not follow from today's allow verdict.
+
+The arXiv `allow` setting is a narrow absence-only exception for a
+standards-designed harvesting endpoint that served no policy. It is not a
+default for network sources. SEC remains on the conservative branch: missing
+policy denies, an explicit disallow denies, and an unreachable origin denies.
+The configured source establishes none of those live outcomes by itself; the
+first live RSS harvest remains separately deferred to v0.26.
 
 ## 7. Run reference
 

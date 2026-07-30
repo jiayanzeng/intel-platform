@@ -178,12 +178,14 @@ the current tree contains neither feature declaration, diagnostic API,
 robots-only network helper/test, nor preview binary. The default product gate
 remains the only supported robots-policy surface.
 
-The live evidence is deliberately narrow: `arxiv-cs` is the only configured
-network source, while the other three configured sources are `example.org`
-fixtures. The first correctly gated harvest therefore proves the wire path
-against one publisher, not multi-publisher aggregation. Adding a second real
-publisher remains an open product question and a separate compliance
-decision.
+The live evidence is deliberately narrow. `arxiv-cs` and
+`sec-edgar-usgaap` are the two configured network sources, while the other
+three configured sources are `example.org` fixtures. Only `arxiv-cs` has ever
+been harvested. The v0.25 SEC observation fetched one policy and one feed body
+through a disposable single-origin observer; admission itself made no request.
+The production origin-keyed robots cache and per-host limiter have therefore
+still never seen two publisher origins in one runtime process. Configuration
+is not evidence of multi-publisher aggregation.
 
 **Terms-policy boundary — operator disposition 2026-07-30.** The executable
 two-gate model does not claim to decide publisher terms compliance. Publisher
@@ -345,9 +347,10 @@ an edited controller can still rewrite the L1 command construction, so the
 server-enforced L2 forced-command wrapper remains open and scheduled. The R3/R4
 open-bottom limits, active-runbook measured-value heuristic, T7 robots
 single-flight, and robots negative-cache Decision B also remain open. The
-single real-publisher boundary remains unchanged: the SEC EDGAR review is
-conditional evidence for a separate v0.25 admission decision, not a configured
-source. Moving the public FastAPI version literal from
+two-configured-publisher boundary remains narrow: only `arxiv-cs` has ever been
+harvested, and the SEC observation did not exercise both origins in one
+production runtime. The first live SEC RSS harvest remains deferred to a
+separately scoped v0.26 cycle. Moving the public FastAPI version literal from
 `shell/intel_shell/app.py` to the package-owned
 `shell/intel_shell/__init__.py` remains a recorded forward option for removing
 the one release-authority/production-source scope overlap; it is not
