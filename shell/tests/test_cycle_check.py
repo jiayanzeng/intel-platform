@@ -39,6 +39,8 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| subject | disposition | trigger | dated measured observation |\n"
         "|---|---|---|---|\n"
         "| baseline | refuted | none | no measurement required |\n"
+        "| trigger baseline | active | active condition | "
+        "v1.2.3 · 2026-07-30 — measured |\n"
     )
     _runbook(root).write_text(
         "# Open cycle\n\n"
@@ -58,7 +60,9 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| Deferred item | Unchanged trigger | Measured 2026-07-29 | "
         "v1.2.3 action |\n"
         "|---|---|---|---|\n"
-        "| Baseline item | none | no measurement required | none |\n\n"
+        "| Baseline item | none | no measurement required | none |\n"
+        "| Trigger baseline | active condition | "
+        "v1.2.3 · 2026-07-30 — measured | none |\n\n"
         "## Step 1 · CHECK\n\n"
         "**Objective.** Preserve the contract.\n\n"
         "**Acceptance criteria.** Original criterion.\n\n"
@@ -1164,8 +1168,142 @@ def test_current_trigger_freshness_tables_are_complete() -> None:
         root,
         errors,
     )
+    expected = (
+        len(
+            cycle_check.governed_trigger_subjects(
+                (root / "ARCHITECTURE.md").read_text(),
+                cycle_check.DATED_DISPOSITIONS_HEADING,
+                "subject",
+            )
+        ),
+        len(
+            cycle_check.governed_trigger_subjects(
+                identity.runbook.read_text(),
+                cycle_check.DEFERRED_HEADING,
+                "Deferred item",
+            )
+        ),
+    )
 
-    assert counts == (2, 15)
+    assert counts == expected
+    assert all(count > 0 for count in expected)
+    assert errors == []
+
+
+def test_cycle_check_rejects_zero_trigger_populations(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    architecture = root / "ARCHITECTURE.md"
+    architecture.write_text(
+        architecture.read_text().replace(
+            "| trigger baseline | active | active condition |",
+            "| trigger baseline | active | none |",
+        )
+    )
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "| Trigger baseline | active condition |",
+            "| Trigger baseline | none |",
+        )
+    )
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert (
+        "'### Dated operational-residual dispositions' must contain at least "
+        "one trigger-bearing row"
+        in error
+    )
+    assert (
+        "'## Deferred means deferred' must contain at least one "
+        "trigger-bearing row"
+        in error
+    )
+
+
+def test_deferred_carry_forward_rejects_silent_drop(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    prior = _runbook(root, "v1.2.2")
+    prior.write_text(
+        "# Prior cycle\n\n"
+        "## Deferred means deferred\n\n"
+        "| Deferred item | Unchanged trigger | Measured observation | action |\n"
+        "|---|---|---|---|\n"
+        "| Retired condition | still active | "
+        "v1.2.2 · 2026-07-29 — measured | none |\n"
+    )
+    active = _runbook(root)
+    errors: list[str] = []
+
+    cycle_check.check_deferred_carry_forward(
+        active,
+        active.read_text(),
+        root,
+        errors,
+    )
+
+    assert any(
+        "deferred subject 'Retired condition'" in error
+        and "absent without a valid dated completion" in error
+        for error in errors
+    )
+
+
+def test_deferred_carry_forward_accepts_dated_completions(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    prior = _runbook(root, "v1.2.2")
+    prior.write_text(
+        "# Prior cycle\n\n"
+        "## Deferred means deferred\n\n"
+        "| Deferred item | Unchanged trigger | Measured observation | action |\n"
+        "|---|---|---|---|\n"
+        "| First live SEC RSS harvest | authorization | "
+        "v1.2.2 · 2026-07-29 — measured | none |\n"
+        "| Observation-byte manifest coverage | schema gap | "
+        "v1.2.2 · 2026-07-29 — measured | none |\n"
+    )
+    active = _runbook(root)
+    active.write_text(
+        active.read_text()
+        + "\n## Deferred completions\n\n"
+        "| Deferred item | Dated completion |\n"
+        "|---|---|\n"
+        "| First live SEC RSS harvest | "
+        "2026-07-30 — completed by the prior cycle |\n"
+        "| Observation-byte manifest coverage | "
+        "2026-07-30 — completed by the prior cycle |\n"
+    )
+    errors: list[str] = []
+
+    cycle_check.check_deferred_carry_forward(
+        active,
+        active.read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == []
+
+
+def test_current_deferred_carry_forward_is_complete() -> None:
+    root = Path(__file__).resolve().parents[2]
+    identity = resolve_cycle(root)
+    errors: list[str] = []
+
+    cycle_check.check_deferred_carry_forward(
+        identity.runbook,
+        identity.runbook.read_text(),
+        root,
+        errors,
+    )
+
     assert errors == []
 
 

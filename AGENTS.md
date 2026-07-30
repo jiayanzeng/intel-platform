@@ -290,6 +290,13 @@ presence, date, and active-cycle identity of the measurement, not the truth of
 an external event. Date freshness is v0.23-forward, cycle identity is
 v0.28-forward, and neither retrofits closed historical runbooks.
 
+Beginning with v0.28, both governed tables must contain at least one
+trigger-bearing row. Every trigger-bearing subject in the immediately prior
+execution runbook must remain in the active deferral table or appear in an
+active **Deferred completions** table with a valid ISO-dated completion. The
+prior runbook is derived from the versioned execution-runbook set; it is never
+named as a fixed cycle in the checker.
+
 Every active runbook's **Deferred means deferred** table must assign each
 non-`none` action to a named, existing `Step N`; an asserted action without its
 discharging step is invalid. Every runbook that changes the release commit must

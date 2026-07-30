@@ -131,6 +131,22 @@ applies that identity gate only at v0.28 forward. Focused lifecycle tests pass
 and prior-cycle-copy failures independently. Standalone golden passes 11/11
 with delta zero. No closed runbook changed.
 
+### 2026-07-30 · Trigger population and carry-forward enforcement
+
+Step 3 — nonzero populations and prior subjects enforced — 2026-07-30
+
+The real transition corrects one drafted characterization: v0.27 → v0.28 has
+14 prior governed subjects, 15 active subjects, zero drops, and one addition.
+“First live SEC RSS harvest” and “Observation-byte manifest coverage” were
+dropped in v0.26 → v0.27, not in the current transition; that comparison is
+14 → 14 with two drops and two additions. The checker now derives its prior
+runbook from `execution_runbooks()`, rejects either governed table at population
+zero, and rejects a missing prior subject unless the active runbook carries a
+valid dated completion. Fixtures using the two real historical subject names
+prove that legitimate completion form. Focused tests pass 50/50,
+`cycle-check` passes, registered self-test derives 12 rules / 49 controls, and
+standalone golden passes 11/11 with delta zero. No closed runbook changed.
+
 One sandboxed `ci-local` attempt and one sandboxed Python dependency install
 were environment non-results; their exact entry points passed with the required
 permissions. Two population-log wrappers assigned zsh's read-only `status`
@@ -539,7 +555,7 @@ under the current code, the premise is refuted — **record and stop.**
 **Done when** setting every trigger to `none`, or dropping a deferred row without
 a completion, both fail — each demonstrated by execution.
 
-- [ ] **TRIGGER-FLOOR**
+- [x] **TRIGGER-FLOOR**
 
 ---
 

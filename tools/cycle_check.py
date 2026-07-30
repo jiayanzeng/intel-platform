@@ -1383,7 +1383,9 @@ def check_declared_scope(
 
 TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (0, 23)
 TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)
+TRIGGER_FLOOR_FORWARD_BOUNDARY = (0, 28)
 DATED_DISPOSITIONS_HEADING = "### Dated operational-residual dispositions"
+DEFERRED_COMPLETIONS_HEADING = "## Deferred completions"
 ISO_DATE_TOKEN_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
 
 
@@ -1541,6 +1543,182 @@ def check_trigger_freshness(
         required_cycle_name,
     )
     return architecture_rows, deferral_rows
+
+
+def governed_trigger_subjects(
+    text: str,
+    heading: str,
+    subject_header: str,
+) -> dict[str, str]:
+    heading_matches = list(
+        re.finditer(rf"^{re.escape(heading)}$", text, re.MULTILINE)
+    )
+    if len(heading_matches) != 1:
+        return {}
+    heading_level = len(heading) - len(heading.lstrip("#"))
+    section = text[heading_matches[0].end():]
+    next_heading = re.search(
+        rf"^#{{1,{heading_level}}} ",
+        section,
+        re.MULTILINE,
+    )
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+    lines = section.splitlines()
+    header_index: int | None = None
+    subject_index: int | None = None
+    trigger_index: int | None = None
+    expected_subject = subject_header.casefold()
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if expected_subject not in normalized:
+            continue
+        header_index = index
+        subject_index = normalized.index(expected_subject)
+        trigger_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "trigger" in cell
+            ),
+            None,
+        )
+        break
+    if (
+        header_index is None
+        or subject_index is None
+        or trigger_index is None
+    ):
+        return {}
+
+    subjects: dict[str, str] = {}
+    for line in lines[header_index + 1:]:
+        cells = markdown_table_cells(line)
+        if not cells:
+            if subjects:
+                break
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        if max(subject_index, trigger_index) >= len(normalized):
+            continue
+        trigger = normalized[trigger_index].casefold()
+        if trigger in {"", "none", "n/a", "not applicable"}:
+            continue
+        subject = normalized[subject_index]
+        subjects[subject.casefold()] = subject
+    return subjects
+
+
+def dated_deferred_completions(text: str) -> dict[str, str]:
+    heading_matches = list(
+        re.finditer(
+            rf"^{re.escape(DEFERRED_COMPLETIONS_HEADING)}$",
+            text,
+            re.MULTILINE,
+        )
+    )
+    if len(heading_matches) != 1:
+        return {}
+    section = text[heading_matches[0].end():]
+    next_heading = re.search(r"^## ", section, re.MULTILINE)
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+    lines = section.splitlines()
+    header_index: int | None = None
+    subject_index: int | None = None
+    completion_index: int | None = None
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if "deferred item" not in normalized:
+            continue
+        header_index = index
+        subject_index = normalized.index("deferred item")
+        completion_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "completion" in cell
+            ),
+            None,
+        )
+        break
+    if (
+        header_index is None
+        or subject_index is None
+        or completion_index is None
+    ):
+        return {}
+
+    completed: dict[str, str] = {}
+    for line in lines[header_index + 1:]:
+        cells = markdown_table_cells(line)
+        if not cells:
+            if completed:
+                break
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        if max(subject_index, completion_index) >= len(normalized):
+            continue
+        completion = normalized[completion_index]
+        if not any(
+            valid_iso_date(raw)
+            for raw in ISO_DATE_TOKEN_RE.findall(completion)
+        ):
+            continue
+        subject = normalized[subject_index]
+        completed[subject.casefold()] = subject
+    return completed
+
+
+def check_deferred_carry_forward(
+    active_path: Path,
+    active_text: str,
+    root: Path,
+    errors: list[str],
+) -> None:
+    active_version = cycle_version(active_path)
+    if active_version is None:
+        return
+    prior_candidates = [
+        (version, path)
+        for path in execution_runbooks(root)
+        if (
+            (version := cycle_version(path)) is not None
+            and version < active_version
+        )
+    ]
+    if not prior_candidates:
+        return
+    _, prior_path = max(prior_candidates, key=lambda candidate: candidate[0])
+    prior_subjects = governed_trigger_subjects(
+        prior_path.read_text(),
+        DEFERRED_HEADING,
+        "Deferred item",
+    )
+    active_subjects = governed_trigger_subjects(
+        active_text,
+        DEFERRED_HEADING,
+        "Deferred item",
+    )
+    completed_subjects = dated_deferred_completions(active_text)
+    for key, subject in sorted(prior_subjects.items()):
+        # Invariant R12 control site: deferred trigger carry-forward.
+        if key not in active_subjects and key not in completed_subjects:
+            errors.append(
+                f"{shown(active_path, root)}: deferred subject {subject!r} "
+                f"from immediately prior {shown(prior_path, root)} is absent "
+                "without a valid dated completion"
+            )
 
 
 def check_active_deferral_assignments(
@@ -1726,7 +1904,30 @@ def run(
             declared_scope_cycle_version(identity.name)
             >= TRIGGER_FRESHNESS_FORWARD_BOUNDARY
         ):
-            check_trigger_freshness(
+            architecture_trigger_rows, deferral_trigger_rows = (
+                check_trigger_freshness(
+                    identity.runbook,
+                    active_text,
+                    root,
+                    errors,
+                )
+            )
+        if (
+            declared_scope_cycle_version(identity.name)
+            >= TRIGGER_FLOOR_FORWARD_BOUNDARY
+        ):
+            if architecture_trigger_rows == 0:
+                errors.append(
+                    f"{shown(root / 'ARCHITECTURE.md', root)}: "
+                    f"{DATED_DISPOSITIONS_HEADING!r} must contain at least "
+                    "one trigger-bearing row"
+                )
+            if deferral_trigger_rows == 0:
+                errors.append(
+                    f"{shown(identity.runbook, root)}: {DEFERRED_HEADING!r} "
+                    "must contain at least one trigger-bearing row"
+                )
+            check_deferred_carry_forward(
                 identity.runbook,
                 active_text,
                 root,

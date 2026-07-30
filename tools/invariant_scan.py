@@ -1618,6 +1618,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
+    "trigger-carry-forward": (
+        "Invariant R12 control site: deferred trigger carry-forward."
+    ),
     "test-population": (
         "Invariant R12 control site: test-population equivalence."
     ),
@@ -2163,6 +2166,50 @@ def r12_findings(root: Path) -> list[str]:
         ):
             missed.setdefault("trigger-freshness", []).append(
                 "stale-trigger-cycle-identity"
+            )
+
+        cycles = fixture / "docs" / "cycles"
+        cycles.mkdir(parents=True)
+        prior_runbook = (
+            cycles
+            / f"TASKS-{prior_trigger_cycle}-EXECUTION.md"
+        )
+        active_runbook = (
+            cycles
+            / f"TASKS-{active_trigger_cycle}-EXECUTION.md"
+        )
+        prior_runbook.write_text(
+            "# Prior trigger control\n\n"
+            "## Deferred means deferred\n\n"
+            "| Deferred item | Unchanged trigger | measured observation |\n"
+            "|---|---|---|\n"
+            "| planted carry-forward | still active | "
+            f"{prior_trigger_cycle} · 2026-07-30 — measured |\n"
+        )
+        active_text = (
+            "# Active trigger control\n\n"
+            "## Deferred means deferred\n\n"
+            "| Deferred item | Unchanged trigger | measured observation |\n"
+            "|---|---|---|\n"
+            "| active baseline | still active | "
+            f"{active_trigger_cycle} · 2026-07-30 — measured |\n"
+        )
+        active_runbook.write_text(active_text)
+        errors = []
+        cycle_check.check_deferred_carry_forward(
+            active_runbook,
+            active_text,
+            fixture,
+            errors,
+        )
+        expected_carry_failure = (
+            "deferred subject 'planted carry-forward' from immediately prior "
+        )
+        if not any(
+            expected_carry_failure in error for error in errors
+        ):
+            missed.setdefault("trigger-carry-forward", []).append(
+                "silently-dropped-trigger-subject"
             )
 
     population_node = "tests/test_population.py::test_on_site"
