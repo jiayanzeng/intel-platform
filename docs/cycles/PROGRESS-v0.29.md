@@ -236,3 +236,42 @@ Entries are append-only; corrections are new dated entries.
   response shape, `/v1/*` value domain, dependency, schema, protected or
   pinned byte, publisher configuration, scheduler state, or ref changed. No
   publisher request or scheduler run occurred.
+
+### 2026-07-31 · BOUNDARY-BIND — reversed boundaries report, never traceback
+
+- owner: Codex
+- commit: ec4a05c1618b2baed6b835a39c84b9d44b7ba8ea
+- result: PASS. Both governed row counts are initialized before either forward
+  gate, and an explicit relationship check rejects
+  `TRIGGER_FLOOR_FORWARD_BOUNDARY < TRIGGER_FRESHNESS_FORWARD_BOUNDARY`.
+- decision-gate acceptance: PASS. G3 showed the live `(0, 28) >= (0, 23)`
+  relationship makes the unbound path latent, so no P1 reclassification was
+  needed.
+- no-unbound acceptance: PASS by reproduction. The test sets freshness to
+  `(1, 2, 4)`, floor to `(1, 2, 2)`, and executes the real checker against
+  active v1.2.3 between them. It exits 1 with
+  `TRIGGER_FLOOR_FORWARD_BOUNDARY must be greater than or equal to
+  TRIGGER_FRESHNESS_FORWARD_BOUNDARY`; `UnboundLocalError` is absent, and the
+  initialized populations reach their named zero-row errors.
+- asserted-relationship acceptance: PASS. R12 independently reverses the two
+  module constants and invokes the production relationship check. Disabling
+  the condition yields the reconstructible
+  `trigger-boundary-order planted controls were not detected:
+  floor-before-freshness` failure.
+- branch-collapse acceptance: PASS. The exhaustive
+  `required_cycle_name is None` / `is not None` pair is one
+  `if not valid_dates` branch. A direct entry-point test proves both modes
+  retain one missing-date error, while active-cycle mode retains its separate
+  missing-cycle-identity error.
+- test acceptance: PASS. Focused lifecycle/invariant tests passed **75/75**;
+  the permission-complete shell population collected and passed **306/306**
+  with zero skips and the one governed Starlette warning. Registered
+  invariants passed **12/12 rules / 51 controls**, with R12 at **23**.
+- export acceptance: PASS. The completed implementation tree reports **99
+  derived / 7 required / 152 exported** at **2,456,371 bytes**, retaining
+  v0.27–v0.29 under depth 3 and both excluded byte classes.
+- golden-E2E delta: **0** — standalone **11/11**, byte-identical.
+- surface/protected/publisher acceptance: PASS. No production source, route,
+  response shape, `/v1/*` value domain, dependency, schema, protected or
+  pinned byte, publisher configuration, scheduler state, or ref changed. No
+  publisher request or scheduler run occurred.
