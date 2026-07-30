@@ -275,3 +275,46 @@ Entries are append-only; corrections are new dated entries.
   response shape, `/v1/*` value domain, dependency, schema, protected or
   pinned byte, publisher configuration, scheduler state, or ref changed. No
   publisher request or scheduler run occurred.
+
+### 2026-07-31 · ORDER-BIND — SQL and Rust archive ordering cross-checked
+
+- owner: Codex
+- commit: 5e7e87cc10c1e991d84c70834336fe6a41ceec7f
+- result: PASS. A test-only store fixture orders held and incoming documents
+  independently through SQLite and `archive_recency_cmp`, then compares each
+  production boundary against the other implementation's derived result.
+- scope/blast-radius acceptance: PASS. The only Rust diff is below
+  `#[cfg(test)]` in `crates/store/src/sqlite.rs`; forbidden cored and ingest
+  paths are byte-identical. The bounded consequence remains one wrong raw
+  boundary string in an internal observational diagnostic if a future
+  divergence occurs, not data loss or a failed poll.
+- rejection-before-acceptance: PASS. Temporarily changing only the production
+  held query to `published_day IS NULL DESC` made the focused test execute and
+  fail with SQL `Some("z-null")` versus Rust `Some("z-raw")`. A preceding
+  compile attempt exposed a test-helper statement lifetime and is not counted
+  as the rejection result. The SQL mutation was removed before any valid
+  result or commit.
+- independent-binding acceptance: PASS. The fixture contains NULL-day rows on
+  both held and incoming sides and discriminates known/null, day, raw-byte, and
+  id terms. SQL full ordering is compared to Rust ordering; production SQL's
+  held boundary is compared to Rust's first document; production Rust's
+  incoming boundary is compared to a separately inserted SQL ordering's last
+  document. No expected output is hardcoded.
+- existing-test acceptance: PASS. The unchanged
+  `coverage_boundary_uses_archive_order_for_a_misordered_window` passed **1/1**;
+  the new cross-ordering test passed **1/1** after the planted mutation was
+  removed.
+- store/identity acceptance: PASS. The complete store suite passed **24 unit +
+  2 integration** tests. The SEC identity measurement reported **201 aggregate
+  kept / 0 dropped**, consisting of **200 SEC kept / 0 dropped** plus one news
+  baseline; SEC pairs remained **19,900** and cross-issuer drops **0**.
+- format/export acceptance: PASS. `cargo fmt --all -- --check` passed. The
+  completed implementation export reports **99 derived / 7 required / 152
+  exported** at **2,464,830 bytes**, retains v0.27–v0.29 at depth 3, and
+  contains neither excluded byte class.
+- golden-E2E delta: **0** — standalone **11/11**, byte-identical.
+- surface/protected/publisher acceptance: PASS. `/ingest` response shape is
+  unchanged; every `/v1/*` field and serialized value domain is unchanged. No
+  dependency, schema, protected or pinned byte, publisher configuration,
+  scheduler state, or ref changed. No publisher request or scheduler run
+  occurred.
