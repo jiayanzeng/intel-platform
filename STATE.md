@@ -1,9 +1,9 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, COVERAGE-DETECTION, and ADMISSION-LANGUAGE are complete locally.** The current tree passes all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 46 controls**, clippy, fmt, ShellCheck, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, COVERAGE-DETECTION, ADMISSION-LANGUAGE, and MULTI-ORIGIN are complete locally.** The current tree passes all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 46 controls**, clippy, fmt, ShellCheck, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher origins have now been exercised sequentially in one bounded runtime: arXiv's HTTP 404 became source-local `RfcAllowAll`, SEC's real policy independently remained `Body(allow)` under `deny`, arXiv content timed out before a page committed, and SEC stored 200 documents. The 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, and terms-gate operator responsibility remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
 
-**Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION, and
-ADMISSION-LANGUAGE are also complete locally.
+**Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION,
+ADMISSION-LANGUAGE, and MULTI-ORIGIN are also complete locally.
 Current constrained Python 3.11.4 and 3.12.13 lanes each collected and passed
 **293** with zero skips; their comparator derived `collected=293`,
 `equivalent=true`, and `equivalent_passed=293`. The architecture now records
@@ -153,6 +153,90 @@ remained byte-identical at **11/11** with its Hamming-12 collapse.
 the protected-artifact manifest are byte-unchanged. The allowed
 `crates/ingest/src/lib.rs` and `crates/ingest/src/rss.rs` production permissions
 were unused. No publisher request was made.
+
+**MULTI-ORIGIN confirms source-local missing-policy isolation in one bounded
+runtime (authorized and measured 2026-07-30).** The authorization basis was
+corrected before execution: focused tests already prove per-origin robots
+keying/reuse and per-host limiter independence. The live question was whether
+arXiv's permissive missing-policy and SEC's restrictive missing-policy could
+coexist in the same process-scoped cache without bleeding across origins.
+
+Before network, exact focused tests proved `max_pages: 1` bounds OAI-PMH to one
+content request and checkpoints a non-terminal page's next token plus
+`pending_high_water` without advancing completed `high_water`; a terminal
+first page advances `high_water`. The first incorrectly filtered zero-test
+invocation was a vacuous non-result, and the exact test then passed **1/1**.
+The exact store cursor lifecycle test also passed **1/1**. Artifact validation
+and `./run verify-artifacts` passed before and after with all **286** pins and
+both protected databases exact. A `data/core.db` harvest attempt exited **2**
+before network, proving the protected-target refusal stood.
+
+The plaintext-observable construction used a disposable, out-of-tree copy of
+the current runtime. The `/ingest`, source registry, gate, cursor adapter, and
+store logic were current production bytes; only its net transport was wrapped
+to write plaintext observations and refuse any repeated or fifth request
+before `send`. The formatted observer source SHA-256 was
+`72783cb5e1b6848d1675bd3bcf608872676781bf39520b394f9af027d91baa33`,
+and its two-source config SHA-256 was
+`7646cff12d6c9df9e9727cdae94bb0957c3e168fcaa2ead1f7893b66138f26c0`.
+A planted pre-existing request marker made a separate attempted run refuse
+before network and emit no response file, so the quota control can fail. A
+sandboxed macOS proxy-config panic was an environment non-result and made no
+request.
+
+One authorized `/ingest` selected `arxiv-cs` then
+`sec-edgar-usgaap` in the same runtime. Exactly **4** application-level request
+starts crossed the observer's `send` boundary, **2 per origin**: one robots and
+one content attempt. There was no redirect, retry, second page, fifth request,
+or scheduler.
+
+| derived origin key | robots response | effective missing-policy | outcome |
+|---|---|---|---|
+| `https://oaipmh.arxiv.org` | 404; 11,083 bytes; SHA-256 `fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2` | `allow` → `RfcAllowAll` for absence only | allowed |
+| `https://www.sec.gov` | 200; 2,622 bytes; SHA-256 `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f` | `deny` | `Body(allow)` |
+
+Both fresh robots bodies were byte-identical to the committed captures. arXiv
+therefore still exercised the missing-policy branch; SEC was evaluated after
+arXiv occupied the same cache and retained its own `Body(allow)` result. This
+independently asserts that arXiv's `RfcAllowAll` did not affect SEC.
+
+Request-start intervals were **1.827372 seconds** within arXiv, **60.004385
+seconds** from arXiv content to SEC robots, **1.313344 seconds** within SEC,
+and **61.831757 seconds** between robots requests. The arXiv content request
+timed out at the shipped 60-second limit, so this run did not display a
+cross-origin interval below the 0.5-second per-host floor. Such a shorter
+cross-origin interval would be expected and correct because the host clocks
+are independent. The focused cache-reuse, per-host limiter, and slow-host/
+fast-host tests each passed **1/1**; the live novelty is opposing-disposition
+coexistence, while keying and spacing are wire-integration corroboration.
+
+The response was **200 fetched / 200 new**. ArXiv reported `ok:false`, zero
+documents, `coverage:not_applicable_paged`, and the content timeout; because no
+page parsed, it committed no cursor, pending high-water, completed high-water,
+or document. Publisher receipt is not claimed from the absent response. SEC
+reported `ok:true`, 200 documents, and `coverage:first_window`. The successful
+arXiv page/cursor and SEC `overlap` hoped for as secondary corroboration were
+therefore not observed and were not relabeled as successes; the request budget
+was not expanded to retry or pre-seed.
+
+The fresh, ignored, unadmitted archive
+`data/live-20260730T125247Z-99839.db` is **253,952 bytes**, SHA-256
+`47f64b7ebe690b0987b17af404b384cad2abdea7eb0e4b83e9dc54534a8d422c`,
+with integrity `ok`, **200** SEC documents, **200** distinct non-null
+canonical ids, and zero cursor rows. T7 did not fire and is not nearer its
+trigger: two sequential sources are not concurrent harvesters. A successful
+live arXiv checkpoint, a sub-floor cross-origin interval, and the 600-second
+schedule remain unexercised.
+
+Full local CI passed **20/20** jobs: warning-denied **145** workspace tests,
+**62** net tests (**32 ingest + 30 cored**), locked Rust 1.78,
+invariant-scan **12 rules / 46 controls**, clippy, fmt, and ShellCheck. Both
+constrained Python lanes collected and passed **293** with zero skips.
+Standalone golden remained byte-identical at **11/11**.
+`config/core.json`, `run`, `config/protected-artifacts.json`, both protected
+databases, and production compliance, ingest, extract, view, and shell source
+are byte-unchanged. The archive was not admitted to protected evidence or
+golden.
 
 ## v0.16.1 post-push verification
 

@@ -130,6 +130,21 @@ Step 2 conclusions are unchanged; only the authored elapsed-time claim is
 wrong. WINDOW-MEASURE records the measured interval and does not bless the
 draft.
 
+### 2026-07-30 — MULTI-ORIGIN rationale corrected before execution
+
+The operator authorized Step 6 after correcting its measurement basis.
+`limiters_are_per_host` already executes per-host acquisition state,
+`a_slow_host_does_not_throttle_a_fast_one` already executes cross-host
+independence, and `a_policy_is_fetched_once_per_origin_and_then_cached` plus
+the `RobotsCache` map execute origin keying and reuse. The live run therefore
+does not claim first proof of those state-machine properties. Its new
+compliance question is whether two opposing missing-policy dispositions can
+coexist in one process-scoped cache without the permissive arXiv disposition
+changing SEC's result: arXiv's committed 404 is configured
+`robots_on_missing: allow`, while SEC's committed real policy is configured
+`robots_on_missing: deny`. Request counting and intervals are wire-integration
+corroboration for already-tested keying and per-host independence.
+
 ---
 
 ## Entering state (asserted, not yet verified)
@@ -238,11 +253,11 @@ was not permitted to reach.
 
 | Deferred item | Unchanged trigger | Measured 2026-07-30 | v0.27 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | 2026-07-30 — ingest is sequential; two configured sources are not two concurrent harvesters; both live phases were single-origin | **none — Step 6, if it runs, still does not fire this** |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | 2026-07-30 — two live robots requests, both HTTP 200, byte-identical policy; no outage | none |
+| T7 robots single-flight | a second concurrent harvester | 2026-07-30 — one runtime exercised both origins sequentially; sequential sources are still not concurrent harvesters | **none — Step 6 did not fire this or move it nearer its trigger** |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | 2026-07-30 — the bounded run observed arXiv HTTP 404 and SEC HTTP 200 at `/robots.txt`; neither is a transient robots outage and no usable stale policy existed | none |
 | Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | 2026-07-30 — three source module headers name it as unimplemented; `get_text` sends no validator; 892,641 bytes would transfer on every poll | **none — G3 records the gap, Step 4 does not implement it** |
 | `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | 2026-07-30 — all 15 observed extension local names enumerated and unmapped; bodies remain the form type alone | none |
-| Live multi-publisher behaviour in one runtime | Steps 2–5 complete plus explicit operator authorization | 2026-07-30 — both origins fetched, never in one runtime; cache and limiter cross-origin behaviour unmeasured | **Step 6 — decided, not assumed** |
+| Live multi-publisher behaviour in one runtime | Steps 2–5 complete plus explicit operator authorization | 2026-07-30 — authorized and executed once with exactly four application-level request starts; the opposing arXiv `RfcAllowAll` and SEC `Body(allow)` dispositions coexisted without policy bleed | **Step 6 — complete; do not expand the measurement** |
 | Postgres / pgvector / multi-host seam | unchanged | 2026-07-30 — single writer, single host | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | 2026-07-30 — one first-party shell; no such claim made | none |
 | L2 forced-command wrapper | an operator server session | 2026-07-30 — none has occurred | none — remains scheduled |
@@ -642,6 +657,106 @@ The allowed production permissions for `crates/ingest/src/lib.rs` and
 `crates/ingest/src/rss.rs` were unused. No compliance, extract, view, or shell
 production source changed; no scheduler ran; no publisher request was made.
 
+### MULTI-ORIGIN execution record — 2026-07-30
+
+The operator authorized the bounded run on 2026-07-30 on the corrected
+mixed-disposition rationale recorded above. Before any publisher request,
+`max_pages_bounds_one_run_and_checkpoints_the_rest` passed **1/1** at its exact
+entry point after a first incorrectly filtered zero-test invocation was
+classified as a vacuous non-result.
+`cursor_absent_then_page_checkpoint_then_completion` also passed **1/1**.
+Together with the inspected cursor adapter, these establish that
+`max_pages: 1` can issue at most one OAI-PMH content request: a non-terminal
+page commits its documents, next token, and `pending_high_water` without
+advancing completed `high_water`; a terminal first page clears pending state
+and advances `high_water`. The live arXiv content request timed out before a
+page was parsed, so this run wrote no cursor row, no `pending_high_water`, no
+completed `high_water`, and no arXiv document.
+
+`python3 tools/evidence_artifacts.py validate` and
+`./run verify-artifacts` passed before and after the run with all **286** pins
+and both protected databases exact. A deliberate `CORE_DB=data/core.db`
+harvest invocation exited **2** before network and printed a fresh alternative,
+so the protected-target refusal was allowed to stand. A fresh, ignored,
+unadmitted archive was then created at
+`data/live-20260730T125247Z-99839.db`; it is **253,952 bytes**, SHA-256
+`47f64b7ebe690b0987b17af404b384cad2abdea7eb0e4b83e9dc54534a8d422c`,
+SQLite integrity `ok`, with **200** documents, **200** distinct non-null
+canonical ids, all from SEC, and zero cursor rows.
+
+The v0.26 corrective construction was reproduced out of tree. It ran the
+current `/ingest`, source registry, compliance gate, cursor adapter, and store
+logic, changing only a disposable copy of the net transport to write plaintext
+request/response observations and refuse any repeated or fifth request before
+`send`. The formatted observer source SHA-256 was
+`72783cb5e1b6848d1675bd3bcf608872676781bf39520b394f9af027d91baa33`;
+its two-source configuration SHA-256 was
+`7646cff12d6c9df9e9727cdae94bb0957c3e168fcaa2ead1f7893b66138f26c0`.
+Its warning-denied net build passed. A planted pre-existing
+`robots-arxiv.start` file made a separate attempted run refuse the robots
+request before network and produce no response body or metadata, proving the
+quota control can fire. A sandboxed launch that panicked while reading macOS
+proxy configuration was an environment non-result and made no request.
+
+The one authorized `/ingest` selected `arxiv-cs` first and
+`sec-edgar-usgaap` second in the same runtime and process-scoped
+`RobotsCache`. Exactly **4** application-level request starts crossed the
+observer's `send` boundary—**2 per origin**, one robots and one content—and
+there was no redirect, retry, second OAI-PMH page, fifth request, or scheduler
+run. Three requests returned plaintext responses; the arXiv content request
+timed out after the shipped 60-second timeout, so publisher receipt of that
+request is not claimed from a response that never arrived.
+
+The fresh disposition matrix was:
+
+| derived origin key | fresh robots wire | effective missing-policy | gate outcome |
+|---|---|---|---|
+| `https://oaipmh.arxiv.org` | HTTP 404, 11,083 bytes, SHA-256 `fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2` | `allow` → `RfcAllowAll` for absence only | allowed |
+| `https://www.sec.gov` | HTTP 200, 2,622 bytes, SHA-256 `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f` | `deny` | `Body(allow)` for the requested feed path |
+
+Both bodies were byte-identical to their committed captures. In particular,
+arXiv still returned a missing policy rather than a real `robots.txt`, so the
+authorized disposition-mix branch remained the branch exercised. SEC was
+evaluated after arXiv occupied the same cache and still produced its own
+`Body(allow)` under `deny`; arXiv's permissive missing-policy did not change
+SEC's result. This is the run's new compliance measurement.
+
+Request-start intervals were **1.827372 seconds** from arXiv robots to arXiv
+content, **60.004385 seconds** from arXiv content to SEC robots, **1.313344
+seconds** from SEC robots to SEC content, and **61.831757 seconds** between the
+two robots requests. No measured cross-origin interval was below the
+0.5-second per-host floor because the sequential arXiv timeout dominated this
+run. A shorter cross-origin interval would have been the expected correct
+result, not an anomaly: host clocks are independent. The focused
+`a_policy_is_fetched_once_per_origin_and_then_cached`,
+`limiters_are_per_host`, and `a_slow_host_does_not_throttle_a_fast_one` tests
+each passed **1/1**; they already prove cache keying/reuse and host
+independence in the state machine. The live contribution for those properties
+is wire integration, while the opposing disposition coexistence above is the
+first measurement this configuration uniquely supplies.
+
+The single `/ingest` response reported **200 fetched / 200 new**. ArXiv
+reported `ok:false`, **0** documents, `coverage:not_applicable_paged`, and the
+content timeout. SEC reported `ok:true`, **200** documents, and
+`coverage:first_window`. Thus the mixed paged/non-paged response fields were
+populated in one live call, but the hoped-for successful arXiv page/cursor and
+SEC `overlap` were not observed: the arXiv request timed out and the archive
+was fresh. These are partial corroborations, not relabeled successes, and the
+four-request authorization was not expanded to retry or pre-seed the archive.
+
+T7 did not fire and is not nearer its trigger: the sources ran sequentially,
+not as concurrent harvesters. A completed arXiv page, arXiv cursor durability
+on this live wire, a sub-floor cross-origin interval, and the 600-second SEC
+schedule remain unexercised. The archive was not admitted to protected
+evidence or golden. `config/core.json`, `run`,
+`config/protected-artifacts.json`, both protected databases, and production
+compliance, ingest, extract, view, and shell source remained byte-unchanged.
+Full `ci-local` passed **20/20** jobs with warning-denied **145** workspace
+tests, **62** net tests (**32 ingest + 30 cored**), invariant-scan **12 rules /
+46 controls**, locked Rust 1.78, clippy, fmt, and ShellCheck. Both constrained
+Python lanes collected and passed **293** with zero skips, and standalone
+golden remained byte-identical at **11/11**.
+
 ---
 
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
@@ -998,7 +1113,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
   named; capabilities stated in one place; naming rule added; **fixtures execute
   both documented shapes and both exact v0.26 rejections**; validator and manifest
   byte-unchanged
-- [ ] **MULTI-ORIGIN** — authorized and measured from a plaintext-observable
+- [x] **MULTI-ORIGIN** — authorized and measured from a plaintext-observable
   construction with per-origin and cross-origin intervals, or deleted with its
   determination
 - [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; receipts

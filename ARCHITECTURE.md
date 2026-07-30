@@ -216,14 +216,24 @@ the current tree contains neither feature declaration, diagnostic API,
 robots-only network helper/test, nor preview binary. The default product gate
 remains the only supported robots-policy surface.
 
-The live evidence is deliberately narrow. `arxiv-cs` and
-`sec-edgar-usgaap` are the two configured network sources, while the other
-three configured sources are `example.org` fixtures. Only `arxiv-cs` has ever
-been harvested. The v0.25 SEC observation fetched one policy and one feed body
-through a disposable single-origin observer; admission itself made no request.
-The production origin-keyed robots cache and per-host limiter have therefore
-still never seen two publisher origins in one runtime process. Configuration
-is not evidence of multi-publisher aggregation.
+The live evidence remains bounded. `arxiv-cs` and `sec-edgar-usgaap` are the
+two configured network sources, while the other three configured sources are
+`example.org` fixtures. On 2026-07-30 one operator-authorized, plaintext-
+observable runtime exercised both origins sequentially with four
+application-level request starts: one robots and one content attempt per
+origin, with no retry, redirect, second OAI-PMH page, scheduler, or fifth
+request. Fresh robots bytes remained exact to the committed captures. arXiv's
+HTTP 404 became `RfcAllowAll` under that source's `robots_on_missing: allow`;
+SEC's real body independently produced `Body(allow)` under
+`robots_on_missing: deny` after arXiv already occupied the same process-scoped
+cache. The permissive absence policy therefore did not bleed across origin
+keys. arXiv's content request timed out before a page or cursor committed,
+while SEC returned 200 documents to the fresh archive. Unit tests already
+execute cache keying/reuse and per-host limiter independence; this live run
+adds wire integration for those properties and the first mixed-disposition
+coexistence measurement. It does not exercise concurrent-harvester
+single-flight (T7), a successful live arXiv cursor checkpoint, or the
+600-second schedule.
 
 **Terms-policy boundary — operator disposition 2026-07-30.** The executable
 two-gate model does not claim to decide publisher terms compliance. Publisher
@@ -381,6 +391,7 @@ causes the identities and affected claims to be forward-corrected.
 | SEC US GAAP RSS cadence | **Explicit per-source cadence: 600 seconds — 2026-07-30** | none | 2026-07-30 — The `<description>` in committed `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` says the feed updates every 10 minutes. `observations/v0.24/publisher-review/sec-edgar-report.md` records the process floor at 2 requests/second, the publisher's cited ceiling at 10 requests/second, and no publisher `Crawl-delay`; `observations/v0.25/terms-gate/sec-edgar-terms-determination.md` records the cited Developer Resources URL and 2026-07-30 read date. The scheduler therefore gives only `sec-edgar-usgaap` a 600-second ingest clock while retaining `filings-digest` and the finance refresh at 7,200 seconds. This cadence decision is separate from, and does not satisfy, the terms determination above. |
 | SEC US GAAP RSS cadence criterion correction (v0.27) | **Explicit per-source cadence remains 600 seconds — criterion corrected 2026-07-30** | none | 2026-07-30 — The governing loss quantity is latest-window advance time, not the publisher's ten-minute rebuild description. The pinned latest-200 sample spans **4,650 seconds / 77.5 minutes**, so the unchanged **600-second poll interval** consumes **12.90%** of that observed span and the span/poll margin is **7.75×**. This sample is one post-close window on one Wednesday and does not establish peak-season density, deadline-day density, or density during hours neither live sample covered. Its positive measured margin does not imply a cadence change, so 600 seconds remains declared; it also does not satisfy the separate terms condition or the coverage-detection objective. |
 | Non-paged fixed-window coverage detection (v0.27) | **Overlap/id-only Option 1 authorized — 2026-07-30** | none | 2026-07-30 — For each non-paged source separately, the store assesses the incoming id window before the combined `append_new` call. An empty store is `first_window`; a non-empty id intersection is `overlap`; a non-empty store plus an empty intersection is the conservative `gap_detected` outcome. The incoming window is still committed, because discarding it would compound the loss. Exact no-gap proof from an overlap depends on a contiguous publication-ordered window and stable ids. The pinned SEC body executes the observed premises at capture: 200 items, zero ascending timestamp inversions, 200 unique GUIDs carrying 200 distinct matching accession numbers, and one `www.sec.gov` host; cross-poll identifier immutability remains a stated dependency rather than a fact one snapshot can prove. Empty overlap can false-positive after a publisher re-issue or GUID-form change, so the system does not claim zero false positives or quantify loss. On a detected gap it reports the held-newest and incoming-oldest `published_raw` boundary strings without instant parsing; eight timestamp values in the pinned body are tied (seven pairs and one triple, maximum multiplicity three), which is why timestamps are not the identity watermark. Cursor-paged OAI-PMH is explicitly `not_applicable_paged`, because consecutive committed pages legitimately need not overlap. The response and log are observational: detection never fails the poll. |
+| Mixed robots dispositions in one runtime (v0.27) | **Confirmed without cross-origin policy bleed — 2026-07-30** | none | 2026-07-30 — One bounded sequential runtime evaluated fresh, byte-identical robots captures for both configured publisher origins. `https://oaipmh.arxiv.org` returned HTTP 404 and used that source's `allow` missing-policy as `RfcAllowAll`; `https://www.sec.gov` returned its real policy and independently produced `Body(allow)` under its `deny` missing-policy after arXiv occupied the same cache. Exactly four application-level request starts occurred, two per origin. arXiv content timed out before a page/cursor committed; SEC returned 200 documents. Cache keying/reuse and per-host independence were already unit-tested, so the live novelty is opposing-disposition coexistence and wire integration, not first state-machine proof. Sequential origins do not fire T7, and the scheduler did not run. |
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;
