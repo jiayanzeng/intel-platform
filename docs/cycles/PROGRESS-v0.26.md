@@ -714,3 +714,57 @@ Entries are append-only; corrections are new dated entries.
   sandboxed golden could not bind loopback and was a non-result; the approved
   rerun executed all controls and passed 11/11.
 - golden-E2E delta: **0**; mandatory golden passed **11/11**.
+
+### 2026-07-30 · RE-MEASURE — authenticated evidence admitted
+
+- owner: Codex
+- commit: be34f7610d61e8f57b6d1c68cde942d9bb240bb8
+- result: PASS. The operator-approved amendment replaced the unsatisfiable
+  chained-receipt clause with immutable pins plus paired Sigstore verification.
+  The earlier blocked entry remains the accurate record of the original stop;
+  this entry records the separately authorized completion.
+- hosted acceptance: PASS. Run **30531390933**, attempt **1**, passed all seven
+  executable jobs at exact candidate
+  `1cd88acd99704cc76c866331e505db446936e469` on neutral ref
+  `refs/heads/codex/v0.26-evidence-1cd88ac`. Remote `main` remained
+  `c66c2b02191e3ca3126dddc3c004b175899b414e`, historical
+  `refs/heads/candidate/v0.16.0` remained
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no tag was created.
+- shell-comparator acceptance: PASS. For both Python 3.11 and 3.12,
+  `tools/test_population.py` derived `collected=291`, `equivalent=true`, and
+  `equivalent_passed=291`: local passed 291 / skipped 0; hosted passed 290
+  plus the named `on_site` skip
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+  whose declared reason is “on-site production audit requires protected
+  corpora and built cored”.
+- authenticated-evidence acceptance: PASS. The seven receipt JSON files and
+  seven paired Sigstore bundles are registered as immutable `supporting`
+  `pinned_files` beneath `evidence/ci-runs/30531390933-1/`. Every bundle
+  verified the exact receipt bytes, repository `jiayanzeng/intel-platform`,
+  workflow `jiayanzeng/intel-platform/.github/workflows/ci.yml`, candidate
+  digest, neutral source ref, and GitHub-hosted runner policy. No `admission`
+  key was added and no receipt entered the SQLite-only `artifacts` container.
+- release-posture acceptance: PASS.
+  `evidence/v0.26/deferred-audit/report.json` is **34,937 bytes**, SHA-256
+  `267c23c676b0e227584d0eb9647d0ce8c4595804fb39e6ac5047691d066d0f25`,
+  and grade `release`. It required attestations, accepted **7** distinct
+  successful identities, rejected **0**, confirmed the single-run matrix
+  complete, and recorded **5 deferred / 2 promoted / 0 implemented deferred
+  subsystems**. Independent rederivation passed when supplied the pinned
+  receipt directory.
+- manifest acceptance: PASS. The fourteen hosted files and release-posture
+  report raise the pin count from 271 to **286**. Manifest validation,
+  `verify-artifacts`, and `evidence-report` passed with both protected
+  databases exact. The exact evidence-directory scope row and dated amendment
+  landed in the same implementation commit as the first admitted bytes.
+- no-publisher-request acceptance: PASS. The hosted workflow has no harvest or
+  ingest command, and complete-log inspection found no publisher URL or
+  publisher-directed HTTP command. The two `usgaap.rss` strings were local
+  `PIN MATCH` output. No additional publisher request was made while admitting
+  or rederiving the evidence.
+- lifecycle acceptance: PASS. `cycle-check`, `version-check`,
+  `progress-check`, `invariant-scan` with self-test, `checklist-audit`,
+  manifest validation, `verify-artifacts`, `evidence-report`, report
+  rederivation, and `git diff --check` all passed. `invariant-scan` remains
+  **12/12 rules / 44 controls**.
+- golden-E2E delta: **0**; mandatory golden passed **11/11**.
