@@ -500,3 +500,47 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; mandatory golden passed 11/11 with the hamming-12
   true-positive collapse intact.
 - publisher-request acceptance: PASS. No publisher request was made.
+
+### 2026-07-30 · CADENCE — explicit SEC source clock and G4 regression
+
+- owner: Codex
+- commit: bd546e1ae399ee1949524735dda45cdcfb7be5c2
+- result: PASS. The inherited two-hour full-finance job was replaced with
+  explicit source clocks: SEC every 600 seconds, `filings-digest` every 7,200
+  seconds, and the finance refresh every 7,200 seconds.
+- evidence acceptance: PASS. Every publisher fact came from a committed path.
+  `observations/v0.25/terms-gate/sec-edgar-terms-determination.md` supplies the
+  Developer Resources URL and 2026-07-30 read date;
+  `observations/v0.24/publisher-review/sec-edgar-report.md` supplies the
+  2-requests/second process floor, cited 10-requests/second publisher ceiling,
+  and absence of publisher `Crawl-delay`; the `<description>` in
+  `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` supplies the
+  ten-minute feed-update interval.
+- cadence acceptance: PASS. Six hundred seconds was chosen to match that
+  committed update interval. Executed scheduler dry-run resolved
+  `quant-desk:ingest-source:sec-edgar-usgaap` at 600 seconds,
+  `quant-desk:ingest-source:filings-digest` at 7,200 seconds, and
+  `quant-desk:refresh` at 7,200 seconds. The real-config regression executes
+  the SEC job and fails if the source or cadence is absent.
+- G4 acceptance: PASS. A failure-capable HTTP transport supplied the exact
+  measured successful offline finance body: fixture-backed `filings-digest`
+  `ok:true`, fixtureless SEC `ok:false`, and the absent-`net` error. The real
+  shell pipeline printed the per-source error, continued through view and
+  audit, wrote the brief, and returned 0.
+- architecture acceptance: PASS. The dated cadence row is immediately after
+  the existing SEC terms row. The terms row is byte-unchanged, and the new row
+  explicitly says cadence does not satisfy terms.
+- test acceptance: PASS. Focused cadence/G4 tests passed 10/10 in Python 3.11
+  and 3.12. Both full constrained populations collected and passed **291** with
+  zero skips. `invariant-scan` passed 12/12 rules / 44 controls; cargo fmt was
+  clean.
+- lifecycle acceptance: PASS. `cycle-check`, `progress-check`, and
+  `version-check` passed before this append; `git diff --check` was clean.
+- scope acceptance: PASS. Only the schedule, shell tests, architecture, and
+  status records changed. Core config, production shell/core source,
+  publisher bytes, fixtures, golden inputs, protected artifacts, databases,
+  dependencies, and refs did not change.
+- golden-E2E delta: **0**; mandatory golden passed 11/11, including the
+  hamming-12 true-positive collapse.
+- publisher-request acceptance: PASS. No publisher request or harvest
+  occurred. Quarantined content was not cited.
