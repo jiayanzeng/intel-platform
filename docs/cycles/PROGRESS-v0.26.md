@@ -142,3 +142,47 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; standalone and matrix golden remained 11/11 with the
   hamming-12 true-positive collapse.
 - publisher-request acceptance: PASS. E0 made no publisher request.
+
+### 2026-07-30 · REPLAY-BLOCKED — schema cannot express the required pin
+
+- owner: Codex
+- commit: d5311a5f6c91db713597ce1a88b27e9ffcfe4212
+- result: BLOCKED at the Step 2 decision gate before any document-set
+  measurement. The runbook requires the five v0.25 observation files to remain
+  at their original paths, become manifest-pinned, and carry a chained
+  admission record. Executed schema 2 cannot represent that combination.
+- pre-proposal acceptance: PASS. Before constructing a candidate,
+  `evidence_artifacts.py validate` and `verify-artifacts` passed with 2
+  artifacts, 266 pinned files, and both protected databases exact.
+- byte-enumeration acceptance: PASS. All five source files were independently
+  re-hashed at 903,679 bytes total. The active execution record lists each
+  path, byte count, and SHA-256; the feed remains 892,641 bytes at
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`.
+- ordinary-pin fail-before acceptance: PASS. A disposable candidate adding an
+  otherwise schema-shaped pinned-file object at the original observation path
+  was examined by the real validator and failed because non-authorization pins
+  must live beneath `evidence/`.
+- chained-pin fail-before acceptance: PASS. A second disposable candidate
+  included the required task/date/wire-reference/operator-approval/retroactive
+  admission chain and was examined by the real validator; it failed the
+  pinned-file exact-key check because `admission` is not allowed there.
+- gate disposition: BLOCKED. Extending `tools/evidence_artifacts.py` and its
+  schema is outside Step 2's Gate. Copying the bytes beneath `evidence/` would
+  violate the runbook's explicit no-copy/original-path boundary. No workaround
+  was implemented and no manifest proposal was made.
+- replay acceptance: NOT MEASURED. Because pin-first is undischarged, no
+  committed parser replay, field inventory, day-zone measurement, or extension
+  enumeration was derived. The REPLAY checklist box remains unchecked.
+- dependency disposition: IDENTITY-MEASURE and IDENTITY-DECISION remain blocked
+  on Step 2. CADENCE remains independently eligible under the declared
+  dependency graph.
+- lifecycle acceptance: PASS. `cycle-check`, `progress-check`, and
+  `checklist-audit` passed before this append, with the REPLAY box correctly
+  unchecked.
+- scope acceptance: PASS. The implementation commit changed only `STATE.md`
+  and the active execution record. No schema, manifest, observation,
+  production source, test, fixture, protected artifact, database, golden
+  input, or ref changed.
+- golden-E2E delta: **0**. The initial sandbox-only loopback bind refusal was a
+  non-result; the identical permitted run passed 11/11.
+- publisher-request acceptance: PASS. No publisher request was made.
