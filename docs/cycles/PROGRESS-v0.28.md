@@ -305,3 +305,51 @@ Entries are append-only; corrections are new dated entries.
   model-server session, historical cycle edit, production runtime source,
   dependency, schema, protected artifact, golden input, public route,
   serialized value domain, tag, or branch ref changed.
+
+### 2026-07-30 · COVERAGE-ORDER — incoming boundary order enforced
+
+- owner: Codex
+- commit: e6b3c1ea6571088e57689045218c809509282ee4
+- result: PASS. The store now derives the incoming oldest raw boundary with the
+  same known-day, day, raw-byte, and id ordering used by the archive instead of
+  using the incoming slice's last position.
+- decision-gate acceptance: PASS. The implementation and test are contained in
+  `crates/store/src/sqlite.rs`. Forbidden `apps/cored/src/main.rs` and
+  `crates/ingest/src/**` did not change; no handler seam was required.
+- ordering-choice acceptance: PASS by enforcement. The archive already owns a
+  complete comparator, so applying it to raw-timestamped incoming documents
+  removes the precondition rather than documenting a second contract. The
+  method comment now states that both boundaries use the same ordering and the
+  input need not be newest-first.
+- misordered-window acceptance: PASS. A middle/oldest/newest input construction
+  produced `incoming_oldest_published_raw=2026-07-05` while its last element
+  carried `2026-07-09`. The new assertion does not consult `incoming.last()`;
+  the focused test passed **1/1**.
+- bounded-effect acceptance: PASS. The value remains an observational
+  diagnostic string, detection continues the poll, and no document or identity
+  path changed. Pinned SEC replay tests passed with the existing measured
+  **200-item / zero ascending timestamp inversion** premise.
+- identity acceptance: PASS. The shipped parser-produced identity control
+  reported **201 input / 201 kept / zero dropped**: all **200** SEC documents
+  plus the separate filings-digest document remained distinct.
+- Rust acceptance: PASS. Warning-denied workspace tests passed **146/146**,
+  including **29** `cored` tests and **23** store unit tests. Workspace clippy,
+  fmt, and warning-denied `cored --features net --all-targets` check passed.
+- invariant acceptance: PASS. Registered self-test derived **12/12 rules / 49
+  controls**. The R1, R5, and R7 expected line fields and R12 runbook source
+  range were re-measured after their source files shifted; every original
+  mutation and expected finding then executed successfully.
+- export-bound acceptance: PASS. The exact project-root entry point passed **99
+  derived / 7 required / 152 exported** at **2,494,839 bytes**, below the
+  3,000,000-byte ceiling with the exact three-cycle set and both excluded byte
+  classes absent.
+- response-contract acceptance: PASS. The internal `/ingest` route, response
+  type, field names, field types, shape, and serialization are unchanged. Only
+  the value of `incoming_oldest_published_raw` is corrected for a misordered
+  edge case; no `/v1/*` response shape or serialized value domain moved.
+- golden-E2E delta: **0**. The permission-complete `./run golden` execution
+  passed **11/11** byte-identically.
+- publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
+  model-server session, historical cycle edit, dependency, schema, protected
+  artifact, golden input, public route, `/v1/*` serialized value domain, tag,
+  or branch ref changed.
