@@ -118,6 +118,18 @@ entry in the same commit that first needs it** — and registers the receipts as
 v0.26's amended Step 7 established works. This paragraph is notice, not
 permission, and it is not a licence to edit the manifest for any other purpose.
 
+## Runbook amendments
+
+### 2026-07-30 — idle-sample elapsed time corrected by committed timestamps
+
+The opening narrative and Step 2 item 4 drafted **7h28m** between the capture at
+`2026-07-30T03:34:00Z` and the corrective content request at
+`2026-07-30T09:18:39.680936Z`. Executing the subtraction measures
+**5h44m39.680936s / 20,679.680936 seconds**. The timestamps and both requested
+Step 2 conclusions are unchanged; only the authored elapsed-time claim is
+wrong. WINDOW-MEASURE records the measured interval and does not bless the
+draft.
+
 ---
 
 ## Entering state (asserted, not yet verified)
@@ -463,6 +475,44 @@ commit and the same annotated tag object.
 repository ref, and left `STATE.md`, `config/core.json`, and
 `config/schedule.json` byte-unchanged.
 
+### WINDOW-MEASURE execution record — 2026-07-30
+
+The committed
+`derives_sec_latest_window_timing_from_pinned_body` test executes against the
+point-of-use length- and SHA-asserted publisher body. It derives, rather than
+uses as inputs, **200** timestamps, oldest
+`Wed, 29 Jul 2026 16:13:52 EDT`, newest
+`Wed, 29 Jul 2026 17:31:22 EDT`, a **4,650-second / 77.5-minute** span, 199
+consecutive gaps, **11-second** median, **215-second** maximum, and hour
+population `{16: 133, 17: 67}`. It derives the complete gap histogram, checks
+that the gaps sum to the endpoint span, and confirms channel `lastBuildDate`
+and `pubDate`. Focused replay passed **2/2**.
+
+The general coverage criterion and its two named terms are recorded at
+`observations/v0.27/sec-latest-window-margin.md`: for consecutive successful
+polls over a stable fixed latest-N identity set, coverage holds if and only if
+the **poll interval** is shorter than the **time the window takes to advance by
+N items**. Against this one measured latest-200 span, the 600-second interval
+has `4,650 / 600 = 7.75` observed headroom; equivalently, one interval consumes
+**12.90%** of the span. This rests on one post-close window on one Wednesday
+and establishes none of peak-season density, deadline-day density, or density
+during hours neither live sample covered.
+
+Both captures fell outside filing hours and kept identical body bytes, hash,
+and `lastBuildDate`. The authored **7h28m** elapsed-time claim is refuted by
+the committed timestamps: 03:34:00Z to 09:18:39.680936Z is
+**5h44m39.680936s / 20,679.680936 seconds**, recorded in the dated runbook
+amendment rather than blessed. The unchanged observable representation across
+far more than ten minutes refutes the ten-minute rebuild claim as a description
+of idle observable behavior, while simultaneously failing to test window
+velocity because no filing arrived.
+
+Warning-denied workspace tests passed **140**; warning-denied net tests passed
+**31 ingest + 26 cored = 57**. Clippy and fmt passed. The SEC identity control
+remained **200 kept / 0 dropped**, and standalone golden remained
+byte-identical at **11/11**. No schedule or production source changed, the
+scheduler did not run, and no publisher request occurred.
+
 ---
 
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
@@ -805,7 +855,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
   headers quoted; **G4's true-of-neither sentences named**; G5's paths priced with
   request counts; G6 answered by execution; G7 stated as a question; pins and
   published objects re-verified; no publisher request
-- [ ] **WINDOW-MEASURE** — window quantities derived by a committed test, not
+- [x] **WINDOW-MEASURE** — window quantities derived by a committed test, not
   asserted; safety criterion stated generally with its ratio; three evidentiary
   gaps recorded; idle-sample finding recorded with both conclusions
 - [ ] **CADENCE-CRITERION** — correction appended as a new dated row with v0.26's

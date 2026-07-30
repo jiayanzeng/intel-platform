@@ -170,6 +170,55 @@ fn direct_text(item: roxmltree::Node<'_, '_>, name: &str) -> Option<String> {
         .map(ToOwned::to_owned)
 }
 
+fn days_from_civil(year: i64, month: i64, day: i64) -> i64 {
+    let year = year - i64::from(month <= 2);
+    let era = if year >= 0 { year } else { year - 399 } / 400;
+    let year_of_era = year - era * 400;
+    let month_prime = month + if month > 2 { -3 } else { 9 };
+    let day_of_year = (153 * month_prime + 2) / 5 + day - 1;
+    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
+    era * 146_097 + day_of_era - 719_468
+}
+
+fn rss_timestamp(raw: &str) -> (i64, u32) {
+    let parts: Vec<_> = raw.split_whitespace().collect();
+    assert_eq!(parts.len(), 6, "unexpected RSS timestamp shape: {raw}");
+    let day: i64 = parts[1].parse().expect("numeric RSS day");
+    let month = match parts[2] {
+        "Jan" => 1,
+        "Feb" => 2,
+        "Mar" => 3,
+        "Apr" => 4,
+        "May" => 5,
+        "Jun" => 6,
+        "Jul" => 7,
+        "Aug" => 8,
+        "Sep" => 9,
+        "Oct" => 10,
+        "Nov" => 11,
+        "Dec" => 12,
+        other => panic!("unexpected RSS month: {other}"),
+    };
+    let year: i64 = parts[3].parse().expect("numeric RSS year");
+    let clock: Vec<i64> = parts[4]
+        .split(':')
+        .map(|part| part.parse().expect("numeric RSS clock component"))
+        .collect();
+    assert_eq!(clock.len(), 3, "unexpected RSS clock shape: {raw}");
+    let offset_seconds = match parts[5] {
+        "EDT" => -4 * 60 * 60,
+        "EST" => -5 * 60 * 60,
+        "GMT" | "UTC" => 0,
+        other => panic!("unexpected RSS timezone: {other}"),
+    };
+    let local_seconds =
+        days_from_civil(year, month, day) * 86_400 + clock[0] * 3_600 + clock[1] * 60 + clock[2];
+    (
+        local_seconds - offset_seconds,
+        u32::try_from(clock[0]).expect("RSS hour is non-negative"),
+    )
+}
+
 fn utc_day(raw: &str, local_day: Day) -> Option<Day> {
     let parts: Vec<&str> = raw.split_whitespace().collect();
     let time_index = parts.iter().position(|part| part.contains(':'))?;
@@ -258,6 +307,81 @@ fn write_document_export(path: &Path, documents: &[Document]) {
         write_string(&mut writer, document.provenance.kind.as_str());
         write_string(&mut writer, document.provenance.license.as_str());
     }
+}
+
+#[test]
+fn derives_sec_latest_window_timing_from_pinned_body() {
+    let bytes = std::fs::read(observation_path()).expect("read SEC observation");
+    assert_observation_bytes(&bytes).unwrap_or_else(|error| panic!("{error}"));
+    let xml = std::str::from_utf8(&bytes).expect("the asserted SEC observation must be UTF-8");
+    let tree = roxmltree::Document::parse(xml).expect("parse asserted SEC observation");
+    let channel = tree
+        .descendants()
+        .find(|node| node.is_element() && node.tag_name().name() == "channel")
+        .expect("RSS channel");
+
+    let mut timestamps: Vec<_> = channel
+        .children()
+        .filter(|node| node.is_element() && node.tag_name().name() == "item")
+        .map(|item| {
+            let raw = direct_text(item, "pubDate").expect("item pubDate");
+            let (seconds, hour) = rss_timestamp(&raw);
+            (seconds, hour, raw)
+        })
+        .collect();
+    timestamps.sort_by_key(|(seconds, _, _)| *seconds);
+
+    let gaps: Vec<_> = timestamps
+        .windows(2)
+        .map(|pair| pair[1].0 - pair[0].0)
+        .collect();
+    let mut sorted_gaps = gaps.clone();
+    sorted_gaps.sort_unstable();
+    let mut gap_distribution = BTreeMap::new();
+    for gap in &gaps {
+        *gap_distribution.entry(*gap).or_insert(0usize) += 1;
+    }
+    let mut hour_distribution = BTreeMap::new();
+    for (_, hour, _) in &timestamps {
+        *hour_distribution.entry(*hour).or_insert(0usize) += 1;
+    }
+
+    let first = timestamps.first().expect("oldest timestamp");
+    let last = timestamps.last().expect("newest timestamp");
+    let span_seconds = last.0 - first.0;
+    let median_gap_seconds = sorted_gaps[sorted_gaps.len() / 2];
+    let max_gap_seconds = *sorted_gaps.last().expect("at least one consecutive gap");
+
+    assert_eq!(timestamps.len(), 200);
+    assert_eq!(first.2, "Wed, 29 Jul 2026 16:13:52 EDT");
+    assert_eq!(last.2, "Wed, 29 Jul 2026 17:31:22 EDT");
+    assert_eq!(span_seconds, 4_650);
+    assert_eq!(gaps.len(), 199);
+    assert_eq!(gaps.iter().sum::<i64>(), span_seconds);
+    assert_eq!(median_gap_seconds, 11);
+    assert_eq!(max_gap_seconds, 215);
+    assert_eq!(hour_distribution, BTreeMap::from([(16, 133), (17, 67)]));
+    assert_eq!(
+        direct_text(channel, "lastBuildDate").as_deref(),
+        Some("Wed, 29 Jul 2026 21:50:03 EDT")
+    );
+    assert_eq!(
+        direct_text(channel, "pubDate").as_deref(),
+        Some("Wed, 29 Jul 2026 21:50:03 EDT")
+    );
+
+    println!(
+        "sec-window-timing: items={} oldest={} newest={} span_seconds={} \
+         consecutive_gaps={} median_gap_seconds={} max_gap_seconds={} \
+         hour_distribution={hour_distribution:?} gap_distribution={gap_distribution:?}",
+        timestamps.len(),
+        first.2,
+        last.2,
+        span_seconds,
+        gaps.len(),
+        median_gap_seconds,
+        max_gap_seconds
+    );
 }
 
 #[tokio::test]

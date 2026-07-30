@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published and v0.26 is closed under R-CLOSE.** Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0 plus WINDOW-MEASURE are complete locally.** The current tree passes warning-denied **140** workspace tests and **57** net tests (**31** `intel-ingest` including both replay tests + **26** `cored`), clippy and fmt, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+
+## v0.27 active execution
+
+**WINDOW-MEASURE derives the SEC latest-window margin and corrects its authored
+elapsed-time premise (measured 2026-07-30).** The committed test
+`derives_sec_latest_window_timing_from_pinned_body` first enforces the pinned
+892,641-byte body and SHA-256, then parses all item timestamps and derives 200
+items from `Wed, 29 Jul 2026 16:13:52 EDT` through
+`Wed, 29 Jul 2026 17:31:22 EDT`: **4,650 seconds / 77.5 minutes**, 199
+consecutive gaps, **11 seconds median**, **215 seconds maximum**, and EDT hour
+counts `{16: 133, 17: 67}`. It also confirms channel `lastBuildDate` and
+`pubDate` at `Wed, 29 Jul 2026 21:50:03 EDT`.
+
+The general safety criterion is: for consecutive successful polls over a
+stable fixed latest-N identity set, the window is covered if and only if the
+poll interval is shorter than the time the window takes to advance by N items.
+The two terms measured here are the committed **600-second poll interval** and
+this sample's **4,650-second latest-200 span**. Their observed ratio is `4,650
+/ 600 = 7.75`; equivalently, one poll consumes **12.90%** of the measured
+span. This is one post-close window on one Wednesday. It does not establish
+peak-season density, deadline-day density, or density during hours neither live
+sample covered.
+
+The committed capture timestamps also correct the runbook's drafted **7h28m**
+idle interval. `2026-07-30T03:34:00Z` to
+`2026-07-30T09:18:39.680936Z` is **5h44m39.680936s / 20,679.680936
+seconds**. Both observations fell outside filing hours; their bodies,
+SHA-256, and `lastBuildDate` were unchanged. That refutes “updated every 10
+minutes” as a description of observable behavior during the idle interval,
+while simultaneously failing to test window velocity because no filing
+arrived.
+
+Focused replay passed **2/2**; warning-denied workspace passed **140**, and
+warning-denied net lanes passed **31 ingest + 26 cored = 57**. Clippy and fmt
+passed. The identity control remained **200 SEC kept / 0 dropped**, and golden
+remained byte-identical at **11/11**. `config/schedule.json` did not change,
+the scheduler did not run, no production source changed, and no publisher
+request was made.
 
 ## v0.16.1 post-push verification
 
