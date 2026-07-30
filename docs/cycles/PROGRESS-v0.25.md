@@ -123,3 +123,72 @@ Entries are append-only; corrections are new dated entries.
   `config/core.json`, production source, protected corpus, schema, or public
   surface.
 - golden-E2E delta: **0**.
+
+### 2026-07-30 · LICENSE-SEMANTICS — PublisherPermitted selects v0.16.0
+
+- owner: Codex
+- commit: ad029da80f9e5c0a463b9f0aa38eff95eb151ef2
+- result: PASS. The operator selected `extend/minor`.
+  `PublisherPermitted` records that a publisher expressly permits reuse under
+  its own stated terms while making no claim about underlying copyright.
+  `PublicDomain` remains excluded because the measured SEC evidence does not
+  establish that issuer-authored filings are government works. `CcBy`,
+  `ClientOwned`, and `IndexOnly` would each make a different false or
+  unnecessarily restrictive claim.
+- gate acceptance: PASS after a pre-implementation scope correction. The task's
+  acceptance criteria required an `AGENTS.md` edit while its gate omitted that
+  path; the dated amendment added the path already permitted by declared scope
+  without changing the objective, implementation, or done condition. E0 had
+  confirmed G1. No ingest, compliance, shell source, configured source,
+  schema-breaking, or protected-database change occurred.
+- version acceptance: PASS. The operator's exact symmetric public-value-domain
+  criterion is now in `AGENTS.md` and reconciled in `ARCHITECTURE.md §8`.
+  Adding, removing, or redefining a value of a field already serialized in a
+  `/v1/*` response takes a minor release because exhaustive value handling is
+  part of the consumer contract. The selected identity is **v0.16.0**
+  independently of later source-admission gates.
+- mapping acceptance: PASS. `PublisherPermitted`, `as_str()`, and `parse()` use
+  exactly the same spelling. `redistributable()` is an exhaustive match and
+  returns true for the new value. The focused core test enumerated all five
+  licences and proved the existing spellings, parse outcomes, redistribution
+  outcomes, and `/attest` behavior unchanged: only `IndexOnly` is
+  non-redistributable and refused.
+- persistence acceptance: PASS. The new store integration test round-tripped
+  `PublisherPermitted`, observed the exact SQLite text, and returned a
+  redistributable search snippet. SQLite's existing `license TEXT NOT NULL`
+  column has no `CHECK`; writes already use `as_str()` and reads already route
+  through `License::parse`. `crates/store/src/sqlite.rs` therefore required no
+  edit, and that half of the conditional scope permission was unused.
+- unknown-value acceptance: PASS in both directions. The actual offline `cored`
+  entry point started from a temporary config containing
+  `PublisherPermitted`; a temporary `FutureLicense` value exited **101** with a
+  hard Serde error. A planted SQLite `FutureLicense` row silently fell back to
+  `IndexOnly` and suppressed its snippet. Both directions fail safely, while
+  the archive path means an older binary can silently reclassify a newer
+  value.
+- invariant acceptance: PASS. Step 2 produced no new invariant rule because a
+  release-classification judgment is not observable by a registered source
+  scan. `invariant-scan` remains exactly **12 rules / 39 controls**, recorded
+  here, in `STATE.md`, and in the active runbook; no R12 mutation was added.
+- complete-matrix acceptance: PASS. `./run ci-local` passed all **20** jobs:
+  workspace **135**, net **55** (**29** ingest + **26** cored),
+  warning-denied current and locked Rust 1.78 lanes, clean
+  clippy/fmt/ShellCheck, Python 3.11 **283 collected / 283 passed / 0 skipped**,
+  protected databases **2/2**, all **251** pins, and embedded golden **11/11**.
+  Independent Python 3.12 passed **283 collected / 283 passed / 0 skipped**.
+  `cycle-check`, formatting, and diff hygiene passed.
+- release-boundary acceptance: PASS. `config/core.json` is unchanged, so zero
+  configured sources produce the value and no `/v1/*` response can yet carry
+  it. `README.md`'s now-stale four-value enumeration is explicitly assigned to
+  Step 7, whose gate contains that release authority. Live remote inspection
+  found no v0.16.0 tag and left the pre-existing
+  `candidate/v0.16.0` branch at the v0.15.1 evidence commit
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; its seven immutable receipt
+  provenance entries plus pinned report remain disambiguated as eight
+  historical evidence subjects. No publisher/feed request or ref mutation
+  occurred.
+- runbook-correction acceptance: PASS. The false author-side G5 implication was
+  recorded as a runbook error: golden uses only `science` and `technology`, so
+  a future `finance` source does not enter it.
+- golden-E2E delta: **0**; mandatory standalone `./run golden` passed
+  **11/11**.
