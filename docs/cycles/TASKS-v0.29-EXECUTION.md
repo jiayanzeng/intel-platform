@@ -2,6 +2,19 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · E0 preparatory manifest-byte correction
+
+Step 1 — measured answers recorded and completion checked — 2026-07-31
+
+E0 measured the unchanged `config/protected-artifacts.json` file at **182,774
+bytes**, not the **182,780** transcribed in the activation progress record and
+activation architecture observation. The manifest's Git blob is byte-identical
+across those trees, so this is a record correction rather than a product or
+manifest change. E0 forward-corrects the value in `STATE.md`, the live governed
+row, this runbook's measured deferred observation, and its append-only progress
+entry. The pin population, verification results, and decision gate do not
+change.
+
 ### 2026-07-31 · Activation retention-edit reconciliation
 
 The activation instructions first say the preparatory commit contains only the
@@ -358,23 +371,23 @@ measured on**, which is the discipline G5 exists to settle.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.29 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.29 · 2026-07-31 — no step starts a harvester; sequential origins remain the only exercised form | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.29 · 2026-07-31 — no transient robots outage observed; no usable stale policy existed | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.29 · 2026-07-31 — `crates/ingest/src/**` is forbidden this cycle; `get_text` sends no validator | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.29 · 2026-07-31 — `crates/ingest/src/**` forbidden | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.29 · 2026-07-31 — executed once in v0.27; no publisher request occurs this cycle | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.29 · 2026-07-31 — the 600-second clock has never run; Step 6 designs and decides, and executes nothing | **Step 6 — design and recorded decision only** |
-| Postgres / pgvector / multi-host seam | unchanged | v0.29 · 2026-07-31 — single writer, single host | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.29 · 2026-07-31 — one first-party shell; no such claim made | none |
-| L2 forced-command wrapper | an operator server session | v0.29 · 2026-07-31 — none has occurred | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.29 · 2026-07-31 — none observed | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.29 · 2026-07-31 — no review pending | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.29 · 2026-07-31 — not authorized | none — **no historical ref touched** |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.29 · 2026-07-31 — tags unpublished | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — 316 pins, 182,773 bytes, 865,803 bytes of headroom; re-measure at E0 | **Step 1 — re-measure only** |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.29 · 2026-07-31 — literal present; this cycle forbids `shell/intel_shell/**` | none — recorded, not acted on |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.29 · 2026-07-31 — `AGENTS.md:330` still declares the gap openly; no operator decision has been made | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` alone exceeds the bound Step 5 records | v0.29 · 2026-07-31 — v0.28's archival is byte-proven and complete; the ceiling has not fired | **Step 5 — record the next boundary, do not archive** |
+| T7 robots single-flight | a second concurrent harvester | v0.29 · 2026-07-31 — E0 started no harvester and made no publisher request; only the existing sequential form remains exercised | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.29 · 2026-07-31 — E0 observed no live outage and created no last-known-good policy; the trigger is absent | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.29 · 2026-07-31 — the activation-to-E0 diff leaves forbidden `crates/ingest/src/**` byte-identical and no live request or 304 occurred | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.29 · 2026-07-31 — `crates/ingest/src/**` is forbidden and byte-identical; no connector review occurred | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.29 · 2026-07-31 — the v0.27 sequential two-origin result remains the only live execution; E0 made no publisher request | none — complete, do not re-exercise |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.29 · 2026-07-31 — G6 confirms the 600-second clock has never run and records a 1,260-second, at-most-three-invocation design with exact refusals; E0 executes no traffic | **Step 6 — design and recorded decision only** |
+| Postgres / pgvector / multi-host seam | unchanged | v0.29 · 2026-07-31 — E0 exercised the existing single-writer SQLite and single-host topology only | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.29 · 2026-07-31 — E0 exercised only the first-party shell and makes no shell-replacement invariance claim | none |
+| L2 forced-command wrapper | an operator server session | v0.29 · 2026-07-31 — E0 opened no operator server session | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.29 · 2026-07-31 — registered invariant self-test passed 12 rules / 49 controls and exposed no unregistered spelling | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.29 · 2026-07-31 — no compliance review completed and no admission decision is pending | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.29 · 2026-07-31 — no publication authorization was given and E0 moved no ref | none — **no historical ref touched** |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.29 · 2026-07-31 — both historical tags remain unpublished, so the trigger is absent | none — **the flag stays** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — E0 measured 316 pins and 182,774 bytes; complete runs took 0.11 s / 0.10 s real, so neither trigger fired | **Step 1 — re-measure only** |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.29 · 2026-07-31 — the literal remains, while `shell/intel_shell/**` is forbidden and unchanged through E0 | none — recorded, not acted on |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.29 · 2026-07-31 — the contract still declares prose adjudication and E0 received no operator decision to replace it | none — recorded, not acted on |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` alone exceeds the bound Step 5 records | v0.29 · 2026-07-31 — E0 derives normalized State growth at 22,525 bytes/cycle; v0.28's archival remains byte-proven, the export ceiling has not fired, and Step 5 will record the next State-size boundary | **Step 5 — record the next boundary, do not archive** |
 
 ---
 
@@ -408,7 +421,7 @@ entry, **record and stop.**
 **Done when** every gate carries a measured answer and the entering state is
 either confirmed or corrected in `STATE.md`.
 
-- [ ] **E0**
+- [x] **E0**
 
 ---
 

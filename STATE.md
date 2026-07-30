@@ -1,6 +1,157 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 is closed with `no-release` disposition as of 2026-07-31; all eight ordered steps are complete on top of published v0.17.0.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both still resolve to that closing commit. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. Both shell comparators derived `collected=303`, `equivalent=true`, and `equivalent_passed=303`; local passed **303 / skipped 0**, while hosted passed **302** plus one named `on_site` skip. Current local CI passes **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), shell **303/303**, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 49 controls**, and golden **11/11**. The authorized evidence registration contains **316** `pinned_files[]`; both protected SQLite archives remain byte-identical. The closing implementation-tree review export measures **2,526,556 bytes** against its **3,000,000-byte** executable ceiling and retains exactly three derived cycles without reducing executing coverage. The internal `/ingest` coverage boundary derives its oldest raw timestamp independently of incoming slice order without changing the response shape or any `/v1/*` value domain. The SEC identity control remains **200 kept / 0 dropped**. The 600-second schedule has never run, and v0.28 made no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; E0 is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. Current local CI passes **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 49 controls**, and golden **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The E0 implementation-tree review export measures **2,430,678 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+
+**v0.29 E0 rebuilds the entering state and settles G1–G7 (measured
+2026-07-31).** The clean permission-complete `./run ci-local` rerun passed all
+**20/20** jobs. It executed warning-denied **146** offline workspace tests and
+**62** net tests, clean clippy, rustfmt, ShellCheck, locked Rust 1.78 checks and
+tests, `invariant-scan` **12 rules / 49 controls**, protected-artifact and
+fingerprint verification, shell **303/303**, and embedded golden **11/11**.
+The separately invoked `./run golden` also passed **11/11**, delta **0**.
+
+Both Python lanes were rebuilt rather than inherited. Python **3.11.4** and
+**3.12.13** each resolved the exact **21-package** constraint set and each
+reported `collected=303`, `passed=303`, `failed=0`, and `skipped=[]`.
+`tools/test_population.py` derived
+`{"collected":303,"equivalent":true,"equivalent_passed":303,"hosted":{"on_site_skipped":0,"passed":303,"skipped":[]},"local":{"passed":303,"skipped":0},"schema_version":1}`.
+Both lanes emitted the same accepted
+`StarletteDeprecationWarning`; it neither became an error nor followed any
+dependency-byte change.
+
+Manifest validation reported schema 2, **2 artifacts / 316 pinned files**.
+Two complete `./run verify-artifacts` executions matched all 316 pins and both
+databases in **0.11 s / 0.10 s real**. The actual manifest byte count is
+**182,774**. The preparatory progress record's **182,780** was a transcription
+error against an unchanged file and is forward-corrected here; its claimed pin
+population, database result, and timing disposition remain true.
+
+The entering ref hypothesis was corrected at activation and held at E0:
+pre-activation `d9ecea493d3bc254051a0fa87fafe0b244cb0d19` is the v0.28
+audit record whose parent is closing commit
+`ec8eaa2ab7c8c23d5a923a08ae36ab7692b4b664`; the published v0.17.0
+closing commit remains its ancestor. The E0 entry tree after the committed
+scope-fixture amendment was clean. No ref moved.
+
+**G1 — CONFIRMED by execution.** `run` declares **20** local CI jobs and none
+is `export-check`; `.github/workflows/ci.yml` contains zero `export`
+occurrences. In a no-hardlink throwaway clone with active v0.29 and the
+retention glob changed back from `2[0-6]` to the supplied `2[0-5]`,
+`./run export-check` exited **1** after generating the real export and printed
+exactly:
+
+```
+export-check: ERROR: unexpected cycle document outside retention depth 3: docs/cycles/PROGRESS-v0.26.md
+export-check: ERROR: unexpected cycle document outside retention depth 3: docs/cycles/TASKS-v0.26-EXECUTION.md
+export-check: FAIL (2 defect(s); derived_sources=99, exported=154)
+```
+
+**G2 — DIFFERENT OBJECT; v0.22 G3 is not reopened.** The proposed automatic
+control parses the tracked `repomix.config.json` pattern, independently derives
+the retained cycle range from the active declaration and
+`CYCLE_RETENTION_DEPTH`, and compares those two facts without creating or
+reading a Repomix export. `export-check` instead compares the paths in an
+operator-created export with the repository-derived expected path set and
+enforces the size and excluded-byte constraints. The proposed control therefore
+binds configuration intent; it does not duplicate the operator-local artifact
+check or add a hosted export. Step 2's decision gate remains open.
+
+**G3 — CONFIRMED latent by reproduction.** In a throwaway clone,
+`TRIGGER_FRESHNESS_FORWARD_BOUNDARY` was changed from `(0, 23)` to `(0, 28)`,
+`TRIGGER_FLOOR_FORWARD_BOUNDARY` from `(0, 28)` to `(0, 23)`, and the active
+declaration was set to intervening cycle v0.25. The real `./run cycle-check`
+exited **1** with:
+
+```
+UnboundLocalError: cannot access local variable 'architecture_trigger_rows' where it is not associated with a value
+```
+
+The live constants are freshness `(0, 23)` and floor `(0, 28)`, so the defect
+is unreachable today. The load is safe only while
+`TRIGGER_FLOOR_FORWARD_BOUNDARY >= TRIGGER_FRESHNESS_FORWARD_BOUNDARY`;
+nothing currently binds that relationship, so Step 3 remains required.
+
+**G4 — ordering agrees today, but is unbound.** A throwaway store test inserted
+one known-day and one NULL-day row into the held archive, then supplied one
+known-day and one NULL-day incoming row. The SQL path selected held raw boundary
+`2026-07-10`, while the Rust comparator selected incoming raw boundary
+`incoming-null-raw`; the focused test executed **1 passed / 0 failed**. This
+confirms the terms agree: SQL's `published_day IS NULL` ascending puts known
+days before NULL in its newest-first result, while Rust's ascending
+`Option::cmp` makes `None` the minimum for its oldest result; day, raw byte,
+and id then use the same lexical tie-breaks in opposite newest/oldest
+directions. An earlier command with an incorrectly combined filter and
+`--exact` ran **0 tests** and is explicitly not the result. Today the SQL and
+Rust statements are bound only by prose and reviewer attention; no permanent
+cross-implementation test fails when one changes alone.
+
+**G5 — CONFIRMED and rule selected.** The live v0.28 architecture row recorded
+its labelled Step 5 tree at **2,485,846 bytes**, **514,154 bytes / 20.68%**
+headroom. The closing implementation tree measured **2,526,556**, and the
+delivered review export measured **2,530,129**. A governed row must carry the
+latest measurement available at cycle close, regardless of which earlier step
+first wrote the row; an earlier measurement remains as openly superseded
+history rather than being rewritten as though it had never been true. Step 5
+will put this symmetric rule in the operating contract.
+
+**G6 — design only; no traffic.** Proven before this design: coverage is
+assessed per non-paged source before insertion; an empty id intersection on a
+non-empty held corpus produces the conservative `gap_detected` observation
+without discarding the incoming window; the boundary derivation is independent
+of incoming slice order; the governing cadence quantity is latest-window
+advance rather than feed rebuild wording; and the one pinned latest-200
+Wednesday sample spans **4,650 seconds**, giving the unchanged **600-second**
+clock a measured **7.75×** span/poll margin (**12.90%** consumed per poll).
+Still unproven are recurring scheduler execution, peak-season density,
+deadline-day density, and every hour covered by neither live sample.
+
+The bounded later-cycle design is one isolated **1,260-second** scheduler
+window, enough for at most three due SEC invocations at seconds 0, 600, and
+1,200. It uses a fresh unprotected SQLite target, a fresh scheduler-state path,
+an isolated schedule copy containing only the admitted
+`sec-edgar-usgaap` source at exactly 600 seconds, and captured scheduler,
+`/ingest`, coverage-outcome, request-count, and database evidence. It begins
+only after `evidence_artifacts.py validate`, two protected-artifact
+verifications, port ownership, source-registry/terms/robots configuration, and
+a dry-run job inventory all pass. It stops and refuses any result if a target
+resolves to a protected artifact; a foreign listener exists; the dry run names
+another ingest source or a cadence other than 600; redirect, robots, DNS, TLS,
+timeout, or HTTP policy fails; any publisher other than the admitted SEC origin
+is contacted; more than three SEC invocations occur; a post-first poll is not
+an overlap or reports `gap_detected`; the scheduler swallows a job exception;
+the database or captured request/log counts disagree; or the 1,260-second bound
+is exceeded. A gap remains committed and reported, per the existing
+observational contract, but makes the scheduled-window outcome a refusal rather
+than a pass. This is a design, not authorization; E0 executed no scheduler and
+made no publisher request.
+
+**G7 — CONFIRMED.** At annotated v0.17.0's peeled commit
+`4af2841816dd3e43fb8423153b91aa22ccb87537`,
+`incoming_oldest_published_raw` is still derived positionally with
+`.iter().rev().find_map(...)`. Commit
+`e6b3c1e` in unpublished descendants replaces that with the archive comparator
+and adds the misordered-window test; the published tag is an ancestor of the
+current tree. The exact user-visible consequence is a wrong raw boundary
+string in one internal `/ingest` diagnostic for a misordered incoming window.
+It drops no filing, loses no archive row, changes no response shape, and changes
+no `/v1/*` field or serialized value domain.
+
+**Growth and headroom are derived, not estimated.** v0.28 began with a
+**453,741-byte** State. Normalizing that start for the later mechanical removal
+of the **185,680-byte** historical slice and **66,557-byte** reference slice
+gives **201,504 bytes**; the v0.28 final State is **224,029 bytes**, so normalized
+one-cycle live-State growth was **22,525 bytes**. The manifest moved from
+**174,152** to **182,774 bytes**, or **8,622 bytes**. The actual delivered-v0.28
+to v0.29-activation export rollover moved from **2,530,129** to **2,411,393
+bytes**, a **118,736-byte decrease**, principally because the **160,726-byte**
+v0.26 cycle pair left retention while the then-current v0.29 pair was smaller.
+A negative observed export rate gives no finite exhaustion projection. For a
+positive planning denominator only, repeating normalized State plus manifest
+growth is **31,147 bytes/cycle**. The measured E0 implementation tree leaves
+**569,322 bytes** of export headroom, or **18.28 cycles** at that deliberately
+narrow denominator. The figure is a planning observation, not an allowance for
+unmeasured code or document growth; the executable 3,000,000-byte check remains
+the gate.
 
 **v0.28 R-CLOSE records the operator-selected no-release disposition (measured
 2026-07-31).** The operator selected `no-release`. The measured cycle diff adds
