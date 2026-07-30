@@ -45,3 +45,29 @@ Entries are append-only; corrections are new dated entries.
 - publisher-request acceptance: PASS. Activation used only repository and local
   Git-object commands; it made no request to a publisher origin.
 - protected artifact delta: NOT MEASURED; no protected or pinned file changed.
+
+### 2026-07-30 · ACTIVATE-AMENDMENT — lifecycle fixtures aligned to v0.28
+
+- owner: Codex
+- commit: be5b9e1827cd4a2a870512f53b5c1baa94e9f413
+- result: PASS. The first permission-complete E0 `./run ci-local` measured two
+  shell failures after every preceding Rust, invariant, lifecycle, lint, MSRV,
+  and net job passed: the active deferred population was `(2, 15)` while the
+  v0.27 fixture expected `(2, 14)`, and v0.28's no-release scope derived zero
+  release-authority/forbid overlaps while the v0.27 fixture expected
+  `shell/intel_shell/app.py`.
+- correction acceptance: PASS. The dated runbook amendment permits only the two
+  exact-current-cycle fixture corrections. Focused
+  `shell/tests/test_cycle_check.py` passed **45/45**, and `cycle-check` passed
+  with v0.28 open. No checker implementation changed. Step 3 remains responsible
+  for replacing the temporary exact trigger-population assertion with a derived
+  expectation.
+- environment acceptance: PASS with one non-result recorded. The first
+  sandboxed `ci-local` attempt reached the net lane but its loopback wire server
+  was denied by the execution sandbox; the permission-complete rerun passed that
+  exact test and the complete net lane before reaching the two lifecycle-fixture
+  failures above.
+- golden-E2E delta: NOT MEASURED in this corrective checkpoint; E0 restarts and
+  owns the complete matrix plus standalone golden.
+- publisher-request acceptance: PASS. No publisher or scheduler command ran.
+- protected artifact delta: PASS. No protected or pinned file changed.
