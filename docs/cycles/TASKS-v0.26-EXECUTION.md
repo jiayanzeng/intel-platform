@@ -899,6 +899,47 @@ view's threshold comment names the executed guard. No ingest/compliance/shell
 source, dependency, protected database, fixture, golden input, ref, or
 publisher changed.
 
+### CADENCE execution record — 2026-07-30
+
+The executed pre-change scheduler resolution was G6's
+`quant-desk:full` at 7,200 seconds. With neither a `sources` nor `sectors` map,
+that one job selected every entitled finance source; a per-source entry was
+not required merely to make SEC run.
+
+The chosen replacement is explicit. `sec-edgar-usgaap` now has a **600-second**
+source clock under `quant-desk`, matching the committed feed's ten-minute
+update statement. `filings-digest` remains at 7,200 seconds so choosing SEC's
+clock does not drop the existing fixture-backed source, and the client refresh
+remains at 7,200 seconds. Executed `scheduler --dry-run` resolved all three.
+A committed test loads the real schedule, asserts those exact jobs and
+intervals, executes the SEC action, and would fail if the admitted source had
+no resolvable cadence.
+
+Every publisher fact is cited from a committed path:
+
+- `observations/v0.25/terms-gate/sec-edgar-terms-determination.md` records the
+  Developer Resources URL and the 2026-07-30 read date.
+- `observations/v0.24/publisher-review/sec-edgar-report.md` records the current
+  process floor of 2 requests/second, the cited publisher ceiling of 10
+  requests/second, and no publisher `Crawl-delay`.
+- the `<description>` in
+  `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` says the feed
+  updates every 10 minutes.
+
+The cadence disposition is dated in `ARCHITECTURE.md` immediately after the
+existing SEC terms row. The terms row itself is unchanged, and the cadence is
+expressly not described as satisfying that separate determination. The
+content from the earlier blocked retrieval remains quarantined and uncited.
+
+G4's exact measured disposition now has an executing regression. A
+failure-capable HTTP transport returns success for offline finance ingest with
+fixture-backed `filings-digest` `ok:true` and fixtureless
+`sec-edgar-usgaap` `ok:false`, including the absent-`net` error. The real shell
+pipeline prints that per-source error, continues through view and audit, writes
+the brief, and exits 0. Focused cadence and G4 tests passed 10/10 in both
+Python versions. No shell production source, core config, publisher byte,
+publisher request, or harvest was involved.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
@@ -1368,7 +1409,7 @@ publication.**
   drop proven still to occur; measured cross-issuer collapses proven gone; rule
   changes carry detected planted failures with counts in three places; unused
   permissions recorded
-- [ ] **CADENCE** — every publisher fact cited by committed file path; quarantined
+- [x] **CADENCE** — every publisher fact cited by committed file path; quarantined
   content uncited; cadence chosen with a reason or examined and kept; **G4's
   disposition covered by a test asserting measured behaviour**; test added or
   vacuity recorded; dated in `ARCHITECTURE.md`; terms row unchanged; no publisher

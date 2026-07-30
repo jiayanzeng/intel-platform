@@ -16,7 +16,11 @@
     },
     {
       "client": "quant-desk",
-      "interval_seconds": 7200
+      "interval_seconds": 7200,
+      "sources": {
+        "filings-digest": 7200,
+        "sec-edgar-usgaap": 600
+      }
     }
   ]
 }

@@ -1,6 +1,37 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, and IDENTITY-DECISION: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **289**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is now guarded by the shared measured floor of 26 features: all 200 SEC rows remain distinct, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. CADENCE is the next step. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, and CADENCE: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is guarded by the shared measured floor of 26 features: all 200 SEC rows remain distinct, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. SEC has an explicit 600-second per-source schedule; the next gate is the operator's HARVEST authorization or deferral. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 CADENCE chooses the SEC feed's per-source clock and covers the
+offline partial failure (measured 2026-07-30).**
+
+The effective pre-change cadence came from executed scheduler resolution:
+`quant-desk` had neither a source nor sector map, so it resolved to one full
+job every 7,200 seconds and selected every entitled finance source. The chosen
+replacement gives `sec-edgar-usgaap` an explicit **600-second** source clock,
+keeps `filings-digest` at 7,200 seconds, and keeps the finance refresh at 7,200
+seconds. A committed test loads the real schedule, resolves those three jobs,
+executes the SEC action, and fails if the source is absent or its cadence
+moves.
+
+Every publisher fact came from committed evidence. The Developer Resources URL
+and 2026-07-30 read date are in
+`observations/v0.25/terms-gate/sec-edgar-terms-determination.md`. The current
+process floor of 2 requests/second, the cited publisher ceiling of 10
+requests/second, and the absence of publisher `Crawl-delay` are in
+`observations/v0.24/publisher-review/sec-edgar-report.md`. The `<description>`
+in `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` says the feed
+updates every ten minutes. Matching that committed update interval is the
+reason for 600 seconds. This scheduling choice is separate from the unchanged
+terms determination.
+
+G4 now has an executing shell regression. A failure-capable HTTP transport
+returns the exact measured offline finance response: fixture-backed
+`filings-digest` is `ok:true`; fixtureless `sec-edgar-usgaap` is `ok:false`
+with the absent-`net` error. The full `quant-desk` pipeline prints the
+per-source error, continues through view and audit, writes the brief, and
+returns 0. Focused tests pass 10/10 in both Python versions. The quarantined
+retrieval was not cited, and no publisher request or harvest occurred.
 
 **v0.26 IDENTITY-DECISION guards radius 16 at the measured feature
 boundary (selected and measured 2026-07-30).**

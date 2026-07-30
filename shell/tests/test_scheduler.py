@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from intel_shell import scheduler
 from intel_shell.scheduler import Job, JobSpec, ScheduleConfig, Scheduler, build_jobs, due_jobs
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class FakeRunner:
@@ -158,3 +162,22 @@ def test_load_schedule_parses_json(tmp_path):
     assert sched.jobs[0].client == "acme"
     assert sched.jobs[0].sources == {"techwire": 900}
     assert sched.jobs[0].sectors == {"science": 600}
+
+
+def test_admitted_sec_source_has_an_explicit_resolvable_cadence():
+    runner = FakeRunner()
+    schedule = scheduler.load_schedule(str(ROOT / "config" / "schedule.json"))
+    jobs = {job.name: job for job in build_jobs(schedule, runner)}
+
+    sec = jobs["quant-desk:ingest-source:sec-edgar-usgaap"]
+    filings = jobs["quant-desk:ingest-source:filings-digest"]
+    refresh = jobs["quant-desk:refresh"]
+    assert sec.interval == 600
+    assert filings.interval == 7200
+    assert refresh.interval == 7200
+    assert "quant-desk:full" not in jobs
+
+    sec.action()
+    assert runner.calls == [
+        ("ingest", ("quant-desk", (), ("sec-edgar-usgaap",)))
+    ]
