@@ -604,3 +604,61 @@ Entries are append-only; corrections are new dated entries.
 - disposition: this is an agent-side observation-design failure, not an
   implementation defect. No second robots or feed request was made. A
   corrective observable replay requires separate operator authorization.
+
+### 2026-07-30 · HARVEST — corrective observation closes acceptance
+
+- owner: Codex
+- commit: bc23c4f6c49e76e99cd20426d4582f902a1ef394
+- result: PASS. The operator separately authorized exactly one fresh robots
+  request and one fresh feed request, with no scheduler and no archive
+  mutation. The observable replay closed every plaintext field the first
+  TLS-opaque attempt left unmeasured.
+- observer acceptance: PASS. The disposable observer compiled offline against
+  the repository's exact locked `reqwest 0.11.27`, `tokio 1.52.3`, and shipped
+  ingest/compliance crates. Its pre-existing-output refusal executed first and
+  failed before client construction. The observer source was SHA-256
+  `e2396b69308f516bfe078eb0730c5b97e202bccd5c7b1e919433b1a6a0fc05c0`.
+- preflight acceptance: PASS. All **271** pins and both protected databases
+  matched immediately before and after the replay. No protected, production,
+  configuration, fixture, golden, dependency, lockfile, or ref byte changed.
+- robots acceptance: PASS. At **2026-07-30T09:18:38.296998Z**, the shipped
+  `HttpRobotsFetcher` recording wrapper and `RobotsCache` each counted exactly
+  **1** request. The cache returned `Body(allow)` for the feed path, the cored
+  operator deny-list also allowed it, and the effective rate remained 2
+  requests/second. The 2,622-byte body has SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`
+  and is byte-identical to the v0.25 policy.
+- feed-wire acceptance: PASS. At **2026-07-30T09:18:39.680936Z**, after both
+  gates and the shared limiter, exactly one feed request began. The measured
+  request-start interval was **1.383946 seconds**. Redirects and retries were
+  disabled and counted zero. The response was HTTP **200**,
+  `Content-Type: text/xml`, with no `Location` or `Retry-After` header. Its
+  892,641-byte body has SHA-256
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`
+  and is byte-identical to v0.25.
+- body-comparison acceptance: PASS. The fresh body still declares
+  `windows-1252`, contains **200** items, and has description equal to
+  `edgar:formType` in **200/200**. Byte identity makes the previously executed
+  fresh-archive distribution authoritative here too:
+  `{4:40, 5:86, 6:48, 7:20, 8:5, 10:1}`, with zero rows in 11–25.
+- User-Agent acceptance: PASS. The exact installed value assigned to both
+  clients was captured as **73 bytes**, SHA-256
+  `2fc0ac45a37a1c604d0f01d5039fffd0d734857b613de87cb6c848f29acec495`,
+  and compared byte-for-byte with the configured production construction
+  without printing the contact. The raw contact-bearing temporary file was
+  removed after verification.
+- archive/identity acceptance: PASS from the original shipped-core phase. The
+  unadmitted fresh archive remains 200 fetched / 200 new, 200 canonical / zero
+  drops. The shipped guard kept 200 / dropped 0, and both distance-zero sparse
+  pairs remain visible as the documented under-collapse cost.
+- multi-origin acceptance: NOT EXERCISED and stated. The corrective phase made
+  one robots plus one feed request to SEC and zero requests to any other
+  origin. Both live phases exercised SEC only; arXiv cache/limiter behavior in
+  the same production runtime remains unmeasured.
+- schedule boundary: PASS. No scheduler ran, no scheduled live run has ever
+  occurred, and the 600-second cadence remains unexercised. Neither bounded
+  authorization grants that recurring traffic commitment.
+- lifecycle acceptance: PASS. `cycle-check`, `progress-check`, and
+  `version-check` passed before the implementation commit; `git diff --check`
+  was clean.
+- golden-E2E delta: **0**; mandatory golden passed **11/11**.
