@@ -1,4 +1,4 @@
-# intel-platform (v0.16.1 — core-shell)
+# intel-platform (v0.17.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,27 +7,35 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.16.1` is the selected release identity. Its release-posture hosted
-evidence is workflow-dispatch run `30531390933`, attempt 1, against exact
-evidence candidate `1cd88acd99704cc76c866331e505db446936e469` on neutral
-branch `codex/v0.26-evidence-1cd88ac`. Seven paired Sigstore bundles
+`v0.17.0` is the selected release identity. Its release-posture hosted
+evidence is workflow-dispatch run `30545771070`, attempt 1, against exact
+evidence candidate `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral
+branch `codex/v0.27-evidence-f2b5f7a`. Seven paired Sigstore bundles
 authenticate the complete runner matrix. Under the tagged-closing protocol,
 the release commit carries the release edits, its immediate child carries the
-closed cycle record, and the annotated `v0.16.1` tag targets that closing
+closed cycle record, and the annotated `v0.17.0` tag targets that closing
 commit rather than the evidence candidate or its release-commit parent.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The declared pair is
-[`TASKS-v0.25-EXECUTION.md`](docs/cycles/TASKS-v0.25-EXECUTION.md) and
-[`PROGRESS-v0.25.md`](docs/cycles/PROGRESS-v0.25.md).
+[`TASKS-v0.27-EXECUTION.md`](docs/cycles/TASKS-v0.27-EXECUTION.md) and
+[`PROGRESS-v0.27.md`](docs/cycles/PROGRESS-v0.27.md).
 
 **Current source scope is two configured publisher origins.** `arxiv-cs` and
 `sec-edgar-usgaap` are configured network sources; the other three sources are
-`example.org` fixture placeholders. Both real sources have now been fetched,
-but never together in one production runtime, so live multi-origin cache and
-limiter behavior remains unmeasured. SEC has an explicit 600-second source
-clock; no scheduled SEC run has occurred and that recurring cadence remains
-unexercised.
+`example.org` fixture placeholders. A bounded sequential production-path run
+evaluated both real origins in one process-scoped robots cache: arXiv's
+source-local missing-policy produced `RfcAllowAll`, while SEC independently
+retained its fetched `Body(allow)` policy. This does not exercise concurrent
+harvesters. SEC has an explicit 600-second source clock; no scheduled SEC run
+has occurred, and publication does not authorize that recurring clock.
+
+**Fixed-window rollover is now visible.** Each successful non-paged source is
+assessed separately before insertion. A first window, an overlapping window,
+and a conservative empty-overlap gap are distinguished in `/ingest`; a gap
+also reports the publisher's raw held/new boundary strings and still commits
+the incoming window. Cursor-paged OAI-PMH is explicitly not subject to this
+overlap test.
 
 **Near-duplicate radius 16 now has a measured eligibility boundary.** Both
 documents must carry at least 26 three-token SimHash features before either
@@ -92,7 +100,7 @@ an intentional diagnostic run. The knob changes timing only, never the
 |---|---|
 | `GET /health` | liveness + archive size |
 | `GET /sectors` | configured sectors/sources/licenses |
-| `POST /ingest {sectors, sources?}` | fetch through the compliance gate; append and corpus-wide canonical rematerialization commit or roll back together; optional `sources` runs exactly those source ids (each validated against `sectors`) for true per-source cadence |
+| `POST /ingest {sectors, sources?}` | fetch through the compliance gate; append and corpus-wide canonical rematerialization commit or roll back together; optional `sources` runs exactly those source ids (each validated against `sectors`) for true per-source cadence; each result reports pre-insert fixed-window coverage or explicit paged non-applicability |
 | `GET /view?sectors=` | the full intelligence view: dedup drops, signals with **license-gated hydrated evidence**, named PMI edges, discovery queue, `kept_doc_ids` |
 | `GET /search?q&sectors&limit` | BM25 hits, snippets gated in the store layer |
 | `POST /retrieve {q, sectors, k, model?, query_vector?}` | hybrid BM25 + cosine + RRF; near-dups suppressed at context assembly; returns full-body context docs + diagnostics |

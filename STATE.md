@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, COVERAGE-DETECTION, ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are complete.** The current tree passes all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 46 controls**, clippy, fmt, ShellCheck, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; authenticated run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **301** current pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher origins have now been exercised sequentially in one bounded runtime: arXiv's HTTP 404 became source-local `RfcAllowAll`, SEC's real policy independently remained `Body(allow)` under `deny`, arXiv content timed out before a page committed, and SEC stored 200 documents. The 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, and terms-gate operator responsibility remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.27 Steps E0 through RE-MEASURE are complete and R-CLOSE publication of v0.17.0 is operator-authorized; the untagged release parent is being prepared and has not yet been published.** Published v0.16.1 remains at release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`, closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, and annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b`; remote `main` and the peeled v0.16.1 tag still resolve to that closing commit. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. At RE-MEASURE the tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched. The release assembly adds the internal `/ingest` coverage value and boundary fields, so the named-surface rule requires a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changes. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and this publication does not authorize it. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
 
 **Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION,
 ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are also complete.
@@ -11,6 +11,134 @@ window advance, not the ten-minute rebuild description, as the governing
 cadence criterion; the configured value remains 600 seconds. The manifest
 contract now names the disjoint `artifacts[]` and `pinned_files[]` capabilities,
 and executing fixtures prove both valid shapes and both exact prohibited shapes.
+
+**v0.27 R-CLOSE selects v0.17.0 and prepares release assembly (operator
+decision 2026-07-30).** Release disposition: release (as of 2026-07-30).
+Published v0.16.1 remains unchanged until the tagged closing tree and its
+annotated tag move atomically.
+
+G7 is settled as a reusable criterion. `ARCHITECTURE.md §8`'s shape rule
+covers every observable route and response body named in the architecture,
+including internal loopback surfaces. Internal classification constrains
+access and redistribution; it does not make the named JSON contract
+unversioned. Adding the per-source coverage field to `/ingest` therefore
+requires the minor release **v0.17.0**. Future additions, removals, renames,
+or incompatible reshapes of fields on named internal responses are minor
+under the same rule unless the surface is first explicitly removed from the
+contract. The separate public value-domain criterion does **not** fire: no
+field serialized in a `/v1/*` body gains, loses, or redefines a value.
+
+No corrective trigger was visible at entry: published v0.16.1 is green and
+its records remain true. The publication trigger is the operator's explicit
+decision to ship the authenticated coverage detector, corrected cadence
+criterion, executable admission-language contract, and bounded
+mixed-disposition measurement.
+
+Authenticated evidence candidate
+`f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` and hosted run
+**30545771070**, attempt **1**, are the closing evidence and remain separate
+from the untagged release parent. All seven executable jobs passed. The
+release-grade audit required paired Sigstore attestations, observed and
+accepted **7** identities, rejected **0**, and found no matrix defect. Both
+shell comparators derived `collected=293`, `equivalent=true`, and
+`equivalent_passed=293`: local passed 293 / skipped 0, while hosted passed 292
+plus the one named, reasoned, `on_site` skip.
+
+The coverage determination is overlap/id-only Option 1. For consecutive
+successful fixed windows, a shared stable id proves the publication-order
+intervals abut only when the publisher's window is contiguous and ids remain
+stable across polls. The pinned body derives the measured premises available
+at capture: **200 items / zero ascending timestamp inversions**, **200 unique
+GUIDs / 200 distinct accession numbers**, and one SEC host. A first window
+does not misfire; an identical window reports overlap; a genuinely disjoint
+67-held / 66-omitted / 67-incoming pair fires with raw publisher boundary
+strings `16:26:17 EDT` / `17:00:13 EDT` and still commits the incoming rows.
+Post-insert reassessment returns overlap, independently proving the surfaced
+field was computed before insertion. A combined batch reports independently
+per source, and cursor-paged OAI-PMH is `not_applicable_paged`. Publisher
+re-issue or GUID-form change can produce a visible false positive; zero false
+positives and a quantified loss size are not claimed.
+
+The cadence criterion is window advance, not the publisher's ten-minute
+rebuild description. The pinned latest-200 sample spans **4,650 seconds /
+77.5 minutes** against the unchanged **600-second** interval: **7.75×**
+span/poll margin and **12.90%** of the observed span consumed per poll. This
+single post-close Wednesday sample does not establish peak-season,
+deadline-day, or uncovered-hour density, so it does not imply a number
+change. The v0.26 architecture row remains intact; the v0.27 correction is
+appended after it. The 600-second schedule has never run, and neither this
+cycle nor publication authorizes it to run.
+
+The admission-language change addresses the generator of the fifth and sixth
+author-side unsatisfiable requirements without reopening either historical
+record. SQLite `artifacts[]` require corpus facts and carry the append-only
+admission chain; immutable `pinned_files[]` carry graded evidence,
+observation, and exact authorization bytes and forbid `admission`. Executing
+fixtures prove both valid containers and the two exact prohibited
+cross-container shapes.
+
+The bounded two-origin runtime did occur: exactly four application request
+starts evaluated arXiv's source-local HTTP-404 `RfcAllowAll` and SEC's
+independent fetched `Body(allow)` in one process-scoped cache. arXiv content
+timed out before a page/cursor committed; SEC returned and stored 200
+documents. This is opposing-disposition coexistence plus wire-integration
+corroboration, not first proof of cache keying or per-host independence. The
+origins were sequential, not concurrent harvesters, so T7 did not fire and is
+not nearer its trigger.
+
+Of the five conditional production permissions, **three were used**:
+`crates/store/src/lib.rs`, `crates/store/src/sqlite.rs`, and
+`apps/cored/src/main.rs` implement and surface pre-insert per-source coverage.
+**Two were unused:** `crates/ingest/src/lib.rs` and
+`crates/ingest/src/rss.rs`. No `edgar:*` extension field was mapped; no
+conditional GET was implemented; `config/core.json`, `config/schedule.json`,
+the 600-second value, dependencies, schema, protected databases, fixtures,
+golden inputs, `crates/extract`, and `crates/view` did not change. Document
+identity remains 200 SEC kept / 0 dropped with the shared 26-feature floor and
+radius 16 unchanged.
+
+The release-parent changed-path classification is prepared in eight disjoint
+groups and will be reconciled against the committed `v0.16.1..R` set, expected
+to contain **38** paths:
+
+- **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
+- **Release version authorities:** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Product behavior:** `apps/cored/src/main.rs`,
+  `crates/store/src/lib.rs`, and `crates/store/src/sqlite.rs`.
+- **Executing controls:** `config/invariant-rules.json`,
+  `crates/ingest/tests/sec_observation_replay.rs`,
+  `shell/tests/test_evidence_artifacts.py`,
+  `shell/tests/test_invariant_scan.py`, `shell/tests/test_scheduler.py`, and
+  `tools/invariant_scan.py`.
+- **Cycle and forward-publication records:**
+  `docs/cycles/PROGRESS-v0.26.md`, `docs/cycles/PROGRESS-v0.27.md`, and
+  `docs/cycles/TASKS-v0.27-EXECUTION.md`.
+- **Window measurement:** `observations/v0.27/sec-latest-window-margin.md`.
+- **Append-only provenance authority:** `config/protected-artifacts.json`.
+- **Authenticated hosted evidence:** all fourteen files under
+  `evidence/ci-runs/30545771070-1/` and
+  `evidence/v0.27/deferred-audit/report.json`.
+
+The prepared release assembly passed all **20/20** local jobs with
+warning-denied **145** workspace tests and **62** net tests (**32 ingest + 30
+cored**), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and
+`invariant-scan` **12 rules / 46 planted controls**. Constrained Python 3.11.4
+and 3.12.13 each collected and passed **293** with zero skips. Embedded and
+standalone golden both passed **11/11** without changing the expected bytes.
+`version-check`, `cycle-check`, `checklist-audit`, `progress-check`,
+manifest validation, protected-artifact verification, and evidence reporting
+all passed. Project-root `export-check` passed **99** derived sources, **7**
+required paths, and **180** exported files. No publisher request or scheduler
+run occurred.
+
+The protected manifest remains below its accepted bounds: **301** pins,
+**174,152 bytes**, and two consecutive complete verifications at **0.16 s /
+0.10 s real**. A4, editable L1, the R3/R4 open-bottom limitations, the
+active-runbook measured-value heuristic, T7, robots negative-cache Decision B,
+scheduled L2, FastAPI version-literal relocation, and terms-gate operator
+responsibility remain open or unchanged.
 
 ## v0.27 active execution
 

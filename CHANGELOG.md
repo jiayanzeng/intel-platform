@@ -4,6 +4,58 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.0 — 2026-07-30
+
+### Added
+
+- Every successful non-paged source now reports a pre-insert fixed-window
+  coverage outcome in the internal `/ingest` response and log. Outcomes
+  distinguish first/empty windows, overlap, and a conservative detected gap;
+  gaps include the publisher's raw held-newest and incoming-oldest date
+  strings.
+- Coverage assessment partitions the combined non-paged tail batch by source.
+  Cursor-paged OAI-PMH explicitly reports `not_applicable_paged`, because
+  consecutive pages legitimately need not share ids.
+- Registered R12 controls now plant both quiet-death mutations: moving the
+  overlap query after insertion and replacing the per-source slice with the
+  combined batch.
+
+### Safety and operations
+
+- A detected gap remains visible but does not fail the poll or discard the
+  incoming window. Empty overlap may false-positive after a publisher
+  re-issue or GUID-form change; the detector does not claim zero false
+  positives or quantify loss.
+- The pinned SEC latest-200 body derives a 4,650-second / 77.5-minute span.
+  Against the unchanged 600-second interval, the observed span/poll margin is
+  7.75×. This is one post-close Wednesday sample, not peak-season or
+  deadline-day evidence. The 600-second schedule has never run.
+- One bounded sequential runtime evaluated both configured publisher origins
+  in the same process-scoped robots cache. arXiv's HTTP-404 missing policy
+  became source-local `RfcAllowAll`; SEC independently retained
+  `Body(allow)` under its restrictive missing policy. The run used exactly
+  four application-level requests, two per origin, and did not exercise T7's
+  concurrent-harvester trigger.
+- The evidence-manifest contract now explicitly separates SQLite
+  `artifacts[]`, which require corpus facts and carry admission chains, from
+  immutable `pinned_files[]`, which forbid `admission`. Executing fixtures
+  prove both valid shapes and both exact rejected cross-container shapes.
+
+### Compatibility and evidence
+
+- This is a minor release because `ARCHITECTURE.md §8` treats every named
+  observable response body as a versioned shape, including internal loopback
+  routes. Adding the coverage field to named `/ingest` changes that response
+  shape. The separate `/v1/*` public value-domain criterion does not fire.
+- SEC identity remains 200 kept / 0 dropped, `crates/extract` and
+  `crates/view` are unchanged, and golden remains byte-identical at 11/11.
+- Authenticated candidate run `30545771070`, attempt 1, passed all seven
+  executable jobs at exact candidate
+  `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e`. Release-posture verification
+  required attestations, accepted seven identities, rejected zero, and found
+  the complete runner matrix. The protected manifest verifies 301 pins and
+  both protected databases remain byte-exact.
+
 ## v0.16.1 — 2026-07-30
 
 ### Fixed
