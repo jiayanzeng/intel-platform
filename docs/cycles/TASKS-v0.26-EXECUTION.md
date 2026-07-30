@@ -47,47 +47,49 @@ not.
 
 ## Declared scope
 
-| Scope class | Path or value |
-|---|---|
-| `scope_version` | `1` |
-| `disposition_intent` | `release` |
-| `allow` | `crates/extract/src/lib.rs` |
-| `allow` | `crates/store/src/sqlite.rs` |
-| `allow` | `crates/view/src/lib.rs` |
-| `allow` | `crates/**/tests/**` |
-| `allow` | `shell/tests/**` |
-| `allow` | `config/schedule.json` |
-| `allow` | `config/protected-artifacts.json` |
-| `allow` | `config/invariant-rules.json` |
-| `allow` | `tools/invariant_scan.py` |
-| `allow` | `tools/cycle_check.py` |
-| `allow` | `observations/**` |
-| `allow` | `evidence/v0.26/deferred-audit/report.json` |
-| `allow` | `AGENTS.md` |
-| `allow` | `ARCHITECTURE.md` |
-| `release_authority` | `Cargo.toml` |
-| `release_authority` | `Cargo.lock` |
-| `release_authority` | `crates/*/Cargo.toml` |
-| `release_authority` | `apps/*/Cargo.toml` |
-| `release_authority` | `shell/intel_shell/__init__.py` |
-| `release_authority` | `shell/intel_shell/app.py` |
-| `release_authority` | `CHANGELOG.md` |
-| `release_authority` | `README.md` |
-| `forbid` | `crates/ingest/src/**` |
-| `forbid` | `crates/compliance/src/**` |
-| `forbid` | `apps/**/*.rs` |
-| `forbid` | `shell/intel_shell/[a-z]*.py` |
-| `forbid` | `config/core.json` |
-| `forbid` | `config/subscriptions*.json` |
-| `forbid` | `fixtures/**` |
-| `forbid` | `run` |
+| Scope class | Path or value | Condition |
+|---|---|---|
+| `scope_version` | `1` | |
+| `disposition_intent` | `release` | |
+| `allow` | `crates/extract/src/lib.rs` | |
+| `allow` | `crates/store/src/sqlite.rs` | |
+| `allow` | `crates/view/src/lib.rs` | |
+| `allow` | `crates/**/tests/**` | |
+| `allow` | `shell/tests/**` | |
+| `allow` | `config/schedule.json` | |
+| `allow` | `config/protected-artifacts.json` | |
+| `allow` | `config/invariant-rules.json` | |
+| `allow` | `tools/invariant_scan.py` | |
+| `allow` | `tools/cycle_check.py` | |
+| `allow` | `tools/evidence_artifacts.py` | **only if Step 2B is authorized**; if declined, this row is removed and Step 8 records the permission as unused |
+| `allow` | `observations/**` | |
+| `allow` | `evidence/v0.26/deferred-audit/report.json` | |
+| `allow` | `AGENTS.md` | |
+| `allow` | `ARCHITECTURE.md` | |
+| `release_authority` | `Cargo.toml` | |
+| `release_authority` | `Cargo.lock` | |
+| `release_authority` | `crates/*/Cargo.toml` | |
+| `release_authority` | `apps/*/Cargo.toml` | |
+| `release_authority` | `shell/intel_shell/__init__.py` | |
+| `release_authority` | `shell/intel_shell/app.py` | |
+| `release_authority` | `CHANGELOG.md` | |
+| `release_authority` | `README.md` | |
+| `forbid` | `crates/ingest/src/**` | |
+| `forbid` | `crates/compliance/src/**` | |
+| `forbid` | `apps/**/*.rs` | |
+| `forbid` | `shell/intel_shell/[a-z]*.py` | |
+| `forbid` | `config/core.json` | |
+| `forbid` | `config/subscriptions*.json` | |
+| `forbid` | `fixtures/**` | |
+| `forbid` | `run` | |
 
-**The three `crates/**/src` permissions are conditional on Step 4's decision and
-on nothing else.** `crates/extract/src/lib.rs` is allowed only for a
-feature-count guard, `crates/store/src/sqlite.rs` and `crates/view/src/lib.rs`
-only for the threshold authority G1 measures. **If Step 4 chooses to record and
-defer, all three must go unmodified and Step 8 must record the permission as
-unused.**
+**The three `crates/**/src` permissions are conditional.**
+`crates/extract/src/lib.rs` is allowed only if Step 4 selects a feature-count
+guard. `crates/store/src/sqlite.rs` and `crates/view/src/lib.rs` are allowed
+for the threshold-authority work in Step 4A and for any Step 4 implementation
+that uses that authority. **If Step 4 records and defers, the extract permission
+must remain unused; Step 8 records the actual use or non-use of all three
+permissions rather than inferring it from Step 4 alone.**
 
 **`crates/ingest/src/**` stays forbidden outright, and this is a decision, not
 an oversight.** The richest content in this feed — `edgar:companyName`,
@@ -185,13 +187,13 @@ any claim rests on. And **a threshold is a claim about a corpus**: a constant
 that is correct for one input distribution and wrong for another is not a bug in
 either corpus.
 
-**Dependency gates.** Step 2 blocks Step 3; Step 3 blocks Step 4. Step 5 is
-independent and may run any time after Step 1. **Step 6 runs only if Steps 2, 3,
-4, and 5 all return affirmative determinations and the operator authorizes it**;
-any undetermined outcome, or an operator decision to defer, ends this cycle at
-Step 5 and **that is a complete cycle**, because the identity determination is
-the substance. Step 7 is blocked by every preceding implementation step; Step 8
-by Step 7.
+**Dependency gates.** Step 2 blocks Step 3 and the optional authorized Step 2B.
+Step 3 blocks Step 4A; Step 4A blocks Step 4. Step 5 is independent and may run
+any time after Step 1. **Step 6 runs only if Steps 2, 3, 4, 4A, and 5 all return
+affirmative determinations and the operator authorizes it**; any undetermined
+outcome, or an operator decision to defer, ends this cycle at Step 5 and **that
+is a complete cycle**, because the identity determination is the substance.
+Step 7 is blocked by every preceding implementation step; Step 8 by Step 7.
 
 ### Cycle activation (before E0)
 
@@ -222,6 +224,133 @@ E0 gate now permits the exact existing lifecycle count control
 not broader than its gate. No objective, acceptance criterion, done condition,
 production permission, publisher permission, or trigger changed.
 
+### 2026-07-30 — Step 2's pin-first requirement withdrawn as unsatisfiable
+
+Step 2 step 1 required the five v0.25 observation files to hold **all three** of:
+their original `observations/` paths, a manifest pin, and a chained admission
+record. **Executed schema 2 has no satisfying assignment for that
+combination**, and the measurement — not the reading — is what establishes it.
+
+`config/protected-artifacts.json` has two disjoint containers:
+
+- **`artifacts[]`** carries `admission`, but `_validate_artifact` also requires
+  an exact `expected` object of `documents`, `integrity_check`, `null_simhash`,
+  `null_canonical_id`, and `cursors`. Those are SQLite-archive facts. An XML
+  response body has none of them, and `integrity_check` must be a non-empty
+  string — so satisfying the schema would mean naming a check nothing runs.
+  **That is precisely the failure `AGENTS.md §0` exists to prevent.**
+- **`pinned_files[]`** accepts the file shape, but its exact key set excludes
+  `admission` entirely, and `_validate_pinned_file` rejects any path that is
+  neither beneath `evidence/` nor an exact registered authorization surface.
+
+Codex constructed both candidate forms, submitted each to the real validator,
+and captured both rejections before proposing anything. That is the correct
+discharge of a decision gate.
+
+**This is a runbook-author error, and the fifth author-side rule with no
+satisfying assignment on this project's record.** The specific mistake was
+demanding the wrong control. The admission chain exists for artifacts whose
+expected hash legitimately changes over time; **a wire observation that changes
+is a defect, not an admission**. The property Step 2 actually needs is "the
+measurement was derived from these exact bytes," and a byte assertion at the
+point of use establishes that completely. Step 2 step 1 is replaced below.
+Repository-wide coverage is a separate, real property and becomes its own
+optional step rather than a precondition smuggled into a measurement task.
+
+No objective, acceptance criterion beyond step 1, done condition, production
+permission, publisher permission, or trigger changed.
+
+### 2026-07-30 — Step 2B added, operator-authorized, may be declined
+
+A new optional step extends `pinned_files` to admit observation bytes so
+`verify-artifacts` covers them repository-wide. It requires one scope addition,
+`tools/evidence_artifacts.py`. **If the operator declines, Step 2B is deleted
+and the deferral row below carries the property forward with its trigger.**
+Step 2 does not depend on it either way.
+
+### 2026-07-30 — CADENCE publisher-request violation disposed
+
+**What happened.** Executing Step 5, Codex directly retrieved
+`https://www.sec.gov/about/developer-resources`. The active runbook prohibits
+every publisher request before Step 6. Work stopped on recognition. No robots
+URL, feed URL, core, connector, or harvest command was invoked, and no
+`config/schedule.json`, test, or `ARCHITECTURE.md` change followed. The
+mandatory local golden passed 11/11 after the stop.
+
+**Why the rule was reachable.** Step 5's original step 1 said to cite the
+publisher text "by URL and read date" and not to "re-derive it from memory,"
+without naming the committed file that already held it. That wording invited a
+read. **The runbook author owns that ambiguity.** It does not excuse the fetch:
+the standing prohibition was unambiguous and absolute, and a weaker instruction
+never silences a stronger gate — which is what Codex's own stop record says.
+**Both halves are recorded; neither substitutes for the other.**
+
+**A satisfying assignment existed.**
+`observations/v0.25/terms-gate/sec-edgar-terms-determination.md` records the URL
+and the 2026-07-30 read date.
+`observations/v0.24/publisher-review/sec-edgar-report.md` records the 2
+requests-per-second process floor, the cited 10-request ceiling, and that no
+publisher `Crawl-delay` was present. The feed's own ten-minute update interval
+is in the `<description>` element of the committed body. **The retrieval was
+unnecessary, not merely prohibited.**
+
+**Why the prohibition exists, stated precisely.** The harm is not the byte
+count or the load on the publisher. It is that a request made outside the
+shipped stack is a request whose robots verdict and operator deny-list
+disposition **nothing measured**. The shipped gate never saw it, so its
+compliance is unknown rather than good. "One small GET to a public about-page"
+is therefore not a mitigating description; it is a description of an unmeasured
+request.
+
+**Disposition.**
+
+- The retrieved content is **quarantined**. No step of this cycle may cite it
+  and no measurement may rest on it. Step 5 cites the committed observations
+  instead. That the figures agreed is fortunate and irrelevant.
+- **Retractions remain three.** The bar is a twice-verified measured false claim
+  in an immutable published record. No published record is false and nothing was
+  measured from the retrieval. This is a cycle-execution failure recorded
+  forward.
+- The `PROGRESS-v0.26.md` entry stands as written, including its conservative
+  "at least one publisher-origin request" phrasing. **That is the correct way to
+  state a request count the tool does not expose**, and it should not be revised
+  into a more confident number.
+- **No new rule is registered.** No repository rule can observe an agent's
+  out-of-band retrieval, and registering one would violate this runbook's own
+  prohibition on rules that evaluate conditions they cannot observe. The forward
+  control is structural: Step 5 now requires every publisher fact to name the
+  committed file it comes from, which makes a fetch unnecessary by construction.
+- Step 5 becomes eligible again on this amendment. **Step 6's eligibility is
+  unchanged** and still requires Steps 2, 3, 4, 4A, and 5 affirmative plus
+  explicit operator authorization.
+
+The standing prohibition is also clarified below to name tool-issued retrievals
+explicitly, so the same reading cannot recur.
+
+### 2026-07-30 — Step 4A added; G1's finding elevated out of Step 4
+
+E0 measured the store's private threshold at `crates/store/src/sqlite.rs:32` and
+an independent view literal at `crates/view/src/lib.rs:44`, and established that
+R1 observes store caller topology while R5 observes the store constant bindings
+— **neither compares the two declarations**. One can move while the other
+remains 16 and no rule fires.
+
+The original runbook buried this in Step 4 step 2, where a "record and defer"
+decision would leave a measured defect unfixed. **That defect exists whether or
+not the SEC corpus does.** It becomes its own step, blocked on Step 3 and **not**
+on Step 4, and Step 4's implementation is gated behind it.
+
+### 2026-07-30 — Step 5 rewritten to cite committed sources, and G4's gap closed
+
+Step 5 step 1 is replaced with a citation-by-path requirement. A new step adds
+the test G4 found missing for the fixtureless offline disposition. No new
+production permission and no publisher permission.
+
+Step 2 — Pin-first acceptance replaced by a point-of-use byte assertion — 2026-07-30
+Step 2B — Observation-pin step added after operator authorization — 2026-07-30
+Step 4A — Threshold-authority step added independently of Step 4 — 2026-07-30
+Step 5 — Publisher facts moved to committed paths and G4 coverage added — 2026-07-30
+
 ### Global definition of done
 
 Protected hashes exact; all pins match until Step 7 adds more; **golden 11/11
@@ -250,7 +379,8 @@ edit the assertion to bless the drift.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | 2026-07-30 — one first-party shell; no such claim made | none |
 | L2 forced-command wrapper | an operator server session | 2026-07-30 — no operator server session has occurred | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | 2026-07-30 — none observed | none |
-| First live SEC RSS harvest | Steps 2–5 affirmative plus explicit operator authorization in this cycle | 2026-07-30 — no live RSS harvest has occurred | **Step 6 — decided, not assumed** |
+| First live SEC RSS harvest | Steps 2, 3, 4, 4A, and 5 affirmative plus explicit operator authorization in this cycle | 2026-07-30 — no live RSS harvest has occurred | **Step 6 — decided, not assumed** |
+| Observation-byte manifest coverage | schema 2 admits no container for observation paths carrying a chained admission | 2026-07-30 — validator rejected both candidate forms; 266 pinned files, zero under `observations/` | **Step 2B — prefix added, chain deliberately not** |
 | `edgar:*` extension field mapping | an operator-authorized cycle whose declared scope permits `crates/ingest/src/**`, with a connector review | 2026-07-30 — the parser reads six per-item fields and discards the namespaced extension | **none — recorded by Step 3, acted on in no step here** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | 2026-07-30 — no review pending | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | 2026-07-30 — not authorized | none — **no historical ref touched** |
@@ -545,13 +675,18 @@ claim rests on.
 
 **Steps.**
 
-1. **If G3 found the observation unpinned, pin it first, in its own commit.**
-   Append a chained admission record for the five `observations/v0.25/` files
-   naming this task, the date, the v0.25 wire command and output reference, and
-   operator approval, with `retroactive` set truthfully. Run
-   `python3 tools/evidence_artifacts.py validate` and `./run verify-artifacts`
-   before proposing the manifest change. **A measurement derived from unchecked
-   bytes is not a measurement.**
+1. **Assert the observation bytes at the point of use, and prove the assertion
+   can fail.** Before parsing, the replay test computes the SHA-256 and byte
+   length of `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` and
+   compares them to
+   `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3` and
+   **892,641**, failing loudly on either mismatch. Cite by path the observation
+   record stating those values. **Then demonstrate the control fires**: run the
+   same assertion against a one-byte-mutated copy in a disposable directory and
+   capture the rejection. **A pin with no demonstrated failure is not a pin.**
+   Do not modify the observation, do not copy it into `fixtures/`, the
+   protected corpus, or golden, and **do not propose a manifest change in this
+   step**.
 2. Execute the shipped parser over the pinned body from a test under
    `crates/**/tests/**`. **Read the file from `observations/v0.25/`; do not copy
    it into `fixtures/`, the protected corpus, or golden.**
@@ -573,16 +708,56 @@ claim rests on.
    fetches, politeness on the wire, redirects, conditional requests, or what the
    publisher serves next.
 
-**Acceptance criteria.** Observation bytes pinned with a valid chained admission
-record, or G3's finding that they already were, recorded either way · parser
-executed over the pinned body from a committed test · full field inventory
-recorded with counts · `published_day` zone semantics recorded as a property ·
-discarded extension fields enumerated without being mapped · establishment
-boundary stated · nothing added to `fixtures/`, the protected corpus, or golden ·
+**Acceptance criteria.** **Byte assertion executed at the point of use with its
+failure demonstrated and captured.** · parser executed over the asserted body
+from a committed test · full field inventory recorded with counts ·
+`published_day` zone semantics recorded as a property · discarded extension
+fields enumerated without being mapped · establishment boundary stated ·
+nothing added to `fixtures/`, the protected corpus, or golden ·
 `config/core.json` untouched · golden 11/11.
 
 **Done when** the document set the parser actually builds is on the record, and
 the bytes it was built from are verified by a command rather than by prose.
+
+---
+
+## Step 2B · OBSERVATION-PIN — make the manifest able to say "this observation" 🧑🤖
+
+**Objective.** Extend `pinned_files` to admit observation bytes so
+`verify-artifacts` covers them repository-wide.
+
+**Gate.** 🧑 **One operator decision: authorize or decline.** Scope is
+`tools/evidence_artifacts.py`, `shell/tests/test_evidence_artifacts.py`,
+`config/protected-artifacts.json`, and status records. **Blocked on Step 2.** No
+production source, no core or shell config, no publisher request. **If declined,
+delete this step and record the deferral row.**
+
+**Steps.**
+
+1. Add `observations/` as a **third** permitted prefix in
+   `_validate_pinned_file`, with a single new grade `observation` and no other
+   prefix or grade.
+2. **Do not add an `admission` key to `pinned_files`.** The chain exists for
+   artifacts whose expected hash legitimately changes; an observation whose bytes
+   change is a defect, and a chain would make that changeable by procedure.
+3. **Prove the new rule can reject, three ways, and capture each**: an
+   `observations/` path carrying a non-`observation` grade; an `observation`
+   grade at a path outside `observations/`; and a path that is neither
+   `evidence/`, `observations/`, nor a registered authorization surface.
+4. Pin all five `observations/v0.25/` files. Re-run
+   `python3 tools/evidence_artifacts.py validate` and `./run verify-artifacts`,
+   and report the new pin count in three places.
+5. **State the limitation.** A pin detects change; it does not establish that
+   the bytes are what the publisher served. Only the v0.25 wire record does that,
+   and this step does not strengthen it.
+
+**Acceptance criteria.** Exactly one new prefix and one new grade · no
+`admission` key added to `pinned_files` · three rejection controls captured ·
+five files pinned with the new count reported in three places · both validator
+commands green · limitation stated · golden 11/11.
+
+**Done when** `verify-artifacts` fails if an observation byte changes, **and
+that failure has been demonstrated rather than asserted**.
 
 ---
 
@@ -636,6 +811,43 @@ a measured distribution.
 
 ---
 
+## Step 4A · THRESHOLD-AUTHORITY — one declaration, or a stated reason for two 🤖
+
+**Objective.** Remove the measured two-declaration divergence risk, independently
+of Step 4's decision.
+
+**Gate.** `crates/store/src/sqlite.rs`, `crates/view/src/lib.rs`, their tests,
+`config/invariant-rules.json`, `tools/invariant_scan.py`, `ARCHITECTURE.md`, and
+status records. **Blocked on Step 3. Not blocked on Step 4, and not skipped if
+Step 4 records and defers.**
+
+**Steps.**
+
+1. Unify the identity threshold to one authority, **or** record why two are
+   correct with the limitation stated in `ARCHITECTURE.md`,
+   `config/invariant-rules.json`'s rule `scope`, and `PROGRESS-v0.26.md`. **A
+   stated limitation is a property; an implied one is not.**
+2. Extend R5's claim and scope — or register a new rule — so that **a change to
+   one declaration that leaves the other behind fails**. The rule's claim must
+   not be broader than its check.
+3. Register the R12 planted-failure control as a mutation that **moves one
+   declaration and not the other**, and capture the detection. A control that
+   moves both proves nothing.
+4. **Prove the change is behaviour-preserving today.** Both declarations
+   currently read 16, so unification must alter no outcome; golden's hamming-12
+   collapse is the control and must survive byte-identical.
+5. Report rule and control counts in three places.
+
+**Acceptance criteria.** One authority, or two with the limitation stated in
+three places · R5 extended or a new rule registered with its claim matching its
+check · planted failure moves exactly one declaration and is detected · behaviour
+proven unchanged · counts in three places · golden 11/11 byte-identical.
+
+**Done when** a change to the identity threshold cannot leave a second
+declaration behind without a rule firing.
+
+---
+
 ## Step 4 · IDENTITY-DECISION — Decide what a threshold may claim 🧑🤖
 
 **Objective.** Decide how the identity rule handles a corpus its constant was
@@ -645,7 +857,8 @@ not calibrated on, and implement exactly that.
 `crates/extract/src/lib.rs`, `crates/store/src/sqlite.rs`, and
 `crates/view/src/lib.rs` **only as the decision requires them**, their tests,
 `config/invariant-rules.json`, `tools/invariant_scan.py`, `ARCHITECTURE.md`, and
-status records. **Blocked on Step 3.** No ingest, compliance, shell source,
+status records. **Blocked on Step 3. Blocked on Step 4A.** No ingest,
+compliance, shell source,
 `config/core.json`, schema-breaking, or protected-database changes.
 
 **Steps.**
@@ -670,9 +883,9 @@ status records. **Blocked on Step 3.** No ingest, compliance, shell source,
      consequence, not as a failure.**
    **Fitting the constant to make this corpus behave is not on the list unless
    it is chosen with that description attached.**
-2. **If G1 found two threshold declarations, resolve that first and separately.**
-   A change applied to one authority while the other keeps its own 16 is the
-   defect G1 exists to catch. **Record whether the resolution was needed.**
+2. **Step 4A has already resolved the declaration question.** Apply the chosen
+   option to the single authority Step 4A established, or to both declarations
+   if Step 4A recorded that two are correct. **Record which.**
 3. If implementing: implement, and **prove by test that the golden collapse at
    hamming 12 still occurs.** That drop is the true-positive control; a change
    that removes it has overshot. **Prove separately that the measured
@@ -708,11 +921,18 @@ no publisher request, no harvest.
 
 **Steps.**
 
-1. State the effective cadence G6 measured, and the cadence SEC's published
-   guidance permits — the ten-requests-per-second fair-access ceiling against
-   the shipped `DEFAULT_RPS = 2.0` per-host floor, and the feed's own
-   ten-minute update interval. **Cite the publisher text by URL and read date;
-   do not re-derive it from memory.**
+1. **Cite the committed record by path, and make no publisher request.** The
+   effective cadence is G6's executed scheduler resolution. Every publisher
+   fact this step cites must name the committed file it comes from: the URL and
+   2026-07-30 read date from
+   `observations/v0.25/terms-gate/sec-edgar-terms-determination.md`; the
+   2 requests-per-second process floor, the cited 10-request ceiling, and the
+   absence of any publisher `Crawl-delay` from
+   `observations/v0.24/publisher-review/sec-edgar-report.md`; and the feed's own
+   ten-minute update interval from the `<description>` element of the committed
+   body. **If a fact this step needs is not in a committed file, that is a
+   finding to record — not a reason to fetch it.** The content retrieved during
+   the blocked attempt is quarantined and may not be cited.
 2. **Decide the cadence explicitly and record the reason.** A per-source entry
    for `sec-edgar-usgaap` under the `quant-desk` job, or a recorded decision
    that the inherited sector cadence is correct. **An inherited default that
@@ -724,12 +944,20 @@ no publisher request, no harvest.
 4. Record the disposition dated in `ARCHITECTURE.md` alongside the existing
    terms-gate row. **Do not describe the cadence decision as satisfying the
    terms condition**; they are different gates and the terms row stays as it is.
+5. **Close G4's measured gap.** Add the test that E0 found missing: an offline
+   `finance` ingest returns HTTP success with the fixture-backed source
+   `ok:true` and the fixtureless SEC source `ok:false` naming the absent `net`
+   feature, and the shell pipeline prints the per-source error, continues, and
+   exits 0. **Assert the disposition E0 measured, not the one that seems
+   tidier** — if the measured behaviour is wrong, that is a separate finding for
+   v0.27, not a test written against a hoped-for result.
 
 **Acceptance criteria.** Effective cadence stated from the scheduler's
 resolution order · publisher rate guidance cited with URL and read date ·
 cadence chosen with its reason, or the inherited value examined and kept with
-its reason · test added or its vacuity recorded · `ARCHITECTURE.md` disposition
-dated · terms-gate row unchanged · no harvest · golden 11/11.
+its reason · test added or its vacuity recorded · **G4's disposition covered by
+an executing test that asserts the measured behaviour** · `ARCHITECTURE.md`
+disposition dated · terms-gate row unchanged · no harvest · golden 11/11.
 
 **Done when** the cadence the admitted source runs at is one somebody chose.
 
@@ -741,11 +969,11 @@ dated · terms-gate row unchanged · no harvest · golden 11/11.
 and if so, execute it under a bounded authorization.
 
 **Gate.** 🧑 **One operator decision, at step 1, and it may be no.** Blocked on
-Steps 2, 3, 4, and 5 all affirmative. **This step may be deleted from the cycle
-entirely, in which case the determination that deferred it is recorded in its
-place.** No protected database is a harvest target. No `config/core.json`
-change. No `run` change unless G7 priced one and the operator authorized both it
-and its manifest admission.
+Steps 2, 3, 4, 4A, and 5 all affirmative. **This step may be deleted from the
+cycle entirely, in which case the determination that deferred it is recorded
+in its place.** No protected database is a harvest target. No
+`config/core.json` change. No `run` change unless G7 priced one and the operator
+authorized both it and its manifest admission.
 
 **Steps.**
 
@@ -860,6 +1088,15 @@ publication.**
     post-push run is a finding for v0.27 and does not invalidate the close.
 14. **State the publisher count precisely.** Two sources are configured; say
     exactly how many have ever been fetched as of the closing date.
+15. **Record both v0.26 blockers with their dispositions.** The Step 2 pin
+    requirement is recorded as an **author-side rule with no satisfying
+    assignment**, the fifth on this project's record, with both rejected
+    candidate forms named and the schema reason stated — not as an
+    implementation defect. The CADENCE retrieval is recorded as a
+    **cycle-execution gate violation** with its quarantine, its author-side
+    ambiguity, and the explicit statement that **retractions remain three**.
+16. **Record whether Step 2B was authorized or declined**, and if declined,
+    that the `tools/evidence_artifacts.py` permission went unused.
 
 ---
 
@@ -870,24 +1107,33 @@ publication.**
   committed bytes**; G3's manifest enumeration with its consequence; G4 settled
   by execution; **G5 settled by captured request evidence**; G6 from the
   scheduler's resolution order; G7's paths priced; no publisher request
-- [ ] **REPLAY** — observation bytes pinned or found pinned; parser executed
-  from a committed test; full field inventory with counts; `published_day` zone
-  semantics recorded; discarded `edgar:*` fields enumerated and not mapped;
-  establishment boundary stated; nothing added to fixtures, corpus, or golden
+- [ ] **REPLAY** — **byte assertion executed at the point of use with its failure
+  demonstrated**; parser executed from a committed test; full field inventory
+  with counts; `published_day` zone semantics recorded; discarded `edgar:*`
+  fields enumerated and not mapped; establishment boundary stated; nothing added
+  to fixtures, corpus, or golden; **no manifest change proposed**
+- [ ] **OBSERVATION-PIN** — authorized and complete with three rejection controls
+  captured and the new pin count in three places, or deleted with its deferral
+  row recorded
 - [ ] **IDENTITY-MEASURE** — shipped rule executed; per-drop distances recorded;
   cross-issuer and same-issuer separated; threshold sweep recorded as corpus
   measurement; shingle-count and pairwise distributions for both corpora;
   same-day concentration observed and not acted on; prediction confirmed or
   refuted with the error owned; zero production files changed
+- [ ] **THRESHOLD-AUTHORITY** — one authority or two with the limitation stated
+  in three places; rule claim matches its check; planted failure moves exactly
+  one declaration and is detected; behaviour proven unchanged; counts in three
+  places
 - [ ] **IDENTITY-DECISION** — one option chosen and dated with its claim;
   two-declaration question resolved or recorded inapplicable; golden's hamming-12
   drop proven still to occur; measured cross-issuer collapses proven gone; rule
   changes carry detected planted failures with counts in three places; unused
   permissions recorded
-- [ ] **CADENCE** — effective cadence stated from resolution order; publisher
-  rate guidance cited with URL and date; cadence chosen with a reason or examined
-  and kept; test added or vacuity recorded; dated in `ARCHITECTURE.md`; terms row
-  unchanged
+- [ ] **CADENCE** — every publisher fact cited by committed file path; quarantined
+  content uncited; cadence chosen with a reason or examined and kept; **G4's
+  disposition covered by a test asserting measured behaviour**; test added or
+  vacuity recorded; dated in `ARCHITECTURE.md`; terms row unchanged; no publisher
+  request
 - [ ] **HARVEST** — authorized and executed under bounds, or deleted with the
   determination that deferred it; deferral table updated either way
 - [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; no
@@ -902,13 +1148,20 @@ publication.**
 ## Standing prohibitions
 
 - **Do not make any publisher request before Step 6, and do not make one at all
-  if Step 6 is deferred.** Every byte Steps 1–5 need is already committed.
+  if Step 6 is deferred. This includes a retrieval issued by any tool available
+  to the agent, not only a request made through the shipped stack** — a request
+  the shipped gate never evaluated is a request whose compliance nothing
+  measured. Every byte Steps 1–5 need is already committed.
+- **Do not cite the content retrieved during the blocked CADENCE attempt.** It is
+  quarantined; cite the committed observations named in Step 5.
 - **Do not treat the v0.25 observation as a live result.** Replayed real bytes
   prove parser behaviour; they do not prove what the publisher serves next.
 - **Do not copy the observation body into `fixtures/`, the protected corpus, or
   golden.** Read it from `observations/v0.25/`.
-- **Do not derive a measurement from unpinned bytes without recording that they
-  are unpinned**, and pin them first if G3 finds they are not.
+- **Do not derive a replay measurement without executing the point-of-use byte
+  assertion and demonstrating its failure.** Repository-wide observation
+  coverage is the separate Step 2B property, not a precondition smuggled back
+  into Step 2.
 - **Do not edit a golden assertion to bless a drift.** Golden's hamming-12 drop
   is the true-positive control for Step 4; losing it means the change overshot.
 - **Do not change the identity threshold in one declaration and leave the other.**

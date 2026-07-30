@@ -69,10 +69,10 @@ CYCLE_LITERAL_RE = re.compile(
     r"(?<![A-Za-z0-9_.-])v[0-9]+\.[0-9]+(?:\.[0-9]+)?"
     r"(?![A-Za-z0-9_.-])"
 )
-STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+)\b[^\n]*$", re.MULTILINE)
+STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+[A-Z]?)\b[^\n]*$", re.MULTILINE)
 DEFERRED_HEADING = "## Deferred means deferred"
 MARKDOWN_TABLE_SEPARATOR_RE = re.compile(r"^:?-{3,}:?$")
-STEP_REFERENCE_RE = re.compile(r"\bStep ([0-9]+)\b", re.IGNORECASE)
+STEP_REFERENCE_RE = re.compile(r"\bStep ([0-9]+[A-Z]?)\b", re.IGNORECASE)
 MEASURED_VALUE_TERM_RE = re.compile(
     r"\b(?:recorded|measured|stored)\b",
     re.IGNORECASE,
@@ -89,7 +89,7 @@ BOLD_BLOCK_RE = re.compile(
 )
 AMENDMENTS_HEADING = "## Runbook amendments"
 AMENDMENT_ENTRY_RE = re.compile(
-    r"^Step ([0-9]+) — .+ — ([0-9]{4}-[0-9]{2}-[0-9]{2})$",
+    r"^Step ([0-9]+[A-Z]?) — .+ — ([0-9]{4}-[0-9]{2}-[0-9]{2})$",
     re.MULTILINE,
 )
 CONTRACT_FIELD_LABELS = {
@@ -880,6 +880,14 @@ def runbook_contract_fields(text: str) -> dict[tuple[str, str], str]:
     return fields
 
 
+def step_sort_key(step: str) -> tuple[int, str]:
+    match = re.fullmatch(r"([0-9]+)([A-Z]?)", step)
+    if match is None:
+        raise ValueError(f"invalid step identifier {step!r}")
+    number, suffix = match.groups()
+    return int(number), suffix
+
+
 def first_committed_runbook_text(root: Path, path: Path) -> str | None:
     relative = shown(path, root)
     history_path = relative
@@ -980,7 +988,10 @@ def check_runbook_amendments(
         if original_fields.get(field) != current_fields.get(field)
     }
     disclosed = disclosed_amendment_steps(text, path, root, errors)
-    for step, label in sorted(changed, key=lambda item: (int(item[0]), item[1])):
+    for step, label in sorted(
+        changed,
+        key=lambda item: (*step_sort_key(item[0]), item[1]),
+    ):
         if step not in disclosed:
             errors.append(
                 f"{shown(path, root)}: undisclosed runbook amendment: "
@@ -1631,7 +1642,7 @@ def check_active_step_value_criteria(
                 errors.append(
                     f"{shown(path, root)}:{line_number}: active Step "
                     f"{current_step} acceptance criterion cites Step "
-                    f"{', '.join(sorted(referenced_steps, key=int))}'s "
+                    f"{', '.join(sorted(referenced_steps, key=step_sort_key))}'s "
                     "recorded/measured quantity; assert the invariant relation "
                     "at the same commit instead"
                 )

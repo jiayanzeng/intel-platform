@@ -839,6 +839,43 @@ def test_cycle_check_accepts_disclosed_acceptance_edit(
     assert cycle_check.run(root) == 0
 
 
+def test_runbook_contract_fields_keep_suffixed_steps_distinct() -> None:
+    fields = cycle_check.runbook_contract_fields(
+        "## Step 2 · REPLAY\n\n"
+        "**Objective.** Replay bytes.\n\n"
+        "**Acceptance criteria.** Replay passes.\n\n"
+        "**Done when** replay is measured.\n\n"
+        "## Step 2B · OBSERVATION-PIN\n\n"
+        "**Objective.** Pin observations.\n\n"
+        "**Acceptance criteria.** Pins pass.\n\n"
+        "**Done when** observation changes fail.\n"
+    )
+
+    assert fields[("2", "Objective")] == "Replay bytes."
+    assert fields[("2B", "Objective")] == "Pin observations."
+    assert fields[("2", "Done when")] == "replay is measured."
+    assert fields[("2B", "Done when")] == "observation changes fail."
+
+
+def test_cycle_check_accepts_suffixed_deferred_step_reference(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "| Baseline item | none | no measurement required | none |",
+            "| Baseline item | trigger | 2026-07-30 — measured | Step 1A |",
+        )
+        + "\n## Step 1A · FOLLOW-UP\n\n"
+        "**Objective.** Discharge the deferred action.\n\n"
+        "**Acceptance criteria.** The action is discharged.\n\n"
+        "**Done when** the action is complete.\n"
+    )
+
+    assert cycle_check.run(root) == 0
+
+
 def test_declared_scope_uses_repository_relative_globs() -> None:
     assert cycle_check.scope_pattern_matches(
         "shell/intel_shell/**",
@@ -1107,7 +1144,7 @@ def test_current_trigger_freshness_tables_are_complete() -> None:
         errors,
     )
 
-    assert counts == (2, 13)
+    assert counts == (2, 14)
     assert errors == []
 
 

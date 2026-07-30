@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. v0.26 E0 passed its complete entering matrix and golden **11/11**; REPLAY is blocked before document-set measurement because the executed schema cannot pin `observations/**` or attach the required admission chain within Step 2's permitted scope. CADENCE then stopped at its own gate after an unnecessary direct retrieval of the SEC guidance page violated the stronger no-publisher-request-before-Step-6 prohibition; no schedule decision or harvest followed. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. v0.26 Amendment 01 withdraws the unsatisfiable REPLAY pin-first rule, authorizes Step 2B observation-pin coverage, quarantines the CADENCE retrieval while making Step 5 eligible from committed evidence, and elevates threshold authority to Step 4A. REPLAY and CADENCE are eligible again; the earlier gate records remain true historical events, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 Amendment 01 disposes both blockers and authorizes observation pins
+(operator decision and local verification 2026-07-30).**
+
+The Step 2 pin-first rule was an author-side rule with no satisfying assignment,
+the fifth on this project's record. Executed schema 2 proved both failures:
+`artifacts[]` carries an admission chain but demands SQLite-only expected facts,
+while `pinned_files[]` fits ordinary files but rejects `observations/` paths and
+an `admission` key. Amendment 01 replaces that precondition with a
+failure-demonstrated SHA-256 and byte-length assertion at replay use. The
+operator separately authorized Step 2B to add exactly the `observations/`
+prefix and `observation` grade without making observations procedurally
+replaceable through an admission chain.
+
+The CADENCE retrieval remains a cycle-execution gate violation. Its content is
+quarantined and no cycle measurement may cite it. Step 5 is eligible again
+because every required publisher fact now names its already committed source.
+The original progress record stands, including its conservative “at least one”
+request wording; **retractions remain three**. No new invariant rule claims to
+observe an agent's out-of-band retrieval.
+
+The amendment also adds Step 4A so the measured store/view threshold divergence
+cannot be left behind by a later “record and defer” identity decision, and adds
+the missing G4 offline fixtureless-source disposition test to CADENCE. The
+lifecycle checker now recognizes one uppercase step suffix, keeping `Step 2B`
+and `Step 4A` contract fields and deferred references distinct. Two new focused
+tests pass; the active trigger population is **2 architecture / 14 runbook**.
+Full constrained Python 3.11.4 and 3.12.13 lanes each collected and passed
+**286**, failed **0**, and skipped **0**. `invariant-scan` remains **12/12
+rules / 39 controls**, including all R12 planted failures after its two
+line-location pins were advanced with the checker edit. Golden remains
+**11/11**. Amendment execution made no publisher request and changed no
+publisher, schedule, core, protected artifact, database, or ref.
 
 **v0.26 REPLAY pin gate blocked before measurement (measured 2026-07-30).**
 
