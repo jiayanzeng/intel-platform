@@ -30,6 +30,104 @@ checker behavior, objective, decision gate, acceptance criterion, scope row, or
 standing prohibition. Step 3 still removes the temporary exact trigger count as
 written.
 
+### 2026-07-30 · E0 measurements and drafted-value corrections
+
+Step 1 — measured answers recorded and completion checked — 2026-07-30
+
+E0 restarted only after the activation compatibility commit and its separate
+audit record existed. The permission-complete entry point then passed all 20
+local jobs. The seven drafted gates settled as follows.
+
+- **Entering state.** Before activation, candidate-lineage HEAD was
+  `ddf08d2063f384d6c3d6d5ddef87b65a9167625c` on
+  `codex/v0.23-action-migration`, exactly one commit beyond locally recorded
+  `origin/main`; local `main` was not that commit and remained 102 commits
+  behind `origin/main`. The active worktree contained only this supplied
+  untracked runbook. After the recorded activation corrections, `./run
+  ci-local` passed 20/20 with 145 workspace tests, 62 net tests, invariant
+  12/46, clean clippy/fmt/ShellCheck and locked Rust 1.78. Standalone golden
+  passed 11/11. Clean Python 3.11.4 and 3.12.13 lanes each collected and passed
+  293 with zero skips; `tools/test_population.py` derived `collected=293`,
+  `equivalent=true`, and `equivalent_passed=293`. Both complete artifact
+  verifications matched 301 pins and took 0.10 s real; the manifest was 174,152
+  bytes. The architecture table had 11 data rows / 2 governed rows; the active
+  deferred table had 15 governed rows, correcting the drafted 14.
+  `checklist-audit` passed 216 checked / 3 retracted / 216 matched / 0
+  exemptions. `STATE.md` was 6,984 lines / 453,741 bytes, and the drafted
+  region sizes were corrected to 12,540; 17,273; 127,922; 185,799; 43,650;
+  38,748; and 27,809 bytes in the stated order. The named
+  `docs/state-archive` consumer search remained empty across `tools/*.py`,
+  `run`, `AGENTS.md`, `ARCHITECTURE.md`, and `config/*.json`; no manifest pin
+  names it.
+- **G1 — confirmed by execution.** In a throwaway clone, every active deferred
+  measured cell was blanked while its measured-column header retained
+  `2026-07-30`. `./run cycle-check` exited 0. The real architecture and active
+  runbook rows each carried their own valid date, so removing a header date
+  from the real tables would reject zero current governed rows. The header
+  fallback is therefore vacuous when present, exactly as drafted.
+- **G2 — confirmed.** The v0.24, v0.25, v0.26, and v0.27 closing records each
+  say `2026-07-30`. At most one cycle closing on a date can be distinguished by
+  a date-only discriminator; three of these four later measurements are not
+  distinguishable from a copied token.
+- **G3 — confirmed by execution.** `tools/cycle_check.py:1707` discarded the
+  `(architecture_rows, deferral_rows)` return, and the only consumer was the
+  activation-corrected exact-current-cycle test asserting `(2, 15)`; no
+  production floor existed. A throwaway clone with every trigger in both
+  governed tables changed to `none` produced derived counts `(0, 0)` and
+  `./run cycle-check` exited 0.
+- **G4 — confirmed.** `tools/export_check.py` only checked inclusion:
+  `SOURCE_ROOTS` was exactly `crates`, `apps`, `tools`, `shell`, and seven
+  `REQUIRED_PATHS` covered neither cycle retention, observations, nor
+  `docs/state-archive`; no byte bound existed. The exact project-root
+  `./run export-check` passed 99 derived sources / 7 required paths / 182
+  exported files. A retained output measured 4,975,987 bytes, 99.52% of decimal
+  5 MB with 24,013 bytes headroom. Raw exported-file composition was:
+  `docs/cycles` 34 files / 1,435,284 bytes; observations 13 / 949,344;
+  repository root 12 / 713,006 (including `STATE.md` at 453,741);
+  `docs/state-archive` 1 / 297,739; and all other reviewed files 122 /
+  1,564,264. The externally measured project-knowledge observation remains
+  2,067 chunks against a 2,000 limit on 2026-07-30.
+- **G5 — confirmed by execution.** A throwaway clone passed `cycle-check`
+  before and after moving closed v0.24 out of `docs/cycles`, while its reported
+  closed-execution count fell 25 to 24. `checklist-audit` also exited 0 both
+  times while checked/matched coverage fell 216 to 209. The
+  `audit_deferred` complete-progress-glob assertion still passed. Moving closed
+  cycle documents is therefore the silent no-op the draft described; only
+  export scope may change.
+- **G6 — confirmed with bounded blast radius.** The doc comment at
+  `crates/store/src/sqlite.rs:228-235` states source partition and before-insert
+  requirements but no ordering requirement. Lines 300-303 return the last
+  non-null `published_raw` in positional order. For a misordered window that
+  places a middle timestamp last, the field reports that middle timestamp, not
+  the oldest. The test at `apps/cored/src/main.rs:2370-2373` compares to
+  `incoming.last()` and encodes the same assumption. This can misreport one
+  observational diagnostic string; detection still commits the poll and no
+  filing or identity is dropped.
+- **G7 — confirmed with no implementation.** `AGENTS.md:331` says that adding,
+  removing, or redefining a value in an existing `/v1/*` response field takes a
+  minor version and openly states that the criterion is prose adjudicated at
+  R-CLOSE with no executed control. `ARCHITECTURE.md:445-452` says that adding,
+  removing, renaming, or incompatibly reshaping a field on any named response,
+  including internal loopback responses, is minor unless the surface is first
+  removed from the contract; lines 454-459 repeat the public value-domain
+  criterion as prose rather than an invariant rule. These are semantic release
+  judgments over unmaterialized historical contracts. No bounded detector is
+  available from the current authorities without first defining a machine-
+  readable surface/value-domain schema, so the honest self-declaration remains
+  the correct posture and implementation is deferred to a later operator
+  decision.
+
+One sandboxed `ci-local` attempt and one sandboxed Python dependency install
+were environment non-results; their exact entry points passed with the required
+permissions. Two population-log wrappers assigned zsh's read-only `status`
+variable after pytest had passed; direct pytest entry points then exited 0 and
+the comparator parsed their machine-readable records. The first direct
+networked Repomix attempt was rejected for repository-egress risk. With explicit
+operator authorization, Repomix 1.17.0 was installed with lifecycle scripts
+disabled in an isolated temporary directory containing no repository data, then
+the real `./run export-check` executed it against the repository inside the
+network-restricted sandbox and passed.
+
 v0.17.0 is published and v0.27 is closed. Annotated object `df4fc3b0…` targets
 closing commit `4af28418…`, whose parent is release commit `d5969207…`; post-push
 run **30550582370** passed all seven executable jobs at that exact commit, and
@@ -293,21 +391,21 @@ record it as the finding.** The count rising is expected as v0.28 checks boxes.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.28 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.28 · 2026-07-30 — one runtime exercised both origins sequentially; sequential sources are still not concurrent harvesters | none — no step here starts a harvester |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.28 · 2026-07-30 — no transient robots outage observed; no usable stale policy existed | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.28 · 2026-07-30 — `crates/ingest/src/**` is forbidden this cycle; `get_text` sends no validator | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.28 · 2026-07-30 — `crates/ingest/src/**` forbidden; bodies remain the form type alone | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.28 · 2026-07-30 — executed once in v0.27 with four application-level request starts; no publisher request occurs this cycle | none — complete, do not re-exercise |
-| Postgres / pgvector / multi-host seam | unchanged | v0.28 · 2026-07-30 — single writer, single host | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.28 · 2026-07-30 — one first-party shell; no such claim made | none |
-| L2 forced-command wrapper | an operator server session | v0.28 · 2026-07-30 — none has occurred | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.28 · 2026-07-30 — none observed | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.28 · 2026-07-30 — no review pending | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.28 · 2026-07-30 — not authorized | none — **no historical ref touched** |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.28 · 2026-07-30 — tags unpublished | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.28 · 2026-07-30 — 301 pins, 174,152 bytes, 0.16 s / 0.10 s; re-measure at E0 | **Step 1 — re-measure only** |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.28 · 2026-07-30 — literal present; this cycle forbids `shell/intel_shell/**` | none — recorded, not acted on |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.28 · 2026-07-30 — G7 enumerates them; `AGENTS.md:330` declares the gap openly | **none — G7 records, Step 7 does not implement** |
+| T7 robots single-flight | a second concurrent harvester | v0.28 · 2026-07-30 — E0 started no harvester; the prior bounded runtime remains sequential rather than concurrent | none — no step here starts a harvester |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.28 · 2026-07-30 — E0 observed no transient robots outage and no usable stale policy | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.28 · 2026-07-30 — E0 confirmed `crates/ingest/src/**` remains forbidden and `get_text` sends no validator | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.28 · 2026-07-30 — E0 confirmed ingest source remains forbidden and RSS bodies remain the form type alone | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.28 · 2026-07-30 — E0 issued no publisher request; v0.27's four-start sequential runtime remains the latest measurement | none — complete, do not re-exercise |
+| Postgres / pgvector / multi-host seam | unchanged | v0.28 · 2026-07-30 — E0 re-ran the single-writer, single-host local matrix; no multi-host authority exists | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.28 · 2026-07-30 — E0 exercised only the first-party shell and made no replacement-invariance claim | none |
+| L2 forced-command wrapper | an operator server session | v0.28 · 2026-07-30 — E0 opened no operator server session | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.28 · 2026-07-30 — invariant-scan passed R3/R4 and E0 observed no outside spelling | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.28 · 2026-07-30 — E0 found no pending third-publisher review or admission | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.28 · 2026-07-30 — E0 received no authorization and moved no historical ref | none — **no historical ref touched** |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.28 · 2026-07-30 — E0 confirmed the historical tags remain unpublished and the flag remains | none — **the flag stays** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.28 · 2026-07-30 — E0 measured 301 pins, 174,152 bytes, and 0.10 s / 0.10 s real; neither bound fired | **Step 1 — re-measure only** |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.28 · 2026-07-30 — E0 confirmed the literal remains present while `shell/intel_shell/**` is forbidden | none — recorded, not acted on |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.28 · 2026-07-30 — G7 enumerated both semantic criteria and found no bounded detector from current authorities | **none — G7 records, Step 7 does not implement** |
 
 ---
 
@@ -344,7 +442,7 @@ ahead of published `main` at `ddf08d20…`, or if any local gate fails at entry,
 **Done when** every gate carries a measured answer and the entering state is
 either confirmed or corrected in `STATE.md`.
 
-- [ ] **E0**
+- [x] **E0**
 
 ---
 

@@ -1,6 +1,82 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.17.0 is published and v0.27 is closed under R-CLOSE.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The exact release parent passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched. The release assembly adds the internal `/ingest` coverage value and boundary fields, so the named-surface rule requires a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changes. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and this publication does not authorize it. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0 is complete on top of published v0.17.0; the cycle remains open.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.28 entering tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both clean constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched twice. The v0.17.0 release assembly added the internal `/ingest` coverage value and boundary fields, so the named-surface rule required a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changed. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and v0.28 authorizes no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+
+**v0.28 E0 rebuilds the entering state and settles G1–G7 (measured
+2026-07-30).** After the separately committed activation compatibility
+corrections, `./run ci-local` passed all **20/20** jobs: warning-denied
+**145** workspace tests and **62** net tests, clean clippy/fmt/ShellCheck,
+locked Rust 1.78, `invariant-scan` **12 rules / 46 planted controls**, shell
+pytest, embedded golden, protected artifacts, and lifecycle checks.
+Standalone golden remained byte-identical at **11/11**. Clean Python 3.11.4
+and 3.12.13 environments resolved all 21 constrained packages and each
+collected/passed **293**, failed zero, and skipped zero.
+`tools/test_population.py` derived `collected=293`, `equivalent=true`, and
+`equivalent_passed=293`.
+
+Both full artifact verifications matched **301** pins plus both protected
+SQLite archives and took **0.10 s / 0.10 s real**. The manifest is **174,152
+bytes**, below its 1 MiB bound. `checklist-audit` passed **216 checked / 3
+retracted / 216 matched / 0 exemptions**. The architecture table contains
+**11** data rows with **2** governed triggers; the active deferred table
+contains **15**, correcting the drafted 14. The entering `STATE.md` was
+**6,984 lines / 453,741 bytes**. Its seven drafted regions measured, in the
+runbook's order, **12,540 / 17,273 / 127,922 / 185,799 / 43,650 / 38,748 /
+27,809 bytes**. The declared `docs/state-archive` consumer search returned no
+match across `tools/*.py`, `run`, `AGENTS.md`, `ARCHITECTURE.md`, or
+`config/*.json`, and the manifest contains no pin for that directory.
+
+G1's throwaway runbook blanked every deferred measured cell while retaining a
+dated measured-column header; `cycle-check` exited **0**. Every real governed
+row currently has its own valid date, so removing a header token from the real
+tables would reject zero rows. G2 confirmed that v0.24 through v0.27 all closed
+on `2026-07-30`; a date-only discriminator distinguishes at most one cycle on
+that date, leaving three of those four later measurements indistinguishable
+from copied tokens. G3 confirmed the checker discarded its returned `(2, 15)`
+population and had no floor: an all-`none` throwaway construction derived
+`(0, 0)` and `cycle-check` exited **0**.
+
+G4 confirmed that `tools/export_check.py` enforced inclusion only: four source
+roots and seven required paths, with no byte or retention bound. The exact
+project-root entry point passed **99 derived sources / 7 required / 182
+exported files**. Its retained export measured **4,975,987 bytes**, **99.52%**
+of decimal 5 MB with **24,013 bytes** headroom. Raw exported-file composition
+was `docs/cycles` **34 files / 1,435,284 bytes**; observations **13 /
+949,344**; repository root **12 / 713,006**; `docs/state-archive` **1 /
+297,739**; and all other reviewed paths **122 / 1,564,264**. The external
+project-knowledge observation remains **2,067 chunks against a 2,000 limit**
+on 2026-07-30.
+
+G5 moved closed v0.24 out of `docs/cycles` in a throwaway clone.
+`cycle-check` exited **0** before and after while its closed count fell **25 →
+24**; `checklist-audit` exited **0** before and after while checked/matched
+coverage fell **216 → 209**. The `audit_deferred` complete-progress-glob
+assertion still passed. Closed cycle documents therefore remain in their sole
+audited directory; only export scope may change.
+
+G6 confirmed the coverage detector's doc comment states source partition and
+before-insert preconditions but no incoming ordering premise.
+`incoming.iter().rev().find_map(...)` returns the last positional non-null raw
+timestamp, so a misordered window can report a middle timestamp as
+`incoming_oldest_published_raw`. The existing handler test compares against
+`incoming.last()` and encodes the same assumption. The blast radius is one
+observational diagnostic string: detection still commits the poll, and no
+filing or identity is dropped. G7 enumerated the public value-domain and named
+response-shape release criteria. Both honestly declare semantic R-CLOSE
+adjudication; no bounded detector exists from current authorities without
+first materializing a machine-readable historical surface/value-domain
+contract, so no implementation was added.
+
+The first sandboxed loopback test and dependency-install attempts were
+environment non-results; their exact entry points passed with the needed
+permissions. The operator explicitly authorized Repomix 1.17.0 after its
+direct networked execution was rejected for repository-egress risk. It was
+installed with lifecycle scripts disabled in an isolated temporary directory
+containing no repository data, then executed against the repository only in
+the network-restricted sandbox; the real `./run export-check` passed. No
+publisher request, scheduler run, model-server session, historical ref
+movement, protected-byte change, dependency change, route change, or public
+value-domain change occurred.
 
 **Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION,
 ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are also complete.
