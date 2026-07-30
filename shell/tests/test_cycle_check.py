@@ -992,7 +992,7 @@ def test_declared_scope_standing_status_paths_exclude_agents(
     assert "diff rejects AGENTS.md" in errors[0]
 
 
-def test_current_scope_has_exactly_one_release_forbid_overlap() -> None:
+def test_current_scope_has_no_release_forbid_overlap() -> None:
     root = Path(__file__).resolve().parents[2]
     identity = resolve_cycle(root)
     errors: list[str] = []
@@ -1007,10 +1007,7 @@ def test_current_scope_has_exactly_one_release_forbid_overlap() -> None:
     assert errors == []
     authorities = cycle_check.release_authority_paths(root)
     assert len(authorities) == 17
-    assert cycle_check.scope_release_forbid_overlaps(
-        declaration,
-        authorities,
-    ) == ("shell/intel_shell/app.py",)
+    assert cycle_check.scope_release_forbid_overlaps(declaration, authorities) == ()
 
 
 def test_activation_anchor_is_exclusive_and_next_commit_is_checked(
@@ -1144,7 +1141,7 @@ def test_current_trigger_freshness_tables_are_complete() -> None:
         errors,
     )
 
-    assert counts == (2, 14)
+    assert counts == (2, 15)
     assert errors == []
 
 

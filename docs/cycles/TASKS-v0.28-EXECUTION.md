@@ -16,6 +16,20 @@ gate, acceptance criterion, declared-scope row, and standing prohibition remains
 semantically unchanged.
 The activation commit is not amended, rebased, or squashed.
 
+### 2026-07-30 · Activation lifecycle-fixture correction
+
+The first permission-complete `./run ci-local` reached the shell lane and
+measured two exact-current-cycle fixtures still encoding v0.27. The active
+deferred table has 15 trigger-bearing rows, not the prior 14, and v0.28's
+declared `no-release` scope has no release-authority/forbid overlap, not
+v0.27's one `shell/intel_shell/app.py` overlap. The runbook already required the
+trigger count control to be corrected when the population changed; the scope
+fixture was an additional activation assumption. This amendment permits only
+those two expected-value corrections before E0 is restarted. It changes no
+checker behavior, objective, decision gate, acceptance criterion, scope row, or
+standing prohibition. Step 3 still removes the temporary exact trigger count as
+written.
+
 v0.17.0 is published and v0.27 is closed. Annotated object `df4fc3b0…` targets
 closing commit `4af28418…`, whose parent is release commit `d5969207…`; post-push
 run **30550582370** passed all seven executable jobs at that exact commit, and
