@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import re
 import subprocess
 import sys
@@ -23,6 +24,7 @@ from tools.cycle_identity import (
     resolve_cycle,
     task_documents,
 )
+from tools.export_check import CYCLE_RETENTION_DEPTH
 from tools.progress_check import default_progress_path
 
 
@@ -1032,6 +1034,78 @@ def declared_scope_cycle_version(name: str) -> tuple[int, ...]:
     return tuple(int(part) for part in match.group(1).split("."))
 
 
+def numeric_glob_range(last: int) -> list[str]:
+    """Return brace alternatives covering every non-negative integer through last."""
+    if last < 0:
+        return []
+    alternatives: list[str] = []
+    decade = 0
+    while decade <= last:
+        upper = min(decade + 9, last)
+        first_digit = 0
+        last_digit = upper - decade
+        prefix = str(decade // 10) if decade else ""
+        if first_digit == last_digit:
+            alternatives.append(f"{prefix}{first_digit}")
+        elif first_digit == 0 and last_digit == 9:
+            alternatives.append(f"{prefix}[0-9]")
+        else:
+            alternatives.append(f"{prefix}[{first_digit}-{last_digit}]")
+        decade += 10
+    return alternatives
+
+
+def expected_review_export_retention_pattern(cycle_name: str) -> str:
+    """Derive the one Repomix exclusion pattern from cycle identity and depth."""
+    version = declared_scope_cycle_version(cycle_name)
+    if len(version) < 2:
+        raise ValueError(f"cannot derive review retention for {cycle_name!r}")
+    last_excluded = version[-1] - CYCLE_RETENTION_DEPTH
+    alternatives = numeric_glob_range(last_excluded)
+    if not alternatives:
+        raise ValueError(
+            f"cannot retain depth {CYCLE_RETENTION_DEPTH} at {cycle_name!r}"
+        )
+    prefix = ".".join(str(part) for part in version[:-1])
+    return (
+        "docs/cycles/{TASKS,PROGRESS}-"
+        f"v{prefix}.{{{','.join(alternatives)}}}"
+        "{.md,.*.md,-*.md}"
+    )
+
+
+def check_review_export_retention_pattern(
+    root: Path,
+    cycle_name: str,
+    errors: list[str],
+) -> None:
+    path = root / "repomix.config.json"
+    try:
+        raw = json.loads(path.read_text())
+        custom_patterns = raw["ignore"]["customPatterns"]
+        if not isinstance(custom_patterns, list) or not all(
+            isinstance(pattern, str) for pattern in custom_patterns
+        ):
+            raise TypeError("ignore.customPatterns is not a string list")
+        expected = expected_review_export_retention_pattern(cycle_name)
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
+        errors.append(
+            f"{shown(path, root)}: cannot derive review-export retention "
+            f"pattern: {error}"
+        )
+        return
+    prefix = "docs/cycles/{TASKS,PROGRESS}-"
+    retention_patterns = [
+        pattern for pattern in custom_patterns if pattern.startswith(prefix)
+    ]
+    # Invariant R12 control site: review-export retention configuration.
+    if retention_patterns != [expected]:
+        errors.append(
+            f"{shown(path, root)}: review-export retention pattern for "
+            f"{cycle_name} must be {expected!r}; found {retention_patterns!r}"
+        )
+
+
 def scope_pattern_regex(pattern: str) -> re.Pattern[str]:
     if (
         not pattern
@@ -1862,6 +1936,7 @@ def run(
         return 1
     check_contract_cycle_paths(identity, root, errors)
     check_source_cycle_literals(root, errors)
+    check_review_export_retention_pattern(root, identity.name, errors)
 
     for required in (identity.runbook, identity.progress):
         if not required.is_file():

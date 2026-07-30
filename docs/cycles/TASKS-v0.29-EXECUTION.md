@@ -2,6 +2,19 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · RETENTION-BIND measured completion
+
+Step 2 — derived retention binding recorded and completion checked — 2026-07-31
+
+The implementation derives the tracked brace pattern from the active cycle and
+the one `CYCLE_RETENTION_DEPTH` authority. It deliberately broadens the
+irrelevant lower alternative from `[6-9]` to `[0-9]`: the added v0.0–v0.5 names
+do not exist, exported paths stay identical, and no second lower-bound literal
+is needed. The real checker rejected the old pattern before the config was
+updated. A focused no-export fixture and registered R12 mutation independently
+exercise the stale-pattern rejection. No objective, decision gate, acceptance
+criterion, scope row, or standing prohibition changes.
+
 ### 2026-07-31 · E0 preparatory manifest-byte correction
 
 Step 1 — measured answers recorded and completion checked — 2026-07-31
@@ -455,7 +468,7 @@ operator decides otherwise, and **a reviewer's proposal is not that decision.**
 **Done when** activating a cycle without touching the glob fails automatically,
 demonstrated.
 
-- [ ] **RETENTION-BIND**
+- [x] **RETENTION-BIND**
 
 ---
 

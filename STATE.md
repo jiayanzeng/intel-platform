@@ -1,6 +1,46 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; E0 is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. Current local CI passes **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 49 controls**, and golden **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The E0 implementation-tree review export measures **2,430,678 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; RETENTION-BIND is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. RETENTION-BIND's focused shell suite passes **304/304**, `invariant-scan` passes **12 rules / 50 controls**, and standalone golden remains **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The RETENTION-BIND implementation-tree review export measures **2,446,347 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+
+**v0.29 RETENTION-BIND makes a stale Repomix cycle glob fail in automatic
+lanes (measured 2026-07-31).** `cycle-check` now imports the sole
+`CYCLE_RETENTION_DEPTH` authority from `tools/export_check.py`, parses the
+active declaration, and independently generates the Repomix brace pattern. For
+active v0.29 and depth 3, the derived exclusion ends at v0.26. The pattern's
+lower range now starts at zero rather than six; matching nonexistent v0.0–v0.5
+paths changes no exported path but removes an unrelated lower-bound literal
+from the derivation.
+
+The rejection ran before the acceptance. With the checker implemented and the
+tracked config still carrying its activation-era `[6-9]` range, the real
+`./run cycle-check` exited **1** with:
+
+```
+repomix.config.json: review-export retention pattern for v0.29 must be 'docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-6]}{.md,.*.md,-*.md}'; found ['docs/cycles/{TASKS,PROGRESS}-v0.{[6-9],1[0-9],2[0-6]}{.md,.*.md,-*.md}']
+```
+
+After the config moved to the derived form, the same entry point passed.
+The fixture explicitly verified that no `repomix-output-*.xml` existed, then
+corrupted the tracked pattern and observed the named failure. The registered
+R12 construction independently appends a stale suffix to the active-cycle
+derivation and executes the production checker; disabling the mismatch branch
+produces the named `stale-retention-pattern` self-test failure. R12 therefore
+moved from **21** to **22** controls and the whole registered scanner passes
+**12/12 rules / 50 controls**. Focused lifecycle/invariant tests passed
+**73/73**, and the permission-complete shell suite passed **304/304**. Its
+first sandboxed invocation passed 296 and failed eight only because loopback
+binding and process-table inspection were denied; that environment attempt is
+a non-result.
+
+This is not v0.22 G3's rejected hosted export duplication. The automatic rule
+reads only the tracked config, active declaration, and one depth authority; it
+does not create or inspect an export, measure bytes, enumerate exported paths,
+or enforce the ceiling and excluded-byte classes. The project-root
+`./run export-check` still owns those artifact properties and passes unchanged
+on the completed implementation tree at **99 derived / 7 required / 152
+exported / 2,446,347 bytes**, depth 3. No production source,
+public route or value domain, dependency, schema, protected byte, publisher
+configuration, or scheduler behavior changed.
 
 **v0.29 E0 rebuilds the entering state and settles G1–G7 (measured
 2026-07-31).** The clean permission-complete `./run ci-local` rerun passed all

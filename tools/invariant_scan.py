@@ -1615,6 +1615,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "declared-scope": (
         "Invariant R12 control site: declared cycle scope."
     ),
+    "review-export-retention": (
+        "Invariant R12 control site: review-export retention configuration."
+    ),
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
@@ -2081,6 +2084,38 @@ def r12_findings(root: Path) -> list[str]:
                 "v0.22-release-paths"
             )
 
+        active_retention_cycle = cycle_check.resolve_cycle(root).name
+        valid_retention_pattern = (
+            cycle_check.expected_review_export_retention_pattern(
+                active_retention_cycle
+            )
+        )
+        (fixture / "repomix.config.json").write_text(
+            json.dumps(
+                {
+                    "ignore": {
+                        "customPatterns": [
+                            f"{valid_retention_pattern}.stale"
+                        ]
+                    }
+                }
+            )
+            + "\n"
+        )
+        errors = []
+        cycle_check.check_review_export_retention_pattern(
+            fixture,
+            active_retention_cycle,
+            errors,
+        )
+        if not any(
+            "review-export retention pattern for " in error
+            for error in errors
+        ):
+            missed.setdefault("review-export-retention", []).append(
+                "stale-retention-pattern"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
@@ -2295,6 +2330,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "test-population planted controls"
         elif group == "coverage-detection":
             finding_kind = "coverage-detection planted controls"
+        elif group == "review-export-retention":
+            finding_kind = "review-export-retention planted controls"
         else:
             finding_kind = "publication planted controls"
         findings.append(

@@ -76,6 +76,20 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     (config / "cycle-history.json").write_text(
         json.dumps({"schema_version": 1, "artifacts": {}}) + "\n"
     )
+    (root / "repomix.config.json").write_text(
+        json.dumps(
+            {
+                "ignore": {
+                    "customPatterns": [
+                        cycle_check.expected_review_export_retention_pattern(
+                            "v1.2.3"
+                        )
+                    ]
+                }
+            }
+        )
+        + "\n"
+    )
     return root
 
 
@@ -675,6 +689,24 @@ def test_cycle_check_accepts_cycle_paths_only_in_declaration(
     tmp_path: Path,
 ) -> None:
     assert cycle_check.run(_cycle_root(tmp_path)) == 0
+
+
+def test_cycle_check_rejects_stale_review_export_retention_without_export(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    assert not list(root.glob("repomix-output-*.xml"))
+    config_path = root / "repomix.config.json"
+    config = json.loads(config_path.read_text())
+    patterns = config["ignore"]["customPatterns"]
+    patterns[0] = f"{patterns[0]}.stale"
+    config_path.write_text(json.dumps(config) + "\n")
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "review-export retention pattern for v1.2.3 must be" in error
+    assert ".stale" in error
 
 
 def test_cycle_check_does_not_fallback_to_root_documents(
