@@ -210,3 +210,51 @@ Entries are append-only; corrections are new dated entries.
   model-server session, closed runbook, production runtime source, dependency,
   schema, protected artifact, golden input, public route, serialized value
   domain, tag, or branch ref changed.
+
+### 2026-07-30 · DOC-SLIM — review corpus halved without coverage loss
+
+- owner: Codex
+- commit: 66a38731bed044cd48a09ec07c0583070c2be2bd
+- result: PASS. Repomix scope excludes the pinned SEC RSS body,
+  `docs/state-archive/**`, and cycle documents older than the v0.26–v0.28
+  retention set. Every observation Markdown file remains. Live State retains
+  v0.22-forward and reference §1–§7; the new through-v0.21 archive preserves
+  the removed history, prior archive, and reference §8/§9.
+- checklist acceptance: PASS. Before and after the archival itself,
+  `checklist-audit` remained **219 checked / 3 retracted / 219 matched / 0
+  exemptions**. No validated content fell. The mandatory Step 4 runbook and
+  this progress record then raise the ordinary workflow total to 220; no
+  historical cycle file was edited, moved, or deleted.
+- byte-identity acceptance: PASS by hash and whole-output comparison. The
+  **185,680-byte** historical slice matched its archived destination at
+  `c2535b16bdec70a4fc3551a3ebfc3bfbc3f02ef337a33aaa47f1942cacad6d6c`;
+  the embedded **297,739-byte** prior archive matched at
+  `3233af5b4c148f7a7f4700edba3238dc67245f28d83dc07cc53c26ebdca6a414`;
+  and the **66,557-byte** reference slice matched at
+  `beca80003f472db3c22aca1fb54d2eb5777a13b66568ab8c3f996d47a3538c98`.
+  Reconstructed State and archive comparisons both returned exact true. The
+  immediate split changed State **462,196 → 209,959 bytes**; mandatory current
+  records leave final live State at **212,857 bytes** and the archive at
+  **549,976 bytes**.
+- lifecycle/artifact acceptance: PASS. `cycle-check`, `progress-check`,
+  manifest validation, `verify-artifacts` over all **301** pins and both
+  protected databases, and `invariant-scan` **12/12 rules / 49 controls**
+  passed after archival.
+- publication-record acceptance: PASS by the actual entry point. The newest
+  closed release resolved to v0.17.0; `POST_PUSH_RECORD_RE` found exactly
+  **one** complete record for that tag, and `check_publication_status` returned
+  zero errors.
+- export acceptance: PASS. The exact project-root command passed **99 derived
+  sources / 7 required / 152 exported**. The final implementation-tree export
+  is **2,469,697 bytes**, **49.39%** of decimal 5 MB. Raw composition is cycle
+  docs **6 / 343,965 bytes**, observations **12 / 56,703**, root **12 /
+  472,800**, state archive **0 / 0**, and other reviewed paths **122 /
+  1,582,306**. The cycle files are exactly TASKS/PROGRESS for v0.26, v0.27,
+  and v0.28; all eight observation Markdown files remain; the RSS body and
+  both State archives are absent.
+- golden-E2E delta: **0**. The permission-complete `./run golden` execution
+  passed **11/11** byte-identically.
+- publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
+  model-server session, historical cycle edit, production runtime source,
+  dependency, schema, protected artifact, golden input, public route,
+  serialized value domain, tag, or branch ref changed.
