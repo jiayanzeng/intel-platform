@@ -1,9 +1,9 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, and CADENCE: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is guarded by the shared measured floor of 26 features: all 200 SEC rows remain distinct, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. The operator authorized HARVEST under seven conditions; one isolated SEC ingest produced **200 fetched / 200 new** documents and the shipped guard kept **200 / dropped 0**, but HARVEST remains unboxed because the TLS-opaque observer did not measure the plaintext publisher status, redirect/retry count, fresh robots hash, fresh XML declaration, or publisher-received User-Agent bytes. No corrective publisher request is authorized. SEC has an explicit 600-second per-source schedule, but no scheduled live run occurred and the cadence remains unexercised. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; the isolated runtime exercised SEC only, so live multi-publisher cache and limiter behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, and retractions remain three. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, CADENCE, and HARVEST: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is guarded by the shared measured floor of 26 features: the live SEC harvest produced **200 fetched / 200 new**, the shipped guard kept **200 / dropped 0**, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. A separately authorized corrective observation executed exactly one fresh shipped robots request and one feed request: the robots body and HTTP-200 feed body were byte-identical to v0.25, and the 73 configured User-Agent bytes were captured and matched the installed identity. SEC has an explicit 600-second per-source schedule, but no scheduled live run occurred and the cadence remains unexercised. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; both live Step 6 phases exercised SEC only, so live multi-publisher cache and limiter behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, and retractions remain three. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
 
-**v0.26 HARVEST crossed the SEC wire but its observation is incomplete
-(measured 2026-07-30).**
+**v0.26 HARVEST crossed the SEC wire and the corrective observation closed its
+evidence gap (measured 2026-07-30).**
 
 The operator authorized Step 6 under seven stated conditions. The authorization
 covered one bounded SEC harvest, not the 600-second scheduler. No scheduled run
@@ -58,6 +58,48 @@ the publisher-received User-Agent bytes. No second feed or robots request was
 made to repair the missing evidence. HARVEST remains unchecked pending a
 separate operator authorization for a corrective observable replay. The fresh
 database remains ignored and unadmitted; no protected byte changed.
+
+The operator then separately authorized that corrective replay. Before any
+request, a disposable observer compiled offline against the repository's exact
+locked `reqwest 0.11.27`, `tokio 1.52.3`, and shipped ingest/compliance crates.
+Its pre-existing-output control was executed and refused before client
+construction. All 271 pins and both protected databases matched again.
+
+At **2026-07-30T09:18:38.296998Z**, the observer's recording wrapper issued
+exactly one request through the shipped `HttpRobotsFetcher`. `RobotsCache`
+and the wrapper each counted **1**, and the shipped cache returned
+`Body(allow)` for the SEC feed path. The 2,622-byte body has SHA-256
+`72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`
+and is byte-identical to the pinned v0.25 policy. The cored operator deny-list
+also allowed the path, and the effective host rate remained 2 requests/second.
+
+At **2026-07-30T09:18:39.680936Z**, after both gates and the shared limiter,
+the same installed identity issued exactly one feed request. The measured
+request-start interval was **1.383946 seconds**. Redirect following and retry
+behavior were disabled by construction; the response was HTTP **200**,
+`Content-Type: text/xml`, with no `Location` or `Retry-After` header. Its
+892,641-byte body has SHA-256
+`154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`
+and is byte-identical to the pinned v0.25 feed. It therefore still declares
+`windows-1252`, contains 200 items, and has description equal to
+`edgar:formType` in 200/200 items.
+
+The assigned User-Agent was captured byte-for-byte before the clients ran:
+**73 bytes**, SHA-256
+`2fc0ac45a37a1c604d0f01d5039fffd0d734857b613de87cb6c848f29acec495`,
+and exactly equal to the value installed for the two clients. The contact was
+not printed, and the temporary raw contact-bearing file was removed after the
+comparison. The corrective phase made one robots plus one feed request to SEC
+and no request to any other origin. It did not run the scheduler, touch the
+archive, or mutate production configuration. Combined with the original
+shipped-core archive and identity measurements above, this closes all seven
+operator conditions without rewriting the original opaque attempt as evidence
+it did not contain.
+
+HARVEST is complete. The fresh database remains ignored and unadmitted; no
+protected artifact changed. No scheduled live run has occurred, the
+600-second cadence remains unexercised, and the larger recurring traffic
+commitment is not implied by either bounded authorization.
 
 **v0.26 CADENCE chooses the SEC feed's per-source clock and covers the
 offline partial failure (measured 2026-07-30).**

@@ -379,7 +379,7 @@ edit the assertion to bless the drift.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | 2026-07-30 — one first-party shell; no such claim made | none |
 | L2 forced-command wrapper | an operator server session | 2026-07-30 — no operator server session has occurred | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | 2026-07-30 — none observed | none |
-| First live SEC RSS harvest | Steps 2, 3, 4, 4A, and 5 affirmative plus explicit operator authorization in this cycle | 2026-07-30 — no live RSS harvest has occurred | **Step 6 — decided, not assumed** |
+| First live SEC RSS harvest | Steps 2, 3, 4, 4A, and 5 affirmative plus explicit operator authorization in this cycle | 2026-07-30 — one isolated live SEC harvest completed; no scheduled live run occurred and the 600-second cadence remains unexercised | **Step 6 — executed under the original and separately authorized corrective bounds** |
 | Observation-byte manifest coverage | schema 2 admits no container for observation paths carrying a chained admission | 2026-07-30 — validator rejected both candidate forms; 266 pinned files, zero under `observations/` | **Step 2B — prefix added, chain deliberately not** |
 | `edgar:*` extension field mapping | an operator-authorized cycle whose declared scope permits `crates/ingest/src/**`, with a connector review | 2026-07-30 — the parser reads six per-item fields and discards the namespaced extension | **none — recorded by Step 3, acted on in no step here** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | 2026-07-30 — no review pending | none |
@@ -940,7 +940,7 @@ the brief, and exits 0. Focused cadence and G4 tests passed 10/10 in both
 Python versions. No shell production source, core config, publisher byte,
 publisher request, or harvest was involved.
 
-### HARVEST partial execution record — 2026-07-30
+### HARVEST execution record — 2026-07-30
 
 The operator authorized Step 6 under the seven stated conditions: one bounded
 harvest but no scheduled run; byte capture of the contact-bearing User-Agent;
@@ -990,6 +990,49 @@ robots or feed request was made to repair it, because the operator authorized
 one bounded harvest. A corrective observable replay requires a separate
 operator authorization. The ignored database was not admitted and no protected
 byte changed.
+
+The operator separately authorized one corrective observable replay: exactly
+one fresh robots request and one fresh feed request, with no scheduler and no
+archive mutation. A disposable observer compiled offline against the
+repository's locked `reqwest 0.11.27`, `tokio 1.52.3`, and the shipped
+ingest/compliance crates. Its pre-existing-output refusal was executed first
+and stopped before client construction; all 271 pins and both protected
+databases then matched again.
+
+The corrective phase completed:
+
+- at **2026-07-30T09:18:38.296998Z**, the shipped
+  `HttpRobotsFetcher` recording wrapper and `RobotsCache` each counted exactly
+  **1** request and returned `Body(allow)`;
+- the 2,622-byte robots body has SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`
+  and is byte-identical to the v0.25 capture;
+- the cored operator deny-list also allowed the feed path and the effective
+  rate remained 2 requests/second;
+- at **2026-07-30T09:18:39.680936Z**, after both gates and the shared limiter,
+  exactly one feed GET began, **1.383946 seconds** after the robots request;
+- redirects and retries were disabled and counted zero; the feed returned HTTP
+  **200**, `Content-Type: text/xml`, no `Location`, and no `Retry-After`;
+- the 892,641-byte feed has SHA-256
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`
+  and is byte-identical to v0.25. It still declares `windows-1252`, contains
+  200 items, and has description equal to `edgar:formType` in 200/200;
+- the assigned installed User-Agent was captured as exactly 73 bytes, SHA-256
+  `2fc0ac45a37a1c604d0f01d5039fffd0d734857b613de87cb6c848f29acec495`,
+  without printing the contact. The raw contact-bearing temporary file was
+  removed after equality verification.
+
+The corrective phase issued one robots plus one feed request to SEC and zero
+requests to any other origin. It did not re-run the shipped-core archive
+mutation: the original fresh archive remains the authority for 200 fetched /
+200 new, 200 canonical / zero drops, the feature distribution, and the two
+kept distance-zero pairs. The two phases are reported separately; the
+corrective authorization does not retroactively make the TLS-opaque attempt an
+HTTP-count observation.
+
+HARVEST now satisfies its acceptance criteria. No scheduler ran, no scheduled
+live run has ever occurred, the 600-second cadence remains unexercised, the
+fresh database remains ignored and unadmitted, and no protected byte changed.
 
 ---
 
@@ -1465,7 +1508,7 @@ publication.**
   disposition covered by a test asserting measured behaviour**; test added or
   vacuity recorded; dated in `ARCHITECTURE.md`; terms row unchanged; no publisher
   request
-- [ ] **HARVEST** — authorized and executed under bounds, or deleted with the
+- [x] **HARVEST** — authorized and executed under bounds, or deleted with the
   determination that deferred it; deferral table updated either way
 - [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; no
   publisher request by any hosted job; run id recorded; scope amendment dated
