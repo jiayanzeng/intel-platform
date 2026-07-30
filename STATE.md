@@ -1,6 +1,63 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Selected release:** v0.16.0 (not yet released) · **Status:** **v0.25 ADMIT is complete without a live harvest.** The operator admitted `sec-edgar-usgaap` under `finance` at the reviewed RSS path as `PublisherPermitted`, with explicit `robots_on_missing: "deny"`. Two publisher origins are now configured; only `arxiv-cs` has ever been harvested. Admission made no publisher request and did not execute live RSS fetching, the repository parser against the observed SEC body, runtime multi-origin caching/limiting, paging, or cursor durability. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, and clean rustc, clippy, fmt, and ShellCheck gates. Rebuilt Python 3.11 and 3.12 lanes each passed **284 collected / 284 passed / 0 skipped**; the comparator derived **284** equivalent passes. `invariant-scan` remains **12 rules / 39 controls**, and both embedded and fresh standalone golden runs remain **11/11**, delta **0**. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Selected release:** v0.16.0 (not yet released) · **Status:** **v0.25 RE-MEASURE is complete; publication is not authorized.** Authenticated hosted run **30513561141**, attempt **1**, passed all seven executable jobs at exact candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` on neutral ref `refs/heads/codex/v0.25-evidence-779fbe5`. Hosted counts equal the candidate's local counts: **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and golden **11/11**. The shell comparator derived **284** equivalent passes for each local lane against hosted **283 passed + 1 named `on_site` skip**. `invariant-scan` remains **12 rules / 39 controls**. The hosted workflow and complete run log made no publisher request. Seven receipt/bundle pairs and the re-derived release report add 15 immutable admissions, so all **266** protected pins and both protected databases match; fresh standalone golden remains **11/11**, delta **0**. Published v0.15.8 release commit remains `696c0863ea684d590970902bcbbd13a7a3ccb610`; remote `main` stayed `64002678672a601804e5f67886c73fffb4d212c8`; the pre-existing `candidate/v0.16.0` stayed at v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; the neutral evidence ref stayed at the v0.25 candidate; and no v0.16.0 tag exists. Two publisher origins are configured, only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.25 RE-MEASURE admits authenticated release-posture evidence without
+publishing (hosted and local measurement 2026-07-30).**
+
+The operator authorized the Step 6 narrow remote mutation. Exact candidate
+`779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` was pushed to the neutral ref
+`refs/heads/codex/v0.25-evidence-779fbe5`; the name encodes neither the selected
+version nor a patch assumption. Before dispatch, the remote
+`.github/workflows/ci.yml` blob was
+`48ea726b798f1049e0b29cce1f0c64588861c2dd`, byte-identical to the local
+candidate blob. Authenticated hosted run
+<https://github.com/jiayanzeng/intel-platform/actions/runs/30513561141>,
+attempt **1**, completed successfully with all seven executable jobs green.
+
+The hosted log reports workspace **135** and net **55**
+(`intel-ingest` **29** + `cored` **26**), locked Rust 1.78, clean
+rustc/clippy/fmt/ShellCheck gates, lifecycle **196 checked / 3 retracted / 196
+matched / 0 exemptions**, `invariant-scan` **12/12 rules / 39 controls** with
+R10 **45** exemptions, and golden **11/11**. Both exact
+`tools/test_population.py` comparisons returned
+`collected=284`, `equivalent=true`, and `equivalent_passed=284`: each local
+lane passed **284 / skipped 0**, while its hosted lane passed **283** plus the
+single named `on_site` skip
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+with reason “on-site production audit requires protected corpora and built
+cored”. The run's workflow commands contained no harvest, and a case-insensitive
+search of the complete hosted log for `sec.gov`, `usgaap.rss`,
+`harvest-arxiv`, `POST /ingest`, or an HTTP GET returned no matches. No hosted
+job made a publisher request.
+
+The seven authenticated receipt JSON files and their seven persisted Sigstore
+bundles are under `evidence/ci-runs/30513561141-1/`. Release-posture
+`./run audit-deferred` measured a clean detached copy of the exact candidate,
+required attestations, accepted **7 / rejected 0** identities, confirmed the
+single-run matrix complete, and recorded **5 deferred / 2 promoted / 0
+implemented deferred subsystems**. The largest measured archive remains
+**2,600 documents**; exact-cosine p95 was **8.640 ms**, below the **16.264 ms**
+A3 request anchor. The **34,881-byte** report is
+`evidence/v0.25/deferred-audit/report.json`, SHA-256
+`9d7c367060d2c9f28aaf17586f7e54ab782f6f8113b64326d730cccb05cfb342`.
+`./run audit-deferred --rederive` reproduced it with attestations required.
+
+Those fourteen signed hosted files plus the report add fifteen records to the
+schema-v2 protected manifest, taking it from **251** to **266** pins.
+`python3 tools/evidence_artifacts.py validate`, `./run verify-artifacts`, and
+`./run evidence-report` passed; both protected databases remained exact.
+Standalone `./run golden` passed **11/11**, delta **0**, and
+`invariant-scan` again passed **12/12 rules / 39 controls**.
+
+Read-only post-dispatch resolution found remote `main` unchanged at
+`64002678672a601804e5f67886c73fffb4d212c8`, the historical
+`refs/heads/candidate/v0.16.0` unchanged at
+`3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and the neutral Step 6 branch
+still at the exact candidate. No `v0.16.0` tag exists. Step 6 created no tag,
+advanced no release ref, and changed no source, public surface, dependency,
+lockfile, schema, or protected database. Step 7 remains behind its separate
+operator publication decision.
 
 **v0.25 ADMIT configures the reviewed SEC source without claiming a harvest
 (operator decision and measurement 2026-07-30).**

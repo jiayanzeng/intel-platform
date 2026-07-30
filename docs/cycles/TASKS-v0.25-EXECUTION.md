@@ -742,6 +742,62 @@ clippy/fmt/ShellCheck, shell 284/284, and embedded golden 11/11. No protected
 corpus, pin, database, schema, dependency, lockfile, ingest source, compliance
 source, shell production source, public response, tag, or branch moved.
 
+### RE-MEASURE measured result — 2026-07-30
+
+**Neutral candidate and hosted identity.** The operator authorized the Step 6
+gate. Exact candidate
+`779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` was pushed to neutral ref
+`refs/heads/codex/v0.25-evidence-779fbe5`; the name encodes neither a version
+identity nor a patch assumption. The remote branch's
+`.github/workflows/ci.yml` blob
+`48ea726b798f1049e0b29cce1f0c64588861c2dd` matched the local candidate
+blob before dispatch. Authenticated hosted run **30513561141**, attempt **1**,
+then passed all seven executable jobs at that exact candidate.
+
+**Measured populations and absence of a publisher request.** Hosted counts
+were workspace **135**, net **55** (`intel-ingest` **29** + `cored` **26**),
+locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, lifecycle **196 checked /
+3 retracted / 196 matched / 0 exemptions**, `invariant-scan` **12/12 rules /
+39 controls** with R10 **45** exemptions, and golden **11/11**. The comparator
+derived the same exact result for Python 3.11 and 3.12:
+`collected=284`, `equivalent=true`, `equivalent_passed=284`, local passed
+**284 / skipped 0**, hosted passed **283** plus one named `on_site` skip. The
+skip node was
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`;
+its reason was “on-site production audit requires protected corpora and built
+cored”. The workflow contained no harvest command, and a case-insensitive
+search of the complete hosted log for `sec.gov`, `usgaap.rss`,
+`harvest-arxiv`, `POST /ingest`, or an HTTP GET returned no matches. No hosted
+job made a publisher request.
+
+**Authenticated admission and release posture.** The seven receipt JSON files
+and seven Sigstore bundles are committed under
+`evidence/ci-runs/30513561141-1/`. Release-posture
+`./run audit-deferred` required attestations, accepted **7 / rejected 0**
+identities, confirmed the single-run matrix complete, and recorded **5 deferred
+/ 2 promoted / 0 implemented deferred subsystems**. The largest evidenced
+archive remains **2,600 documents**; exact-cosine p95 was **8.640 ms**, below
+the **16.264 ms** A3 request anchor. The **34,881-byte** report at
+`evidence/v0.25/deferred-audit/report.json` has SHA-256
+`9d7c367060d2c9f28aaf17586f7e54ab782f6f8113b64326d730cccb05cfb342`.
+`./run audit-deferred --rederive` reproduced it with attestations required.
+
+The fourteen signed hosted files plus the report add fifteen schema-v2
+manifest records, moving the protected count from **251** to **266** pins.
+`python3 tools/evidence_artifacts.py validate`, `./run verify-artifacts`, and
+`./run evidence-report` passed; both protected databases remained exact.
+Standalone `./run golden` passed **11/11**, delta **0**, and local
+`invariant-scan` passed **12/12 rules / 39 controls**.
+
+**Remote disposition.** Read-only post-dispatch resolution found remote
+`main` unchanged at `64002678672a601804e5f67886c73fffb4d212c8`, the
+pre-existing `refs/heads/candidate/v0.16.0` unchanged at
+`3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and the neutral evidence ref
+still at the exact candidate. No `v0.16.0` tag exists. Step 6 created no tag,
+advanced no release ref, and changed no source, public surface, dependency,
+lockfile, schema, or protected database. Step 7 remains behind its separate
+operator publication decision.
+
 ---
 
 ## Step 2 · LICENSE-SEMANTICS (G1, G4) — Say only what the evidence supports 🧑🤖
@@ -1037,7 +1093,7 @@ publication.**
 - [x] **ADMIT** — complete, or deleted with the determination that deferred it.
   Decision recorded; `robots_on_missing` explicitly reasoned; **no live harvest**;
   non-exercise stated; deferral table updated both ways
-- [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; **no
+- [x] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; **no
   publisher request by any hosted job**; run id recorded
 - [ ] **R-CLOSE** — version and its written criterion recorded; three
   determinations recorded with evidence; non-exercise stated; G5 amendment
