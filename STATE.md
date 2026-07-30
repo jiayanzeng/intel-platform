@@ -1,6 +1,49 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.26 is closed locally under R-CLOSE and v0.16.1 is operator-authorized for atomic publication; v0.16.0 remains published until that ref movement.** Untagged release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d` is the immediate parent of this closing tree; the annotated v0.16.1 tag must target the closing tree, not its parent. The separate v0.26 evidence candidate is `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated run **30531390933**, attempt **1**, passed all seven executable jobs. Its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. Both candidate-hosted shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The exact release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published and v0.26 is closed under R-CLOSE.** Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+
+## v0.16.1 post-push verification
+
+- **Post-push verification date:** 2026-07-30
+- **Post-push release:** `v0.16.1`
+- **Post-push annotated tag object:** `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b`
+- **Post-push closing commit:** `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`
+- **Post-push hosted run:** `30535121730`
+
+Remote `main` and the peeled `v0.16.1` tag both resolve to closing commit
+`397d100ae425d5d059cef8a8ddb2ac13cfde52f5`; annotated tag object
+`ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` names that closing commit, whose
+immediate parent is release commit
+`b9af84b8785bcd52c16ab0225d66386ecd872c4d`. Historical
+`refs/heads/candidate/v0.16.0` remains v0.15.1 evidence at
+`3481e4ba85d65c927b7d0fc3a430bc04fb094394`.
+
+Post-push CI run **30535121730**, attempt **1**, executed at the exact closing
+commit and passed all seven executable jobs: core, lint, golden, net, shell
+3.11, shell 3.12, and MSRV; the report-only dependency-drift job was skipped
+as designed. Hosted execution reported **139** workspace tests and **56** net
+tests (**30** `intel-ingest`, including replay, plus **26** `cored`);
+checklist-audit reported **208 checked / 3 retracted / 208 matched / 0
+exemptions**; invariant-scan reported **12/12 rules / 44 controls**;
+manifest validation reported **286** pins; and golden passed **11/11**.
+
+Both post-push machine-readable population comparisons returned:
+`{"collected":291,"equivalent":true,"equivalent_passed":291,"hosted":{"on_site_skipped":1,"passed":290,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":291,"skipped":0},"schema_version":1}`.
+The one hosted skip is named, reasoned, and marked `on_site`; both Python lanes
+therefore match the local population exactly under the registered comparator.
+
+Authenticated candidate run **30531390933**, attempt **1**, remains the
+closing evidence because it supplied the required signed attestations.
+Post-push run **30535121730** is forward confirmation of the published closing
+commit and does not replace that evidence. Complete hosted-log inspection found
+no publisher URL or publisher-directed request command; its only two
+`usgaap.rss` matches were local `PIN MATCH` output. No publisher request was
+made by publication or verification.
+
+This post-push record is the first commit after the tagged closing commit. It
+is supported by the required local gates but is intentionally hosted-unverified
+until the following publication, when it becomes an ancestor of the next
+candidate and release commit.
 
 **v0.26 R-CLOSE selects v0.16.1 and closes on authenticated candidate evidence
 (operator decision and measurement 2026-07-30).** Release disposition: release

@@ -853,3 +853,46 @@ Entries are append-only; corrections are new dated entries.
   to this release and must not be renamed or deleted.
 - publisher-request acceptance: PASS. R-CLOSE made no publisher request.
 - golden-E2E delta: **0**.
+
+### 2026-07-30 · POST-PUSH — v0.16.1 forward confirmation
+
+- owner: Codex
+- commit: 397d100ae425d5d059cef8a8ddb2ac13cfde52f5
+- result: PASS. Atomic publication moved remote `main` and annotated tag
+  `v0.16.1` together. Tag object
+  `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit
+  `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is
+  release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`.
+- hosted-forward acceptance: PASS. Post-push run **30535121730**, attempt
+  **1**, executed at the exact closing commit and passed all seven executable
+  jobs: core, lint, golden, net, shell 3.11, shell 3.12, and MSRV. The
+  report-only dependency-drift job was skipped as designed.
+- population acceptance: PASS. Both machine-readable comparisons returned
+  `collected=291`, `equivalent=true`, and `equivalent_passed=291`: local
+  passed **291 / skipped 0**, while hosted passed **290** plus the one named,
+  reasoned, `on_site` skip
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`.
+- hosted-count acceptance: PASS. Hosted execution reported **139** workspace
+  tests; **56** net tests (**30** `intel-ingest`, including replay, plus
+  **26** `cored`); checklist-audit **208 checked / 3 retracted / 208 matched /
+  0 exemptions**; invariant-scan **12/12 rules / 44 controls**; **286** pins;
+  and golden **11/11**.
+- closure-semantics acceptance: PASS. Authenticated candidate run
+  **30531390933**, attempt **1**, remains the signed closing evidence.
+  Post-push run **30535121730** is forward confirmation of the published
+  closing commit and does not replace those attestations.
+- publisher-request acceptance: PASS. Complete hosted-log inspection found no
+  publisher URL or publisher-directed request command. The only two
+  `usgaap.rss` matches were local `PIN MATCH` output. Publication and
+  verification made no publisher request.
+- historical-ref acceptance: PASS. Existing
+  `refs/heads/candidate/v0.16.0` remains v0.15.1 evidence at
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong
+  to v0.16.1.
+- audit-rhythm acceptance: PASS. This first descendant audit record is
+  supported by its required local gates and intentionally remains
+  hosted-unverified until the following publication.
+- scope acceptance: PASS. This audit record changes only `STATE.md` and the
+  active append-only progress log.
+- golden-E2E delta: **0**; published-head hosted golden passed **11/11** and
+  the mandatory local audit golden passed **11/11**.
