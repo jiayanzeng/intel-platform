@@ -38,3 +38,28 @@ Entries are append-only; corrections are new dated entries.
   entering matrix and drafted-gate measurements.
 - golden-E2E delta: NOT MEASURED; no claim.
 - protected artifact delta: NOT MEASURED; no protected or pinned file changed.
+
+### 2026-07-30 · ACTIVATE-CORRECTION — crate-source scope made explicit
+
+- owner: Codex
+- commit: e1512ca
+- result: PASS. The first clean Python 3.11 E0 shell lane executed the active
+  scope control and found three release-authority/forbid overlaps rather than
+  the one documented overlap. The two crate-wide forbids now name only
+  `crates/ingest/src/**` and `crates/compliance/src/**`; the effective
+  release-authority permission is unchanged.
+- fail-before acceptance: PASS. The clean lane resolved all **21** constrained
+  packages, collected **283**, passed **282**, failed the exact active-scope
+  control, and skipped **0**. The failing assertion reported
+  `crates/compliance/Cargo.toml`, `crates/ingest/Cargo.toml`, and
+  `shell/intel_shell/app.py` instead of the required sole `app.py` overlap.
+  This was a gate finding, not a passing shell measurement.
+- focused acceptance: PASS. The unchanged failure-capable
+  `test_current_scope_has_exactly_one_release_forbid_overlap` passes **1/1**
+  after the runbook correction.
+- lifecycle acceptance: PASS. `cycle-check` accepts the corrected active scope
+  and its dated amendment.
+- scope acceptance: PASS. Only the active runbook changed. No crate source,
+  manifest, workflow, dependency, schema, protected artifact, public surface,
+  configured publisher, or ref changed.
+- golden-E2E delta: NOT MEASURED; no claim.
