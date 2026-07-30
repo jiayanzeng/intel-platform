@@ -45,6 +45,14 @@ Declared scope — crate-wide forbids corrected to source-tree forbids — 2026-
   The gate now names that exact test. Declared scope already permits
   `shell/tests/**`; no production, objective, acceptance, or done-condition
   permission changed.
+- **2026-07-30 — Step 6 declared-scope correction.** As specified by
+  `AGENTS.md`, the diff sub-rule first fired after the changed Step 6 evidence
+  commit. It found that the machine-readable table omitted the exact evidence
+  paths and manifest that Step 6's gate and steps explicitly require. The table
+  now allows only run `30513561141`'s receipt/bundle directory, the exact v0.25
+  deferred-audit report, and `config/protected-artifacts.json`. This makes the
+  executable table agree with the already-authorized gate; it adds no source,
+  release, publication, database, or other task authority.
 
 v0.24 closed and v0.15.8 published. Release parent `696c0863…`, closing commit
 `64002678…`, annotated object `dc5abe06…`, hosted run `30475988050` green on all
@@ -116,6 +124,9 @@ default has no answer for this case.
 | `allow` | `tools/cycle_check.py` |
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `config/invariant-rules.json` |
+| `allow` | `config/protected-artifacts.json` |
+| `allow` | `evidence/ci-runs/30513561141-1/**` |
+| `allow` | `evidence/v0.25/deferred-audit/report.json` |
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `release_authority` | `Cargo.toml` |

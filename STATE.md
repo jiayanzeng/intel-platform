@@ -59,6 +59,13 @@ advanced no release ref, and changed no source, public surface, dependency,
 lockfile, schema, or protected database. Step 7 remains behind its separate
 operator publication decision.
 
+The declared-scope diff sub-rule first became applicable after the changed
+Step 6 commit and rejected the evidence directory, exact report, and protected
+manifest because the runbook table omitted them even though the Step 6 gate
+and steps explicitly require all three. The dated runbook correction adds only
+the exact run `30513561141` directory, exact v0.25 report path, and manifest
+path. The corrected `cycle-check` passes; no task authority was broadened.
+
 **v0.25 ADMIT configures the reviewed SEC source without claiming a harvest
 (operator decision and measurement 2026-07-30).**
 

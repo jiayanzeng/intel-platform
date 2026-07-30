@@ -368,3 +368,70 @@ Entries are append-only; corrections are new dated entries.
   shell production source, public response, tag, or branch moved.
 - golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
   **11/11**, matching E0's finance-sector exclusion finding.
+
+### 2026-07-30 · RE-MEASURE — authenticated v0.25 candidate evidence
+
+- owner: Codex
+- commit: 31449d57a744571941658f34bf4c39e512506a2f
+- result: PASS. Authenticated hosted run **30513561141**, attempt **1**,
+  passed all seven executable jobs at exact evidence candidate
+  `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3`.
+- gate acceptance: PASS. The only remote mutation was the exact candidate push
+  to neutral ref `refs/heads/codex/v0.25-evidence-779fbe5` and its
+  authenticated evidence dispatch. Repository admission contains only that
+  run's seven receipt/bundle pairs, the release-posture deferred report, the
+  protected manifest, active runbook, and state record. No tag, `main`
+  advance, publication, source, public surface, dependency, lockfile, schema,
+  or protected database changed. The declared-scope diff sub-rule first fired
+  after the changed evidence commit and found the table omitted the exact
+  evidence and manifest paths that this gate already requires. Its dated
+  correction adds only run `30513561141`'s directory, the exact v0.25 report,
+  and the protected manifest; corrected `cycle-check` passed without
+  broadening task authority.
+- workflow-identity acceptance: PASS. Before dispatch, the remote branch's
+  `.github/workflows/ci.yml` blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd` matched the local candidate
+  blob exactly.
+- hosted-count acceptance: PASS. Hosted counts were workspace **135**, net
+  **55** (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, lifecycle **196 checked / 3 retracted / 196
+  matched / 0 exemptions**, and golden **11/11**.
+- shell-comparator acceptance: PASS. For both Python 3.11 and 3.12,
+  `tools/test_population.py` derived `collected=284`, `equivalent=true`, and
+  `equivalent_passed=284`: local passed **284 / skipped 0**, while hosted
+  passed **283** plus one named `on_site` skip. The skip node was
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`;
+  its declared reason was “on-site production audit requires protected
+  corpora and built cored”.
+- no-publisher-request acceptance: PASS. The hosted workflow contained no
+  harvest command. A case-insensitive search of the complete run log for
+  `sec.gov`, `usgaap.rss`, `harvest-arxiv`, `POST /ingest`, or an HTTP GET
+  returned no matches. No hosted job made a publisher request.
+- invariant acceptance: PASS. The hosted run and the post-admission local
+  rerun both reported `invariant-scan` **12/12 rules / 39 controls**; hosted
+  R10 reported **45** exemptions.
+- signed-evidence acceptance: PASS. The seven receipt JSON files and seven
+  Sigstore bundles under `evidence/ci-runs/30513561141-1/` bind the exact run,
+  attempt, candidate digest, neutral source ref, repository, workflow signer,
+  and GitHub-hosted runner identity.
+- deferred-audit acceptance: PASS. Release-posture `./run audit-deferred`
+  required attestations, accepted **7 / rejected 0** identities, confirmed the
+  single-run matrix complete, and recorded **5 deferred / 2 promoted / 0
+  implemented deferred subsystems**. At the largest evidenced archive of
+  **2,600 documents**, exact-cosine p95 was **8.640 ms**, below the
+  **16.264 ms** A3 request anchor. The **34,881-byte** report has SHA-256
+  `9d7c367060d2c9f28aaf17586f7e54ab782f6f8113b64326d730cccb05cfb342`;
+  `./run audit-deferred --rederive` reproduced it with attestations required.
+- protected-evidence acceptance: PASS. Fourteen signed hosted files plus the
+  report added fifteen schema-v2 manifest records, increasing the protected
+  count from **251** to **266** pins. `python3
+  tools/evidence_artifacts.py validate`, `./run verify-artifacts`, and
+  `./run evidence-report` passed; both protected databases remained exact.
+- remote-disposition acceptance: PASS. Read-only post-dispatch resolution
+  found remote `main` unchanged at
+  `64002678672a601804e5f67886c73fffb4d212c8`, historical
+  `refs/heads/candidate/v0.16.0` unchanged at
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and the neutral evidence ref at
+  the exact v0.25 candidate. No `v0.16.0` tag exists.
+- golden-E2E delta: **0**. Hosted and mandatory standalone golden each passed
+  **11/11**.
