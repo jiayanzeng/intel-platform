@@ -138,3 +138,40 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
   model-server session, historical ref movement, protected-byte change,
   dependency change, route change, or public value-domain change occurred.
+
+### 2026-07-30 · TRIGGER-IDENTITY — freshness bound to the active cycle
+
+- owner: Codex
+- data commit: 5342663f89e3e2b499bfc1bf42b15c44705de58b
+- commit: 3e80d0b79f7151cc4ee28b516d73d46e09b85b1c
+- result: PASS. The mandatory data-first commit re-measured only the two
+  trigger-bearing architecture rows with row-owned `v0.28` and ISO-date
+  tokens. The rule-second commit removes the header fallback, preserves
+  v0.23-forward own-cell date freshness, and requires v0.28-forward exact
+  active-cycle identity resolved through `resolve_cycle(root)`. No closed
+  runbook changed.
+- separate-commit acceptance: PASS. Data commit `5342663…` passed the
+  pre-tightening `cycle-check`; rule commit `3e80d0b…` passed the tightened
+  checker. The implementation hashes are distinct, adjacent, and ordered data
+  before rule.
+- planted-control acceptance: PASS by execution. R12 retains its generic
+  missing-date mutation as control 15 and gains two independent controls:
+  control 16 catches a row with no own-cell date even when the header carries
+  `2026-07-30`; control 17 catches a `v0.27` row supplied to the active v0.28
+  checker. Each mutation's configured `expected_fail` matched the real
+  self-test output.
+- invariant acceptance: PASS. `./run invariant-scan --self-test` derived
+  **12/12 rules / 48 controls**, including R12 **20/20**. No aggregate control
+  total is hardcoded in tooling or tests.
+- lifecycle acceptance: PASS. Focused
+  `shell/tests/test_cycle_check.py` passed **46/46**. The real
+  `./run cycle-check` passed with active v0.28, 25 closed execution runbooks,
+  three historical runbooks, and both governed live tables in the new format.
+- golden-E2E delta: **0**. The first sandboxed invocation could not bind its
+  isolated loopback port and was recorded as an environment non-result. The
+  permission-complete execution of the exact `./run golden` entry point passed
+  **11/11** byte-identically.
+- publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
+  model-server session, closed document, production runtime source, dependency,
+  schema, protected artifact, golden input, public route, serialized value
+  domain, tag, or branch ref changed.
