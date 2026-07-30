@@ -246,6 +246,12 @@ warnings; clippy is an independent blocking gate.)
   `crates/ingest/src/lib.rs`. Registered, self-testing invariant R4 is this
   repository's credential control. `./run export-check` fails if the omitted
   source is absent from the generated review export.
+- **Keep the review export within its executable bound.** `export-check`
+  rejects an export above 3,000,000 bytes, derives exactly three retained
+  execution cycles (the active cycle plus two prior) from the cycle declaration,
+  and rejects the pinned SEC RSS body or any `docs/state-archive/**` content in
+  the export. Repository bytes and protected pins remain untouched by these
+  review-scope exclusions.
 
 These are review-export operating rules, not additions to the HC series.
 

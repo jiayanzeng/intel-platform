@@ -192,6 +192,38 @@ re-derived independently and every one held: 12 rules / 46 planted controls from
 definitions, a two-way Python matrix, and one schedule-gated `drift`; 180
 exported files. **No claim in that report was refuted.**
 
+### 2026-07-30 · Executable review-export boundary
+
+Step 5 — byte ceiling and exact derived retention — 2026-07-30
+
+The Step 4 dependency gate was open, and the existing
+`python3 tools/export_check.py <export>` interface proved sufficient; forbidden
+`run` was not edited. The declared ceiling is **3,000,000 bytes**. The first
+implementation-tree export measured **2,481,041 bytes / 152 files**, leaving
+**518,959 bytes / 20.92%** headroom. This round ceiling permits the remaining
+cycle records while keeping the corpus well below the former 4,975,987-byte
+near-limit state.
+
+The checker derives the active cycle and its two immediately prior execution
+cycles from `cycle_identity` and the one depth constant, resolves each matching
+progress record, and rejects either a missing retained document or any older
+cycle document. It discovers the repository's unique pinned SEC capture and
+rejects its exact path, and independently rejects every
+`docs/state-archive/**` path. The existing **99** Git-derived sources and **7**
+required paths remain unchanged.
+
+Five planted constructions independently exercised the over-ceiling, retained
+missing, older present, pinned-body present, and State-archive present rejection
+paths before the valid construction passed. Focused tests pass **8/8**; the full
+shell population passes **303/303** with zero skips; `cycle-check` passes with
+the new third governed architecture row; registered invariant self-test remains
+**12 rules / 49 controls**; and standalone golden remains **11/11**, delta zero.
+The lifecycle baseline remained **220 checked / 220 matched** before this
+mandatory completion record; the only following count increase is this active
+task's required checkbox. The final implementation-tree export, including this
+status and checklist record, passes at **2,485,846 bytes / 152 files**, leaving
+**514,154 bytes / 20.68%** headroom.
+
 **One reviewer hypothesis was refuted by measurement and is recorded as an error,
 not a finding.** The reviewer suspected T7 and NEGATIVE-CACHE Decision B were
 trigger-shaped residuals living in ungoverned `ARCHITECTURE.md` prose, because
@@ -677,7 +709,7 @@ behind the existing `python3 tools/export_check.py <export>` interface.
 does not match the derived one, fails — **and the failure has been produced, not
 described.**
 
-- [ ] **EXPORT-BOUND**
+- [x] **EXPORT-BOUND**
 
 ---
 
