@@ -303,6 +303,168 @@ what the system would report if it lost a filing.
 
 ---
 
+## Execution records
+
+### E0 execution record — 2026-07-30
+
+**Entering matrix.** `./run ci-local` passed all twenty jobs at the cycle
+activation descendant. The workspace carried **139** tests; the two net lanes
+carried **56** tests (**30** ingest, including the SEC replay, and **26**
+cored). Current and locked Rust 1.78 warning-denied builds, clippy, fmt,
+ShellCheck, floor byte-compilation, the embedded golden, and all **12**
+registered invariant rules / **44** planted controls passed. The first
+sandboxed invocations of `ci-local` and standalone golden could not bind a
+loopback listener and were recorded as environment non-results; both passed at
+their actual entry points when rerun with loopback permission. Standalone
+golden passed **11/11**.
+
+Independent clean constrained Python 3.11.4 and 3.12.13 rebuilds each collected
+**291**, passed **291**, failed **0**, and skipped **0**; each named the one
+collected `on_site` test and emitted the accepted Starlette deprecation warning.
+The required comparator, run over their machine-readable summaries, derived:
+
+`test-population-compare: {"collected":291,"equivalent":true,"equivalent_passed":291,"hosted":{"on_site_skipped":0,"passed":291,"skipped":[]},"local":{"passed":291,"skipped":0},"schema_version":1}`
+
+Standalone `evidence-report`, `cycle-check`, `checklist-audit`,
+`progress-check`, `version-check`, and `invariant-scan` passed. Root
+`export-check` passed **99 derived / 7 required / 179 exported** after its
+sandboxed npm lookup was recorded as an environment non-result and the command
+was rerun with network permission.
+
+**G1 — RSS has no window-position state.** The RSS fetch path at
+`crates/ingest/src/rss.rs:26-42` either reads the complete fixture or calls
+`net::get_text`; `Source::fetch` at lines 58-86 reparses every descendant
+`item`. It never reads or writes `SourceContext.cursors`; cored states at
+`apps/cored/src/main.rs:812-815` that RSS ignores the cursor adapter.
+`SqliteStore::append_new` at `crates/store/src/sqlite.rs:201-210` inserts the
+present ids and runs canonical assignment only when its inserted count is
+positive. Finally, `/ingest` at `apps/cored/src/main.rs:818-871` reports the
+number fetched, the number newly inserted, and per-source `ok`, document count,
+and error.
+
+No RSS cursor, watermark, response field, log line, or test retains the oldest
+or newest member of the preceding latest-200 window or reports an id that
+disappeared. The existing repeat-ingest coverage establishes idempotence for
+the same ids, not window continuity. Executing cored offline against the pinned
+body and a fresh archive produced HTTP 200 with
+`{"fetched":200,"new":200,"results":[{"sector":"finance","source_id":"sec-edgar-usgaap","ok":true,"documents":200,"error":null}]}`
+and, on the identical second ingest, HTTP 200 with the same source result but
+`"new":0`. Between calls, a failure-capable SQLite trigger was installed to
+abort any `canonical_id` update; the second call still returned 200, proving
+canonical reassignment did not run when `append_new` returned zero. The archive
+held 200 documents, zero null canonical ids, and zero cursor rows.
+
+**If one or more filings leave the latest-200 window before any poll observes
+them, a completely advanced replacement window reports ordinary success —
+`fetched=200`, `new=200`, source `ok=true` — and reports no loss.**
+
+**G2 — all draft quantities confirmed from the pinned bytes.** An independent
+byte parse measured **892,641** bytes at SHA-256 `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`
+and the channel description: “This is a list of up to 200 of the latest filings
+containing financial statements tagged using the US GAAP or IFRS taxonomies,
+updated every 10 minutes.” There are **200** items, newest-first. The oldest is
+`Wed, 29 Jul 2026 16:13:52 EDT`, the newest is
+`Wed, 29 Jul 2026 17:31:22 EDT`, and the span is **4,650 seconds / 77.5
+minutes**. Across the timestamp-sorted items, the median consecutive gap is
+**11.0 seconds** and the maximum is **215.0 seconds**; the EDT hour counts are
+`{16: 133, 17: 67}`. Channel `lastBuildDate` and `pubDate` are both
+`Wed, 29 Jul 2026 21:50:03 EDT`. The 03:34:00Z and 09:18:39Z captures were
+byte-identical, so every quantity, including `lastBuildDate`, was identical at
+both capture times. Every drafted number is confirmed.
+
+**G3 — validators were neither captured nor usable.** A repository-wide search
+found no committed live-response `ETag` or `Last-Modified`; the v0.26 record
+captured absence of `Location` and `Retry-After` only. At
+`crates/ingest/src/net.rs:149-166`, the document client sets the installed
+`User-Agent`; the locked reqwest 0.11.27 builder supplies
+`Accept: */*`. Lines 171-178 then issue exactly
+`client.get(url).send()` with no request-specific header. Thus the effective
+application headers are `User-Agent: intel-platform/<version> (research
+prototype; contact: <operator contact>)` and `Accept: */*`, with no
+`If-None-Match` or `If-Modified-Since`. This is an observation gap, not
+permission to issue another request: each successful poll currently transfers
+the complete 892,641-byte body.
+
+**G4 — admission-language classification.** The admission-describing statements
+were enumerated as follows:
+
+| Statement | Classification |
+|---|---|
+| `ARCHITECTURE.md:49`, the manifest holds immutable artifact facts and chained admissions | both, as a file-level inventory statement |
+| `ARCHITECTURE.md:67`, “Protected-artifact admission is an executable append-only chain” | **neither when “protected-artifact” is read to cover both containers** |
+| `ARCHITECTURE.md:68-70`, current artifact SHA equals newest admission and `prior_sha256` chains | `artifacts[]` |
+| `ARCHITECTURE.md:70-72`, every admission record names task/date, wire evidence, approval, and retroactivity | `artifacts[]` |
+| `ARCHITECTURE.md:72-76`, validate the chain and verify recorded bytes/facts; initial A2 records are retroactive | `artifacts[]` for the chain and initial records; both containers are byte-validated by the named commands |
+| `AGENTS.md:412-415`, the two databases' provenance authority and immutability | `artifacts[]` |
+| `AGENTS.md:417-421`, “Protected-artifact admission is executable under manifest schema v2” and a new artifact/hash requires a record | **neither when “protected-artifact” or “new … expected hash” is read to cover both containers** |
+| `AGENTS.md:421`, never edit or replace an earlier admission record | `artifacts[]` |
+| `AGENTS.md:422-427`, run both validation commands before a manifest proposal | both |
+| `AGENTS.md:429-431`, one command rejects a broken chain and the other measures bytes/facts | `artifacts[]` for the chain; both for byte validation |
+| `AGENTS.md:431-433`, the two existing v0.10/A2 records are retroactive | `artifacts[]` |
+
+The generator is the pair of unqualified opening claims at
+`ARCHITECTURE.md:67` and `AGENTS.md:417-421`: schema 2 gives chained
+`admission` only to `artifacts[]`, while `pinned_files[]` rejects that key.
+
+**G5 — priced paths to one two-origin production runtime.**
+
+1. A documented operator sequence can change no repository or pinned byte:
+   derive a temporary config from committed configuration, omit the arXiv
+   fixture, set `max_pages: 1`, retain fixtureless SEC, run the net cored binary
+   against a fresh archive, and select only both named sources. A successful
+   bounded pass is exactly **4 publisher requests** — one robots and one content
+   request to each origin — and changes **0 pins**.
+2. Editing `config/core.json` to express that same construction also costs
+   exactly **4 publisher requests** and changes **0 currently pinned files**, but
+   it changes core-owned production configuration and is forbidden this cycle.
+3. Generalizing the existing `harvest-arxiv` dispatcher while retaining its
+   arXiv reachability preflight costs **5 publisher requests** on a successful
+   bounded pass: the preflight plus the four shipped-gate requests. It changes
+   the one hash-pinned `run` byte surface, so the current pin would fail and the
+   path is forbidden.
+4. A new bounded multi-origin `run` subcommand can avoid the preflight and cost
+   exactly **4 publisher requests**, but it still changes that same one pinned
+   `run` surface and is forbidden.
+5. A direct two-connector observer can cost exactly **4 publisher requests** and
+   change **0 pins**, but it omits the cored/store runtime and therefore does not
+   answer Step 6. Deferral costs **0 requests**, changes **0 pins**, and leaves
+   the condition unmeasured.
+
+These counts assume the required non-error, no-redirect, no-retry bounded
+observer; any construction unable to enforce those bounds is not a Step 6 path.
+
+**G6 — duplicate-window execution.** The fresh-archive execution described in
+G1 measured first ingest **200 fetched / 200 new / `ok:true`**, second ingest
+**200 fetched / 0 new / `ok:true`**, and proved with a failure-capable trigger
+that canonical reassignment did not run the second time.
+
+**G7 — question reserved for R-CLOSE.** Does `ARCHITECTURE.md §8`'s phrase
+“observable route, response body, schema, or other named surface” include the
+core-internal loopback `/ingest` response body, making an added coverage field
+a minor release? The text is not restricted to `/v1/*` and `/ingest` has a
+named serialized body, which argues yes; its explicitly internal, non-public
+role argues for distinguishing it from the public-value-domain rule. E0 records
+the ambiguity and leaves the reusable criterion to Step 8.
+
+**Artifacts, manifest, and published objects.** The manifest measured **165,488
+bytes**. Two consecutive full `verify-artifacts` runs measured **0.21 s / 0.23
+s real**; schema validation passed with two artifacts and **286 pinned files**,
+and both databases and all pins matched. `evidence-report` measured
+`data/core.db` at 1,764 documents / one cursor and `data/live-smoke.db` at 2,600
+documents / one cursor, both integrity `ok`. Read-only local object
+verification found annotated tag object
+`ae593e882898b9c49d5e91e2d50b6ca1f02ac49b`, tagged closing commit
+`397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, and its sole parent release commit
+`b9af84b8785bcd52c16ab0225d66386ecd872c4d`. Activation's read-only remote
+verification found remote `main` and peeled `v0.16.1` at that same closing
+commit and the same annotated tag object.
+
+**Boundary.** E0 made no publisher request, created/moved/deleted no working-
+repository ref, and left `STATE.md`, `config/core.json`, and
+`config/schedule.json` byte-unchanged.
+
+---
+
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
 
 **Objective.** Turn G2's numbers into the recorded quantity a cadence decision can
@@ -637,7 +799,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with comparator citation; G1 answered by reading and
+- [x] **E0** — entering matrix with comparator citation; G1 answered by reading and
   execution with today's `/ingest` report stated; **G2's drafted numbers confirmed
   or refuted from pinned bytes**; G3's validator gap recorded with `get_text`'s
   headers quoted; **G4's true-of-neither sentences named**; G5's paths priced with
