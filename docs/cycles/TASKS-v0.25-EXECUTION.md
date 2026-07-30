@@ -1106,10 +1106,29 @@ publication.**
   non-exercise stated; deferral table updated both ways
 - [x] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; **no
   publisher request by any hosted job**; run id recorded
-- [ ] **R-CLOSE** — version and its written criterion recorded; three
+- [x] **R-CLOSE** — version and its written criterion recorded; three
   determinations recorded with evidence; non-exercise stated; G5 amendment
   recorded; scope permission usage recorded; T7 not described as nearer its
   trigger
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-30
+- **Release disposition:** release (as of 2026-07-30)
+- **Release:** `v0.16.0`
+- **Release commit:** `7baddb305a4357ec2dc2a35757528c1a6dc13f1e`
+- **Evidence candidate:** `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3`
+- **Candidate hosted run:** `30513561141` attempt 1
+- **Publication trigger:** the operator's explicit decision to publish the
+  authenticated missing publisher-permission rights ground and the reviewed
+  SEC source that uses it; no corrective trigger was visible at entry.
+- **Closing evidence:** all 7 executable hosted jobs green at the exact
+  candidate; 7 accepted / 0 rejected signed identities with attestations
+  required; comparator-derived equivalence in both Python lanes; release-parent
+  local definition of done all 20 jobs; invariant 12/12 rules / 39 controls;
+  golden 11/11; protected evidence 266/266.
 
 ---
 

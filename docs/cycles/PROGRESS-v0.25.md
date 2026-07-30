@@ -435,3 +435,68 @@ Entries are append-only; corrections are new dated entries.
   the exact v0.25 candidate. No `v0.16.0` tag exists.
 - golden-E2E delta: **0**. Hosted and mandatory standalone golden each passed
   **11/11**.
+
+### 2026-07-30 · R-CLOSE — v0.16.0 tagged close
+
+- owner: Codex
+- commit: 7baddb305a4357ec2dc2a35757528c1a6dc13f1e
+- result: PASS. Release implementation commit
+  `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` prepares v0.16.0 and is the
+  untagged immediate parent of the closing tree. No corrective trigger was
+  visible at entry; the publication trigger is the operator's explicit
+  decision to ship the authenticated publisher-permission rights ground and
+  the reviewed SEC source that uses it.
+- closing-evidence acceptance: PASS. Authenticated candidate
+  `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run `30513561141` attempt
+  **1** remain separate from the release parent. All seven executable hosted
+  jobs passed. The release-grade verifier required attestations and accepted
+  **7 / rejected 0** signed identities with the complete job/matrix set.
+- population acceptance: PASS. Local Python 3.11.4 and independent Python
+  3.12.13 each collected **284**, passed **284**, failed **0**, and skipped
+  **0**. `tools/test_population.py` derived `collected=284`,
+  `equivalent=true`, and `equivalent_passed=284`. The candidate-hosted
+  comparator separately derived the same **284**-test population from hosted
+  **283** passed plus the one named `on_site` skip.
+- release-parent acceptance: PASS. `./run ci-local` passed all **20** jobs with
+  workspace **135**, net **55** (**29 + 26**), warning-denied current and
+  locked Rust 1.78 builds, clean rustc/clippy/fmt/ShellCheck gates,
+  `invariant-scan` **12/12 rules / 39 controls**, and embedded golden
+  **11/11**. Mandatory standalone golden passed all **11** checks.
+- evidence acceptance: PASS. All **266** protected pins and both protected
+  databases remained exact. Root `export-check` passed **96** derived sources,
+  **7** required, and **170** exported. Release-posture
+  `./run audit-deferred --rederive
+  evidence/v0.25/deferred-audit/report.json` required attestations and
+  reproduced all **7** rows.
+- release-identity acceptance: PASS. v0.16.0 is minor because adding
+  `PublisherPermitted` expands the value domain of the already-public
+  `license` field. The standing surface-movement default had no answer for
+  value-domain expansion; the dated `AGENTS.md` criterion supplies it. No
+  invariant was added, and counts remain **12 rules / 39 controls**. The exact
+  **38** `v0.15.8..7baddb305a4357ec2dc2a35757528c1a6dc13f1e` paths are
+  classified once in seven disjoint groups in `STATE.md`.
+- determination acceptance: PASS. Licence, terms, and feed-shape
+  determinations are affirmative with their evidence recorded. Admission
+  configured `sec-edgar-usgaap` but made no harvest, so no live RSS parsing,
+  paging, cursor durability, or multi-origin runtime behavior was exercised.
+  Two publishers are configured; only `arxiv-cs` has ever been fetched.
+- scope acceptance: PASS. `crates/core/**` was used for
+  `PublisherPermitted`; the conditional `crates/store/src/sqlite.rs` permission
+  was unused because the existing text column and parse boundary suffice.
+  E0's G5 assertion was corrected as a runbook error on 2026-07-30: golden
+  reads the live config but excludes `finance`, so the outcome remains
+  **11/11**.
+- protocol acceptance: PASS. The closed record names the existing release
+  parent and candidate evidence, omits the not-yet-knowable tag-object field,
+  and requires the annotated v0.16.0 tag to target this immediate child and
+  move with `main` atomically. Exact tag, closing-commit, and post-push-run
+  identities belong only in the first dated forward append.
+- residual acceptance: PASS. A4, editable L1, R3/R4, the measured-value
+  heuristic, T7, NEGATIVE-CACHE Decision B, scheduled L2, FastAPI
+  version-literal relocation, and live multi-publisher behavior remain open.
+  The second configured source is not T7's second-concurrent-harvester trigger.
+- historical-ref acceptance: PASS. Existing
+  `refs/heads/candidate/v0.16.0` remains v0.15.1 evidence at
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong
+  to this release and must not be renamed or deleted.
+- golden-E2E delta: **0**.
