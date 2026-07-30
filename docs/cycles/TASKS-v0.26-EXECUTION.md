@@ -329,6 +329,140 @@ parser result.
 
 ---
 
+## Execution records
+
+### E0 execution record — 2026-07-30
+
+**Entering matrix.** `./run ci-local` passed all twenty stages. The Rust
+workspace carried **135** tests and the two `net` lanes carried **55** tests
+(29 ingest and 26 cored); current and Rust 1.78 warning-denied builds, clippy,
+fmt, ShellCheck, and floor byte-compilation passed. Clean constrained Python
+3.11.4 and 3.12.13 environments each collected **284**, passed **284**, skipped
+**0**, and emitted the same accepted Starlette deprecation warning. The
+required comparator, run against their machine-readable summaries, reported:
+
+`test-population-compare: {"collected":284,"equivalent":true,"equivalent_passed":284,"hosted":{"on_site_skipped":0,"passed":284,"skipped":[]},"local":{"passed":284,"skipped":0},"schema_version":1}`
+
+Standalone `cycle-check`, `checklist-audit`, `progress-check`,
+`version-check`, and `invariant-scan` passed. The latter executed **12/12
+rules and 39 controls**. Standalone `./run golden` passed **11/11**, including
+the true-positive hamming-12 collapse. Root `export-check` passed **96 derived
+/ 7 required / 172 exported**. The first clean 3.11 lane's live
+trigger-table-count failure and its exact correction are recorded separately
+in the dated runbook amendment and `ACTIVATE-CORRECTION` progress entry; the
+numbers above are the clean rerun after that correction.
+
+**G1 — two authorities, not one.** Ingest-time canonical assignment reads
+`crates/store/src/sqlite.rs:32`, `const DEDUP_MAX_DISTANCE: u32 = 16;`; its
+five production callers at lines 207, 475, 493, 664, and 850 all pass that
+constant. View-time collapse reads the independent default at
+`crates/view/src/lib.rs:44`, `dedup_max_distance: 16`, which line 52 passes to
+`dedup_near`. R1's exact claim is: “The five enumerated production store
+callers each invoke assign_canonical_ids_tx exactly once, and no other
+production canonical-identity helper call exists.” Its exact scope is:
+“Production Rust; the allow-list is crates/store/src/sqlite.rs in append_new,
+update_document, delete_document, rematerialize_canonical_ids, and
+commit_harvest_page, each calling assign_canonical_ids_tx exactly once.
+Test-only Rust is excluded.” R1 observes caller topology, not either threshold
+value. R5's exact claim is: “Every production canonical-identity call site
+binds its distance to the one private DEDUP_MAX_DISTANCE constant.” Its exact
+scope is: “All production Rust calls to assign_canonical_ids,
+assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance;
+test-only Rust is excluded.” R5 observes the store constant and calls, not
+`ViewParams` or `dedup_near`. Either literal can therefore change while the
+other stays 16 without R1 or R5 firing.
+
+**G2 — accepted replay; accidental decoding safety.** A disposable clone added
+only a temporary integration probe and executed the shipped `RssSource`
+against
+`observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml`. After correcting an
+initial probe-only relative-path error, the executed parser passed **1/1** and
+reported `parser-result=accepted documents=200`. This is replayed real bytes,
+not a fixture and not a live request. The locally resolved reqwest 0.11.27
+implementation makes `Response::text()` call `text_with_charset("utf-8")`:
+an HTTP `charset` wins when present, and absent one defaults to UTF-8; it does
+not inspect the XML declaration. The captured response had
+`Content-Type: text/xml` without a charset, so the net path would decode as
+UTF-8 before roxmltree. The body contains zero bytes outside printable ASCII,
+tab, CR, and LF, so this snapshot's `windows-1252` declaration is lossless by
+accident of its pure-ASCII bytes, not by property of the feed. roxmltree
+received `&str`, accepted that declaration, and the shipped parser built 200
+documents.
+
+**G3 — observation unpinned.** Manifest schema 2 enumerated **2 artifacts plus
+266 pinned files**, with **zero** path under `observations/`. The SHA-256
+written in the observation prose is therefore not executed by any control.
+Before Step 2 derives document-set measurements, it must append a chained
+admission and pin all five v0.25 observation files.
+
+**G4 — structured partial failure with a successful pipeline exit.** An
+isolated offline cored using a fresh temporary archive returned HTTP success
+for `POST /ingest {"sectors":["finance"]}` with this exact body:
+
+`{"fetched":1,"new":1,"results":[{"sector":"finance","source_id":"filings-digest","ok":true,"documents":1,"error":null},{"sector":"finance","source_id":"sec-edgar-usgaap","ok":false,"documents":0,"error":"http: no fixture configured and binary built without the 'net' feature"}]}`
+
+The shell `quant-desk` pipeline against the same core printed the SEC
+per-source error, continued through analysis and brief generation, and exited
+**0**. A repository test search found no test of either the exact fixtureless
+RSS offline result or the pipeline's exit-on-per-source-`ok:false` behaviour;
+existing tests cover configured-source admission and other source-selection
+cases.
+
+**G5 — zero SEC requests from the arXiv harness.** In a disposable clone, an
+exact copy of `run` was instrumented only with external-effect capture doubles
+and dispatched through the bare `harvest-arxiv` command. The capture double
+logged every would-be curl and therefore could expose a `sec.gov` request. It
+captured three curls—arXiv reachability, loopback ingest, and loopback
+view—and **zero** SEC-origin requests. The actual ingest body was exactly
+`{"sectors":["science"],"sources":["arxiv-cs"]}`. A separately started
+offline cored consumed the generated live config and that exact body; its
+result contained only `arxiv-cs`, confirming the core selector did not admit
+SEC. This measures the dispatcher construction and source filtering under
+failure-capable capture; it is not an arXiv or SEC live-wire claim.
+
+**G6 — inherited two-hour cadence.** Executing `load_schedule` and
+`build_jobs` over the committed schedule produced `quant-desk:full` at
+**7,200 seconds**. Because the job has neither a `sources` map nor a sector
+restriction, scheduler resolution selects one full job at the job interval.
+On a net core it therefore selects every entitled finance source, including
+`sec-edgar-usgaap`, every two hours. No per-source cadence is required for the
+source to run.
+
+**G7 — one viable unpinned-byte path.**
+
+1. Generalizing `harvest-arxiv` would edit the hash-pinned and presently
+   forbidden `run`; it needs operator authorization, implementation and tests,
+   and a chained admission replacing the pin.
+2. Adding a new `run` subcommand has the same cost and prohibition.
+3. A documented operator sequence can change no pinned bytes: run
+   `verify-artifacts`, build cored with `net`, use the committed SEC config and
+   the monitored `INTEL_CRAWLER_CONTACT` without printing it, select a fresh
+   temporary database and unused loopback port, start cored, post
+   `{"sectors":["finance"],"sources":["sec-edgar-usgaap"]}`, capture bounded
+   status/log/request evidence, and stop it. This is viable for Step 6 if the
+   operator authorizes it, but has the operational cost of manual lifecycle,
+   explicit bounds, and independently enforced fresh-target refusal.
+4. No qualifying already-running net cored was found; such a process would
+   also lack the fresh-archive and provenance evidence.
+5. A direct connector probe omits the core/store runtime and is therefore not
+   the harvest Step 6 specifies.
+
+**Artifacts and refs.** Two consecutive `verify-artifacts` runs measured
+**0.11 s / 0.09 s real**, all **266** pins and both protected databases exact.
+The manifest measured **154,205 bytes** and schema validation passed with two
+artifacts and 266 pinned files. Read-only remote re-verification resolved
+`main` and peeled `v0.16.0` to closing commit
+`c66c2b02191e3ca3126dddc3c004b175899b414e`, annotated tag object
+`54f8cb2f89ed53d9e0b485f6cd46924a51e41813`, and the historical candidate
+branch to `3481e4ba85d65c927b7d0fc3a430bc04fb094394`. Local tag type, peel, and
+closing-parent relation also matched; all refs were read-only.
+
+**Boundary.** E0 made no publisher request, created or moved no working-
+repository ref, and did not edit `STATE.md`, `config/core.json`, or
+`config/schedule.json`.
+
+---
+
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
 
 **Objective.** Produce, by executing shipped code over the committed wire body,
@@ -662,7 +796,7 @@ publication.**
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with comparator citation; G1's two declarations
+- [x] **E0** — entering matrix with comparator citation; G1's two declarations
   quoted with R1/R5 coverage stated; **G2 settled by executing the parser over
   committed bytes**; G3's manifest enumeration with its consequence; G4 settled
   by execution; **G5 settled by captured request evidence**; G6 from the
