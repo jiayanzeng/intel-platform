@@ -307,3 +307,64 @@ Entries are append-only; corrections are new dated entries.
   correctly classified as binary, staged diff hygiene passed.
 - golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-30 · ADMIT — SEC EDGAR RSS configured without harvest
+
+- owner: Codex
+- commit: 088712197c3e86e93f36a6094552dd40181e5d2c
+- result: PASS. The operator admitted `sec-edgar-usgaap` under `finance` at
+  `https://www.sec.gov/Archives/edgar/usgaap.rss.xml`, classified
+  `PublisherPermitted`. The source is bound to the reviewed path, the
+  monitored-contact identity, fresh publisher-robots plus operator deny-list
+  enforcement, and total automated traffic at or below the SEC's then-current
+  published ceiling.
+- gate acceptance: PASS after one measured correction. The Step 5-required
+  live-RSS deferral row increased the governed trigger-row population from 11
+  to 12, exposing that the gate omitted its executable count control,
+  `shell/tests/test_cycle_check.py`. The dated amendment added that exact path,
+  which declared scope already permitted; no production, objective,
+  acceptance, or done-condition permission changed.
+- configuration acceptance: PASS. `config/core.json` contains the exact
+  finance RSS source, `PublisherPermitted`, and explicit
+  `robots_on_missing: "deny"`. SEC serves a policy today, so absence is not
+  the reviewed condition and fails closed instead of copying arXiv's
+  publisher-specific 404 exception.
+- config-control acceptance: PASS. The focused test pins the sector, global id
+  uniqueness, id, type, URL, licence, and conservative missing-policy value.
+  Its fail-before run found no source and failed; the implemented control
+  passed.
+- no-harvest acceptance: PASS. Step 5 made no publisher request and ran no live
+  harvest. Two publisher origins are configured, but only `arxiv-cs` has ever
+  been harvested. The production origin-keyed robots cache and per-host limiter
+  have never handled both origins in one runtime; live RSS fetching, repository
+  parsing of the observed body, paging, repeated-fetch behavior, near-duplicate
+  behavior, and cursor durability remain unmeasured.
+- deferral acceptance: PASS. The second-publisher row closed on 2026-07-30.
+  The first-live-RSS-harvest row is deferred to an operator-authorized v0.26
+  runbook with declared live-RSS scope and fresh publisher gates.
+- shell acceptance: PASS. The first complete rebuilt lanes each collected 284,
+  passed 283, and failed the same stale trigger-row expectation; after the gate
+  correction, focused controls passed 2/2 and clean Python 3.11 and 3.12 lanes
+  each passed **284 collected / 284 passed / 0 skipped** with the same accepted
+  third-party warning. `python3 tools/test_population.py
+  /private/tmp/intel-v025-admit-py311.log
+  /private/tmp/intel-v025-admit-py312.log` derived `collected=284`,
+  `equivalent=true`, and `equivalent_passed=284`, with local passed 284/skipped
+  0 and comparison passed 284/`on_site` skipped 0. The second input was local
+  Python 3.12, not hosted evidence. The draft's nonexistent `compare`
+  subcommand failed argument parsing; the cited command is the successful
+  actual entry point.
+- complete-matrix acceptance: PASS. `./run ci-local` passed all **20** jobs at
+  the admitted configuration: workspace **135**, net **55** (**29** ingest +
+  **26** cored), warning-denied current and locked Rust 1.78 lanes, clean
+  clippy/fmt/ShellCheck, Python 3.11 **284/284**, embedded golden **11/11**,
+  all **251** pins, and protected databases **2/2**. Independent Python 3.12
+  passed **284/284**. `version-check`, `cycle-check`, JSON validation, and diff
+  hygiene passed.
+- invariant and evidence acceptance: PASS. `invariant-scan` remains **12/12
+  rules / 39 controls**. Manifest schema 2 validated; all **251** protected
+  pins and both protected databases remained exact. No protected corpus, pin,
+  database, schema, dependency, lockfile, ingest source, compliance source,
+  shell production source, public response, tag, or branch moved.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11**, matching E0's finance-sector exclusion finding.
