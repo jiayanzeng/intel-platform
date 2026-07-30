@@ -92,3 +92,98 @@ Entries are append-only; corrections are new dated entries.
   golden.
 - publisher/protected acceptance: PASS. No publisher or scheduler command ran,
   and no protected or pinned file changed.
+
+### 2026-07-31 · E0 — entering state rebuilt and G1–G7 settled
+
+- owner: Codex
+- commit: 64ebc2eaa2955a6f0974a5654deddb97c31eece0
+- result: PASS. The permission-complete clean rerun passed all **20/20**
+  `ci-local` jobs. The entering closure and audit commits were where the
+  corrected activation record placed them, the E0 entry tree after the
+  committed scope-fixture correction was clean, and no decision gate tripped.
+- complete-suite acceptance: PASS. Warning-denied Rust execution passed
+  **146** workspace tests and **62** net tests (**32** ingest including three
+  replay tests, plus **30** cored), locked Rust 1.78, clippy, rustfmt,
+  ShellCheck, `invariant-scan` **12 rules / 49 controls**, embedded golden
+  **11/11**, protected-artifact verification, and persisted-fingerprint
+  verification. The separately required post-task `./run golden` passed
+  **11/11**.
+- constrained-Python acceptance: PASS. Clean Python **3.11.4** and **3.12.13**
+  environments each resolved all **21** exact constraints and each reported
+  `collected=303`, `passed=303`, `failed=0`, and `skipped=[]`.
+  `tools/test_population.py` independently derived `collected=303`,
+  `equivalent=true`, and `equivalent_passed=303`, with local and comparison
+  populations both passed 303 / skipped 0. Each lane emitted the same one
+  accepted `StarletteDeprecationWarning`; no dependency byte changed.
+- protected-artifact acceptance: PASS. Manifest validation reported schema 2,
+  **2 artifacts / 316 pinned files**. Two complete verification runs matched
+  every pin and both protected databases at **0.11 s / 0.10 s real**. The
+  unchanged manifest is **182,774 bytes**. This forward-corrects the activation
+  record's false **182,780-byte** transcription without changing the manifest,
+  pin count, or prior verification outcome.
+- G1 acceptance: PASS by execution. A no-hardlink throwaway clone with active
+  v0.29 and the stale `2[0-5]` glob ran the real export and exited 1 with
+  `unexpected cycle document outside retention depth 3` for exactly
+  `docs/cycles/PROGRESS-v0.26.md` and
+  `docs/cycles/TASKS-v0.26-EXECUTION.md`, followed by
+  `FAIL (2 defect(s); derived_sources=99, exported=154)`. The configured local
+  lane has 20 jobs with no export-check and the hosted workflow has zero
+  `export` occurrences.
+- G2 acceptance: PASS; Step 2 is unblocked. The proposed automatic check reads
+  tracked `repomix.config.json` and compares its retention pattern with an
+  independent derivation from the active cycle and
+  `CYCLE_RETENTION_DEPTH`, without an export in existence. `export-check`
+  inspects an operator-created artifact's actual paths, size, and excluded
+  bytes. These are different objects, so the proposal neither duplicates the
+  operator-local check nor reopens v0.22 G3.
+- G3 acceptance: PASS by reproduction. A throwaway active-v0.25 clone with
+  freshness moved to `(0, 28)` and floor moved to `(0, 23)` ran the real
+  checker and raised `UnboundLocalError` for unbound
+  `architecture_trigger_rows`. The current `(0, 28) >= (0, 23)` relationship
+  makes the path latent, but nothing binds the required
+  `floor >= freshness` ordering.
+- G4 acceptance: PASS by execution. A throwaway Rust store fixture containing
+  known-day and NULL-day rows in both the held archive and incoming window
+  executed one focused test and passed. SQL selected held raw
+  `2026-07-10`; Rust selected incoming raw `incoming-null-raw`, confirming
+  agreement over known/null, day, raw-byte, and id terms. An earlier
+  incorrectly exact-filtered command executed zero tests and is a construction
+  non-result. The two orderings have no permanent binding today.
+- G5 acceptance: PASS. The architecture row's labelled Step 5 measurement was
+  **2,485,846 bytes / 514,154 bytes / 20.68%** headroom; the closing tree
+  measured **2,526,556**, and the delivered export **2,530,129**. The selected
+  rule is that a governed row carries the latest measurement available at
+  close while preserving earlier measurements as openly superseded history.
+- G6 acceptance: PASS with no traffic. The recorded design bounds a later,
+  separately authorized scheduler window to **1,260 seconds** and at most
+  three SEC invocations at the unchanged **600-second** cadence, using fresh
+  unprotected archive/state paths and an isolated SEC-only schedule copy. It
+  enumerates preflight, origin/cadence/count, coverage, exception, database,
+  and deadline refusals. Proven inputs are pre-insert coverage detection,
+  order-independent boundaries, the corrected window-advance criterion, and
+  the pinned **4,650 / 600 = 7.75×** margin. Recurring execution, peak-season
+  density, deadline-day density, and uncovered hours remain unproven.
+- G7 acceptance: PASS. Tagged v0.17.0 still uses positional
+  `.iter().rev().find_map(...)`; unpublished descendant `e6b3c1e` owns the
+  comparator correction. The consequence is one wrong raw boundary string in
+  an internal diagnostic for a misordered window: no dropped row, response
+  shape change, `/v1/*` field change, or public serialized value-domain change.
+- growth acceptance: PASS by derivation. Normalizing the **453,741-byte**
+  v0.28 starting State for its later **252,237-byte** mechanical removal gives
+  **201,504**; final **224,029** means **22,525 bytes/cycle** of live-State
+  growth. The manifest grew **8,622 bytes**, from 174,152 to 182,774. The real
+  delivered-to-activation export rollover decreased **118,736 bytes**, from
+  2,530,129 to 2,411,393, so that negative observation yields no finite
+  exhaustion estimate. The deliberately narrow positive State-plus-manifest
+  denominator is **31,147 bytes/cycle**. The final E0 implementation export
+  passed at **2,430,678 bytes / 152 files**, leaving **569,322 bytes / 18.98%**
+  or **18.28 cycles** at that planning denominator.
+- governed-record acceptance: PASS. All **17** deferred rows now carry E0's
+  v0.29 measured observations. The three live architecture trigger rows carry
+  the final E0 export, actual manifest/timings, and clean two-lane warning
+  result. `cycle-check` passed with active v0.29 open.
+- golden-E2E delta: **0** — standalone **11/11** before implementation and
+  **11/11** after the completed task record.
+- publisher/ref acceptance: PASS. E0 ran no scheduler, issued no publisher
+  request, changed no protected or pinned byte, and created, moved, or deleted
+  no ref.
