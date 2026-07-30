@@ -1,6 +1,51 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell; v0.16.0 selected, not yet released) · **Status:** **v0.25 LICENSE-SEMANTICS is complete; TERMS-GATE awaits its separate operator determination.** The operator selected `PublisherPermitted` and a minor release because the new value expands a public `/v1/*` field's domain. No source is configured with the value, and `config/core.json` remains unchanged. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, Python 3.11 and 3.12 each at **283 collected / 283 passed / 0 skipped**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell; v0.16.0 selected, not yet released) · **Status:** **v0.25 TERMS-GATE is affirmatively complete; FEED-SHAPE awaits its separately authorized single live GET.** The operator confirmed that the configured crawler contact is monitored and determined that the contact-bearing identity satisfies the SEC's published organization-and-contact direction. Terms compliance remains a dated publisher-specific operator responsibility outside the executable robots-plus-deny-list model. No source is configured with `PublisherPermitted`, and `config/core.json` remains unchanged. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, Python 3.11 and 3.12 each at **283 collected / 283 passed / 0 skipped**, embedded golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates; Step 3's fresh standalone golden also passed **11/11**. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.25 TERMS-GATE is affirmative for the reviewed SEC path and leaves terms
+as a dated operator responsibility (operator decision and measurement
+2026-07-30).**
+
+The measured publisher gates remain distinct. The shipped matcher returned
+**allow** for `/Archives/edgar/usgaap.rss.xml` against the captured SEC
+`robots.txt`. The SEC Privacy Information page, read on 2026-07-30 at
+<https://www.sec.gov/about/privacy-information>, states that the SEC does not
+allow “unclassified” bots or automated tools to crawl the site. The Webmaster
+FAQ, read on the same date at
+<https://www.sec.gov/about/webmaster-frequently-asked-questions>, directs
+programmatic EDGAR downloaders to declare their User-Agent and supplies an
+organization-and-administrative-contact example. The publisher supplies no
+separate glossary or registration transaction defining “unclassified”; the
+organization-and-contact declaration is the operational procedure the
+publisher actually publishes.
+
+The operator accepted the recommended affirmative determination on 2026-07-30,
+including its premise that the configured contact is monitored. The
+version-independent property is: **a monitored contact is present in the
+crawler identity**. Source construction guarantees before bind that a
+net-enabled process has a trimmed, non-empty, non-placeholder contact and
+derives its version from the package authority. Monitoring is not
+source-observable; it is the operator fact confirmed here. E0 therefore found
+no structural contact defect to fix or assign forward.
+
+`ARCHITECTURE.md` now records the dated disposition that publisher terms remain
+a publisher-specific operator responsibility outside the executable model.
+The SEC condition is natural-language policy with no stable machine-readable
+classification or registration state; encoding a third boolean gate would
+claim an automation the evidence cannot support. The runtime continues to
+enforce publisher `robots.txt` plus the operator deny-list, while a dated
+operator review decides the separate terms question before admission.
+
+This result binds one publisher, the reviewed path, the cited texts, and
+2026-07-30. It is not a general finding about government or regulatory sources,
+does not establish another publisher's compliance, and says nothing about the
+feed's shape. The dated observation is
+`observations/v0.25/terms-gate/sec-edgar-terms-determination.md`. Step 3 made
+**zero publisher requests**, no code change, and no source/config/schema/ref
+change. Its first sandboxed golden attempt exited before startup because the
+loopback bind was denied with `Operation not permitted`; the permitted rerun of
+the same `./run golden` entry point passed **11/11**, delta **0**. Step 4 remains
+behind its separate authorization for exactly one live feed GET.
 
 **v0.25 LICENSE-SEMANTICS adds the missing rights ground and selects v0.16.0
 (operator decision and measurement 2026-07-30).**
@@ -4419,6 +4464,25 @@ stay fixed. The symmetric dated rule now lives in `AGENTS.md §5` and is
 reconciled in `ARCHITECTURE.md §8`. It is intentionally prose adjudicated at
 R-CLOSE: no source scan can decide whether a semantic value was added, removed,
 or redefined, so no new invariant rule or vacuous planted control was created.
+
+### 6j. Why SEC terms stay operator-adjudicated (v0.25/TERMS-GATE)
+
+**Decision: affirmative identity; operator-owned terms review, selected
+2026-07-30.** The SEC publishes two separate facts: its Internet Security
+Policy refuses “unclassified” automated tools, while its Webmaster FAQ directs
+programmatic EDGAR downloaders to declare an organization-and-contact
+User-Agent. It publishes no glossary or registration state that the product can
+query. The operator confirmed that the structurally required contact is
+monitored and therefore determined that the current identity satisfies the
+published direction for the reviewed SEC path.
+
+A runtime terms boolean was rejected because it would turn publisher-specific
+natural-language judgment into an asserted machine decision without a
+machine-readable input. The executable boundary remains the fetched
+`robots.txt` plus the operator deny-list; a dated publisher-specific operator
+review owns the additional terms determination before admission. This is
+narrower and more truthful than calling robots permission terms permission, and
+it generalizes nothing from the SEC to another publisher.
 
 ## 7. Run reference
 

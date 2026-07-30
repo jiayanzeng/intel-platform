@@ -552,6 +552,61 @@ standalone golden passed **11/11**, delta **0**. No dependency, lockfile,
 configured source, shell source, schema, protected artifact, publisher request,
 feed request, or ref changed.
 
+### TERMS-GATE measured result — 2026-07-30
+
+**Gate coverage.** Before the determination was recorded, every acceptance
+criterion was mapped to the existing gate: the dated publisher observation is
+under `observations/v0.25/**`, the terms-model disposition is in
+`ARCHITECTURE.md`, and this execution record, `STATE.md`, and the progress log
+are status records. No criterion required code, config, schema, or a widened
+path.
+
+**Publisher text and robots result.** The committed v0.24 wire evidence records
+the shipped matcher's **allow** verdict for
+`/Archives/edgar/usgaap.rss.xml`. The SEC Privacy Information page, read on
+2026-07-30 at <https://www.sec.gov/about/privacy-information>, states that the
+SEC does not allow “unclassified” bots or automated tools to crawl the site.
+The SEC Webmaster FAQ, read and cited on the same date at
+<https://www.sec.gov/about/webmaster-frequently-asked-questions>, directs
+programmatic downloaders to declare their User-Agent and supplies an
+organization-and-administrative-contact example. The publisher supplies no
+separate glossary or registration transaction; its published operational
+classification procedure is the organization-and-contact declaration. A
+robots allow is not treated as the answer to this terms question.
+
+**Determination and property.** **Affirmative.** On 2026-07-30 the operator
+accepted the recommended affirmative determination and its premise that the
+configured contact is monitored. The version-independent condition is: **a
+monitored contact is present in the crawler identity**. E0 proved that every
+net-enabled startup structurally requires a trimmed, non-empty,
+non-placeholder contact before bind and derives the identity version from the
+package authority. Monitoring is operator evidence, not source evidence; the
+operator confirmed it. There is therefore no structural contact defect to fix
+or assign forward.
+
+**Terms-model disposition.** `ARCHITECTURE.md` records the dated disposition:
+publisher terms compliance remains a publisher-specific operator
+responsibility outside the executable model. The SEC condition is
+natural-language policy with no stable machine-readable classification or
+registration state, so a third runtime boolean would pretend to automate a
+judgment the system cannot observe. Runtime continues to enforce the
+publisher's fetched `robots.txt` and the operator deny-list; dated operator
+review owns the separate terms decision before admission.
+
+**Limits and boundary.** This determination binds the SEC, the reviewed
+`/Archives/edgar/usgaap.rss.xml` path, the cited texts, and 2026-07-30. It is
+not a general finding about government or regulatory sources and does not
+establish feed shape. Step 3 made **zero publisher requests**, made no code,
+config, schema, protected-artifact, or ref change, and leaves Step 4's single
+live feed GET separately gated.
+
+**Acceptance execution.** `cycle-check` passed with the new dated architecture
+row. Diff inspection found only `ARCHITECTURE.md`, the v0.25 observation, and
+status records; all code and config paths were byte-unchanged. The first
+sandboxed `./run golden` attempt could not bind loopback and exited before
+startup with `Operation not permitted`. The authorized rerun of the identical
+entry point passed **11/11**, delta **0**.
+
 ---
 
 ## Step 2 · LICENSE-SEMANTICS (G1, G4) — Say only what the evidence supports 🧑🤖
@@ -836,7 +891,7 @@ publication.**
   `PublicDomain` excluded with reason; version decided with a criterion written
   into `AGENTS.md`; existing gating proven unchanged if extended;
   `config/core.json` untouched
-- [ ] **TERMS-GATE** — publisher text cited with URL and date; determination
+- [x] **TERMS-GATE** — publisher text cited with URL and date; determination
   recorded with undetermined accepted as complete; condition restated as a
   version-independent property; terms-gate disposition dated in
   `ARCHITECTURE.md`; no code change

@@ -185,6 +185,16 @@ against one publisher, not multi-publisher aggregation. Adding a second real
 publisher remains an open product question and a separate compliance
 decision.
 
+**Terms-policy boundary — operator disposition 2026-07-30.** The executable
+two-gate model does not claim to decide publisher terms compliance. Publisher
+terms are reviewed as a dated, publisher-specific operator responsibility
+before admission because the reviewed SEC requirement is natural-language
+policy with no stable machine-readable classification or registration state.
+For the reviewed SEC path, the publisher's operational direction is an
+organization-and-contact User-Agent; the operator affirmed on 2026-07-30 that
+the structurally required contact is monitored. This does not add a third
+runtime gate or generalize the determination to another publisher.
+
 **Redirects are re-gated before the next request (v0.8/T5).** Both
 `reqwest::Client`s in `crates/ingest/src/net.rs` use `Policy::none()`. Document
 redirects are resolved manually (maximum 10 hops), and the full publisher +
@@ -327,6 +337,7 @@ causes the identities and affected claims to be forward-corrected.
 | hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — Run `30456330833` passed **7/7** executable jobs on the migrated actions; all eight check runs had annotation count **0**, and the new **7-receipt / 7-bundle** set verified **7 accepted / 0 rejected**. |
 | hosted action immutability (`dtolnay/rust-toolchain@master`) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — All **6/6** workflow uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`, dated **2026-07-16T09:35:07-07:00**, and the same hosted evidence run verified. |
 | recorded-trigger freshness discipline | **Completed by v0.23 Step 5 — 2026-07-29** | none | 2026-07-29 — `cycle-check` now requires a valid dated measured observation for each trigger-bearing row in this table and the active v0.23-forward deferral table; registered R12 mutation **15** proves a missing date is rejected. |
+| SEC automated-access terms (v0.25 TERMS-GATE) | **Operator responsibility outside the executable model — 2026-07-30** | none | 2026-07-30 — The SEC privacy policy prohibits “unclassified” automated tools while its webmaster FAQ directs programmatic downloaders to declare an organization-and-contact User-Agent. The operator affirmed that the structurally required contact is monitored. The terms condition is publisher-specific natural-language policy with no stable machine-readable classification or registration state, so a dated operator review—not a pretend third runtime gate—owns it. |
 
 The v0.13 sector-boundary correction narrows neither residual: a rewritten
 shell can still bypass or falsify the `/attest` handoff, so A4 remains open;
