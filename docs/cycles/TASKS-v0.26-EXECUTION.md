@@ -503,6 +503,33 @@ Step 2; Step 5 remains independently eligible. The mandatory golden control
 first encountered a sandbox-only loopback bind refusal, which is not counted;
 the identical permitted rerun passed **11/11**. No publisher request occurred.
 
+### CADENCE gate — blocked by procedural violation 2026-07-30
+
+While beginning Step 5, Codex used the web retrieval tool to open
+`https://www.sec.gov/about/developer-resources` in order to satisfy the
+instruction to cite the publisher's text with a read date. That was an
+agent-side runbook error. The standing prohibition is stronger: **no publisher
+request of any kind before Step 6**. The tool exposed one explicit URL
+retrieval; its underlying wire method, redirect behavior, and request count are
+not observable here, so the defensible statement is that at least one
+publisher-origin request occurred. No robots path, feed path, core, connector,
+or harvest command was invoked, and no other publisher URL was requested.
+
+The returned page was titled “Developer Resources”, said it was last reviewed
+or updated **2025-03-10**, and stated the current fair-access limit as no more
+than **10 requests per second** in total. This content did not justify
+continuing through a tripped gate. The already committed v0.25 terms
+determination had cited the same URL on 2026-07-30, so a new direct retrieval
+was unnecessary.
+
+CADENCE stopped immediately. No cadence was chosen or kept; no schedule test
+was added; `config/schedule.json`, `shell/tests/**`, and `ARCHITECTURE.md` are
+unchanged, including the existing terms-gate row. The CADENCE checklist box
+remains unchecked and Step 6 is ineligible independently of the earlier REPLAY
+block. Mandatory golden passed **11/11** after the stop. This is a procedural
+failure in cycle execution, not an implementation defect or a live-harvest
+result.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖

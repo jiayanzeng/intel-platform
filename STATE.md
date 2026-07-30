@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. v0.26 E0 passed its complete entering matrix and golden **11/11**; REPLAY is blocked before document-set measurement because the executed schema cannot pin `observations/**` or attach the required admission chain within Step 2's permitted scope. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. v0.26 E0 passed its complete entering matrix and golden **11/11**; REPLAY is blocked before document-set measurement because the executed schema cannot pin `observations/**` or attach the required admission chain within Step 2's permitted scope. CADENCE then stopped at its own gate after an unnecessary direct retrieval of the SEC guidance page violated the stronger no-publisher-request-before-Step-6 prohibition; no schedule decision or harvest followed. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
 
 **v0.26 REPLAY pin gate blocked before measurement (measured 2026-07-30).**
 
@@ -24,6 +24,30 @@ IDENTITY-DECISION remain blocked; CADENCE remains independently eligible.
 The mandatory permitted golden rerun passed **11/11** after a sandbox-only
 loopback-bind refusal was discarded as a non-result. No publisher request was
 made.
+
+**v0.26 CADENCE stopped at a publisher-request gate violation (measured
+2026-07-30).**
+
+Codex directly opened
+<https://www.sec.gov/about/developer-resources> with the web retrieval tool
+while beginning CADENCE. That instruction path was wrong: although Step 5 asks
+for the publisher guidance with a read date, the active runbook separately
+prohibits every publisher request before Step 6. The retrieval exposed the
+exact URL but not the connector's underlying wire method, redirects, or
+request count; the safe statement is therefore that at least one
+publisher-origin request occurred. It was not a product-runtime request and it
+did not touch robots, the RSS feed, a connector, or a harvest, but those facts
+do not cure the gate violation.
+
+The returned official page said it was last reviewed or updated 2025-03-10 and
+gave the fair-access ceiling as no more than 10 requests per second total. The
+already committed v0.25 terms record had cited the same page on 2026-07-30, so
+the direct read was unnecessary. Execution stopped immediately: no cadence
+decision, schedule edit, scheduler test, or architecture disposition was made,
+and the existing terms row is unchanged. CADENCE remains unchecked; Step 6 is
+ineligible both here and because REPLAY is blocked. Local golden passed
+**11/11** after the stop. This is an agent-side procedural failure, not an
+implementation defect or live-harvest evidence.
 
 **v0.16.0 post-push confirmation (measured 2026-07-30).**
 
