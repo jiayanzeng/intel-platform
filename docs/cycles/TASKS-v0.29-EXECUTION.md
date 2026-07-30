@@ -2,6 +2,19 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · MARGIN-TRUTH measured completion
+
+Step 5 — current governed margins and next State boundary recorded; completion checked — 2026-07-31
+
+The export row carries the exact Step 5 implementation tree and openly
+supersedes E0. The other two governed rows carry their latest available
+complete measurements: E0's unchanged manifest verification and
+BOUNDARY-BIND's later shell population. `AGENTS.md` now requires the latest
+available close-time measurement in either direction. The next State trigger is
+the prior measured 453,741-byte pre-archive size, with headroom derived from
+E0's 22,525-byte/cycle rate; no archive byte changes. No objective, decision
+gate, acceptance criterion, scope row, or standing prohibition changes.
+
 ### 2026-07-31 · ORDER-BIND measured completion
 
 Step 4 — cross-implementation ordering fixture recorded and completion checked — 2026-07-31
@@ -425,7 +438,7 @@ measured on**, which is the discipline G5 exists to settle.
 | Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — E0 measured 316 pins and 182,774 bytes; complete runs took 0.11 s / 0.10 s real, so neither trigger fired | **Step 1 — re-measure only** |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.29 · 2026-07-31 — the literal remains, while `shell/intel_shell/**` is forbidden and unchanged through E0 | none — recorded, not acted on |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.29 · 2026-07-31 — the contract still declares prose adjudication and E0 received no operator decision to replace it | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` alone exceeds the bound Step 5 records | v0.29 · 2026-07-31 — E0 derives normalized State growth at 22,525 bytes/cycle; v0.28's archival remains byte-proven, the export ceiling has not fired, and Step 5 will record the next State-size boundary | **Step 5 — record the next boundary, do not archive** |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.29 · 2026-07-31 — MARGIN-TRUTH measures current State at 241,866 bytes, leaving 211,875 bytes / 9.41 cycles at E0's normalized 22,525-byte/cycle rate; the export ceiling has not fired and no archive byte changed | **Step 5 — boundary recorded; no archive** |
 
 ---
 
@@ -589,7 +602,7 @@ this step records the next archival boundary and does not archive.**
 **Done when** the three live trigger rows each carry a current, cycle-identified
 margin and the recording rule is executable prose in the contract.
 
-- [ ] **MARGIN-TRUTH**
+- [x] **MARGIN-TRUTH**
 
 ---
 

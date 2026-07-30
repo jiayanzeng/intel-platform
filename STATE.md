@@ -1,6 +1,39 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; ORDER-BIND is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. ORDER-BIND's store suite passes **24** unit plus **2** integration tests, SEC identity remains **200 SEC kept / 0 dropped**, `invariant-scan` passes **12 rules / 51 controls**, and standalone golden remains **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The ORDER-BIND implementation-tree review export measures **2,464,830 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; MARGIN-TRUTH is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. Current focused results include **306/306** shell tests, **24** store unit plus **2** integration tests, SEC identity **200 kept / 0 dropped**, `invariant-scan` **12 rules / 51 controls**, and standalone golden **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The MARGIN-TRUTH implementation-tree review export measures **2,471,012 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+
+**v0.29 MARGIN-TRUTH makes governed observations current and records the next
+State boundary (measured 2026-07-31).** G5 held exactly. The v0.28 live row
+carried its correctly labelled Step 5 measurement of **2,485,846 bytes** and
+**514,154 bytes / 20.68%** headroom. The v0.28 closing implementation tree later
+measured **2,526,556**, and the delivered reviewer export measured
+**2,530,129**. The earlier row was historical truth about its named tree but was
+not the latest observation available to a reader deciding whether its trigger
+was near.
+
+`AGENTS.md §5` now states the rule symmetrically: at close, a governed row uses
+the latest measurement actually available; it may not retain an earlier value
+when a later measurement exists, and it may not invent a later value when none
+exists. Earlier observations stay in their dated task/progress records and the
+live row forward-corrects explicitly, whether the margin rises or falls.
+
+All three trigger-bearing architecture rows are current as of this tree. The
+export row records the exact MARGIN-TRUTH tree and openly supersedes E0. The
+manifest row retains E0 because it remains the latest complete measurement:
+**316 pins / 182,774 bytes**, **865,802 bytes** below 1 MiB, and **0.11 s /
+0.10 s real**, leaving **0.89 s / 0.90 s** to the timing trigger. The warning
+row now carries BOUNDARY-BIND's later permission-complete **306 collected / 306
+passed / 0 skipped** result; the dependency bytes remain unchanged.
+
+The next live-State archival boundary is **453,741 bytes**, the measured
+pre-archive State size at v0.28 entry. That is a reasoned byte boundary: it is
+the prior demonstrated point at which review scope required the successful
+mechanical archive, not a line count or a round invented limit. The current
+State is **241,866 bytes**, leaving **211,875 bytes**; at E0's normalized
+**22,525 bytes/cycle** rate that is **9.41 cycles** of State-only headroom. The
+independent 3,000,000-byte export ceiling may fire sooner and remains an equal
+trigger. This task records the boundary only: no byte under
+`docs/state-archive/**` moved or changed.
 
 **v0.29 ORDER-BIND makes SQL/Rust recency drift fail in the store test suite
 (measured 2026-07-31).** The permanent fixture lives entirely below

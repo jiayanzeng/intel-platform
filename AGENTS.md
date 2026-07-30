@@ -296,6 +296,14 @@ presence, date, and active-cycle identity of the measurement, not the truth of
 an external event. Date freshness is v0.23-forward, cycle identity is
 v0.28-forward, and neither retrofits closed historical runbooks.
 
+Beginning with v0.29, a trigger-bearing governed row's measured cell carries
+the latest measurement available when the cycle closes, not whichever earlier
+task first wrote the row. If a later measurement exists, an earlier value is
+not current; if no later measurement exists, do not invent or project one.
+Preserve the earlier measurement in its dated task or progress record and
+forward-correct the live row explicitly, so neither an increase nor a decrease
+can be selected opportunistically.
+
 Beginning with v0.28, both governed tables must contain at least one
 trigger-bearing row. Every trigger-bearing subject in the immediately prior
 execution runbook must remain in the active deferral table or appear in an
