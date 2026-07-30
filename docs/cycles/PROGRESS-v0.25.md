@@ -192,3 +192,56 @@ Entries are append-only; corrections are new dated entries.
   a future `finance` source does not enter it.
 - golden-E2E delta: **0**; mandatory standalone `./run golden` passed
   **11/11**.
+
+### 2026-07-30 · TERMS-GATE — SEC identity affirmative, terms operator-owned
+
+- owner: Codex
+- commit: a6f6d17bade91a9da194b132d98defc4a4134d14
+- result: PASS. The operator accepted the recommended affirmative
+  determination and confirmed its premise that the configured crawler contact
+  is monitored. The identity satisfies the SEC's published
+  organization-and-contact direction for the reviewed path.
+- gate acceptance: PASS. Every criterion fit the existing gate:
+  `observations/v0.25/**`, `ARCHITECTURE.md`, and status records. No code,
+  config, schema, protected-artifact, or public-surface edit was required. E0
+  had confirmed G2, so the dependency gate was open.
+- publisher-text acceptance: PASS. The committed robots evidence records an
+  **allow** verdict for `/Archives/edgar/usgaap.rss.xml`. The SEC Privacy
+  Information page and Webmaster FAQ are cited by URL with their 2026-07-30
+  read date. The former refuses “unclassified” automated tools; the latter
+  directs programmatic downloaders to declare a User-Agent and supplies an
+  organization-and-administrative-contact example. The publisher provides no
+  separate glossary or registration transaction, so no broader definition was
+  inferred.
+- identity-property acceptance: PASS. The condition is now
+  version-independent: **a monitored contact is present in the crawler
+  identity**. E0 proved that net startup structurally requires a trimmed,
+  non-empty, non-placeholder contact before bind and derives the version from
+  package authority. Monitoring is an operator fact, and the operator confirmed
+  it. No structural contact defect exists to fix or assign forward.
+- architecture acceptance: PASS. The dated operational disposition records
+  publisher terms as a publisher-specific operator responsibility outside the
+  executable model. The SEC requirement is natural-language policy with no
+  stable machine-readable classification or registration state; a third
+  runtime boolean would assert an automation the system cannot perform.
+  Publisher `robots.txt` plus the operator deny-list remain the two executable
+  gates.
+- limits acceptance: PASS. The determination binds only the SEC, the reviewed
+  path, the cited texts, and 2026-07-30. It is not a general finding about
+  government or regulatory publishers and establishes nothing about feed
+  shape. Step 4 remains separately gated on authorization for one live feed
+  GET.
+- request and diff boundary: PASS. Step 3 made **zero publisher requests**.
+  Final diff inspection found only `ARCHITECTURE.md`, `STATE.md`, the active
+  runbook, and the new dated observation; all code and config paths were
+  byte-unchanged.
+- lifecycle acceptance: PASS. `cycle-check` validates the dated architecture
+  row and unchanged task contracts. During drafting it rejected result text
+  placed inside Step 2 and then Step 3 acceptance sections as undisclosed
+  amendments; moving the unchanged record into the dedicated execution-record
+  section produced the final pass. `invariant-scan` remains **12/12 rules / 39
+  controls**.
+- golden-E2E delta: **0**. The first restricted invocation exited before
+  startup because the sandbox denied the loopback bind with `Operation not
+  permitted`; the authorized rerun of the identical `./run golden` entry point
+  passed **11/11**.
