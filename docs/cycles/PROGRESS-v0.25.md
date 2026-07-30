@@ -63,3 +63,63 @@ Entries are append-only; corrections are new dated entries.
   manifest, workflow, dependency, schema, protected artifact, public surface,
   configured publisher, or ref changed.
 - golden-E2E delta: NOT MEASURED; no claim.
+
+### 2026-07-30 · E0 — entering state rebuilt and six gates settled
+
+- owner: Codex
+- commit: cf092ad0209a952f55aaeb8221f82c578dbe1cfc
+- result: PASS. The complete entering matrix, both clean shell lanes, every
+  standalone control, G1–G6, artifact scale, published objects, and all pins
+  were re-measured. The active runbook contains the command-backed record.
+- entering-matrix acceptance: PASS. `./run ci-local` passed all **20** jobs:
+  workspace **133**, net **55** (**29** ingest + **26** cored), warning-denied
+  current and locked Rust 1.78 builds, clean clippy/fmt/ShellCheck, shell
+  **283 / 283 / 0 skipped**, protected databases **2/2**, and embedded golden
+  **11/11**. Standalone golden passed **11/11**. Standalone `cycle-check`,
+  `checklist-audit` (**191 checked / 3 retracted / 191 matched / 0
+  exemptions**), `progress-check`, `version-check`, `invariant-scan` (**12/12
+  rules / 39 controls**), manifest validation, and root `export-check` (**94**
+  derived / **7** required / **163** exported) passed.
+- population acceptance: PASS. Clean Python **3.11.4** and **3.12.13** each
+  collected **283**, passed **283**, failed **0**, and skipped **0**. The
+  machine-readable comparator derived `equivalent=true` and
+  `equivalent_passed=283`; its second input was the local 3.12 lane, not a
+  hosted run.
+- G1 acceptance: PASS. `PublicDomain` would make the unsupported
+  government-work/public-domain claim, `CcBy` would invent a CC licence,
+  `ClientOwned` would falsely assert subscriber ownership, and `IndexOnly`
+  would be safe only by forfeiting the publisher's express reuse permission.
+  No existing variant expresses publisher-granted reuse under the publisher's
+  own terms.
+- G2 acceptance: PASS. The executable model was enumerated as publisher
+  `robots.txt` plus the operator deny-list, with no terms component. The SEC
+  privacy, webmaster FAQ, and developer-resource texts were recorded by URL and
+  2026-07-30 read date: the publisher disallows “unclassified” automation and
+  operationally directs programmatic downloaders to declare an
+  organization-and-contact User-Agent. No broader definition was inferred.
+- G3 acceptance: PASS. The parser requires well-formed XML but treats every
+  per-item field—`title`, `guid`, `pubDate`, `link`, `description`, and
+  `author`—as optional; zero `item` elements succeeds with an empty result. No
+  feed request was made.
+- G4 acceptance: PASS. Public licence carriers were enumerated for
+  `/v1/signals`, `/v1/search`, `/v1/ask`, and the conditional plaintext branch
+  of `/v1/brief`. The standing rule does not explicitly classify a compatible
+  expansion of a string enum's value domain.
+- G5 acceptance: PASS after a dated runbook correction. Golden does read
+  `config/core.json`, but explicitly selects only `science` and `technology`;
+  the proposed source is confined to `finance`. Its measured expected outcome
+  therefore remains **11/11**.
+- G6 acceptance: PASS. The crawler identity derives its version from
+  `CARGO_PKG_VERSION`; every net startup structurally requires a non-empty,
+  non-placeholder contact before bind. Whether the contact is monitored remains
+  an operator fact.
+- evidence acceptance: PASS. The protected manifest remains **145,541 bytes**.
+  Two consecutive `verify-artifacts` entry-point runs passed in **0.09 s** each,
+  all **251** pins and both protected databases matched, and the v0.15.8
+  annotated object, peeled closing commit, release parent, and live remote refs
+  were re-verified.
+- boundary acceptance: PASS. E0 made no publisher-origin request, no feed
+  request, no working-repository ref mutation, and no change to `STATE.md`,
+  `config/core.json`, production source, protected corpus, schema, or public
+  surface.
+- golden-E2E delta: **0**.
