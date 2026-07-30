@@ -186,3 +186,39 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The initial sandbox-only loopback bind refusal was a
   non-result; the identical permitted run passed 11/11.
 - publisher-request acceptance: PASS. No publisher request was made.
+
+### 2026-07-30 · CADENCE-BLOCKED — publisher-request gate violated
+
+- owner: Codex
+- commit: 6087c0fd6169882dad72f529738253cf54b5d097
+- result: BLOCKED by an agent-side procedural violation at the Step 5 Gate.
+  Codex directly opened the SEC Developer Resources URL even though the active
+  runbook prohibits every publisher request before Step 6.
+- request-boundary acceptance: FAIL. The web tool exposed one explicit
+  retrieval of `https://www.sec.gov/about/developer-resources`; its underlying
+  HTTP method, redirects, and request count are not observable, so the record
+  conservatively says at least one publisher-origin request occurred. No
+  robots URL, RSS URL, core, connector, or harvest command was invoked.
+- guidance measurement: MEASURED BUT NOT ACCEPTED AS TASK COMPLETION. The
+  official page returned “Developer Resources”, last reviewed or updated
+  2025-03-10, and the current fair-access ceiling of no more than 10 requests
+  per second total. The already committed v0.25 terms record had cited this URL
+  on 2026-07-30, so the direct retrieval was unnecessary.
+- stop acceptance: PASS. Work stopped immediately when the conflict was
+  recognized. The weaker request-to-cite instruction was not used to silence
+  the stronger no-request gate.
+- cadence acceptance: NOT MEASURED. No cadence was chosen or explicitly kept;
+  no resolvable-cadence test or vacuity disposition was produced. The CADENCE
+  checklist box remains unchecked.
+- architecture acceptance: NOT PERFORMED. `ARCHITECTURE.md` and its terms-gate
+  row are byte-unchanged.
+- scope acceptance: PASS after the stop. The implementation commit changed
+  only `STATE.md` and the active execution record. `config/schedule.json`,
+  shell tests/source, core config, production Rust, observations, manifest,
+  protected artifacts, databases, and refs did not change.
+- dependency disposition: Step 6 is ineligible both because CADENCE is not
+  affirmative and because REPLAY remains blocked. Steps 7 and 8 remain blocked
+  by their declared predecessors.
+- golden-E2E delta: **0**; mandatory local golden passed 11/11 after the stop.
+- classification: This is a cycle-execution failure by Codex, not an
+  implementation defect and not live-harvest evidence.
