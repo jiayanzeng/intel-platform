@@ -660,6 +660,65 @@ block. Mandatory golden passed **11/11** after the stop. This is a procedural
 failure in cycle execution, not an implementation defect or a live-harvest
 result.
 
+### REPLAY execution record — 2026-07-30
+
+The committed integration test
+`crates/ingest/tests/sec_observation_replay.rs` read the response body directly
+from `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml`. Before calling
+the shipped parser it asserted **892,641 bytes** and SHA-256
+`154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`,
+citing
+`observations/v0.25/feed-shape/sec-edgar-feed-shape.md`. The same assertion
+read and rejected a disposable one-byte-mutated copy at SHA-256
+`feb138bb57e12466321c5db5a8f2a6ab1ea51ee59c9b94d355e7eaf65c9be748`.
+The temporary directory was removed. No manifest change was proposed.
+
+`cargo test -p intel-ingest --test sec_observation_replay --locked --
+--nocapture` passed **1/1** and executed `RssSource::fetch` over the asserted
+body. It produced **200** documents from 200 items:
+
+| Field or population | Executed result |
+|---|---|
+| ids | 200 distinct; `sec-edgar-usgaap::<guid>`; maximum 114 bytes |
+| titles | 30–80 characters |
+| bodies | length 3: 108; 4: 64; 5: 5; 6: 4; 7: 19; mean 3.810 |
+| `published_day` | `2026-07-29`: 200 |
+| `published_raw` | present 200; 191 distinct |
+| authors | 0 documents; 0 values; 0 distinct |
+| URLs | present 200; 200 distinct |
+| tags | empty 200 |
+| sector | `finance`: 200 |
+| license / kind | `PublisherPermitted` / `Rss`: 200 |
+
+The test compared every constructed field to the direct RSS children and the
+configured provenance values. The body declares `windows-1252`; the shipped
+fixture path read it to a Rust string and roxmltree accepted the declaration.
+This snapshot succeeds because the body is ASCII-only, not because a general
+Windows-1252 decoder executed.
+
+`Day::parse_rfc822ish` slides a three-token window and ignores the clock and
+zone, so all 200 EDT timestamps produce the publisher-local calendar day.
+Executed EDT-to-UTC conversion found **0** items whose UTC day differs from
+the recorded day.
+
+The full per-item extension inventory is recorded at
+`observations/v0.26/replay/sec-edgar-observation-replay.md`. The namespaced
+elements and `(items containing, total elements)` counts are:
+`acceptanceDatetime` (200,200), `accessionNumber` (200,200), `assignedSic`
+(170,170), `assistantDirector` (170,170), `cikNumber` (200,200),
+`companyName` (200,200), `fileNumber` (200,200), `filingDate` (200,200),
+`fiscalYearEnd` (194,194), `formType` (200,200), `otherCikNumbers` (7,7),
+`period` (200,200), `xbrlFile` (200,2339), `xbrlFiles` (200,200), and
+`xbrlFiling` (200,200). None reaches a `Document` field.
+
+Real publisher bytes asserted and replayed through shipped code establish
+parser behavior for this response. They establish nothing about paging,
+cursor durability, repeated fetches, wire politeness, redirects, conditional
+requests, or the publisher's next response. `RUSTFLAGS="-D warnings" cargo
+test --workspace --locked` passed **136** tests; clippy and fmt passed; golden
+remained **11/11**. No publisher request occurred, and no fixture, protected
+artifact, golden input, core config, production source, or manifest changed.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
@@ -1107,7 +1166,7 @@ publication.**
   committed bytes**; G3's manifest enumeration with its consequence; G4 settled
   by execution; **G5 settled by captured request evidence**; G6 from the
   scheduler's resolution order; G7's paths priced; no publisher request
-- [ ] **REPLAY** — **byte assertion executed at the point of use with its failure
+- [x] **REPLAY** — **byte assertion executed at the point of use with its failure
   demonstrated**; parser executed from a committed test; full field inventory
   with counts; `published_day` zone semantics recorded; discarded `edgar:*`
   fields enumerated and not mapped; establishment boundary stated; nothing added

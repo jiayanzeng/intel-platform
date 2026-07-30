@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. v0.26 Amendment 01 withdraws the unsatisfiable REPLAY pin-first rule, authorizes Step 2B observation-pin coverage, quarantines the CADENCE retrieval while making Step 5 eligible from committed evidence, and elevates threshold authority to Step 4A. REPLAY and CADENCE are eligible again; the earlier gate records remain true historical events, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has now completed REPLAY: the `-D warnings` workspace lane passes **136** tests, the focused asserted-byte parser replay passes **1/1**, clippy and fmt are clean, and golden remains **11/11**. All **266** protected pins and both protected databases match; authorized Step 2B will next extend this to the five observation files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 REPLAY constructs and records the real document set (measured
+2026-07-30).**
+
+The committed `sec_observation_replay` integration test reads the v0.25 SEC
+body at its observation path. Before the shipped parser runs, the test asserts
+**892,641 bytes** and SHA-256
+`154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`.
+The same assertion rejected a disposable one-byte mutation at hash
+`feb138bb57e12466321c5db5a8f2a6ab1ea51ee59c9b94d355e7eaf65c9be748`;
+the temporary directory was removed and no manifest change was proposed.
+
+Shipped `RssSource::fetch` constructed **200** documents and the test compared
+every field against the asserted XML items. There are 200 distinct ids in
+`sec-edgar-usgaap::<guid>` form (maximum 114 bytes), titles span 30–80
+characters, bodies have the exact distribution 3:108 / 4:64 / 5:5 / 6:4 /
+7:19 with mean **3.810**, all 200 raw dates are retained (191 distinct), zero
+authors are populated, and all 200 URLs are present and distinct. Every
+document is `finance`, `PublisherPermitted`, and `Rss`.
+
+`Day::parse_rfc822ish` ignores the clock and zone after finding a three-token
+day/month/year window. All 200 EDT values therefore record the publisher-local
+day `2026-07-29`; an executed EDT-to-UTC comparison found **0** items crossing
+a UTC day boundary. The committed observation record enumerates all 15
+namespaced `edgar:*` local names with item and element counts, including 2,339
+`xbrlFile` occurrences; none reaches a `Document` field. The declared
+`windows-1252` path executed successfully because these committed bytes are
+ASCII-only, not because the connector implements a general Windows-1252
+decoder.
+
+This proves shipped parser behavior against this real response only. Paging,
+cursor durability, repeated fetches, on-wire politeness, redirects,
+conditional requests, and the publisher's next response remain unmeasured.
+The `-D warnings` workspace suite passed **136**, the focused replay passed
+**1/1** with its rejection output captured, clippy and fmt passed, and golden
+remained **11/11**. No publisher request, fixture change, protected-corpus
+change, golden-input change, core-config change, production-source change, or
+manifest change occurred.
 
 **v0.26 Amendment 01 disposes both blockers and authorizes observation pins
 (operator decision and local verification 2026-07-30).**
