@@ -124,6 +124,18 @@ Condensed from `STATE.md §2`.
    a property of the question, not the corpus. Only the persisted fingerprint
    is reused there.
 
+   **Threshold-authority limitation — measured 2026-07-30.** Store
+   canonicalization and view collapse retain two boundary-local numeric
+   declarations because neither production crate depends on the other and
+   v0.26 Step 4A's allowed scope contains no common dependency module or
+   manifest edge. Registered R5 makes the pair one synchronized authority: it
+   requires every production store caller to use the private store constant
+   and requires `ViewParams::default` to carry the same numeric value. Its
+   planted failure moves only the view declaration and is rejected. This is
+   static equality, not a shared compiled constant; a coordinated change to
+   both declarations still requires the behavioral evidence and decision that
+   the active cycle assigns separately.
+
 ## 4. The robots subsystem (two gates, one direction)
 
 - **Publisher policy** — fetched from the real `/robots.txt` (`RobotsCache`,
@@ -252,7 +264,7 @@ in core SQL; an empty set makes every requested document unavailable.
 | HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
 | HC12 lock discipline | CI (`--locked`, MSRV job) | the lock *is* the build; its format is part of MSRV |
 | HC13 fixtures ≠ wire | tests + live-run policy | three bugs came from believing otherwise |
-| corpus identity atomicity | core store transaction + R1 production-caller allow-list + private canonical-distance constant | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit, no other production canonicalization caller exists, and production callers cannot supply a different threshold |
+| corpus identity atomicity | core store transaction + R1 production-caller allow-list + R5 synchronized boundary-local distance declarations | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit, no other production canonicalization caller exists, every store caller uses the private store constant, and the separately required view default must carry the same numeric value; the two declarations remain because neither crate depends on the other, while a coordinated value change still requires separate behavioral review |
 | repository absence claims | registered `invariant-scan` rules in local/hosted CI | each scoped claim has executable source coverage and a captured planted failure; prose-only absence is not accepted |
 | local/hosted check parity | R10 over `run` and `.github/workflows/ci.yml` | the local `ci-local` jobs and non-report-only hosted verification steps are derived from their entry-point commands in both directions; runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database bytes are explicit, counted exemptions |
 | active-runbook measured-value references | `cycle-check` acceptance-criterion heuristic | explicit cross-step references to a recorded, measured, or stored value/count/number/quantity/total are rejected; acceptance must state the invariant relation at the same commit |

@@ -814,6 +814,43 @@ The focused `-D warnings` measurement passed 1/1, the full workspace passed
 observation, and status paths changed. No production source, config, fixture,
 golden input, protected artifact, database, ref, or publisher changed.
 
+### THRESHOLD-AUTHORITY execution record — 2026-07-30
+
+Step 4A retains two declarations with a stated limitation rather than creating
+a false single-authority claim. Store and view are separate production crates
+with no dependency edge between them, and this step's allowed scope contains
+neither a common dependency module nor a manifest change. The store's private
+constant and `ViewParams::default` therefore remain boundary-local. This
+limitation is stated here, in `ARCHITECTURE.md`, in R5's registered `scope`,
+and in the progress record. It is static synchronization, not one shared
+compiled constant; changing both still requires behavioral review.
+
+R5's claim and executable check now cover:
+
+1. every production store canonical-identity caller binds to the private
+   `DEDUP_MAX_DISTANCE`;
+2. exactly one such store declaration exists;
+3. exactly one `ViewParams` default distance exists; and
+4. both declarations carry the same numeric value.
+
+The new registered planted failure changes only
+`crates/view/src/lib.rs:44` from 16 to 17, leaving the store declaration at 16.
+The real self-test rejected it with:
+
+```text
+crates/view/src/lib.rs:44: view default dedup_max_distance=17 differs from store DEDUP_MAX_DISTANCE=16
+```
+
+No rule was added. Counts remain **12 rules** and rise from 39 to **40
+controls**. Both Python 3.11 and 3.12 focused invariant suites passed 22/22,
+and full `invariant-scan` passed 12/12 rules with all 40 controls.
+
+Both production declarations remain 16 and neither production file changed.
+Golden's hamming-12 collapse survived in the same **11/11** output, proving
+the authority change behavior-preserving today. `cycle-check` and fmt also
+passed. No config other than the invariant registry, fixture, golden input,
+protected artifact, database, dependency, ref, or publisher changed.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
@@ -1274,7 +1311,7 @@ publication.**
   measurement; shingle-count and pairwise distributions for both corpora;
   same-day concentration observed and not acted on; prediction confirmed or
   refuted with the error owned; zero production files changed
-- [ ] **THRESHOLD-AUTHORITY** — one authority or two with the limitation stated
+- [x] **THRESHOLD-AUTHORITY** — one authority or two with the limitation stated
   in three places; rule claim matches its check; planted failure moves exactly
   one declaration and is detected; behaviour proven unchanged; counts in three
   places

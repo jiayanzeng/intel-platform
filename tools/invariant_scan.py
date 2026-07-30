@@ -36,6 +36,7 @@ from typing import Callable
 ROOT = Path(__file__).resolve().parents[1]
 RULES_FILE = Path("config/invariant-rules.json")
 STORE = Path("crates/store/src/sqlite.rs")
+VIEW = Path("crates/view/src/lib.rs")
 CORE_MAIN = Path("apps/cored/src/main.rs")
 AUTHORITY_FILES = (
     Path("AGENTS.md"),
@@ -86,6 +87,10 @@ THRESHOLD_DECL = re.compile(
 CANONICAL_DISTANCE_CALL = re.compile(
     r"\b(?P<name>assign_canonical_ids(?:_tx)?|"
     r"rematerialize_canonical_ids_with_distance)\s*\("
+)
+VIEW_DEFAULT_DISTANCE = re.compile(
+    r"(?ms)impl\s+Default\s+for\s+ViewParams\s*\{.*?"
+    r"dedup_max_distance:\s*(\d+)\s*,"
 )
 CANONICAL_IDENTITY_CALLERS = {
     "append_new",
@@ -1124,17 +1129,15 @@ def r5_findings(root: Path) -> list[str]:
         for item in declarations
         if item[0].resolve() == (root / STORE).resolve()
         and item[2].group(1) == "DEDUP_MAX_DISTANCE"
-        and item[2].group(2) == "16"
     ]
     if len(expected) != 1:
         findings.append(
-            f"{STORE}: expected one private DEDUP_MAX_DISTANCE: u32 = 16"
+            f"{STORE}: expected one private DEDUP_MAX_DISTANCE: u32 declaration"
         )
     for path, text, match in declarations:
         if (
             path.resolve() != (root / STORE).resolve()
             or match.group(1) != "DEDUP_MAX_DISTANCE"
-            or match.group(2) != "16"
         ):
             findings.append(
                 f"{location(root, path, text, match.start())}: second "
@@ -1145,6 +1148,22 @@ def r5_findings(root: Path) -> list[str]:
             "production Rust contains "
             f"{len(declarations)} DEDUP/CANONICAL distance constants; expected 1"
         )
+    view_path = root / VIEW
+    view_text = production_text(VIEW, view_path.read_text())
+    view_defaults = list(VIEW_DEFAULT_DISTANCE.finditer(view_text))
+    if len(view_defaults) != 1:
+        findings.append(
+            f"{VIEW}: expected one ViewParams default dedup_max_distance"
+        )
+    if len(expected) == 1 and len(view_defaults) == 1:
+        store_value = expected[0][2].group(2)
+        view_value = view_defaults[0].group(1)
+        if store_value != view_value:
+            findings.append(
+                f"{location(root, view_path, view_text, view_defaults[0].start(1))}: "
+                f"view default dedup_max_distance={view_value} differs from "
+                f"store DEDUP_MAX_DISTANCE={store_value}"
+            )
     return findings
 
 

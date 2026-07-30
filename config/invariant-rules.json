@@ -96,9 +96,9 @@
     },
     {
       "id": "R5",
-      "claim": "Every production canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant.",
-      "source": "docs/cycles/TASKS-v0.13-EXECUTION.md:326-333",
-      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; test-only Rust is excluded.",
+      "claim": "Every production store canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant, and the ViewParams default carries the same numeric distance.",
+      "source": "docs/cycles/TASKS-v0.26-EXECUTION.md:909-937",
+      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; the one private crates/store/src/sqlite.rs DEDUP_MAX_DISTANCE declaration; and the one ViewParams default dedup_max_distance in crates/view/src/lib.rs. Test-only Rust is excluded. Two boundary-local declarations remain deliberate because neither production crate depends on the other and Step 4A's allowed scope contains no common dependency or manifest edge; R5 compares their numeric values so either declaration moving alone fails.",
       "fail_before": [
         {
           "file": "crates/store/src/sqlite.rs",
@@ -137,6 +137,16 @@
           "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found 16",
           "expected_file": "crates/store/src/sqlite.rs",
           "expected_line": 207
+        },
+        {
+          "file": "crates/view/src/lib.rs",
+          "find": "            dedup_max_distance: 16,\n",
+          "replace_with": [
+            "            dedup_max_distance: 17,\n"
+          ],
+          "expected_fail": "view default dedup_max_distance=17 differs from store DEDUP_MAX_DISTANCE=16",
+          "expected_file": "crates/view/src/lib.rs",
+          "expected_line": 44
         }
       ],
       "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
