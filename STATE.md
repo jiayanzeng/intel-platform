@@ -1,6 +1,40 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, CADENCE, and HARVEST: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Authorized RE-MEASURE run **30531390933**, attempt **1**, passed all seven executable hosted jobs at exact candidate `1cd88acd99704cc76c866331e505db446936e469`, but Step 7 is blocked before evidence admission: schema 2 gives `pinned_files` no `admission` key and gives `artifacts` a SQLite-only `expected` shape, so its chained-admission requirement has no satisfying assignment. No receipt has entered the repository and the pin count remains **271**. Radius 16 is guarded by the shared measured floor of 26 features: the live SEC harvest produced **200 fetched / 200 new**, the shipped guard kept **200 / dropped 0**, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. A separately authorized corrective observation executed exactly one fresh shipped robots request and one feed request: the robots body and HTTP-200 feed body were byte-identical to v0.25, and the 73 configured User-Agent bytes were captured and matched the installed identity. SEC has an explicit 600-second per-source schedule, but no scheduled live run occurred and the cadence remains unexercised. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; both live Step 6 phases exercised SEC only, so live multi-publisher cache and limiter behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment; Step 7's admission clause is the sixth under the same operator criterion. The CADENCE retrieval remains quarantined, and retractions remain three. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, CADENCE, HARVEST, and RE-MEASURE: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Authorized RE-MEASURE run **30531390933**, attempt **1**, passed all seven executable hosted jobs at exact candidate `1cd88acd99704cc76c866331e505db446936e469`; the approved schema-2 amendment registered its fourteen authenticated receipt/bundle files plus the release-posture report as immutable pins. The report accepted **7** signed identities, rejected **0**, and confirmed the complete matrix. Radius 16 is guarded by the shared measured floor of 26 features: the live SEC harvest produced **200 fetched / 200 new**, the shipped guard kept **200 / dropped 0**, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. A separately authorized corrective observation executed exactly one fresh shipped robots request and one feed request: the robots body and HTTP-200 feed body were byte-identical to v0.25, and the 73 configured User-Agent bytes were captured and matched the installed identity. SEC has an explicit 600-second per-source schedule, but no scheduled live run occurred and the cadence remains unexercised. All **286** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; both live Step 6 phases exercised SEC only, so live multi-publisher cache and limiter behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment; Step 7's withdrawn chained-admission clause is the sixth under the same operator criterion. The CADENCE retrieval remains quarantined, and retractions remain three. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 RE-MEASURE admits authenticated hosted evidence after the approved
+schema-2 correction (measured 2026-07-30).**
+
+The operator approved replacing the impossible chained-receipt clause with
+immutable `pinned_files` registration plus paired Sigstore verification. The
+seven receipt JSON files and seven bundles from run **30531390933**, attempt
+**1**, are registered under `evidence/ci-runs/30531390933-1/` with grade
+`supporting`; no `admission` key was added and no receipt was misclassified as
+a SQLite artifact.
+
+Release-posture audit
+`evidence/v0.26/deferred-audit/report.json` is **34,937 bytes**, SHA-256
+`267c23c676b0e227584d0eb9647d0ce8c4595804fb39e6ac5047691d066d0f25`.
+It measured a clean detached subject at exact hosted candidate
+`1cd88acd99704cc76c866331e505db446936e469`, required attestations, accepted
+**7** distinct successful identities, rejected **0**, and confirmed the
+single-run matrix complete. The authenticated boundary is repository
+`jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest
+`1cd88acd99704cc76c866331e505db446936e469`, and source ref
+`refs/heads/codex/v0.26-evidence-1cd88ac`.
+
+The report recorded **5 deferred / 2 promoted / 0 implemented deferred
+subsystems**. Its exact-cosine p95 over the 2,600-document protected archive
+was **9.289042 ms**, still below the 16.264 ms A3 anchor. T7 remains deferred:
+one supported simultaneous harvest caller was measured and zero schedulers were
+active; the v0.26 SEC work did not move that trigger nearer.
+
+Manifest schema validation, `verify-artifacts`, and `evidence-report` pass with
+**286** pinned files and both protected databases exact. This supersedes the
+blocked disposition below without deleting it: the blocked attempt correctly
+records why the original runbook wording could not be satisfied, and the dated
+operator amendment records why the replacement is valid.
 
 **v0.26 RE-MEASURE passed hosted execution but its admission clause has no
 satisfying schema-2 form (measured 2026-07-30).**
@@ -51,6 +85,10 @@ none is pinned, the exact evidence-directory scope amendment has not been
 claimed, and the manifest remains at **271** pins. RE-MEASURE stays unchecked
 and R-CLOSE stays blocked pending an operator amendment that withdraws or
 replaces the impossible chain clause.
+
+That disposition was true at the stop. The operator subsequently approved the
+schema-2 replacement recorded immediately above; the evidence is now admitted
+without rewriting this historical finding.
 
 **v0.26 HARVEST crossed the SEC wire and the corrective observation closed its
 evidence gap (measured 2026-07-30).**

@@ -63,6 +63,7 @@ not.
 | `allow` | `tools/cycle_check.py` | |
 | `allow` | `tools/evidence_artifacts.py` | **only if Step 2B is authorized**; if declined, this row is removed and Step 8 records the permission as unused |
 | `allow` | `observations/**` | |
+| `allow` | `evidence/ci-runs/30531390933-1/**` | **Step 7 only**; exact authenticated run and attempt authorized by the 2026-07-30 amendment |
 | `allow` | `evidence/v0.26/deferred-audit/report.json` | |
 | `allow` | `AGENTS.md` | |
 | `allow` | `ARCHITECTURE.md` | |
@@ -346,11 +347,39 @@ Step 5 step 1 is replaced with a citation-by-path requirement. A new step adds
 the test G4 found missing for the fixtureless offline disposition. No new
 production permission and no publisher permission.
 
+### 2026-07-30 — Step 7 receipt chain withdrawn as unsatisfiable
+
+The authorized hosted run passed, but Step 7 step 3 required its JSON
+receipt/bundle set to carry a chained admission record. Executed schema 2 has
+no satisfying form for that requirement. The real validator rejected a
+receipt under `pinned_files` with
+`keys differ; missing=[], extra=['admission']`; it rejected the same receipt
+under `artifacts` with `keys differ; missing=['expected'], extra=[]`.
+Supplying the latter object would assert SQLite document, integrity,
+fingerprint, canonical-id, and cursor facts about a JSON receipt.
+
+This is the sixth author-side rule with no satisfying assignment under
+Amendment 1's operator criterion. The operator approved the narrow replacement:
+the seven receipt/bundle pairs are registered as immutable `pinned_files` with
+grade `supporting`, every bundle is verified against its paired receipt and
+the exact repository/workflow/source digest/source ref, and the resulting
+release-posture report is registered with grade `release`. No `admission` key
+is added to `pinned_files`; no receipt is placed in `artifacts`.
+
+The replacement does not make evidence mutable. Each receipt has a new,
+run-specific path; its pin detects any later byte change, while the persisted
+Sigstore bundle establishes the authenticated hosted provenance that a hash
+alone cannot. The exact run directory
+`evidence/ci-runs/30531390933-1/**` is added to declared scope in the same
+commit that first admits it. No objective, hosted result, production
+permission, publisher permission, protected database, or release decision
+changes.
+
 Step 2 — Pin-first acceptance replaced by a point-of-use byte assertion — 2026-07-30
 Step 2B — Observation-pin step added after operator authorization — 2026-07-30
 Step 4A — Threshold-authority step added independently of Step 4 — 2026-07-30
 Step 5 — Publisher facts moved to committed paths and G4 coverage added — 2026-07-30
-Step 7 — Blocked hosted attempt recorded; acceptance criteria unchanged — 2026-07-30
+Step 7 — Blocked attempt recorded; receipt chain replaced by authenticated immutable pins — 2026-07-30
 
 ### Global definition of done
 
@@ -1403,16 +1432,21 @@ hosted job.** 🧑 One narrow operator authorization for the remote branch push.
 2. Record the run id and attempt. Compare local and hosted shell populations
    with `tools/test_population.py` and **cite the comparator's derived output**;
    every skip named with node id, declared reason, and `on_site` marker.
-3. Admit the receipt and bundle set with a chained admission record and report
-   the new pin count.
+3. Verify every paired Sigstore bundle against the exact repository, workflow,
+   source digest, and neutral source ref. Register the seven receipt/bundle
+   pairs as immutable `pinned_files` with grade `supporting`; generate and
+   register the release-posture deferred-audit report with grade `release`.
+   **Do not add `admission` to `pinned_files` and do not place receipts in
+   `artifacts`.** Report the new pin count.
 4. **Confirm no hosted job issued a publisher request**, and say how that was
    determined.
 
 **Acceptance criteria.** Hosted run on a neutral branch with run id and attempt
 recorded · comparator-derived populations cited, never transcribed · receipts
-and bundles admitted with a valid chain and the new pin count reported · no
-publisher request by any hosted job, with the determination method stated ·
-scope amendment dated in the same commit · golden 11/11.
+and bundles authenticated and registered as immutable pins, with the
+release-posture report and new pin count recorded · no publisher request by any
+hosted job, with the determination method stated · scope amendment dated in the
+same commit · golden 11/11.
 
 ### Attempted result — 2026-07-30
 
@@ -1447,6 +1481,37 @@ The downloaded set has not entered the repository. No exact evidence-directory
 scope amendment is claimed, the pin count remains 271, RE-MEASURE remains
 unchecked, and R-CLOSE remains blocked pending an operator amendment to the
 impossible chained-admission clause.
+
+The operator subsequently approved the amendment above. This attempted result
+remains the accurate record of the stop; the replacement makes Step 7 eligible
+again without retroactively describing the blocked attempt as complete.
+
+### Completed result — 2026-07-30
+
+The approved replacement was executed exactly. All seven receipt/bundle pairs
+from run **30531390933**, attempt **1**, are immutable `supporting` pins under
+`evidence/ci-runs/30531390933-1/`; no `admission` key was added and no receipt
+entered `artifacts`. Release-posture report
+`evidence/v0.26/deferred-audit/report.json` is a `release` pin at SHA-256
+`267c23c676b0e227584d0eb9647d0ce8c4595804fb39e6ac5047691d066d0f25`
+and 34,937 bytes.
+
+The report measured clean detached candidate
+`1cd88acd99704cc76c866331e505db446936e469`, required attestations, accepted
+seven distinct successful identities, rejected zero, and confirmed the
+single-run matrix complete against repository `jiayanzeng/intel-platform`,
+workflow `jiayanzeng/intel-platform/.github/workflows/ci.yml`, the exact
+candidate digest, and neutral source ref
+`refs/heads/codex/v0.26-evidence-1cd88ac`. It recorded 5 deferred / 2 promoted
+/ 0 implemented deferred subsystems.
+
+Both comparator results remain the derived outputs recorded in the attempted
+result. The complete-log and workflow audit still establish no publisher
+request; the two `usgaap.rss` strings are local pin-verifier output. Manifest
+validation, `verify-artifacts`, and `evidence-report` pass at **286** pins with
+both protected databases exact. The exact evidence-directory scope row and
+this amendment land in the same commit as those first admitted bytes. Golden
+remains 11/11. RE-MEASURE is complete.
 
 ---
 
@@ -1545,7 +1610,7 @@ publication.**
   request
 - [x] **HARVEST** — authorized and executed under bounds, or deleted with the
   determination that deferred it; deferral table updated either way
-- [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; no
+- [x] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; no
   publisher request by any hosted job; run id recorded; scope amendment dated
 - [ ] **R-CLOSE** — version and its criterion recorded with the value-domain
   criterion explicitly not firing; identity determination recorded with its
