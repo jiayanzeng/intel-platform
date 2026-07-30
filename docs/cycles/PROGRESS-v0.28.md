@@ -430,3 +430,59 @@ Entries are append-only; corrections are new dated entries.
   source, dependency, schema, protected database, golden input, public route,
   or serialized value domain changed. Step 8 remains behind its separate
   operator-only disposition decision.
+
+### 2026-07-31 · R-CLOSE — no-release cycle closure
+
+- owner: Codex
+- commit: ec8eaa2ab7c8c23d5a923a08ae36ab7692b4b664
+- result: PASS. The operator selected `no-release`; the active runbook now
+  records `Cycle closed: 2026-07-31` and the dated no-release disposition.
+  Version v0.17.0 remains the current published release.
+- disposition acceptance: PASS. The measured v0.28 change set moved no route,
+  response shape, `/v1/*` value domain, dependency, schema, or public surface.
+  The runtime correction changes only one internal `/ingest` diagnostic value
+  for a misordered edge case and leaves its response shape unchanged.
+- publication-boundary acceptance: PASS. Immediately before closure, remote
+  `main` and the peeled v0.17.0 tag both resolved to
+  `4af2841816dd3e43fb8423153b91aa22ccb87537`; the neutral evidence ref remained
+  at authenticated candidate
+  `47bb77c19420bf513b53b228e473d4accedc6cc9`. No version authority, tag,
+  remote `main`, or release ref moved.
+- scope acceptance: PASS. Every declared conditional permission is recorded
+  used or unused by path. Thirteen `allow` rows were used, two were unused,
+  every `forbid` row was unused, and no `release_authority` was declared or
+  used. The manifest use remained limited to the explicitly authorized Step 7
+  evidence registration.
+- gate acceptance: PASS. G1–G7 retain measured answers. G1, G3, and G5 were
+  demonstrated by execution; G2, G4, and G6 were directly measured; G7
+  enumerated both semantic release criteria and honestly added no
+  implementation because the current authorities expose no bounded historical
+  surface/value-domain detector.
+- reviewer acceptance: PASS. The drafted T7/NEGATIVE-CACHE accusation is
+  preserved as a reviewer error, not a finding: both subjects were already
+  governed by dated rows in the active deferred table.
+- lifecycle acceptance: PASS. Step 4's archival control held
+  `checklist-audit` at **219 → 219** before mandatory records; Step 5's
+  implementation baseline was **220** before its mandatory increment. The
+  pre-closure control passed **223 checked / 223 matched / 223 commits
+  resolved**. `cycle-check` passed with v0.28 closed and all older runbooks
+  closed. After this required R-CLOSE progress entry, `checklist-audit` passed
+  **224 checked / 224 matched / 224 commits resolved** with zero exemptions.
+- export-bound acceptance: PASS. The fixed-point closing implementation-tree
+  export passed **99 derived / 7 required / 152 exported** at **2,526,556
+  bytes**, below the **3,000,000-byte** executable ceiling.
+- local-regression acceptance: PASS. Full closed-tree `ci-local` passed
+  **20/20** with warning-denied **146** workspace tests, **62** net tests,
+  shell **303/303**, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck,
+  registered invariant self-test **12 rules / 49 controls**, protected
+  evidence, and embedded golden **11/11**. Manifest validation at closure
+  reported **2 artifacts / 316 pinned files**.
+- golden-E2E delta: **0**. The permission-complete standalone `./run golden`
+  passed **11/11** byte-identically after the closure edits.
+- non-result: the first standalone golden attempt was denied permission to
+  bind the isolated loopback port. The identical permission-complete entry
+  point passed and is the cited result.
+- final boundary acceptance: PASS. No publisher request, scheduler run,
+  model-server session, historical cycle edit, production source, dependency,
+  schema, protected database, golden input, public route, serialized value
+  domain, tag, or release ref changed.
