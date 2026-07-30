@@ -662,3 +662,55 @@ Entries are append-only; corrections are new dated entries.
   `version-check` passed before the implementation commit; `git diff --check`
   was clean.
 - golden-E2E delta: **0**; mandatory golden passed **11/11**.
+
+### 2026-07-30 · RE-MEASURE — hosted run green, admission clause unsatisfiable
+
+- owner: Codex
+- commit: c9721ab7969865ae35a9030d6da0cd8145a87c51
+- result: BLOCKED. Hosted execution passed, but Step 7 step 3 requires a
+  chained admission record for a receipt/bundle set and executed manifest
+  schema 2 has no container that can express that combination. RE-MEASURE
+  remains unchecked and R-CLOSE remains blocked.
+- authorization acceptance: PASS. The operator authorized one exact
+  neutral-branch push. Candidate
+  `1cd88acd99704cc76c866331e505db446936e469` was pushed only to
+  `refs/heads/codex/v0.26-evidence-1cd88ac`. Remote `main` remained
+  `c66c2b02191e3ca3126dddc3c004b175899b414e`, historical
+  `refs/heads/candidate/v0.16.0` remained
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no tag was created.
+- hosted acceptance: PASS. Authenticated run **30531390933**, attempt **1**,
+  passed all seven executable jobs at the exact candidate. Remote and local
+  CI workflow blobs matched at
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd`; hosted golden passed 11/11
+  and `invariant-scan` passed 12/12 rules / 44 controls.
+- shell-comparator acceptance: PASS. For both Python 3.11 and 3.12,
+  `tools/test_population.py` derived `collected=291`, `equivalent=true`, and
+  `equivalent_passed=291`: local passed 291 / skipped 0; hosted passed 290
+  plus one named `on_site` skip. The skipped node was
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`;
+  its declared reason was “on-site production audit requires protected
+  corpora and built cored”.
+- no-publisher-request acceptance: PASS. The workflow contains no harvest or
+  ingest command. A case-insensitive complete-log search found no `sec.gov`,
+  `harvest-arxiv`, `POST /ingest`, publisher URL, or publisher-directed HTTP
+  command. Both `usgaap.rss` matches were `PIN MATCH` output for the committed
+  observation path, not network commands.
+- chained-admission acceptance: FAIL / NO SATISFYING ASSIGNMENT. The real
+  validator rejected a receipt under `pinned_files` with
+  `pinned_files[271]: keys differ; missing=[], extra=['admission']`. It
+  rejected the same receipt under `artifacts` with
+  `artifacts[2]: keys differ; missing=['expected'], extra=[]`; the required
+  `expected` object is the SQLite document/integrity/fingerprint/canonical-id/
+  cursor shape and cannot truthfully describe a JSON receipt. Under Amendment
+  1's operator criterion, this is the sixth author-side rule with no
+  satisfying assignment, not an implementation or hosted-CI defect.
+- evidence acceptance: BLOCKED. The fourteen downloaded receipt/bundle files
+  remain outside the repository. No evidence-directory scope amendment is
+  claimed, no deferred-audit report was generated, and the manifest remains
+  **271** pins with both protected databases exact.
+- lifecycle acceptance: PASS for the blocked record. `cycle-check`,
+  `version-check`, `progress-check`, manifest validation, `verify-artifacts`,
+  and `git diff --check` passed before the implementation commit. The first
+  sandboxed golden could not bind loopback and was a non-result; the approved
+  rerun executed all controls and passed 11/11.
+- golden-E2E delta: **0**; mandatory golden passed **11/11**.
