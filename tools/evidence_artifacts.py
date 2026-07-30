@@ -297,14 +297,19 @@ def _validate_pinned_file(value: Any, index: int) -> dict[str, Any]:
     _sha256_string(value["sha256"], f"{context}.sha256")
     grade = _non_empty_string(value["grade"], f"{context}.grade")
     beneath_evidence = bool(path.parts) and path.parts[0] == "evidence"
+    beneath_observations = (
+        bool(path.parts) and path.parts[0] == "observations"
+    )
     if beneath_evidence:
         allowed_grades = {"structural", "release", "supporting", "legacy"}
+    elif beneath_observations:
+        allowed_grades = {"observation"}
     elif raw_path in AUTHORIZATION_PIN_PATHS:
         allowed_grades = {"authorization"}
     else:
         raise ManifestError(
-            f"{context}.path: pinned files must live beneath evidence/ or be "
-            "an exact registered authorization surface"
+            f"{context}.path: pinned files must live beneath evidence/, "
+            "observations/, or be an exact registered authorization surface"
         )
     if grade not in allowed_grades:
         raise ManifestError(

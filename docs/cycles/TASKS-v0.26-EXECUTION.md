@@ -719,6 +719,43 @@ test --workspace --locked` passed **136** tests; clippy and fmt passed; golden
 remained **11/11**. No publisher request occurred, and no fixture, protected
 artifact, golden input, core config, production source, or manifest changed.
 
+### OBSERVATION-PIN execution record — 2026-07-30
+
+The operator authorized Step 2B. `_validate_pinned_file` now recognizes
+`observations/` as exactly one third prefix and `observation` as exactly one
+new grade. The old evidence grades remain confined to `evidence/`; registered
+authorization surfaces remain exact. `pinned_files` still has its original
+six-key shape and carries no `admission`.
+
+Four focused controls passed and printed the real validator's rejection:
+
+1. `observations/body.xml` with grade `supporting` failed with
+   `expected one of ['observation']`.
+2. `evidence/report.json` with grade `observation` failed with
+   `expected one of ['legacy', 'release', 'structural', 'supporting']`.
+3. `outside/body.xml` with grade `observation` failed because pinned files
+   must live beneath `evidence/`, `observations/`, or an exact registered
+   authorization surface.
+4. A disposable copy of the committed manifest and pins changed one byte of
+   `sec-edgar-usgaap.rss.xml` without changing its length.
+   `validate` reported `field=sha256`, expected
+   `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`,
+   actual
+   `feb138bb57e12466321c5db5a8f2a6ab1ea51ee59c9b94d355e7eaf65c9be748`.
+
+The manifest now pins all five v0.25 observation files at their original paths
+and raises the count from 266 to **271**. `python3
+tools/evidence_artifacts.py validate` passed schema 2 with 2 artifacts / 271
+pins. `./run verify-artifacts` matched all 271 files and both protected
+databases. Constrained Python 3.11.4 and 3.12.13 each collected and passed
+**289**, failed 0, and skipped 0; golden remained **11/11**.
+
+The limitation is unchanged and explicit: a pin detects change; it does not
+establish that the bytes are what the publisher served. Only
+`observations/v0.25/feed-shape/sec-edgar-feed-shape.md` records the bounded
+wire capture, and Step 2B does not strengthen that provenance. No publisher
+request occurred.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
@@ -1171,7 +1208,7 @@ publication.**
   with counts; `published_day` zone semantics recorded; discarded `edgar:*`
   fields enumerated and not mapped; establishment boundary stated; nothing added
   to fixtures, corpus, or golden; **no manifest change proposed**
-- [ ] **OBSERVATION-PIN** — authorized and complete with three rejection controls
+- [x] **OBSERVATION-PIN** — authorized and complete with three rejection controls
   captured and the new pin count in three places, or deleted with its deferral
   row recorded
 - [ ] **IDENTITY-MEASURE** — shipped rule executed; per-drop distances recorded;

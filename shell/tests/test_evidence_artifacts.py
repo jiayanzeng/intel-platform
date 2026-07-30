@@ -369,6 +369,73 @@ def test_pinned_evidence_file_is_checked_by_validate(tmp_path: Path) -> None:
     assert "MISMATCH evidence/report.json field=sha256" in changed.stderr
 
 
+def _candidate_pin(path: str, grade: str) -> dict[str, Any]:
+    return {
+        "path": path,
+        "grade": grade,
+        "sha256": "1" * 64,
+        "bytes": 1,
+        "purpose": "observation-prefix rejection control",
+        "provenance": "disposable malformed fixture",
+    }
+
+
+def test_observation_path_rejects_non_observation_grade(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    manifest["pinned_files"].append(
+        _candidate_pin("observations/body.xml", "supporting")
+    )
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode == 2
+    assert (
+        "pinned_files[0].grade: expected one of ['observation'] "
+        "for observations/body.xml"
+    ) in checked.stderr
+    print(f"observation-pin-rejection-1: {checked.stderr.strip()}")
+
+
+def test_observation_grade_rejects_path_outside_observations(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    manifest["pinned_files"].append(
+        _candidate_pin("evidence/report.json", "observation")
+    )
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode == 2
+    assert (
+        "pinned_files[0].grade: expected one of "
+        "['legacy', 'release', 'structural', 'supporting'] "
+        "for evidence/report.json"
+    ) in checked.stderr
+    print(f"observation-pin-rejection-2: {checked.stderr.strip()}")
+
+
+def test_pin_path_rejects_unregistered_prefix(tmp_path: Path) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    manifest["pinned_files"].append(
+        _candidate_pin("outside/body.xml", "observation")
+    )
+    _write_manifest(manifest_path, manifest)
+
+    checked = _run(tmp_path, manifest_path, "validate")
+
+    assert checked.returncode == 2
+    assert (
+        "pinned_files[0].path: pinned files must live beneath evidence/, "
+        "observations/, or be an exact registered authorization surface"
+    ) in checked.stderr
+    print(f"observation-pin-rejection-3: {checked.stderr.strip()}")
+
+
 def test_only_registered_authorization_pins_may_live_outside_evidence(
     tmp_path: Path,
 ) -> None:
@@ -411,7 +478,7 @@ def test_only_registered_authorization_pins_may_live_outside_evidence(
     assert "must live beneath evidence/" in checked.stderr
 
 
-def test_committed_deferred_receipt_pin_rejects_one_byte_mutation(
+def test_committed_pins_reject_one_byte_mutations(
     tmp_path: Path,
 ) -> None:
     manifest = json.loads(
@@ -450,6 +517,37 @@ def test_committed_deferred_receipt_pin_rejects_one_byte_mutation(
     assert (
         "MISMATCH evidence/v0.10.1/deferred-audit/report.json field=sha256"
         in changed.stderr
+    )
+    receipt.write_bytes(
+        (
+            ROOT
+            / "evidence"
+            / "v0.10.1"
+            / "deferred-audit"
+            / "report.json"
+        ).read_bytes()
+    )
+
+    observation = (
+        tmp_path
+        / "observations"
+        / "v0.25"
+        / "feed-shape"
+        / "sec-edgar-usgaap.rss.xml"
+    )
+    mutated = bytearray(observation.read_bytes())
+    mutated[-1] ^= 1
+    observation.write_bytes(mutated)
+    changed_observation = _run(tmp_path, manifest_path, "validate")
+
+    assert changed_observation.returncode == 1
+    assert (
+        "MISMATCH observations/v0.25/feed-shape/"
+        "sec-edgar-usgaap.rss.xml field=sha256"
+    ) in changed_observation.stderr
+    print(
+        "observation-pin-byte-rejection: "
+        f"{changed_observation.stderr.strip()}"
     )
 
 

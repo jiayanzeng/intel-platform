@@ -1,6 +1,34 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has now completed REPLAY: the `-D warnings` workspace lane passes **136** tests, the focused asserted-byte parser replay passes **1/1**, clippy and fmt are clean, and golden remains **11/11**. All **266** protected pins and both protected databases match; authorized Step 2B will next extend this to the five observation files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY and OBSERVATION-PIN: the `-D warnings` workspace lane passes **136** tests, both constrained Python lanes collect and pass **289**, clippy and fmt are clean, and golden remains **11/11**. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 OBSERVATION-PIN makes observation changes repository-visible
+(operator-authorized and measured 2026-07-30).**
+
+`pinned_files` now accepts exactly one third prefix, `observations/`, with
+exactly one new grade, `observation`. The existing evidence grades remain
+confined to `evidence/`; `observation` is rejected there, and unregistered
+prefixes remain rejected. No `admission` key was added: observations are not
+procedurally replaceable artifacts.
+
+Three failure controls executed the real validator and captured distinct
+rejections: `observations/body.xml` with `supporting`, an
+`evidence/report.json` path with `observation`, and
+`outside/body.xml` with `observation`. A fourth control copied the committed
+manifest and pinned files into a disposable directory, flipped one byte of the
+SEC RSS observation without changing its length, and captured the expected
+SHA mismatch
+`154556cd…` versus
+`feb138bb…`.
+
+All five v0.25 observation files are now manifest-pinned, raising the pin count
+from 266 to **271**. `python3 tools/evidence_artifacts.py validate` passed
+schema 2 with 2 artifacts / 271 pins, and `./run verify-artifacts` matched all
+271 files and both databases. Both constrained Python lanes collected and
+passed **289** with no skip, and golden remained **11/11**. The limitation is
+explicit: a pin detects changed repository bytes; it does not establish that
+those bytes are what the publisher served. Only the v0.25 wire record supports
+that claim. No publisher request occurred.
 
 **v0.26 REPLAY constructs and records the real document set (measured
 2026-07-30).**

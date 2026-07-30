@@ -2229,6 +2229,46 @@
       "bytes": 34881,
       "purpose": "Authenticated release-posture v0.25 deferred-design audit receipt.",
       "provenance": "Clean detached offline measurement of evidence candidate 779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3 on 2026-07-30 before the separate Step 7 publication decision; accepted seven distinct successful receipts from run 30513561141 attempt 1 after each persisted Sigstore bundle verified its exact bytes, source digest, repository, workflow signer, neutral candidate source ref, and GitHub-hosted runner identity."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/.gitattributes",
+      "grade": "observation",
+      "sha256": "01be878b7d5393273981278a686f5940127adb400d121b1e8d91c7710a933c42",
+      "bytes": 213,
+      "purpose": "Byte-treatment declaration for the v0.25 SEC EDGAR wire observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/sec-edgar-feed-shape.md",
+      "grade": "observation",
+      "sha256": "87677a7c4721f3262f646f5b138406b5c296edc32dd06ad64a5439bafb27e936",
+      "bytes": 4654,
+      "purpose": "Wire-command, response-header, hash, and feed-shape record for the v0.25 SEC EDGAR observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/sec-edgar-robots.txt",
+      "grade": "observation",
+      "sha256": "72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f",
+      "bytes": 2622,
+      "purpose": "Publisher robots response body captured for the v0.25 SEC EDGAR wire observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml",
+      "grade": "observation",
+      "sha256": "154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3",
+      "bytes": 892641,
+      "purpose": "Publisher RSS response body captured for the v0.25 SEC EDGAR wire observation and replayed in v0.26.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/terms-gate/sec-edgar-terms-determination.md",
+      "grade": "observation",
+      "sha256": "103d29edd3a9ab005981a8ccd22eb8118040d992474e6a33491a51bde9ddbb2c",
+      "bytes": 3549,
+      "purpose": "Terms-gate determination that authorized the bounded v0.25 SEC EDGAR observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
     }
   ]
 }
