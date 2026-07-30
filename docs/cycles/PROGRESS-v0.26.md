@@ -324,3 +324,48 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The sandbox-only loopback bind refusal was a
   non-result; the permitted mandatory rerun passed 11/11.
 - publisher-request acceptance: PASS. No publisher request was made.
+
+### 2026-07-30 · OBSERVATION-PIN — observation bytes enter manifest coverage
+
+- owner: Codex
+- commit: 53ff369d17dcf9b62d1002ca9ad59686ce550f7d
+- operator decision: AUTHORIZE, supplied 2026-07-30. The conditional
+  `tools/evidence_artifacts.py` scope permission was used.
+- result: PASS. `pinned_files` admits exactly one third prefix,
+  `observations/`, and exactly one new grade, `observation`; five committed
+  v0.25 observation files are now covered repository-wide.
+- schema-shape acceptance: PASS. Observation pins carry only the existing six
+  keys. No `admission` key was added, so a changed observation remains a defect
+  rather than an artifact replaceable by an admission procedure.
+- rejection-control acceptance: PASS. Four focused tests executed the real
+  validator and passed 4/4. It rejected an observations path with
+  `supporting`, rejected an `observation` grade under `evidence/`, and rejected
+  an `observation` grade under an unregistered prefix. Each exact error was
+  printed and captured.
+- changed-byte acceptance: PASS. A disposable copy of the committed manifest
+  and pins flipped one byte of the RSS body without changing its length.
+  Validation reported its SHA mismatch: expected
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`,
+  actual
+  `feb138bb57e12466321c5db5a8f2a6ab1ea51ee59c9b94d355e7eaf65c9be748`.
+- pin-count acceptance: PASS. The manifest rose from 266 to **271** pins, five
+  under `observations/`, all carrying only grade `observation`.
+  `evidence_artifacts.py validate` passed schema 2 with 2 artifacts / 271 pins;
+  `verify-artifacts` matched all 271 files and both protected databases.
+- limitation acceptance: PASS. The runbook and `STATE.md` state that a pin
+  detects changed repository bytes but does not prove those bytes are what the
+  publisher served. Only the v0.25 wire record establishes that provenance.
+- shell acceptance: PASS after discarding the sandbox-only lane whose eight
+  failures could not bind loopback or inspect processes. Permitted constrained
+  Python 3.11.4 and 3.12.13 each collected and passed **289**, failed 0, and
+  skipped 0.
+- invariant and lifecycle acceptance: PASS. `invariant-scan` remained 12/12
+  rules / 39 controls; `cycle-check`, `progress-check`, and `version-check`
+  passed before this append.
+- scope acceptance: PASS. The implementation changed only the manifest
+  validator, its shell tests, the manifest, `STATE.md`, and the active runbook.
+  It changed no production product source, publisher config, observation byte,
+  fixture, protected database, golden input, dependency, or ref.
+- golden-E2E delta: **0**; mandatory golden passed 11/11 with the hamming-12
+  true-positive collapse intact.
+- publisher-request acceptance: PASS. No publisher request was made.
