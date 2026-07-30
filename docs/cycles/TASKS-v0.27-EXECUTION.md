@@ -1178,10 +1178,30 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
 - [x] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; receipts
   pinned as `supporting` with **no `admission` key**; release-posture report
   recorded; no publisher request by any hosted job; scope amendment dated
-- [ ] **R-CLOSE** — **G7 decided and recorded as a reusable criterion**; coverage
+- [x] **R-CLOSE** — **G7 decided and recorded as a reusable criterion**; coverage
   determination with measurements; cadence correction with the number unchanged;
   admission-language generator fix recorded; non-exercise stated; permission usage
   recorded; cadence posture stated; T7 not described as nearer its trigger
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-30
+- **Release disposition:** release (as of 2026-07-30)
+- **Release:** `v0.17.0`
+- **Release commit:** `d5969207835c9f27f461d292b169ccb8d6ae5a46`
+- **Evidence candidate:** `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e`
+- **Candidate hosted run:** `30545771070` attempt 1
+- **Publication trigger:** the operator's explicit decision to publish the
+  authenticated coverage detector, corrected cadence criterion, executable
+  admission-language contract, and bounded mixed-disposition measurement; no
+  corrective trigger was visible at entry.
+- **Closing evidence:** all 7 executable hosted jobs green at the exact
+  candidate; 7 accepted / 0 rejected signed identities with attestations
+  required; comparator-derived equivalence in both Python lanes; release-parent
+  local definition of done all 20 jobs; invariant 12/12 rules / 46 controls;
+  golden 11/11; protected evidence 301/301.
 
 ---
 

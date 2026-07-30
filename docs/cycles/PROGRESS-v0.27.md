@@ -430,3 +430,91 @@ Entries are append-only; corrections are new dated entries.
   publisher configuration, schedule, document identity, `config/core.json`,
   or publisher ref changed. Step 8 remains behind its separate operator
   publication decision.
+
+### 2026-07-30 · R-CLOSE — v0.17.0 tagged close
+
+- owner: Codex
+- commit: d5969207835c9f27f461d292b169ccb8d6ae5a46
+- result: PASS. Release implementation commit
+  `d5969207835c9f27f461d292b169ccb8d6ae5a46` prepares v0.17.0 and is the
+  untagged immediate parent of the closing tree. No corrective trigger was
+  visible at entry; the publication trigger is the operator's explicit
+  decision to ship the authenticated coverage detector, corrected cadence
+  criterion, executable admission-language contract, and bounded
+  mixed-disposition measurement.
+- closing-evidence acceptance: PASS. Authenticated candidate
+  `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` and run **30545771070**
+  attempt **1** remain separate from the release parent. All seven executable
+  hosted jobs passed. Release-grade verification required attestations,
+  accepted **7 / rejected 0** identities, and confirmed the complete matrix.
+- release-identity acceptance: PASS. G7 is now reusable: a named observable
+  response shape remains versioned when its route is internal loopback; the
+  access classification does not erase the contract. Adding coverage fields
+  to `/ingest` therefore requires the minor **v0.17.0**. The public
+  value-domain criterion does not fire because no serialized `/v1/*` field
+  gains, loses, or redefines a value. The exact **38**
+  `v0.16.1..d5969207835c9f27f461d292b169ccb8d6ae5a46` paths are
+  classified once in eight disjoint groups in `STATE.md`.
+- coverage acceptance: PASS. The selected overlap/id-only detector depends on
+  contiguous publisher windows and stable ids. Pinned bytes derive 200 items
+  with zero ascending inversions and 200 unique GUIDs carrying 200 distinct
+  SEC accession numbers. First and identical windows respectively
+  non-misfire as `first_window` and `overlap`; a 67-held / 66-omitted /
+  67-incoming construction fires `gap_detected` with raw boundary strings
+  `16:26:17 EDT` / `17:00:13 EDT` and still commits. Post-insert reassessment
+  returns overlap, the combined batch remains partitioned by source, and
+  OAI-PMH is `not_applicable_paged`. Publisher re-issue or GUID-form change
+  can produce a visible false positive; zero false positives are not claimed.
+- cadence acceptance: PASS. Window advance is the loss criterion. The pinned
+  latest-200 sample spans **4,650 seconds / 77.5 minutes** against the
+  unchanged 600-second interval: **7.75×** margin, or **12.90%** of the
+  observed span consumed per poll. The v0.26 row is intact; the number did not
+  change. Peak-season, deadline-day, and uncovered-hour density remain
+  unmeasured. The 600-second schedule has never run and this publication does
+  not authorize it.
+- admission acceptance: PASS. The container-language fix addresses the
+  generator of the fifth and sixth author-side unsatisfiable rules without
+  reopening either record. SQLite `artifacts[]` carry corpus facts and chained
+  admission; immutable `pinned_files[]` carry graded bytes and forbid
+  admission. Executing fixtures accept both documented shapes and reject both
+  prohibited cross-container shapes.
+- source/scope acceptance: PASS. Exactly four application request starts in
+  the authorized Step 6 runtime put arXiv `RfcAllowAll` and SEC
+  `Body(allow)` in one process-scoped cache without policy bleed. arXiv timed
+  out before a page committed; SEC stored 200 documents. The sources were
+  sequential, not concurrent harvesters, so T7 did not fire and is not nearer
+  its trigger. Three conditional production permissions were used:
+  `crates/store/src/lib.rs`, `crates/store/src/sqlite.rs`, and
+  `apps/cored/src/main.rs`; `crates/ingest/src/lib.rs` and
+  `crates/ingest/src/rss.rs` were unused.
+- non-exercise acceptance: PASS. No `edgar:*` mapping, conditional GET,
+  `config/core.json` change, cadence change, dependency/schema change,
+  protected-database change, scheduler run, or identity change occurred.
+  `crates/extract` and `crates/view` are byte-unchanged; SEC remains **200
+  kept / 0 dropped**.
+- release-parent acceptance: PASS. At the exact committed parent,
+  `./run ci-local` passed all **20** jobs: workspace **145**, net **62**
+  (**32** ingest + **30** cored), warning-denied current and locked Rust 1.78
+  builds, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12/12 rules /
+  46 controls**, and embedded golden **11/11**. Mandatory standalone golden
+  passed **11/11**.
+- population acceptance: PASS. Constrained Python **3.11.4** and **3.12.13**
+  lanes each collected and passed **293** with zero skips. The authenticated
+  candidate comparators separately derived equivalence from hosted 292 passes
+  plus the one named, reasoned, `on_site` skip in both lanes.
+- evidence acceptance: PASS. All **301** pins and both protected databases
+  remained exact. Manifest size is **174,152 bytes**; consecutive complete
+  verification runs were **0.16 s / 0.10 s real**. Project-root
+  `export-check` passed **99** derived sources / **7** required / **180**
+  exported.
+- protocol acceptance: PASS. The closed record names release parent
+  `d5969207835c9f27f461d292b169ccb8d6ae5a46` and evidence candidate
+  `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` separately, omits the
+  not-yet-knowable tag-object field, and requires the annotated v0.17.0 tag to
+  target this immediate child and move atomically with `main`.
+- residual acceptance: PASS. A4, editable L1, R3/R4, the measured-value
+  heuristic, T7, NEGATIVE-CACHE Decision B, scheduled L2, FastAPI
+  version-literal relocation, and terms-gate operator responsibility remain
+  open or unchanged.
+- publisher-request acceptance: PASS. R-CLOSE made no publisher request.
+- golden-E2E delta: **0**.

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.27 Steps E0 through RE-MEASURE are complete and R-CLOSE publication of v0.17.0 is operator-authorized; the untagged release parent is being prepared and has not yet been published.** Published v0.16.1 remains at release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`, closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, and annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b`; remote `main` and the peeled v0.16.1 tag still resolve to that closing commit. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. At RE-MEASURE the tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched. The release assembly adds the internal `/ingest` coverage value and boundary fields, so the named-surface rule requires a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changes. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and this publication does not authorize it. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.27 is closed locally under R-CLOSE and v0.17.0 is operator-authorized for atomic publication; v0.16.1 remains published until that ref movement.** Untagged release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46` is the immediate parent of this closing tree; the annotated v0.17.0 tag must target the closing tree, not its parent. Published v0.16.1 remains at implementation parent `b9af84b8785bcd52c16ab0225d66386ecd872c4d`, closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, and annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b`; remote `main` and the peeled v0.16.1 tag still resolve to that closing commit. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The exact release parent passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched. The release assembly adds the internal `/ingest` coverage value and boundary fields, so the named-surface rule requires a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changes. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and this publication does not authorize it. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
 
 **Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION,
 ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are also complete.
@@ -12,10 +12,12 @@ cadence criterion; the configured value remains 600 seconds. The manifest
 contract now names the disjoint `artifacts[]` and `pinned_files[]` capabilities,
 and executing fixtures prove both valid shapes and both exact prohibited shapes.
 
-**v0.27 R-CLOSE selects v0.17.0 and prepares release assembly (operator
-decision 2026-07-30).** Release disposition: release (as of 2026-07-30).
-Published v0.16.1 remains unchanged until the tagged closing tree and its
-annotated tag move atomically.
+**v0.27 R-CLOSE selects v0.17.0 and closes on authenticated candidate evidence
+(operator decision and measurement 2026-07-30).** Release disposition: release
+(as of 2026-07-30). Untagged release commit
+`d5969207835c9f27f461d292b169ccb8d6ae5a46` is the immediate parent of the
+closing tree. Published v0.16.1 remains unchanged until that closing tree and
+its annotated v0.17.0 tag move atomically.
 
 G7 is settled as a reusable criterion. `ARCHITECTURE.md §8`'s shape rule
 covers every observable route and response body named in the architecture,
@@ -97,9 +99,9 @@ golden inputs, `crates/extract`, and `crates/view` did not change. Document
 identity remains 200 SEC kept / 0 dropped with the shared 26-feature floor and
 radius 16 unchanged.
 
-The release-parent changed-path classification is prepared in eight disjoint
-groups and will be reconciled against the committed `v0.16.1..R` set, expected
-to contain **38** paths:
+The release-parent changed-path classification is reconciled in eight disjoint
+groups against the exact
+`v0.16.1..d5969207835c9f27f461d292b169ccb8d6ae5a46` set of **38** paths:
 
 - **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
   `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
@@ -121,7 +123,7 @@ to contain **38** paths:
   `evidence/ci-runs/30545771070-1/` and
   `evidence/v0.27/deferred-audit/report.json`.
 
-The prepared release assembly passed all **20/20** local jobs with
+The exact release parent passed all **20/20** local jobs with
 warning-denied **145** workspace tests and **62** net tests (**32 ingest + 30
 cored**), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and
 `invariant-scan` **12 rules / 46 planted controls**. Constrained Python 3.11.4
