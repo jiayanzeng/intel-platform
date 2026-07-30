@@ -1,6 +1,29 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. All **266** protected pins and both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. v0.26 E0 passed its complete entering matrix and golden **11/11**; REPLAY is blocked before document-set measurement because the executed schema cannot pin `observations/**` or attach the required admission chain within Step 2's permitted scope. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 REPLAY pin gate blocked before measurement (measured 2026-07-30).**
+
+The required pre-proposal `evidence_artifacts.py validate` and
+`verify-artifacts` entries passed schema 2 with **2 artifacts**, **266 pinned
+files**, and both protected databases exact. All five v0.25 observation files
+were then re-hashed at **903,679 bytes** total. The feed body's SHA-256 remains
+`154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`;
+the other four exact hashes are in the active execution record.
+
+Two disposable manifest constructions were executed through the real
+validator. An otherwise valid pinned-file object at the original
+`observations/v0.25/` path failed because non-authorization pins must live
+beneath `evidence/`. Adding the runbook-required `admission` object failed the
+pinned-file exact-key check because schema 2 permits that chain only on the two
+database artifacts. Extending the validator/schema is outside REPLAY's Gate;
+copying the body beneath `evidence/` would violate the runbook's no-copy
+boundary. No manifest edit was proposed, no measurement was derived from the
+unchecked bytes, and REPLAY is blocked. Consequently IDENTITY-MEASURE and
+IDENTITY-DECISION remain blocked; CADENCE remains independently eligible.
+The mandatory permitted golden rerun passed **11/11** after a sandbox-only
+loopback-bind refusal was discarded as a non-result. No publisher request was
+made.
 
 **v0.16.0 post-push confirmation (measured 2026-07-30).**
 

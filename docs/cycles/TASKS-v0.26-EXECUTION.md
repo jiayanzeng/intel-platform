@@ -461,6 +461,48 @@ closing-parent relation also matched; all refs were read-only.
 repository ref, and did not edit `STATE.md`, `config/core.json`, or
 `config/schedule.json`.
 
+### REPLAY pin gate — blocked 2026-07-30
+
+Step 2 ran its required pre-proposal checks before touching the manifest.
+`python3 tools/evidence_artifacts.py validate` and
+`./run verify-artifacts` passed with schema 2, **2 artifacts**, **266 pinned
+files**, and both protected databases exact. The five intended observation
+files re-measured at **903,679 bytes** total with these exact digests:
+
+| Path | Bytes | SHA-256 |
+|---|---:|---|
+| `observations/v0.25/feed-shape/.gitattributes` | 213 | `01be878b7d5393273981278a686f5940127adb400d121b1e8d91c7710a933c42` |
+| `observations/v0.25/feed-shape/sec-edgar-feed-shape.md` | 4,654 | `87677a7c4721f3262f646f5b138406b5c296edc32dd06ad64a5439bafb27e936` |
+| `observations/v0.25/feed-shape/sec-edgar-robots.txt` | 2,622 | `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f` |
+| `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` | 892,641 | `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3` |
+| `observations/v0.25/terms-gate/sec-edgar-terms-determination.md` | 3,549 | `103d29edd3a9ab005981a8ccd22eb8118040d992474e6a33491a51bde9ddbb2c` |
+
+The manifest's executed schema cannot express Step 2's required construction.
+`pinned_files` accepts exactly `path`, `grade`, `sha256`, `bytes`, `purpose`,
+and `provenance`; non-authorization entries must live beneath `evidence/`.
+`admission` exists only on protected database artifacts, whose schema also
+requires database-specific expected document, integrity, null, and cursor
+facts. A disposable candidate adding the RSS body as an ordinary pinned file
+was executed through the real validator and failed:
+
+`pinned_files[266].path: pinned files must live beneath evidence/ or be an exact registered authorization surface`
+
+A second disposable candidate added the runbook-required chained `admission`
+object, including the v0.25 wire record, operator approval, and truthful
+`retroactive: true`; the real validator failed:
+
+`pinned_files[266]: keys differ; missing=[], extra=['admission']`
+
+Changing `tools/evidence_artifacts.py` or its schema is outside Step 2's Gate.
+Copying the observation beneath `evidence/` would both duplicate the bytes and
+violate the standing prohibition to read them from their original observation
+path. No manifest proposal was therefore made. The pin-first condition is
+undischarged, so no committed replay test or field inventory was derived and
+REPLAY is **blocked at its decision gate**. Steps 3 and 4 remain blocked on
+Step 2; Step 5 remains independently eligible. The mandatory golden control
+first encountered a sandbox-only loopback bind refusal, which is not counted;
+the identical permitted rerun passed **11/11**. No publisher request occurred.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
