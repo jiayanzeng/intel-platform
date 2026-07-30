@@ -209,6 +209,19 @@ v0.25's draft arrived as non-executable YAML and had to be translated at
 activation. If this table still cannot be parsed as written, **that is a
 finding to record, not a silent conversion**.
 
+## Runbook amendments
+
+### 2026-07-30 — E0 gate widened for the live trigger-table count control
+
+The first clean Python 3.11 E0 lane collected **284**, passed **283**, skipped
+**0**, and failed because
+`test_current_trigger_freshness_tables_are_complete` still expected **12**
+trigger-bearing active-runbook rows while v0.26 validly declares **13**. The
+E0 gate now permits the exact existing lifecycle count control
+`shell/tests/test_cycle_check.py` so the full-matrix acceptance criterion is
+not broader than its gate. No objective, acceptance criterion, done condition,
+production permission, publisher permission, or trigger changed.
+
 ### Global definition of done
 
 Protected hashes exact; all pins match until Step 7 adds more; **golden 11/11
@@ -252,11 +265,12 @@ edit the assertion to bless the drift.
 **Objective.** Confirm HEAD is green and settle G1–G7.
 
 **Gate.** Read-only repository, object, disposable-clone, and local execution
-measurements plus `PROGRESS-v0.26.md` and this runbook's status records. **No
-publisher request of any kind is made in this step, and none is needed: every
-byte this cycle reasons from is already committed.** No ref created, moved, or
-deleted in the working repository; `STATE.md`, `config/core.json`, and
-`config/schedule.json` unedited.
+measurements plus `PROGRESS-v0.26.md`, this runbook's status records, and the
+exact live trigger-table count control in
+`shell/tests/test_cycle_check.py`. **No publisher request of any kind is made
+in this step, and none is needed: every byte this cycle reasons from is already
+committed.** No ref created, moved, or deleted in the working repository;
+`STATE.md`, `config/core.json`, and `config/schedule.json` unedited.
 
 **Steps.**
 
