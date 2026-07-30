@@ -1,0 +1,769 @@
+# TASKS-v0.26-EXECUTION.md — the threshold that was calibrated on one corpus
+
+v0.25 closed and v0.16.0 published. Release parent `7baddb30…`, closing commit
+`c66c2b02…`, annotated object `54f8cb2f…`, post-push run `30516010035` green on
+all seven executable jobs. **Every condition set on `extend/minor` was
+discharged and verified by path**: `PublisherPermitted` spells identically
+across config, archive, and `/v1/*`; `redistributable()` is an exhaustive
+`match` so the compiler now refuses a silently non-redistributable new variant;
+`crates/store/src/sqlite.rs` went unmodified and was recorded as unused rather
+than touched to look thorough; the older-reader `unwrap_or(IndexOnly)` fallback
+is recorded as a property instead of waiting to be discovered; and the
+`candidate/v0.16.0` name collision is disambiguated on the record with the
+pre-existing ref untouched at `3481e4ba…`.
+
+**The v0.25 wire observation is the most valuable artifact in the tree.** It is
+892,641 bytes of real publisher response at
+`observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml`, and it makes this
+cycle's central question answerable with **zero publisher requests**.
+
+**The archive's identity rule was calibrated on news text, and the first real
+finance corpus breaks it.** `DEDUP_MAX_DISTANCE` is **16** over a 64-bit
+SimHash. The repository's RSS parser assigns `description` to `Document.body`,
+and in this feed `description` is the **form type alone** — `8-K`, `10-Q`,
+`486BPOS`. Title plus body yields a **median of five 3-token shingles** per
+item, against **28–36** for the news fixtures the threshold was measured on.
+With five features voting per bit, the fingerprint carries far less than 64 bits
+of information, and unrelated documents land inside a 16-bit radius routinely.
+**This is one named root cause — a fixed Hamming radius over a fingerprint whose
+information content varies with input length — not twenty separate collapses.
+Nothing in the system measures or records feature count.**
+
+**Three further conditions exist that the close did not name.** The parser has
+never been executed against these bytes, and the feed declares
+`encoding="windows-1252"` while every existing fixture declares UTF-8, so that
+branch has never run at all. `config/schedule.json` was never touched at
+admission, so the admitted live source inherited a two-hour sector cadence
+nobody chose. And the observation body carrying all of this evidence is
+committed but its SHA-256 lives only in prose.
+
+**No step in this file harvests anything until Step 6, and Step 6 is an operator
+decision that may correctly answer "not yet."** A cycle that measures the
+identity rule against real content and declines to harvest is a complete cycle.
+Harvesting into an archive whose identity rule has just been measured wrong is
+not.
+
+---
+
+## Declared scope
+
+| Scope class | Path or value |
+|---|---|
+| `scope_version` | `1` |
+| `disposition_intent` | `release` |
+| `allow` | `crates/extract/src/lib.rs` |
+| `allow` | `crates/store/src/sqlite.rs` |
+| `allow` | `crates/view/src/lib.rs` |
+| `allow` | `crates/**/tests/**` |
+| `allow` | `shell/tests/**` |
+| `allow` | `config/schedule.json` |
+| `allow` | `config/protected-artifacts.json` |
+| `allow` | `config/invariant-rules.json` |
+| `allow` | `tools/invariant_scan.py` |
+| `allow` | `tools/cycle_check.py` |
+| `allow` | `observations/**` |
+| `allow` | `evidence/v0.26/deferred-audit/report.json` |
+| `allow` | `AGENTS.md` |
+| `allow` | `ARCHITECTURE.md` |
+| `release_authority` | `Cargo.toml` |
+| `release_authority` | `Cargo.lock` |
+| `release_authority` | `crates/*/Cargo.toml` |
+| `release_authority` | `apps/*/Cargo.toml` |
+| `release_authority` | `shell/intel_shell/__init__.py` |
+| `release_authority` | `shell/intel_shell/app.py` |
+| `release_authority` | `CHANGELOG.md` |
+| `release_authority` | `README.md` |
+| `forbid` | `crates/ingest/src/**` |
+| `forbid` | `crates/compliance/src/**` |
+| `forbid` | `apps/**/*.rs` |
+| `forbid` | `shell/intel_shell/[a-z]*.py` |
+| `forbid` | `config/core.json` |
+| `forbid` | `config/subscriptions*.json` |
+| `forbid` | `fixtures/**` |
+| `forbid` | `run` |
+
+**The three `crates/**/src` permissions are conditional on Step 4's decision and
+on nothing else.** `crates/extract/src/lib.rs` is allowed only for a
+feature-count guard, `crates/store/src/sqlite.rs` and `crates/view/src/lib.rs`
+only for the threshold authority G1 measures. **If Step 4 chooses to record and
+defer, all three must go unmodified and Step 8 must record the permission as
+unused.**
+
+**`crates/ingest/src/**` stays forbidden outright, and this is a decision, not
+an oversight.** The richest content in this feed — `edgar:companyName`,
+`formType`, `cikNumber`, `accessionNumber`, `period` — sits in a namespaced
+extension the parser discards, and mapping it would both improve the product and
+incidentally raise the feature count. **That is a product decision deserving its
+own cycle with its own connector review, not a side effect of a dedup fix.** It
+enters the deferral table with a trigger.
+
+**`run` is forbidden and hash-pinned.** Any change to it requires a chained
+manifest admission record; G7 must price that before Step 6 assumes a harvest
+path exists.
+
+**Amendment obligation known in advance.** The Step 7 hosted receipt directory
+path is `evidence/ci-runs/<run-id>-<attempt>/**` and its run id cannot exist
+until the run does. v0.25 discovered this at its Step 6 and corrected the table
+after the fact. **Step 7 must add that exact directory by a dated
+`## Runbook amendments` entry in the same commit that first needs it**; this
+paragraph is notice, not permission.
+
+---
+
+## Entering state (asserted, not yet verified)
+
+**Every sentence here is a hypothesis until Step 1 (E0) measures it.**
+
+- `v0.16.0` is published. Release parent
+  `7baddb305a4357ec2dc2a35757528c1a6dc13f1e`, closing commit
+  `c66c2b02191e3ca3126dddc3c004b175899b414e`, annotated tag object
+  `54f8cb2f89ed53d9e0b485f6cd46924a51e41813`. v0.25 is closed. **None of this is
+  reopened.** Post-push run `30516010035` is the verification of record;
+  authenticated closing evidence remains candidate
+  `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run `30513561141`.
+- Local `main` is one commit ahead at post-push audit `12d0601e…`, unpushed,
+  under the accepted cycle-ending rhythm. **Do not amend, rebase, or squash it.**
+- Local shell lanes are **284 collected / 284 passed / 0 skips** on both
+  interpreters; hosted is **284 collected / 283 passed / 1 named `on_site`
+  skip**; the comparator confirmed equivalence.
+- `ci-local` is 20/20. Workspace **135**; net **55** (**29** ingest + **26**
+  cored). `invariant-scan` is **12 rules / 39 controls**. Golden is **11/11**.
+  `checklist-audit` is **198 checked / 3 retracted / 198 matched / 0
+  exemptions**. Retractions remain **three**.
+- Protected pins are **266**; manifest **154,205 bytes**; two consecutive
+  `verify-artifacts` runs at **0.14 s / 0.09 s real**. `export-check` from the
+  root is **96 derived / 7 required / 170 exported**.
+- `config/core.json` declares two live-capable sources. `arxiv-cs` is
+  `arxiv_oai`, `IndexOnly`, `robots_on_missing: allow`, with a fixture.
+  `sec-edgar-usgaap` is `rss`, `PublisherPermitted`, `robots_on_missing: deny`,
+  **with no fixture**, under `finance`. The three other `rss` sources point at
+  `example.org` and all have fixtures.
+- The v0.25 wire observation is five files under `observations/v0.25/`. The feed
+  body is **892,641 bytes**, SHA-256
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`, **200
+  `<item>` elements**, `Content-Type: text/xml`, XML declaration
+  `encoding="windows-1252"`.
+- A4, the editable-L1 controller residual, the R3/R4 open-bottom deny-lists, the
+  active-runbook measured-value heuristic, T7 robots single-flight, NEGATIVE-CACHE
+  Decision B, the FastAPI version-literal relocation, and live multi-publisher
+  behaviour remain open. L2 remains scheduled. `v0.8.0` and `v0.10.2` remain
+  local-only. **No step in this file closes or narrows any of them.**
+
+---
+
+## Drafted gates
+
+| Gate | Where | Hypothesis |
+|---|---|---|
+| **G1** [P1] | `crates/store/src/sqlite.rs` `DEDUP_MAX_DISTANCE`; `crates/view` `ViewParams::dedup_max_distance`; registered R1 and R5 | **The identity threshold may be two literals that agree by coincidence, not one authority.** The store declares a private `DEDUP_MAX_DISTANCE = 16`; the view carries its own `dedup_max_distance` defaulting to **16**. The v0.11 retraction record shows a "one shared constant" claim was already false once. **Determine whether ingest-time canonical assignment and view-time collapse read one authority or two independent declarations, and state exactly what R1 and R5 do and do not cover.** A change to one that silently leaves the other is this project's recurring defect class. |
+| **G2** [P1] | `crates/ingest/src/rss.rs`; `observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml` | **The shipped parser has never been executed against these bytes, and the non-UTF-8 declaration branch has never executed at all.** Every committed fixture declares `UTF-8`; this body declares `windows-1252`. roxmltree 0.19 is handed a `&str`. **Determine by execution whether the shipped parser accepts this body**, and record what the response's absent `charset` parameter means for decoding in general — the captured body is pure ASCII, which makes today's decode lossless by accident of the snapshot, not by property. **No publisher request. The bytes are in the tree.** |
+| **G3** [P1] | `config/protected-artifacts.json`; `observations/v0.25/feed-shape/` | **The evidence this cycle reasons from is unpinned.** The observation's SHA-256 is recorded in the observation's own prose. Enumerate the manifest and determine whether `verify-artifacts` covers any file under `observations/`. **If it does not, that recorded hash is not a property, and every measurement Steps 2–4 derive from those bytes rests on an unchecked artifact.** |
+| **G4** [P2] | `crates/ingest/src/rss.rs` fixtureless branch; `apps/cored` `/ingest`; `shell/intel_shell/pipeline.py` | **A configured source that cannot run offline is now in the tree and nothing executes that path.** A fixtureless `rss` source on a non-`net` build returns `IngestError::Http`. Determine what `/ingest` returns for `finance` offline, whether it is a per-source `ok:false` or a whole-call failure, and what the shell pipeline's exit status becomes. **Confirm whether any existing test covers it.** |
+| **G5** [P2] | `run` `cmd_harvest_arxiv` | **The arXiv harness now generates a live config containing the SEC source.** `cmd_harvest_arxiv` copies `config/core.json`, edits only `arxiv-cs`, and starts a `net` build against the result. Its `/ingest` body appears source-filtered. **Confirm by measurement — not by reading — that a bare `./run harvest-arxiv` issues zero requests to any `sec.gov` origin.** |
+| **G6** [P2] | `config/schedule.json`; `shell/intel_shell/scheduler.py` | **The admitted source inherited a cadence nobody chose.** The `quant-desk` job declares `interval_seconds: 7200` and no `sources` map. Determine the effective cadence the scheduler would apply to `sec-edgar-usgaap` on a `net` build, and whether any per-source cadence is required for the source to run at all. |
+| **G7** [P2] | `run` (hash-pinned); `config/protected-artifacts.json` | **There may be no executable path to a live SEC harvest.** `harvest-arxiv` is arXiv-specific and `run` is hash-pinned, so generalizing it requires a chained admission record. **Enumerate every path to a first SEC harvest and price each**, including a documented operator sequence that changes no pinned bytes. Step 6 may not assume a path exists. |
+
+---
+
+## How to run this file
+
+Execute top to bottom, one task and one commit at a time. Follow `AGENTS.md §5`
+after **every** task. Implementation and audit-record commits stay separate.
+
+- **🤖 = Codex executes and self-verifies end to end** — no publication, no push
+  to `main`, no ref creation or deletion **in the working repository**.
+- **🧑 = exactly one named operator action or decision.**
+
+**Interpretive rules, binding throughout.** An exit code of 0 from a
+construction the checker never examined is **not measured**. A measurement that
+disagrees with an acceptance criterion is **reported as measured**; the
+criterion is what gets corrected. **Replayed real bytes are stronger than a
+fixture and weaker than a request**: executing the shipped parser over the
+v0.25 observation proves what the parser does with a real publisher response and
+proves nothing about what the publisher will serve next. Say which of the three
+any claim rests on. And **a threshold is a claim about a corpus**: a constant
+that is correct for one input distribution and wrong for another is not a bug in
+either corpus.
+
+**Dependency gates.** Step 2 blocks Step 3; Step 3 blocks Step 4. Step 5 is
+independent and may run any time after Step 1. **Step 6 runs only if Steps 2, 3,
+4, and 5 all return affirmative determinations and the operator authorizes it**;
+any undetermined outcome, or an operator decision to defer, ends this cycle at
+Step 5 and **that is a complete cycle**, because the identity determination is
+the substance. Step 7 is blocked by every preceding implementation step; Step 8
+by Step 7.
+
+### Cycle activation (before E0)
+
+In a separate preparatory implementation/audit pair: confirm the worktree is
+clean and record the measured refs **without asserting a literal `origin/main`
+hash in `STATE.md`'s header**. Commit **only** this runbook at
+`docs/cycles/TASKS-v0.26-EXECUTION.md` — including its `## Declared scope`
+table — the `AGENTS.md` header moving the active declaration from v0.25 to
+v0.26, and a new `docs/cycles/PROGRESS-v0.26.md`. **Local `main` already carries
+the unpushed post-push audit `12d0601e…`; activation sits on top of it and does
+not amend, rebase, or squash it.**
+
+**The scope block above is written in the executable Markdown-table dialect.**
+v0.25's draft arrived as non-executable YAML and had to be translated at
+activation. If this table still cannot be parsed as written, **that is a
+finding to record, not a silent conversion**.
+
+### Global definition of done
+
+Protected hashes exact; all pins match until Step 7 adds more; **golden 11/11
+byte-identical**; `./run version-check` green; zero rustc warnings on offline and
+net builds; all Rust tests green; all shell tests green under Python 3.11 **and**
+3.12; shell results recorded as collected / passed / skipped with every skip
+named and compared by `tools/test_population.py`, never as a bare `N/N`; clippy,
+fmt, ShellCheck, floor byte-compilation, and locked Rust 1.78 green.
+
+**Golden is this cycle's true-positive control, not merely its anchor.** Its
+expected outcome includes `techwire::tw-004` dropped for `osdaily::osd-004` at
+hamming **12** — a correct collapse of two genuinely near-duplicate news items.
+Any Step 4 change is intended to remove false collapses **without** removing
+that true one. **If golden moves, stop and record it as the finding**; do not
+edit the assertion to bless the drift.
+
+---
+
+## Deferred means deferred
+
+| Deferred item | Unchanged trigger | Measured 2026-07-30 | v0.26 action |
+|---|---|---|---|
+| T7 robots single-flight | a second concurrent harvester | 2026-07-30 — one harvester; ingest is sequential; two configured sources are not two concurrent harvesters | **none — and Step 6, if it runs, still does not fire this** |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | 2026-07-30 — no such outage observed | none |
+| Postgres / pgvector / multi-host seam | unchanged | 2026-07-30 — single writer, single host | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | 2026-07-30 — one first-party shell; no such claim made | none |
+| L2 forced-command wrapper | an operator server session | 2026-07-30 — no operator server session has occurred | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | 2026-07-30 — none observed | none |
+| First live SEC RSS harvest | Steps 2–5 affirmative plus explicit operator authorization in this cycle | 2026-07-30 — no live RSS harvest has occurred | **Step 6 — decided, not assumed** |
+| `edgar:*` extension field mapping | an operator-authorized cycle whose declared scope permits `crates/ingest/src/**`, with a connector review | 2026-07-30 — the parser reads six per-item fields and discards the namespaced extension | **none — recorded by Step 3, acted on in no step here** |
+| Third configured publisher | a completed compliance review, then a separate admission decision | 2026-07-30 — no review pending | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | 2026-07-30 — not authorized | none — **no historical ref touched** |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | 2026-07-30 — tags unpublished | none — **the flag stays** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | 2026-07-30 — 266 pins, 154,205 bytes, 0.14 s / 0.09 s | **Step 1 — re-measure only** |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | 2026-07-30 — literal present in production source; this cycle forbids `shell/intel_shell/[a-z]*.py` | none — recorded, not acted on |
+
+---
+
+## Step 1 · E0 — Rebuild the entering state and settle seven gates 🤖
+
+**Objective.** Confirm HEAD is green and settle G1–G7.
+
+**Gate.** Read-only repository, object, disposable-clone, and local execution
+measurements plus `PROGRESS-v0.26.md` and this runbook's status records. **No
+publisher request of any kind is made in this step, and none is needed: every
+byte this cycle reasons from is already committed.** No ref created, moved, or
+deleted in the working repository; `STATE.md`, `config/core.json`, and
+`config/schedule.json` unedited.
+
+**Steps.**
+
+1. Run the full entering matrix and standalone `./run golden`, plus
+   `verify-artifacts`, `cycle-check`, `checklist-audit`, `progress-check`,
+   `version-check`, `invariant-scan`, and `export-check` from the root. **Record
+   shell as collected / passed / skipped and cite the comparator's derived
+   output, never a figure transcribed from a log.**
+2. **Settle G1.** Quote both threshold declarations with file and line. State
+   whether view-time collapse and ingest-time canonical assignment read one
+   authority or two. **Quote R1's and R5's `claim` and `scope` fields and state
+   precisely which of the two declarations each rule observes.** If a change to
+   one could leave the other at 16 without any rule firing, say so as the
+   finding.
+3. **Settle G2 by execution, in this step, offline.** Hand the committed
+   observation bytes to the shipped parser and record the outcome: accepted or
+   rejected, with the exact error if rejected. **Do not paraphrase roxmltree's
+   documented behaviour; run it.** Separately record what `reqwest`'s `.text()`
+   does with a `text/xml` response carrying no `charset` parameter, and state
+   plainly that the captured body's pure-ASCII content makes today's decode
+   lossless by accident rather than by property.
+4. **Settle G3.** Enumerate the manifest's artifact paths and state whether any
+   file under `observations/` is pinned. **If none is, record that the SHA-256
+   in the observation's prose is not executed by anything**, and state what
+   Step 2 must therefore do before deriving measurements from those bytes.
+5. **Settle G4.** Execute an offline `/ingest` for `finance` and record the
+   exact response shape, the per-source result, and the shell pipeline's exit
+   status. Search the test suite and state whether any test covers it.
+6. **Settle G5 by measurement.** Determine, by capturing the generated live
+   config and the ingest request actually issued, that a bare
+   `./run harvest-arxiv` sends nothing to any `sec.gov` origin. **A reading of
+   the source is not the measurement.** If this box cannot reach arXiv, record
+   the reachability refusal as a non-result and state what remains unmeasured.
+7. **Settle G6.** State the effective scheduler cadence for `sec-edgar-usgaap`
+   under the committed `config/schedule.json`, derived from the scheduler's own
+   resolution order rather than from the file's appearance.
+8. **Settle G7.** Enumerate every candidate path to a first live SEC harvest —
+   generalizing `run`, a new subcommand, a documented operator sequence against
+   a `net` build, or none — and price each against the `run` hash pin and the
+   admission-chain requirement.
+9. Re-measure manifest size and `verify-artifacts` wall time. Re-verify the
+   published `v0.16.0` objects and all pins.
+
+**Acceptance criteria.** Entering matrix with both interpreters and comparator
+citation · G1 answered with both declarations quoted by file and line and R1/R5
+coverage stated exactly · **G2 answered by executing the shipped parser over the
+committed bytes, with the decode question recorded separately** · G3 answered by
+enumeration with the consequence for Step 2 stated · G4 answered by execution
+with test coverage stated · **G5 answered by captured request evidence, not by
+reading** · G6 answered from the scheduler's resolution order · G7's paths
+enumerated and priced · manifest and verify time freshly measured · published
+objects and all pins re-verified · golden 11/11 · **no publisher request made**.
+
+**Done when** every gate carries a measurement and G2 carries an executed
+parser result.
+
+---
+
+## Step 2 · REPLAY — Build the real document set from real bytes 🤖
+
+**Objective.** Produce, by executing shipped code over the committed wire body,
+the exact `Document` set the parser would construct — and pin the bytes that
+claim rests on.
+
+**Gate.** `crates/**/tests/**`, `shell/tests/**`,
+`config/protected-artifacts.json`, `observations/v0.26/**`, and status records.
+**Blocked on E0 settling G2 and G3.** No production source, no
+`config/core.json`, no fixture, no golden input, no publisher request.
+
+**Steps.**
+
+1. **If G3 found the observation unpinned, pin it first, in its own commit.**
+   Append a chained admission record for the five `observations/v0.25/` files
+   naming this task, the date, the v0.25 wire command and output reference, and
+   operator approval, with `retroactive` set truthfully. Run
+   `python3 tools/evidence_artifacts.py validate` and `./run verify-artifacts`
+   before proposing the manifest change. **A measurement derived from unchecked
+   bytes is not a measurement.**
+2. Execute the shipped parser over the pinned body from a test under
+   `crates/**/tests/**`. **Read the file from `observations/v0.25/`; do not copy
+   it into `fixtures/`, the protected corpus, or golden.**
+3. **Record the constructed set field by field**, with counts, not adjectives:
+   item count; distinct `Document.id` count; `id` construction and maximum
+   length; `title` length range; **`body` length distribution, including the
+   mean**; `published_day` distribution; `published_raw` retention; `authors`
+   population; `url` population; and the `License` and `SourceKind` carried.
+4. **State the `published_day` semantics explicitly.** `Day::parse_rfc822ish`
+   slides a three-token window and ignores the zone, so `EDT` timestamps yield
+   the publisher's local calendar day. Record that as a property, and record
+   whether any item's UTC day differs from its recorded day.
+5. **Record what the parser discards.** Enumerate the namespaced `edgar:*`
+   elements present per item and state that none reaches a `Document` field.
+   **This is the deferred mapping row's evidence; do not act on it here.**
+6. **State what this establishes and what it does not.** Real publisher bytes
+   replayed through shipped code establish parser behaviour against a real
+   response. They establish nothing about paging, cursor durability, repeated
+   fetches, politeness on the wire, redirects, conditional requests, or what the
+   publisher serves next.
+
+**Acceptance criteria.** Observation bytes pinned with a valid chained admission
+record, or G3's finding that they already were, recorded either way · parser
+executed over the pinned body from a committed test · full field inventory
+recorded with counts · `published_day` zone semantics recorded as a property ·
+discarded extension fields enumerated without being mapped · establishment
+boundary stated · nothing added to `fixtures/`, the protected corpus, or golden ·
+`config/core.json` untouched · golden 11/11.
+
+**Done when** the document set the parser actually builds is on the record, and
+the bytes it was built from are verified by a command rather than by prose.
+
+---
+
+## Step 3 · IDENTITY-MEASURE — Run the shipped identity rule over real content 🤖
+
+**Objective.** Measure what the shipped dedup rule does to the real corpus,
+before anyone proposes changing it.
+
+**Gate.** `crates/**/tests/**`, `observations/v0.26/**`, and status records.
+**Blocked on Step 2.** **No production source change in this commit** — this
+step measures; Step 4 decides. No `config/core.json`, no fixture, no golden
+input, no publisher request.
+
+**Steps.**
+
+1. **Execute `assign_canonical_ids_tx` and `dedup_near` at the shipped
+   threshold** over the Step 2 document set in the `finance` sector, including
+   the existing `filings-digest::fin-001` fixture document, in the shipped
+   ordering: `(sector, published_day, id)`.
+2. **Report kept, dropped, and for each drop the kept id and the measured
+   hamming distance.** Classify every drop as same-issuer or cross-issuer using
+   the CIK in the title, and report both counts.
+3. **Sweep the threshold** across at least 16, 15, 14, 13, 12, 10, and 8, and
+   report kept / dropped / cross-issuer at each. **Report the sweep as a
+   measurement of this corpus, not as a recommendation.**
+4. **Measure the mechanism, not just the symptom.** Report the 3-token shingle
+   count distribution for the SEC set and for the news fixtures golden uses, and
+   the pairwise hamming distance distribution over the SEC set with the count of
+   pairs at or inside the shipped radius. **The claim to be confirmed or refuted
+   is that the collapse rate is a function of feature count.**
+5. **Record the same-day concentration.** All items share one `published_day`.
+   Record what the analyze layer does with that concentration in a sector that
+   previously held one document — burst baseline, z-scores, and whether any
+   entity resolves against the gazetteer — as an observation. **Do not act on
+   it; it is not this cycle's subject.**
+6. **This draft's predicted values are stated in the provenance section below.**
+   Report the measured values. **If they disagree with the prediction, the
+   measurement is the result and the prediction is the error** — record it as an
+   author-side error in the runbook, not as an implementation defect.
+
+**Acceptance criteria.** Shipped rule executed, not reproduced · kept/dropped
+with per-drop distances recorded · cross-issuer and same-issuer counts separated
+· threshold sweep recorded as corpus measurement · shingle-count and pairwise
+distance distributions recorded for both corpora · same-day concentration
+observed and explicitly not acted on · prediction confirmed or refuted with the
+disagreement owned by whichever side was wrong · **zero production source files
+changed in this commit** · golden 11/11.
+
+**Done when** the false-collapse count is a measured number and its mechanism is
+a measured distribution.
+
+---
+
+## Step 4 · IDENTITY-DECISION — Decide what a threshold may claim 🧑🤖
+
+**Objective.** Decide how the identity rule handles a corpus its constant was
+not calibrated on, and implement exactly that.
+
+**Gate.** 🧑 **One operator decision, at step 1.** Scope is
+`crates/extract/src/lib.rs`, `crates/store/src/sqlite.rs`, and
+`crates/view/src/lib.rs` **only as the decision requires them**, their tests,
+`config/invariant-rules.json`, `tools/invariant_scan.py`, `ARCHITECTURE.md`, and
+status records. **Blocked on Step 3.** No ingest, compliance, shell source,
+`config/core.json`, schema-breaking, or protected-database changes.
+
+**Steps.**
+
+1. **🧑 Choose exactly one, and record the claim each would make:**
+   - **Guard the radius by feature count.** Refuse to collapse — or require a
+     stricter radius — when either document's feature count falls below a floor
+     measured in Step 3. **Claim:** the threshold's validity is conditional on
+     feature count, and the condition is now executed rather than assumed.
+     **Cost:** a new concept in the identity rule, a floor that must itself be
+     derived from measurement rather than chosen, and R1/R5 coverage that must
+     be extended to it. **Recommended**, because it corrects the named root
+     cause instead of the corpus that exposed it.
+   - **Lower the constant.** **Claim:** 16 was wrong and some smaller number is
+     right. **Cost:** the new number is fitted to one 200-item snapshot of one
+     publisher, and the next corpus with different feature counts re-opens this
+     exact finding. Say that plainly rather than presenting it as the
+     conservative option.
+   - **Record and defer.** A complete outcome, and the right one if neither of
+     the above can be justified from Step 3's measurements. **Cost:** the
+     configured source stays unharvested and Step 6 cannot run. **Say so as a
+     consequence, not as a failure.**
+   **Fitting the constant to make this corpus behave is not on the list unless
+   it is chosen with that description attached.**
+2. **If G1 found two threshold declarations, resolve that first and separately.**
+   A change applied to one authority while the other keeps its own 16 is the
+   defect G1 exists to catch. **Record whether the resolution was needed.**
+3. If implementing: implement, and **prove by test that the golden collapse at
+   hamming 12 still occurs.** That drop is the true-positive control; a change
+   that removes it has overshot. **Prove separately that the measured
+   cross-issuer collapses no longer occur**, using the Step 2 document set.
+4. **Register any new rule as an R12 planted-failure mutation and report counts
+   in three places.** If the chosen option extends what R1 or R5 must observe,
+   **the rule changes with it**; a rule whose claim no longer matches its check
+   is the v0.14 finding repeating.
+5. **Do not change `config/core.json` or `config/schedule.json` in this step.**
+
+**Acceptance criteria.** Exactly one option chosen and dated with the claim it
+makes recorded · fitted-constant framing stated if that option is chosen · G1's
+two-declaration question resolved or recorded as not applicable · if
+implemented: golden's hamming-12 drop proven still to occur **and** the measured
+cross-issuer collapses proven gone · new or changed rules carry detected planted
+failures with counts in three places · `config/core.json` and
+`config/schedule.json` untouched · if not implemented, all three source
+permissions recorded as unused · golden 11/11 byte-identical.
+
+**Done when** no document is suppressed as a near-duplicate of a document it is
+not near, and the collapse the corpus was calibrated on still happens.
+
+---
+
+## Step 5 · CADENCE — Say what the admitted source was signed up for 🤖
+
+**Objective.** Replace an inherited cadence with a chosen one, or record that
+the inherited one is correct.
+
+**Gate.** `config/schedule.json`, `shell/tests/**`, `ARCHITECTURE.md`, and
+status records. **Blocked on E0 settling G6.** No core config, no shell source,
+no publisher request, no harvest.
+
+**Steps.**
+
+1. State the effective cadence G6 measured, and the cadence SEC's published
+   guidance permits — the ten-requests-per-second fair-access ceiling against
+   the shipped `DEFAULT_RPS = 2.0` per-host floor, and the feed's own
+   ten-minute update interval. **Cite the publisher text by URL and read date;
+   do not re-derive it from memory.**
+2. **Decide the cadence explicitly and record the reason.** A per-source entry
+   for `sec-edgar-usgaap` under the `quant-desk` job, or a recorded decision
+   that the inherited sector cadence is correct. **An inherited default that
+   nobody chose is not a decision; a default that someone examined and kept
+   is.**
+3. Add a test that fails if the admitted source has no resolvable cadence, or
+   record why the scheduler's resolution order makes such a test vacuous.
+   **A vacuous test is worse than none — the v0.21 lesson.**
+4. Record the disposition dated in `ARCHITECTURE.md` alongside the existing
+   terms-gate row. **Do not describe the cadence decision as satisfying the
+   terms condition**; they are different gates and the terms row stays as it is.
+
+**Acceptance criteria.** Effective cadence stated from the scheduler's
+resolution order · publisher rate guidance cited with URL and read date ·
+cadence chosen with its reason, or the inherited value examined and kept with
+its reason · test added or its vacuity recorded · `ARCHITECTURE.md` disposition
+dated · terms-gate row unchanged · no harvest · golden 11/11.
+
+**Done when** the cadence the admitted source runs at is one somebody chose.
+
+---
+
+## Step 6 · HARVEST — The first live SEC request, or a recorded refusal 🧑🤖
+
+**Objective.** Decide whether the first live SEC harvest happens in this cycle,
+and if so, execute it under a bounded authorization.
+
+**Gate.** 🧑 **One operator decision, at step 1, and it may be no.** Blocked on
+Steps 2, 3, 4, and 5 all affirmative. **This step may be deleted from the cycle
+entirely, in which case the determination that deferred it is recorded in its
+place.** No protected database is a harvest target. No `config/core.json`
+change. No `run` change unless G7 priced one and the operator authorized both it
+and its manifest admission.
+
+**Steps.**
+
+1. **🧑 Authorize or defer.** If deferring, delete this step and record the
+   determination that deferred it in the deferral table with an unchanged
+   trigger. **A deferral here is a complete cycle outcome.**
+2. If authorized: **re-evaluate the publisher's `robots.txt` fresh and compare
+   its hash to the v0.25 body.** Do not reuse a verdict from a prior date to
+   authorize a request today.
+3. Execute the harvest by the exact path G7 priced, into the fresh
+   `data/live-<UTC-timestamp>-<pid>.db` the harness prints. **Run
+   `./run verify-artifacts` first, and let the protected-target refusal stand.**
+4. **Bound the run**: exactly one feed request, no re-request on a non-error
+   response, no paging beyond what one RSS response contains.
+5. **Report what the wire did, in counts.** Requests issued per origin, HTTP
+   statuses, redirects, retries, measured inter-request interval, documents
+   fetched, documents new, and the canonical assignment the store actually
+   performed under the Step 4 rule.
+6. **Record the first two-origin runtime observation.** Whether the robots cache
+   keyed both origins separately and whether the per-host limiter spaced each
+   independently. **This is the first time both origins exist in one production
+   runtime; say what was and was not exercised.**
+7. **Do not admit the harvested database to the protected corpus and do not add
+   it to golden.** It is an observation.
+
+**Acceptance criteria.** Decision recorded and dated · if deferred, the step
+deleted with its determination recorded and the trigger unchanged · if executed:
+fresh robots evaluation with hash comparison, exactly one feed request evidenced
+by count, wire result reported in counts, two-origin cache and limiter behaviour
+recorded, harvest database fresh and unadmitted, non-exercise stated · no
+protected artifact or database changed · golden 11/11.
+
+**Done when** either documents crossed the wire and the record says how many, or
+the record says why none did and what would change that.
+
+---
+
+## Step 7 · RE-MEASURE — Hosted verification on a neutral branch 🤖
+
+**Objective.** Prove the release-parent tree on hosted CI before any close.
+
+**Gate.** Evidence paths and `config/protected-artifacts.json` only, plus status
+records. **Add the exact `evidence/ci-runs/<run-id>-<attempt>/**` directory to
+the declared scope by a dated `## Runbook amendments` entry in this same
+commit**, as the activation notice above requires. **No publisher request by any
+hosted job.** 🧑 One narrow operator authorization for the remote branch push.
+
+**Steps.**
+
+1. Push the exact candidate to a neutral branch; do not push `main` and do not
+   create a tag.
+2. Record the run id and attempt. Compare local and hosted shell populations
+   with `tools/test_population.py` and **cite the comparator's derived output**;
+   every skip named with node id, declared reason, and `on_site` marker.
+3. Admit the receipt and bundle set with a chained admission record and report
+   the new pin count.
+4. **Confirm no hosted job issued a publisher request**, and say how that was
+   determined.
+
+**Acceptance criteria.** Hosted run on a neutral branch with run id and attempt
+recorded · comparator-derived populations cited, never transcribed · receipts
+and bundles admitted with a valid chain and the new pin count reported · no
+publisher request by any hosted job, with the determination method stated ·
+scope amendment dated in the same commit · golden 11/11.
+
+---
+
+## Step 8 · R-CLOSE 🧑🤖
+
+**Objective.** Close the cycle under the tagged-close protocol.
+
+**Gate.** Steps 1–7 complete and boxed, with Step 6 either complete or deleted
+with its determination. Worktree clean. **🧑 One operator decision:
+publication.**
+
+**Steps.**
+
+1. **Follow the Option C tagged-close protocol as `AGENTS.md` states it.**
+2. Re-run the complete definition of done at the release parent and capture it.
+3. **Record the version and the criterion used.** The public value-domain
+   criterion added in v0.25 **does not fire** here: no route, field, type, body
+   shape, or public value set moves. Say which criterion did fire and why —
+   a behaviour correction within existing names and shapes, or a no-release
+   close if nothing shipped. **Do not inherit a default silently.**
+4. Name the publication trigger, or record a no-release close as complete.
+   **No corrective trigger is visible at entry**: the published head is green
+   and its records are true.
+5. Record evidence candidate and release parent as **separate named fields**,
+   and the disposition **as of a date**.
+6. **Record the identity determination with its measurements** — the measured
+   false-collapse count at the shipped threshold, the mechanism, the option
+   chosen, and the golden hamming-12 control that proved the change did not
+   overshoot. **If Step 4 recorded and deferred, record that as the cycle's
+   result rather than as a shortfall.**
+7. **Record the parser execution result**, including whether the non-UTF-8
+   declaration branch executed for the first time and what it did.
+8. **Record whether the observation bytes were pinned by this cycle**, and if
+   they already were, that G3 found them so.
+9. **Record what did not happen**: no `edgar:*` mapping, no ingest or compliance
+   source change, no `config/core.json` change, and — if Step 6 deferred — no
+   live SEC request, no two-origin runtime, no live RSS ingest.
+10. Record whether each conditional source permission was used, and name each
+    unused one.
+11. Classify every diff path exactly once in `STATE.md`; update `CHANGELOG.md`,
+    `README.md`, and the release authorities.
+12. Reconcile `ARCHITECTURE.md`. **A4, the L1 residual, the R3/R4 open-bottom
+    limitations, the measured-value heuristic, T7, NEGATIVE-CACHE Decision B,
+    the FastAPI version-literal relocation, and the terms-gate operator
+    responsibility must all still read as open or unchanged**, and **T7 must not
+    be described as nearer its trigger**.
+13. Record the post-push hosted result as a **dated forward append**; a red
+    post-push run is a finding for v0.27 and does not invalidate the close.
+14. **State the publisher count precisely.** Two sources are configured; say
+    exactly how many have ever been fetched as of the closing date.
+
+---
+
+## Cycle checklist
+
+- [ ] **E0** — entering matrix with comparator citation; G1's two declarations
+  quoted with R1/R5 coverage stated; **G2 settled by executing the parser over
+  committed bytes**; G3's manifest enumeration with its consequence; G4 settled
+  by execution; **G5 settled by captured request evidence**; G6 from the
+  scheduler's resolution order; G7's paths priced; no publisher request
+- [ ] **REPLAY** — observation bytes pinned or found pinned; parser executed
+  from a committed test; full field inventory with counts; `published_day` zone
+  semantics recorded; discarded `edgar:*` fields enumerated and not mapped;
+  establishment boundary stated; nothing added to fixtures, corpus, or golden
+- [ ] **IDENTITY-MEASURE** — shipped rule executed; per-drop distances recorded;
+  cross-issuer and same-issuer separated; threshold sweep recorded as corpus
+  measurement; shingle-count and pairwise distributions for both corpora;
+  same-day concentration observed and not acted on; prediction confirmed or
+  refuted with the error owned; zero production files changed
+- [ ] **IDENTITY-DECISION** — one option chosen and dated with its claim;
+  two-declaration question resolved or recorded inapplicable; golden's hamming-12
+  drop proven still to occur; measured cross-issuer collapses proven gone; rule
+  changes carry detected planted failures with counts in three places; unused
+  permissions recorded
+- [ ] **CADENCE** — effective cadence stated from resolution order; publisher
+  rate guidance cited with URL and date; cadence chosen with a reason or examined
+  and kept; test added or vacuity recorded; dated in `ARCHITECTURE.md`; terms row
+  unchanged
+- [ ] **HARVEST** — authorized and executed under bounds, or deleted with the
+  determination that deferred it; deferral table updated either way
+- [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; no
+  publisher request by any hosted job; run id recorded; scope amendment dated
+- [ ] **R-CLOSE** — version and its criterion recorded with the value-domain
+  criterion explicitly not firing; identity determination recorded with its
+  measurements; parser result recorded; pinning recorded; non-exercise stated;
+  permission usage recorded; T7 not described as nearer its trigger
+
+---
+
+## Standing prohibitions
+
+- **Do not make any publisher request before Step 6, and do not make one at all
+  if Step 6 is deferred.** Every byte Steps 1–5 need is already committed.
+- **Do not treat the v0.25 observation as a live result.** Replayed real bytes
+  prove parser behaviour; they do not prove what the publisher serves next.
+- **Do not copy the observation body into `fixtures/`, the protected corpus, or
+  golden.** Read it from `observations/v0.25/`.
+- **Do not derive a measurement from unpinned bytes without recording that they
+  are unpinned**, and pin them first if G3 finds they are not.
+- **Do not edit a golden assertion to bless a drift.** Golden's hamming-12 drop
+  is the true-positive control for Step 4; losing it means the change overshot.
+- **Do not change the identity threshold in one declaration and leave the other.**
+  That is exactly what G1 exists to catch.
+- **Do not fit a constant to this corpus and describe it as a fix.** If the
+  fitted-constant option is chosen, it is chosen with that description attached.
+- **Do not map the `edgar:*` extension fields in this cycle.** It is a product
+  decision with its own trigger and its own connector review.
+- **Do not modify `crates/ingest/src/**` or `crates/compliance/src/**`.**
+- **Do not modify `run`.** It is hash-pinned; a change requires a chained
+  admission record the operator has not authorized.
+- **Do not modify `config/core.json`.** The admitted source's configuration is
+  settled; this cycle changes the rule, not the source.
+- **Do not harvest into `data/core.db` or `data/live-smoke.db`**, and do not
+  bypass the harness's protected-target refusal.
+- **Do not admit a harvested database to the protected corpus or to golden.**
+- **Do not describe T7 as nearer its trigger.** A live harvest of a second
+  source is still not a second concurrent harvester.
+- **Do not describe the cadence decision as satisfying the terms condition.**
+- **Do not create, move, or delete any ref in the working repository**; refs in
+  a disposable clone are not repository refs.
+- **Do not remove `--skip-local-tag-verification`.**
+- **Do not add a rule without an R12 planted-failure control**, and do not add a
+  rule that evaluates a condition it cannot observe.
+- **Do not write a rule with no satisfying assignment for a case it governs.**
+- **Do not amend, rebase, or squash `12d0601e…`.**
+- **Do not batch `STATE.md` / `PROGRESS-v0.26.md` updates or combine two tasks
+  in one commit.**
+- If any Step's Objective, Acceptance criteria, or "Done when" is amended after
+  this file is committed at activation, name the amendment in a dated
+  `## Runbook amendments` block in the same commit.
+
+---
+
+## Provenance of this draft
+
+Every gate was read out of the repomix export of the v0.16.0 tree on 2026-07-30
+by path, and each is a hypothesis for E0 to confirm or refute.
+
+**Six claims here were verified against the export rather than reasoned to.**
+`crates/core/src/lib.rs` carries `PublisherPermitted` with an exhaustive
+`redistributable()` and `as_str` returning the Rust identifier exactly.
+`crates/ingest/src/rss.rs` maps `description` to `Document.body` and
+`{source_id}::{guid}` to `Document.id`, with `child_text` reading direct
+children only. `crates/store/src/sqlite.rs` declares a private
+`DEDUP_MAX_DISTANCE = 16` and `assign_canonical_ids_tx` orders by
+`(sector, published_day, id)`; `ViewParams::dedup_max_distance` separately
+defaults to **16**. `config/core.json` carries `sec-edgar-usgaap` with **no
+fixture**, so a non-`net` build cannot run it. `config/schedule.json`'s
+`quant-desk` job declares no `sources` map. And every committed XML fixture
+declares `UTF-8`, while the observation body declares `windows-1252`.
+
+**Step 3's predictions, stated so they can be refuted.** This draft's author
+reimplemented `tokens`, `fnv1a64`, `simhash`, `dedup_near`, and
+`assign_canonical_ids_tx` in Python and ran them over the committed observation
+body. **That is a reproduction, not an execution of the shipped code, and it is
+not a measurement of this product.** It predicts: 200 items; 200 distinct ids;
+198 distinct fingerprints; a single `published_day`; mean body length **3.81**
+characters; a median of **5** shingles against **28–36** for the news fixtures;
+**35 of 19,900** pairs inside the shipped radius; and, at threshold 16 in the
+`finance` sector, **172 kept / 28 dropped, of which 20 are cross-issuer** — with
+the existing `filings-digest` fixture at minimum distance **23** and therefore
+uninvolved. The sweep predicts 14 as the largest threshold with zero
+cross-issuer collapses on this corpus. **Step 3 executes the shipped code and
+reports what it finds. If the shipped result differs from any number above, the
+shipped result is the measurement and this paragraph is the error.**
+
+**The v0.25 observation is why this cycle can be about the product rather than
+about apparatus.** One authorized request, made under a fresh robots decision
+and preserved byte-for-byte, turned "we do not know whether this feed is
+usable" into a question that can be settled offline, repeatedly, by anyone with
+the repository. **A cheaper observation would have recorded the item count and
+thrown the body away**, and this cycle would have had to spend a live request to
+learn that the identity rule was wrong — or worse, learned it from a harvested
+archive after the fact.
