@@ -1,4 +1,4 @@
-# intel-platform (v0.15.8 — core-shell)
+# intel-platform (v0.16.0 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,28 +7,26 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.15.8` is the selected release identity. Its release-posture hosted
-evidence is workflow-dispatch run `30472740314`, attempt 1, against exact
-evidence candidate `a73c042068a367aea22e63e28dfd2f754b65ef9c` on neutral
-branch `codex/v0.24-evidence-a73c042`. Signed receipts pin that candidate and
+`v0.16.0` is the selected release identity. Its release-posture hosted
+evidence is workflow-dispatch run `30513561141`, attempt 1, against exact
+evidence candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` on neutral
+branch `codex/v0.25-evidence-779fbe5`. Signed receipts pin that candidate and
 source ref. Under the tagged-closing protocol, the release commit carries the
 release edits, its immediate child carries the closed cycle record, and the
-annotated `v0.15.8` tag targets that closing commit rather than the candidate
+annotated `v0.16.0` tag targets that closing commit rather than the candidate
 or its release-commit parent.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The declared pair is
-[`TASKS-v0.24-EXECUTION.md`](docs/cycles/TASKS-v0.24-EXECUTION.md) and
-[`PROGRESS-v0.24.md`](docs/cycles/PROGRESS-v0.24.md).
+[`TASKS-v0.25-EXECUTION.md`](docs/cycles/TASKS-v0.25-EXECUTION.md) and
+[`PROGRESS-v0.25.md`](docs/cycles/PROGRESS-v0.25.md).
 
-**Current source scope is one real publisher.** `arxiv-cs` is the only
-configured network source; the other three configured sources are
-`example.org` fixture placeholders. v0.18 performed the platform's first live
-harvest under a gate that enforces the publisher policy it claims to enforce,
-but it did not turn a one-publisher platform into an aggregator. v0.24 reviewed
-SEC EDGAR's official US GAAP RSS path and found it conditionally admissible;
-that review added no source, and admission still requires a separate v0.25
-operator decision.
+**Current source scope is two configured publisher origins.** `arxiv-cs` and
+`sec-edgar-usgaap` are configured network sources; the other three sources are
+`example.org` fixture placeholders. Only `arxiv-cs` has ever been harvested.
+v0.25 admitted SEC EDGAR's reviewed US GAAP RSS path after separate licence,
+terms, and feed-shape determinations, but performed no live RSS harvest and did
+not exercise both origins in one production runtime.
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:
@@ -569,7 +567,8 @@ one match arm in the registry. Adding a *product feature* = Python only.
 { "sectors": [{ "id": "science", "display_name": "Science",
     "sources": [{ "type": "arxiv_oai" | "rss", "id": "...", "url": "...",
                   "fixture": "fixtures/...",  // omit for live fetch (net)
-                  "license": "PublicDomain" | "CcBy" | "ClientOwned" | "IndexOnly" }] }] }
+                  "license": "PublicDomain" | "CcBy" | "ClientOwned" |
+                             "PublisherPermitted" | "IndexOnly" }] }] }
 ```
 
 `config/entities.json` (core-owned data, shell-managed workflow): the

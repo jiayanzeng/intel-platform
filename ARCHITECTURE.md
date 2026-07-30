@@ -334,8 +334,8 @@ causes the identities and affected claims to be forward-corrected.
 | subject | disposition | trigger | dated measured observation and reason |
 |---|---|---|---|
 | review-export operator-local status (v0.22 G3) | **REFUTED as a missing-contract claim — 2026-07-29** | none | 2026-07-29 — The contributor-facing paragraph above and `AGENTS.md` already state that `./run export-check` is operator-local, why it is absent from local/hosted CI, and what it verifies. No duplicate rule or hosted workaround is added. |
-| protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-30** | the manifest first reaches **1 MiB**, or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real** | 2026-07-30 — v0.24 R-CLOSE re-measured **251** pins, **145,541 bytes**, and two clean full-verification runs at **0.14 s / 0.10 s real**. Neither bound has fired; immutable append-only provenance remains worth the current full re-hash cost. |
-| shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-30** | the warning becomes an error/failure, or the next authorized constraints refresh changes FastAPI, Starlette, `httpx`, or `httpx2` | 2026-07-30 — Clean constrained Python **3.11.4** and **3.12.13** v0.24 lanes each collected **283**, passed **283**, and skipped **0**, with the same one third-party warning; no relevant authorized constraints refresh occurred. The trigger has not fired. |
+| protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-30** | the manifest first reaches **1 MiB**, or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real** | 2026-07-30 — v0.25 R-CLOSE re-measured **266** pins, **154,205 bytes**, and two clean full-verification runs at **0.14 s / 0.09 s real**. Neither bound has fired; immutable append-only provenance remains worth the current full re-hash cost. |
+| shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-30** | the warning becomes an error/failure, or the next authorized constraints refresh changes FastAPI, Starlette, `httpx`, or `httpx2` | 2026-07-30 — Clean constrained Python **3.11.4** and **3.12.13** v0.25 lanes each collected **284**, passed **284**, and skipped **0**, with the same one third-party warning; no relevant authorized constraints refresh occurred. The trigger has not fired. |
 | hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — Run `30456330833` passed **7/7** executable jobs on the migrated actions; all eight check runs had annotation count **0**, and the new **7-receipt / 7-bundle** set verified **7 accepted / 0 rejected**. |
 | hosted action immutability (`dtolnay/rust-toolchain@master`) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — All **6/6** workflow uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`, dated **2026-07-16T09:35:07-07:00**, and the same hosted evidence run verified. |
 | recorded-trigger freshness discipline | **Completed by v0.23 Step 5 — 2026-07-29** | none | 2026-07-29 — `cycle-check` now requires a valid dated measured observation for each trigger-bearing row in this table and the active v0.23-forward deferral table; registered R12 mutation **15** proves a missing date is rejected. |
@@ -354,7 +354,9 @@ separately scoped v0.26 cycle. Moving the public FastAPI version literal from
 `shell/intel_shell/app.py` to the package-owned
 `shell/intel_shell/__init__.py` remains a recorded forward option for removing
 the one release-authority/production-source scope overlap; it is not
-implemented here.
+implemented here. The v0.16.0 release changes neither residual disposition:
+adding a configured source is not T7's second-concurrent-harvester trigger, and
+no transient robots outage supplied Decision B's trigger.
 
 ## 7. The decision-log discipline
 

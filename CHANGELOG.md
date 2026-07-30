@@ -4,6 +4,68 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.16.0 — 2026-07-30
+
+### Added
+
+- `License::PublisherPermitted` represents the missing rights ground: the
+  publisher expressly permits reuse under its own stated terms, without
+  asserting that third-party-authored material is public domain. Its serialized
+  and stored spelling is exactly `PublisherPermitted`.
+- `License::redistributable()` is now exhaustive. `PublicDomain`, `CcBy`,
+  `ClientOwned`, and `PublisherPermitted` permit redistribution;
+  `IndexOnly` does not. A future variant therefore requires a compiler-visible
+  classification decision.
+- The reviewed SEC EDGAR US GAAP RSS source is configured under `finance` with
+  `PublisherPermitted` and conservative `robots_on_missing: "deny"`.
+
+### Publisher determination
+
+- The source is bound to the official
+  `/Archives/edgar/usgaap.rss.xml` path, a monitored-contact crawler identity,
+  fresh publisher `robots.txt` plus the operator deny-list, and the
+  publisher's then-current fair-access ceiling.
+- The publisher's terms determination is affirmative as of 2026-07-30: SEC's
+  privacy policy disallows “unclassified” automation, while its webmaster FAQ
+  directs programmatic downloaders to declare an organization-and-contact
+  User-Agent. Terms remain a dated publisher-specific operator responsibility,
+  not a pretend third runtime gate.
+- One separately authorized observation fetched the RSS body after a fresh
+  robots decision. It returned 200 items; `title`, `guid`, `pubDate`, `link`,
+  and `description` were present in 200/200, while optional `author` was absent
+  in 200/200. The repository parser was deliberately not run against the body.
+- Admission performed no live harvest. It did not exercise runtime
+  multi-origin limiting/caching, live RSS ingestion, paging, repeated-fetch
+  behavior, or cursor durability. Two publisher origins are configured, and
+  only `arxiv-cs` has ever been harvested.
+
+### Compatibility and evidence
+
+- Config deserialization rejects an unknown licence value loudly. An older
+  binary reading a newer archive silently maps an unknown stored value to
+  `IndexOnly`; this is safe but can conservatively reclassify
+  publisher-permitted documents. SQLite required no schema or production
+  mapping change.
+- Expanding the value domain of `license` in existing `/v1/*` bodies is a
+  public contract change. The dated criterion now requires a minor release
+  whenever a serialized public field gains, loses, or redefines a value, even
+  if its route, field name, field type, and body shape are unchanged.
+- Authenticated candidate run `30513561141` attempt 1 passed all seven
+  executable jobs at exact candidate
+  `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3`. The population comparator
+  derived equivalence in both Python lanes between local 284 passes and hosted
+  283 passes plus one named `on_site` skip.
+- Release-posture verification required attestations and accepted all seven
+  signed identities with zero rejected. The protected manifest verifies
+  **266** exact pins and both protected databases remain byte-exact.
+- Publication was explicitly selected as **release as of 2026-07-30**. No
+  corrective trigger was visible at entry; the publication trigger is the
+  operator's decision to ship the authenticated public value-domain expansion
+  and admitted source.
+- A4, editable L1, the R3/R4 open-bottom limits, active-runbook measured-value
+  heuristic, T7, negative-cache Decision B, scheduled L2, and live
+  multi-publisher behavior remain open.
+
 ## v0.15.8 — 2026-07-30
 
 ### Fixed

@@ -1,6 +1,106 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Selected release:** v0.16.0 (not yet released) · **Status:** **v0.25 RE-MEASURE is complete; publication is not authorized.** Authenticated hosted run **30513561141**, attempt **1**, passed all seven executable jobs at exact candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` on neutral ref `refs/heads/codex/v0.25-evidence-779fbe5`. Hosted counts equal the candidate's local counts: **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and golden **11/11**. The shell comparator derived **284** equivalent passes for each local lane against hosted **283 passed + 1 named `on_site` skip**. `invariant-scan` remains **12 rules / 39 controls**. The hosted workflow and complete run log made no publisher request. Seven receipt/bundle pairs and the re-derived release report add 15 immutable admissions, so all **266** protected pins and both protected databases match; fresh standalone golden remains **11/11**, delta **0**. Published v0.15.8 release commit remains `696c0863ea684d590970902bcbbd13a7a3ccb610`; remote `main` stayed `64002678672a601804e5f67886c73fffb4d212c8`; the pre-existing `candidate/v0.16.0` stayed at v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; the neutral evidence ref stayed at the v0.25 candidate; and no v0.16.0 tag exists. Two publisher origins are configured, only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.25 R-CLOSE publication of v0.16.0 is operator-authorized; the untagged release parent is being prepared while v0.15.8 remains published.** Published v0.15.8 release commit remains `696c0863ea684d590970902bcbbd13a7a3ccb610`, its closing commit is `64002678672a601804e5f67886c73fffb4d212c8`, annotated tag object `dc5abe0690e77cef671896102382427721d97321` peels to that closing commit, and remote `main` still resolves there. The separate v0.25 evidence candidate is `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` on neutral ref `refs/heads/codex/v0.25-evidence-779fbe5`; authenticated hosted run **30513561141**, attempt **1**, passed all seven executable jobs. The shell comparator derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. Hosted and local invariant counts remain **12 rules / 39 controls**, golden remains **11/11**, and all **266** protected pins plus both protected databases match. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. No v0.16.0 tag exists yet. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.25 R-CLOSE selects v0.16.0 and prepares release assembly (operator
+decision 2026-07-30).** Release disposition: release (as of 2026-07-30).
+
+The minor identity follows the operator's dated public-value-domain criterion,
+not the standing surface-movement default. `license` is already serialized in
+`/v1/signals`, `/v1/search`, `/v1/ask`, and the conditional plaintext branch
+of `/v1/brief`. Adding `PublisherPermitted` expands that field's value set even
+though route, field name, field type, and body shape do not move. The prior
+surface rule had no answer for this case; that gap was the Step 2 finding.
+`AGENTS.md` now states symmetrically that adding, removing, or redefining a
+public serialized value requires a minor release because exhaustive consumer
+handling is part of the contract. No invariant rule was added: this is prose
+adjudicated at R-CLOSE, and counts remain **12 rules / 39 controls**.
+
+No corrective trigger was visible at entry: published v0.15.8 is green and its
+records are true. The publication trigger is the operator's explicit decision
+to ship the authenticated product change—the missing publisher-permission
+rights ground and the reviewed SEC source that uses it. Authenticated candidate
+`779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141** attempt
+**1** are the closing evidence, deliberately separate from the untagged release
+parent. The release-parent identity and exact local definition of done will be
+recorded in its immediate closing child after that parent exists; the tag
+object and closing-commit identity remain unknowable until their
+protocol-defined points.
+
+The three product determinations are affirmative and bounded:
+
+- **Licence.** `PublisherPermitted` claims only that the publisher expressly
+  permits reuse under its own stated terms; it makes no claim that
+  issuer-authored filings are government works or public domain. The spelling
+  is exact across config, archive, and `/v1/*`; redistribution is true.
+- **Terms.** SEC's Privacy Information page says it does not allow
+  “unclassified” automated tools, while its Webmaster FAQ directs
+  programmatic downloaders to declare an organization-and-contact User-Agent.
+  On 2026-07-30 the operator affirmed that the structurally required contact is
+  monitored. Terms remain a dated publisher-specific operator responsibility
+  outside the executable robots-plus-deny-list model.
+- **Feed shape.** After a fresh allowed robots decision, the one authorized
+  RSS request returned HTTP 200 with **200** items. `title`, `guid`, `pubDate`,
+  `link`, and `description` were non-empty in **200/200**; optional `author`
+  was present in **0/200**. E0 found zero mandatory per-item fields. The
+  repository parser was deliberately not executed against the body, so the
+  record does not claim parser success.
+
+Admission configured the reviewed path under `finance` with
+`PublisherPermitted` and `robots_on_missing: "deny"` but performed no live
+harvest. It did not exercise the production origin-keyed robots cache or
+per-host limiter with both origins in one runtime, live RSS ingestion, paging,
+repeated-fetch behavior, near-duplicate behavior, or cursor durability. Two
+publisher origins are configured and only `arxiv-cs` has ever been fetched.
+The first live SEC RSS harvest remains deferred to a separately authorized and
+scoped v0.26 runbook.
+
+E0's G5 author-side implication was corrected on 2026-07-30 as a runbook error,
+not an implementation defect. Golden reads `config/core.json` but explicitly
+selects only `science` and `technology`; the new source is confined to
+`finance`. The definition of done therefore stayed **11/11**, and admission
+produced delta **0**.
+
+The release-parent changed-path classification is prepared in seven disjoint
+groups and will be reconciled against the committed `v0.15.8..R` path set,
+expected to contain **38** paths:
+
+- **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
+- **Release version authorities:** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Product configuration, licence implementation, and focused controls:**
+  `config/core.json`, `crates/core/src/lib.rs`,
+  `crates/store/tests/license_compat.rs`,
+  `shell/tests/test_core_config_admission.py`, and
+  `shell/tests/test_cycle_check.py`.
+- **Cycle and forward-publication records:**
+  `docs/cycles/PROGRESS-v0.24.md`, `docs/cycles/PROGRESS-v0.25.md`, and
+  `docs/cycles/TASKS-v0.25-EXECUTION.md`.
+- **Append-only provenance authority:** `config/protected-artifacts.json`.
+- **Publisher determinations and wire observations:** all five files under
+  `observations/v0.25/`.
+- **Authenticated evidence:** all fourteen files under
+  `evidence/ci-runs/30513561141-1/` and
+  `evidence/v0.25/deferred-audit/report.json`.
+
+The `crates/core/src/lib.rs` permission was used for the new enum value and its
+exhaustive redistribution decision. The conditional permission to edit
+`crates/store/src/sqlite.rs` was unused: the existing unconstrained text column
+and `as_str`/`parse` boundary already persist the value. The new store
+integration control records the older-reader fallback without changing
+production storage code. The only `shell/intel_shell/app.py` change at
+R-CLOSE is the mechanical public version literal; the recorded relocation
+option remains unused. Cargo changes only the local `cored` version in
+`Cargo.lock`; dependency resolution is unchanged.
+
+The protected manifest remains below its accepted bounds: **266** pins,
+**154,205 bytes**, and two consecutive complete verifications at **0.14 s /
+0.09 s real**. A4, editable L1, the R3/R4 open-bottom limitations, the
+active-runbook measured-value heuristic, T7, robots negative-cache Decision B,
+scheduled L2, and live multi-publisher behavior all remain open. A second
+configured source is not T7's second-concurrent-harvester trigger, and no
+transient robots outage fired Decision B.
 
 **v0.25 RE-MEASURE admits authenticated release-posture evidence without
 publishing (hosted and local measurement 2026-07-30).**
