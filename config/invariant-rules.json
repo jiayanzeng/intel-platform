@@ -473,9 +473,9 @@
     },
     {
       "id": "R12",
-      "claim": "Every closing/publication-status, v0.23-forward declared-scope, review-export retention-configuration, v0.23-forward trigger-freshness, v0.28-forward trigger-identity and carry-forward, shell test-population equivalence, and non-paged coverage-detection topology rule rejects its planted failure; legacy immutable assertions remain required and fresh, tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants, an unsatisfiable release scope rejects its changed paths, the tracked Repomix retention pattern agrees with an independent derivation from the active cycle and one retention-depth authority without an export in existence, both governed trigger tables have a nonzero population, every trigger-bearing governed row carries a valid ISO date in its own measured cell and v0.28-forward names the active cycle, an immediately prior deferred subject remains active or has a valid dated completion, an unmarked hosted skip cannot be classified as an allowed population difference, and coverage assessment remains before insertion and partitioned by source.",
-      "source": "docs/cycles/TASKS-v0.29-EXECUTION.md:430-450",
-      "scope": "The actual tools/cycle_check.py check_release_record, check_publication_status, validate_declared_scope, check_review_export_retention_pattern, check_trigger_freshness, check_trigger_table, and check_deferred_carry_forward entry points; tools/test_population.py parse_summary and compare_populations entry points; and the production apps/cored/src/main.rs non-paged coverage assessment call relative to every append_new call and its exact sel.source.id()/docs partition. Planted cases cover legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, missing or stale post-push records, a v0.22-shaped release scope that rejects apps/cored/Cargo.toml and Cargo.lock, a stale review-export retention pattern for active v0.29, a trigger-bearing governed row whose own cell lacks a valid date while its header carries one, a trigger-bearing row naming v0.27 instead of active v0.28, a silently dropped immediately prior deferred subject, an unmarked hosted skip, an insert moved before coverage assessment, and a combined fetched batch substituted for the per-source docs slice. Scope and trigger-freshness declarations apply only to the active v0.23-forward runbook; review-export retention uses the active cycle and the single export-check retention-depth authority without reading an export; trigger identity, population floors, and immediate-prior carry-forward apply v0.28-forward; trigger freshness governs the live ARCHITECTURE.md dated-dispositions table and active runbook deferral table; and assertion grammar remains deliberately narrow.",
+      "claim": "Every closing/publication-status, v0.23-forward declared-scope, review-export retention-configuration, trigger-boundary-order, v0.23-forward trigger-freshness, v0.28-forward trigger-identity and carry-forward, shell test-population equivalence, and non-paged coverage-detection topology rule rejects its planted failure; legacy immutable assertions remain required and fresh, tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants, an unsatisfiable release scope rejects its changed paths, the tracked Repomix retention pattern agrees with an independent derivation from the active cycle and one retention-depth authority without an export in existence, the trigger floor cannot precede trigger freshness and both row counts are initialized before either gate, both governed trigger tables have a nonzero population, every trigger-bearing governed row carries a valid ISO date in its own measured cell and v0.28-forward names the active cycle, an immediately prior deferred subject remains active or has a valid dated completion, an unmarked hosted skip cannot be classified as an allowed population difference, and coverage assessment remains before insertion and partitioned by source.",
+      "source": "docs/cycles/TASKS-v0.29-EXECUTION.md:455-510",
+      "scope": "The actual tools/cycle_check.py check_release_record, check_publication_status, validate_declared_scope, check_review_export_retention_pattern, check_trigger_boundary_relationship, check_trigger_freshness, check_trigger_table, and check_deferred_carry_forward entry points; tools/test_population.py parse_summary and compare_populations entry points; and the production apps/cored/src/main.rs non-paged coverage assessment call relative to every append_new call and its exact sel.source.id()/docs partition. Planted cases cover legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, missing or stale post-push records, a v0.22-shaped release scope that rejects apps/cored/Cargo.toml and Cargo.lock, a stale review-export retention pattern for the active cycle, a trigger floor reordered before freshness, a trigger-bearing governed row whose own cell lacks a valid date while its header carries one, a trigger-bearing row naming v0.27 instead of active v0.28, a silently dropped immediately prior deferred subject, an unmarked hosted skip, an insert moved before coverage assessment, and a combined fetched batch substituted for the per-source docs slice. Scope and trigger-freshness declarations apply only to the active v0.23-forward runbook; review-export retention uses the active cycle and the single export-check retention-depth authority without reading an export; trigger boundary order is checked independently of the active version before initialized populations are read; trigger identity, population floors, and immediate-prior carry-forward apply v0.28-forward; trigger freshness governs the live ARCHITECTURE.md dated-dispositions table and active runbook deferral table; and assertion grammar remains deliberately narrow.",
       "fail_before": [
         {
           "file": "tools/cycle_check.py",
@@ -638,23 +638,33 @@
         },
         {
           "file": "tools/cycle_check.py",
-          "find": "        if required_cycle_name is None and not valid_dates:\n",
+          "find": "    if TRIGGER_FLOOR_FORWARD_BOUNDARY < TRIGGER_FRESHNESS_FORWARD_BOUNDARY:\n",
           "replace_with": [
-            "        if False:\n"
+            "    if False:\n"
           ],
-          "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date",
+          "expected_fail": "trigger-boundary-order planted controls were not detected: floor-before-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1560
+          "expected_line": 1467
         },
         {
           "file": "tools/cycle_check.py",
-          "find": "        if required_cycle_name is not None and not valid_dates:\n",
+          "find": "        if not valid_dates:\n",
           "replace_with": [
             "        if False:\n"
           ],
-          "expected_fail": "publication planted controls were not detected: header-only-trigger-measurement-date",
+          "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date, header-only-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1560
+          "expected_line": 1569
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "        if not valid_dates:\n",
+          "replace_with": [
+            "        if required_cycle_name is not None and not valid_dates:\n"
+          ],
+          "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 1569
         },
         {
           "file": "tools/cycle_check.py",
@@ -664,7 +674,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: stale-trigger-cycle-identity",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1560
+          "expected_line": 1569
         },
         {
           "file": "tools/cycle_check.py",
@@ -674,7 +684,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: silently-dropped-trigger-subject",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1789
+          "expected_line": 1796
         },
         {
           "file": "tools/test_population.py",

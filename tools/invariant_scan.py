@@ -1618,6 +1618,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "review-export-retention": (
         "Invariant R12 control site: review-export retention configuration."
     ),
+    "trigger-boundary-order": (
+        "Invariant R12 control site: trigger boundary relationship."
+    ),
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
@@ -2116,6 +2119,28 @@ def r12_findings(root: Path) -> list[str]:
                 "stale-retention-pattern"
             )
 
+        original_freshness_boundary = (
+            cycle_check.TRIGGER_FRESHNESS_FORWARD_BOUNDARY
+        )
+        original_floor_boundary = cycle_check.TRIGGER_FLOOR_FORWARD_BOUNDARY
+        cycle_check.TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (1,)
+        cycle_check.TRIGGER_FLOOR_FORWARD_BOUNDARY = (0,)
+        errors = []
+        cycle_check.check_trigger_boundary_relationship(errors)
+        cycle_check.TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (
+            original_freshness_boundary
+        )
+        cycle_check.TRIGGER_FLOOR_FORWARD_BOUNDARY = original_floor_boundary
+        if not any(
+            "TRIGGER_FLOOR_FORWARD_BOUNDARY must be greater than or equal to "
+            "TRIGGER_FRESHNESS_FORWARD_BOUNDARY"
+            in error
+            for error in errors
+        ):
+            missed.setdefault("trigger-boundary-order", []).append(
+                "floor-before-freshness"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
@@ -2332,6 +2357,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "coverage-detection planted controls"
         elif group == "review-export-retention":
             finding_kind = "review-export-retention planted controls"
+        elif group == "trigger-boundary-order":
+            finding_kind = "trigger-boundary-order planted controls"
         else:
             finding_kind = "publication planted controls"
         findings.append(

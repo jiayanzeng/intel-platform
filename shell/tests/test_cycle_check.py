@@ -1167,6 +1167,77 @@ def test_cycle_check_rejects_trigger_observation_without_valid_date(
     )
 
 
+def test_trigger_date_failure_is_independent_of_cycle_identity_requirement(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "trigger-table.md"
+    text = (
+        "# Trigger table\n\n"
+        "### Dated operational-residual dispositions\n\n"
+        "| subject | trigger | measured observation |\n"
+        "|---|---|---|\n"
+        "| planted row | an operator session | no session occurred |\n"
+    )
+    path.write_text(text)
+
+    for required_cycle in (None, "v1.2.3"):
+        errors: list[str] = []
+        assert (
+            cycle_check.check_trigger_table(
+                path,
+                text,
+                cycle_check.DATED_DISPOSITIONS_HEADING,
+                "subject",
+                tmp_path,
+                errors,
+                required_cycle,
+            )
+            == 1
+        )
+        date_errors = [
+            error
+            for error in errors
+            if "requires a valid dated measured observation" in error
+        ]
+        assert len(date_errors) == 1
+        if required_cycle is None:
+            assert len(errors) == 1
+        else:
+            assert len(errors) == 2
+            assert any(
+                "requires a measured observation naming active cycle"
+                in error
+                for error in errors
+            )
+
+
+def test_trigger_floor_before_freshness_reports_instead_of_raising(
+    tmp_path: Path,
+    capsys,
+    monkeypatch,
+) -> None:
+    root = _cycle_root(tmp_path)
+    monkeypatch.setattr(
+        cycle_check,
+        "TRIGGER_FRESHNESS_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
+    monkeypatch.setattr(
+        cycle_check,
+        "TRIGGER_FLOOR_FORWARD_BOUNDARY",
+        (1, 2, 2),
+    )
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert (
+        "TRIGGER_FLOOR_FORWARD_BOUNDARY must be greater than or equal to "
+        "TRIGGER_FRESHNESS_FORWARD_BOUNDARY"
+        in error
+    )
+    assert "UnboundLocalError" not in error
+
+
 def test_cycle_check_rejects_prior_cycle_trigger_observation(
     tmp_path: Path,
     capsys,

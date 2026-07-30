@@ -1463,6 +1463,15 @@ DEFERRED_COMPLETIONS_HEADING = "## Deferred completions"
 ISO_DATE_TOKEN_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
 
 
+def check_trigger_boundary_relationship(errors: list[str]) -> None:
+    # Invariant R12 control site: trigger boundary relationship.
+    if TRIGGER_FLOOR_FORWARD_BOUNDARY < TRIGGER_FRESHNESS_FORWARD_BOUNDARY:
+        errors.append(
+            "TRIGGER_FLOOR_FORWARD_BOUNDARY must be greater than or equal to "
+            "TRIGGER_FRESHNESS_FORWARD_BOUNDARY"
+        )
+
+
 def check_trigger_table(
     path: Path,
     text: str,
@@ -1563,9 +1572,7 @@ def check_trigger_table(
             f"{shown(path, root)}:{line_number}: trigger-bearing row "
             f"{item!r} requires a valid dated measured observation"
         )
-        if required_cycle_name is None and not valid_dates:
-            errors.append(missing_date_error)
-        if required_cycle_name is not None and not valid_dates:
+        if not valid_dates:
             errors.append(missing_date_error)
         if (
             required_cycle_name is not None
@@ -1949,6 +1956,9 @@ def run(
     active_state = "missing"
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
+        architecture_trigger_rows = 0
+        deferral_trigger_rows = 0
+        check_trigger_boundary_relationship(errors)
         check_runbook_amendments(
             identity.runbook,
             active_text,

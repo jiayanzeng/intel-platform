@@ -2,6 +2,19 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · BOUNDARY-BIND measured completion
+
+Step 3 — initialized populations, asserted boundary order, and completion checked — 2026-07-31
+
+G3's path remained latent under the live constants, so no P1 reclassification
+occurred. The implementation initializes both governed populations before
+either version gate and independently rejects a floor boundary earlier than
+freshness. A test places active v1.2.3 between reversed boundaries and observes
+the named relationship defect without a traceback. The exhaustive missing-date
+branch pair is one condition, with direct tests preserving legacy and
+active-cycle behavior. No objective, decision gate, acceptance criterion, scope
+row, or standing prohibition changes.
+
 ### 2026-07-31 · RETENTION-BIND measured completion
 
 Step 2 — derived retention binding recorded and completion checked — 2026-07-31
@@ -498,7 +511,7 @@ and treat it at P1.
 **Done when** no ordering of the two constants produces a traceback, demonstrated
 by reproduction rather than by argument.
 
-- [ ] **BOUNDARY-BIND**
+- [x] **BOUNDARY-BIND**
 
 ---
 

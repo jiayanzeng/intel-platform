@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; RETENTION-BIND is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. RETENTION-BIND's focused shell suite passes **304/304**, `invariant-scan` passes **12 rules / 50 controls**, and standalone golden remains **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The RETENTION-BIND implementation-tree review export measures **2,446,347 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; BOUNDARY-BIND is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. BOUNDARY-BIND's shell suite passes **306/306**, `invariant-scan` passes **12 rules / 51 controls**, and standalone golden remains **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The BOUNDARY-BIND implementation-tree review export measures **2,456,371 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+
+**v0.29 BOUNDARY-BIND turns a latent traceback into a named configuration
+defect (measured 2026-07-31).** G3 classified the defect as latent: the live
+floor `(0, 28)` does not precede freshness `(0, 23)`. The implementation uses
+both defenses appropriate to the two different properties. It initializes the
+architecture and deferral populations to zero before either version gate, so no
+ordering can read an unbound local. It also executes an explicit
+`TRIGGER_FLOOR_FORWARD_BOUNDARY >= TRIGGER_FRESHNESS_FORWARD_BOUNDARY` check,
+because the floor's semantic population requirement depends on freshness having
+performed the measurements.
+
+The reproduction test sets freshness to `(1, 2, 4)`, floor to `(1, 2, 2)`, and
+runs the real checker against active cycle v1.2.3 between them. It exits **1**
+with:
+
+```
+TRIGGER_FLOOR_FORWARD_BOUNDARY must be greater than or equal to TRIGGER_FRESHNESS_FORWARD_BOUNDARY
+```
+
+The output contains no `UnboundLocalError`; the initialized zero populations
+also reach the existing named floor errors rather than a traceback. The
+registered R12 construction independently reverses the constants and confirms
+the same relationship check; disabling it produces the named
+`floor-before-freshness` failure.
+
+The two exhaustive missing-date branches collapsed to `if not valid_dates`.
+A direct test invokes the same `check_trigger_table` entry point with
+`required_cycle_name=None` and with an active-cycle name. Each still produces
+exactly one missing-date error; the active-cycle case also preserves its
+separate missing-cycle-identity error. This is a readability correction, not a
+behavioral change.
+
+Focused lifecycle/invariant tests passed **75/75**. The permission-complete
+shell entry point collected and passed **306/306** with zero skips and the one
+governed Starlette warning. Registered invariants pass **12/12 rules / 51
+controls**, with R12 at **23**. No production source, public route or value
+domain, dependency, schema, protected byte, publisher configuration, or
+scheduler behavior changed.
 
 **v0.29 RETENTION-BIND makes a stale Repomix cycle glob fail in automatic
 lanes (measured 2026-07-31).** `cycle-check` now imports the sole
