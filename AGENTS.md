@@ -414,12 +414,25 @@ Before any live harvest, run `./run verify-artifacts`. A bare
 live-harvest targets. Protected artifacts are immutable evidence. Do not bypass
 that refusal—choose the fresh path it prints.
 
-Protected-artifact admission is executable under manifest schema v2. A new
-artifact or expected hash requires a newly appended admission record whose
-`prior_sha256` chains to the preceding record and whose fields name the task,
-date, captured wire command/output reference, operator approval, and
-retroactive status. Never edit or replace an earlier admission record. Run both
-commands before proposing the manifest change:
+Manifest schema v2 has two disjoint containers:
+
+- **`artifacts[]`** is for protected SQLite archives. Each entry requires the
+  SQLite corpus-fact `expected` shape and carries the executable append-only
+  `admission` chain. A new artifact hash requires a newly appended record whose
+  `prior_sha256` chains to the preceding record and whose fields name the task,
+  date, captured wire command/output reference, operator approval, and
+  retroactive status. Never edit or replace an earlier admission record.
+- **`pinned_files[]`** is for immutable bytes beneath `evidence/` or
+  `observations/`, plus exact registered authorization paths. Each entry carries
+  its applicable grade and byte facts, and **forbids `admission`**.
+
+A task that requires a byte to be pinned must name `artifacts[]` or
+`pinned_files[]`. A requirement that neither container can express is an
+author-side defect to record and correct, not a condition to work around. The
+fifth and sixth unsatisfiable author-side rules recorded in v0.26 are the two
+data points that caused this rule; neither historical disposition is reopened.
+
+Run both commands before proposing a manifest change:
 
 ```
 python3 tools/evidence_artifacts.py validate
@@ -431,6 +444,13 @@ also measures the actual artifact bytes and corpus facts. CI runs the schema
 validation independently. The two existing v0.10/A2 records are explicitly
 retroactive and cite the already-recorded wire and B0 evidence; they are not
 fresh admissions or fresh wire runs.
+
+The container-shape fixtures prove that this description matches the validator
+today, including rejection of `admission` under `pinned_files[]` and rejection
+of an `artifacts[]` entry without `expected`. They do not prevent a later
+validator change from drifting away from the description; a cycle changing the
+validator must update and re-execute the contract. v0.27 forbids changing
+`tools/evidence_artifacts.py`, so that limitation is controlled for this cycle.
 
 Record every block precisely. A block is a non-result, never a pass.
 

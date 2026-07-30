@@ -541,6 +541,39 @@ Standalone golden remained **11/11**. `config/schedule.json` is byte-unchanged,
 no scheduler ran, and no publisher request or production-source change
 occurred.
 
+### ADMISSION-LANGUAGE execution record — 2026-07-30
+
+The two G4 claims that could be read as true of neither manifest container now
+name schema v2's disjoint capabilities in both `AGENTS.md` and
+`ARCHITECTURE.md`: `artifacts[]` requires the SQLite `expected` shape and
+carries the chained `admission` record; `pinned_files[]` accepts immutable bytes
+under `evidence/` or `observations/`, plus exact registered authorization paths,
+with an applicable grade and forbids `admission`. The operating contract now
+requires a pinning task to name its intended container and identifies a
+requirement expressible by neither container as an author-side defect to record
+and correct. The fifth and sixth v0.26 instances are motivating data only; their
+historical dispositions remain closed.
+
+The executing fixture validates both documented shapes in one disposable
+manifest: one SQLite artifact and three pins covering an evidence path, an
+observation path, and an exact authorization path. It then mutates the manifest
+and proves both exact v0.26 failures:
+`pinned_files[0]: keys differ; missing=[], extra=['admission']` and
+`artifacts[0]: keys differ; missing=['expected'], extra=[]`. The stated
+limitation is explicit: fixtures prove documentation/validator agreement today,
+not against a future validator change; v0.27 forbids that change.
+
+The focused fixture passed **1/1** under Python 3.11 and 3.12. Complete
+constrained lanes each collected and passed **293** with zero skips; the
+comparator derived `collected=293`, `equivalent=true`, and
+`equivalent_passed=293`. `invariant-scan` passed unchanged at **12 rules / 44
+controls**. Standalone golden remained **11/11**. The forbidden validator
+remained SHA-256
+`3e5e0c5ff6e12c25180833124faaaf91dc43b5171e893e83500e029d04e99af5`;
+the forbidden manifest remained SHA-256
+`8711aa1b95d6071c6492594aa20a3c4ab8a1756ffe4b5ed72b5208f39ed9a3da`.
+No production source changed and no publisher request occurred.
+
 ---
 
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
@@ -893,7 +926,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
   detection sited; **firing and non-misfiring both demonstrated**; SEC 200/0 and
   golden 11/11 byte-identical with extract and view unmodified; counts in three
   places; unused permissions named
-- [ ] **ADMISSION-LANGUAGE** — true-of-neither sentences rewritten with containers
+- [x] **ADMISSION-LANGUAGE** — true-of-neither sentences rewritten with containers
   named; capabilities stated in one place; naming rule added; **fixtures execute
   both documented shapes and both exact v0.26 rejections**; validator and manifest
   byte-unchanged

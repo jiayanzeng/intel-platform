@@ -341,6 +341,66 @@ def test_complete_chained_admission_verifies(tmp_path: Path) -> None:
     assert "protected evidence: 1/1 artifacts match" in verified.stdout
 
 
+def test_documented_manifest_container_capabilities_execute(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    evidence = tmp_path / "evidence" / "report.json"
+    observation = tmp_path / "observations" / "sample.txt"
+    authorization = tmp_path / "run"
+    for path, content in (
+        (evidence, '{"complete":true}\n'),
+        (observation, "observed bytes\n"),
+        (authorization, "#!/bin/sh\n"),
+    ):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+    for path, grade in (
+        (evidence, "supporting"),
+        (observation, "observation"),
+        (authorization, "authorization"),
+    ):
+        manifest["pinned_files"].append(
+            {
+                "path": str(path.relative_to(tmp_path)),
+                "grade": grade,
+                "sha256": _sha256(path),
+                "bytes": path.stat().st_size,
+                "purpose": "documented container-capability fixture",
+                "provenance": "created inside one disposable pytest directory",
+            }
+        )
+    _write_manifest(manifest_path, manifest)
+
+    both_shapes = _run(tmp_path, manifest_path, "validate")
+    assert both_shapes.returncode == 0, both_shapes.stderr
+    assert "evidence-manifest: PASS (schema=2, artifacts=1, pinned_files=3)" in (
+        both_shapes.stdout
+    )
+
+    pinned_with_admission = json.loads(json.dumps(manifest))
+    pinned_with_admission["pinned_files"][0]["admission"] = manifest[
+        "artifacts"
+    ][0]["admission"]
+    _write_manifest(manifest_path, pinned_with_admission)
+    rejected_pin = _run(tmp_path, manifest_path, "validate")
+    assert rejected_pin.returncode == 2
+    assert (
+        "pinned_files[0]: keys differ; missing=[], extra=['admission']"
+        in rejected_pin.stderr
+    )
+
+    artifact_without_expected = json.loads(json.dumps(manifest))
+    del artifact_without_expected["artifacts"][0]["expected"]
+    _write_manifest(manifest_path, artifact_without_expected)
+    rejected_artifact = _run(tmp_path, manifest_path, "validate")
+    assert rejected_artifact.returncode == 2
+    assert (
+        "artifacts[0]: keys differ; missing=['expected'], extra=[]"
+        in rejected_artifact.stderr
+    )
+
+
 def test_pinned_evidence_file_is_checked_by_validate(tmp_path: Path) -> None:
     _, manifest_path, manifest = _fixture(tmp_path)
     evidence_dir = tmp_path / "evidence"

@@ -64,16 +64,30 @@ The recorded SQLite scopes are:
 - **Core store tables:** `documents`, `embeddings`, and `signals_history`
   are archive/query state, not shell-owned configuration.
 
-**Protected-artifact admission is an executable append-only chain.** Manifest
-schema v2 requires every artifact's current SHA-256 to equal its newest
-admission record, and each new record's `prior_sha256` to equal the preceding
-record's SHA-256. Every record also names the admitting task/date, captured
-wire command and output reference, operator approval, and whether it is
-retroactive. Validate the record chain with
-`python3 tools/evidence_artifacts.py validate`; then prove the recorded bytes
-and corpus facts with `./run verify-artifacts`. The two initial v0.10/A2
-records are explicitly retroactive references to prior wire/B0 evidence, not
-new harvest claims.
+**Manifest schema v2 has two disjoint evidence containers.**
+`artifacts[]` holds protected SQLite archives, requires the SQLite corpus-fact
+`expected` shape, and carries the executable append-only `admission` chain.
+Every artifact's current SHA-256 equals its newest admission record; each new
+record's `prior_sha256` equals the preceding record's SHA-256 and names the
+admitting task/date, captured wire command and output reference, operator
+approval, and retroactive status. `pinned_files[]` instead accepts immutable
+bytes beneath `evidence/` or `observations/` and exact registered authorization
+paths, with the applicable grade and byte facts; it forbids `admission`.
+Validate the manifest with `python3 tools/evidence_artifacts.py validate`; then
+prove the recorded bytes and corpus facts with `./run verify-artifacts`. The two
+initial v0.10/A2 artifact records are explicitly retroactive references to
+prior wire/B0 evidence, not new harvest claims.
+
+A task requiring a byte pin names the container it intends to use. If neither
+container can express the requirement, that is an author-side defect to record
+and correct rather than a condition to work around. v0.26's fifth and sixth
+unsatisfiable author-side rules are the two motivating data points and remain
+historical dispositions; this rule does not reopen either. Executed
+container-shape fixtures prove this description matches the validator today,
+including the two exact v0.26 rejections: `extra=['admission']` under
+`pinned_files[]` and `missing=['expected']` under `artifacts[]`. They cannot
+prevent future validator drift; v0.27's prohibition on changing the validator
+is what controls that limitation in this cycle.
 
 ## 3. Load-bearing placement decisions (do not move casually)
 

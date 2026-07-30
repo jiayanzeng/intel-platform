@@ -1,13 +1,16 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0 plus WINDOW-MEASURE are complete locally.** The current tree passes warning-denied **140** workspace tests and **57** net tests (**31** `intel-ingest` including both replay tests + **26** `cored`), clippy and fmt, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, and ADMISSION-LANGUAGE are complete locally.** The current tree passes warning-denied **140** workspace tests and **57** net tests (**31** `intel-ingest` including both replay tests + **26** `cored`), clippy and fmt, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
 
-**Active v0.27 continuation:** CADENCE-CRITERION is also complete locally.
+**Active v0.27 continuation:** CADENCE-CRITERION and ADMISSION-LANGUAGE are also
+complete locally.
 Current constrained Python 3.11.4 and 3.12.13 lanes each collected and passed
-**292** with zero skips; their comparator derived `collected=292`,
-`equivalent=true`, and `equivalent_passed=292`. The architecture now records
+**293** with zero skips; their comparator derived `collected=293`,
+`equivalent=true`, and `equivalent_passed=293`. The architecture now records
 window advance, not the ten-minute rebuild description, as the governing
-cadence criterion; the configured value remains 600 seconds.
+cadence criterion; the configured value remains 600 seconds. The manifest
+contract now names the disjoint `artifacts[]` and `pinned_files[]` capabilities,
+and executing fixtures prove both valid shapes and both exact prohibited shapes.
 
 ## v0.27 active execution
 
@@ -67,6 +70,32 @@ comparator derived `equivalent=true` / `equivalent_passed=292`. Golden remained
 **11/11**. Hash comparison proves both the v0.25 terms row and v0.26 cadence row
 are byte-unchanged; `config/schedule.json` is byte-unchanged. No publisher
 request or scheduler run occurred.
+
+**ADMISSION-LANGUAGE makes the manifest-container contract executable
+(measured 2026-07-30).** `AGENTS.md` and `ARCHITECTURE.md` now name schema v2's
+disjoint containers: `artifacts[]` requires the SQLite `expected` shape and
+carries the chained `admission` record; `pinned_files[]` carries graded
+immutable bytes under `evidence/` or `observations/`, plus exact registered
+authorization paths, and forbids `admission`. The operating contract now
+requires every pinning task to name its container and classifies a requirement
+expressible by neither container as an author-side defect. The fifth and sixth
+v0.26 instances are recorded only as motivating data and are not reopened.
+
+The executing fixture validates one SQLite artifact and three pins covering
+evidence, observation, and authorization grades. It then proves the two exact
+rejections: `extra=['admission']` under `pinned_files[]` and
+`missing=['expected']` under `artifacts[]`. This proves the documentation
+matches the validator today; it cannot prevent future validator drift, while
+v0.27's explicit prohibition on editing the validator controls that limitation
+for this cycle. Full constrained Python 3.11 and 3.12 lanes each collected and
+passed **293** with zero skips; their comparator derived `collected=293`,
+`equivalent=true`, and `equivalent_passed=293`. `invariant-scan` remained
+**12 rules / 44 controls**, and golden remained **11/11**.
+`tools/evidence_artifacts.py` remained SHA-256
+`3e5e0c5ff6e12c25180833124faaaf91dc43b5171e893e83500e029d04e99af5`;
+`config/protected-artifacts.json` remained SHA-256
+`8711aa1b95d6071c6492594aa20a3c4ab8a1756ffe4b5ed72b5208f39ed9a3da`.
+No production source changed and no publisher request was made.
 
 ## v0.16.1 post-push verification
 
