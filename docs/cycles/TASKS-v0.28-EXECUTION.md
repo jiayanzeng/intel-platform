@@ -258,6 +258,45 @@ field name, field type, or serialization changed. Only the value of
 `incoming_oldest_published_raw` is corrected for an unordered edge case. No
 `/v1/*` response path or value domain moved.
 
+### 2026-07-31 · Step 7 exact evidence scope and manifest authorization
+
+Step 7 — release-grade authenticated evidence measured and completion checked — 2026-07-31
+
+Authenticated hosted run **30561513204**, attempt **1**, fixes Step 7's
+advance-notice placeholder to the exact path
+`evidence/ci-runs/30561513204-1/**`. On 2026-07-31 the operator explicitly
+authorized the required dated amendment and the addition of the fourteen
+authenticated receipt/bundle files plus
+`evidence/v0.28/deferred-audit/report.json` as fifteen `pinned_files[]`
+records. The declared scope therefore allows those two exact evidence paths
+and `config/protected-artifacts.json` solely for this pin-registration change.
+No validator, production source, protected database, publisher permission,
+publisher request, release ref, or other manifest use is admitted. The exact
+evidence directory, report, manifest pins, and this dated amendment land in
+the same implementation commit.
+
+The exact candidate was
+`47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref
+`refs/heads/codex/v0.28-evidence-47bb77c`. Hosted run **30561513204**, attempt
+**1**, passed all seven executable jobs; dependency drift skipped under its
+report-only condition. All seven signed identities were accepted, none was
+rejected, and the complete matrix was found. Both shell-lane comparisons
+derived `collected=303`, `equivalent=true`, and `equivalent_passed=303`:
+local passed 303 with zero skips, while hosted passed 302 plus the one named,
+reasoned, `on_site` skip. The candidate's **301** pins and hosted golden
+**11/11** passed before registration.
+
+The fourteen hosted files plus the release-grade report moved the manifest to
+**316** pins. The report is **35,070 bytes**, SHA-256
+`1e72a50061a31e84fbc7e38fadb60036ea86f5afd1b3cdff480c2e3f21695227`,
+requires attestations, and records **5 deferred / 2 promoted / 0 implemented
+deferred subsystems**. Manifest validation, `verify-artifacts`,
+`evidence-report`, authenticated clean-candidate re-derivation, and full
+`ci-local` **20/20** passed. Standalone golden remained **11/11**, delta zero.
+Remote `main` and the peeled v0.17.0 tag remained at `4af28418…`; no release
+tag moved. Workflow and complete hosted-log searches found no publisher URL
+or publisher-directed ingest, and no publisher request occurred.
+
 **One reviewer hypothesis was refuted by measurement and is recorded as an error,
 not a finding.** The reviewer suspected T7 and NEGATIVE-CACHE Decision B were
 trigger-shaped residuals living in ungoverned `ARCHITECTURE.md` prose, because
@@ -344,11 +383,13 @@ without shrinking what is checked.**
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `repomix.config.json` |
 | `allow` | `docs/state-archive/**` |
+| `allow` | `evidence/ci-runs/30561513204-1/**` |
+| `allow` | `evidence/v0.28/deferred-audit/report.json` |
+| `allow` | `config/protected-artifacts.json` |
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `forbid` | `run` |
 | `forbid` | `tools/model_profiles.py` |
-| `forbid` | `config/protected-artifacts.json` |
 | `forbid` | `tools/evidence_artifacts.py` |
 | `forbid` | `apps/cored/src/main.rs` |
 | `forbid` | `crates/ingest/src/**` |
@@ -813,7 +854,7 @@ neutral ref, without publishing.
 
 **Done when** the candidate carries release-grade authenticated evidence.
 
-- [ ] **RE-MEASURE**
+- [x] **RE-MEASURE**
 
 ---
 

@@ -1,6 +1,67 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0, TRIGGER-IDENTITY, TRIGGER-FLOOR, DOC-SLIM, EXPORT-BOUND, and COVERAGE-ORDER are complete on top of published v0.17.0; the cycle remains open.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.28 entering tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both clean constrained Python lanes passed **293**, and all **301** pins matched twice. Current warning-denied workspace tests pass **146/146**; shell tests pass **303/303**; current `invariant-scan` passes **12 rules / 49 controls**, including row-owned date, active-cycle identity, and prior-subject carry-forward mutations; standalone golden remains **11/11**. The review export is now roughly half its former size, has a **3,000,000-byte** executable ceiling, and retains exactly three derived cycles without reducing executing coverage. The internal `/ingest` coverage boundary now derives its oldest raw timestamp independently of incoming slice order without changing the response shape or any `/v1/*` value domain. The v0.17.0 release assembly added the internal `/ingest` coverage value and boundary fields, so the named-surface rule required a minor release even though `/ingest` is loopback-only. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and v0.28 authorizes no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0, TRIGGER-IDENTITY, TRIGGER-FLOOR, DOC-SLIM, EXPORT-BOUND, COVERAGE-ORDER, and RE-MEASURE are complete on top of published v0.17.0; the cycle remains open pending the operator's Step 8 disposition.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both still resolve to that closing commit. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. Both shell comparators derived `collected=303`, `equivalent=true`, and `equivalent_passed=303`; local passed **303 / skipped 0**, while hosted passed **302** plus one named `on_site` skip. Current local CI passes **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), shell **303/303**, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 49 controls**, and golden **11/11**. The authorized evidence registration contains **316** `pinned_files[]`; both protected SQLite archives remain byte-identical. The review export has a **3,000,000-byte** executable ceiling and retains exactly three derived cycles without reducing executing coverage. The internal `/ingest` coverage boundary derives its oldest raw timestamp independently of incoming slice order without changing the response shape or any `/v1/*` value domain. The SEC identity control remains **200 kept / 0 dropped**. The 600-second schedule has never run, and v0.28 made no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+
+**v0.28 RE-MEASURE authenticates the exact neutral evidence candidate without
+publishing (authorized and measured 2026-07-31).** Candidate
+`47bb77c19420bf513b53b228e473d4accedc6cc9` was pushed only to
+`refs/heads/codex/v0.28-evidence-47bb77c`. Hosted workflow-dispatch run
+**30561513204**, attempt **1**, executed that exact candidate and ref. Core,
+golden, lint, MSRV, net, shell 3.11, and shell 3.12 all passed; the
+report-only dependency-drift job skipped under its declared condition. Remote
+`main` and the peeled v0.17.0 tag both remained
+`4af2841816dd3e43fb8423153b91aa22ccb87537`; no release tag was created or
+moved. Earlier run **30561374600** omitted `publish_evidence`, could not supply
+the required attestations, and was cancelled; it is a dispatch non-result and
+is not cited as evidence.
+
+Both fresh local shell lanes collected and passed **303** with zero skips.
+For each hosted lane, `tools/test_population.py` independently derived
+`{"collected":303,"equivalent":true,"equivalent_passed":303,"hosted":{"on_site_skipped":1,"passed":302,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":303,"skipped":0},"schema_version":1}`.
+The one hosted skip is named, carries the declared reason, and is marked
+`on_site`.
+
+All seven receipts and their seven paired Sigstore bundles are registered
+under `evidence/ci-runs/30561513204-1/` as `pinned_files[]` with `supporting`
+grade and no `admission` key. Each bundle verified the exact receipt bytes,
+repository, CI workflow signer, candidate digest, neutral source ref, and
+GitHub-hosted runner identity. The release-grade report at
+`evidence/v0.28/deferred-audit/report.json` is **35,070 bytes**, SHA-256
+`1e72a50061a31e84fbc7e38fadb60036ea86f5afd1b3cdff480c2e3f21695227`,
+requires attestations, accepted all **7** identities, rejected **0**, found no
+matrix finding, and recorded **5 deferred / 2 promoted / 0 implemented
+deferred subsystems**. Clean-candidate re-derivation passed **7** rows, **5**
+source-determined dispositions, and **7** trigger texts.
+
+The first production-report invocation was an environment non-result because
+the sandbox denied its required local process inspection; the identical
+permission-complete entry point passed. The first re-derivation lacked the new
+logical receipt paths in its detached subject and was a construction
+non-result. A later wrapper lost a completed process's exit status and was
+also not counted. After the authenticated bytes were mirrored to their exact
+temporary logical paths, a fully captured re-derivation passed.
+
+The candidate itself verified the pre-registration **301** pins and golden
+**11/11**. The operator explicitly authorized the dated amendment and fifteen
+new `pinned_files[]` records on 2026-07-31; manifest validation now reports
+schema 2, **2 artifacts / 316 pinned files**. `verify-artifacts` and
+`evidence-report` pass, and both protected SQLite artifacts remain
+byte-identical. The exact evidence paths and manifest allowance are scoped
+only to this registration; no validator, production source, protected
+database, publisher configuration, schedule, or identity changed.
+
+Complete workflow and hosted-log searches found no SEC or arXiv publisher URL,
+no `harvest-arxiv`, and no publisher-directed ingest command. The two
+`usgaap.rss` occurrences were local `PIN MATCH` output for the committed SEC
+observation. Every `curl` command was the pinned Rust toolchain action's
+`https://sh.rustup.rs` installer. No hosted publisher request occurred.
+
+Full local `ci-local` passed **20/20** jobs with warning-denied **146**
+workspace tests, **62** net tests (**32 ingest + 30 cored**), locked Rust
+1.78, clean clippy/fmt/ShellCheck, shell **303/303**, registered invariants
+**12 rules / 49 controls**, protected evidence, and embedded golden **11/11**.
+The separately required standalone golden also passed **11/11**, delta **0**.
+Step 8 remains behind its separate operator-only disposition decision.
 
 **v0.28 COVERAGE-ORDER removes the coverage detector's positional assumption
 (measured 2026-07-30).** The decision gate remained open: the implementation is
