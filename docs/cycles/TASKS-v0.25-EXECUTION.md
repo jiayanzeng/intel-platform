@@ -607,6 +607,68 @@ sandboxed `./run golden` attempt could not bind loopback and exited before
 startup with `Operation not permitted`. The authorized rerun of the identical
 entry point passed **11/11**, delta **0**.
 
+### FEED-SHAPE measured result — 2026-07-30
+
+**Gate coverage and preflight.** Every acceptance criterion fits the existing
+gate: the raw policy, feed body, and report are under
+`observations/v0.25/**`; this record, `STATE.md`, and the progress log are
+status records. No criterion requires code, config, schema, protected database,
+or public-surface changes. E0 confirmed G3 and Step 3 was affirmative. Before
+the wire action, `python3 tools/evidence_artifacts.py validate` and
+`./run verify-artifacts` passed with all **251** pins and both protected
+databases exact, port 8788 was free, the worktree was clean, and neither output
+file existed.
+
+**Fresh robots decision.** At **2026-07-30T03:33:58Z**, exactly one
+`GET https://www.sec.gov/robots.txt` ran through the shipped
+`HttpRobotsFetcher`, `RobotsCache`, and `RobotsGate`; the cache and recording
+wrapper both counted **1**. The fresh **2,622-byte** body has SHA-256
+`72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`
+and is byte-identical to v0.24. Publisher and operator gates both allowed
+`/Archives/edgar/usgaap.rss.xml`, with a **0.500-second** effective interval
+and redirects disabled.
+
+**Single feed request.** Only after the policy comparison and allow decisions,
+at **2026-07-30T03:34:00Z**, the monitored-contact
+`intel-platform/0.15.8` identity made exactly one redirect-disabled, no-retry
+GET of `https://www.sec.gov/Archives/edgar/usgaap.rss.xml`. Request count was
+**1**. The response was HTTP **200**, `Content-Type: text/xml`, with no
+`Location` header and a **892,641-byte** body. SHA-256 is
+`154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`.
+Step 4 made no other publisher request.
+
+**Item and field presence.** Independent offline XPath inspection counted
+**200** `<item>` elements. E0's mandatory-field list is empty. For completeness,
+the six optional parser fields measured:
+
+| Field | Items with field | Non-empty | Presence |
+|---|---:|---:|---|
+| `title` | **200/200** | **200/200** | every |
+| `guid` | **200/200** | **200/200** | every |
+| `pubDate` | **200/200** | **200/200** | every |
+| `link` | **200/200** | **200/200** | every |
+| `description` | **200/200** | **200/200** | every |
+| `author` | **0/200** | **0/200** | none |
+
+The empty mandatory set is satisfied, so FEED-SHAPE is affirmative and Step 5
+may reach its separate admission decision.
+
+**Derived parser behavior, not execution.** The repository parser was not run
+against the body. Derived from E0's source enumeration only: if the XML is
+accepted, the parser sees 200 candidate items, uses present values for
+`title`, `guid`, `link`, and `description`, retains each raw `pubDate` while
+conditionally deriving its day, and emits an empty author vector for every
+item. Independent counting is not reported as repository-parser success.
+
+**Storage, limits, and golden.** The body, fresh policy, and report remain only
+under `observations/v0.25/feed-shape/`; they are not fixtures, protected-corpus
+admissions, configured-source inputs, or golden inputs. One request establishes
+nothing about paging, resumption-token equivalents, cursor durability,
+near-duplicate behavior, repeated-fetch politeness, conditional requests, or a
+live ingest. No code, config, schema, protected artifact, database, public
+surface, or ref changed. Mandatory standalone `./run golden` passed **11/11**,
+delta **0**.
+
 ---
 
 ## Step 2 · LICENSE-SEMANTICS (G1, G4) — Say only what the evidence supports 🧑🤖
@@ -895,7 +957,7 @@ publication.**
   recorded with undetermined accepted as complete; condition restated as a
   version-independent property; terms-gate disposition dated in
   `ARCHITECTURE.md`; no code change
-- [ ] **FEED-SHAPE** — robots re-evaluated fresh with hash compared; exactly one
+- [x] **FEED-SHAPE** — robots re-evaluated fresh with hash compared; exactly one
   feed request evidenced by count; shape and per-field presence recorded; parser
   behaviour derived not executed; body kept out of fixtures, corpus, and golden
 - [ ] **ADMIT** — complete, or deleted with the determination that deferred it.

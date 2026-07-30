@@ -1,0 +1,4 @@
+# Preserve the captured publisher body byte-for-byte. Treating the wire
+# artifact as binary prevents text normalization or whitespace cleanup from
+# changing the measured SHA-256.
+sec-edgar-usgaap.rss.xml binary

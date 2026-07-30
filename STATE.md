@@ -1,6 +1,57 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell; v0.16.0 selected, not yet released) · **Status:** **v0.25 TERMS-GATE is affirmatively complete; FEED-SHAPE awaits its separately authorized single live GET.** The operator confirmed that the configured crawler contact is monitored and determined that the contact-bearing identity satisfies the SEC's published organization-and-contact direction. Terms compliance remains a dated publisher-specific operator responsibility outside the executable robots-plus-deny-list model. No source is configured with `PublisherPermitted`, and `config/core.json` remains unchanged. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, Python 3.11 and 3.12 each at **283 collected / 283 passed / 0 skipped**, embedded golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates; Step 3's fresh standalone golden also passed **11/11**. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell; v0.16.0 selected, not yet released) · **Status:** **v0.25 FEED-SHAPE is affirmatively complete; ADMIT awaits its separate operator decision.** Fresh shipped-matcher evaluation found SEC's policy byte-identical and still allowing; exactly one authorized feed GET returned HTTP 200, `text/xml`, 892,641 bytes, and 200 items. E0's mandatory-field list is empty; five optional fields occur in all 200 items and optional `author` in none. The repository parser was not run against the body. No source is configured with `PublisherPermitted`, and `config/core.json` remains unchanged. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, Python 3.11 and 3.12 each at **283 collected / 283 passed / 0 skipped**, embedded golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates; Step 4's fresh standalone golden also passed **11/11**. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.25 FEED-SHAPE observes 200 SEC items in one authorized request without
+claiming parser execution (wire and offline measurement 2026-07-30).**
+
+Preflight passed `python3 tools/evidence_artifacts.py validate` and
+`./run verify-artifacts`; all **251** protected pins and both protected
+databases matched, port 8788 was free, and the destination observation files
+did not exist. The ignored `.env` supplied the monitored contact without
+printing it. A disposable out-of-tree observer compiled offline before any
+wire action and refused existing output paths, policy change, or either robots
+denial before constructing the feed client.
+
+At **2026-07-30T03:33:58Z**, exactly one shipped
+`HttpRobotsFetcher` request fetched `https://www.sec.gov/robots.txt`.
+`RobotsCache` and the recording wrapper each counted **1** fetch.
+The body is **2,622 bytes** with SHA-256
+`72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`,
+byte-identical to the v0.24 policy. The shipped matcher returned
+`Body(allow)` for `/Archives/edgar/usgaap.rss.xml`; the operator deny-list also
+allowed it, the effective interval was **0.500 seconds**, and redirects were
+disabled.
+
+Only after those checks, at **2026-07-30T03:34:00Z**, the same
+contact-bearing `intel-platform/0.15.8` identity made exactly one
+redirect-disabled, no-retry GET of
+`https://www.sec.gov/Archives/edgar/usgaap.rss.xml`. It returned HTTP **200**,
+`Content-Type: text/xml`, no `Location` header, and **892,641 bytes** with
+SHA-256
+`154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`.
+No other publisher URL was requested by Step 4.
+
+Independent offline XPath counts found **200** `<item>` elements.
+`title`, `guid`, `pubDate`, `link`, and `description` are present and non-empty
+in **200/200**; optional `author` is present in **0/200**. E0 proved that all six
+fields are optional, so the mandatory-field list is empty and the Step 4 shape
+condition is satisfied. The repository parser was deliberately not invoked
+against the body. Derived only from E0's source enumeration: if it accepts the
+XML, it sees 200 candidate items, uses the five present-value branches, retains
+each raw `pubDate` while conditionally deriving its day, and emits an empty
+author vector for every item. This is not a claim that the repository parser
+succeeded.
+
+The wire body, fresh robots body, and report live only in
+`observations/v0.25/feed-shape/`. They are not fixtures, protected-corpus
+admissions, configured-source inputs, or golden inputs. One request establishes
+nothing about paging, resumption-token equivalents, cursor durability,
+near-duplicate behavior, repeated-fetch politeness, conditional requests, or a
+live ingest. No code, config, schema, protected artifact, database, public
+surface, or ref changed. Mandatory standalone golden passed **11/11**, delta
+**0**. Step 5 is now eligible but remains behind its separate operator
+admission decision.
 
 **v0.25 TERMS-GATE is affirmative for the reviewed SEC path and leaves terms
 as a dated operator responsibility (operator decision and measurement
@@ -4483,6 +4534,21 @@ machine-readable input. The executable boundary remains the fetched
 review owns the additional terms determination before admission. This is
 narrower and more truthful than calling robots permission terms permission, and
 it generalizes nothing from the SEC to another publisher.
+
+### 6k. Why observed feed shape is affirmative without a parser-success claim (v0.25/FEED-SHAPE)
+
+**Decision: the shape gate is affirmative; parser success remains unmeasured.**
+E0 found no mandatory per-item field in the repository RSS parser. The one
+authorized feed response contained 200 items; every optional field except
+`author` was present and non-empty in all 200, and `author` was absent in all
+200. The empty mandatory set is therefore satisfied, and Step 5 may reach its
+separate admission decision.
+
+That result does not turn an independent XPath count into a repository-parser
+test. Step 4 deliberately did not run the parser against the body. Its behavior
+record is conditional and derived from the already-measured source branches;
+parser execution belongs to admission testing. Keeping those claims separate
+preserves HC13's distinction between observed wire shape and program behavior.
 
 ## 7. Run reference
 
