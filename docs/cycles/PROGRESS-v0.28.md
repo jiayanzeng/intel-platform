@@ -71,3 +71,70 @@ Entries are append-only; corrections are new dated entries.
   owns the complete matrix plus standalone golden.
 - publisher-request acceptance: PASS. No publisher or scheduler command ran.
 - protected artifact delta: PASS. No protected or pinned file changed.
+
+### 2026-07-30 · E0 — entering state rebuilt and G1–G7 settled
+
+- owner: Codex
+- commit: 5d73b2936d3f94883dbc6b2d3a7fb1e84713175a
+- result: PASS. Every entering hypothesis and gate answer is recorded in
+  `STATE.md` and the runbook's dated E0 amendment; differences from the draft
+  are corrections, not silently retained assertions.
+- entering-matrix acceptance: PASS. Permission-complete `./run ci-local` passed
+  all **20/20** jobs with warning-denied **145** workspace tests, **62** net
+  tests, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck,
+  `invariant-scan` **12 rules / 46 controls**, embedded golden, protected
+  artifacts, and lifecycle checks. Standalone golden passed **11/11**.
+- shell-population acceptance: PASS. Clean constrained Python 3.11.4 and
+  3.12.13 lanes each collected/passed **293**, failed zero, and skipped zero.
+  `tools/test_population.py` derived `collected=293`, `equivalent=true`, and
+  `equivalent_passed=293`.
+- artifact acceptance: PASS. Both complete verifications matched **301** pins
+  and both protected databases at **0.10 s / 0.10 s real**. The manifest
+  measured **174,152 bytes**, below 1 MiB.
+- lifecycle/shape acceptance: PASS with drafted values corrected. The
+  architecture table measured **11 data / 2 governed** rows, the active
+  deferred table **15 governed** rows, and `checklist-audit` **216 checked / 3
+  retracted / 216 matched / 0 exemptions**. Entering `STATE.md` measured
+  **6,984 lines / 453,741 bytes** and its seven regions measured **12,540 /
+  17,273 / 127,922 / 185,799 / 43,650 / 38,748 / 27,809 bytes**.
+- G1 acceptance: PASS by execution. Blanking every deferred measured cell while
+  retaining a dated column header made `cycle-check` exit **0**. All real
+  governed rows carry their own date, so removing a real header token would
+  reject zero current rows.
+- G2 acceptance: PASS. v0.24–v0.27 each close on `2026-07-30`; a date-only
+  discriminator distinguishes at most one cycle on that date.
+- G3 acceptance: PASS by execution. The current call discarded derived counts
+  and only the temporary lifecycle fixture consumed `(2, 15)`. Setting every
+  trigger to `none` derived `(0, 0)` and `cycle-check` exited **0**.
+- G4 acceptance: PASS. The exact project-root `./run export-check` passed **99
+  derived / 7 required / 182 exported**. The retained export was **4,975,987
+  bytes**, **99.52%** of decimal 5 MB with **24,013 bytes** headroom. Raw
+  composition was cycle docs **34 / 1,435,284**, observations **13 / 949,344**,
+  root **12 / 713,006**, state archive **1 / 297,739**, and other reviewed
+  paths **122 / 1,564,264**. The 2026-07-30 external observation remains
+  **2,067 chunks / 2,000 limit**. Source inspection confirmed no ceiling.
+- G5 acceptance: PASS by execution. Moving closed v0.24 in a throwaway clone
+  left both commands at exit **0**, while `cycle-check` closed coverage fell
+  **25 → 24** and checklist checked/matched coverage fell **216 → 209**.
+  `audit_deferred`'s complete-progress-glob assertion still passed.
+- G6 acceptance: PASS. The unstated ordering assumption and
+  `incoming.last()`-equivalent implementation are recorded with the bounded
+  effect: a misordered window can misreport one diagnostic string, while the
+  poll still commits and identity is unchanged.
+- G7 acceptance: PASS with no implementation. The public value-domain and named
+  response-shape release criteria are enumerated at their exact authorities.
+  No bounded detector exists without a machine-readable historical contract;
+  their honest prose-adjudicated status remains.
+- deferred-table acceptance: PASS. All **15** governed rows now carry
+  E0-remeasured observations containing both `v0.28` and `2026-07-30`.
+- environment acceptance: PASS with non-results named. Sandboxed loopback,
+  dependency-install, population-wrapper, and direct networked Repomix attempts
+  were not interpreted as measurements. Their actual entry points passed under
+  the required permissions; Repomix was downloaded with scripts disabled
+  outside the repository and executed against repository bytes only with
+  network denied after explicit operator authorization.
+- golden-E2E delta: **0**; embedded and post-record standalone outcomes remain
+  byte-identical at **11/11**.
+- publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
+  model-server session, historical ref movement, protected-byte change,
+  dependency change, route change, or public value-domain change occurred.
