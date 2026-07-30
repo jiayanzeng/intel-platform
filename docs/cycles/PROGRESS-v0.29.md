@@ -187,3 +187,52 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref acceptance: PASS. E0 ran no scheduler, issued no publisher
   request, changed no protected or pinned byte, and created, moved, or deleted
   no ref.
+
+### 2026-07-31 · RETENTION-BIND — active cycle binds the tracked export glob
+
+- owner: Codex
+- commit: b06e1e583c580e2e7be96bbddd76c1d5e550282a
+- result: PASS. `cycle-check` imports the one
+  `tools.export_check.CYCLE_RETENTION_DEPTH` authority and derives the expected
+  tracked Repomix brace pattern from the active declaration. It does not create
+  or inspect an export.
+- decision-gate acceptance: PASS. G2 established that the automatic rule
+  checks configuration intent, whereas operator-local `export-check` checks an
+  actual artifact's path population, size, and excluded bytes. v0.22 G3 is not
+  reopened and no hosted export duplicate was added.
+- rejection-before-acceptance: PASS. Before changing the tracked glob, the real
+  checker exited 1 and required
+  `docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-6]}{.md,.*.md,-*.md}`;
+  it named the still-present `[6-9]` alternative as the sole found mismatch.
+  After the config moved to the derived zero-based range, the same entry point
+  passed. The added v0.0–v0.5 matches name no existing path and change no
+  export member.
+- derivation acceptance: PASS. No expected retention string is stored in the
+  checker or its tests. The numeric brace alternatives are generated from the
+  active cycle's last component and the imported depth; the fixed prefix and
+  filename suffix express path grammar, not a cycle endpoint.
+- automatic-lane acceptance: PASS. `cycle-check` is already a blocking local
+  and hosted lifecycle entry point. Its no-export fixture confirms no
+  `repomix-output-*.xml` exists, corrupts the tracked pattern, and observes the
+  named rejection. Focused lifecycle plus invariant tests passed **73/73**.
+- registered-control acceptance: PASS. R12 independently appends a stale suffix
+  to the active-cycle derivation and invokes the production check. Disabling
+  the mismatch branch produces
+  `review-export-retention planted controls were not detected:
+  stale-retention-pattern`. Registered invariants pass **12/12 rules / 50
+  controls**, with R12 now **22**.
+- shell acceptance: PASS at the permission-complete entry point: collected
+  **304**, passed **304**, failed **0**, skipped **0**, with the one governed
+  Starlette warning. A preceding sandboxed attempt passed 296 and failed eight
+  only at denied loopback binds/process-table inspection; it is an environment
+  non-result.
+- export acceptance: PASS. The completed implementation tree's real
+  project-root export reports **99 derived / 7 required / 152 exported** at
+  **2,446,347 bytes**, retention depth 3, under the 3,000,000-byte ceiling.
+  Retained paths remain exactly v0.27–v0.29 and both excluded byte classes
+  remain absent.
+- golden-E2E delta: **0** — standalone **11/11**, byte-identical.
+- surface/protected/publisher acceptance: PASS. No production source, route,
+  response shape, `/v1/*` value domain, dependency, schema, protected or
+  pinned byte, publisher configuration, scheduler state, or ref changed. No
+  publisher request or scheduler run occurred.
