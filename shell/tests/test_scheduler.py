@@ -3,13 +3,26 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
+
+import pytest
 
 from intel_shell import scheduler
 from intel_shell.scheduler import Job, JobSpec, ScheduleConfig, Scheduler, build_jobs, due_jobs
 
 
 ROOT = Path(__file__).resolve().parents[2]
+CADENCE_ROW_SUBJECT = "SEC US GAAP RSS cadence criterion correction (v0.27)"
+
+
+def _assert_architecture_cadence_matches_schedule(row: str, scheduled: int) -> None:
+    match = re.search(r"cadence remains (\d+) seconds", row)
+    assert match is not None, "architecture cadence row has no machine-readable seconds"
+    stated = int(match.group(1))
+    assert stated == scheduled, (
+        f"architecture SEC cadence {stated} != scheduled {scheduled}"
+    )
 
 
 class FakeRunner:
@@ -181,3 +194,31 @@ def test_admitted_sec_source_has_an_explicit_resolvable_cadence():
     assert runner.calls == [
         ("ingest", ("quant-desk", (), ("sec-edgar-usgaap",)))
     ]
+
+
+def test_architecture_sec_cadence_matches_schedule_and_rejects_mismatch():
+    runner = FakeRunner()
+    schedule = scheduler.load_schedule(str(ROOT / "config" / "schedule.json"))
+    jobs = {job.name: job for job in build_jobs(schedule, runner)}
+    scheduled = int(
+        jobs["quant-desk:ingest-source:sec-edgar-usgaap"].interval
+    )
+
+    rows = [
+        line
+        for line in (ROOT / "ARCHITECTURE.md").read_text().splitlines()
+        if f"| {CADENCE_ROW_SUBJECT} |" in line
+    ]
+    assert len(rows) == 1
+    _assert_architecture_cadence_matches_schedule(rows[0], scheduled)
+
+    planted = rows[0].replace(
+        "cadence remains 600 seconds",
+        "cadence remains 601 seconds",
+        1,
+    )
+    with pytest.raises(
+        AssertionError,
+        match=r"architecture SEC cadence 601 != scheduled 600",
+    ):
+        _assert_architecture_cadence_matches_schedule(planted, scheduled)

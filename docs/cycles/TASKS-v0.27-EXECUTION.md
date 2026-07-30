@@ -513,6 +513,34 @@ remained **200 kept / 0 dropped**, and standalone golden remained
 byte-identical at **11/11**. No schedule or production source changed, the
 scheduler did not run, and no publisher request occurred.
 
+### CADENCE-CRITERION execution record — 2026-07-30
+
+`ARCHITECTURE.md` now appends a new dated cadence-criterion row after the
+byte-identical v0.26 row. The new row corrects the governing reason from the
+publisher's ten-minute rebuild description to latest-window advance time and
+records the unchanged 600-second interval against the measured 4,650-second
+span: **7.75×** span/poll headroom, or **12.90%** of the observed span consumed
+per interval. It names the one-Wednesday-window basis and the peak-season,
+deadline-day, and uncovered-hour gaps. The measured positive margin does not
+imply a number change, so none is recommended or applied.
+
+The v0.25 terms row and the v0.26 cadence row have identical before/after
+SHA-256 values. The new row expressly says the cadence correction satisfies
+neither the terms condition nor the coverage-detection objective.
+
+The new shell test resolves the SEC job through committed `load_schedule` and
+`build_jobs`, extracts the cadence asserted by the new architecture row, and
+compares them. Its planted 601-second architecture value raises the expected
+`601 != scheduled 600` failure, proving the check is non-vacuous. Focused
+scheduler tests passed **10/10** in both interpreters. Complete constrained
+Python 3.11 and 3.12 lanes each collected and passed **292** with zero skips;
+the comparator derived `collected=292`, `equivalent=true`, and
+`equivalent_passed=292`.
+
+Standalone golden remained **11/11**. `config/schedule.json` is byte-unchanged,
+no scheduler ran, and no publisher request or production-source change
+occurred.
+
 ---
 
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
@@ -858,7 +886,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
 - [x] **WINDOW-MEASURE** — window quantities derived by a committed test, not
   asserted; safety criterion stated generally with its ratio; three evidentiary
   gaps recorded; idle-sample finding recorded with both conclusions
-- [ ] **CADENCE-CRITERION** — correction appended as a new dated row with v0.26's
+- [x] **CADENCE-CRITERION** — correction appended as a new dated row with v0.26's
   intact; margin stated; any implied number change recommended and not applied;
   test added or vacuity recorded; `config/schedule.json` byte-unchanged
 - [ ] **COVERAGE-DETECTION** — one option chosen with its claim and dependencies;
