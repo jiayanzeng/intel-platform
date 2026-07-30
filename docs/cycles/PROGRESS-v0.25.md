@@ -245,3 +245,65 @@ Entries are append-only; corrections are new dated entries.
   startup because the sandbox denied the loopback bind with `Operation not
   permitted`; the authorized rerun of the identical `./run golden` entry point
   passed **11/11**.
+
+### 2026-07-30 · FEED-SHAPE — one SEC feed response observed
+
+- owner: Codex
+- commit: 6c16767a8a1cf98647a67b44813933f8f9914582
+- result: PASS. The one authorized SEC US GAAP RSS request returned 200 items.
+  E0's mandatory-field list is empty, so the shape condition is affirmative;
+  repository-parser success remains deliberately unmeasured.
+- gate acceptance: PASS. E0 confirmed G3, TERMS-GATE was affirmative, and the
+  operator authorized one live feed GET. Every criterion fit
+  `observations/v0.25/**` and status records. No code, config, schema,
+  protected-database, or public-surface path was needed.
+- preflight acceptance: PASS. `python3 tools/evidence_artifacts.py validate`
+  and `./run verify-artifacts` passed with all **251** pins and both protected
+  databases exact; port 8788 was free, the worktree was clean, and neither
+  observation output existed. The disposable observer compiled offline and
+  refused pre-existing outputs, policy drift, or a robots denial before a feed
+  request.
+- robots acceptance: PASS. At **2026-07-30T03:33:58Z**, the shipped
+  `HttpRobotsFetcher`, `RobotsCache`, and `RobotsGate` made exactly one
+  `GET https://www.sec.gov/robots.txt`; both cache and wrapper counted **1**.
+  The **2,622-byte** body has SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`,
+  byte-identical to v0.24. Publisher and operator gates both allowed the
+  intended path, with redirects disabled and a **0.500-second** effective
+  interval.
+- feed-wire acceptance: PASS. Only after those checks, at
+  **2026-07-30T03:34:00Z**, the monitored-contact
+  `intel-platform/0.15.8` identity made exactly one redirect-disabled,
+  no-retry GET of
+  `https://www.sec.gov/Archives/edgar/usgaap.rss.xml`. The response was HTTP
+  **200**, `Content-Type: text/xml`, no `Location` header, and **892,641
+  bytes** with SHA-256
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`.
+  No additional publisher request occurred.
+- shape acceptance: PASS. Independent offline XPath counting found **200**
+  `<item>` elements. Optional `title`, `guid`, `pubDate`, `link`, and
+  `description` are present and non-empty in **200/200**; optional `author` is
+  present in **0/200**. The mandatory list is empty and therefore satisfied.
+- parser-boundary acceptance: PASS. The repository parser was not run against
+  the body. Its documented outcome is conditional and derived only from E0's
+  source enumeration: if it accepts the XML, it sees 200 candidate items, uses
+  the five present-value branches, conditionally converts each retained raw
+  `pubDate`, and emits empty author vectors. Independent counting is not
+  reported as parser success.
+- storage acceptance: PASS. Raw policy, raw feed body, and report live only
+  under `observations/v0.25/feed-shape/`; no fixture, protected corpus,
+  configured source, or golden input changed. An observation-local
+  `.gitattributes` marks the feed as binary so Git preserves the exact
+  publisher bytes, including their measured trailing whitespace, without text
+  normalization; the SHA-256 remained exact after staging.
+- non-establishment acceptance: PASS. One response establishes nothing about
+  paging, resumption-token equivalents, cursor durability, near-duplicate
+  behavior, repeated-fetch politeness, conditional requests, or a live ingest.
+  Step 5 is eligible but remains behind its separate operator admission
+  decision.
+- lifecycle acceptance: PASS. `cycle-check` passed. The staged observation,
+  including the raw body, passed `invariant-scan` at **12/12 rules / 39
+  controls** and R4 found no credential-bearing content. With the raw artifact
+  correctly classified as binary, staged diff hygiene passed.
+- golden-E2E delta: **0**. Mandatory standalone `./run golden` passed
+  **11/11**.
