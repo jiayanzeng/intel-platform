@@ -544,3 +544,63 @@ Entries are append-only; corrections are new dated entries.
   hamming-12 true-positive collapse.
 - publisher-request acceptance: PASS. No publisher request or harvest
   occurred. Quarantined content was not cited.
+
+### 2026-07-30 · HARVEST — wire crossed, plaintext evidence incomplete
+
+- owner: Codex
+- commit: 983fa9cf9d06403cac0c4f1b7df4c57812e15f02
+- result: BLOCKED. The authorized isolated SEC ingest returned **200 fetched /
+  200 new** and source `ok:true`, but the TLS-opaque observer did not measure
+  all acceptance fields. HARVEST remains unchecked and Step 7 remains blocked.
+- authorization acceptance: PARTIAL. The operator authorized one bounded
+  harvest under seven conditions. No scheduler ran, no scheduled live run has
+  occurred, and the 600-second cadence remains unexercised. No corrective
+  publisher request is authorized.
+- preflight acceptance: PASS. `verify-artifacts` matched all 271 pins and both
+  protected databases. `data/core.db` was explicitly refused before
+  reachability, and the harness-printed fresh absent target was
+  `data/live-20260730T084234Z-16401.db`. Port 8788 was unused and the `-D
+  warnings` net build passed.
+- shipped-gate acceptance: PARTIAL. The live core logged `Body(allow)` for the
+  SEC feed path with effective 0.500-second spacing. The observer recorded two
+  SEC TLS connections at 08:47:16.394914Z and 08:47:17.646652Z, 1.251746
+  seconds apart. Because TLS remained opaque, it did not capture the fresh
+  robots body or establish its hash, exact status, redirect, or retry count.
+- request-count acceptance: FAIL / NOT MEASURED. Two CONNECT records are not
+  proof of the number of HTTP requests carried inside them. The record
+  therefore does not claim exactly one feed request, exact publisher statuses,
+  redirects, or retries even though the one core ingest completed.
+- User-Agent acceptance: PARTIAL. The configured bytes were captured locally
+  without printing the contact: 73 bytes, SHA-256
+  `2fc0ac45a37a1c604d0f01d5039fffd0d734857b613de87cb6c848f29acec495`.
+  The shipped two-client raw-wire test executed and passed, and the deliberate
+  mismatch control fired. The publisher-received plaintext header was not
+  observable through the relay, so byte-for-byte publisher receipt is not
+  claimed.
+- body-comparison acceptance: PARTIAL. The fresh archive contains 200 rows.
+  All normalized ids, titles, descriptions, links, and raw publication dates
+  equal the pinned observation; 200/200 descriptions equal pinned
+  `edgar:formType`. The fresh XML declaration was not captured, so the pinned
+  `windows-1252` declaration cannot be claimed for the fresh body.
+- identity acceptance: PASS. The shipped guard kept **200 / dropped 0**. The
+  fresh feature distribution is `{4:40, 5:86, 6:48, 7:20, 8:5, 10:1}`:
+  200 below 11, zero in the 11–25 calibration gap, and zero eligible at floor
+  26. Both distance-zero pairs, at 8/8 and 6/6 features, remain visible. This
+  is the measured under-collapse cost in the safer failure direction.
+- archive acceptance: PASS. The ignored, unadmitted 253,952-byte database has
+  SHA-256
+  `00b221483d58870f7841582f5afa9f0e3f6d19818e0c9cae1212d8bf6bfc8035`,
+  passes integrity, and has 200 documents, 200 distinct canonical ids, zero
+  canonical drops, and zero cursors. No protected byte changed.
+- multi-origin acceptance: NOT EXERCISED. The selected runtime exercised SEC
+  only; arXiv was not requested. Separate SEC cache/limiter use was observed,
+  but two-origin runtime behavior remains unmeasured.
+- lifecycle acceptance: PASS for the blocked record. `cycle-check`,
+  `progress-check`, and `version-check` passed before the implementation
+  commit; `git diff --check` was clean.
+- golden-E2E delta: **0**. The initial sandboxed run could not bind loopback
+  and was a non-result; the approved rerun executed all controls and passed
+  11/11.
+- disposition: this is an agent-side observation-design failure, not an
+  implementation defect. No second robots or feed request was made. A
+  corrective observable replay requires separate operator authorization.
