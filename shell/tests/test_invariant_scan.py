@@ -122,7 +122,7 @@ def test_control_rejects_a_failure_reported_at_the_wrong_site(
     assert invariant_scan.self_test(ROOT, registry, {"R7"}) == 1
     output = capsys.readouterr().out
     assert "missing expected finding" in output
-    assert "apps/cored/src/main.rs:1156" in output
+    assert "apps/cored/src/main.rs:1252" in output
 
 
 def test_overbroad_matcher_cannot_pass_a_control_at_an_unrelated_site(
@@ -149,7 +149,7 @@ def test_overbroad_matcher_cannot_pass_a_control_at_an_unrelated_site(
         invariant_scan.expected_control_finding(rule, control)
         not in output.splitlines()
     )
-    assert "apps/cored/src/main.rs:1202" in output
+    assert "apps/cored/src/main.rs:1298" in output
 
 
 def test_malformed_registry_exits_two(

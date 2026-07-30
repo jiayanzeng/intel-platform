@@ -13,8 +13,8 @@
 
 pub mod sqlite;
 pub use sqlite::{
-    Cursor, EmbeddingStats, EmbeddingWriteError, SearchHit, SqliteStore, StoreOpenTimings,
-    VectorSearchResult,
+    Cursor, EmbeddingStats, EmbeddingWriteError, SearchHit, SourceWindowCoverage,
+    SourceWindowCoverageOutcome, SqliteStore, StoreOpenTimings, VectorSearchResult,
 };
 
 use intel_core::Document;

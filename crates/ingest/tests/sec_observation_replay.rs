@@ -384,6 +384,108 @@ fn derives_sec_latest_window_timing_from_pinned_body() {
     );
 }
 
+#[test]
+fn derives_overlap_identity_and_timestamp_tie_premises_from_pinned_body() {
+    let bytes = std::fs::read(observation_path()).expect("read SEC observation");
+    assert_observation_bytes(&bytes).unwrap_or_else(|error| panic!("{error}"));
+    let xml = std::str::from_utf8(&bytes).expect("the asserted SEC observation must be UTF-8");
+    let tree = roxmltree::Document::parse(xml).expect("parse asserted SEC observation");
+    let channel = tree
+        .descendants()
+        .find(|node| node.is_element() && node.tag_name().name() == "channel")
+        .expect("RSS channel");
+    let items: Vec<_> = channel
+        .children()
+        .filter(|node| node.is_element() && node.tag_name().name() == "item")
+        .collect();
+
+    let ordered_timestamps: Vec<_> = items
+        .iter()
+        .map(|item| {
+            let raw = direct_text(*item, "pubDate").expect("item pubDate");
+            rss_timestamp(&raw).0
+        })
+        .collect();
+    let ascending_inversions = ordered_timestamps
+        .windows(2)
+        .filter(|pair| pair[1] > pair[0])
+        .count();
+
+    let guids: Vec<_> = items
+        .iter()
+        .map(|item| direct_text(*item, "guid").expect("item guid"))
+        .collect();
+    let accessions: Vec<_> = items
+        .iter()
+        .map(|item| {
+            item.descendants()
+                .find(|node| node.is_element() && node.tag_name().name() == "accessionNumber")
+                .and_then(|node| node.text())
+                .expect("item accessionNumber")
+                .to_string()
+        })
+        .collect();
+    let unique_guids: BTreeSet<_> = guids.iter().collect();
+    let unique_accessions: BTreeSet<_> = accessions.iter().collect();
+    let hosts: BTreeSet<_> = guids
+        .iter()
+        .map(|guid| {
+            guid.strip_prefix("https://")
+                .and_then(|tail| tail.split('/').next())
+                .expect("absolute HTTPS guid")
+        })
+        .collect();
+    let guid_accessions_match = guids
+        .iter()
+        .zip(&accessions)
+        .all(|(guid, accession)| guid.contains(accession));
+
+    let mut timestamp_multiplicities = BTreeMap::new();
+    for item in &items {
+        let raw = direct_text(*item, "pubDate").expect("item pubDate");
+        *timestamp_multiplicities.entry(raw).or_insert(0usize) += 1;
+    }
+    let shared_timestamp_values = timestamp_multiplicities
+        .values()
+        .filter(|multiplicity| **multiplicity > 1)
+        .count();
+    let maximum_timestamp_multiplicity = timestamp_multiplicities
+        .values()
+        .copied()
+        .max()
+        .expect("at least one timestamp");
+    let mut tie_distribution = BTreeMap::new();
+    for multiplicity in timestamp_multiplicities
+        .values()
+        .copied()
+        .filter(|multiplicity| *multiplicity > 1)
+    {
+        *tie_distribution.entry(multiplicity).or_insert(0usize) += 1;
+    }
+
+    assert_eq!(items.len(), 200);
+    assert_eq!(ascending_inversions, 0);
+    assert_eq!(unique_guids.len(), 200);
+    assert_eq!(unique_accessions.len(), 200);
+    assert_eq!(hosts, BTreeSet::from(["www.sec.gov"]));
+    assert!(guid_accessions_match);
+    assert_eq!(shared_timestamp_values, 8);
+    assert_eq!(tie_distribution, BTreeMap::from([(2, 7), (3, 1)]));
+    assert_eq!(maximum_timestamp_multiplicity, 3);
+
+    println!(
+        "sec-overlap-premises: items={} ascending_inversions={} unique_guids={} \
+         unique_accessions={} hosts={hosts:?} shared_timestamp_values={} \
+         tie_distribution={tie_distribution:?} max_timestamp_multiplicity={}",
+        items.len(),
+        ascending_inversions,
+        unique_guids.len(),
+        unique_accessions.len(),
+        shared_timestamp_values,
+        maximum_timestamp_multiplicity,
+    );
+}
+
 #[tokio::test]
 async fn replays_sec_observation_through_shipped_rss_parser() {
     let observation_path = observation_path();

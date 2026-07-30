@@ -1,9 +1,9 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, and ADMISSION-LANGUAGE are complete locally.** The current tree passes warning-denied **140** workspace tests and **57** net tests (**31** `intel-ingest` including both replay tests + **26** `cored`), clippy and fmt, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, COVERAGE-DETECTION, and ADMISSION-LANGUAGE are complete locally.** The current tree passes all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 46 controls**, clippy, fmt, ShellCheck, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
 
-**Active v0.27 continuation:** CADENCE-CRITERION and ADMISSION-LANGUAGE are also
-complete locally.
+**Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION, and
+ADMISSION-LANGUAGE are also complete locally.
 Current constrained Python 3.11.4 and 3.12.13 lanes each collected and passed
 **293** with zero skips; their comparator derived `collected=293`,
 `equivalent=true`, and `equivalent_passed=293`. The architecture now records
@@ -96,6 +96,63 @@ passed **293** with zero skips; their comparator derived `collected=293`,
 `config/protected-artifacts.json` remained SHA-256
 `8711aa1b95d6071c6492594aa20a3c4ab8a1756ffe4b5ed72b5208f39ed9a3da`.
 No production source changed and no publisher request was made.
+
+**COVERAGE-DETECTION makes a fixed-window rollover visible without failing the
+poll (measured and authorized 2026-07-30).** The operator selected the id-only
+overlap watermark. Its exact no-gap claim is conditional: when each fetched
+window is a contiguous interval in publication order and document ids remain
+stable across polls, any id shared with the source's stored corpus proves the
+old and new covered intervals abut. The pinned SEC body re-derives both measured
+premises available in this sample: **200 items with zero ascending inversions**
+in document order and **200 unique SEC GUIDs containing 200 distinct accession
+numbers**, with each parsed id derived from its source id and GUID. Accession
+immutability supports id stability; stability across an actual publisher
+re-issue remains a dependency rather than a property this single body executes.
+
+For every successful non-paged source, cored now asks the store about overlap
+**before** the combined tail `append_new`, passing that source's id and its own
+document slice. The resulting per-source field is computed pre-commit and
+carried into `IngestSourceResult`; it is not populated by a default or
+back-filled after insertion. A fresh source reports `first_window`, an
+identical window reports `overlap`, and an empty incoming window reports
+`empty_window`. An empty overlap against a non-empty source reports
+`gap_detected` in the response and human-readable log, with the publisher's raw
+`held_newest_published_raw` and `incoming_oldest_published_raw` strings. It
+still commits the incoming documents. This is deliberately a conservative
+visible finding, not proof that a filing was lost: a publisher re-issue or a
+change in GUID form can cause a false positive. The implementation neither
+claims zero false positives nor quantifies the gap. Cursor-paged OAI-PMH
+reports `not_applicable_paged`, because page-to-page id overlap is not a valid
+coverage condition there.
+
+Execution against the pinned body proved the fresh **200-document** poll reports
+`first_window`, then the identical poll reports `overlap` with **0 new**. A
+genuinely disjoint pair kept 67 older documents, omitted the 66 intervening
+items, then ingested 67 newer documents; it reported `gap_detected`,
+`held_newest_published_raw="Wed, 29 Jul 2026 16:26:17 EDT"`, and
+`incoming_oldest_published_raw="Wed, 29 Jul 2026 17:00:13 EDT"`, while committing
+all 67 incoming rows. Re-assessing after insertion returned `overlap`, proving
+the surfaced result came from the pre-insert check. A combined two-source
+non-paged ingest independently reported overlap for one source and a gap for
+the other; an OAI-PMH fixture reported `not_applicable_paged` while committing
+its cursor.
+
+R12 now carries **18 planted controls**, and the repository total is **12 rules
+/ 46 controls**. The two new mutations move an insert before assessment and
+replace the per-source document slice with the combined fetched batch; both
+produced their expected failures. Full local CI passed **20/20** jobs:
+warning-denied **145** workspace tests and **62** net tests (**32 ingest + 30
+cored**), clean locked Rust 1.78, clippy, fmt, ShellCheck, and both constrained
+Python lanes at **293/293** with zero skips. The first sandboxed Python 3.12
+attempt could not perform its loopback/process checks and was a non-result; the
+same entry point passed with the required local permissions. The identity
+fixture still measured the 200 SEC documents as **200 kept / 0 dropped**
+(alongside one separately kept filings-digest document), and standalone golden
+remained byte-identical at **11/11** with its Hamming-12 collapse.
+`crates/extract`, `crates/view`, `config/schedule.json`, `config/core.json`, and
+the protected-artifact manifest are byte-unchanged. The allowed
+`crates/ingest/src/lib.rs` and `crates/ingest/src/rss.rs` production permissions
+were unused. No publisher request was made.
 
 ## v0.16.1 post-push verification
 

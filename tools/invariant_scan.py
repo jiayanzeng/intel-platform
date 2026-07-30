@@ -1621,6 +1621,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "test-population": (
         "Invariant R12 control site: test-population equivalence."
     ),
+    "coverage-detection": (
+        "Invariant R12 control site: pre-insert per-source coverage detection."
+    ),
 }
 
 
@@ -1664,7 +1667,7 @@ def _load_test_population_for_control(root: Path):
 
 
 def r12_findings(root: Path) -> list[str]:
-    """Exercise every closing/publication rule against a planted failure."""
+    """Exercise lifecycle, population, and coverage rules against planted failures."""
     cycle_check = _load_cycle_check_for_control(root)
     test_population = _load_test_population_for_control(root)
     tag = "publication-control-tag"
@@ -2142,14 +2145,40 @@ def r12_findings(root: Path) -> list[str]:
     else:
         missed.setdefault("test-population", []).append("unmarked-skip")
 
+    coverage_path = root / "apps/cored/src/main.rs"
+    coverage_source = production_text(
+        coverage_path.relative_to(root),
+        coverage_path.read_text(),
+    )
+    assessment_call = ".assess_source_window_coverage_before_insert("
+    append_call = ".append_new("
+    assessment_position = coverage_source.find(assessment_call)
+    append_position = coverage_source.find(append_call)
+    if (
+        coverage_source.count(assessment_call) != 1
+        or append_position < 0
+        or assessment_position > append_position
+    ):
+        missed.setdefault("coverage-detection", []).append(
+            "overlap-before-insert"
+        )
+    partitioned_call = (
+        ".assess_source_window_coverage_before_insert(sel.source.id(), &docs)"
+    )
+    if coverage_source.count(partitioned_call) != 1:
+        missed.setdefault("coverage-detection", []).append(
+            "per-source-partition"
+        )
+
     findings: list[str] = []
     for group, names in missed.items():
         marker = PUBLICATION_CONTROL_MARKERS[group]
-        source_relative = (
-            "tools/test_population.py"
-            if group == "test-population"
-            else "tools/cycle_check.py"
-        )
+        if group == "test-population":
+            source_relative = "tools/test_population.py"
+        elif group == "coverage-detection":
+            source_relative = "apps/cored/src/main.rs"
+        else:
+            source_relative = "tools/cycle_check.py"
         source_path = root / source_relative
         source = source_path.read_text()
         if source.count(marker) != 1:
@@ -2157,11 +2186,12 @@ def r12_findings(root: Path) -> list[str]:
                 f"{source_relative}: R12 marker {marker!r} must occur once"
             )
         line = source.count("\n", 0, source.index(marker)) + 1
-        finding_kind = (
-            "test-population planted controls"
-            if group == "test-population"
-            else "publication planted controls"
-        )
+        if group == "test-population":
+            finding_kind = "test-population planted controls"
+        elif group == "coverage-detection":
+            finding_kind = "coverage-detection planted controls"
+        else:
+            finding_kind = "publication planted controls"
         findings.append(
             f"{source_relative}:{line}: {finding_kind} "
             f"were not detected: {', '.join(names)}"

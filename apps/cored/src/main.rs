@@ -40,12 +40,14 @@ use axum::response::{IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use intel_compliance::{HostLimiters, RobotsCache, RobotsGate};
-use intel_core::{attest_answer, Attestation, Day, Document, Signal};
+use intel_core::{attest_answer, Attestation, Day, Document, Signal, SourceKind};
 use intel_enrich::Gazetteer;
 use intel_extract::hamming;
 use intel_ingest::{CursorStore, SourceContext};
 use intel_registry::{select_sources, CoreConfig};
-use intel_store::{SqliteStore, StoreOpenTimings};
+use intel_store::{
+    SourceWindowCoverage, SourceWindowCoverageOutcome, SqliteStore, StoreOpenTimings,
+};
 use intel_view::{compute_view, entity_names, ViewParams};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -475,7 +477,76 @@ struct IngestSourceResult {
     source_id: String,
     ok: bool,
     documents: usize,
+    coverage: CoverageOutcome,
+    coverage_boundary: Option<CoverageBoundary>,
     error: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum CoverageOutcome {
+    EmptyWindow,
+    FirstWindow,
+    Overlap,
+    GapDetected,
+    NotApplicablePaged,
+    NotEvaluated,
+}
+
+impl CoverageOutcome {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::EmptyWindow => "empty_window",
+            Self::FirstWindow => "first_window",
+            Self::Overlap => "overlap",
+            Self::GapDetected => "gap_detected",
+            Self::NotApplicablePaged => "not_applicable_paged",
+            Self::NotEvaluated => "not_evaluated",
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+struct CoverageBoundary {
+    held_newest_published_raw: Option<String>,
+    incoming_oldest_published_raw: Option<String>,
+}
+
+fn response_coverage(
+    assessed: SourceWindowCoverage,
+) -> (CoverageOutcome, Option<CoverageBoundary>) {
+    let outcome = match assessed.outcome {
+        SourceWindowCoverageOutcome::EmptyWindow => CoverageOutcome::EmptyWindow,
+        SourceWindowCoverageOutcome::FirstWindow => CoverageOutcome::FirstWindow,
+        SourceWindowCoverageOutcome::Overlap => CoverageOutcome::Overlap,
+        SourceWindowCoverageOutcome::GapDetected => CoverageOutcome::GapDetected,
+    };
+    let boundary = (outcome == CoverageOutcome::GapDetected).then_some(CoverageBoundary {
+        held_newest_published_raw: assessed.held_newest_published_raw,
+        incoming_oldest_published_raw: assessed.incoming_oldest_published_raw,
+    });
+    (outcome, boundary)
+}
+
+fn coverage_log_line(
+    source_id: &str,
+    outcome: CoverageOutcome,
+    boundary: Option<&CoverageBoundary>,
+) -> String {
+    match boundary {
+        Some(boundary) => format!(
+            "ingest coverage: source_id={source_id} outcome={} \
+             held_newest_published_raw={:?} incoming_oldest_published_raw={:?} \
+             poll_continues=true",
+            outcome.as_str(),
+            boundary.held_newest_published_raw,
+            boundary.incoming_oldest_published_raw,
+        ),
+        None => format!(
+            "ingest coverage: source_id={source_id} outcome={} poll_continues=true",
+            outcome.as_str()
+        ),
+    }
 }
 
 #[derive(Serialize)]
@@ -821,12 +892,28 @@ async fn ingest(
     for sel in &selection.selected {
         match sel.source.fetch(&ctx).await {
             Ok(mut docs) => {
+                let (coverage, coverage_boundary) = if sel.source.kind() == SourceKind::OaiPmh {
+                    (CoverageOutcome::NotApplicablePaged, None)
+                } else {
+                    // Invariant R12 control site: pre-insert per-source coverage detection.
+                    let assessed = st
+                        .store
+                        .assess_source_window_coverage_before_insert(sel.source.id(), &docs)
+                        .map_err(internal)?;
+                    response_coverage(assessed)
+                };
+                eprintln!(
+                    "{}",
+                    coverage_log_line(sel.source.id(), coverage, coverage_boundary.as_ref())
+                );
                 fetched_count += docs.len();
                 results.push(IngestSourceResult {
                     sector: sel.sector_id.clone(),
                     source_id: sel.source.id().to_string(),
                     ok: true,
                     documents: docs.len(),
+                    coverage,
+                    coverage_boundary,
                     error: None,
                 });
                 fetched.append(&mut docs);
@@ -836,11 +923,18 @@ async fn ingest(
                 // fails. Report those documents rather than claiming zero.
                 let committed = cursor_adapter.committed_for(sel.source.id());
                 fetched_count += committed;
+                let coverage = if sel.source.kind() == SourceKind::OaiPmh {
+                    CoverageOutcome::NotApplicablePaged
+                } else {
+                    CoverageOutcome::NotEvaluated
+                };
                 results.push(IngestSourceResult {
                     sector: sel.sector_id.clone(),
                     source_id: sel.source.id().to_string(),
                     ok: false,
                     documents: committed,
+                    coverage,
+                    coverage_boundary: None,
                     error: Some(e.to_string()),
                 });
             }
@@ -854,6 +948,8 @@ async fn ingest(
             source_id: id.clone(),
             ok: false,
             documents: 0,
+            coverage: CoverageOutcome::NotEvaluated,
+            coverage_boundary: None,
             error: Some("unknown or not entitled source id".to_string()),
         });
     }
@@ -1467,6 +1563,8 @@ fn warn_if_view_diagnostic_delay_configured() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use intel_ingest::rss::RssSource;
+    use intel_ingest::Source;
 
     #[test]
     fn loopback_bind_check_rejects_unspecified_and_lan_literals() {
@@ -1633,6 +1731,93 @@ mod tests {
             .as_nanos();
         let pid = std::process::id();
         std::env::temp_dir().join(format!("cored-ingest-test-{pid}-{seq}-{n}.db"))
+    }
+
+    fn single_source_state(
+        source_type: &str,
+        source_id: &str,
+        fixture: &Path,
+        max_pages: Option<u32>,
+    ) -> Arc<AppState> {
+        let cfg: CoreConfig = serde_json::from_value(serde_json::json!({
+            "sectors": [{
+                "id": "finance",
+                "display_name": "Finance",
+                "sources": [{
+                    "type": source_type,
+                    "id": source_id,
+                    "url": "https://example.org/fixture",
+                    "fixture": fixture.display().to_string(),
+                    "license": "PublicDomain",
+                    "max_pages": max_pages
+                }]
+            }]
+        }))
+        .expect("parse one-source test config");
+        let root = root();
+        let gaz = Gazetteer::from_json(
+            &std::fs::read_to_string(root.join("config/entities.json")).expect("read entities"),
+        )
+        .expect("parse entities");
+        let store = SqliteStore::open(&tmp_db()).expect("open store");
+        Arc::new(AppState::new(store, gaz, cfg, None))
+    }
+
+    async fn pinned_sec_documents() -> Vec<Document> {
+        let path = root().join("observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml");
+        let source = RssSource {
+            id: "sec-edgar-usgaap".into(),
+            sector: intel_core::SectorId::new("finance"),
+            feed_url: "https://www.sec.gov/Archives/edgar/usgaap.rss.xml".into(),
+            fixture_path: Some(path.display().to_string()),
+            license: intel_core::License::PublicDomain,
+            robots_on_missing: intel_ingest::MissingPolicy::Deny,
+        };
+        let context = SourceContext {
+            robots: RobotsGate::new(&[]),
+            limiter: Arc::new(HostLimiters::per_second(DEFAULT_RPS)),
+            cursors: None,
+            robots_cache: None,
+        };
+        source
+            .fetch(&context)
+            .await
+            .expect("parse pinned SEC observation")
+    }
+
+    fn write_rss_fixture(path: &Path, source_id: &str, documents: &[Document]) {
+        fn escaped(value: &str) -> String {
+            value
+                .replace('&', "&amp;")
+                .replace('<', "&lt;")
+                .replace('>', "&gt;")
+                .replace('"', "&quot;")
+        }
+
+        let mut xml = String::from(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
+             <rss version=\"2.0\"><channel><title>coverage fixture</title>",
+        );
+        let prefix = format!("{source_id}::");
+        for document in documents {
+            let guid = document
+                .id
+                .strip_prefix(&prefix)
+                .expect("document id carries source prefix");
+            let published_raw = document
+                .published_raw
+                .as_deref()
+                .expect("pinned SEC document has pubDate");
+            xml.push_str(&format!(
+                "<item><title>{}</title><guid>{}</guid><description>fixture</description>\
+                 <pubDate>{}</pubDate></item>",
+                escaped(&document.title),
+                escaped(guid),
+                escaped(published_raw),
+            ));
+        }
+        xml.push_str("</channel></rss>\n");
+        std::fs::write(path, xml).expect("write disposable RSS fixture");
     }
 
     // A three-source config (two in `technology`, one in `finance`) backed by
@@ -2124,6 +2309,140 @@ mod tests {
             .map(|r| r.source_id.as_str())
             .collect();
         assert_eq!(ran, vec!["osdaily"]);
+    }
+
+    #[tokio::test]
+    async fn pinned_non_paged_first_and_identical_windows_do_not_report_a_gap() {
+        let documents = pinned_sec_documents().await;
+        assert_eq!(documents.len(), 200);
+        let fixture = tmp_db().with_extension("rss.xml");
+        write_rss_fixture(&fixture, "sec-edgar-usgaap", &documents);
+        let st = single_source_state("rss", "sec-edgar-usgaap", &fixture, None);
+
+        let first = do_ingest(&st, &["finance"], Some(&["sec-edgar-usgaap"])).await;
+        assert_eq!(first.new, 200);
+        assert_eq!(first.results.len(), 1);
+        assert_eq!(first.results[0].coverage, CoverageOutcome::FirstWindow);
+        assert!(first.results[0].coverage_boundary.is_none());
+
+        let identical = do_ingest(&st, &["finance"], Some(&["sec-edgar-usgaap"])).await;
+        assert_eq!(identical.fetched, 200);
+        assert_eq!(identical.new, 0);
+        assert_eq!(identical.results[0].coverage, CoverageOutcome::Overlap);
+        assert!(identical.results[0].coverage_boundary.is_none());
+    }
+
+    #[tokio::test]
+    async fn pinned_disjoint_windows_report_raw_boundaries_and_still_commit() {
+        let documents = pinned_sec_documents().await;
+        assert_eq!(documents.len(), 200);
+        let held = &documents[133..];
+        let incoming = &documents[..67];
+        let held_ids: HashSet<_> = held.iter().map(|document| &document.id).collect();
+        assert!(
+            incoming
+                .iter()
+                .all(|document| !held_ids.contains(&document.id)),
+            "the firing control requires genuinely disjoint windows"
+        );
+        assert_eq!(
+            documents.len() - held.len() - incoming.len(),
+            66,
+            "the firing control must leave an unobserved middle interval"
+        );
+
+        let fixture = tmp_db().with_extension("rss.xml");
+        write_rss_fixture(&fixture, "sec-edgar-usgaap", incoming);
+        let st = single_source_state("rss", "sec-edgar-usgaap", &fixture, None);
+        assert_eq!(st.store.append_new(held).unwrap(), held.len());
+
+        let response = do_ingest(&st, &["finance"], Some(&["sec-edgar-usgaap"])).await;
+        assert_eq!(response.new, incoming.len());
+        assert_eq!(response.results.len(), 1);
+        let result = &response.results[0];
+        assert!(result.ok);
+        assert_eq!(result.coverage, CoverageOutcome::GapDetected);
+        let boundary = result
+            .coverage_boundary
+            .as_ref()
+            .expect("gap result carries the publisher's raw boundary pair");
+        assert_eq!(boundary.held_newest_published_raw, held[0].published_raw);
+        assert_eq!(
+            boundary.incoming_oldest_published_raw,
+            incoming.last().unwrap().published_raw
+        );
+        assert_eq!(
+            st.store.count().unwrap(),
+            held.len() + incoming.len(),
+            "a detected gap must not discard the incoming window"
+        );
+
+        let after_insert = st
+            .store
+            .assess_source_window_coverage_before_insert("sec-edgar-usgaap", incoming)
+            .unwrap();
+        assert_eq!(
+            after_insert.outcome,
+            SourceWindowCoverageOutcome::Overlap,
+            "the response could only have fired from the pre-insert assessment"
+        );
+        let log = coverage_log_line(
+            "sec-edgar-usgaap",
+            result.coverage,
+            result.coverage_boundary.as_ref(),
+        );
+        assert!(log.contains("outcome=gap_detected"));
+        assert!(log.contains("held_newest_published_raw="));
+        assert!(log.contains("incoming_oldest_published_raw="));
+        assert!(log.contains("poll_continues=true"));
+    }
+
+    #[tokio::test]
+    async fn combined_non_paged_batch_is_assessed_per_source() {
+        let st = test_state();
+        let seeded = do_ingest(&st, &["technology"], Some(&["techwire"])).await;
+        assert_eq!(seeded.results[0].coverage, CoverageOutcome::FirstWindow);
+        let mut prior_osdaily = st
+            .store
+            .load_all()
+            .unwrap()
+            .into_iter()
+            .find(|document| document.provenance.source_id == "techwire")
+            .expect("seeded techwire document");
+        prior_osdaily.id = "osdaily::prior-window-only".into();
+        prior_osdaily.provenance.source_id = "osdaily".into();
+        prior_osdaily.published_raw = Some("Thu, 02 Jul 2026 00:00:00 UTC".into());
+        assert_eq!(st.store.append_new(&[prior_osdaily]).unwrap(), 1);
+
+        let response = do_ingest(&st, &["technology"], None).await;
+        let techwire = response
+            .results
+            .iter()
+            .find(|result| result.source_id == "techwire")
+            .expect("techwire result");
+        let osdaily = response
+            .results
+            .iter()
+            .find(|result| result.source_id == "osdaily")
+            .expect("osdaily result");
+        assert_eq!(techwire.coverage, CoverageOutcome::Overlap);
+        assert_eq!(osdaily.coverage, CoverageOutcome::GapDetected);
+        assert!(osdaily.coverage_boundary.is_some());
+    }
+
+    #[tokio::test]
+    async fn cursor_paged_source_is_explicitly_outside_overlap_detection() {
+        let fixture = root().join("fixtures/arxiv_oai_cs.xml");
+        let st = single_source_state("arxiv_oai", "arxiv-cs", &fixture, Some(1));
+        let response = do_ingest(&st, &["finance"], Some(&["arxiv-cs"])).await;
+        assert_eq!(response.results.len(), 1);
+        assert!(response.results[0].ok);
+        assert_eq!(
+            response.results[0].coverage,
+            CoverageOutcome::NotApplicablePaged
+        );
+        assert!(response.results[0].coverage_boundary.is_none());
+        assert!(st.store.get_cursor("arxiv-cs").unwrap().is_some());
     }
 
     // Unknown / not-entitled source id -> structured error result, never a panic.

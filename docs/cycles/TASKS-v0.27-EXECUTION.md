@@ -574,6 +574,74 @@ the forbidden manifest remained SHA-256
 `8711aa1b95d6071c6492594aa20a3c4ab8a1756ffe4b5ed72b5208f39ed9a3da`.
 No production source changed and no publisher request occurred.
 
+### COVERAGE-DETECTION execution record — 2026-07-30
+
+The operator authorized exactly **Option 1: overlap watermark, id-only** on
+2026-07-30. Its claim is exact only under its two stated dependencies: each
+incoming fixed window is a contiguous interval in publication order, and
+document ids remain stable between polls. Under those conditions, any shared id
+proves the old and new covered intervals abut, while an empty overlap against a
+non-empty source is reported as a possible gap without measuring its size.
+
+The committed replay derives the premises from the pinned body rather than from
+the authorization message: **200 items**, **zero ascending inversions** in
+document order, **200 unique GUIDs**, **200 distinct accession numbers**, every
+GUID hosted at `www.sec.gov`, and every accession embedded in the corresponding
+GUID. The RSS parser constructs each document id from source id plus GUID.
+Accession immutability supports stable ids; stability across a future
+publisher re-issue remains an explicit dependency that this one pinned body
+cannot execute. The same replay derives **8 shared timestamp values**, seven
+pairs and one triple, with maximum multiplicity three; this supports avoiding a
+timestamp watermark whose boundary could land inside a tie.
+
+The store owns the held-set query, and cored performs it for each successful
+non-paged source **before** the one combined tail `append_new`. It passes
+`sel.source.id()` and that source's `docs`, so a combined batch is never treated
+as one window. The result is computed before commit and carried directly into
+the matching `IngestSourceResult`, not left at a default or back-filled later.
+The response and log distinguish `first_window`, `empty_window`, `overlap`, and
+`gap_detected`; a detected gap carries the publisher's raw
+`held_newest_published_raw` and `incoming_oldest_published_raw` strings.
+Cursor-paged OAI-PMH is explicitly scoped out as `not_applicable_paged`, because
+consecutive pages legitimately need not overlap.
+
+The non-failing direction is a recorded decision: `gap_detected` remains
+visible but the incoming window is committed and the poll succeeds, because
+discarding it would compound possible loss. Empty overlap is conservative. A
+publisher re-issue or GUID-form change can yield a false positive without data
+loss; no zero-false-positive claim is made.
+
+Execution proved all boundary cases. A fresh source ingesting the pinned
+200-document window reported `first_window`; the identical second poll reported
+`overlap` and **0 new**. A genuinely disjoint sequence stored 67 old documents,
+omitted the intervening 66, and supplied 67 new documents. It reported
+`gap_detected` with raw boundary pair
+`Wed, 29 Jul 2026 16:26:17 EDT` /
+`Wed, 29 Jul 2026 17:00:13 EDT`, then committed all 67 incoming documents.
+Assessment after that insert returned `overlap`, proving the populated response
+field was carried from the pre-insert check. A combined non-paged ingest
+reported overlap for `techwire` and a gap for `osdaily`, proving per-source
+partitioning. An empty store did not report a gap, and a cursor-paged fixture
+reported `not_applicable_paged` while committing its cursor.
+
+R12 now has **18 planted controls**, and the repository total is **12 rules /
+46 controls**. Its two new mutations (1) insert before the overlap query and
+(2) replace the per-source slice with the combined batch; both produced the
+registered expected failure. Full `ci-local` passed **20/20** jobs with
+warning-denied **145** workspace tests and **62** net tests (**32 ingest,
+including three replay tests, + 30 cored**), locked Rust 1.78, clippy, fmt,
+ShellCheck, and both constrained Python lanes at **293/293** with zero skips.
+The first sandboxed Python 3.12 attempt lacked permission for loopback/process
+checks and was a non-result; the same entry point passed with those local
+permissions. The SEC identity fixture remained **200 kept / 0 dropped**,
+standalone golden stayed byte-identical at **11/11**, and `crates/extract`,
+`crates/view`, `config/schedule.json`, `config/core.json`, and
+`config/protected-artifacts.json` are byte-unchanged.
+
+The allowed production permissions for `crates/ingest/src/lib.rs` and
+`crates/ingest/src/rss.rs` were unused. No compliance, extract, view, or shell
+production source changed; no scheduler ran; no publisher request was made.
+
 ---
 
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
@@ -922,7 +990,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
 - [x] **CADENCE-CRITERION** — correction appended as a new dated row with v0.26's
   intact; margin stated; any implied number change recommended and not applied;
   test added or vacuity recorded; `config/schedule.json` byte-unchanged
-- [ ] **COVERAGE-DETECTION** — one option chosen with its claim and dependencies;
+- [x] **COVERAGE-DETECTION** — one option chosen with its claim and dependencies;
   detection sited; **firing and non-misfiring both demonstrated**; SEC 200/0 and
   golden 11/11 byte-identical with extract and view unmodified; counts in three
   places; unused permissions named

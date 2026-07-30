@@ -137,6 +137,21 @@ pub struct StoreOpenTimings {
     pub fingerprints_backfilled: usize,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SourceWindowCoverageOutcome {
+    EmptyWindow,
+    FirstWindow,
+    Overlap,
+    GapDetected,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceWindowCoverage {
+    pub outcome: SourceWindowCoverageOutcome,
+    pub held_newest_published_raw: Option<String>,
+    pub incoming_oldest_published_raw: Option<String>,
+}
+
 #[derive(Debug)]
 pub struct SearchHit {
     pub doc_id: String,
@@ -208,6 +223,90 @@ impl SqliteStore {
         }
         tx.commit()?;
         Ok(n)
+    }
+
+    /// Assess one non-paged source's incoming latest-window before inserting it.
+    ///
+    /// The caller must partition by `source_id` and invoke this before
+    /// `append_new`: after insertion, every non-empty incoming window overlaps
+    /// itself and a detector could never fire. Boundary timestamps remain the
+    /// publisher's raw strings. The held value is selected by the archive's
+    /// existing day, raw-byte, and id ordering; it is descriptive and is never
+    /// parsed into or claimed as a measured duration.
+    pub fn assess_source_window_coverage_before_insert(
+        &self,
+        source_id: &str,
+        incoming: &[Document],
+    ) -> rusqlite::Result<SourceWindowCoverage> {
+        if incoming.is_empty() {
+            return Ok(SourceWindowCoverage {
+                outcome: SourceWindowCoverageOutcome::EmptyWindow,
+                held_newest_published_raw: None,
+                incoming_oldest_published_raw: None,
+            });
+        }
+        if incoming
+            .iter()
+            .any(|document| document.provenance.source_id != source_id)
+        {
+            return Err(rusqlite::Error::InvalidParameterName(format!(
+                "coverage window for {source_id:?} contains another source"
+            )));
+        }
+
+        let conn = self.conn.lock().unwrap();
+        let source_non_empty = conn.query_row(
+            "SELECT EXISTS(SELECT 1 FROM documents WHERE source_id = ?1)",
+            [source_id],
+            |row| row.get::<_, bool>(0),
+        )?;
+        if !source_non_empty {
+            return Ok(SourceWindowCoverage {
+                outcome: SourceWindowCoverageOutcome::FirstWindow,
+                held_newest_published_raw: None,
+                incoming_oldest_published_raw: None,
+            });
+        }
+
+        let mut overlap_query = conn
+            .prepare("SELECT EXISTS(SELECT 1 FROM documents WHERE source_id = ?1 AND id = ?2)")?;
+        let mut overlaps = false;
+        for document in incoming {
+            if overlap_query.query_row(params![source_id, document.id], |row| row.get(0))? {
+                overlaps = true;
+                break;
+            }
+        }
+        if overlaps {
+            return Ok(SourceWindowCoverage {
+                outcome: SourceWindowCoverageOutcome::Overlap,
+                held_newest_published_raw: None,
+                incoming_oldest_published_raw: None,
+            });
+        }
+
+        let held_newest_published_raw = conn
+            .query_row(
+                "SELECT published_raw
+                 FROM documents
+                 WHERE source_id = ?1 AND published_raw IS NOT NULL
+                 ORDER BY published_day IS NULL, published_day DESC,
+                          published_raw DESC, id DESC
+                 LIMIT 1",
+                [source_id],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?;
+        let incoming_oldest_published_raw = incoming
+            .iter()
+            .rev()
+            .find_map(|document| document.published_raw.clone());
+
+        Ok(SourceWindowCoverage {
+            outcome: SourceWindowCoverageOutcome::GapDetected,
+            held_newest_published_raw,
+            incoming_oldest_published_raw,
+        })
     }
 
     /// Load the whole archive for integrity/export operations and tests.
