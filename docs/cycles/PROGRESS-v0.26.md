@@ -414,3 +414,43 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; mandatory golden passed 11/11 and retained the
   hamming-12 true-positive drop.
 - publisher-request acceptance: PASS. No publisher request was made.
+
+### 2026-07-30 · THRESHOLD-AUTHORITY — boundary declarations synchronized
+
+- owner: Codex
+- commit: 0acbe17c63f3e56826242f7900aab3fdb693e8e4
+- result: PASS. Store and view retain two deliberate boundary-local numeric
+  declarations, and R5 now makes a unilateral change to either declaration
+  fail.
+- authority disposition: TWO WITH STATED LIMITATION. Neither production crate
+  depends on the other, and Step 4A's allowed scope contains no common
+  dependency module or manifest edge. The limitation is stated in
+  `ARCHITECTURE.md`, R5's registered scope, and this progress record: R5
+  provides static equality, not one shared compiled constant, and a coordinated
+  edit to both values still needs separate behavioral evidence.
+- claim/scope acceptance: PASS. R5 now checks every production store identity
+  caller uses the private `DEDUP_MAX_DISTANCE`, exactly one store declaration
+  and one `ViewParams` default exist, and their numeric values match. Its claim
+  is no broader than those checks; test-only Rust remains excluded.
+- planted-failure acceptance: PASS. The new registered control moved only the
+  view default from 16 to 17 and left the store at 16. The real scanner rejected
+  it at `crates/view/src/lib.rs:44` with the exact numeric mismatch.
+- count acceptance: PASS. No rule was added: totals remain **12 rules** and
+  rise from 39 to **40 controls**. The same counts appear in `STATE.md`, the
+  active execution record, and this append.
+- behavior acceptance: PASS. Both declarations remain 16 and neither
+  production file changed. Golden remained byte-identical at 11/11, including
+  the hamming-12 collapse.
+- invariant-test acceptance: PASS. Python 3.11 and 3.12 focused invariant
+  suites each passed 22/22. Full `invariant-scan` passed 12/12 rules and all
+  40 controls.
+- lifecycle acceptance: PASS. `cycle-check`, `progress-check`, and
+  `version-check` passed before this append; fmt remained clean.
+- scope acceptance: PASS. The implementation changed only
+  `ARCHITECTURE.md`, the invariant registry and scanner, `STATE.md`, and the
+  active runbook. Store/view production permissions were examined but unused;
+  no test, config outside the registry, fixture, golden input, protected
+  artifact, database, dependency, or ref changed.
+- golden-E2E delta: **0**; mandatory golden passed 11/11 with byte-identical
+  assertions.
+- publisher-request acceptance: PASS. No publisher request was made.
