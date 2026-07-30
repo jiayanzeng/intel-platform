@@ -2,6 +2,18 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · ORDER-BIND measured completion
+
+Step 4 — cross-implementation ordering fixture recorded and completion checked — 2026-07-31
+
+The permanent fixture is test-only and derives every expected order from the
+other implementation; it adds no hardcoded expected output. A temporary
+production-SQL mutation reversed the NULL term and made the new test fail
+before the valid form passed. NULL-day rows occur in both held and incoming
+sets, the existing misordered-window test is unchanged, and the runtime diff is
+empty. No objective, decision gate, acceptance criterion, scope row, or
+standing prohibition changes.
+
 ### 2026-07-31 · BOUNDARY-BIND measured completion
 
 Step 3 — initialized populations, asserted boundary order, and completion checked — 2026-07-31
@@ -548,7 +560,7 @@ not data loss. **Do not inflate this.**
 
 **Done when** a divergence between the two orderings is detected by execution.
 
-- [ ] **ORDER-BIND**
+- [x] **ORDER-BIND**
 
 ---
 

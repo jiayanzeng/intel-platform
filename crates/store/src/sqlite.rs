@@ -1467,6 +1467,88 @@ mod tests {
         );
     }
 
+    #[test]
+    fn coverage_sql_and_rust_recency_orderings_are_bound() {
+        fn recency_doc(id: &str, day: Option<&str>, raw: &str) -> Document {
+            let mut document = doc(id, "Coverage ordering", "ordering fixture");
+            document.published_day = day.and_then(Day::parse_iso);
+            document.published_raw = Some(raw.to_string());
+            document
+        }
+
+        fn sql_recency_ids(store: &SqliteStore) -> Vec<String> {
+            let conn = store.conn.lock().unwrap();
+            let mut statement = conn
+                .prepare(
+                    "SELECT id
+                 FROM documents
+                 WHERE source_id = ?1 AND published_raw IS NOT NULL
+                 ORDER BY published_day IS NULL, published_day DESC,
+                          published_raw DESC, id DESC",
+                )
+                .unwrap();
+            let rows = statement
+                .query_map(["techwire"], |row| row.get::<_, String>(0))
+                .unwrap();
+            rows.collect::<rusqlite::Result<Vec<_>>>().unwrap()
+        }
+
+        fn rust_recency_documents(documents: &[Document]) -> Vec<Document> {
+            let mut ordered = documents.to_vec();
+            ordered.sort_by(|left, right| archive_recency_cmp(right, left));
+            ordered
+        }
+
+        let held = vec![
+            recency_doc("held-null-high", None, "z-null"),
+            recency_doc("held-null-low", None, "a-null"),
+            recency_doc("held-known-old", Some("2026-07-09"), "z-raw"),
+            recency_doc("held-known-raw-low", Some("2026-07-10"), "a-raw"),
+            recency_doc("held-known-id-low", Some("2026-07-10"), "z-raw"),
+            recency_doc("held-known-id-high", Some("2026-07-10"), "z-raw"),
+        ];
+        let incoming = vec![
+            recency_doc("incoming-known-old", Some("2026-07-05"), "a-raw"),
+            recency_doc("incoming-known-new", Some("2026-07-08"), "z-raw"),
+            recency_doc("incoming-null-high", None, "z-null"),
+            recency_doc("incoming-null-id-low", None, "a-null"),
+            recency_doc("incoming-null-id-high", None, "a-null"),
+        ];
+
+        let store = tmp_store();
+        store.append_new(&held).unwrap();
+        let held_rust_order = rust_recency_documents(&held);
+        assert_eq!(
+            sql_recency_ids(&store),
+            held_rust_order
+                .iter()
+                .map(|document| document.id.clone())
+                .collect::<Vec<_>>()
+        );
+
+        let coverage = store
+            .assess_source_window_coverage_before_insert("techwire", &incoming)
+            .unwrap();
+        assert_eq!(
+            coverage.held_newest_published_raw.as_deref(),
+            held_rust_order
+                .first()
+                .and_then(|document| document.published_raw.as_deref())
+        );
+
+        let incoming_store = tmp_store();
+        incoming_store.append_new(&incoming).unwrap();
+        let incoming_sql_order = sql_recency_ids(&incoming_store);
+        let incoming_oldest = incoming
+            .iter()
+            .find(|document| Some(&document.id) == incoming_sql_order.last())
+            .and_then(|document| document.published_raw.as_deref());
+        assert_eq!(
+            coverage.incoming_oldest_published_raw.as_deref(),
+            incoming_oldest
+        );
+    }
+
     fn hits(s: &SqliteStore, q: &str) -> usize {
         s.search(q, &["technology".to_string()], 10).unwrap().len()
     }

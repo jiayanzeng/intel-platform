@@ -1,6 +1,45 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; BOUNDARY-BIND is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. BOUNDARY-BIND's shell suite passes **306/306**, `invariant-scan` passes **12 rules / 51 controls**, and standalone golden remains **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The BOUNDARY-BIND implementation-tree review export measures **2,456,371 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; ORDER-BIND is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. ORDER-BIND's store suite passes **24** unit plus **2** integration tests, SEC identity remains **200 SEC kept / 0 dropped**, `invariant-scan` passes **12 rules / 51 controls**, and standalone golden remains **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The ORDER-BIND implementation-tree review export measures **2,464,830 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+
+**v0.29 ORDER-BIND makes SQL/Rust recency drift fail in the store test suite
+(measured 2026-07-31).** The permanent fixture lives entirely below
+`#[cfg(test)]`; no production byte changed. Held and incoming sets each contain
+known-day and NULL-day documents plus day, raw-byte, and id ties. The held set
+is inserted into SQLite and independently ordered by the production comparator;
+the full SQL id order must equal the Rust order. The production coverage call's
+SQL-selected held boundary must equal the Rust-derived first row. The incoming
+set is separately inserted and independently SQL-ordered; its last row must
+equal the production comparator's incoming-oldest boundary.
+
+That binds the terms in both directions. SQL's `published_day IS NULL`
+ascending corresponds to Rust `Option::cmp` placing `None` below `Some`; SQL
+then orders day, raw byte, and id descending, exactly the reverse of the
+comparator's ascending order. Changing either statement alone cannot satisfy
+both comparisons by construction.
+
+The failure was executed before acceptance. With only the production held
+query changed to `published_day IS NULL DESC`, the focused test executed and
+failed:
+
+```
+left: Some("z-null")
+right: Some("z-raw")
+```
+
+The mutation was then removed. The same focused test passed **1/1**, the
+unchanged v0.28 misordered-window test passed **1/1**, and the full store suite
+passed **24 unit + 2 integration** tests. The SEC measurement reported
+**201 aggregate kept / 0 dropped**, comprising the **200 SEC** documents plus
+the one news baseline; the SEC pair population remained 19,900 and no
+cross-issuer drop occurred.
+
+The blast radius is exactly the one G4 measured: a divergence can produce a
+wrong raw boundary string in one internal observational diagnostic. Detection
+does not fail the poll, and this task changes no runtime output at all. The
+internal `/ingest` response shape is unchanged; every `/v1/*` field and
+serialized value domain is unchanged. No filing, schema, dependency, protected
+byte, publisher configuration, or scheduler behavior changed.
 
 **v0.29 BOUNDARY-BIND turns a latent traceback into a named configuration
 defect (measured 2026-07-31).** G3 classified the defect as latent: the live
