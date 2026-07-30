@@ -353,3 +353,80 @@ Entries are append-only; corrections are new dated entries.
   model-server session, historical cycle edit, dependency, schema, protected
   artifact, golden input, public route, `/v1/*` serialized value domain, tag,
   or branch ref changed.
+
+### 2026-07-31 · RE-MEASURE — neutral candidate authenticated on hosted CI
+
+- owner: Codex
+- commit: acd7266daf38997fd1960eefec3b26dab8c5b912
+- result: PASS. Exact evidence candidate
+  `47bb77c19420bf513b53b228e473d4accedc6cc9` was pushed only to neutral ref
+  `refs/heads/codex/v0.28-evidence-47bb77c`; hosted run **30561513204**,
+  attempt **1**, executed that exact candidate and ref.
+- hosted-matrix acceptance: PASS. Core, golden, lint, MSRV, net, shell 3.11,
+  and shell 3.12 all passed. Dependency drift skipped under its declared
+  report-only condition. The authenticated report required attestations,
+  accepted all **7** signed identities, rejected **0**, found no matrix
+  finding, and recorded a complete single-run matrix.
+- neutral-ref acceptance: PASS. Remote `main` and the peeled v0.17.0 tag both
+  remained `4af2841816dd3e43fb8423153b91aa22ccb87537`; no release tag was
+  created or moved. The workflow ran on the neutral source ref, not `main`.
+- population acceptance: PASS. Fresh local Python 3.11.4 and 3.12.13 lanes
+  each collected and passed **303** with zero skips. For each hosted lane,
+  `tools/test_population.py` independently derived
+  `{"collected":303,"equivalent":true,"equivalent_passed":303,"hosted":{"on_site_skipped":1,"passed":302,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":303,"skipped":0},"schema_version":1}`.
+  The one hosted skip was named, carried that declared reason, and was marked
+  `on_site`.
+- receipt acceptance: PASS. Seven receipts and seven paired Sigstore bundles
+  were registered under `evidence/ci-runs/30561513204-1/` in
+  `pinned_files[]`, all with `supporting` grade and no `admission` key. Every
+  bundle verified its paired receipt bytes, repository, workflow signer,
+  candidate digest, neutral source ref, and GitHub-hosted runner identity.
+- release-report acceptance: PASS. The release-grade report is **35,070
+  bytes**, SHA-256
+  `1e72a50061a31e84fbc7e38fadb60036ea86f5afd1b3cdff480c2e3f21695227`,
+  requires attestations, and records **5 deferred / 2 promoted / 0 implemented
+  deferred subsystems**. A fully captured clean-candidate re-derivation passed
+  **7** rows, **5** source-determined dispositions, and **7** trigger texts.
+- manifest acceptance: PASS. The candidate verified the required
+  pre-registration **301** pins. After the operator's explicit 2026-07-31
+  authorization, the fourteen hosted files plus the report moved the manifest
+  to **316** pins. Manifest validation reported schema 2, **2 artifacts / 316
+  pinned files**; `verify-artifacts` and `evidence-report` passed, and both
+  protected SQLite archives remained byte-identical. The validator was not
+  changed.
+- no-publisher acceptance: PASS. Candidate workflow and complete hosted-log
+  searches found no SEC or arXiv publisher URL, no `harvest-arxiv`, and no
+  publisher-directed ingest command. The two `usgaap.rss` occurrences were
+  local `PIN MATCH` output for the committed observation; every `curl` command
+  was the pinned Rust toolchain action's `https://sh.rustup.rs` installer. No
+  publisher request occurred.
+- scope acceptance: PASS. The dated amendment names the exact
+  `evidence/ci-runs/30561513204-1/**` and v0.28 report paths and permits
+  `config/protected-artifacts.json` only for the fifteen authorized pin
+  registrations. The amendment, evidence, report, and manifest change landed
+  together in the implementation commit. No production source, protected
+  database, publisher configuration, schedule, or identity changed.
+- local-regression acceptance: PASS. Full `ci-local` passed **20/20** jobs
+  with warning-denied **146** workspace tests, **62** net tests (**32 ingest +
+  30 cored**), locked Rust 1.78, clippy, fmt, ShellCheck, shell **303/303**,
+  registered invariant self-test **12 rules / 49 controls**, protected
+  evidence, and embedded golden **11/11**. `cycle-check`, manifest validation,
+  `evidence-report`, `verify-artifacts`, `git diff --check`, and
+  authenticated report re-derivation passed independently.
+- export-bound acceptance: PASS. The exact project-root entry point passed
+  **99 derived / 7 required / 152 exported** at **2,512,433 bytes**, beneath
+  the 3,000,000-byte ceiling with exactly three retained cycles.
+- golden-E2E delta: **0**. Hosted, embedded, and separately required
+  standalone golden all passed **11/11** byte-identically.
+- non-results: hosted run **30561374600** omitted `publish_evidence`, could
+  not provide attestations, and was cancelled. The first report invocation
+  was sandbox-denied local process inspection; its exact permitted rerun
+  passed. The first re-derivation lacked the newly assigned logical receipt
+  paths in its detached subject; a later wrapper lost the completed process's
+  exit status. Neither construction was counted; the final exact entry point
+  was captured and passed.
+- boundary acceptance: PASS. No push to `main`, tag, publisher request,
+  scheduler run, model-server session, historical cycle edit, production
+  source, dependency, schema, protected database, golden input, public route,
+  or serialized value domain changed. Step 8 remains behind its separate
+  operator-only disposition decision.
