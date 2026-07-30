@@ -14,6 +14,15 @@ Declared scope — crate-wide forbids corrected to source-tree forbids — 2026-
   already permitted the two manifests, so this correction broadens no
   effective path permission. No task objective, gate, acceptance criterion, or
   done condition changed.
+- **2026-07-30 — G5 measured correction.** E0 confirmed that `./run golden`
+  starts the core with `CORE_CONFIG=config/core.json`, but refuted the draft's
+  implication that any source addition therefore changes golden: the harness
+  explicitly ingests and views only `science` and `technology`, while the
+  proposed source is confined to `finance`. Step 1 item 6 and the G5 hypothesis
+  are therefore narrowed to the condition golden actually executes. The
+  existing 11/11 definition of done and Step 5's requirement to match E0's
+  determination are correct; changing either would manufacture drift rather
+  than measure it.
 
 v0.24 closed and v0.15.8 published. Release parent `696c0863…`, closing commit
 `64002678…`, annotated object `dc5abe06…`, hosted run `30475988050` green on all
@@ -275,6 +284,183 @@ definition of done amended in the same commit if required** · G6 answered
 structurally, not by inspection of today's string · manifest and verify time
 freshly measured · published objects and all pins re-verified · golden 11/11 or
 the amended expectation · no publisher request made.
+
+---
+
+## Execution records
+
+### E0 measured result — 2026-07-30
+
+**Entering objects and refs.** The activation commit is `822aa54`; its scope
+correction is `e1512ca`, and the correction's audit child was the measured HEAD,
+`07e64626e2c79404c685d928a371138763af78f7`. The draft's entering assertion
+about `main` was false: `947822c8…` is carried by the working branch, while the
+local `refs/heads/main` remained
+`eb2d9df8b3ffd3e0380d506e958fb5a3adb2d42e`. A live `git ls-remote` measured
+`origin/main=64002678672a601804e5f67886c73fffb4d212c8`,
+`refs/tags/v0.15.8=dc5abe0690e77cef671896102382427721d97321`, and
+`refs/tags/v0.15.8^{}` equal to that remote-main commit. Local object inspection
+confirmed that the tag ref is an annotated `tag`, peels to closing commit
+`64002678672a601804e5f67886c73fffb4d212c8`, and that closing commit's parent is
+release commit `696c0863ea684d590970902bcbbd13a7a3ccb610`. No ref was
+created, moved, or deleted.
+
+**Clean shell populations and comparator.** Both repository-local environments
+were deleted and rebuilt from the constraints before measurement:
+
+- Python 3.11.4: collected 283, passed 283, failed 0, skipped 0.
+- Python 3.12.13: collected 283, passed 283, failed 0, skipped 0.
+- `python3 tools/test_population.py compare
+  /private/tmp/intel-v025-e0-py311.log
+  /private/tmp/intel-v025-e0-py312.log` returned
+  `collected=283`, `equivalent=true`, `equivalent_passed=283`, local passed 283
+  and skipped 0, comparison passed 283 and skipped 0. The tool's
+  machine-readable field is named `hosted`, but this E0 comparison input was
+  the local Python 3.12 lane, not a hosted run. Both lanes emitted the same one
+  accepted `StarletteDeprecationWarning`; neither emitted a test skip.
+
+The first 3.11 lane exposed the declared-scope overlap described in the
+activation-validation amendment above. After the scope correction, a sandboxed
+run also produced eight loopback/process-inspection failures and was treated as
+not measured; the clean unsandboxed entry-point run above is the recorded lane.
+
+**Entering command matrix.**
+
+| Command | Measured result |
+|---|---|
+| `./run ci-local` | PASS, all 20 jobs |
+| workspace locked check/test with `-D warnings` | PASS, 0 rustc warnings; 133 tests passed |
+| net locked check/test with `-D warnings` | PASS, 0 rustc warnings; ingest 29 and cored 26 tests passed |
+| `cargo clippy ... -D warnings`; `cargo fmt --check` | PASS; PASS |
+| Rust 1.78 locked check/test | PASS; PASS |
+| shell pytest | 283 collected / 283 passed / 0 skipped |
+| `./run golden` inside the matrix | PASS, 11/11 |
+| protected artifacts; persisted fingerprints | 2/2 match; 1/1 stored fingerprint matches |
+| `./run golden` standalone | PASS, 11/11, byte-identical expected outcome |
+| `./run cycle-check` | PASS, active v0.25 open, 22 closed execution cycles and 3 historical cycles |
+| `./run checklist-audit` | PASS, 191 checked, 3 retracted, 191 matched/resolved, 0 exemptions |
+| `./run progress-check` | PASS, latest entry `ACTIVATE-CORRECTION` cites `e1512ca` |
+| `./run version-check` | PASS at 0.15.8, with the expected ahead-of-tag warning |
+| `./run invariant-scan` | PASS, 12/12 rules and 39/39 planted controls |
+| `./run export-check` from the project root | PASS, 94 derived sources, 7 required, 163 exported |
+
+**G1 — licence claims.** `License` is exactly `PublicDomain | CcBy |
+ClientOwned | IndexOnly`; `redistributable()` is true only for the first three.
+Admitting the reviewed SEC feed under each value would assert:
+
+| Variant | Rights claim admission would make | Fit to evidence |
+|---|---|---|
+| `PublicDomain` | the issuer-authored filing text is public-domain material | Rejected: the v0.24 review expressly declined to turn the SEC's reuse permission into a government-authorship/public-domain claim |
+| `CcBy` | the text is offered under a Creative Commons Attribution licence | Unsupported: the cited SEC statement names no CC licence |
+| `ClientOwned` | the subscriber owns the text | False for public issuer filings |
+| `IndexOnly` | analysis/indexing is allowed but raw text must not be redistributed | Safe as a restriction, but it deliberately forfeits the publisher's express statement that EDGAR public filing content is free to access and reuse |
+
+The cited evidence says that government-created SEC content **and EDGAR public
+filing content** are free to access and reuse; it does not say all filing text
+is government-authored. G1 is confirmed: no existing variant expresses
+publisher-granted reuse under the publisher's own terms without inventing a
+copyright status.
+
+**G2 — the terms-model gap and the publisher's wording.** Production has exactly
+two policy inputs at this boundary:
+
+1. `RobotsCache` fetches, parses, caches, and evaluates the publisher's
+   `robots.txt`.
+2. `RobotsGate` applies the operator-configured deny-list on top, subtracting
+   from the publisher result.
+
+`intel_ingest::gate` composes those two decisions. No production component
+fetches, parses, stores, accepts, registers against, or evaluates publisher
+terms. `SourceKind::CompliantCrawl`'s “ToS-compliant” comment is a label, not an
+executed terms gate.
+
+The committed v0.24 publisher review records the SEC Privacy Information page's
+Internet Security Policy on 2026-07-30:
+<https://www.sec.gov/about/privacy-information>. Its own operative sentence is
+that the SEC does not allow “unclassified” bots or automated tools to crawl the
+site. The SEC Webmaster FAQ, read and cited on the same date,
+<https://www.sec.gov/about/webmaster-frequently-asked-questions>, separately
+directs programmatic downloaders to declare their User-Agent in request
+headers; its published sample identifies the organization and an administrative
+contact at that organization's domain. The Developer Resources “Fair Access”
+page, <https://www.sec.gov/about/developer-resources>, separately publishes the
+ten-requests-per-second ceiling.
+
+Those publisher texts do not supply a separate glossary definition or a
+registration transaction explicitly equating “unclassified” with a named
+state. E0 therefore records the publisher's own operational classification
+procedure—declare an organization-and-contact User-Agent—and does not infer a
+broader definition. Step 3 must determine whether the existing construction
+satisfies that published direction; there is no executed project control that
+can decide it. E0 re-read committed evidence and search-indexed publisher text
+only and made no request to a publisher origin.
+
+**G3 — RSS parser contract, without a feed request.** The parser requires
+well-formed XML to return successfully and iterates descendant elements whose
+local name is `item`. Zero `<item>` elements is a successful empty result. No
+per-item field is syntactically mandatory:
+
+| `<item>` child | Parser treatment |
+|---|---|
+| `title` | optional; absent becomes the empty string |
+| `guid` | optional; absent falls back to `title`, so both absent yield source id plus an empty suffix |
+| `pubDate` | optional; absent or unparsable yields no `published_day`, while the raw value is retained when present |
+| `link` | optional; absent yields no URL |
+| `description` | optional; absent becomes an empty body |
+| `author` | optional; absent yields an empty author vector, present yields one value |
+
+Thus the Step 4 “mandatory fields” list is empty; item count and the presence
+counts for these optional fields are still material observations. No feed URL
+was requested.
+
+**G4 — public licence-string carriers and version gap.** The public shell
+surfaces are:
+
+- `/v1/signals`: each `signals[].evidence[].license`;
+- `/v1/search`: each `hits[].license`;
+- `/v1/ask`: each `citations[].license`;
+- `/v1/brief`: the plaintext withheld-excerpt line can include the licence
+  string, although a newly redistributable variant normally takes the
+  excerpt-present branch.
+
+The billing routes carry no licence string. Core-internal `/sectors`,
+`/retrieve`, and `/docs` also serialize licence strings across the loopback
+seam but are not public `/v1/*` response fields.
+
+`ARCHITECTURE.md §8` says that adding, removing, renaming, or incompatibly
+reshaping an observable route, response body, schema, or other named surface
+requires the corresponding minor release; a correctness or behavior fix within
+existing names and shapes uses a patch. It does not classify a compatible
+expansion of an existing string enum's value domain. G4 is confirmed: Step 2
+must write that criterion before choosing the release class.
+
+**G5 — golden reads live config but excludes this sector.** `./run golden`
+exports `CORE_CONFIG=config/core.json`. Its executable ingest and view calls
+then name only `science` and `technology`; the proposed source is under
+`finance`. A finance-only admission therefore cannot enter the golden corpus.
+The measured expectation remains exactly 11/11. The dated amendment above
+corrects the draft's false implication; no golden definition-of-done change is
+required.
+
+**G6 — identity construction.** `crawler_user_agent(version, contact)` formats
+the structural product token, its `version` argument, and the contact.
+Net-enabled `cored` passes `env!("CARGO_PKG_VERSION")`, so the identity follows
+the package version authority rather than a written version literal.
+`required_crawler_contact` trims and requires the environment value, rejects an
+empty value and the registered `example.com`, `you@`, and `changeme`
+placeholders, and a net-enabled startup panics before bind if construction
+fails. A non-placeholder contact-bearing identity is therefore structural for
+every live process. Whether that address is actively monitored is an operator
+fact, not something source can prove; v0.24 measured it for that preview.
+
+**Artifact scale and integrity.** `config/protected-artifacts.json` is 145,541
+bytes. Two consecutive `/usr/bin/time -p ./run verify-artifacts` invocations
+both passed at 0.09 seconds, below both retention triggers. Manifest schema 2
+validated with 251/251 pinned files, and protected `data/core.db` and
+`data/live-smoke.db` matched byte hashes and corpus facts (2/2). The published
+objects above and every pin were re-verified. `STATE.md`, `config/core.json`,
+the protected corpus, and refs remained untouched. No publisher request of any
+kind was made by E0.
 
 ---
 
@@ -551,7 +737,7 @@ publication.**
 
 ## Cycle checklist
 
-- [ ] **E0** — entering matrix with comparator citation; G1 stated per variant as
+- [x] **E0** — entering matrix with comparator citation; G1 stated per variant as
   a rights claim; G2's model gap enumerated and the publisher's own definition of
   "unclassified" cited; G3's mandatory fields enumerated with no feed request;
   G4's response fields and the rule quoted; **G5 settled and the definition of
