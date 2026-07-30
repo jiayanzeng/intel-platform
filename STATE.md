@@ -1,6 +1,63 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, and CADENCE: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is guarded by the shared measured floor of 26 features: all 200 SEC rows remain distinct, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. SEC has an explicit 600-second per-source schedule; the next gate is the operator's HARVEST authorization or deferral. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, and CADENCE: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is guarded by the shared measured floor of 26 features: all 200 SEC rows remain distinct, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. The operator authorized HARVEST under seven conditions; one isolated SEC ingest produced **200 fetched / 200 new** documents and the shipped guard kept **200 / dropped 0**, but HARVEST remains unboxed because the TLS-opaque observer did not measure the plaintext publisher status, redirect/retry count, fresh robots hash, fresh XML declaration, or publisher-received User-Agent bytes. No corrective publisher request is authorized. SEC has an explicit 600-second per-source schedule, but no scheduled live run occurred and the cadence remains unexercised. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; the isolated runtime exercised SEC only, so live multi-publisher cache and limiter behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, and retractions remain three. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 HARVEST crossed the SEC wire but its observation is incomplete
+(measured 2026-07-30).**
+
+The operator authorized Step 6 under seven stated conditions. The authorization
+covered one bounded SEC harvest, not the 600-second scheduler. No scheduled run
+occurred, and that larger traffic commitment remains unexercised.
+
+Preflight passed all **271** pins and both protected databases. An explicit
+`CORE_DB=data/core.db ./run harvest-arxiv` invocation was refused before its
+reachability step, and the harness printed the fresh absent destination
+`data/live-20260730T084234Z-16401.db`. A `-D warnings` net build then started
+the committed core configuration on unused loopback port 8788 with the
+monitored `.env` contact. The exact ingest body selected only
+`finance` / `sec-edgar-usgaap`; no scheduler or arXiv source ran.
+
+At **2026-07-30T08:47:16.394914Z** a target-restricted CONNECT observer accepted
+the first `www.sec.gov:443` TLS connection, and at
+**2026-07-30T08:47:17.646652Z** it accepted the second: **2** SEC-origin TLS
+connections, **1.251746 seconds** apart. The shipped log recorded
+`Body(allow)` for `/Archives/edgar/usgaap.rss.xml` with a 0.500-second effective
+floor. The ingest returned **200 fetched / 200 new**, source `ok:true`, and the
+process was stopped. The observer recorded 594 / 9,318 encrypted bytes on the
+first connection and 706 / 902,479 on the second. No second origin was
+exercised, so the per-origin cache/limiter result is SEC-only and cannot claim
+two-origin runtime behavior.
+
+The fresh unadmitted archive is **253,952 bytes**, SHA-256
+`00b221483d58870f7841582f5afa9f0e3f6d19818e0c9cae1212d8bf6bfc8035`,
+and passes SQLite integrity with 200 documents, 200 distinct canonical ids,
+zero canonical drops, and zero cursor rows. Executing the shipped guard over
+the fresh rows kept **200 / dropped 0** at radius 16 and floor 26. The exact
+feature distribution is `{4:40, 5:86, 6:48, 7:20, 8:5, 10:1}`: all 200 remain
+below 11, none enters the 11–25 calibration gap, and none is eligible. Two
+distance-zero pairs, at 8/8 and 6/6 features, are both kept. This is the
+measured under-collapse cost and moves the failure direction from hiding
+distinct filings to showing duplicate filings.
+
+All 200 fresh normalized rows have the same ids, titles, descriptions, links,
+and raw publication dates as the pinned observation; all 200 descriptions
+still equal the pinned `edgar:formType`. The pinned body declares
+`windows-1252`, but the fresh declaration was **not measured**. The configured
+User-Agent bytes were captured locally without printing the contact: **73
+bytes**, SHA-256
+`2fc0ac45a37a1c604d0f01d5039fffd0d734857b613de87cb6c848f29acec495`.
+The shipped raw-wire control passed for both HTTP clients and its deliberate
+mismatch control fired, but the publisher-received plaintext header was not
+visible through the TLS relay.
+
+This is an agent-side observation-design failure, not an implementation defect
+and not a false wire claim. A CONNECT count is not an HTTP request count:
+because TLS remained opaque, the record cannot prove exact publisher statuses,
+redirects, retries, the fresh robots body hash, the fresh XML declaration, or
+the publisher-received User-Agent bytes. No second feed or robots request was
+made to repair the missing evidence. HARVEST remains unchecked pending a
+separate operator authorization for a corrective observable replay. The fresh
+database remains ignored and unadmitted; no protected byte changed.
 
 **v0.26 CADENCE chooses the SEC feed's per-source clock and covers the
 offline partial failure (measured 2026-07-30).**

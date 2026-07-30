@@ -940,6 +940,57 @@ the brief, and exits 0. Focused cadence and G4 tests passed 10/10 in both
 Python versions. No shell production source, core config, publisher byte,
 publisher request, or harvest was involved.
 
+### HARVEST partial execution record — 2026-07-30
+
+The operator authorized Step 6 under the seven stated conditions: one bounded
+harvest but no scheduled run; byte capture of the contact-bearing User-Agent;
+measured per-origin timing; comparison with the pinned body; the shipped guard
+over the fresh set; a fresh shipped-gate robots verdict with body-hash
+comparison; and the sparse under-collapse cost.
+
+Preflight passed all **271** pins and both protected databases. The protected
+`data/core.db` target was explicitly refused before reachability, printing the
+fresh absent destination `data/live-20260730T084234Z-16401.db`. The `-D
+warnings` net build started with the committed config, monitored contact, fresh
+database, and unused loopback port. No scheduler ran and the 600-second cadence
+remains unexercised.
+
+The exact SEC-only ingest crossed the wire once as a harvest operation. The
+shipped gate logged `Body(allow)` with a 0.500-second effective floor, and the
+core returned **200 fetched / 200 new**, source `ok:true`. A target-restricted
+TLS CONNECT observer recorded **2** `www.sec.gov:443` connections at
+08:47:16.394914Z and 08:47:17.646652Z, **1.251746 seconds** apart, then both
+processes stopped. It recorded 594 / 9,318 and 706 / 902,479 encrypted
+client-to-origin / origin-to-client bytes. No arXiv request occurred, so only
+the SEC cache key and SEC host limiter were exercised; two-origin runtime
+behavior remains unmeasured.
+
+The fresh unadmitted 253,952-byte archive has SHA-256
+`00b221483d58870f7841582f5afa9f0e3f6d19818e0c9cae1212d8bf6bfc8035`,
+passes integrity, and holds 200 distinct canonical ids with zero drops.
+Executing the shipped guard kept **200 / dropped 0**. Fresh feature counts are
+`{4:40, 5:86, 6:48, 7:20, 8:5, 10:1}`: 200 below 11, zero in 11–25, and zero
+eligible at floor 26. The two distance-zero pairs at 8/8 and 6/6 features are
+both kept, recording the under-collapse cost in the safer failure direction.
+All 200 stored ids, titles, descriptions, links, and raw publication dates
+match the pinned observation, and every description still equals the pinned
+`edgar:formType`.
+
+**The acceptance record is incomplete and HARVEST remains unchecked.** The
+observer preserved end-to-end TLS and therefore could not see HTTP plaintext.
+Its two connection records do not establish request count within either
+connection, exact publisher statuses, redirects, retries, the fresh robots
+body hash, or the fresh XML declaration. The locally constructed configured
+User-Agent was captured without printing the contact as 73 bytes with SHA-256
+`2fc0ac45a37a1c604d0f01d5039fffd0d734857b613de87cb6c848f29acec495`;
+the shipped two-client raw-wire test passed and its mismatch control fired, but
+the header as received by the publisher was not observable. This is an
+agent-side observation-design failure, not an implementation defect. No second
+robots or feed request was made to repair it, because the operator authorized
+one bounded harvest. A corrective observable replay requires a separate
+operator authorization. The ignored database was not admitted and no protected
+byte changed.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
