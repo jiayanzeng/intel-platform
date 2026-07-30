@@ -272,3 +272,55 @@ Entries are append-only; corrections are new dated entries.
   true-positive collapse intact.
 - publisher-request acceptance: PASS. Amendment execution made no publisher
   request; the earlier quarantined retrieval remains recorded separately.
+
+### 2026-07-30 · REPLAY — asserted real bytes through the shipped parser
+
+- owner: Codex
+- commit: 10071460c9a634279bf4b06b81675e0788b7d9e7
+- result: PASS. The committed integration test executed shipped
+  `RssSource::fetch` over the v0.25 SEC observation after verifying its bytes,
+  and recorded the exact 200-document set without copying or mapping the
+  observation.
+- byte-assertion acceptance: PASS. Before parsing, the test asserted 892,641
+  bytes and SHA-256
+  `154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3`,
+  citing the committed v0.25 feed-shape record. The same assertion rejected a
+  one-byte mutation at
+  `feb138bb57e12466321c5db5a8f2a6ab1ea51ee59c9b94d355e7eaf65c9be748`;
+  the disposable directory was removed.
+- parser acceptance: PASS. The focused `-D warnings` test passed 1/1 and
+  `RssSource::fetch` constructed 200 documents from 200 items. The test
+  compared every `Document` field to the direct RSS children and configured
+  provenance values.
+- field-inventory acceptance: PASS. The execution record captures 200 distinct
+  ids with maximum 114 bytes, titles of 30–80 characters, exact body-length
+  distribution 3:108 / 4:64 / 5:5 / 6:4 / 7:19 and mean 3.810, one local day,
+  all 200 raw dates retained with 191 distinct values, zero authors, 200
+  distinct URLs, and `finance` / `PublisherPermitted` / `Rss` on every row.
+- day-semantics acceptance: PASS. All raw zones were EDT and all constructed
+  days were publisher-local `2026-07-29`. The executing test records that the
+  parser ignores the clock and zone and independently found 0/200 UTC-day
+  differences.
+- extension acceptance: PASS. The committed v0.26 observation record lists 15
+  `edgar:*` local names with both item populations and element totals,
+  including 2,339 `xbrlFile` elements. None was mapped to `Document`.
+- decoding acceptance: PASS with limitation. The body declares
+  `windows-1252`; the shipped string path and roxmltree accepted it because
+  the committed bytes are ASCII-only. This does not establish a general
+  Windows-1252 decoder.
+- establishment-boundary acceptance: PASS. Replay proves shipped parser
+  behavior for this response only; paging, cursor durability, repeated
+  fetches, on-wire politeness, redirects, conditional requests, and the next
+  publisher response remain unmeasured.
+- Rust acceptance: PASS. `RUSTFLAGS="-D warnings" cargo test --workspace
+  --locked` passed 136 tests; clippy and fmt passed.
+- lifecycle acceptance: PASS. `cycle-check` passed with REPLAY checked; the
+  expected transitional checklist-audit failure before this append named only
+  the absent REPLAY progress entry.
+- scope acceptance: PASS. The implementation changed one integration test,
+  one v0.26 observation record, `STATE.md`, and the active runbook. It changed
+  no production source, dependency, fixture, protected artifact, manifest,
+  golden input, core config, database, or ref.
+- golden-E2E delta: **0**. The sandbox-only loopback bind refusal was a
+  non-result; the permitted mandatory rerun passed 11/11.
+- publisher-request acceptance: PASS. No publisher request was made.
