@@ -1,4 +1,4 @@
-# intel-platform (v0.16.0 — core-shell)
+# intel-platform (v0.16.1 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,14 +7,14 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.16.0` is the selected release identity. Its release-posture hosted
-evidence is workflow-dispatch run `30513561141`, attempt 1, against exact
-evidence candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` on neutral
-branch `codex/v0.25-evidence-779fbe5`. Signed receipts pin that candidate and
-source ref. Under the tagged-closing protocol, the release commit carries the
-release edits, its immediate child carries the closed cycle record, and the
-annotated `v0.16.0` tag targets that closing commit rather than the candidate
-or its release-commit parent.
+`v0.16.1` is the selected release identity. Its release-posture hosted
+evidence is workflow-dispatch run `30531390933`, attempt 1, against exact
+evidence candidate `1cd88acd99704cc76c866331e505db446936e469` on neutral
+branch `codex/v0.26-evidence-1cd88ac`. Seven paired Sigstore bundles
+authenticate the complete runner matrix. Under the tagged-closing protocol,
+the release commit carries the release edits, its immediate child carries the
+closed cycle record, and the annotated `v0.16.1` tag targets that closing
+commit rather than the evidence candidate or its release-commit parent.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The declared pair is
@@ -23,10 +23,18 @@ live under [`docs/cycles/`](docs/cycles/). The declared pair is
 
 **Current source scope is two configured publisher origins.** `arxiv-cs` and
 `sec-edgar-usgaap` are configured network sources; the other three sources are
-`example.org` fixture placeholders. Only `arxiv-cs` has ever been harvested.
-v0.25 admitted SEC EDGAR's reviewed US GAAP RSS path after separate licence,
-terms, and feed-shape determinations, but performed no live RSS harvest and did
-not exercise both origins in one production runtime.
+`example.org` fixture placeholders. Both real sources have now been fetched,
+but never together in one production runtime, so live multi-origin cache and
+limiter behavior remains unmeasured. SEC has an explicit 600-second source
+clock; no scheduled SEC run has occurred and that recurring cadence remains
+unexercised.
+
+**Near-duplicate radius 16 now has a measured eligibility boundary.** Both
+documents must carry at least 26 three-token SimHash features before either
+store canonicalization or view collapse can apply the radius. The SEC corpus
+measured at 4–10 features and therefore stays distinct; the calibrated golden
+news pair still collapses at Hamming distance 12. Sparse identical documents
+also remain distinct, an explicit safer-direction under-collapse cost.
 
 **The design premise is unchanged: the moat is the derived layer, not the
 inputs.** What changed in v0.4 is *where things live*:

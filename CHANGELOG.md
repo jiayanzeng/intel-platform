@@ -4,6 +4,59 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.16.1 — 2026-07-30
+
+### Fixed
+
+- Near-duplicate identity still uses Hamming radius 16, but the radius now
+  applies only when both documents have at least 26 three-token SimHash
+  features. The one shared `DEDUP_MIN_FEATURES` guard is invoked by both store
+  canonicalization and view collapse.
+- The boundary-local store and view distance declarations remain separate,
+  but registered invariant R5 now requires them to agree and detects a
+  unilateral change. Its claim also covers the shared feature floor, both
+  guard sides, and both production call sites.
+- The 200-document SEC replay previously produced 28 drops at radius 16,
+  including 20 cross-issuer false collapses. The feature guard keeps all 200;
+  a bounded live sample independently kept 200 and dropped zero. Golden still
+  collapses the calibrated news pair at Hamming distance 12.
+
+### Operations and evidence
+
+- SEC EDGAR's US GAAP RSS source has an explicit 600-second per-source clock
+  matching the committed feed update interval. The fixture-backed finance
+  source and the finance refresh retain 7,200-second clocks. No scheduled SEC
+  run has occurred, so the recurring cadence remains unexercised.
+- A committed replay executes the shipped RSS parser over the asserted
+  892,641-byte v0.25 observation and constructs 200 documents. The body
+  declares Windows-1252 but is ASCII-only; the existing string path accepted
+  it losslessly and does not establish a general Windows-1252 decoder.
+- Five v0.25 wire-observation files are now immutable `observation` pins.
+  Seven hosted receipts and their seven Sigstore bundles plus the release
+  posture report raise the protected total to 286 pins.
+- The separately authorized bounded SEC harvest returned 200 fetched / 200
+  new. A corrective observation measured exactly one fresh robots request and
+  one feed request, a 1.383946-second same-origin request-start interval, a
+  byte-identical robots body and feed body, and the exact installed 73-byte
+  crawler identity. No scheduler or two-origin production runtime ran.
+- Authenticated candidate run `30531390933`, attempt 1, passed all seven
+  executable jobs at exact candidate
+  `1cd88acd99704cc76c866331e505db446936e469`. Release-posture verification
+  required attestations, accepted seven identities, rejected zero, and found
+  the complete runner matrix.
+
+### Compatibility
+
+- This is a patch release: behavior is corrected within existing routes,
+  fields, types, body shapes, and public value sets. The public value-domain
+  criterion introduced for v0.16.0 does not fire.
+- Sparse documents, including identical sparse documents, remain separate
+  identities below 26 features. This moves the measured failure direction
+  from hiding distinct filings to displaying possible duplicates.
+- No `edgar:*` extension was mapped, and no ingest or compliance production
+  source, core source configuration, dependency, schema, protected database,
+  or public API surface changed.
+
 ## v0.16.0 — 2026-07-30
 
 ### Added

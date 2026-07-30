@@ -1,6 +1,119 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, IDENTITY-DECISION, CADENCE, HARVEST, and RE-MEASURE: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **291**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Authorized RE-MEASURE run **30531390933**, attempt **1**, passed all seven executable hosted jobs at exact candidate `1cd88acd99704cc76c866331e505db446936e469`; the approved schema-2 amendment registered its fourteen authenticated receipt/bundle files plus the release-posture report as immutable pins. The report accepted **7** signed identities, rejected **0**, and confirmed the complete matrix. Radius 16 is guarded by the shared measured floor of 26 features: the live SEC harvest produced **200 fetched / 200 new**, the shipped guard kept **200 / dropped 0**, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. A separately authorized corrective observation executed exactly one fresh shipped robots request and one feed request: the robots body and HTTP-200 feed body were byte-identical to v0.25, and the 73 configured User-Agent bytes were captured and matched the installed identity. SEC has an explicit 600-second per-source schedule, but no scheduled live run occurred and the cadence remains unexercised. All **286** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; both live Step 6 phases exercised SEC only, so live multi-publisher cache and limiter behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment; Step 7's withdrawn chained-admission clause is the sixth under the same operator criterion. The CADENCE retrieval remains quarantined, and retractions remain three. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.26 R-CLOSE publication of v0.16.1 is operator-authorized; the untagged release parent is being prepared while v0.16.0 remains published.** Published v0.16.0 release commit remains `7baddb305a4357ec2dc2a35757528c1a6dc13f1e`, its closing commit is `c66c2b02191e3ca3126dddc3c004b175899b414e`, annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` peels to that closing commit, and remote `main` still resolves there. The separate v0.26 evidence candidate is `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated run **30531390933**, attempt **1**, passed all seven executable jobs. Both shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. Active invariants pass **12 rules / 44 controls**, golden remains **11/11**, and all **286** pins plus both protected databases match. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher sources are configured and both have now been fetched, but never in one production runtime; the 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate operator responsibility, and live multi-publisher behavior remain open or unchanged; L2 remains scheduled.
+
+**v0.26 R-CLOSE selects v0.16.1 and prepares release assembly (operator
+decision 2026-07-30).** Release disposition: release (as of 2026-07-30).
+
+The patch criterion fires because this cycle corrects near-duplicate behavior
+within existing routes, fields, types, body shapes, and public value sets. The
+public value-domain criterion added at v0.25 does **not** fire: no serialized
+`/v1/*` field gains, loses, or redefines a value. No corrective trigger was
+visible at entry; published v0.16.0 is green and its records are true. The
+publication trigger is the operator's explicit decision to ship the
+authenticated identity correction, explicit SEC cadence, and bounded
+first-contact validation.
+
+Authenticated evidence candidate
+`1cd88acd99704cc76c866331e505db446936e469` and hosted run
+**30531390933**, attempt **1**, are the closing evidence and remain separate
+from the untagged release parent. All seven executable jobs passed. The
+release-grade audit required paired Sigstore attestations, accepted **7**
+identities, rejected **0**, and confirmed the complete matrix. Its protected
+report is 34,937 bytes at SHA-256
+`267c23c676b0e227584d0eb9647d0ce8c4595804fb39e6ac5047691d066d0f25`.
+
+The identity determination is the operator-selected feature-floor option.
+Under the shipped radius 16, the parser-produced 200 SEC documents yielded
+172 kept / 28 dropped: 8 same-issuer and **20 cross-issuer false collapses**.
+The mechanism was a fixed 64-bit Hamming radius over fingerprints built from
+only 4–10 three-token features, compared with the calibrated news corpus's
+26–42. `intel-extract` now owns one `DEDUP_MIN_FEATURES = 26` two-sided guard,
+and both store canonicalization and view collapse invoke it. Both shipped
+paths keep all 200 SEC documents; the independently fetched live sample also
+kept **200 / dropped 0**. Golden remains byte-identical at **11/11** and still
+drops `techwire::tw-004` for `osdaily::osd-004` at Hamming 12, proving the
+change did not overshoot. The measured cost is intentional under-collapse:
+sparse documents, including two distance-zero pairs in the SEC sample, remain
+visible.
+
+The committed replay executed shipped `RssSource::fetch` over the exact
+892,641-byte observation and constructed **200** documents. The XML declares
+`windows-1252`, but the response is ASCII-only: reqwest's charset-less string
+path decoded those bytes as UTF-8 and roxmltree accepted them losslessly. No
+general non-UTF-8 decoder branch executed or was established. All 15 observed
+`edgar:*` extension local names remain enumerated but unmapped.
+
+G3 found zero observation paths in the manifest. Authorized Step 2B therefore
+added the `observations/` prefix and `observation` grade and pinned all five
+v0.25 files without an admission key, increasing 266 pins to 271. Step 7's
+authenticated receipt/bundle set and release report raised the final total to
+**286**. A pin detects later byte change; only the v0.25 wire record
+establishes what the publisher served.
+
+The bounded live SEC ingest did occur: **200 fetched / 200 new**, followed by
+one separately authorized corrective robots request and one feed request. No
+scheduler ran, no scheduled SEC run has occurred, and no production runtime
+has exercised both publisher origins together. No `edgar:*` field was mapped;
+no ingest or compliance production source, `config/core.json`, dependency,
+schema, protected database, fixture, or golden input changed.
+
+Every conditional source permission was used. `crates/extract/src/lib.rs`
+owns the feature-floor authority and guard; `crates/store/src/sqlite.rs` and
+`crates/view/src/lib.rs` invoke it while retaining their synchronized
+boundary-local radius declarations. Authorized Step 2B used
+`tools/evidence_artifacts.py`. No conditional source permission is unused.
+The only R-CLOSE change to `shell/intel_shell/app.py` is the mechanical public
+version literal; the recorded relocation option remains unused.
+
+Two v0.26 blockers retain their distinct dispositions. Step 2's original
+pin-first rule is the fifth author-side rule with no satisfying assignment:
+`artifacts[]` requires SQLite-only expected facts, while `pinned_files[]`
+originally rejected an observation path and cannot carry `admission`. The
+CADENCE retrieval is a cycle-execution gate violation with an author-side
+ambiguity; its content remains quarantined and uncited, and **retractions
+remain three**. Step 7 later exposed the sixth author-side unsatisfiable rule:
+receipts cannot truthfully enter `artifacts[]`, while `pinned_files[]` rejects
+an `admission` key. Its operator-approved replacement uses immutable pins plus
+paired authenticated provenance without weakening either schema.
+
+The release-parent changed-path classification is prepared in eight disjoint
+groups and will be reconciled against the committed `v0.16.0..R` set, expected
+to contain **44** paths:
+
+- **Operating contract, architecture, release notes, and status:** `AGENTS.md`,
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `README.md`, and `STATE.md`.
+- **Release version authorities:** `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, and `shell/intel_shell/app.py`.
+- **Product behavior and cadence:** `config/schedule.json`,
+  `crates/extract/src/lib.rs`, `crates/store/src/sqlite.rs`, and
+  `crates/view/src/lib.rs`.
+- **Executing controls:** `config/invariant-rules.json`,
+  `crates/ingest/tests/sec_observation_replay.rs`,
+  `crates/store/tests/sec_identity_measure.rs`,
+  `shell/tests/test_cycle_check.py`,
+  `shell/tests/test_evidence_artifacts.py`,
+  `shell/tests/test_offline_fixtureless_ingest.py`,
+  `shell/tests/test_scheduler.py`, `tools/cycle_check.py`,
+  `tools/evidence_artifacts.py`, and `tools/invariant_scan.py`.
+- **Cycle and forward-publication records:**
+  `docs/cycles/PROGRESS-v0.25.md`, `docs/cycles/PROGRESS-v0.26.md`, and
+  `docs/cycles/TASKS-v0.26-EXECUTION.md`.
+- **Replay and identity measurements:** both files under
+  `observations/v0.26/`.
+- **Append-only provenance authority:** `config/protected-artifacts.json`.
+- **Authenticated hosted evidence:** all fourteen files under
+  `evidence/ci-runs/30531390933-1/` and
+  `evidence/v0.26/deferred-audit/report.json`.
+
+The protected manifest remains below its accepted bounds: **286** pins,
+**165,488 bytes**, and two consecutive complete verifications at **0.11 s /
+0.10 s real**. A4, editable L1, the R3/R4 open-bottom limitations, the
+active-runbook measured-value heuristic, T7, robots negative-cache Decision B,
+scheduled L2, FastAPI version-literal relocation, terms-gate operator
+responsibility, and live multi-publisher behavior all remain open or
+unchanged. The one supported SEC harvest caller and zero running schedulers do
+not move T7 nearer its trigger.
 
 **v0.26 RE-MEASURE admits authenticated hosted evidence after the approved
 schema-2 correction (measured 2026-07-30).**
