@@ -16,7 +16,9 @@
       "**/__pycache__/**",
       "**/*.pyc",
       "evidence/**",
-      "docs/cycles/{TASKS,PROGRESS}-v0.{[6-9],1[01]}{.md,.*.md,-*.md}",
+      "observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml",
+      "docs/state-archive/**",
+      "docs/cycles/{TASKS,PROGRESS}-v0.{[6-9],1[0-9],2[0-5]}{.md,.*.md,-*.md}",
       "repomix-output-*.xml"
     ]
   },

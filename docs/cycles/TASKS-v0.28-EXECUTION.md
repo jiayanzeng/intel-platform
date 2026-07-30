@@ -147,6 +147,29 @@ prove that legitimate completion form. Focused tests pass 50/50,
 `cycle-check` passes, registered self-test derives 12 rules / 49 controls, and
 standalone golden passes 11/11 with delta zero. No closed runbook changed.
 
+### 2026-07-30 · Review-corpus reduction and workflow-record scope
+
+Step 4 — export scope reduced and State history archived — 2026-07-30
+
+The archival itself changed no file under `docs/cycles/`: lifecycle coverage
+remained 219/219 before and after, and no historical cycle document was edited,
+moved, or deleted. The acceptance criterion's literal “no file” wording
+conflicts with the standing per-task workflow, which requires this active
+runbook's completion box and a later append-only progress entry. Those two
+control-plane records are the only cycle-directory changes attributable to
+closing Step 4; neither is a corpus-retention reduction or a historical edit.
+
+The new through-v0.21 State archive is a byte-exact concatenation of the removed
+history, the prior through-v0.13 archive, and removed reference §8/§9. Three
+slice hashes and whole reconstructed-output comparisons all matched. State
+retains v0.22-forward and reference §1–§7. The first post-reduction export is
+2,465,363 bytes / 152 files, retains exactly the v0.26–v0.28 TASKS/PROGRESS
+pairs and every observation Markdown file, and excludes the SEC body plus the
+State-archive directory. All 301 pins, lifecycle checks, invariant 12/49,
+current-tag post-push record count one, and golden 11/11 pass. After the
+mandatory status and completion records, the final implementation-tree export
+is 2,469,697 bytes / 152 files, 49.39% of decimal 5 MB.
+
 One sandboxed `ci-local` attempt and one sandboxed Python dependency install
 were environment non-results; their exact entry points passed with the required
 permissions. Two population-log wrappers assigned zsh's read-only `status`
@@ -615,7 +638,7 @@ measured value governs.**
 **Done when** the export is roughly half its entering size and every executing
 check reports the same coverage it reported before.
 
-- [ ] **DOC-SLIM**
+- [x] **DOC-SLIM**
 
 ---
 
