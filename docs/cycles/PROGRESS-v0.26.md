@@ -369,3 +369,48 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; mandatory golden passed 11/11 with the hamming-12
   true-positive collapse intact.
 - publisher-request acceptance: PASS. No publisher request was made.
+
+### 2026-07-30 · IDENTITY-MEASURE — 20 cross-issuer collapses measured
+
+- owner: Codex
+- commit: 4ec0082791eb169dea876f219a89b05d57578e90
+- result: PASS with finding. At shipped radius 16, the 200 SEC documents
+  produce 172 kept / 28 dropped; 8 drops share the kept document's issuer CIK
+  and **20 cross issuer CIKs**. The existing finance fixture stays kept.
+- shipped-rule acceptance: PASS. A committed test invoked the asserted-byte
+  shipped RSS parser into a disposable binary interchange, sent the 201
+  finance documents through `SqliteStore::append_new` and therefore private
+  `assign_canonical_ids_tx`, then ran shipped `dedup_near` over the persisted
+  fingerprints. The two shipped paths returned the same 28 drop pairs.
+- per-drop acceptance: PASS. The committed observation record lists all 28
+  dropped ids, kept ids, Hamming distances, issuer classes, and both CIKs.
+- sweep acceptance: PASS as corpus measurement, not recommendation. Total
+  kept / dropped / same / cross was 16: 173/28/8/20; 15: 187/14/6/8;
+  14: 196/5/5/0; 13: 197/4/4/0; 12: 197/4/4/0; 10: 199/2/2/0; and
+  8: 199/2/2/0. The fixture's minimum SEC distance was 23.
+- mechanism acceptance: PASS. SEC three-token feature counts were
+  `{4:40, 5:86, 6:48, 7:20, 8:5, 10:1}`, median 5; news counts were
+  `{26:1, 28:1, 37:1, 40:2, 41:1, 42:1}`, median 40. SEC had 198 distinct
+  fingerprints and 35/19,900 pairs inside radius 16; first-match identity
+  yielded 28 drops. News had one of 21 pairs inside, the intended hamming-12
+  golden pair. The full pair distributions are committed.
+- same-day acceptance: PASS and not acted on. All 200 SEC inputs were on
+  2026-07-29; 172 remained beside the 2026-07-03 fixture. The committed
+  gazetteer resolved 0 mentions / 0 entities, so executed shipped analyze
+  constructed no per-entity baseline, computed no z-score, and emitted zero
+  signals and edges over its 26-day corpus window.
+- prediction disposition: CONFIRMED except one author-side error. The draft's
+  “28–36” news-feature comparison was wrong: execution measured range 26–42,
+  median 40. This is not an implementation defect.
+- Rust acceptance: PASS. The focused `-D warnings` measurement passed 1/1;
+  full `-D warnings` workspace tests passed **137**; clippy and fmt passed.
+- invariant and lifecycle acceptance: PASS. `invariant-scan` remained 12/12
+  rules / 39 controls; `cycle-check`, `progress-check`, and `version-check`
+  passed before this append.
+- scope acceptance: PASS. Only two integration-test files, one v0.26
+  observation, `STATE.md`, and the active runbook changed. Zero production
+  source files, configs, fixtures, golden inputs, protected artifacts,
+  databases, dependencies, or refs changed.
+- golden-E2E delta: **0**; mandatory golden passed 11/11 and retained the
+  hamming-12 true-positive drop.
+- publisher-request acceptance: PASS. No publisher request was made.
