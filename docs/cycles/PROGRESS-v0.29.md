@@ -62,3 +62,33 @@ Entries are append-only; corrections are new dated entries.
 - publisher-request acceptance: PASS. Activation used repository, local Git,
   protected-byte verification, and the operator-local export only; it made no
   request to a publisher origin and ran no scheduler.
+
+### 2026-07-31 · ACTIVATE-AMENDMENT — scope fixture aligned to v0.29
+
+- owner: Codex
+- commit: b92902edf861e4a3a21eba509519c0b9b46b2870
+- result: PASS. The first permission-complete E0 `./run ci-local` passed
+  release/cycle/checklist checks, registered invariants **12/49**, evidence,
+  warning-denied workspace and net Rust lanes, clippy, fmt, and locked Rust
+  1.78 before the shell lane collected **303**, passed **302**, and failed the
+  v0.28 exact-current-cycle assertion that release-authority/forbid overlap
+  must be empty.
+- correction acceptance: PASS. The active v0.29 table intentionally makes
+  `shell/intel_shell/__init__.py` and `shell/intel_shell/app.py` both release
+  authorities and matches both with the broad shell-source forbid; documented
+  release-authority precedence is unchanged. The fixture now derives that
+  overlap independently with Python's standard `fnmatchcase` over the parsed
+  table and the separately enumerated release-authority paths. No expected
+  overlap value is hardcoded and no production checker behavior changed.
+- focused acceptance: PASS. Constrained Python 3.11 ran
+  `shell/tests/test_cycle_check.py` at **50/50**, and the real
+  `cycle-check` entry point passed with active v0.29 open.
+- environment acceptance: PASS with one non-result recorded. The first
+  sandboxed full CI attempt reached the net lane but could not bind its
+  loopback wire-test server. The permission-complete rerun passed that lane and
+  exposed the fixture failure above; it is the result used for the correction.
+- golden-E2E delta: NOT MEASURED in this compatibility checkpoint; E0 restarts
+  from this committed correction and owns the complete matrix plus standalone
+  golden.
+- publisher/protected acceptance: PASS. No publisher or scheduler command ran,
+  and no protected or pinned file changed.
