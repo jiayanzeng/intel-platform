@@ -1,6 +1,53 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0, TRIGGER-IDENTITY, TRIGGER-FLOOR, DOC-SLIM, EXPORT-BOUND, COVERAGE-ORDER, and RE-MEASURE are complete on top of published v0.17.0; the cycle remains open pending the operator's Step 8 disposition.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both still resolve to that closing commit. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. Both shell comparators derived `collected=303`, `equivalent=true`, and `equivalent_passed=303`; local passed **303 / skipped 0**, while hosted passed **302** plus one named `on_site` skip. Current local CI passes **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), shell **303/303**, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 49 controls**, and golden **11/11**. The authorized evidence registration contains **316** `pinned_files[]`; both protected SQLite archives remain byte-identical. The review export has a **3,000,000-byte** executable ceiling and retains exactly three derived cycles without reducing executing coverage. The internal `/ingest` coverage boundary derives its oldest raw timestamp independently of incoming slice order without changing the response shape or any `/v1/*` value domain. The SEC identity control remains **200 kept / 0 dropped**. The 600-second schedule has never run, and v0.28 made no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 is closed with `no-release` disposition as of 2026-07-31; all eight ordered steps are complete on top of published v0.17.0.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both still resolve to that closing commit. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. Both shell comparators derived `collected=303`, `equivalent=true`, and `equivalent_passed=303`; local passed **303 / skipped 0**, while hosted passed **302** plus one named `on_site` skip. Current local CI passes **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), shell **303/303**, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 49 controls**, and golden **11/11**. The authorized evidence registration contains **316** `pinned_files[]`; both protected SQLite archives remain byte-identical. The closing implementation-tree review export measures **2,526,556 bytes** against its **3,000,000-byte** executable ceiling and retains exactly three derived cycles without reducing executing coverage. The internal `/ingest` coverage boundary derives its oldest raw timestamp independently of incoming slice order without changing the response shape or any `/v1/*` value domain. The SEC identity control remains **200 kept / 0 dropped**. The 600-second schedule has never run, and v0.28 made no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+
+**v0.28 R-CLOSE records the operator-selected no-release disposition (measured
+2026-07-31).** The operator selected `no-release`. The measured cycle diff adds
+no route, response shape, `/v1/*` value domain, dependency, schema, or public
+surface. The one runtime correction changes only the value of the internal
+`/ingest` diagnostic for a misordered window and leaves its response shape
+untouched. v0.17.0 remains the current published release; no version authority,
+tag, remote `main`, or release ref moved.
+
+Immediately before closure, remote `main` and the peeled v0.17.0 tag both
+resolved to `4af2841816dd3e43fb8423153b91aa22ccb87537`; the neutral evidence ref
+resolved to authenticated candidate
+`47bb77c19420bf513b53b228e473d4accedc6cc9`. The exact project-root export
+passed **99 derived / 7 required / 152 exported** at **2,526,556 bytes**,
+below the **3,000,000-byte** ceiling. Step 4's archival control held
+`checklist-audit` at **219 → 219** before its mandatory workflow records. Step
+5 measured **220** before its mandatory increment. The pre-closure audit
+passed **223 checked / 223 matched / 223 commits resolved**; this distinguishes
+the unchanged detector populations from their ordinary task-record increments.
+
+Every declared permission was reconciled. Used `allow` paths were
+`tools/cycle_check.py`, `tools/export_check.py`,
+`crates/store/src/sqlite.rs`, `shell/tests/**`,
+`config/invariant-rules.json`, `tools/invariant_scan.py`,
+`repomix.config.json`, `docs/state-archive/**`, the exact hosted evidence
+directory and report, the explicitly authorized manifest registration,
+`AGENTS.md`, and `ARCHITECTURE.md`. The unused `allow` paths were
+`crates/store/src/lib.rs` and `crates/**/tests/**`; every `forbid` path was
+unused. No release authority was declared or used.
+
+G1's blank-cell and G3's all-`none` constructions both executed and exposed
+their vacuous controls; G5's executed historical-cycle move reduced audited
+coverage while both prior checkers still passed. G2 measured the inadequate
+day-resolution identity, G4 measured the unbounded near-limit export, G6
+reproduced and then corrected the positional raw-boundary assumption, and G7
+enumerated both semantic release criteria with no implementation because the
+current authorities provide no bounded historical surface/value-domain
+detector. The drafted T7/NEGATIVE-CACHE accusation is preserved as a
+**reviewer error**, not a finding: both subjects were already governed in the
+active deferred table with dated observations.
+
+The closing local suite passed **20/20** jobs with warning-denied **146**
+workspace tests, **62** net tests, shell **303/303**, locked Rust 1.78, clean
+rustc/clippy/fmt/ShellCheck, registered invariant self-test **12 rules / 49
+controls**, protected-artifact validation at **2 artifacts / 316 pinned
+files**, and embedded golden **11/11**. The separately required standalone
+golden also passed **11/11**, delta **0**.
 
 **v0.28 RE-MEASURE authenticates the exact neutral evidence candidate without
 publishing (authorized and measured 2026-07-31).** Candidate

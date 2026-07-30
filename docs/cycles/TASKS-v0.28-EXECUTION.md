@@ -297,6 +297,68 @@ Remote `main` and the peeled v0.17.0 tag remained at `4af28418…`; no release
 tag moved. Workflow and complete hosted-log searches found no publisher URL
 or publisher-directed ingest, and no publisher request occurred.
 
+### 2026-07-31 · No-release closure
+
+Step 8 — no-release disposition measured and completion checked — 2026-07-31
+
+The operator selected **`no-release`**. The disposition matches the declared
+intent and the measured change set: v0.28 moved no route, response shape,
+`/v1/*` value domain, dependency, schema, or public surface. The one runtime
+correction changes only the internal `/ingest` diagnostic value for a
+misordered edge case, without changing its shape. Version v0.17.0 therefore
+remains the published release; no version authority, tag, remote `main`, or
+release ref moved. Immediately before this record, remote `main` and the peeled
+v0.17.0 tag both resolved to
+`4af2841816dd3e43fb8423153b91aa22ccb87537`, while the neutral evidence ref
+resolved to candidate `47bb77c19420bf513b53b228e473d4accedc6cc9`.
+
+The declared-scope reconciliation is exact:
+
+- **Used `allow`:** `tools/cycle_check.py`, `tools/export_check.py`,
+  `crates/store/src/sqlite.rs`, `shell/tests/**`,
+  `config/invariant-rules.json`, `tools/invariant_scan.py`,
+  `repomix.config.json`, `docs/state-archive/**`,
+  `evidence/ci-runs/30561513204-1/**`,
+  `evidence/v0.28/deferred-audit/report.json`,
+  `config/protected-artifacts.json`, `AGENTS.md`, and `ARCHITECTURE.md`.
+  The manifest use was only the explicitly authorized Step 7 registration.
+- **Unused `allow`:** `crates/store/src/lib.rs` and
+  `crates/**/tests/**`.
+- **Unused `forbid`:** `run`, `tools/model_profiles.py`,
+  `tools/evidence_artifacts.py`, `apps/cored/src/main.rs`,
+  `crates/ingest/src/**`, `crates/compliance/src/**`,
+  `crates/extract/src/**`, `crates/view/src/**`, `shell/intel_shell/**`,
+  `config/core.json`, `config/schedule.json`,
+  `config/subscriptions*.json`, `observations/**`, `fixtures/**`,
+  `docs/cycles/TASKS-v0.[12]*-EXECUTION.md`, and
+  `docs/cycles/PROGRESS-v0.[12]*.md`.
+- **Standing status paths used:** `STATE.md`, this active runbook, and
+  `docs/cycles/PROGRESS-v0.28.md`. No `release_authority` row was declared or
+  used.
+
+G1–G7 retain their E0 measurements. G1 executed a blank-cell construction and
+proved the dated-header fallback vacuous. G2 measured four cycles closed on
+2026-07-30 and proved day resolution too coarse. G3 executed an all-`none`
+construction and proved the absent nonzero floor. G4 measured the unbounded
+4,975,987-byte export. G5 executed the v0.24 move and observed lifecycle
+coverage fall while both checkers still exited zero. G6 reproduced the
+positional oldest-raw error and bounded it to one diagnostic value. G7
+enumerated both semantic release criteria and, because the current authorities
+provide no bounded historical surface/value-domain detector, correctly added
+no implementation.
+
+The reviewer's T7/NEGATIVE-CACHE hypothesis remains a **reviewer error**, not a
+finding: the active deferred table already governed both subjects with dated
+observations. The Step 4 archival control held `checklist-audit` at **219 →
+219** before the mandatory workflow records; the Step 5 implementation
+baseline was **220** before its mandatory increment. The pre-closure control
+passed **223 checked / 223 matched / 223 commits resolved**. The exact
+project-root export passed **99 derived / 7 required / 152 exported** at
+**2,517,774 bytes**, beneath the **3,000,000-byte** ceiling. Full local
+`ci-local` passed **20/20**, shell passed **303/303**, registered invariants
+passed **12 rules / 49 controls**, and golden passed **11/11**. Manifest
+validation reports **2 artifacts / 316 pinned files**.
+
 **One reviewer hypothesis was refuted by measurement and is recorded as an error,
 not a finding.** The reviewer suspected T7 and NEGATIVE-CACHE Decision B were
 trigger-shaped residuals living in ungoverned `ARCHITECTURE.md` prose, because
@@ -895,26 +957,29 @@ gates, or by Step 7's evidence. Two options, stated so neither is a default:
 
 **Done when** the disposition is authorized, recorded, and measured.
 
-- [ ] **R-CLOSE**
+- [x] **R-CLOSE**
 
 ---
 
 ## Cycle checklist
 
-- [ ] Worktree clean at entry; `main` one commit ahead at `ddf08d20…`, unpushed
-- [ ] Every entering-state hypothesis measured and confirmed or corrected
-- [ ] G1–G7 each carry a measured answer; G1, G3, and G5 answered **by execution**
-- [ ] No closed cycle document edited, moved, or deleted
-- [ ] `checklist-audit` total unchanged by Steps 4 and 5, both figures recorded
-- [ ] `STATE.md` archival proven byte-identical by recorded hash
-- [ ] Every new checker rule demonstrated **rejecting** before demonstrated passing
-- [ ] No expected count hardcoded in any test added or edited this cycle
-- [ ] Golden **11/11** byte-identical at every step
-- [ ] SEC identity **200 kept / 0 dropped** unchanged
-- [ ] **301** pins verified; manifest bounds re-measured against 1 MiB / 1.00 s
-- [ ] Both Python lanes reported as collected/passed/skipped, comparator-derived
-- [ ] Deferred table rows all carry v0.28-identified observations
-- [ ] Reviewer error preserved as such in the cycle record
+- [x] Entry corrected by measurement: candidate-lineage HEAD was one commit
+  beyond recorded `origin/main`; local `main` was 102 commits behind
+- [x] Every entering-state hypothesis measured and confirmed or corrected
+- [x] G1–G7 each carry a measured answer; G1, G3, and G5 answered **by execution**
+- [x] No closed cycle document edited, moved, or deleted
+- [x] `checklist-audit` held **219 → 219** for Step 4 archival; Step 5's
+  implementation baseline was **220** before its mandatory record
+- [x] `STATE.md` archival proven byte-identical by recorded hash
+- [x] Every new checker rule demonstrated **rejecting** before demonstrated passing
+- [x] No expected count hardcoded in any test added or edited this cycle
+- [x] Golden **11/11** byte-identical at every step
+- [x] SEC identity **200 kept / 0 dropped** unchanged
+- [x] Manifest pins: **301** verified on the candidate and **316** after the
+  authorized evidence registration; bounds re-measured against 1 MiB / 1.00 s
+- [x] Both Python lanes reported as collected/passed/skipped, comparator-derived
+- [x] Deferred table rows all carry v0.28-identified observations
+- [x] Reviewer error preserved as such in the cycle record
 
 ---
 
@@ -975,3 +1040,59 @@ and NEGATIVE-CACHE Decision B were ungoverned prose residuals, then measured the
 runbook deferred table and found both governed with dated observations. The
 suspicion was withdrawn before delivery. It is recorded here because a reviewer
 who reports only surviving hypotheses is reporting a filtered sample.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-31
+- **Release disposition:** no-release (as of 2026-07-31)
+
+No route, response shape, `/v1/*` value domain, dependency, schema, or public
+surface changed. The operator chose no-release, so v0.17.0 remains the current
+published version and no publication ref moved.
+
+Intentionally unreleased implementation commits:
+
+1. E0 evidence and gate settlement:
+   `5d73b2936d3f94883dbc6b2d3a7fb1e84713175a`
+2. Trigger identity data:
+   `5342663f89e3e2b499bfc1bf42b15c44705de58b`
+3. Trigger identity enforcement:
+   `3e80d0b79f7151cc4ee28b516d73d46e09b85b1c`
+4. Trigger population floor:
+   `1dde546029fbaf4f1b84c7628f07e06587d99316`
+5. State archival and export reduction:
+   `66a38731bed044cd48a09ec07c0583070c2be2bd`
+6. Executable export boundary:
+   `1a949e691b388487302b75ea89939eba23d8896c`
+7. Coverage-order correction:
+   `e6b3c1ea6571088e57689045218c809509282ee4`
+8. Hosted evidence registration:
+   `acd7266daf38997fd1960eefec3b26dab8c5b912`
+9. Clean entry and corrected hypotheses:
+   `789070d32b9af89a2bd1f0fe7a259e88d43fe981`
+10. G1–G7 measured answers:
+    `5d73b2936d3f94883dbc6b2d3a7fb1e84713175a`
+11. Executed G1, G3, and G5 controls:
+    `5d73b2936d3f94883dbc6b2d3a7fb1e84713175a`
+12. Closed-cycle preservation:
+    `6d96a94f62447ee844c3dfd14c5b7af1b20abaa0`
+13. Step 4 checklist control:
+    `66a38731bed044cd48a09ec07c0583070c2be2bd`
+14. State archival byte identity:
+    `66a38731bed044cd48a09ec07c0583070c2be2bd`
+15. Planted checker rejections:
+    `1a949e691b388487302b75ea89939eba23d8896c`
+16. Derived rather than hardcoded populations:
+    `1dde546029fbaf4f1b84c7628f07e06587d99316`
+17. Golden continuity:
+    `acd7266daf38997fd1960eefec3b26dab8c5b912`
+18. SEC identity continuity:
+    `e6b3c1ea6571088e57689045218c809509282ee4`
+19. Protected-artifact verification:
+    `acd7266daf38997fd1960eefec3b26dab8c5b912`
+20. Comparator-derived Python populations:
+    `acd7266daf38997fd1960eefec3b26dab8c5b912`
+21. Deferred-observation identity:
+    `3e80d0b79f7151cc4ee28b516d73d46e09b85b1c`
+22. Reviewer-error preservation and closure inputs:
+    `8ed206bf3d91a723e49ca6c01ca4beeb106e2e64`
