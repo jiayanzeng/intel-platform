@@ -187,3 +187,47 @@ Entries are append-only; corrections are new dated entries.
 - boundary acceptance: PASS. `config/schedule.json` and `config/core.json` are
   byte-unchanged; no production source changed, no scheduler ran, and no
   publisher request occurred.
+
+### 2026-07-30 · ADMISSION-LANGUAGE — manifest containers named and executed
+
+- owner: Codex
+- commit: 405e68fa6d144e8bca245fe5d2852980a8db3958
+- result: PASS. The two G4 statements that could be read as true of neither
+  schema-v2 container now name the applicable container, and an executing
+  fixture proves both documented valid shapes and both exact prohibited
+  shapes.
+- container-language acceptance: PASS. `AGENTS.md` and `ARCHITECTURE.md`
+  jointly state the disjoint capabilities in one place: `artifacts[]` requires
+  the SQLite `expected` shape and carries chained `admission`; `pinned_files[]`
+  accepts graded immutable bytes under `evidence/` and `observations/`, plus
+  exact registered authorization paths, and forbids `admission`.
+- author-rule acceptance: PASS. The operating contract now requires each task
+  demanding a pinned byte to name its target container. A requirement
+  expressible by neither container is an author-side defect to record and
+  correct, not a condition to work around. The fifth and sixth v0.26 instances
+  remain closed historical dispositions and are cited only as motivating data.
+- executable-contract acceptance: PASS. The new fixture validates one
+  `artifacts[]` entry and three `pinned_files[]` entries covering evidence,
+  observation, and authorization grades. Its mutations execute the exact
+  rejections `pinned_files[0]: keys differ; missing=[],
+  extra=['admission']` and `artifacts[0]: keys differ;
+  missing=['expected'], extra=[]`. Focused execution passed **1/1** in both
+  Python lanes.
+- limitation acceptance: PASS. The contract states that the fixture proves
+  documentation/validator agreement today but cannot prevent future drift;
+  v0.27's prohibition on editing the validator controls that limitation here.
+- shell acceptance: PASS. Complete constrained Python 3.11.4 and 3.12.13 lanes
+  each collected and passed **293**, failed zero, and skipped zero. The
+  comparator derived `collected=293`, `equivalent=true`, and
+  `equivalent_passed=293`.
+- invariant acceptance: PASS. `invariant-scan` remains **12 rules / 44
+  controls**; `cycle-check`, `version-check`, and `git diff --check` passed.
+- forbidden-file acceptance: PASS. `tools/evidence_artifacts.py` is unchanged at
+  SHA-256
+  `3e5e0c5ff6e12c25180833124faaaf91dc43b5171e893e83500e029d04e99af5`,
+  and `config/protected-artifacts.json` is unchanged at SHA-256
+  `8711aa1b95d6071c6492594aa20a3c4ab8a1756ffe4b5ed72b5208f39ed9a3da`.
+- golden-E2E delta: **0**; standalone golden remains byte-identical at
+  **11/11**.
+- boundary acceptance: PASS. No production source changed, no prior record was
+  reopened, and no publisher request occurred.
