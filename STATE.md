@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.27 is closed locally under R-CLOSE and v0.17.0 is operator-authorized for atomic publication; v0.16.1 remains published until that ref movement.** Untagged release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46` is the immediate parent of this closing tree; the annotated v0.17.0 tag must target the closing tree, not its parent. Published v0.16.1 remains at implementation parent `b9af84b8785bcd52c16ab0225d66386ecd872c4d`, closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, and annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b`; remote `main` and the peeled v0.16.1 tag still resolve to that closing commit. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The exact release parent passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched. The release assembly adds the internal `/ingest` coverage value and boundary fields, so the named-surface rule requires a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changes. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and this publication does not authorize it. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.17.0 is published and v0.27 is closed under R-CLOSE.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The exact release parent passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched. The release assembly adds the internal `/ingest` coverage value and boundary fields, so the named-surface rule requires a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changes. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and this publication does not authorize it. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
 
 **Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION,
 ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are also complete.
@@ -134,6 +134,32 @@ manifest validation, protected-artifact verification, and evidence reporting
 all passed. Project-root `export-check` passed **99** derived sources, **7**
 required paths, and **180** exported files. No publisher request or scheduler
 run occurred.
+
+**v0.17.0 post-push forward verification (measured 2026-07-30).** The atomic
+push moved remote `main` and annotated `v0.17.0` together. Remote inspection
+resolves `main` and the peeled tag to closing commit
+`4af2841816dd3e43fb8423153b91aa22ccb87537`, while the annotated tag object is
+`df4fc3b044ca12335e773dcc0b9bdd4e0db90afd`; the closing commit's immediate
+parent remains release commit
+`d5969207835c9f27f461d292b169ccb8d6ae5a46`.
+
+- **Post-push verification date:** 2026-07-30
+- **Post-push release:** `v0.17.0`
+- **Post-push annotated tag object:** `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd`
+- **Post-push closing commit:** `4af2841816dd3e43fb8423153b91aa22ccb87537`
+- **Post-push hosted run:** `30550582370`
+
+Post-push run **30550582370**, attempt **1**, passed all seven executable jobs
+at the exact closing commit; the dependency-drift job skipped under its
+declared report-only condition. Fresh local Python 3.11.4 and 3.12.13 lanes
+each collected and passed **293** with zero skips. For each hosted lane,
+`tools/test_population.py` derived
+`{"collected":293,"equivalent":true,"equivalent_passed":293,"hosted":{"on_site_skipped":1,"passed":292,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":293,"skipped":0},"schema_version":1}`.
+The complete hosted-log search found no SEC or arXiv URL and no harvest
+command. Its `usgaap.rss` matches were local `PIN MATCH` lines for the
+committed observation; its `curl` matches were the pinned rustup action's
+installer command, not publisher traffic. Closing-tree standalone golden
+remained **11/11**.
 
 The protected manifest remains below its accepted bounds: **301** pins,
 **174,152 bytes**, and two consecutive complete verifications at **0.16 s /

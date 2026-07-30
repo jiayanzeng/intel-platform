@@ -518,3 +518,34 @@ Entries are append-only; corrections are new dated entries.
   open or unchanged.
 - publisher-request acceptance: PASS. R-CLOSE made no publisher request.
 - golden-E2E delta: **0**.
+
+### 2026-07-30 · POST-PUSH — v0.17.0 forward verification
+
+- owner: Codex
+- commit: 4af2841816dd3e43fb8423153b91aa22ccb87537
+- result: PASS. Atomic publication moved remote `main` and annotated
+  `v0.17.0` together. Remote inspection resolves `main` and the peeled tag to
+  closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`; tag object
+  `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` is annotated, and the closing
+  commit's immediate parent is release commit
+  `d5969207835c9f27f461d292b169ccb8d6ae5a46`.
+- hosted acceptance: PASS. Post-push run **30550582370**, attempt **1**,
+  completed successfully at the exact closing commit and `main`. All seven
+  executable jobs passed; dependency drift skipped under its declared
+  report-only condition.
+- population acceptance: PASS. Fresh local Python 3.11.4 and 3.12.13 lanes
+  each collected and passed **293** with zero skips. For each hosted lane,
+  `tools/test_population.py` derived
+  `{"collected":293,"equivalent":true,"equivalent_passed":293,"hosted":{"on_site_skipped":1,"passed":292,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":293,"skipped":0},"schema_version":1}`.
+- no-publisher acceptance: PASS. Complete hosted-log search found no SEC or
+  arXiv URL and no harvest command. The `usgaap.rss` matches were local
+  `PIN MATCH` output for the committed observation; `curl` matches were the
+  pinned rustup action's installer command, not publisher traffic.
+- record acceptance: PASS. `STATE.md` carries the exact required contiguous
+  post-push date, release, tag-object, closing-commit, and hosted-run fields.
+  The closing runbook remains byte-unchanged after publication.
+- audit-rhythm acceptance: PASS. This first descendant record is supported by
+  its local gates and intentionally remains unpushed and hosted-unverified
+  until the next publication under the accepted cycle-ending rhythm.
+- golden-E2E delta: **0**; closing-tree and audit-record standalone golden
+  remain **11/11**.
