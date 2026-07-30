@@ -1,5 +1,20 @@
 # TASKS-v0.25-EXECUTION.md — admission, and the gates the model does not hold
 
+## Runbook amendments
+
+Declared scope — crate-wide forbids corrected to source-tree forbids — 2026-07-30
+
+- **2026-07-30 — activation validation correction.** The first clean E0 shell
+  lane executed the live active-scope control and found that the crate-wide
+  `crates/ingest/**` and `crates/compliance/**` forbids overlapped their two
+  enumerated Cargo release authorities in addition to the one documented
+  `shell/intel_shell/app.py` overlap. The forbids now name the two source trees,
+  which preserves the standing prohibition on ingest/compliance source changes
+  and leaves release-authority handling explicit. Release-authority precedence
+  already permitted the two manifests, so this correction broadens no
+  effective path permission. No task objective, gate, acceptance criterion, or
+  done condition changed.
+
 v0.24 closed and v0.15.8 published. Release parent `696c0863…`, closing commit
 `64002678…`, annotated object `dc5abe06…`, hosted run `30475988050` green on all
 seven executable jobs. **The population comparator did its job on its first live
@@ -80,8 +95,8 @@ default has no answer for this case.
 | `release_authority` | `shell/intel_shell/app.py` |
 | `release_authority` | `CHANGELOG.md` |
 | `release_authority` | `README.md` |
-| `forbid` | `crates/ingest/**` |
-| `forbid` | `crates/compliance/**` |
+| `forbid` | `crates/ingest/src/**` |
+| `forbid` | `crates/compliance/src/**` |
 | `forbid` | `apps/**/*.rs` |
 | `forbid` | `shell/intel_shell/[a-z]*.py` |
 | `forbid` | `config/subscriptions*.json` |
