@@ -756,6 +756,64 @@ establish that the bytes are what the publisher served. Only
 wire capture, and Step 2B does not strengthen that provenance. No publisher
 request occurred.
 
+### IDENTITY-MEASURE execution record — 2026-07-30
+
+`crates/store/tests/sec_identity_measure.rs` invoked the asserted-byte REPLAY
+test through offline Cargo into a disposable target and binary interchange.
+The real parser produced the 200 SEC documents plus the committed finance and
+news fixture documents. No test parser or copied fixture produced the corpus.
+
+The integration test sent the 201 finance documents through
+`SqliteStore::append_new`, which executes private `assign_canonical_ids_tx` at
+the shipped radius 16. It loaded the persisted fingerprints, executed shipped
+`dedup_near` at 16, and asserted that both paths returned the same 28 dropped /
+kept id pairs. The existing `filings-digest::fin-001` row stayed kept at a
+minimum SEC distance of 23. The SEC result was **172 kept / 28 dropped**:
+**8 same-issuer and 20 cross-issuer** by title CIK. The full 28-row table with
+each id, kept id, distance, and CIK is at
+`observations/v0.26/identity/sec-identity-measurement.md`.
+
+The threshold sweep, including the kept fixture, measured:
+
+| Radius | Kept | Dropped | Same issuer | Cross issuer |
+|---:|---:|---:|---:|---:|
+| 16 | 173 | 28 | 8 | 20 |
+| 15 | 187 | 14 | 6 | 8 |
+| 14 | 196 | 5 | 5 | 0 |
+| 13 | 197 | 4 | 4 | 0 |
+| 12 | 197 | 4 | 4 | 0 |
+| 10 | 199 | 2 | 2 | 0 |
+| 8 | 199 | 2 | 2 | 0 |
+
+This is a measurement of this corpus, not a recommendation. Fourteen is the
+largest swept radius with zero cross-issuer drops here.
+
+Shipped tokenization and three-token features measured SEC distribution
+`{4:40, 5:86, 6:48, 7:20, 8:5, 10:1}`, median 5, versus news distribution
+`{26:1, 28:1, 37:1, 40:2, 41:1, 42:1}`, median 40. SEC has 198 distinct
+fingerprints and **35 of 19,900** pairs at or inside radius 16. The full SEC
+pair distribution is in the observation record. News has one of 21 pairs
+inside the radius: golden's intended hamming-12 near-duplicate. The sparse
+feature-count mechanism is therefore confirmed on this corpus without
+claiming general calibration.
+
+All 200 SEC inputs share `2026-07-29`; after collapse 172 remain beside the
+one `2026-07-03` fixture document. The committed gazetteer resolved 0 mentions
+and 0 entities. Executed shipped analyze therefore saw a 26-day corpus window
+but built no per-entity baseline, calculated no z-score, and emitted 0 rising
+signals, 0 total signals, and 0 graph edges. This is recorded and not acted on.
+
+The draft prediction was correct on item and fingerprint counts, SEC day and
+body mean, SEC median feature count, pairs inside radius, shipped drops and
+cross-issuer count, fixture distance, and radius 14. Its “28–36” news-feature
+comparison was wrong: the executed range is **26–42**, median 40. This is an
+author-side prediction error, not an implementation defect.
+
+The focused `-D warnings` measurement passed 1/1, the full workspace passed
+**137** tests, clippy and fmt passed, and golden remained **11/11**. Only test,
+observation, and status paths changed. No production source, config, fixture,
+golden input, protected artifact, database, ref, or publisher changed.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
@@ -1211,7 +1269,7 @@ publication.**
 - [x] **OBSERVATION-PIN** — authorized and complete with three rejection controls
   captured and the new pin count in three places, or deleted with its deferral
   row recorded
-- [ ] **IDENTITY-MEASURE** — shipped rule executed; per-drop distances recorded;
+- [x] **IDENTITY-MEASURE** — shipped rule executed; per-drop distances recorded;
   cross-issuer and same-issuer separated; threshold sweep recorded as corpus
   measurement; shingle-count and pairwise distributions for both corpora;
   same-day concentration observed and not acted on; prediction confirmed or

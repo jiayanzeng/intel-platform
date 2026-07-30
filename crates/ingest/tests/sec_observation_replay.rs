@@ -1,9 +1,10 @@
 use intel_compliance::{HostLimiters, RobotsGate};
-use intel_core::{Day, License, SectorId, SourceKind};
+use intel_core::{Day, Document, License, SectorId, SourceKind};
 use intel_ingest::rss::RssSource;
 use intel_ingest::{MissingPolicy, Source, SourceContext};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
+use std::io::Write as IoWrite;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -194,6 +195,69 @@ fn utc_day(raw: &str, local_day: Day) -> Option<Day> {
 fn quartile(sorted: &[usize], numerator: usize, denominator: usize) -> usize {
     let index = (sorted.len() - 1) * numerator / denominator;
     sorted[index]
+}
+
+fn write_u32(writer: &mut impl IoWrite, value: usize) {
+    writer
+        .write_all(
+            &u32::try_from(value)
+                .expect("test export length must fit u32")
+                .to_le_bytes(),
+        )
+        .expect("write test export u32");
+}
+
+fn write_string(writer: &mut impl IoWrite, value: &str) {
+    write_u32(writer, value.len());
+    writer
+        .write_all(value.as_bytes())
+        .expect("write test export string");
+}
+
+fn write_optional_string(writer: &mut impl IoWrite, value: Option<&str>) {
+    writer
+        .write_all(&[u8::from(value.is_some())])
+        .expect("write test export option tag");
+    if let Some(value) = value {
+        write_string(writer, value);
+    }
+}
+
+fn write_strings(writer: &mut impl IoWrite, values: &[String]) {
+    write_u32(writer, values.len());
+    for value in values {
+        write_string(writer, value);
+    }
+}
+
+fn write_document_export(path: &Path, documents: &[Document]) {
+    let mut writer = std::fs::File::create(path).expect("create test-only document export");
+    writer
+        .write_all(b"INTEL-DOCUMENT-EXPORT-1\n")
+        .expect("write test export header");
+    write_u32(&mut writer, documents.len());
+    for document in documents {
+        write_string(&mut writer, &document.id);
+        write_string(&mut writer, &document.sector.0);
+        write_optional_string(&mut writer, document.url.as_deref());
+        write_string(&mut writer, &document.title);
+        write_string(&mut writer, &document.body);
+        writer
+            .write_all(&[u8::from(document.published_day.is_some())])
+            .expect("write test export day tag");
+        if let Some(day) = document.published_day {
+            writer
+                .write_all(&day.0.to_le_bytes())
+                .expect("write test export day");
+        }
+        write_optional_string(&mut writer, document.published_raw.as_deref());
+        write_strings(&mut writer, &document.authors);
+        write_strings(&mut writer, &document.tags);
+        write_string(&mut writer, &document.provenance.source_id);
+        write_string(&mut writer, &document.provenance.retrieved_from);
+        write_string(&mut writer, document.provenance.kind.as_str());
+        write_string(&mut writer, document.provenance.license.as_str());
+    }
 }
 
 #[tokio::test]
@@ -425,6 +489,56 @@ async fn replays_sec_observation_through_shipped_rss_parser() {
         document.provenance.kind == SourceKind::Rss
             && document.provenance.license == License::PublisherPermitted
     }));
+
+    if let Some(export_path) = std::env::var_os("INTEL_SEC_REPLAY_EXPORT_PATH") {
+        let fixture_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures");
+        let mut exported = documents.clone();
+        for (id, fixture, feed_url, license) in [
+            (
+                "filings-digest",
+                "finance.xml",
+                "https://example.org/filings/feed.xml",
+                License::PublicDomain,
+            ),
+            (
+                "techwire",
+                "techwire.xml",
+                "https://example.org/techwire/feed.xml",
+                License::CcBy,
+            ),
+            (
+                "osdaily",
+                "osdaily.xml",
+                "https://example.org/osdaily/feed.xml",
+                License::IndexOnly,
+            ),
+        ] {
+            let source = RssSource {
+                id: id.to_string(),
+                sector: SectorId::new(if id == "filings-digest" {
+                    "finance"
+                } else {
+                    "technology"
+                }),
+                feed_url: feed_url.to_string(),
+                fixture_path: Some(fixture_root.join(fixture).display().to_string()),
+                license,
+                robots_on_missing: MissingPolicy::Deny,
+            };
+            exported.extend(
+                source
+                    .fetch(&context)
+                    .await
+                    .unwrap_or_else(|error| panic!("export {id}: {error}")),
+            );
+        }
+        write_document_export(Path::new(&export_path), &exported);
+        println!(
+            "identity-measure-test-export: documents={} path={}",
+            exported.len(),
+            Path::new(&export_path).display()
+        );
+    }
 
     println!(
         "replay-field-inventory: items={} distinct_ids={} \
