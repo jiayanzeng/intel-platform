@@ -116,3 +116,42 @@ Entries are append-only; corrections are new dated entries.
   `config/schedule.json`, `run`, the evidence validator, the manifest, and all
   protected/pinned bytes are unchanged. No working-repository ref was created,
   moved, or deleted.
+
+### 2026-07-30 · WINDOW-MEASURE — latest-200 margin derived from pinned bytes
+
+- owner: Codex
+- commit: 5eee3f963b9e48a305eb426023bfa1b79df6525b
+- result: PASS. A committed point-of-use test now derives the latest-window
+  timing distribution from the pinned SEC response, and the observation record
+  states both the measured margin and its limits.
+- derivation acceptance: PASS. Focused replay passed **2/2**. The new test first
+  enforces 892,641 bytes and SHA-256 `154556cd…`, then derives **200** items,
+  oldest `16:13:52 EDT`, newest `17:31:22 EDT`, **4,650 seconds / 77.5
+  minutes**, 199 gaps, **11 seconds median**, **215 seconds maximum**, and hour
+  population `{16:133,17:67}`. It derives the complete gap histogram and
+  confirms the channel build/publication date.
+- criterion acceptance: PASS. For consecutive successful polls over a stable
+  fixed latest-N identity set, coverage holds if and only if the poll interval
+  is shorter than the time the window advances by N items. The named terms are
+  the **600-second poll interval** and the **4,650-second observed latest-200
+  span**, for a measured ratio of **7.75×**; the poll consumes **12.90%** of
+  the observed span.
+- evidence-limit acceptance: PASS. The record names one post-close
+  77.5-minute window on one Wednesday and expressly does not establish
+  peak-season density, deadline-day density, or density during hours neither
+  live sample covered.
+- idle-sample acceptance: PASS with a drafted value refuted. Both captures were
+  outside filing hours with identical bytes, hash, and `lastBuildDate`.
+  Executed timestamp subtraction measures **5h44m39.680936s**, not the
+  runbook's **7h28m**. A dated amendment records the author error. The unchanged
+  observable representation refutes the ten-minute statement as idle observable
+  behavior and, separately, fails to test window velocity because no filings
+  arrived.
+- regression acceptance: PASS. Warning-denied workspace tests passed **140**;
+  warning-denied net tests passed **31 ingest + 26 cored = 57**. Clippy and fmt
+  passed. The SEC identity control remained **200 kept / 0 dropped**.
+- golden-E2E delta: **0**; standalone golden remains byte-identical at
+  **11/11**.
+- boundary acceptance: PASS. `config/schedule.json` and production source are
+  unchanged; no scheduler ran, no publisher request occurred, and no protected
+  or pinned byte changed.
