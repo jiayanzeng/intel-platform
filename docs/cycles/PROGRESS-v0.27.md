@@ -155,3 +155,35 @@ Entries are append-only; corrections are new dated entries.
 - boundary acceptance: PASS. `config/schedule.json` and production source are
   unchanged; no scheduler ran, no publisher request occurred, and no protected
   or pinned byte changed.
+
+### 2026-07-30 · CADENCE-CRITERION — architectural reason corrected
+
+- owner: Codex
+- commit: f4f877164216e38b56dd31eb4242afd8a7014c12
+- result: PASS. A new dated architecture row records latest-window advance
+  time, rather than the ten-minute rebuild description, as the governing
+  cadence quantity. The configured and recorded value remains 600 seconds.
+- append-only correction acceptance: PASS. SHA-256 comparison proves the v0.26
+  cadence row is byte-identical before and after this task. The new v0.27 row
+  follows it and records **600 seconds against 4,650 seconds**, **7.75×**
+  span/poll margin, **12.90%** span consumed per poll, and the peak-season,
+  deadline-day, and uncovered-hour gaps.
+- number-decision acceptance: PASS. This one sample's positive margin does not
+  imply a value change, so no change is recommended or applied.
+- executable-record acceptance: PASS. The new scheduler test parses the v0.27
+  architecture row, resolves the committed SEC job through `load_schedule` and
+  `build_jobs`, and compares both values. Its planted 601-second row raises
+  `architecture SEC cadence 601 != scheduled 600`, proving the test is
+  non-vacuous.
+- shell acceptance: PASS. Focused scheduler tests passed **10/10** under both
+  interpreters. Complete constrained Python 3.11.4 and 3.12.13 lanes each
+  collected and passed **292**, failed zero, and skipped zero. The comparator
+  derived `collected=292`, `equivalent=true`, and `equivalent_passed=292`.
+- separation acceptance: PASS. SHA-256 comparison proves the v0.25 terms row is
+  byte-unchanged. The new row expressly says the cadence correction satisfies
+  neither the terms condition nor the coverage-detection objective.
+- golden-E2E delta: **0**; standalone golden remains byte-identical at
+  **11/11**.
+- boundary acceptance: PASS. `config/schedule.json` and `config/core.json` are
+  byte-unchanged; no production source changed, no scheduler ran, and no
+  publisher request occurred.
