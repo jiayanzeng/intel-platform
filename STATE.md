@@ -1,9 +1,9 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, COVERAGE-DETECTION, ADMISSION-LANGUAGE, and MULTI-ORIGIN are complete locally.** The current tree passes all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 46 controls**, clippy, fmt, ShellCheck, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **286** pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher origins have now been exercised sequentially in one bounded runtime: arXiv's HTTP 404 became source-local `RfcAllowAll`, SEC's real policy independently remained `Body(allow)` under `deny`, arXiv content timed out before a page committed, and SEC stored 200 documents. The 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, and terms-gate operator responsibility remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
+**As of:** 2026-07-30 · **Version:** v0.16.1 (core-shell) · **Status:** **v0.16.1 is published, v0.26 is closed under R-CLOSE, and v0.27 E0, WINDOW-MEASURE, CADENCE-CRITERION, COVERAGE-DETECTION, ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are complete.** The current tree passes all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 46 controls**, clippy, fmt, ShellCheck, standalone golden **11/11**, and the SEC identity control at **200 kept / 0 dropped**. The committed window test derives a **4,650-second / 77.5-minute** latest-200 span against the unchanged 600-second poll, an observed **7.75×** margin based on one post-close Wednesday window; peak-season, deadline-day, and uncovered-hour density remain unmeasured. Annotated tag object `ae593e882898b9c49d5e91e2d50b6ca1f02ac49b` targets closing commit `397d100ae425d5d059cef8a8ddb2ac13cfde52f5`, whose immediate parent is release commit `b9af84b8785bcd52c16ab0225d66386ecd872c4d`; remote `main` and the peeled tag both resolve to the closing commit. Post-push run **30535121730**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=291`, `equivalent=true`, and `equivalent_passed=291`; local passed **291 / skipped 0**, while hosted passed **290** plus one named `on_site` skip. The separate v0.26 evidence candidate remains `1cd88acd99704cc76c866331e505db446936e469` on neutral ref `refs/heads/codex/v0.26-evidence-1cd88ac`; authenticated closing-evidence run **30531390933**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; authenticated run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The release parent passed all **20** local jobs with **139** workspace tests, **56** net tests (**30** `intel-ingest` including replay + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 44 controls**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. Independent clean Python 3.11.4 and 3.12.13 lanes each collected and passed **291** with zero skips. All **301** current pins and both protected databases match; root export-check passed **99** derived / **7** required / **177** exported. Radius 16 is guarded by a two-sided 26-feature floor: the measured SEC corpus moved from 28 drops, including 20 cross-issuer false collapses, to 200 kept / 0 dropped, while golden still collapses its calibrated pair at Hamming 12. Two real publisher origins have now been exercised sequentially in one bounded runtime: arXiv's HTTP 404 became source-local `RfcAllowAll`, SEC's real policy independently remained `Body(allow)` under `deny`, arXiv content timed out before a page committed, and SEC stored 200 documents. The 600-second SEC schedule has never run. The earlier REPLAY requirement remains the fifth author-side rule with no satisfying assignment, Step 7's withdrawn chained-admission clause is the sixth, and the CADENCE retrieval remains a quarantined cycle-execution violation; retractions remain three. A4, editable L1, R3/R4, the active-runbook measured-value heuristic, T7, robots negative-cache Decision B, the FastAPI version-literal relocation, and terms-gate operator responsibility remain open or unchanged; L2 remains scheduled. This first descendant audit record is locally verified and remains hosted-unverified until the next publication, as required by the accepted cycle-ending rhythm.
 
 **Active v0.27 continuation:** CADENCE-CRITERION, COVERAGE-DETECTION,
-ADMISSION-LANGUAGE, and MULTI-ORIGIN are also complete locally.
+ADMISSION-LANGUAGE, MULTI-ORIGIN, and RE-MEASURE are also complete.
 Current constrained Python 3.11.4 and 3.12.13 lanes each collected and passed
 **293** with zero skips; their comparator derived `collected=293`,
 `equivalent=true`, and `equivalent_passed=293`. The architecture now records
@@ -237,6 +237,46 @@ Standalone golden remained byte-identical at **11/11**.
 databases, and production compliance, ingest, extract, view, and shell source
 are byte-unchanged. The archive was not admitted to protected evidence or
 golden.
+
+**v0.27 RE-MEASURE authenticates the neutral evidence candidate before any
+publication decision (authorized and measured 2026-07-30).** Exact candidate
+`f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` was pushed only to
+`refs/heads/codex/v0.27-evidence-f2b5f7a`. Remote `main`, the historical
+candidate refs, and the annotated `v0.16.1` tag remained unchanged. Hosted
+workflow-dispatch run **30545771070**, attempt **1**, executed that exact
+candidate/ref and passed all seven executable jobs: core, golden, lint, MSRV,
+net, shell 3.11, and shell 3.12. Report-only dependency drift skipped as
+designed.
+
+Fresh local Python 3.11.4 and 3.12.13 lanes each collected and passed **293**
+with zero skips. For each hosted lane, `tools/test_population.py` derived
+`{"collected":293,"equivalent":true,"equivalent_passed":293,"hosted":{"on_site_skipped":1,"passed":292,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":293,"skipped":0},"schema_version":1}`.
+The single hosted skip is named, carries the declared reason, and is marked
+`on_site`; no unnamed or unmarked skip was accepted.
+
+All seven receipts and seven paired Sigstore bundles are exact `pinned_files[]`
+with `supporting` grade and no `admission` key. Each bundle verified its paired
+receipt bytes, repository, CI workflow, candidate digest, source ref, and
+GitHub-hosted runner policy. The generated release-posture report is **34,995
+bytes**, SHA-256
+`67b0c7a5488293cba8bc38e410bd24c748af6f1598481a23a37eeb623ec8dc64`,
+grade `release`, with attestations required. It accepted all **7** observed
+runner identities, rejected **0**, found no matrix finding, and recorded **5
+deferred / 2 promoted / 0 implemented deferred subsystems**. These fifteen
+new pins move the manifest from **286** to **301**; both protected databases
+remain byte-unchanged. Manifest validation, `verify-artifacts`,
+`evidence-report`, and authenticated clean-subject re-derivation passed.
+
+No hosted publisher request occurred. The candidate workflow contains no
+publisher URL or publisher-directed ingest command. Complete hosted-log search
+found only two `usgaap.rss` occurrences, both local `PIN MATCH` output for the
+committed SEC observation; the broader `curl` search found only the rustup
+installer URL. A sandboxed `ci-local` rerun could not bind its loopback
+wire-test socket and was a non-result; the exact command passed all **20/20**
+jobs with its required local permissions. Hosted and standalone golden both
+remained **11/11**. The exact evidence directory and manifest pins are the
+only Step 7 evidence admissions; no production source, protected database,
+publisher configuration, schedule, or identity changed.
 
 ## v0.16.1 post-push verification
 

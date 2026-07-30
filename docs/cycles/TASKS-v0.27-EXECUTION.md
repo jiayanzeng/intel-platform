@@ -74,7 +74,9 @@ runs the 600-second clock, which has still never run.
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `tools/cycle_check.py` |
 | `allow` | `observations/**` |
+| `allow` | `evidence/ci-runs/30545771070-1/**` |
 | `allow` | `evidence/v0.27/deferred-audit/report.json` |
+| `allow` | `config/protected-artifacts.json` |
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `release_authority` | `Cargo.toml` |
@@ -91,7 +93,6 @@ runs the 600-second clock, which has still never run.
 | `forbid` | `shell/intel_shell/[a-z]*.py` |
 | `forbid` | `config/core.json` |
 | `forbid` | `config/subscriptions*.json` |
-| `forbid` | `config/protected-artifacts.json` |
 | `forbid` | `tools/evidence_artifacts.py` |
 | `forbid` | `fixtures/**` |
 | `forbid` | `run` |
@@ -144,6 +145,19 @@ changing SEC's result: arXiv's committed 404 is configured
 `robots_on_missing: allow`, while SEC's committed real policy is configured
 `robots_on_missing: deny`. Request counting and intervals are wire-integration
 corroboration for already-tested keying and per-host independence.
+
+### 2026-07-30 — Step 7 exact evidence scope and manifest correction
+
+Authenticated hosted run **30545771070**, attempt **1**, fixes the advance-
+notice placeholder to the exact path
+`evidence/ci-runs/30545771070-1/**`. Step 7's Gate expressly permits
+`config/protected-artifacts.json` for admission only, while the activation
+table incorrectly left that path under `forbid`; the table now places it under
+`allow` for this one required pin-registration change. No validator,
+production source, protected database, publisher permission, or other
+manifest use is admitted by this correction. The exact evidence directory,
+manifest pins, and this dated amendment land in the same implementation
+commit, as the activation notice requires.
 
 ---
 
@@ -757,6 +771,51 @@ tests, **62** net tests (**32 ingest + 30 cored**), invariant-scan **12 rules /
 Python lanes collected and passed **293** with zero skips, and standalone
 golden remained byte-identical at **11/11**.
 
+### RE-MEASURE execution record — 2026-07-30
+
+The authorized push moved only neutral ref
+`refs/heads/codex/v0.27-evidence-f2b5f7a` to exact evidence candidate
+`f2b5f7a9ded1b21f3815752cc9e310bd29c1478e`. Remote `main`, the historical
+candidate refs, and the annotated `v0.16.1` tag did not move. Hosted CI run
+**30545771070**, attempt **1**, used `workflow_dispatch` at that exact commit
+and ref. Its seven executable jobs — core, golden, lint, MSRV, net, shell
+3.11, and shell 3.12 — all passed; report-only dependency drift skipped as
+designed.
+
+Fresh local Python 3.11 and 3.12 lanes each collected and passed **293** with
+zero skips. For each hosted lane, `tools/test_population.py` derived:
+`{"collected":293,"equivalent":true,"equivalent_passed":293,"hosted":{"on_site_skipped":1,"passed":292,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":293,"skipped":0},"schema_version":1}`.
+The named hosted skip carries the declared reason and the `on_site` marker; no
+unnamed or unmarked skip was accepted.
+
+The seven exact receipts and seven paired Sigstore bundles are registered
+under `pinned_files[]` as `supporting`, with no `admission` key. Every bundle
+verified its paired receipt bytes, repository
+`jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest, neutral
+source ref, and GitHub-hosted runner policy. Together with the release-posture
+report they move the manifest from **286** to **301** pins; both protected
+SQLite artifacts remain unchanged.
+
+The release-posture report is **34,995 bytes**, SHA-256
+`67b0c7a5488293cba8bc38e410bd24c748af6f1598481a23a37eeb623ec8dc64`,
+grade `release`, and requires attestations. It observed and accepted all
+**7** runner identities, rejected **0**, found an empty matrix-findings set,
+and recorded **5 deferred / 2 promoted / 0 implemented deferred
+subsystems**. Manifest validation, `verify-artifacts`, `evidence-report`, and
+authenticated clean-subject re-derivation all passed.
+
+No hosted publisher request occurred. The candidate workflow bytes contain no
+publisher URL or publisher-directed ingest command; the complete hosted log's
+only two `usgaap.rss` matches are local `PIN MATCH` output for the committed
+SEC observation. A broader `curl` search found only the rustup installer URL.
+The first sandboxed `ci-local` rerun could not bind its loopback wire-test
+socket and was a non-result; the exact command then passed all **20/20** jobs
+with its required local permissions. Standalone golden remained byte-identical
+at **11/11**. The dated exact-scope amendment, the exact evidence directory,
+and the admission-only manifest pin change land in this same implementation
+commit.
+
 ---
 
 ## Step 2 · WINDOW-MEASURE — Establish the margin that the cadence rests on 🤖
@@ -1116,7 +1175,7 @@ with its determination. Worktree clean. **🧑 One operator decision: publicatio
 - [x] **MULTI-ORIGIN** — authorized and measured from a plaintext-observable
   construction with per-origin and cross-origin intervals, or deleted with its
   determination
-- [ ] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; receipts
+- [x] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; receipts
   pinned as `supporting` with **no `admission` key**; release-posture report
   recorded; no publisher request by any hosted job; scope amendment dated
 - [ ] **R-CLOSE** — **G7 decided and recorded as a reusable criterion**; coverage
