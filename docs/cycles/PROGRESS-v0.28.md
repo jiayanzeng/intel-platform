@@ -175,3 +175,38 @@ Entries are append-only; corrections are new dated entries.
   model-server session, closed document, production runtime source, dependency,
   schema, protected artifact, golden input, public route, serialized value
   domain, tag, or branch ref changed.
+
+### 2026-07-30 · TRIGGER-FLOOR — population and carry-forward enforced
+
+- owner: Codex
+- commit: 1dde546029fbaf4f1b84c7628f07e06587d99316
+- result: PASS. The active call site binds both governed-row counts, rejects
+  either table at zero, and checks immediately prior deferred subjects against
+  the active table or a valid ISO-dated **Deferred completions** table. The
+  prior runbook is selected by version from `execution_runbooks()` and is not
+  hardcoded.
+- population acceptance: PASS by derivation and execution. The focused test
+  derives expected counts from both live tables rather than a numeric literal;
+  the real result is **2 architecture / 15 deferred**. A planted all-`none`
+  construction made `cycle-check` name and reject both zero-population tables.
+- carry-forward acceptance: PASS. The real v0.27 → v0.28 comparison measured
+  **14 → 15**, zero dropped, and one added subject:
+  “Release-classification criteria with no executed control.” This corrects the
+  draft's transition wording. The two named drops, “First live SEC RSS harvest”
+  and “Observation-byte manifest coverage,” occurred in v0.26 → v0.27, whose
+  populations measured **14 → 14** with two additions. A fixture using those
+  exact subject names proves both are expressible through dated completions
+  without changing historical files.
+- planted-control acceptance: PASS by execution. R12 control 18 disables the
+  carry-forward rejection; the registered self-test then reports
+  `silently-dropped-trigger-subject` at the real control site.
+- lifecycle/invariant acceptance: PASS. Focused lifecycle tests passed
+  **50/50**; real `cycle-check` passed with both current tables and the actual
+  v0.27 predecessor; `invariant-scan` derived **12/12 rules / 49 controls**,
+  including R12 **21/21**.
+- golden-E2E delta: **0**. The permission-complete `./run golden` execution
+  passed **11/11** byte-identically.
+- publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
+  model-server session, closed runbook, production runtime source, dependency,
+  schema, protected artifact, golden input, public route, serialized value
+  domain, tag, or branch ref changed.
