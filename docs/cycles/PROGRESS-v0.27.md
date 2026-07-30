@@ -290,3 +290,78 @@ Entries are append-only; corrections are new dated entries.
   `crates/ingest/src/lib.rs` and `crates/ingest/src/rss.rs` production
   permissions were unused; no compliance, extract, view, or shell production
   source changed. No scheduler ran and no publisher request occurred.
+
+### 2026-07-30 · MULTI-ORIGIN — mixed robots dispositions isolated live
+
+- owner: Codex
+- commit: 641b8021014e2599012a1befcf1d6f0961bce91c
+- result: PASS with source-level limitations recorded. One authorized,
+  bounded, plaintext-observable runtime exercised arXiv then SEC in the same
+  process-scoped robots cache. arXiv's permissive missing-policy did not change
+  SEC's independently evaluated restrictive-policy result. arXiv content timed
+  out before a page committed; SEC returned and stored 200 documents.
+- decision acceptance: PASS. The operator authorized Step 6 on 2026-07-30
+  after correcting its rationale: unit tests already prove cache keying/reuse
+  and per-host independence, so the first live measurement unique to this
+  configuration is coexistence of opposing robots dispositions.
+- paging-bound acceptance: PASS. Exact focused execution proved
+  `max_pages: 1` permits at most one OAI-PMH content request and checkpoints a
+  non-terminal token plus `pending_high_water` without advancing completed
+  `high_water`; the cursor lifecycle test also passed. An initial incorrectly
+  filtered zero-test invocation was classified as a vacuous non-result. The
+  live timeout occurred before parsing, so no cursor or high-water state was
+  written.
+- protected-target acceptance: PASS. Manifest validation and
+  `verify-artifacts` passed before and after with **286** pins and both
+  protected databases exact. A deliberate `data/core.db` target exited **2**
+  before network. The live archive
+  `data/live-20260730T125247Z-99839.db` remained ignored and unadmitted; it
+  measured **253,952 bytes**, integrity `ok`, **200** SEC documents, **200**
+  distinct non-null canonical ids, zero cursor rows, and SHA-256
+  `47f64b7ebe690b0987b17af404b384cad2abdea7eb0e4b83e9dc54534a8d422c`.
+- observer acceptance: PASS. A disposable out-of-tree net wrapper, SHA-256
+  `72783cb5e1b6848d1675bd3bcf608872676781bf39520b394f9af027d91baa33`,
+  wrote plaintext and refused duplicate or fifth requests before `send`; its
+  two-source config SHA-256 was
+  `7646cff12d6c9df9e9727cdae94bb0957c3e168fcaa2ead1f7893b66138f26c0`.
+  A planted pre-existing request marker produced an actual pre-network refusal
+  with no response file, proving the quota control can fail.
+- request-bound acceptance: PASS. Exactly **4** application-level request
+  starts crossed `send`, **2 per origin**: one robots and one content attempt.
+  There was no redirect, retry, second OAI-PMH page, fifth request, or
+  scheduler. Three responses were plaintext-observed; publisher receipt is not
+  claimed for the timed-out arXiv content attempt.
+- disposition acceptance: PASS. Derived origin
+  `https://oaipmh.arxiv.org` returned HTTP 404 / 11,083 bytes / SHA-256
+  `fe5a8ce88b89f96db55e8d9a7eb3d978f3d364bf31d48c4880422511e9035ab2`
+  and used `allow` as `RfcAllowAll`. Derived origin
+  `https://www.sec.gov` returned HTTP 200 / 2,622 bytes / SHA-256
+  `72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f`
+  and independently produced `Body(allow)` under `deny` after arXiv occupied
+  the cache. Both bodies were byte-identical to committed captures.
+- interval acceptance: PASS. Request-start intervals measured **1.827372 s**
+  within arXiv, **60.004385 s** from arXiv content to SEC robots,
+  **1.313344 s** within SEC, and **61.831757 s** between robots requests.
+  The sequential timeout prevented a sub-floor cross-origin sample; such a
+  shorter interval would be expected and correct for independent host clocks.
+  The three focused cache/limiter tests each passed **1/1**.
+- response acceptance: PASS as an honest partial corroboration. `/ingest`
+  returned **200 fetched / 200 new**. ArXiv reported `ok:false`, zero
+  documents, `not_applicable_paged`, and the timeout; SEC reported `ok:true`,
+  200 documents, and `first_window`. No successful live arXiv page/cursor or
+  SEC `overlap` is claimed, and the authorization was not expanded.
+- non-exercise acceptance: PASS. T7 did not fire and is not nearer its trigger
+  because the sources were sequential, not concurrent harvesters. A successful
+  live arXiv checkpoint, a sub-floor cross-origin interval, and the 600-second
+  schedule remain unexercised.
+- regression acceptance: PASS. Full `ci-local` passed **20/20** jobs with
+  warning-denied **145** workspace and **62** net tests (**32 ingest + 30
+  cored**), locked Rust 1.78, invariant-scan **12 rules / 46 controls**,
+  clippy, fmt, and ShellCheck. Python 3.11.4 and 3.12.13 each collected and
+  passed **293** with zero skips.
+- golden-E2E delta: **0**; standalone golden remains byte-identical at
+  **11/11**.
+- boundary acceptance: PASS. `config/core.json`, `run`,
+  `config/protected-artifacts.json`, both protected databases, and production
+  compliance, ingest, extract, view, and shell source are byte-unchanged. The
+  archive was not admitted to protected evidence or golden.
