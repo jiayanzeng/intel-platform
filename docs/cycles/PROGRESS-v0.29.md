@@ -318,3 +318,39 @@ Entries are append-only; corrections are new dated entries.
   dependency, schema, protected or pinned byte, publisher configuration,
   scheduler state, or ref changed. No publisher request or scheduler run
   occurred.
+
+### 2026-07-31 · MARGIN-TRUTH — current governed margins and State boundary
+
+- owner: Codex
+- commit: 28aa96a48ae20126065921458a8a1d9b93f73e36
+- result: PASS. `AGENTS.md §5` now requires every trigger-bearing governed row
+  to carry the latest measurement actually available when a cycle closes,
+  symmetrically forbidding both retention of an earlier value and invention of
+  a later one. Earlier measurements remain in their dated records and the live
+  row forward-corrects explicitly.
+- export-margin acceptance: PASS. v0.28's Step 5 row truthfully measured
+  **2,485,846 bytes**, **514,154 bytes / 20.68%** headroom on its named tree;
+  its later closing implementation and delivered reviewer exports measured
+  **2,526,556** and **2,530,129**. The v0.29 live row now names the completed
+  MARGIN-TRUTH implementation tree and reports the exact latest measurement:
+  **99 derived / 7 required / 152 exported**, **2,471,012 bytes**, and
+  **528,988 bytes / 17.63%** headroom under the 3,000,000-byte ceiling.
+- other-governed-margin acceptance: PASS. The unchanged manifest's latest
+  complete result remains E0 at **316 pins / 182,774 bytes**, leaving
+  **865,802 bytes** to 1 MiB; its **0.11 s / 0.10 s** runs leave
+  **0.89 s / 0.90 s** to the timing trigger. The warning row carries the later
+  permission-complete BOUNDARY-BIND population of **306 collected / 306 passed
+  / 0 skipped** and the same one governed warning.
+- State-boundary acceptance: PASS. The reasoned next boundary is v0.28's
+  measured pre-archive State size of **453,741 bytes**, not a line count.
+  Current State measures **241,866 bytes**, leaving **211,875 bytes / 9.41
+  cycles** at E0's normalized **22,525 bytes/cycle** rate. The independent
+  export ceiling remains an equal trigger. No `docs/state-archive/**` byte
+  moved or changed.
+- contract/check acceptance: PASS. `cycle-check` passed; `invariant-scan`
+  passed **12/12 rules / 51 controls**. `git diff --check` passed.
+- golden-E2E delta: **0** — standalone **11/11**, byte-identical.
+- surface/protected/publisher acceptance: PASS. No production source, route,
+  response shape, `/v1/*` value domain, dependency, schema, protected or
+  pinned byte, publisher configuration, scheduler state, or ref changed. No
+  publisher request or scheduler run occurred.
