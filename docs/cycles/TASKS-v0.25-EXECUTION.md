@@ -16,13 +16,20 @@ Declared scope — crate-wide forbids corrected to source-tree forbids — 2026-
   done condition changed.
 - **2026-07-30 — G5 measured correction.** E0 confirmed that `./run golden`
   starts the core with `CORE_CONFIG=config/core.json`, but refuted the draft's
-  implication that any source addition therefore changes golden: the harness
-  explicitly ingests and views only `science` and `technology`, while the
-  proposed source is confined to `finance`. Step 1 item 6 and the G5 hypothesis
-  are therefore narrowed to the condition golden actually executes. The
-  existing 11/11 definition of done and Step 5's requirement to match E0's
-  determination are correct; changing either would manufacture drift rather
-  than measure it.
+  author-side implication that any source addition therefore changes golden:
+  the harness explicitly ingests and views only `science` and `technology`,
+  while the proposed source is confined to `finance`. This was a runbook error,
+  not an implementation defect. Step 1 item 6 and the G5 hypothesis are
+  therefore narrowed to the condition golden actually executes. The existing
+  11/11 definition of done and Step 5's requirement to match E0's determination
+  are correct; changing either would manufacture drift rather than measure it.
+- **2026-07-30 — Step 2 gate-scope correction.** Before implementation, the
+  Step 2 gate was found narrower than its acceptance criteria: the task
+  requires the public-value-domain criterion to be written into `AGENTS.md`,
+  but the gate omitted that path. The gate now names `AGENTS.md`. The declared
+  scope already allowed it, so this correction adds no repository permission
+  and changes no objective, implementation condition, acceptance criterion, or
+  done condition.
 
 v0.24 closed and v0.15.8 published. Release parent `696c0863…`, closing commit
 `64002678…`, annotated object `dc5abe06…`, hosted run `30475988050` green on all
@@ -462,6 +469,89 @@ objects above and every pin were re-verified. `STATE.md`, `config/core.json`,
 the protected corpus, and refs remained untouched. No publisher request of any
 kind was made by E0.
 
+### LICENSE-SEMANTICS measured result — 2026-07-30
+
+**Decision and rights claim.** The operator selected `extend/minor`.
+`PublisherPermitted` means the publisher expressly permits reuse under its own
+stated terms and makes no claim about underlying copyright. `PublicDomain`
+remains excluded because the SEC evidence does not establish that
+issuer-authored filings are government works. `CcBy` would invent a Creative
+Commons grant, `ClientOwned` would falsely assert subscriber ownership, and
+`IndexOnly` would record a restriction opposite to the publisher's measured
+reuse permission. The selected variant fills a missing ground in the existing
+licensing taxonomy rather than adding a new axis.
+
+**Version and criterion.** The operator selected minor, making the release
+identity **v0.16.0** independently of whether later terms or feed-shape gates
+defer admission. The exact operator-supplied symmetric public-value-domain
+criterion is now in `AGENTS.md`; `ARCHITECTURE.md §8` reconciles it. Adding,
+removing, or redefining a value of a field already serialized in a `/v1/*`
+response takes a minor release even when route, field name, field type, and body
+shape do not move, because exhaustive value handling is part of the consumer's
+contract. Patch is available only when every public field's value set is
+unchanged.
+
+The criterion is prose adjudicated at R-CLOSE. Step 2 step 5 produced **no new
+invariant rule** because the registered scanners cannot observe that semantic
+release-classification judgment. Counts remain exactly **12 rules / 39
+controls** here, in `STATE.md`, and in the Step 2 progress entry; no R12
+mutation was added.
+
+**Implementation and existing behavior.** `PublisherPermitted` is
+redistributable, and `as_str()` returns exactly `"PublisherPermitted"`;
+`parse()` accepts that same spelling. `redistributable()` is now an exhaustive
+match, so a future variant cannot silently inherit a false outcome. The focused
+core control enumerates all five values and proves every spelling, parse result,
+redistribution result, and attestation result: the existing three
+redistributable values remain true and unblocked, `IndexOnly` remains false and
+refused, and the new value is true and unblocked.
+
+**Persistence and compatibility.** Inspection confirmed that SQLite's
+`license TEXT NOT NULL` has no `CHECK`, writes already use `as_str()`, and
+document/search hydration already uses `License::parse`. No production mapping
+or schema edit was required; `crates/store/src/sqlite.rs` is byte-unchanged and
+its conditional scope permission is recorded as unused. A new integration test
+under `crates/store/tests/**` writes, reads, and searches
+`PublisherPermitted`, confirms the raw stored text, then plants
+`FutureLicense`. The unchanged fallback reads that unknown value as
+`IndexOnly` and suppresses its search snippet.
+
+The opposite boundary was exercised through the actual offline `cored` entry
+point. A temporary config using `PublisherPermitted` reached successful server
+startup. The same config with `FutureLicense` exited 101 at deserialization,
+naming the five accepted variants. Config unknowns are therefore loud; stored
+unknowns are silent and safely restrictive. This means an older binary reading
+a newer archive can silently reclassify publisher-permitted documents as
+`IndexOnly`, and the property is now recorded in both directions.
+
+**Release-name collision.** Live remote inspection measured the pre-existing
+`refs/heads/candidate/v0.16.0` at
+`3481e4ba85d65c927b7d0fc3a430bc04fb094394` and no `v0.16.0` tag. The branch
+predates this release and is the v0.15.1 evidence candidate. Seven immutable
+Sigstore-bundle provenance entries and the pinned v0.15.1 deferred-audit report
+preserve that source ref across eight evidence subjects. It was not renamed,
+deleted, or moved; Step 7 must state explicitly that it does not belong to this
+release.
+
+**Deferred release documentation and admission independence.** `README.md`'s
+four-value config-schema enumeration became stale when the variant landed. It
+is a release authority outside this step's gate and remains assigned to Step 7
+step 10. `config/core.json` is unchanged, so zero configured sources currently
+produce `PublisherPermitted` and no `/v1/*` response can carry it. If Step 3 or
+Step 4 defers admission, that is the close-time fact rather than a shortfall;
+the enum and minor release still ship.
+
+**Acceptance matrix.** The complete `./run ci-local` passed all **20** jobs:
+workspace **135**, net **55** (**29** ingest + **26** cored), warning-denied
+current and locked Rust 1.78 lanes, clean clippy/fmt/ShellCheck, shell Python
+3.11 **283 collected / 283 passed / 0 skipped**, `invariant-scan` **12/12
+rules / 39 controls**, all **251** pins, protected databases **2/2**, and
+embedded golden **11/11**. Independent Python 3.12 passed **283 collected /
+283 passed / 0 skipped** with the same accepted third-party warning. Mandatory
+standalone golden passed **11/11**, delta **0**. No dependency, lockfile,
+configured source, shell source, schema, protected artifact, publisher request,
+feed request, or ref changed.
+
 ---
 
 ## Step 2 · LICENSE-SEMANTICS (G1, G4) — Say only what the evidence supports 🧑🤖
@@ -471,9 +561,9 @@ decision implies.
 
 **Gate.** 🧑 **One operator decision, at step 1.** Scope is
 `crates/core/src/lib.rs` and `crates/store/src/sqlite.rs` **only if the decision
-requires them**, their tests, `ARCHITECTURE.md`, and status records. **Blocked on
-E0 confirming G1.** No ingest, compliance, shell source, `config/core.json`,
-schema-breaking, or protected-database changes.
+requires them**, their tests, `AGENTS.md`, `ARCHITECTURE.md`, and status
+records. **Blocked on E0 confirming G1.** No ingest, compliance, shell source,
+`config/core.json`, schema-breaking, or protected-database changes.
 
 **Steps.**
 
@@ -742,7 +832,7 @@ publication.**
   "unclassified" cited; G3's mandatory fields enumerated with no feed request;
   G4's response fields and the rule quoted; **G5 settled and the definition of
   done amended in the same commit if required**; G6 answered structurally
-- [ ] **LICENSE-SEMANTICS** — one option chosen with its rights claim;
+- [x] **LICENSE-SEMANTICS** — one option chosen with its rights claim;
   `PublicDomain` excluded with reason; version decided with a criterion written
   into `AGENTS.md`; existing gating proven unchanged if extended;
   `config/core.json` untouched

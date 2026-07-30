@@ -328,6 +328,8 @@ figure transcribed from a log.
    contain its own commit hash: changing commit contents changes the hash, so
    that proposed self-reference cannot be true.
 
+**Public value-domain change (2026-07-30).** A release that adds a value to, removes a value from, or redefines a value in the domain of any field already serialized in a `/v1/*` response body takes a **minor** version, even when no route, field name, field type, or body shape moves. Patch is available only when the set of values every public field can take is unchanged. A consumer's exhaustive handling of a field's values is part of the contract it was given. Stated symmetrically so a later contraction is not argued again. This criterion is prose adjudicated at R-CLOSE; no executed control enforces it.
+
 ### Cycle-ending hosted-verification rhythm — accepted 2026-07-29
 
 The operator accepts that the final append-only audit record of each cycle is

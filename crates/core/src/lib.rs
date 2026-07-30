@@ -62,16 +62,24 @@ pub enum License {
     PublicDomain,
     CcBy,
     ClientOwned,
+    /// The publisher expressly permits reuse under its own stated terms.
+    ///
+    /// This names the ground of the permission without asserting that the
+    /// underlying work is public domain, CC-licensed, or client-owned.
+    PublisherPermitted,
     /// May index and analyze; must not resell the raw text.
     IndexOnly,
 }
 
 impl License {
     pub fn redistributable(self) -> bool {
-        matches!(
-            self,
-            License::PublicDomain | License::CcBy | License::ClientOwned
-        )
+        match self {
+            License::PublicDomain
+            | License::CcBy
+            | License::ClientOwned
+            | License::PublisherPermitted => true,
+            License::IndexOnly => false,
+        }
     }
 
     pub fn as_str(self) -> &'static str {
@@ -79,6 +87,7 @@ impl License {
             License::PublicDomain => "PublicDomain",
             License::CcBy => "CcBy",
             License::ClientOwned => "ClientOwned",
+            License::PublisherPermitted => "PublisherPermitted",
             License::IndexOnly => "IndexOnly",
         }
     }
@@ -88,6 +97,7 @@ impl License {
             "PublicDomain" => License::PublicDomain,
             "CcBy" => License::CcBy,
             "ClientOwned" => License::ClientOwned,
+            "PublisherPermitted" => License::PublisherPermitted,
             "IndexOnly" => License::IndexOnly,
             _ => return None,
         })
@@ -454,6 +464,44 @@ mod tests {
     }
 
     const SOURCE_SENTENCE: &str = "The newly measured sparse routing system coordinates many specialized experts while preserving stable token assignments across long analytical workloads.";
+
+    #[test]
+    fn every_license_mapping_and_gate_outcome_is_explicit() {
+        let cases = [
+            (License::PublicDomain, "PublicDomain", true, false),
+            (License::CcBy, "CcBy", true, false),
+            (License::ClientOwned, "ClientOwned", true, false),
+            (
+                License::PublisherPermitted,
+                "PublisherPermitted",
+                true,
+                false,
+            ),
+            (License::IndexOnly, "IndexOnly", false, true),
+        ];
+
+        for (license, spelling, redistributable, refused) in cases {
+            assert_eq!(license.as_str(), spelling);
+            assert_eq!(License::parse(spelling), Some(license));
+            assert_eq!(license.redistributable(), redistributable);
+
+            let document = attestation_document(spelling, license, SOURCE_SENTENCE);
+            let answer = format!("The source says: {SOURCE_SENTENCE}");
+            let result = attest_answer(&answer, &[&document]);
+            assert_eq!(
+                result.clean_answer == ATTEST_REFUSAL,
+                refused,
+                "{spelling} attestation outcome"
+            );
+            assert_eq!(
+                result.violations.is_empty(),
+                !refused,
+                "{spelling} violation set"
+            );
+        }
+
+        assert_eq!(License::parse("UnknownLicense"), None);
+    }
 
     #[test]
     fn index_only_sentence_is_refused() {

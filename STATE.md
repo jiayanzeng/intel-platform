@@ -1,6 +1,83 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell) · **Status:** **v0.24 is closed and v0.15.8 is published under R-CLOSE.** Remote `main` and the peeled v0.15.8 tag resolve to closing commit `64002678672a601804e5f67886c73fffb4d212c8`; annotated tag object `dc5abe0690e77cef671896102382427721d97321` targets that closing tree, whose first parent is release commit `696c0863ea684d590970902bcbbd13a7a3ccb610`. Published-head run `30475988050` attempt **1** passed all seven executable jobs. Fresh comparator executions derived equivalent populations for both Python lanes: local collected **283**, passed **283**, and skipped **0**; hosted collected **283**, passed **282**, and skipped the one named `on_site` test. The separate authenticated v0.24 evidence candidate is `a73c042068a367aea22e63e28dfd2f754b65ef9c`; run `30472740314` attempt **1** accepted **7** signed identities, rejected **0**, required attestations, and found the complete job/matrix set. The exact release parent passed all **20** local jobs with **133** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls** including R12 control **16**, embedded golden **11 checks**, and clean Rust, clippy, fmt, and ShellCheck gates. All **251** protected pins and both protected databases match. SEC EDGAR's reviewed US GAAP RSS path is conditionally admissible only for a separate v0.25 operator decision; no source was added. The protected corpus and three retractions remain unchanged. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.15.8 (core-shell; v0.16.0 selected, not yet released) · **Status:** **v0.25 LICENSE-SEMANTICS is complete; TERMS-GATE awaits its separate operator determination.** The operator selected `PublisherPermitted` and a minor release because the new value expands a public `/v1/*` field's domain. No source is configured with the value, and `config/core.json` remains unchanged. The current implementation passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, Python 3.11 and 3.12 each at **283 collected / 283 passed / 0 skipped**, embedded and standalone golden **11/11**, and clean rustc, clippy, fmt, and ShellCheck gates. All **251** protected pins and both protected databases match. Published v0.15.8 release commit `696c0863ea684d590970902bcbbd13a7a3ccb610` remains remote `main`; the pre-existing `candidate/v0.16.0` still resolves to v0.15.1 evidence candidate `3481e4ba85d65c927b7d0fc3a430bc04fb094394`, and no v0.16.0 tag exists. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and the one-real-publisher product limitation remain open; L2 remains scheduled.
+
+**v0.25 LICENSE-SEMANTICS adds the missing rights ground and selects v0.16.0
+(operator decision and measurement 2026-07-30).**
+
+The operator chose `extend/minor`. `PublisherPermitted` means that the publisher
+expressly permits reuse under its own stated terms; it asserts nothing about
+underlying copyright. `PublicDomain` remains excluded because the SEC evidence
+does not establish that issuer-authored filings are government works. `CcBy`
+would invent a Creative Commons grant, `ClientOwned` would falsely assert
+subscriber ownership, and `IndexOnly` would assert the opposite operational
+restriction from the publisher's measured reuse permission.
+
+`PublisherPermitted` serializes and persists as exactly
+`"PublisherPermitted"`. `redistributable()` is now an exhaustive match:
+`PublicDomain`, `CcBy`, `ClientOwned`, and `PublisherPermitted` are true, while
+`IndexOnly` is false. The compiler will therefore require an explicit decision
+when a later enum variant is added. The focused core control exercised every
+variant's spelling, parse result, redistribution result, and `/attest` outcome;
+only `IndexOnly` produced a refusal and violation.
+
+SQLite required no production edit and no schema change. The existing
+`license TEXT NOT NULL` column has no `CHECK`; writes already use `as_str()`,
+and both document hydration and search already use `License::parse`. A new
+integration control wrote and reopened `PublisherPermitted`, observed the exact
+stored text, and returned a redistributable search snippet. It then planted
+`FutureLicense` directly in the temporary archive; the unchanged older-reader
+fallback reclassified it as `IndexOnly` and suppressed the snippet. The
+conditional permission to edit `crates/store/src/sqlite.rs` was therefore
+unused.
+
+Unknown values are intentionally asymmetric and both directions were executed.
+At the config boundary, a temporary configuration using
+`PublisherPermitted` started the actual offline `cored` entry point; replacing
+it with `FutureLicense` exited **101** with a hard Serde error naming the five
+accepted variants. At the stored-row boundary, the integration control above
+showed the silent `License::parse(...).unwrap_or(License::IndexOnly)` fallback.
+Both fail safely, but an older binary reading a newer archive can silently
+reclassify publisher-permitted documents as `IndexOnly`; this compatibility
+behavior is now explicit rather than inferred.
+
+The operator's exact dated public-value-domain criterion is in `AGENTS.md`, and
+`ARCHITECTURE.md §8` now reconciles the same rule: adding, removing, or
+redefining any value of a field already serialized in a `/v1/*` response
+requires a minor release even when route, field name, field type, and body shape
+do not move. Patch is available only when every public field's value set is
+unchanged. The criterion is prose adjudicated at R-CLOSE. No invariant rule was
+added because no registered rule can observe that release-classification
+judgment; counts remain exactly **12 rules / 39 controls** in the runbook,
+progress record, and this state record.
+
+Minor classification selects **v0.16.0** even if later terms or feed-shape
+determinations defer source admission. In that outcome, closure will state that
+the value exists, zero configured sources produce it, and no `/v1/*` response
+can carry it as of the closing date. `README.md`'s four-value config-schema
+block is now known stale and is deliberately assigned to Step 7 step 10, whose
+gate contains that release authority.
+
+Live remote inspection measured the pre-existing
+`refs/heads/candidate/v0.16.0` at
+`3481e4ba85d65c927b7d0fc3a430bc04fb094394` and found no `v0.16.0` tag. That
+branch predates this release identity and belongs to the v0.15.1 evidence run.
+Seven immutable Sigstore-bundle provenance entries and the pinned v0.15.1
+deferred-audit report preserve that source ref across eight evidence subjects.
+The ref was not renamed, deleted, or moved. Step 7 must explicitly disambiguate
+it from this release.
+
+The author-side G5 implication was also corrected as a runbook error, not an
+implementation defect: golden reads `config/core.json` but explicitly selects
+only `science` and `technology`, so a future `finance` source cannot enter that
+corpus. The complete matrix passed **20/20** with workspace **135**, net **55**,
+both warning-denied Rust lanes, clean clippy/fmt/ShellCheck, shell Python 3.11
+**283 / 283 / 0 skipped**, `invariant-scan` **12/12 / 39 controls**, all
+**251** pins, and embedded golden **11/11**. Independent Python 3.12 passed
+**283 / 283 / 0 skipped**, and mandatory standalone golden passed **11/11**,
+delta **0**. No configured source, publisher request, feed request, dependency,
+lockfile, protected database, protected pin, schema, shell source, or ref
+changed.
 
 **v0.24 R-CLOSE selects v0.15.8 and closes on authenticated candidate evidence
 (operator decision and measurement 2026-07-30).** Release disposition: release
@@ -4316,6 +4393,32 @@ profile is admitted. Its forced-command `authorized_keys` wrapper must be
 tested from both directions so the server, rather than the Mac controller,
 enforces the lifecycle set. This is the operations analogue of A4; it neither
 narrows nor closes A4's core-shell trust boundary.
+
+### 6i. Why publisher-granted reuse is `PublisherPermitted` and a minor release (v0.25/LICENSE-SEMANTICS)
+
+**Decision: extend/minor, selected by the operator on 2026-07-30.** The
+licensing enum names the ground for redistribution: public domain, a CC grant,
+client ownership, or a publisher's own express permission. SEC's measured
+statement supports the fourth ground without establishing any of the first
+three. `IndexOnly` was rejected as a supposedly conservative default because it
+would record a restriction opposite to the measured permission and would
+forfeit the only prospective real-content exercise of the redistributable
+branch.
+
+`PublisherPermitted` is redistributable and makes no underlying-copyright
+claim. Its config, public, and SQLite spelling is exactly the Rust identifier.
+The core control enumerates all five variants and proves the existing four
+spellings, redistribution outcomes, and attestation outcomes did not move.
+SQLite's existing unconstrained text mapping required no production edit; its
+integration control proves both the new round trip and the safe
+unknown-row-to-`IndexOnly` fallback.
+
+The release is minor because adding a value to an existing public field changes
+the contract seen by exhaustive consumers even when the route and body shape
+stay fixed. The symmetric dated rule now lives in `AGENTS.md §5` and is
+reconciled in `ARCHITECTURE.md §8`. It is intentionally prose adjudicated at
+R-CLOSE: no source scan can decide whether a semantic value was added, removed,
+or redefined, so no new invariant rule or vacuous planted control was created.
 
 ## 7. Run reference
 

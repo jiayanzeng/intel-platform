@@ -369,6 +369,13 @@ the measured diff is classified:
 - operations and evidence-only changes may also use a patch release;
 - a cycle with no shipped change may close with no release.
 
+The dated public-value-domain criterion in `AGENTS.md §5` also classifies adding,
+removing, or redefining any value a field already serialized in a `/v1/*`
+response can take as a minor release. A consumer's exhaustive handling of that
+set is part of the public contract even when route, field name, field type, and
+body shape stay fixed. This is a prose R-CLOSE adjudication, not an executable
+invariant rule.
+
 For an actual release, the Rust package, Python package, public FastAPI literal,
 `STATE.md` header, and newest `CHANGELOG.md` release must agree on the chosen
 version. A no-release close instead names the intentionally unreleased commits
