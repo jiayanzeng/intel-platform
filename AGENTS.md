@@ -282,11 +282,13 @@ Beginning with v0.23, trigger freshness is executable over exactly two live
 tables: `ARCHITECTURE.md`'s **Dated operational-residual dispositions** and the
 active runbook's **Deferred means deferred** table. Only rows whose trigger cell
 is neither empty nor `none` are governed. Each such row must carry a valid
-ISO-date in its measured-observation cell or that column's header. A dated
-negative observation is sufficient for an event-shaped condition (for example,
-no operator server session occurred); the checker verifies the presence and
-date of the measurement, not the truth of an external event. This rule is
-v0.23-forward and never retrofits closed historical runbooks.
+ISO-date in its own measured-observation cell. Beginning with v0.28, that cell
+must also name the literal active cycle resolved from the active declaration.
+A dated negative observation is sufficient for an event-shaped condition (for
+example, no operator server session occurred); the checker verifies the
+presence, date, and active-cycle identity of the measurement, not the truth of
+an external event. Date freshness is v0.23-forward, cycle identity is
+v0.28-forward, and neither retrofits closed historical runbooks.
 
 Every active runbook's **Deferred means deferred** table must assign each
 non-`none` action to a named, existing `Step N`; an asserted action without its

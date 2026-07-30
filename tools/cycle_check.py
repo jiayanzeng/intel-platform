@@ -1382,6 +1382,7 @@ def check_declared_scope(
 
 
 TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (0, 23)
+TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)
 DATED_DISPOSITIONS_HEADING = "### Dated operational-residual dispositions"
 ISO_DATE_TOKEN_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
 
@@ -1393,6 +1394,7 @@ def check_trigger_table(
     subject_header: str,
     root: Path,
     errors: list[str],
+    required_cycle_name: str | None = None,
 ) -> int:
     heading_matches = list(
         re.finditer(rf"^{re.escape(heading)}$", text, re.MULTILINE)
@@ -1454,7 +1456,6 @@ def check_trigger_table(
         )
         return 0
 
-    header_measurement = markdown_table_cells(lines[header_index])[measured_index]
     trigger_rows = 0
     for offset, line in enumerate(lines[header_index + 1 :], header_index + 1):
         cells = markdown_table_cells(line)
@@ -1476,18 +1477,28 @@ def check_trigger_table(
         measured = normalized[measured_index]
         valid_dates = [
             raw
-            for raw in ISO_DATE_TOKEN_RE.findall(
-                f"{header_measurement} {measured}"
-            )
+            for raw in ISO_DATE_TOKEN_RE.findall(measured)
             if valid_iso_date(raw)
         ]
         line_number = text[:section_start].count("\n") + offset + 1
         # Invariant R12 control site: trigger freshness.
-        if not valid_dates:
-            item = normalized[0] if normalized else "<unnamed>"
+        item = normalized[0] if normalized else "<unnamed>"
+        missing_date_error = (
+            f"{shown(path, root)}:{line_number}: trigger-bearing row "
+            f"{item!r} requires a valid dated measured observation"
+        )
+        if required_cycle_name is None and not valid_dates:
+            errors.append(missing_date_error)
+        if required_cycle_name is not None and not valid_dates:
+            errors.append(missing_date_error)
+        if (
+            required_cycle_name is not None
+            and required_cycle_name not in CYCLE_LITERAL_RE.findall(measured)
+        ):
             errors.append(
                 f"{shown(path, root)}:{line_number}: trigger-bearing row "
-                f"{item!r} requires a valid dated measured observation"
+                f"{item!r} requires a measured observation naming active "
+                f"cycle {required_cycle_name!r}"
             )
     return trigger_rows
 
@@ -1498,6 +1509,15 @@ def check_trigger_freshness(
     root: Path,
     errors: list[str],
 ) -> tuple[int, int]:
+    identity = resolve_cycle(root)
+    required_cycle_name = (
+        identity.name
+        if (
+            declared_scope_cycle_version(identity.name)
+            >= TRIGGER_IDENTITY_FORWARD_BOUNDARY
+        )
+        else None
+    )
     architecture = root / "ARCHITECTURE.md"
     architecture_text = (
         architecture.read_text() if architecture.is_file() else ""
@@ -1509,6 +1529,7 @@ def check_trigger_freshness(
         "subject",
         root,
         errors,
+        required_cycle_name,
     )
     deferral_rows = check_trigger_table(
         path,
@@ -1517,6 +1538,7 @@ def check_trigger_freshness(
         "Deferred item",
         root,
         errors,
+        required_cycle_name,
     )
     return architecture_rows, deferral_rows
 

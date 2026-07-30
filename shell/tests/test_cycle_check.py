@@ -865,7 +865,8 @@ def test_cycle_check_accepts_suffixed_deferred_step_reference(
     runbook.write_text(
         runbook.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
-            "| Baseline item | trigger | 2026-07-30 — measured | Step 1A |",
+            "| Baseline item | trigger | "
+            "v1.2.3 · 2026-07-30 — measured | Step 1A |",
         )
         + "\n## Step 1A · FOLLOW-UP\n\n"
         "**Objective.** Discharge the deferred action.\n\n"
@@ -1062,7 +1063,8 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
     runbook.write_text(
         runbook.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
-            "| Runner evidence | release changes | no release yet | "
+            "| Runner evidence | release changes | "
+            "v1.2.3 · 2026-07-30 — no release yet | "
             "re-measure — discharged by Step 2 |",
         )
         + "\n## Step 2 · RE-MEASURE\n\n"
@@ -1083,7 +1085,8 @@ def test_cycle_check_accepts_dated_negative_trigger_observation(
         runbook.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| L2 wrapper | an operator server session | "
-            "no operator server session has occurred | none |",
+            "v1.2.3 · 2026-07-30 — no operator server session has occurred | "
+            "none |",
         )
     )
 
@@ -1097,12 +1100,10 @@ def test_cycle_check_rejects_trigger_observation_without_valid_date(
     root = _cycle_root(tmp_path)
     runbook = _runbook(root)
     runbook.write_text(
-        runbook.read_text()
-        .replace("Measured 2026-07-29", "Measured 2026-02-30")
-        .replace(
+        runbook.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| L2 wrapper | an operator server session | "
-            "no operator server session has occurred | none |",
+            "v1.2.3 — no operator server session has occurred | none |",
         )
     )
 
@@ -1110,6 +1111,29 @@ def test_cycle_check_rejects_trigger_observation_without_valid_date(
     assert (
         "trigger-bearing row 'L2 wrapper' requires a valid dated measured "
         "observation"
+        in capsys.readouterr().err
+    )
+
+
+def test_cycle_check_rejects_prior_cycle_trigger_observation(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "| Baseline item | none | no measurement required | none |",
+            "| L2 wrapper | an operator server session | "
+            "v0.27 · 2026-07-30 — no operator server session occurred | "
+            "none |",
+        )
+    )
+
+    assert cycle_check.run(root) == 1
+    assert (
+        "trigger-bearing row 'L2 wrapper' requires a measured observation "
+        "naming active cycle 'v1.2.3'"
         in capsys.readouterr().err
     )
 

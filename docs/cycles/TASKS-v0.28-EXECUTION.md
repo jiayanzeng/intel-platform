@@ -117,6 +117,20 @@ local jobs. The seven drafted gates settled as follows.
   the correct posture and implementation is deferred to a later operator
   decision.
 
+### 2026-07-30 · Trigger identity enforcement
+
+Step 2 — governed observations bound to active-cycle identity — 2026-07-30
+
+The data-first commit `5342663f89e3e2b499bfc1bf42b15c44705de58b`
+re-measured the two governed architecture rows with row-owned `v0.28` and
+ISO-date tokens and passed the pre-tightening checker. The rule deletes the
+header fallback, resolves active-cycle identity from the declaration, and
+applies that identity gate only at v0.28 forward. Focused lifecycle tests pass
+46/46; the real `cycle-check` passes; registered self-test derives 12 rules /
+48 controls. The two new R12 mutations execute the dated-header/undated-cell
+and prior-cycle-copy failures independently. Standalone golden passes 11/11
+with delta zero. No closed runbook changed.
+
 One sandboxed `ci-local` attempt and one sandboxed Python dependency install
 were environment non-results; their exact entry points passed with the required
 permissions. Two population-log wrappers assigned zsh's read-only `status`
@@ -490,7 +504,7 @@ closed document appears to need a change, that is the finding.
 **Done when** a row copied forward from v0.27 without re-measurement fails, and
 the failure is demonstrated rather than argued.
 
-- [ ] **TRIGGER-IDENTITY**
+- [x] **TRIGGER-IDENTITY**
 
 ---
 

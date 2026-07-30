@@ -1,6 +1,32 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0 is complete on top of published v0.17.0; the cycle remains open.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.28 entering tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both clean constrained Python lanes passed **293**, `invariant-scan` passed **12 rules / 46 controls**, standalone golden passed **11/11**, and all **301** pins matched twice. The v0.17.0 release assembly added the internal `/ingest` coverage value and boundary fields, so the named-surface rule required a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changed. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and v0.28 authorizes no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0 and TRIGGER-IDENTITY are complete on top of published v0.17.0; the cycle remains open.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.28 entering tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both clean constrained Python lanes passed **293**, and all **301** pins matched twice. Current `invariant-scan` passes **12 rules / 48 controls**, including the new row-owned date and active-cycle mutations; standalone golden remains **11/11**. The v0.17.0 release assembly added the internal `/ingest` coverage value and boundary fields, so the named-surface rule required a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changed. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and v0.28 authorizes no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+
+**v0.28 TRIGGER-IDENTITY binds governed observations to their owning cycle
+(measured 2026-07-30).** The mandatory data-first commit
+`5342663f89e3e2b499bfc1bf42b15c44705de58b` re-measured and rewrote only the
+two trigger-bearing architecture rows with their own `v0.28` and ISO-date
+tokens; the pre-tightening checker passed that commit. The rule then removed
+the measured-column header fallback, retained v0.23-forward own-cell date
+freshness, and added v0.28-forward exact active-cycle identity resolved through
+`resolve_cycle(root)`. No closed runbook changed.
+
+The focused lifecycle suite passed **46/46** and the real `cycle-check` passed
+with active v0.28, 25 closed execution runbooks, and three historical runbooks.
+Registered `invariant-scan --self-test` derived **12/12 rules / 48 controls**.
+R12 control 16 disabled the v0.28 own-cell date branch and caught a row whose
+cell had no date even though its header carried `2026-07-30`; control 17
+disabled active-cycle identity and caught a `v0.27` observation presented to
+the v0.28 checker. The prior generic missing-date control remains independently
+executable as control 15. The real checker accepts both live tables in their
+new format, and neither tests nor tooling hardcode the aggregate control count.
+
+The first sandboxed standalone golden invocation was an environment non-result:
+the core could not bind its isolated loopback port. The permission-complete
+execution of that exact `./run golden` entry point passed **11/11**, delta
+**0**. No production runtime source, dependency, schema, protected artifact,
+golden input, publisher request, scheduler run, model-server session, public
+route, serialized value domain, tag, or branch ref changed.
 
 **v0.28 E0 rebuilds the entering state and settles G1–G7 (measured
 2026-07-30).** After the separately committed activation compatibility

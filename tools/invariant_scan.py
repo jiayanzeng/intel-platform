@@ -2079,7 +2079,14 @@ def r12_findings(root: Path) -> list[str]:
             )
 
         trigger_path = fixture / "trigger-control.md"
-        trigger_text = (
+        trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
+        active_trigger_cycle = "v" + ".".join(
+            str(part) for part in trigger_cycle_parts
+        )
+        prior_trigger_cycle = (
+            f"v{trigger_cycle_parts[0]}.{trigger_cycle_parts[1] - 1}"
+        )
+        legacy_trigger_text = (
             "# Trigger control\n\n"
             "### Dated operational-residual dispositions\n\n"
             "| subject | disposition | trigger | measured observation |\n"
@@ -2090,7 +2097,7 @@ def r12_findings(root: Path) -> list[str]:
         errors = []
         trigger_rows = cycle_check.check_trigger_table(
             trigger_path,
-            trigger_text,
+            legacy_trigger_text,
             cycle_check.DATED_DISPOSITIONS_HEADING,
             "subject",
             fixture,
@@ -2105,6 +2112,57 @@ def r12_findings(root: Path) -> list[str]:
         ):
             missed.setdefault("trigger-freshness", []).append(
                 "missing-trigger-measurement-date"
+            )
+
+        trigger_text = (
+            "# Trigger control\n\n"
+            "### Dated operational-residual dispositions\n\n"
+            "| subject | disposition | trigger | Measured 2026-07-30 |\n"
+            "|---|---|---|---|\n"
+            "| planted event | deferred | an operator session | "
+            f"{active_trigger_cycle} — no operator session occurred |\n"
+        )
+        errors = []
+        trigger_rows = cycle_check.check_trigger_table(
+            trigger_path,
+            trigger_text,
+            cycle_check.DATED_DISPOSITIONS_HEADING,
+            "subject",
+            fixture,
+            errors,
+            active_trigger_cycle,
+        )
+        if trigger_rows != 1 or not any(
+            expected_trigger_failure in error for error in errors
+        ):
+            missed.setdefault("trigger-freshness", []).append(
+                "header-only-trigger-measurement-date"
+            )
+
+        stale_trigger_text = trigger_text.replace(
+            f"{active_trigger_cycle} — no operator session occurred",
+            f"{prior_trigger_cycle} · 2026-07-30 — "
+            "no operator session occurred",
+        )
+        errors = []
+        trigger_rows = cycle_check.check_trigger_table(
+            trigger_path,
+            stale_trigger_text,
+            cycle_check.DATED_DISPOSITIONS_HEADING,
+            "subject",
+            fixture,
+            errors,
+            active_trigger_cycle,
+        )
+        expected_cycle_failure = (
+            "trigger-bearing row 'planted event' requires a measured "
+            f"observation naming active cycle {active_trigger_cycle!r}"
+        )
+        if trigger_rows != 1 or not any(
+            expected_cycle_failure in error for error in errors
+        ):
+            missed.setdefault("trigger-freshness", []).append(
+                "stale-trigger-cycle-identity"
             )
 
     population_node = "tests/test_population.py::test_on_site"
