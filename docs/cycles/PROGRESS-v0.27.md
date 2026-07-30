@@ -231,3 +231,62 @@ Entries are append-only; corrections are new dated entries.
   **11/11**.
 - boundary acceptance: PASS. No production source changed, no prior record was
   reopened, and no publisher request occurred.
+
+### 2026-07-30 · COVERAGE-DETECTION — id-only overlap made visible
+
+- owner: Codex
+- commit: 2c0c9d11cc67c93ccbd1751b7eaff84b84919148
+- result: PASS. The operator authorized Option 1, and every successful
+  non-paged source now carries a pre-insert id-overlap outcome in its `/ingest`
+  result and a human-readable log without failing or discarding the poll.
+- decision acceptance: PASS. The selected claim is dated and conditional on
+  contiguous publication-order windows and ids stable across polls. The pinned
+  body re-derives **200 items / zero ascending inversions**, **200 unique
+  GUIDs / 200 distinct accession numbers**, the SEC host and accession-to-GUID
+  correspondence, and source-id-plus-GUID parser identity. Accession
+  immutability supports stability; future publisher re-issue behavior remains
+  a stated dependency.
+- siting acceptance: PASS. Cored calls the store's held-set assessment before
+  every tail `append_new`, with `sel.source.id()` and that source's `docs`.
+  The per-source outcome is computed before commit and carried into
+  `IngestSourceResult`, not defaulted or back-filled. The result and log expose
+  `first_window`, `empty_window`, `overlap`, `gap_detected`, raw publisher
+  boundary strings for gaps, and explicit `not_applicable_paged` for OAI-PMH.
+- failure-direction acceptance: PASS. A gap finding does not fail the poll; the
+  incoming window is committed. Empty overlap is deliberately conservative:
+  publisher re-issue or GUID-form changes can produce a visible false positive,
+  and neither zero false positives nor a measured loss size is claimed.
+- firing acceptance: PASS. A genuinely disjoint pinned-window sequence stored
+  67 older items, omitted 66 intervening items, and ingested 67 newer items. It
+  returned `gap_detected`, raw boundary pair
+  `Wed, 29 Jul 2026 16:26:17 EDT` /
+  `Wed, 29 Jul 2026 17:00:13 EDT`, and committed all 67 incoming rows.
+  Re-assessment after insertion returned `overlap`, proving the response field
+  came from the pre-insert check.
+- non-misfiring acceptance: PASS. An empty per-source store ingesting the
+  pinned 200-document window reported `first_window`; the identical second
+  window reported `overlap` and **0 new**. A combined non-paged batch
+  independently reported overlap for `techwire` and a gap for `osdaily`,
+  proving per-source partitioning. The paged fixture reported
+  `not_applicable_paged` and committed its cursor.
+- invariant acceptance: PASS. R12 now has **18 controls** and the repository
+  total is **12 rules / 46 controls**. The new insert-before-query and
+  combined-batch mutations each produced the registered expected failure;
+  `cycle-check`, `version-check`, fmt, and `git diff --check` also passed.
+- regression acceptance: PASS. Full `ci-local` passed **20/20** jobs with
+  warning-denied **145** workspace tests, **62** net tests (**32 ingest,
+  including three replay tests, + 30 cored**), locked Rust 1.78, clippy, fmt,
+  and ShellCheck. Complete constrained Python 3.11.4 and 3.12.13 lanes each
+  collected and passed **293**, failed zero, and skipped zero. The first
+  sandboxed Python 3.12 attempt lacked its required loopback/process
+  permissions and was a non-result; its real entry point passed on rerun.
+- identity acceptance: PASS. The 200-document SEC corpus remains **200 kept /
+  0 dropped**; the same fixture run separately kept one filings-digest
+  document. `crates/extract` and `crates/view` are byte-unchanged.
+- golden-E2E delta: **0**; standalone golden remains byte-identical at
+  **11/11** with its Hamming-12 collapse.
+- boundary acceptance: PASS. `config/schedule.json`, `config/core.json`, and
+  `config/protected-artifacts.json` are byte-unchanged. The allowed
+  `crates/ingest/src/lib.rs` and `crates/ingest/src/rss.rs` production
+  permissions were unused; no compliance, extract, view, or shell production
+  source changed. No scheduler ran and no publisher request occurred.
