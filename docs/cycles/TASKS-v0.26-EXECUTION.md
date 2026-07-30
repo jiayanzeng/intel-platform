@@ -1612,10 +1612,29 @@ publication.**
   determination that deferred it; deferral table updated either way
 - [x] **RE-MEASURE** — hosted run on a neutral branch; comparator cited; no
   publisher request by any hosted job; run id recorded; scope amendment dated
-- [ ] **R-CLOSE** — version and its criterion recorded with the value-domain
+- [x] **R-CLOSE** — version and its criterion recorded with the value-domain
   criterion explicitly not firing; identity determination recorded with its
   measurements; parser result recorded; pinning recorded; non-exercise stated;
   permission usage recorded; T7 not described as nearer its trigger
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-30
+- **Release disposition:** release (as of 2026-07-30)
+- **Release:** `v0.16.1`
+- **Release commit:** `b9af84b8785bcd52c16ab0225d66386ecd872c4d`
+- **Evidence candidate:** `1cd88acd99704cc76c866331e505db446936e469`
+- **Candidate hosted run:** `30531390933` attempt 1
+- **Publication trigger:** the operator's explicit decision to publish the
+  authenticated identity correction, explicit SEC cadence, and bounded
+  first-contact validation; no corrective trigger was visible at entry.
+- **Closing evidence:** all 7 executable hosted jobs green at the exact
+  candidate; 7 accepted / 0 rejected signed identities with attestations
+  required; comparator-derived equivalence in both Python lanes; release-parent
+  local definition of done all 20 jobs; invariant 12/12 rules / 44 controls;
+  golden 11/11; protected evidence 286/286.
 
 ---
 

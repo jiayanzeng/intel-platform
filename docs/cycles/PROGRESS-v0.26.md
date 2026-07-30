@@ -768,3 +768,88 @@ Entries are append-only; corrections are new dated entries.
   rederivation, and `git diff --check` all passed. `invariant-scan` remains
   **12/12 rules / 44 controls**.
 - golden-E2E delta: **0**; mandatory golden passed **11/11**.
+
+### 2026-07-30 · R-CLOSE — v0.16.1 tagged close
+
+- owner: Codex
+- commit: b9af84b8785bcd52c16ab0225d66386ecd872c4d
+- result: PASS. Release implementation commit
+  `b9af84b8785bcd52c16ab0225d66386ecd872c4d` prepares v0.16.1 and is the
+  untagged immediate parent of the closing tree. No corrective trigger was
+  visible at entry; the publication trigger is the operator's explicit
+  decision to ship the authenticated identity correction, explicit SEC
+  cadence, and bounded first-contact validation.
+- closing-evidence acceptance: PASS. Authenticated candidate
+  `1cd88acd99704cc76c866331e505db446936e469` and run **30531390933**
+  attempt **1** remain separate from the release parent. All seven executable
+  hosted jobs passed. Release-grade verification required attestations,
+  accepted **7 / rejected 0** identities, and confirmed the complete matrix.
+- release-identity acceptance: PASS. v0.16.1 is patch because it corrects
+  behavior within existing routes, fields, types, body shapes, and public
+  value sets. The public value-domain criterion does not fire: no serialized
+  `/v1/*` field gains, loses, or redefines a value. The exact **44**
+  `v0.16.0..b9af84b8785bcd52c16ab0225d66386ecd872c4d` paths are classified
+  once in eight disjoint groups in `STATE.md`.
+- identity acceptance: PASS. At radius 16 the parser-produced SEC corpus
+  measured 172 kept / 28 dropped, including 8 same-issuer and **20
+  cross-issuer false collapses**. The selected two-sided 26-feature floor
+  addresses the measured sparse-fingerprint mechanism: both shipped paths and
+  the independent live sample keep **200 / drop 0**. Golden remains
+  byte-identical and still drops `techwire::tw-004` for
+  `osdaily::osd-004` at Hamming 12. Sparse identical documents remain visible
+  as the explicit safer-direction under-collapse cost.
+- parser/pin acceptance: PASS. Shipped `RssSource::fetch` constructed **200**
+  documents from the asserted 892,641-byte observation. The body declares
+  Windows-1252 but is ASCII-only; the existing UTF-8 string path accepted it
+  losslessly, and no general non-UTF-8 decoder branch was established. No
+  `edgar:*` field was mapped. G3 found the observation unpinned; authorized
+  Step 2B added exactly the `observations/` prefix and `observation` grade and
+  pinned all five v0.25 files without `admission`.
+- scope/non-exercise acceptance: PASS. All three conditional Rust source
+  permissions were used for the shared floor/guard and its store/view calls;
+  the authorized conditional `tools/evidence_artifacts.py` permission was also
+  used. No conditional source permission is unused. No ingest or compliance
+  production source, `config/core.json`, dependency, schema, protected
+  database, fixture, or golden input changed. A bounded SEC ingest did occur,
+  but no scheduler or scheduled SEC run occurred and no production runtime
+  exercised both origins together. Both configured real publisher sources
+  have now been fetched.
+- blocker acceptance: PASS. Step 2's original pin-first requirement remains
+  the fifth author-side rule with no satisfying assignment: `artifacts[]`
+  requires SQLite-only expected facts and the original `pinned_files[]`
+  shape could neither admit the observation path nor carry `admission`.
+  CADENCE's out-of-band retrieval remains a cycle-execution gate violation;
+  its content is quarantined and uncited, its author-side ambiguity is
+  recorded, and retractions remain **three**. Step 7's separately withdrawn
+  chained-receipt clause remains the sixth unsatisfiable author-side rule.
+- release-parent acceptance: PASS. `./run ci-local` passed all **20** jobs:
+  workspace **139**, net **56** (**30** ingest including replay + **26**
+  cored), warning-denied current and locked Rust 1.78 builds, clean
+  rustc/clippy/fmt/ShellCheck, `invariant-scan` **12/12 rules / 44 controls**,
+  and embedded golden **11/11**. Mandatory standalone golden passed **11/11**.
+- population acceptance: PASS. Clean Python **3.11.4** and **3.12.13** lanes
+  each collected **291**, passed **291**, failed 0, and skipped 0. The
+  authenticated candidate comparators separately derived equivalence from
+  hosted 290 passes plus the one named `on_site` skip in both lanes.
+- evidence acceptance: PASS. All **286** pins and both protected databases
+  remained exact. Manifest size is **165,488 bytes**; consecutive complete
+  verification runs were **0.11 s / 0.10 s real**. Root `export-check` passed
+  **99** derived sources / **7** required / **177** exported.
+  Release-posture rederivation reproduced all 7 rows with attestations
+  required.
+- protocol acceptance: PASS. The closed record names release parent
+  `b9af84b8785bcd52c16ab0225d66386ecd872c4d` and evidence candidate
+  `1cd88acd99704cc76c866331e505db446936e469` separately, omits the
+  not-yet-knowable tag-object field, and requires the annotated v0.16.1 tag to
+  target this immediate child and move atomically with `main`.
+- residual acceptance: PASS. A4, editable L1, R3/R4, the measured-value
+  heuristic, T7, NEGATIVE-CACHE Decision B, scheduled L2, FastAPI
+  version-literal relocation, terms-gate operator responsibility, and live
+  multi-publisher behavior remain open or unchanged. One supported SEC
+  harvest caller and zero schedulers do not move T7 nearer its trigger.
+- historical-ref acceptance: PASS. Existing
+  `refs/heads/candidate/v0.16.0` remains v0.15.1 evidence at
+  `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong
+  to this release and must not be renamed or deleted.
+- publisher-request acceptance: PASS. R-CLOSE made no publisher request.
+- golden-E2E delta: **0**.
