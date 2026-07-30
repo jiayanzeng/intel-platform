@@ -1,5 +1,21 @@
 # TASKS-v0.28-EXECUTION.md — the clock, the ceiling, and the order
 
+## Runbook amendments
+
+### 2026-07-30 · Activation syntax correction
+
+The supplied draft already contained a blank cycle-closing heading while all
+task boxes remained unchecked. After activation commit `c44af84…`,
+`./run cycle-check` exited 1 with
+an error that an open runbook cannot contain the reserved closing heading.
+The prior cycle's activation form contains no closing-record heading; R-CLOSE
+appends that record only when the cycle closes. This amendment therefore removes
+the premature blank template and rephrases G2's reference to the reserved
+heading so it is not mistaken for the heading itself. Every objective, decision
+gate, acceptance criterion, declared-scope row, and standing prohibition remains
+semantically unchanged.
+The activation commit is not amended, rebased, or squashed.
+
 v0.17.0 is published and v0.27 is closed. Annotated object `df4fc3b0…` targets
 closing commit `4af28418…`, whose parent is release commit `d5969207…`; post-push
 run **30550582370** passed all seven executable jobs at that exact commit, and
@@ -186,7 +202,7 @@ files. Nothing in this section may be relied upon before Step 1 records it.**
 | Gate | Where | Hypothesis |
 |---|---|---|
 | **G1** [P1] | `tools/cycle_check.py:1479-1483`; `AGENTS.md:286-288` | **The per-row date requirement is vacuous whenever the column header carries a date.** Confirm by execution, not reading: blank every measured cell in a scratch runbook's deferred table, leave the dated header, and run `cycle_check`. **If it exits 0, the rule protects nothing it claims to protect.** Then state whether any governed row in the tree today would fail if the header token were removed. |
-| **G2** [P1] | four `## Cycle closing record` blocks, v0.24–v0.27 | **Confirm all four record `2026-07-30`.** If so, state the maximum number of cycles that can close on one date and still be distinguishable by the current rule. **The answer is the size of the hole.** |
+| **G2** [P1] | the four cycle-closing record blocks in v0.24–v0.27 | **Confirm all four record `2026-07-30`.** If so, state the maximum number of cycles that can close on one date and still be distinguishable by the current rule. **The answer is the size of the hole.** |
 | **G3** [P1] | `tools/cycle_check.py:1707`; `shell/tests/test_cycle_check.py:1135-1148` | **The governed-row count is computed and discarded.** Confirm the call site binds nothing, that the only consumer is a test asserting a hardcoded `(2, 14)`, and that no floor exists. Then determine, by execution, what `cycle_check` reports when every trigger cell in both tables reads `none`. **Report the exit code.** |
 | **G4** [P1] | `tools/export_check.py`; project-knowledge index | **Nothing bounds the export.** Confirm `export_check` asserts inclusion only, that `SOURCE_ROOTS` is `crates/apps/tools/shell` and `REQUIRED_PATHS` names seven paths, and that neither constrains `docs/cycles`, `observations`, or `docs/state-archive`. Re-measure export bytes and file count. **Record the 2,067-chunk / 2,000-limit observation with its date as the entering measurement.** |
 | **G5** [P1] | `tools/cycle_identity.py:36-57`; `tools/cycle_check.py:1740-1788`; `tools/checklist_audit.py:18` | **Determine, by execution, what stops being checked if a closed runbook leaves `docs/cycles`.** Move one closed runbook to a scratch path in a throwaway clone, run `cycle-check` and `checklist-audit`, and record both exit codes and both counts. **Confirm specifically whether `audit_deferred`'s complete-progress-glob assertion still passes.** If it does, that is the silent no-op and the reason Step 5 touches export scope only. |
@@ -627,19 +643,6 @@ gates, or by Step 7's evidence. Two options, stated so neither is a default:
 - [ ] Both Python lanes reported as collected/passed/skipped, comparator-derived
 - [ ] Deferred table rows all carry v0.28-identified observations
 - [ ] Reviewer error preserved as such in the cycle record
-
----
-
-## Cycle closing record
-
-- **Cycle closed:**
-- **Release disposition:**
-- **Release:**
-- **Release commit:**
-- **Evidence candidate:**
-- **Candidate hosted run:**
-- **Publication trigger:**
-- **Closing evidence:**
 
 ---
 
