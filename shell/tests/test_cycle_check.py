@@ -1,5 +1,6 @@
 import json
 import subprocess
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 from tools import cycle_check
@@ -997,7 +998,7 @@ def test_declared_scope_standing_status_paths_exclude_agents(
     assert "diff rejects AGENTS.md" in errors[0]
 
 
-def test_current_scope_has_no_release_forbid_overlap() -> None:
+def test_current_scope_release_forbid_overlap_matches_independent_derivation() -> None:
     root = Path(__file__).resolve().parents[2]
     identity = resolve_cycle(root)
     errors: list[str] = []
@@ -1012,7 +1013,22 @@ def test_current_scope_has_no_release_forbid_overlap() -> None:
     assert errors == []
     authorities = cycle_check.release_authority_paths(root)
     assert len(authorities) == 17
-    assert cycle_check.scope_release_forbid_overlaps(declaration, authorities) == ()
+    expected = tuple(
+        authority
+        for authority in authorities
+        if any(
+            fnmatchcase(authority, pattern)
+            for pattern in declaration.release_authorities
+        )
+        and any(
+            fnmatchcase(authority, pattern)
+            for pattern in declaration.forbid
+        )
+    )
+    assert cycle_check.scope_release_forbid_overlaps(
+        declaration,
+        authorities,
+    ) == expected
 
 
 def test_activation_anchor_is_exclusive_and_next_commit_is_checked(

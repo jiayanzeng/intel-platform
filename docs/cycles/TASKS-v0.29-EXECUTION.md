@@ -34,6 +34,22 @@ remain intact; these two are errors five and six, and the Step 8 preservation
 criterion is corrected accordingly. No objective, decision gate, declared
 scope, standing prohibition, or task order changes.
 
+### 2026-07-31 · Activation scope-fixture correction
+
+The first permission-complete E0 `./run ci-local` passed every preceding
+lifecycle, invariant, Rust, net, lint, format, and MSRV gate, then measured the
+v0.28 exact-current-cycle scope fixture still requiring zero
+release-authority/forbid overlaps. The v0.29 table deliberately declares both
+Python version files as release authorities while its broad shell-source forbid
+also matches them; release-authority precedence is the stated behavior. This is
+the exact fixture class the activation instructions assign for correction.
+The amendment permits only
+`shell/tests/test_cycle_check.py::test_current_scope_has_no_release_forbid_overlap`
+to replace its hardcoded empty tuple with a second, independent derivation from
+the active table and release-authority paths. It does not change scope semantics,
+production code, a task contract field, or any expected value literal. E0
+restarts only after this correction and its audit record are committed.
+
 v0.28 closed `no-release` on 2026-07-31 and every substantive claim in the Codex
 report was re-derived and held. The export is **2,530,129 bytes** — the byte
 count Codex reported, matched exactly on receipt. Invariant totals moved **12
