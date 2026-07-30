@@ -44,3 +44,34 @@ Entries are append-only; corrections are new dated entries.
 - publisher-request acceptance: PASS. Activation invoked repository and GitHub
   ref/lifecycle commands only; it made no request to a publisher origin.
 - protected artifact delta: NOT MEASURED; no protected or pinned file changed.
+
+### 2026-07-30 · ACTIVATE-CORRECTION — trigger-table count made current
+
+- owner: Codex
+- commit: b6806e4b714a9eb0c42619834c4ac5f56985a9a8
+- result: PASS. The first clean Python 3.11 E0 shell lane executed the live
+  trigger-freshness control and found that v0.26 has **13** trigger-bearing
+  rows while the exact current-table test still asserted **12**.
+- fail-before acceptance: PASS. The clean constrained lane collected **284**,
+  passed **283**, failed the exact
+  `test_current_trigger_freshness_tables_are_complete` assertion, and skipped
+  **0**. The observed count was `(2, 13)` against expected `(2, 12)`; this was
+  a gate finding, not a passing shell measurement.
+- gate-scope acceptance: PASS. The dated runbook amendment widens E0's gate
+  only for `shell/tests/test_cycle_check.py`, which the full-matrix acceptance
+  criterion already exercises and declared scope already permits. No objective,
+  acceptance criterion, done condition, production permission, publisher
+  permission, or trigger changed.
+- focused acceptance: PASS. The unchanged failure-capable entry point now
+  expects `(2, 13)` and passes **1/1**.
+- lifecycle acceptance: PASS. `cycle-check` accepts the amended open v0.26
+  runbook and its original activation anchor.
+- scope acceptance: PASS. Only the active runbook and the exact shell
+  lifecycle-count test changed. No production source, manifest, dependency,
+  schema, protected artifact, public surface, configured source, or ref
+  changed.
+- complete-matrix acceptance: NOT YET CLAIMED. E0 restarts its clean Python
+  lane after this correction and owns the complete entering result.
+- golden-E2E delta: NOT MEASURED; no claim.
+- publisher-request acceptance: PASS. The correction ran only a local focused
+  lifecycle test and `cycle-check`; no publisher request occurred.
