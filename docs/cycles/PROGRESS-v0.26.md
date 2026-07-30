@@ -222,3 +222,53 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**; mandatory local golden passed 11/11 after the stop.
 - classification: This is a cycle-execution failure by Codex, not an
   implementation defect and not live-harvest evidence.
+
+### 2026-07-30 · AMENDMENT-01 — both blockers disposed; Step 2B authorized
+
+- owner: Codex
+- commit: b54cdbfcd727c7e327d100e4022f9d297c77ab81
+- operator decision: AUTHORIZE Step 2B. The declared scope now conditionally
+  permits `tools/evidence_artifacts.py`, the authorized deferral row discharges
+  repository-wide observation coverage at Step 2B, and the new checklist row
+  remains open until that task executes.
+- supplied-amendment acceptance: PASS. All five dated operator-supplied entries
+  were added under `Runbook amendments`; the Step 2, Step 2B, Step 4A, Step 4,
+  Step 5, Step 6, Step 8, scope, deferral, checklist, and standing-prohibition
+  replacements/additions are present. The quarantined retrieval remains
+  uncited and the earlier `CADENCE-BLOCKED` progress entry is unchanged.
+- REPLAY disposition: PASS. The unsatisfiable pin-first rule is classified as
+  the fifth author-side rule with no satisfying assignment, not an
+  implementation defect. Step 2 now requires a failure-demonstrated SHA-256
+  and byte-length assertion at the point of use and forbids a manifest proposal.
+- CADENCE disposition: PASS. The out-of-band retrieval remains a
+  cycle-execution gate violation; its content is quarantined, the author-side
+  ambiguity is recorded, and retractions remain three. Step 5 is eligible
+  again only through its named committed observation paths.
+- dependency acceptance: PASS. Step 2 blocks Step 3 and authorized Step 2B;
+  Step 3 blocks Step 4A; Step 4A blocks Step 4; Step 6 requires affirmative
+  Steps 2, 3, 4, 4A, and 5 plus a later explicit operator decision.
+- lifecycle-control acceptance: PASS. `cycle-check` now recognizes one
+  uppercase step suffix, so `Step 2B` and `Step 4A` retain distinct contract
+  fields and deferred references. Two focused controls were added; the
+  complete cycle-check test file passed 45/45 and the governed trigger
+  population is now 2 architecture / 14 active-runbook rows.
+- shell acceptance: PASS after discarding the sandbox-only failures that could
+  not bind loopback or inspect processes. Permitted constrained Python 3.11.4
+  and 3.12.13 runs each collected 286, passed 286, failed 0, and skipped 0,
+  with the same accepted Starlette deprecation warning.
+- invariant acceptance: PASS. `invariant-scan` passed 12/12 rules and all 39
+  planted-failure controls. R12's two line-location pins were advanced with
+  the checker edit; no claim, scope, rule, control construction, or count
+  changed.
+- lifecycle and version acceptance: PASS. `cycle-check`, `progress-check`,
+  `checklist-audit` at 199 checked / 3 retracted / 199 matched / 0 exemptions,
+  and `version-check` at 0.16.0 all passed.
+- scope acceptance: PASS. The commit changed the active runbook, `STATE.md`,
+  the exact lifecycle checker and tests needed for suffixed steps, and R12's
+  shifted expected-line metadata. No production product source, publisher
+  configuration, schedule, manifest, observation byte, protected artifact,
+  database, public surface, dependency, or ref changed.
+- golden-E2E delta: **0**; mandatory golden passed 11/11 with the hamming-12
+  true-positive collapse intact.
+- publisher-request acceptance: PASS. Amendment execution made no publisher
+  request; the earlier quarantined retrieval remains recorded separately.
