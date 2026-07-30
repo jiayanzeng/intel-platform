@@ -258,3 +258,50 @@ Entries are append-only; corrections are new dated entries.
   model-server session, historical cycle edit, production runtime source,
   dependency, schema, protected artifact, golden input, public route,
   serialized value domain, tag, or branch ref changed.
+
+### 2026-07-30 · EXPORT-BOUND — review corpus ceiling and retention enforced
+
+- owner: Codex
+- commit: 1a949e691b388487302b75ea89939eba23d8896c
+- result: PASS. `export_check` now measures output bytes, enforces the declared
+  **3,000,000-byte** ceiling, derives the exact retained cycle-document set from
+  `cycle_identity` plus the one depth constant, and rejects both excluded byte
+  classes. Forbidden `run` was not edited.
+- ceiling acceptance: PASS. `ARCHITECTURE.md` carries the trigger-bearing v0.28
+  disposition and reason for the round bound. The fixed-point final
+  implementation-tree export passed at **2,485,846 bytes / 152 files**, leaving
+  **514,154 bytes / 20.68%** headroom beneath the ceiling.
+- retention acceptance: PASS. Depth **3** resolves the active execution cycle
+  plus its two immediate predecessors and each matching progress record. The
+  real export contained exactly those six derived paths; neither a missing
+  retained document nor an older cycle document was accepted. The implementation
+  contains no written expected file list, and the fixture population is derived
+  from the same depth constant rather than an expected count.
+- absence acceptance: PASS. The checker discovers the repository's unique
+  pinned SEC RSS capture and rejects its exact exported path; it separately
+  rejects any `docs/state-archive/**` path. The real export contained neither
+  excluded byte class.
+- prior-coverage acceptance: PASS. Existing coverage remained **99**
+  Git-derived source paths and **7** required paths, all present in the real
+  export.
+- planted-control acceptance: PASS by execution. Before the valid construction
+  passed, five independent fixtures exercised and detected: over ceiling,
+  retained document missing, older document present, pinned capture present,
+  and State archive present. The focused suite passed **8/8**.
+- shell/lifecycle/invariant acceptance: PASS. The permission-complete shell
+  population collected and passed **303/303**, failed zero, and skipped zero.
+  An earlier sandbox-denied loopback/process-table attempt was recorded as a
+  non-result. `cycle-check` passed with the new third governed architecture
+  row. Registered `invariant-scan` passed **12/12 rules / 49 controls**; its
+  only registry edit preserves R12's shifted runbook source locator.
+- checklist acceptance: PASS. Before the mandatory Step 5 completion box,
+  `checklist-audit` remained **220 checked / 3 retracted / 220 matched / 220
+  commits resolved / 0 exemptions**. The active task box and this progress
+  record are the ordinary workflow increment; no historical cycle document
+  changed.
+- golden-E2E delta: **0**. The permission-complete `./run golden` execution
+  passed **11/11** byte-identically.
+- publisher/ref/protected acceptance: PASS. No publisher request, scheduler,
+  model-server session, historical cycle edit, production runtime source,
+  dependency, schema, protected artifact, golden input, public route,
+  serialized value domain, tag, or branch ref changed.
