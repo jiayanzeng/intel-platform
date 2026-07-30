@@ -365,3 +365,68 @@ Entries are append-only; corrections are new dated entries.
   `config/protected-artifacts.json`, both protected databases, and production
   compliance, ingest, extract, view, and shell source are byte-unchanged. The
   archive was not admitted to protected evidence or golden.
+
+### 2026-07-30 · RE-MEASURE — neutral candidate authenticated on hosted CI
+
+- owner: Codex
+- commit: 5713e9c4c87c3af1327e038eff4c390e042a29a4
+- result: PASS. Exact evidence candidate
+  `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` was pushed only to neutral
+  ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run
+  **30545771070**, attempt **1**, passed all seven executable jobs at that
+  exact candidate and ref.
+- neutral-ref acceptance: PASS. Remote `main`, the historical candidate refs,
+  and annotated `v0.16.1` did not move. No tag was created. Workflow blob
+  `48ea726b798f1049e0b29cce1f0c64588861c2dd` was the candidate CI
+  configuration; the report-only dependency-drift job skipped as designed.
+- population acceptance: PASS. Fresh local Python 3.11.4 and 3.12.13 lanes
+  each collected and passed **293** with zero skips. For each hosted lane,
+  `tools/test_population.py` derived
+  `{"collected":293,"equivalent":true,"equivalent_passed":293,"hosted":{"on_site_skipped":1,"passed":292,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":293,"skipped":0},"schema_version":1}`.
+  The single hosted skip was named, carried that declared reason, and was
+  marked `on_site`.
+- receipt acceptance: PASS. Seven receipts and seven paired Sigstore bundles
+  were registered in `pinned_files[]` with `supporting` grade and no
+  `admission` key. Each bundle verified the exact receipt bytes, repository,
+  CI workflow identity, candidate digest, neutral source ref, and
+  GitHub-hosted runner policy. The first batch-verification harness
+  accidentally included its own temporary decoder file and was a harness
+  non-result; the corrected exact fourteen-file entry point verified all
+  seven pairs.
+- release-report acceptance: PASS. The release-posture report is **34,995
+  bytes**, SHA-256
+  `67b0c7a5488293cba8bc38e410bd24c748af6f1598481a23a37eeb623ec8dc64`,
+  grade `release`, with attestations required. It observed and accepted **7**
+  identities, rejected **0**, found no matrix finding, and recorded **5
+  deferred / 2 promoted / 0 implemented deferred subsystems**. A first clean
+  detached re-derivation lacked ignored protected databases, and a second
+  lacked the new logical receipt paths; both were construction non-results.
+  After exact protected bytes and the already-authenticated receipts were
+  mirrored into the detached candidate, re-derivation passed all seven rows.
+- manifest acceptance: PASS. The fourteen hosted files plus the report moved
+  the manifest from **286** to **301** pins. `python3
+  tools/evidence_artifacts.py validate`, `./run verify-artifacts`, and
+  `./run evidence-report` passed; both protected SQLite artifacts remained
+  byte-identical. The validator was not changed.
+- no-publisher acceptance: PASS. Candidate workflow inspection found no
+  publisher URL or publisher-directed ingest command. Complete hosted-log
+  search found exactly two `usgaap.rss` occurrences, both local `PIN MATCH`
+  output for the committed SEC observation; broader `curl` search found only
+  the rustup installer URL. No hosted publisher request occurred.
+- scope acceptance: PASS. The dated amendment fixes the receipt placeholder
+  to `evidence/ci-runs/30545771070-1/**` and corrects the activation table's
+  contradiction by allowing `config/protected-artifacts.json` only for this
+  required pin registration. The exact evidence directory, manifest change,
+  and amendment landed together in the implementation commit.
+- regression acceptance: PASS. Full `ci-local` passed **20/20** jobs with
+  warning-denied **145** workspace tests, **62** net tests (**32 ingest + 30
+  cored**), invariant-scan **12 rules / 46 controls**, locked Rust 1.78,
+  clippy, fmt, ShellCheck, and shell **293/293**. The first sandboxed rerun
+  could not bind the net test's loopback socket and was a non-result; the
+  exact command passed with its required local permissions.
+- golden-E2E delta: **0**; hosted, embedded, and required standalone golden
+  remain byte-identical at **11/11**.
+- boundary acceptance: PASS. No production source, protected database,
+  publisher configuration, schedule, document identity, `config/core.json`,
+  or publisher ref changed. Step 8 remains behind its separate operator
+  publication decision.
