@@ -13,6 +13,27 @@ implementation commit contains those three lifecycle files plus only the
 already-declared `repomix.config.json` edit. No other scope, objective, gate,
 acceptance criterion, or prohibition changes.
 
+Step 8 — reviewer-error preservation count corrected — 2026-07-31
+
+### 2026-07-31 · Activation lifecycle correction
+
+Activation commit `1cf49cf…` exposed two additional reviewer errors. First, the
+draft repeated the checker's reserved cycle-closing Markdown token in prose
+while all task boxes were unchecked. The real `cycle-check` therefore exited 1
+with `declared runbook cannot mix unchecked boxes with` that reserved token,
+recreating the first recorded reviewer error despite the draft's claim that the
+token was absent. This amendment rephrases both prose occurrences without
+adding a closing heading.
+
+Second, the draft updated the 17 deferred observations to v0.29 but overlooked
+the three trigger-bearing rows in `ARCHITECTURE.md`, even though the current
+checker governs both tables. The same invocation named all three stale rows and
+required active-cycle identity. This amendment permits only their v0.29
+activation measurements before E0 restarts. The original four reviewer errors
+remain intact; these two are errors five and six, and the Step 8 preservation
+criterion is corrected accordingly. No objective, decision gate, declared
+scope, standing prohibition, or task order changes.
+
 v0.28 closed `no-release` on 2026-07-31 and every substantive claim in the Codex
 report was re-derived and held. The export is **2,530,129 bytes** — the byte
 count Codex reported, matched exactly on receipt. Invariant totals moved **12
@@ -35,10 +56,10 @@ to 316 pins went through the sanctioned path: explicit operator authorization on
 manifest, landing in one implementation commit. **The standing prohibition was
 respected rather than routed around.**
 
-**Four reviewer errors, all mine, all recorded before anything else.**
+**Six reviewer errors, all mine, all recorded before anything else.**
 
-1. **The supplied v0.28 draft could not activate.** It carried a blank
-   `## Cycle closing record` heading while every task box was unchecked, and
+1. **The supplied v0.28 draft could not activate.** It carried the reserved
+   cycle-closing heading while every task box was unchecked, and
    `cycle_check` rejects exactly that combination. **This reviewer had read that
    code path in the prior review and drafted the template anyway.** It cost an
    activation cycle and amendment 1. **This file contains no closing-record
@@ -55,6 +76,14 @@ respected rather than routed around.**
    reviewer measures from a Repomix export that strips one trailing newline per
    file — an artifact noted in the *previous* review and then not corrected for.
    **Every byte figure this reviewer derives from an export is a lower bound.**
+5. **The supplied v0.29 draft repeated the reserved closing token in prose.**
+   The checker treats that exact token as a closing heading even inside the
+   sentence claiming the heading is absent, so activation failed in the same
+   way error 1 says v0.28 failed.
+6. **The supplied v0.29 draft refreshed only one of the two governed tables.**
+   Its deferred rows named v0.29, but all three trigger-bearing architecture
+   observations still named v0.28, so the active-cycle identity gate rejected
+   them at activation.
 
 **The projection was also low.** 2,375,647 drafted against 2,530,129 delivered,
 because the retained set was priced without v0.28's own documents. Arithmetic on
@@ -278,7 +307,7 @@ hash in `STATE.md`'s header**. Commit **only** this runbook at
 table — the `AGENTS.md` header moving the active declaration from v0.28 to v0.29,
 and a new `docs/cycles/PROGRESS-v0.29.md`.
 
-**This file deliberately contains no `## Cycle closing record` heading and no
+**This file deliberately contains no reserved cycle-closing heading and no
 blank closing template.** v0.28's activation failed on exactly that and the
 failure was this reviewer's. R-CLOSE appends the record when the cycle closes.
 
@@ -602,7 +631,7 @@ default:
 - Every declared permission is reconciled as used or unused, by path.
 - Every gate G1–G7 has a recorded measured answer, including G6's
   no-traffic outcome and G7's stated consequence.
-- **The four reviewer errors in this file's header are preserved in the cycle
+- **The six reviewer errors in this file's header are preserved in the cycle
   record as reviewer errors**, not restated as findings and not quietly dropped.
 - `STATE.md` records the final export figure against the ceiling **naming its
   tree**, the `checklist-audit` control, and the derived growth rate.
@@ -631,7 +660,7 @@ default:
 - [ ] Both Python lanes reported as collected/passed/skipped, comparator-derived
 - [ ] Deferred table rows all carry v0.29-identified observations
 - [ ] No publisher request, no scheduler run, no cadence change
-- [ ] Four reviewer errors preserved as such in the cycle record
+- [ ] Six reviewer errors preserved as such in the cycle record
 
 ---
 
@@ -692,6 +721,6 @@ document was moved or edited, which now rests on Codex's measurement and the
 checkers because retention depth 3 removed those files from this reviewer's
 reach.
 
-**Four reviewer errors are recorded in this file's header** rather than here,
+**Six reviewer errors are recorded in this file's header** rather than here,
 because a provenance note is where a reader looks last and an error is what they
 should see first.
