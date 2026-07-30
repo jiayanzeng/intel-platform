@@ -31,6 +31,13 @@ use std::time::Instant;
 
 const DEDUP_MAX_DISTANCE: u32 = 16;
 
+fn archive_recency_cmp(left: &Document, right: &Document) -> std::cmp::Ordering {
+    left.published_day
+        .cmp(&right.published_day)
+        .then_with(|| left.published_raw.cmp(&right.published_raw))
+        .then_with(|| left.id.cmp(&right.id))
+}
+
 const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS documents (
     id            TEXT PRIMARY KEY,
@@ -230,9 +237,10 @@ impl SqliteStore {
     /// The caller must partition by `source_id` and invoke this before
     /// `append_new`: after insertion, every non-empty incoming window overlaps
     /// itself and a detector could never fire. Boundary timestamps remain the
-    /// publisher's raw strings. The held value is selected by the archive's
-    /// existing day, raw-byte, and id ordering; it is descriptive and is never
-    /// parsed into or claimed as a measured duration.
+    /// publisher's raw strings. Both values are selected by the archive's
+    /// existing known-day, day, raw-byte, and id ordering, so the incoming
+    /// slice need not already be newest-first. They are descriptive and are
+    /// never parsed into or claimed as a measured duration.
     pub fn assess_source_window_coverage_before_insert(
         &self,
         source_id: &str,
@@ -299,8 +307,9 @@ impl SqliteStore {
             .optional()?;
         let incoming_oldest_published_raw = incoming
             .iter()
-            .rev()
-            .find_map(|document| document.published_raw.clone());
+            .filter(|document| document.published_raw.is_some())
+            .min_by(|left, right| archive_recency_cmp(left, right))
+            .and_then(|document| document.published_raw.clone());
 
         Ok(SourceWindowCoverage {
             outcome: SourceWindowCoverageOutcome::GapDetected,
@@ -1423,6 +1432,39 @@ mod tests {
                 license: License::CcBy,
             },
         }
+    }
+
+    fn coverage_doc(id: &str, day: &str) -> Document {
+        let mut document = doc(id, "Coverage boundary", "coverage fixture");
+        document.published_day = Day::parse_iso(day);
+        document.published_raw = Some(day.to_string());
+        document
+    }
+
+    #[test]
+    fn coverage_boundary_uses_archive_order_for_a_misordered_window() {
+        let store = tmp_store();
+        let held = coverage_doc("held", "2026-07-10");
+        store.append_new(&[held]).unwrap();
+        let incoming = vec![
+            coverage_doc("middle", "2026-07-08"),
+            coverage_doc("oldest", "2026-07-05"),
+            coverage_doc("newest", "2026-07-09"),
+        ];
+
+        let coverage = store
+            .assess_source_window_coverage_before_insert("techwire", &incoming)
+            .unwrap();
+
+        assert_eq!(coverage.outcome, SourceWindowCoverageOutcome::GapDetected);
+        assert_eq!(
+            coverage.held_newest_published_raw.as_deref(),
+            Some("2026-07-10")
+        );
+        assert_eq!(
+            coverage.incoming_oldest_published_raw.as_deref(),
+            Some("2026-07-05")
+        );
     }
 
     fn hits(s: &SqliteStore, q: &str) -> usize {

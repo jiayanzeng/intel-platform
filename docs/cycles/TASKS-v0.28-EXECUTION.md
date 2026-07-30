@@ -224,6 +224,40 @@ task's required checkbox. The final implementation-tree export, including this
 status and checklist record, passes at **2,485,846 bytes / 152 files**, leaving
 **514,154 bytes / 20.68%** headroom.
 
+### 2026-07-30 · Coverage boundary ordering enforced
+
+Step 6 — misordered incoming windows use archive ordering — 2026-07-30
+
+The decision gate was open: the correction is contained in
+`crates/store/src/sqlite.rs` and its unit test. Forbidden
+`apps/cored/src/main.rs` and `crates/ingest/src/**` did not change. Enforcement
+was chosen over merely documenting the precondition because the archive already
+defines the needed ordering and the incoming boundary can apply it without a
+handler seam.
+
+Both coverage boundaries now use the archive's known-day, day, raw-byte, and id
+ordering. The incoming slice is filtered to documents carrying a raw publisher
+timestamp, ordered by that same comparator, and its minimum supplies the oldest
+raw boundary; slice position is irrelevant. A planted window in middle,
+oldest, newest order produced `2026-07-05`, not the last element's
+`2026-07-09`. The protected SEC replay's measured newest-first premise remained
+**200 items / zero ascending timestamp inversions**.
+
+The effect remains bounded to an observational diagnostic string: detection
+does not fail the poll, and no filing or identity is dropped. The shipped
+identity measurement kept the **200** SEC documents plus the separate
+filings-digest document, **201/201 total with zero drops**. Warning-denied
+workspace tests passed **146/146**, including all **29** `cored` tests and the
+new **23rd** store unit test; clippy, fmt, and the warning-denied net-feature
+check passed. Registered invariant self-test passed **12 rules / 49 controls**
+after re-measuring the R1, R5, and R7 store-source line locators. Standalone
+golden passed **11/11**, delta zero.
+
+The internal `/ingest` response shape is unchanged: no handler, response type,
+field name, field type, or serialization changed. Only the value of
+`incoming_oldest_published_raw` is corrected for an unordered edge case. No
+`/v1/*` response path or value domain moved.
+
 **One reviewer hypothesis was refuted by measurement and is recorded as an error,
 not a finding.** The reviewer suspected T7 and NEGATIVE-CACHE Decision B were
 trigger-shaped residuals living in ungoverned `ARCHITECTURE.md` prose, because
@@ -749,7 +783,7 @@ wire.
 **Done when** a mis-ordered window has a measured, recorded behaviour instead of
 an assumed one.
 
-- [ ] **COVERAGE-ORDER**
+- [x] **COVERAGE-ORDER**
 
 ---
 

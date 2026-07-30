@@ -1,6 +1,42 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0, TRIGGER-IDENTITY, TRIGGER-FLOOR, DOC-SLIM, and EXPORT-BOUND are complete on top of published v0.17.0; the cycle remains open.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.28 entering tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both clean constrained Python lanes passed **293**, and all **301** pins matched twice. Current shell tests pass **303/303**; current `invariant-scan` passes **12 rules / 49 controls**, including row-owned date, active-cycle identity, and prior-subject carry-forward mutations; standalone golden remains **11/11**. The review export is now roughly half its former size, has a **3,000,000-byte** executable ceiling, and retains exactly three derived cycles without reducing executing coverage. The v0.17.0 release assembly added the internal `/ingest` coverage value and boundary fields, so the named-surface rule required a minor release even though `/ingest` is loopback-only; no `/v1/*` value domain changed. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and v0.28 authorizes no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+**As of:** 2026-07-30 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.28 E0, TRIGGER-IDENTITY, TRIGGER-FLOOR, DOC-SLIM, EXPORT-BOUND, and COVERAGE-ORDER are complete on top of published v0.17.0; the cycle remains open.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; remote `main` and the peeled v0.17.0 tag both resolve to the closing commit. Post-push run **30550582370**, attempt **1**, passed all seven executable jobs at that exact closing commit. Both post-push shell comparators derived `collected=293`, `equivalent=true`, and `equivalent_passed=293`; local passed **293 / skipped 0**, while hosted passed **292** plus one named `on_site` skip. The authenticated v0.27 evidence candidate is `f2b5f7a9ded1b21f3815752cc9e310bd29c1478e` on neutral ref `refs/heads/codex/v0.27-evidence-f2b5f7a`; hosted run **30545771070**, attempt **1**, passed all seven executable jobs, required attestations, accepted **7** signed identities, rejected **0**, and found the complete matrix. The v0.28 entering tree passed all **20** local jobs with warning-denied **145** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), both clean constrained Python lanes passed **293**, and all **301** pins matched twice. Current warning-denied workspace tests pass **146/146**; shell tests pass **303/303**; current `invariant-scan` passes **12 rules / 49 controls**, including row-owned date, active-cycle identity, and prior-subject carry-forward mutations; standalone golden remains **11/11**. The review export is now roughly half its former size, has a **3,000,000-byte** executable ceiling, and retains exactly three derived cycles without reducing executing coverage. The internal `/ingest` coverage boundary now derives its oldest raw timestamp independently of incoming slice order without changing the response shape or any `/v1/*` value domain. The v0.17.0 release assembly added the internal `/ingest` coverage value and boundary fields, so the named-surface rule required a minor release even though `/ingest` is loopback-only. The SEC identity control remains **200 kept / 0 dropped**; the measured latest-200 span is **4,650 seconds / 77.5 minutes**, or **7.75×** the unchanged 600-second cadence. Two publisher origins were exercised sequentially in one bounded runtime: arXiv's missing policy produced `RfcAllowAll`, SEC independently retained `Body(allow)`, arXiv timed out before page commit, and SEC stored 200 documents. The 600-second schedule has never run and v0.28 authorizes no publisher request. T7, A4, editable L1, R3/R4, robots negative-cache Decision B, the FastAPI version-literal relocation, terms-gate responsibility, and L2 remain open or unchanged.
+
+**v0.28 COVERAGE-ORDER removes the coverage detector's positional assumption
+(measured 2026-07-30).** The decision gate remained open: the implementation is
+contained in `crates/store/src/sqlite.rs` and its unit test; forbidden
+`apps/cored/src/main.rs` and `crates/ingest/src/**` are byte-unchanged.
+Enforcement was selected because the store already owns the archive ordering,
+so a second handler contract would add ambiguity without adding assurance.
+
+Both boundary selections now use the archive's known-day, day, raw-byte, and id
+ordering. Incoming documents without a raw publisher timestamp do not supply a
+raw boundary; among those that do, the minimum archive-order document supplies
+`incoming_oldest_published_raw`. The input need not be sorted. The new test
+constructs a middle/oldest/newest sequence and measures `2026-07-05` as the
+boundary even though the last element is `2026-07-09`; it never consults
+`incoming.last()`.
+
+The blast radius remains one observational diagnostic string. Gap detection
+continues the poll and commits the incoming window; it does not discard a
+filing or alter identity. The pinned SEC replay tests remained green, including
+the measured **200 items / zero ascending timestamp inversions** premise. The
+shipped identity control kept the **200** SEC documents plus the separate
+filings-digest document: **201/201 total kept, zero dropped**.
+
+The focused misordered-window test passed **1/1**. Warning-denied workspace
+tests passed **146/146**, comprising **29** `cored`, **23** store unit tests,
+and the unchanged remaining population. Clippy, fmt, and warning-denied
+`cored --features net --all-targets` check passed. Registered invariant scan
+passed **12/12 rules / 49 controls** after its R1, R5, and R7 exact store-line
+locators were re-measured. Standalone golden passed **11/11**, delta **0**.
+
+The internal `/ingest` response shape did not change: its route, response type,
+field names, field types, and serialization are untouched. The corrected edge
+case may change only the value of `incoming_oldest_published_raw`; no `/v1/*`
+route, response shape, or serialized value domain moved. No dependency, schema,
+protected artifact, publisher request, scheduler run, tag, or branch ref
+changed.
 
 **v0.28 EXPORT-BOUND makes reviewability an executable property (measured
 2026-07-30).** `tools/export_check.py` now rejects exports above a declared

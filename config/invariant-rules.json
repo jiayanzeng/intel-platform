@@ -29,7 +29,7 @@
           ],
           "expected_fail": "canonical identity helper call is outside the production caller allow-list; found assign_canonical_ids_tx in rebuild_identity_with_limit",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 771
+          "expected_line": 780
         }
       ],
       "fail_before_note": "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production assign_canonical_ids call outside the store"
@@ -112,7 +112,7 @@
           ],
           "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found INGEST_FUZZ_LIMIT",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 223
+          "expected_line": 230
         },
         {
           "file": "crates/store/src/sqlite.rs",
@@ -136,7 +136,7 @@
           ],
           "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found 16",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 222
+          "expected_line": 229
         },
         {
           "file": "crates/view/src/lib.rs",
@@ -188,7 +188,7 @@
           ],
           "expected_fail": "assign_canonical_ids_tx must call intel_extract::dedup_eligible",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 820
+          "expected_line": 829
         }
       ],
       "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
@@ -226,7 +226,7 @@
           ],
           "expected_fail": "documents_by_ids must not be public",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 388
+          "expected_line": 397
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -474,7 +474,7 @@
     {
       "id": "R12",
       "claim": "Every closing/publication-status, v0.23-forward declared-scope, v0.23-forward trigger-freshness, v0.28-forward trigger-identity and carry-forward, shell test-population equivalence, and non-paged coverage-detection topology rule rejects its planted failure; legacy immutable assertions remain required and fresh, tagged-closing releases pin the prior release commit in the tagged tree and require a fresh dated post-push record on descendants, an unsatisfiable release scope rejects its changed paths, both governed trigger tables have a nonzero population, every trigger-bearing governed row carries a valid ISO date in its own measured cell and v0.28-forward names the active cycle, an immediately prior deferred subject remains active or has a valid dated completion, an unmarked hosted skip cannot be classified as an allowed population difference, and coverage assessment remains before insertion and partitioned by source.",
-      "source": "docs/cycles/TASKS-v0.28-EXECUTION.md:582-611",
+      "source": "docs/cycles/TASKS-v0.28-EXECUTION.md:616-645",
       "scope": "The actual tools/cycle_check.py check_release_record, check_publication_status, validate_declared_scope, check_trigger_freshness, check_trigger_table, and check_deferred_carry_forward entry points; tools/test_population.py parse_summary and compare_populations entry points; and the production apps/cored/src/main.rs non-paged coverage assessment call relative to every append_new call and its exact sel.source.id()/docs partition. Planted cases cover legacy active-close shape, lightweight tag, wrong release parent, open tagged tree, origin/main, missing and stale legacy immutable assertions, missing and stale tagged-closing release-commit assertion, pending-publication, missing annotated-tag ref, missing peeled target, unavailable ancestry, missing or stale post-push records, a v0.22-shaped release scope that rejects apps/cored/Cargo.toml and Cargo.lock, a trigger-bearing governed row whose own cell lacks a valid date while its header carries one, a trigger-bearing row naming v0.27 instead of active v0.28, a silently dropped immediately prior deferred subject, an unmarked hosted skip, an insert moved before coverage assessment, and a combined fetched batch substituted for the per-source docs slice. Scope and trigger-freshness declarations apply only to the active v0.23-forward runbook; trigger identity, population floors, and immediate-prior carry-forward apply v0.28-forward; trigger freshness governs the live ARCHITECTURE.md dated-dispositions table and active runbook deferral table; and assertion grammar remains deliberately narrow.",
       "fail_before": [
         {
