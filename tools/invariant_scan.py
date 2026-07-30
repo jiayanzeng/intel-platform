@@ -36,6 +36,7 @@ from typing import Callable
 ROOT = Path(__file__).resolve().parents[1]
 RULES_FILE = Path("config/invariant-rules.json")
 STORE = Path("crates/store/src/sqlite.rs")
+EXTRACT = Path("crates/extract/src/lib.rs")
 VIEW = Path("crates/view/src/lib.rs")
 CORE_MAIN = Path("apps/cored/src/main.rs")
 AUTHORITY_FILES = (
@@ -91,6 +92,20 @@ CANONICAL_DISTANCE_CALL = re.compile(
 VIEW_DEFAULT_DISTANCE = re.compile(
     r"(?ms)impl\s+Default\s+for\s+ViewParams\s*\{.*?"
     r"dedup_max_distance:\s*(\d+)\s*,"
+)
+DEDUP_FEATURE_FLOOR_DECL = re.compile(
+    r"(?m)^\s*(?:pub(?:\([^)]*\))?\s+)?const\s+"
+    r"(DEDUP_MIN_FEATURES)\s*:\s*usize\s*=\s*(\d+)"
+)
+DEDUP_ELIGIBILITY_BODY = re.compile(
+    r"(?ms)pub\s+fn\s+dedup_eligible\s*\("
+    r"\s*left_features:\s*usize,\s*right_features:\s*usize\s*\)"
+    r"\s*->\s*bool\s*\{\s*"
+    r"left_features\s*>=\s*DEDUP_MIN_FEATURES\s*&&\s*"
+    r"right_features\s*>=\s*DEDUP_MIN_FEATURES\s*\}"
+)
+DEDUP_ELIGIBILITY_CALL = re.compile(
+    r"\b(?P<qualified>intel_extract::)?dedup_eligible\s*\("
 )
 CANONICAL_IDENTITY_CALLERS = {
     "append_new",
@@ -1111,11 +1126,28 @@ def _canonical_distance_calls(
 def r5_findings(root: Path) -> list[str]:
     findings: list[str] = []
     declarations: list[tuple[Path, str, re.Match[str]]] = []
+    feature_floors: list[tuple[Path, str, re.Match[str]]] = []
+    eligibility_calls: list[tuple[Path, str, re.Match[str], str]] = []
     for path in rust_files(root):
         text = production_text(path.relative_to(root), path.read_text())
         declarations.extend(
             (path, text, match) for match in THRESHOLD_DECL.finditer(text)
         )
+        feature_floors.extend(
+            (path, text, match)
+            for match in DEDUP_FEATURE_FLOOR_DECL.finditer(text)
+        )
+        for match in DEDUP_ELIGIBILITY_CALL.finditer(text):
+            prefix = text[max(0, match.start() - 32) : match.start()]
+            if re.search(r"\bfn\s*$", prefix):
+                continue
+            declaration = _enclosing_function(text, match.start())
+            caller = (
+                declaration.group("name")
+                if declaration is not None
+                else "<module>"
+            )
+            eligibility_calls.append((path, text, match, caller))
         for match, token in _canonical_distance_calls(text):
             if token != "DEDUP_MAX_DISTANCE":
                 findings.append(
@@ -1164,6 +1196,96 @@ def r5_findings(root: Path) -> list[str]:
                 f"view default dedup_max_distance={view_value} differs from "
                 f"store DEDUP_MAX_DISTANCE={store_value}"
             )
+
+    extract_path = root / EXTRACT
+    extract_text = production_text(EXTRACT, extract_path.read_text())
+    expected_floor = [
+        item
+        for item in feature_floors
+        if item[0].resolve() == extract_path.resolve()
+    ]
+    if len(expected_floor) != 1:
+        findings.append(
+            f"{EXTRACT}:24: expected one public DEDUP_MIN_FEATURES: usize declaration"
+        )
+    for path, text, match in feature_floors:
+        if path.resolve() != extract_path.resolve():
+            findings.append(
+                f"{location(root, path, text, match.start())}: second "
+                f"DEDUP_MIN_FEATURES declaration={match.group(2)}"
+            )
+    if len(feature_floors) != 1:
+        findings.append(
+            f"{EXTRACT}:24: production Rust contains {len(feature_floors)} "
+            "DEDUP_MIN_FEATURES declarations; expected 1"
+        )
+    if len(expected_floor) == 1 and expected_floor[0][2].group(2) != "26":
+        path, text, match = expected_floor[0]
+        findings.append(
+            f"{location(root, path, text, match.start(2))}: "
+            f"DEDUP_MIN_FEATURES={match.group(2)} differs from measured floor 26"
+        )
+
+    guard_bodies = list(DEDUP_ELIGIBILITY_BODY.finditer(extract_text))
+    if len(guard_bodies) != 1:
+        guard_definition = next(
+            (
+                declaration
+                for declaration in RUST_FUNCTION.finditer(extract_text)
+                if declaration.group("name") == "dedup_eligible"
+            ),
+            None,
+        )
+        guard_line = (
+            location(root, extract_path, extract_text, guard_definition.start())
+            if guard_definition is not None
+            else f"{EXTRACT}:58"
+        )
+        findings.append(
+            f"{guard_line}: dedup_eligible must compare both feature counts "
+            "to DEDUP_MIN_FEATURES"
+        )
+
+    expected_eligibility_sites = {
+        (EXTRACT, "dedup_near", False),
+        (STORE, "assign_canonical_ids_tx", True),
+    }
+    seen_eligibility_sites: set[tuple[Path, str, bool]] = set()
+    for path, text, match, caller in eligibility_calls:
+        site = (
+            path.relative_to(root),
+            caller,
+            match.group("qualified") is not None,
+        )
+        if site not in expected_eligibility_sites:
+            findings.append(
+                f"{location(root, path, text, match.start())}: unexpected "
+                f"dedup_eligible call in {caller}"
+            )
+        seen_eligibility_sites.add(site)
+    for relative, caller, qualified in sorted(
+        expected_eligibility_sites - seen_eligibility_sites,
+        key=lambda item: (str(item[0]), item[1], item[2]),
+    ):
+        path = root / relative
+        text = production_text(relative, path.read_text())
+        declaration = next(
+            (
+                item
+                for item in RUST_FUNCTION.finditer(text)
+                if item.group("name") == caller
+            ),
+            None,
+        )
+        line = (
+            location(root, path, text, declaration.start())
+            if declaration is not None
+            else f"{relative}:1"
+        )
+        qualification = "intel_extract::" if qualified else ""
+        findings.append(
+            f"{line}: {caller} must call {qualification}dedup_eligible"
+        )
     return findings
 
 

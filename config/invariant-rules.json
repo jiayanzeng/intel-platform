@@ -96,9 +96,9 @@
     },
     {
       "id": "R5",
-      "claim": "Every production store canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant, and the ViewParams default carries the same numeric distance.",
-      "source": "docs/cycles/TASKS-v0.26-EXECUTION.md:909-937",
-      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; the one private crates/store/src/sqlite.rs DEDUP_MAX_DISTANCE declaration; and the one ViewParams default dedup_max_distance in crates/view/src/lib.rs. Test-only Rust is excluded. Two boundary-local declarations remain deliberate because neither production crate depends on the other and Step 4A's allowed scope contains no common dependency or manifest edge; R5 compares their numeric values so either declaration moving alone fails.",
+      "claim": "Every production store canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant, the ViewParams default carries the same numeric distance, and both store canonicalization and view dedup invoke the shared eligibility guard whose one measured feature floor is 26.",
+      "source": "docs/cycles/TASKS-v0.26-EXECUTION.md:1042-1087",
+      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; the one private crates/store/src/sqlite.rs DEDUP_MAX_DISTANCE declaration; the one ViewParams default dedup_max_distance in crates/view/src/lib.rs; the one public crates/extract/src/lib.rs DEDUP_MIN_FEATURES declaration fixed at the measured floor 26; the shared dedup_eligible body comparing both feature counts to that floor; and exactly the dedup_near and assign_canonical_ids_tx production calls to that guard. Test-only Rust is excluded. The two radius declarations remain boundary-local and R5 compares their numeric values. The feature floor has one shared compiled authority in intel-extract, which both store and view already consume. R1's caller-topology claim is unchanged: the guard adds no canonical-identity caller.",
       "fail_before": [
         {
           "file": "crates/store/src/sqlite.rs",
@@ -147,6 +147,48 @@
           "expected_fail": "view default dedup_max_distance=17 differs from store DEDUP_MAX_DISTANCE=16",
           "expected_file": "crates/view/src/lib.rs",
           "expected_line": 44
+        },
+        {
+          "file": "crates/extract/src/lib.rs",
+          "find": "pub const DEDUP_MIN_FEATURES: usize = 26;\n",
+          "replace_with": [
+            "pub const DEDUP_MIN_FEATURES: usize = 25;\n"
+          ],
+          "expected_fail": "DEDUP_MIN_FEATURES=25 differs from measured floor 26",
+          "expected_file": "crates/extract/src/lib.rs",
+          "expected_line": 24
+        },
+        {
+          "file": "crates/extract/src/lib.rs",
+          "find": "    left_features >= DEDUP_MIN_FEATURES && right_features >= DEDUP_MIN_FEATURES\n",
+          "replace_with": [
+            "    left_features >= DEDUP_MIN_FEATURES && right_features >= 26\n"
+          ],
+          "expected_fail": "dedup_eligible must compare both feature counts to DEDUP_MIN_FEATURES",
+          "expected_file": "crates/extract/src/lib.rs",
+          "expected_line": 58
+        },
+        {
+          "file": "crates/extract/src/lib.rs",
+          "find": "            if dedup_eligible(*kept_features, feature_count) && dist <= max_distance {\n",
+          "replace_with": [
+            "            if dist <= max_distance {\n"
+          ],
+          "expected_fail": "dedup_near must call dedup_eligible",
+          "expected_file": "crates/extract/src/lib.rs",
+          "expected_line": 106
+        },
+        {
+          "file": "crates/store/src/sqlite.rs",
+          "find": "        match kept.iter().find(|(kept_fp, kept_features, _)| {\n            intel_extract::dedup_eligible(*kept_features, features)\n                && intel_extract::hamming(*kept_fp, fp) <= max_distance\n        }) {\n",
+          "replace_with": [
+            "        match kept.iter().find(|(kept_fp, _, _)| {\n",
+            "            intel_extract::hamming(*kept_fp, fp) <= max_distance\n",
+            "        }) {\n"
+          ],
+          "expected_fail": "assign_canonical_ids_tx must call intel_extract::dedup_eligible",
+          "expected_file": "crates/store/src/sqlite.rs",
+          "expected_line": 721
         }
       ],
       "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"

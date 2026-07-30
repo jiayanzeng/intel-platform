@@ -136,6 +136,18 @@ Condensed from `STATE.md §2`.
    both declarations still requires the behavioral evidence and decision that
    the active cycle assigns separately.
 
+   **Feature eligibility — selected 2026-07-30.** Radius 16 applies only when
+   both documents have at least 26 three-token SimHash features. Twenty-six is
+   the smallest feature count measured in the calibrated golden news corpus;
+   the measured SEC corpus had at most 10, so the unmeasured 11–25 range is
+   deliberately ineligible rather than extrapolated. `intel-extract` owns the
+   one compiled `DEDUP_MIN_FEATURES` authority and the shared two-sided guard;
+   store canonicalization and view collapse both invoke it. R5 statically
+   observes the floor, guard body, and both call sites with planted failures.
+   R1 remains the caller-topology control because this policy adds no identity
+   caller. The explicit cost is that sparse documents, including byte-identical
+   ones, remain separate identities until another measured rule is admitted.
+
 ## 4. The robots subsystem (two gates, one direction)
 
 - **Publisher policy** — fetched from the real `/robots.txt` (`RobotsCache`,
@@ -264,7 +276,7 @@ in core SQL; an empty set makes every requested document unavailable.
 | HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
 | HC12 lock discipline | CI (`--locked`, MSRV job) | the lock *is* the build; its format is part of MSRV |
 | HC13 fixtures ≠ wire | tests + live-run policy | three bugs came from believing otherwise |
-| corpus identity atomicity | core store transaction + R1 production-caller allow-list + R5 synchronized boundary-local distance declarations | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit, no other production canonicalization caller exists, every store caller uses the private store constant, and the separately required view default must carry the same numeric value; the two declarations remain because neither crate depends on the other, while a coordinated value change still requires separate behavioral review |
+| corpus identity atomicity and eligibility | core store transaction + R1 production-caller allow-list + R5 synchronized distance declarations and shared feature guard | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit; the two boundary-local radius declarations remain synchronized; and both store and view invoke the one two-sided 26-feature eligibility authority, so sparse fingerprints cannot exercise a radius calibrated on denser text |
 | repository absence claims | registered `invariant-scan` rules in local/hosted CI | each scoped claim has executable source coverage and a captured planted failure; prose-only absence is not accepted |
 | local/hosted check parity | R10 over `run` and `.github/workflows/ci.yml` | the local `ci-local` jobs and non-report-only hosted verification steps are derived from their entry-point commands in both directions; runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database bytes are explicit, counted exemptions |
 | active-runbook measured-value references | `cycle-check` acceptance-criterion heuristic | explicit cross-step references to a recorded, measured, or stored value/count/number/quantity/total are rejected; acceptance must state the invariant relation at the same commit |

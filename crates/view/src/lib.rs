@@ -30,9 +30,9 @@ pub struct View {
 }
 
 pub struct ViewParams {
-    /// Near-dup hamming threshold. Calibrated for short title+abstract texts
-    /// (dup ~12 bits, related-but-distinct ~26, unrelated ~36); long-document
-    /// corpora want much tighter (~3). Make per-source-class in production.
+    /// Near-dup hamming threshold. Calibrated for title+abstract texts and
+    /// guarded in intel-extract so both documents must first meet the measured
+    /// minimum feature count.
     pub dedup_max_distance: u32,
     pub discovery_min_docs: usize,
     pub analyze: AnalyzeParams,

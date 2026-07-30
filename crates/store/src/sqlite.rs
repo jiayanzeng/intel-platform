@@ -719,22 +719,27 @@ impl SqliteStore {
 }
 
 fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite::Result<usize> {
-    // (sector, published_day, id, simhash), in the dedup's own order.
-    let rows: Vec<(String, Option<i64>, String, u64)> = {
+    // (sector, published_day, id, simhash, feature_count), in the dedup's own
+    // order. Feature count is derived from the same title+body input as the
+    // persisted fingerprint.
+    let rows: Vec<(String, Option<i64>, String, u64, usize)> = {
         let mut stmt = tx.prepare(
-            "SELECT sector, published_day, id, simhash FROM documents
+            "SELECT sector, published_day, id, title, body, simhash FROM documents
              ORDER BY sector, published_day, id",
         )?;
         let it = stmt.query_map([], |r| {
             let id = r.get::<_, String>(2)?;
+            let title = r.get::<_, String>(3)?;
+            let body = r.get::<_, String>(4)?;
             let fingerprint = r
-                .get::<_, Option<i64>>(3)?
-                .ok_or_else(|| missing_fingerprint_error(3, &id))?;
+                .get::<_, Option<i64>>(5)?
+                .ok_or_else(|| missing_fingerprint_error(5, &id))?;
             Ok((
                 r.get::<_, String>(0)?,
                 r.get::<_, Option<i64>>(1)?,
                 id,
                 fingerprint as u64,
+                intel_extract::simhash_feature_count(&format!("{title} {body}")),
             ))
         })?;
         it.collect::<rusqlite::Result<Vec<_>>>()?
@@ -742,19 +747,19 @@ fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite:
 
     let mut assignments: Vec<(String, String)> = Vec::new();
     let mut sector = String::new();
-    let mut kept: Vec<(u64, String)> = Vec::new();
-    for (sec, _day, id, fp) in rows {
+    let mut kept: Vec<(u64, usize, String)> = Vec::new();
+    for (sec, _day, id, fp, features) in rows {
         if sec != sector {
             sector = sec;
             kept.clear();
         }
-        match kept
-            .iter()
-            .find(|(kept_fp, _)| intel_extract::hamming(*kept_fp, fp) <= max_distance)
-        {
-            Some((_, canonical)) => assignments.push((id, canonical.clone())),
+        match kept.iter().find(|(kept_fp, kept_features, _)| {
+            intel_extract::dedup_eligible(*kept_features, features)
+                && intel_extract::hamming(*kept_fp, fp) <= max_distance
+        }) {
+            Some((_, _, canonical)) => assignments.push((id, canonical.clone())),
             None => {
-                kept.push((fp, id.clone()));
+                kept.push((fp, features, id.clone()));
                 assignments.push((id.clone(), id));
             }
         }
@@ -1374,7 +1379,7 @@ mod tests {
     // --- T9.1: persisted fingerprints + canonical ids -----------------------
 
     fn dup_doc(id: &str, day: &str, body: &str) -> Document {
-        let mut d = doc(id, "Shared headline about DeepSeek V4", body);
+        let mut d = doc(id, "DeepSeek opens V4 Pro weights for research use", body);
         d.published_day = Day::parse_iso(day);
         d.published_raw = Some(day.to_string());
         d
@@ -1384,10 +1389,12 @@ mod tests {
     // story, published the same day by two different outlets.
     const ORIGINAL: &str = "DeepSeek said researchers can request the V4 Pro \
         checkpoints starting today. Early adopters are serving the release \
-        through vLLM at launch.";
+        through vLLM at launch. Helios Labs said it will fine-tune the model \
+        for laboratory automation workloads.";
     const SYNDICATED: &str = "Syndicated: DeepSeek said researchers can request \
         the V4 Pro checkpoints starting today. Early adopters are serving the \
-        release through vLLM at launch.";
+        release through vLLM at launch. Helios Labs said it will fine-tune the \
+        model for laboratory automation workloads.";
 
     fn canonical_rows(s: &SqliteStore) -> Vec<(String, Option<String>)> {
         let conn = s.conn.lock().unwrap();
@@ -1561,6 +1568,29 @@ mod tests {
         s.assign_canonical_ids(16).unwrap();
         assert_eq!(s.canonical_id("d1").unwrap().as_deref(), Some("d1"));
         assert_eq!(s.canonical_id("d2").unwrap().as_deref(), Some("d2"));
+        assert!(s.duplicates().unwrap().is_empty());
+    }
+
+    #[test]
+    fn sparse_identical_documents_are_not_canonicalized_together() {
+        let s = tmp_store();
+        let first = doc("sparse-a", "Quarterly filing", "Revenue increased");
+        let second = doc("sparse-b", "Quarterly filing", "Revenue increased");
+        assert!(
+            intel_extract::simhash_feature_count(&format!("{} {}", first.title, first.body))
+                < intel_extract::DEDUP_MIN_FEATURES
+        );
+        s.append_new(&[first, second]).unwrap();
+        s.assign_canonical_ids(16).unwrap();
+
+        assert_eq!(
+            s.canonical_id("sparse-a").unwrap().as_deref(),
+            Some("sparse-a")
+        );
+        assert_eq!(
+            s.canonical_id("sparse-b").unwrap().as_deref(),
+            Some("sparse-b")
+        );
         assert!(s.duplicates().unwrap().is_empty());
     }
 

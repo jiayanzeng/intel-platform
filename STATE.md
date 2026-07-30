@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, and THRESHOLD-AUTHORITY: the `-D warnings` workspace lane passes **137** tests, both constrained Python lanes collect and pass **289**, active `invariant-scan` passes **12 rules / 40 controls**, clippy and fmt are clean, and golden remains **11/11**. Shipped radius 16 keeps 172/200 SEC rows and falsely collapses **20** across issuer CIKs; the next gate is the operator's Step 4 identity-policy decision. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+**As of:** 2026-07-30 · **Version:** v0.16.0 (core-shell) · **Status:** **v0.16.0 is published under the v0.25 R-CLOSE protocol.** Untagged release commit `7baddb305a4357ec2dc2a35757528c1a6dc13f1e` is the immediate parent of closing commit `c66c2b02191e3ca3126dddc3c004b175899b414e`; annotated tag object `54f8cb2f89ed53d9e0b485f6cd46924a51e41813` targets that closing commit. Post-push run **30516010035**, attempt **1**, passed all seven executable jobs at the exact published closing commit. The separate authenticated closing evidence remains candidate `779fbe55ba33dd5d196df391cc9a9eeb3ce0bbb3` and run **30513561141**, attempt **1**; its release-grade audit required attestations, accepted **7** signed identities, rejected **0**, and found the complete job/matrix set. The post-push comparators derived equivalent populations for both Python lanes: local collected **284**, passed **284**, and skipped **0**; hosted collected **284**, passed **283**, and skipped one named `on_site` test. The exact release parent passed all **20** local jobs with **135** workspace tests, **55** net tests (**29** `intel-ingest` + **26** `cored`), locked Rust 1.78, `invariant-scan` **12 rules / 39 controls**, embedded and standalone golden **11/11**, and clean Rust, clippy, fmt, and ShellCheck gates. The active v0.26 worktree has completed REPLAY, OBSERVATION-PIN, IDENTITY-MEASURE, THRESHOLD-AUTHORITY, and IDENTITY-DECISION: the `-D warnings` workspace lane passes **139** tests, both constrained Python lanes collect and pass **289**, active `invariant-scan` passes **12 rules / 44 controls**, clippy and fmt are clean, and golden remains **11/11**. Radius 16 is now guarded by the shared measured floor of 26 features: all 200 SEC rows remain distinct, all 20 measured cross-issuer false collapses are gone, and golden's hamming-12 true positive still collapses. CADENCE is the next step. All **271** pinned files and both protected databases match, including five observation-grade v0.25 files. Two publisher origins are configured; only `arxiv-cs` has ever been harvested, and live multi-publisher behavior remains unmeasured. The pre-existing `refs/heads/candidate/v0.16.0` remains the v0.15.1 evidence ref at `3481e4ba85d65c927b7d0fc3a430bc04fb094394`; it predates and does not belong to this release. The earlier REPLAY rule is the fifth author-side rule with no satisfying assignment, the CADENCE retrieval remains quarantined, retractions remain three, and no harvest has occurred. A4, the editable-L1 controller residual, the R3/R4 bounded open-bottom deny-lists, the active-runbook measured-value heuristic, T7 robots single-flight, the explicitly deferred last-known-good robots fallback, the FastAPI version-literal relocation, and live multi-publisher behavior remain open; L2 remains scheduled.
+
+**v0.26 IDENTITY-DECISION guards radius 16 at the measured feature
+boundary (selected and measured 2026-07-30).**
+
+The operator selected Option 1, guard by feature count. The claim is narrow:
+radius 16 is eligible only when both documents have at least 26 three-token
+SimHash features. Twenty-six is the smallest count measured in the calibrated
+golden news corpus. The SEC maximum was 10, so 11–25 remains deliberately
+ineligible rather than being treated as measured. The cost is explicit:
+sparse documents, even identical ones, remain separate identities.
+
+`intel-extract` now owns one compiled `DEDUP_MIN_FEATURES` value and the shared
+two-sided eligibility guard. Both `dedup_near` and store
+`assign_canonical_ids_tx` compute feature counts from the same title-plus-body
+input as SimHash and call that guard before comparing distance. Step 4A's two
+boundary-local radius declarations remain 16; the shared guard is applied to
+both boundaries. R1 is unchanged because no canonical-identity caller was
+added. R5 now observes the floor fixed at 26, the guard's two-sided comparison,
+and both production call sites in addition to its prior distance checks.
+
+The parser-produced finance test sent 201 documents through the public store
+append path and shipped view dedup. Both paths kept 201 and dropped 0; all 200
+SEC rows stayed distinct, so the previously measured 20 cross-issuer drops are
+gone. Separate sparse-identical tests prove the guard refuses distance zero.
+Golden still drops `techwire::tw-004` for `osdaily::osd-004` at hamming 12,
+so the calibrated true positive remains.
+
+Four new R5 planted failures changed the floor, severed one side of the shared
+guard, removed the view-side call, and removed the store-side call. All were
+detected at their exact production locations. Counts remain **12 rules** and
+rise from 40 to **44 controls**. The focused invariant suites passed 22/22 in
+both Python versions; full self-test passed 12/12 rules and all 44 controls.
+The `-D warnings` workspace passed **139** tests; both full constrained Python
+lanes passed **289/289**; clippy and fmt were clean; and golden passed
+**11/11** byte-identically. The first sandboxed golden and shell invocations
+could not bind loopback ports (and the shell lane could not inspect `ps`);
+their approved reruns executed those controls and passed. `config/core.json`
+and `config/schedule.json` did not change, and no publisher request was made.
 
 **v0.26 THRESHOLD-AUTHORITY synchronizes the boundary-local declarations
 (measured 2026-07-30).**

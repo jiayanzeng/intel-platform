@@ -851,6 +851,54 @@ the authority change behavior-preserving today. `cycle-check` and fmt also
 passed. No config other than the invariant registry, fixture, golden input,
 protected artifact, database, dependency, ref, or publisher changed.
 
+### IDENTITY-DECISION execution record — 2026-07-30
+
+The operator selected **Option 1: guard the radius by feature count**. The
+claim is conditional and executed: radius 16 applies only when both documents
+have at least **26** three-token SimHash features. Twenty-six is the smallest
+feature count measured in the calibrated golden news corpus. The measured SEC
+maximum is 10, so this decision does not extrapolate into the unmeasured 11–25
+range. The explicit cost is that sparse documents, including identical ones,
+remain distinct.
+
+`intel-extract` now owns the one compiled `DEDUP_MIN_FEATURES` authority and
+the shared two-sided eligibility guard. Store `assign_canonical_ids_tx` and
+view `dedup_near` both calculate feature counts from the same title-plus-body
+input as the fingerprint and invoke the guard before the radius. Step 4A's two
+boundary-local radius declarations remain 16; the option applies the shared
+guard to both. R1's caller-topology claim remains accurate and unchanged
+because no canonical-identity caller was added.
+
+The committed parser-produced test passes 201 finance documents through the
+public store append path and shipped `dedup_near`. Both kept 201 and dropped
+0. All 200 SEC rows therefore remained distinct and the previously measured
+20 cross-issuer collapses are gone. Separate extract and store tests prove
+that sparse identical documents at distance zero remain distinct. Standalone
+golden passed **11/11** and still dropped `techwire::tw-004` for
+`osdaily::osd-004` at hamming 12, proving the calibrated true positive
+survives byte-identically.
+
+R5's claim, scope, and checker now also cover the one floor fixed at 26, both
+sides of the shared guard, and the exact store and view call sites. Four new
+registered mutations changed 26 to 25, hard-coded one side of the guard,
+removed the `dedup_near` guard call, and removed the store guard call. The real
+self-test detected each at its exact production location. R1 was not broadened
+because its existing caller-topology property did not change. Counts remain
+**12 rules** and rise from 40 to **44 controls**.
+
+The `-D warnings` workspace passed **139** tests. Both constrained Python
+lanes passed **289/289**, both focused invariant suites passed 22/22, full
+`invariant-scan` passed 12/12 rules and all 44 controls, clippy and fmt were
+clean, and golden passed 11/11. The initial sandboxed golden and shell
+invocations were unable to bind loopback test ports (and the shell audit could
+not inspect `ps`); approved reruns exercised those controls and passed.
+`config/core.json` and `config/schedule.json` are untouched. All three
+production-source permissions were used exactly for the decision:
+`intel-extract` owns the policy, store applies it to canonical identity, and
+view's threshold comment names the executed guard. No ingest/compliance/shell
+source, dependency, protected database, fixture, golden input, ref, or
+publisher changed.
+
 ---
 
 ## Step 2 · REPLAY — Build the real document set from real bytes 🤖
@@ -1315,7 +1363,7 @@ publication.**
   in three places; rule claim matches its check; planted failure moves exactly
   one declaration and is detected; behaviour proven unchanged; counts in three
   places
-- [ ] **IDENTITY-DECISION** — one option chosen and dated with its claim;
+- [x] **IDENTITY-DECISION** — one option chosen and dated with its claim;
   two-declaration question resolved or recorded inapplicable; golden's hamming-12
   drop proven still to occur; measured cross-issuer collapses proven gone; rule
   changes carry detected planted failures with counts in three places; unused

@@ -16,6 +16,13 @@
 
 use intel_core::Document;
 
+/// The radius-16 identity rule is calibrated only for documents with at least
+/// this many SimHash features. Step 3 measured 26 as the smallest feature count
+/// in the golden news corpus; the SEC corpus had at most 10. Keeping the floor
+/// at the measured boundary avoids extrapolating into the unmeasured 11–25
+/// range.
+pub const DEDUP_MIN_FEATURES: usize = 26;
+
 /// Deterministic 64-bit FNV-1a. Stability across runs matters because
 /// fingerprints can be persisted alongside documents.
 pub fn fnv1a64(bytes: &[u8]) -> u64 {
@@ -35,15 +42,27 @@ pub fn tokens(text: &str) -> Vec<String> {
         .collect()
 }
 
+fn features(text: &str) -> Vec<String> {
+    let toks = tokens(text);
+    if toks.len() >= 3 {
+        toks.windows(3).map(|window| window.join(" ")).collect()
+    } else {
+        toks
+    }
+}
+
+pub fn simhash_feature_count(text: &str) -> usize {
+    features(text).len()
+}
+
+pub fn dedup_eligible(left_features: usize, right_features: usize) -> bool {
+    left_features >= DEDUP_MIN_FEATURES && right_features >= DEDUP_MIN_FEATURES
+}
+
 /// 64-bit SimHash over 3-token shingles (falls back to unigrams for very
 /// short texts). Each feature votes on each bit; the majority wins.
 pub fn simhash(text: &str) -> u64 {
-    let toks = tokens(text);
-    let feats: Vec<String> = if toks.len() >= 3 {
-        toks.windows(3).map(|w| w.join(" ")).collect()
-    } else {
-        toks
-    };
+    let feats = features(text);
     if feats.is_empty() {
         return 0;
     }
@@ -91,14 +110,15 @@ pub fn dedup_near(mut docs: Vec<(Document, u64)>, max_distance: u32) -> DedupRes
             .then_with(|| a.id.cmp(&b.id))
     });
 
-    let mut kept: Vec<(u64, Document)> = Vec::new();
+    let mut kept: Vec<(u64, usize, Document)> = Vec::new();
     let mut drops = Vec::new();
 
     for (d, fp) in docs {
+        let feature_count = simhash_feature_count(&format!("{} {}", d.title, d.body));
         let mut matched: Option<(u32, String)> = None;
-        for (kfp, k) in &kept {
+        for (kfp, kept_features, k) in &kept {
             let dist = hamming(*kfp, fp);
-            if dist <= max_distance {
+            if dedup_eligible(*kept_features, feature_count) && dist <= max_distance {
                 matched = Some((dist, k.id.clone()));
                 break;
             }
@@ -109,12 +129,12 @@ pub fn dedup_near(mut docs: Vec<(Document, u64)>, max_distance: u32) -> DedupRes
                 kept_id,
                 distance,
             }),
-            None => kept.push((fp, d)),
+            None => kept.push((fp, feature_count, d)),
         }
     }
 
     DedupResult {
-        kept: kept.into_iter().map(|(_, d)| d).collect(),
+        kept: kept.into_iter().map(|(_, _, d)| d).collect(),
         drops,
     }
 }
@@ -169,13 +189,24 @@ mod tests {
     fn dedup_consumes_supplied_fingerprints_instead_of_recomputing() {
         let first = doc(
             "a",
-            "Sparse mixture of experts routing",
-            "memory constraints on accelerators",
+            "Sparse mixture of experts routing under memory constraints",
+            "Researchers measured deterministic accelerator scheduling across many independent \
+             inference workloads and published the complete reproducible evaluation today for \
+             independent verification across laboratories worldwide",
         );
         let second = doc(
             "b",
-            "Coastal salinity trends",
-            "twenty years of public buoy measurements",
+            "Coastal salinity trends from public buoy measurements",
+            "Oceanographers compared twenty years of estuary observations across seasonal \
+             currents and released the complete reproducible marine dataset today for independent \
+             verification across coastal research institutes worldwide",
+        );
+        assert!(
+            simhash_feature_count(&format!("{} {}", first.title, first.body)) >= DEDUP_MIN_FEATURES
+        );
+        assert!(
+            simhash_feature_count(&format!("{} {}", second.title, second.body))
+                >= DEDUP_MIN_FEATURES
         );
         let fresh_first = simhash(&format!("{} {}", first.title, first.body));
         let fresh_second = simhash(&format!("{} {}", second.title, second.body));
@@ -190,5 +221,20 @@ mod tests {
         assert_eq!(result.drops[0].dropped_id, "b");
         assert_eq!(result.drops[0].kept_id, "a");
         assert_eq!(result.drops[0].distance, 0);
+    }
+
+    #[test]
+    fn sparse_documents_remain_distinct_even_with_identical_fingerprints() {
+        let first = doc("a", "Quarterly filing", "Revenue increased");
+        let second = doc("b", "Quarterly filing", "Revenue increased");
+        let first_features = simhash_feature_count(&format!("{} {}", first.title, first.body));
+        let second_features = simhash_feature_count(&format!("{} {}", second.title, second.body));
+        assert!(first_features < DEDUP_MIN_FEATURES);
+        assert!(second_features < DEDUP_MIN_FEATURES);
+        assert!(!dedup_eligible(first_features, second_features));
+
+        let result = dedup_near(vec![(first, 7), (second, 7)], 16);
+        assert_eq!(result.kept.len(), 2);
+        assert!(result.drops.is_empty());
     }
 }

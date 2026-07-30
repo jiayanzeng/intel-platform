@@ -5,7 +5,9 @@ use intel_core::{
     Day, Document, Entity, EntityKind, License, Mention, Provenance, SectorId, SignalKind,
     SourceKind,
 };
-use intel_extract::{dedup_near, hamming, simhash, tokens, DedupResult};
+use intel_extract::{
+    dedup_eligible, dedup_near, hamming, simhash, simhash_feature_count, DEDUP_MIN_FEATURES,
+};
 use intel_store::SqliteStore;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -171,12 +173,7 @@ fn parser_produced_documents(disposable: &DisposableDir) -> Vec<Document> {
 }
 
 fn feature_count(document: &Document) -> usize {
-    let count = tokens(&format!("{} {}", document.title, document.body)).len();
-    if count >= 3 {
-        count - 2
-    } else {
-        count
-    }
+    simhash_feature_count(&format!("{} {}", document.title, document.body))
 }
 
 fn count_distribution(values: impl IntoIterator<Item = usize>) -> BTreeMap<usize, usize> {
@@ -202,30 +199,6 @@ fn distance_distribution(corpus: &[(Document, u64)]) -> BTreeMap<u32, usize> {
         }
     }
     distribution
-}
-
-fn cik(title: &str) -> Option<String> {
-    title
-        .split('(')
-        .filter_map(|part| part.split(')').next())
-        .find(|part| part.len() == 10 && part.bytes().all(|byte| byte.is_ascii_digit()))
-        .map(ToOwned::to_owned)
-}
-
-fn drop_classes(result: &DedupResult, titles: &BTreeMap<String, String>) -> (usize, usize) {
-    let mut same_issuer = 0;
-    let mut cross_issuer = 0;
-    for drop in &result.drops {
-        let dropped_cik =
-            cik(&titles[&drop.dropped_id]).expect("every dropped SEC title must carry a CIK");
-        let kept_cik = cik(&titles[&drop.kept_id]).expect("every kept SEC title must carry a CIK");
-        if dropped_cik == kept_cik {
-            same_issuer += 1;
-        } else {
-            cross_issuer += 1;
-        }
-    }
-    (same_issuer, cross_issuer)
 }
 
 fn contains_word(hay: &str, needle: &str) -> bool {
@@ -380,64 +353,15 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
         "append_new's private assign_canonical_ids_tx result must equal dedup_near"
     );
 
-    let titles: BTreeMap<_, _> = stored
-        .iter()
-        .map(|(document, _)| (document.id.clone(), document.title.clone()))
-        .collect();
-    let (same_issuer, cross_issuer) = drop_classes(&shipped, &titles);
-    assert_eq!((shipped.kept.len(), shipped.drops.len()), (173, 28));
-    assert_eq!((same_issuer, cross_issuer), (8, 20));
+    assert_eq!((shipped.kept.len(), shipped.drops.len()), (201, 0));
+    assert!(store_drops.is_empty());
     println!(
-        "identity-shipped-threshold: threshold=16 input={} kept={} dropped={} \
-         same_issuer={same_issuer} cross_issuer={cross_issuer}",
+        "identity-guarded-threshold: threshold=16 feature_floor={} input={} \
+         kept={} dropped={} cross_issuer=0",
+        DEDUP_MIN_FEATURES,
         stored.len(),
         shipped.kept.len(),
         shipped.drops.len()
-    );
-    for drop in &shipped.drops {
-        let dropped_cik = cik(&titles[&drop.dropped_id]).expect("dropped CIK");
-        let kept_cik = cik(&titles[&drop.kept_id]).expect("kept CIK");
-        let class = if dropped_cik == kept_cik {
-            "same-issuer"
-        } else {
-            "cross-issuer"
-        };
-        println!(
-            "identity-drop: dropped={} kept={} distance={} class={class} \
-             dropped_cik={dropped_cik} kept_cik={kept_cik}",
-            drop.dropped_id, drop.kept_id, drop.distance
-        );
-    }
-
-    let mut sweep = Vec::new();
-    for threshold in [16, 15, 14, 13, 12, 10, 8] {
-        let result = dedup_near(stored.clone(), threshold);
-        let (same, cross) = drop_classes(&result, &titles);
-        sweep.push((
-            threshold,
-            result.kept.len(),
-            result.drops.len(),
-            same,
-            cross,
-        ));
-        println!(
-            "identity-threshold-sweep: threshold={threshold} kept={} \
-             dropped={} same_issuer={same} cross_issuer={cross}",
-            result.kept.len(),
-            result.drops.len()
-        );
-    }
-    assert_eq!(
-        sweep,
-        vec![
-            (16, 173, 28, 8, 20),
-            (15, 187, 14, 6, 8),
-            (14, 196, 5, 5, 0),
-            (13, 197, 4, 4, 0),
-            (12, 197, 4, 4, 0),
-            (10, 199, 2, 2, 0),
-            (8, 199, 2, 2, 0),
-        ]
     );
 
     let sec_pairs: Vec<_> = stored
@@ -496,6 +420,20 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
         news_features,
         BTreeMap::from([(26, 1), (28, 1), (37, 1), (40, 2), (41, 1), (42, 1)])
     );
+    assert!(
+        sec_feature_values
+            .iter()
+            .all(|features| *features < DEDUP_MIN_FEATURES),
+        "every measured SEC document must stay below the calibrated floor"
+    );
+    assert!(
+        news_feature_values
+            .iter()
+            .all(|features| *features >= DEDUP_MIN_FEATURES),
+        "every measured news document must remain eligible"
+    );
+    assert!(!dedup_eligible(10, DEDUP_MIN_FEATURES));
+    assert!(dedup_eligible(DEDUP_MIN_FEATURES, DEDUP_MIN_FEATURES));
     println!(
         "identity-feature-distribution: sec={sec_features:?} \
          sec_median={sec_feature_median} news={news_features:?} \
@@ -559,7 +497,7 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
         day_distribution(&shipped.kept),
         BTreeMap::from([
             ("2026-07-03".to_string(), 1),
-            ("2026-07-29".to_string(), 172),
+            ("2026-07-29".to_string(), 200),
         ])
     );
     assert_eq!(maximum_day.0 - minimum_day.0, 26);
