@@ -350,6 +350,7 @@ Step 2 — Pin-first acceptance replaced by a point-of-use byte assertion — 20
 Step 2B — Observation-pin step added after operator authorization — 2026-07-30
 Step 4A — Threshold-authority step added independently of Step 4 — 2026-07-30
 Step 5 — Publisher facts moved to committed paths and G4 coverage added — 2026-07-30
+Step 7 — Blocked hosted attempt recorded; acceptance criteria unchanged — 2026-07-30
 
 ### Global definition of done
 
@@ -1412,6 +1413,40 @@ recorded · comparator-derived populations cited, never transcribed · receipts
 and bundles admitted with a valid chain and the new pin count reported · no
 publisher request by any hosted job, with the determination method stated ·
 scope amendment dated in the same commit · golden 11/11.
+
+### Attempted result — 2026-07-30
+
+The operator authorized the one neutral-branch push. Exact candidate
+`1cd88acd99704cc76c866331e505db446936e469` was pushed only to
+`refs/heads/codex/v0.26-evidence-1cd88ac`, and authenticated hosted run
+**30531390933**, attempt **1**, passed all seven executable jobs. Remote and
+local CI workflow blobs matched at
+`48ea726b798f1049e0b29cce1f0c64588861c2dd`; `main`, the historical
+`candidate/v0.16.0` branch, and tags did not move.
+
+For both Python lanes, `tools/test_population.py` derived `collected=291`,
+`equivalent=true`, and `equivalent_passed=291`: local passed 291 with zero
+skips, while hosted passed 290 plus the one named and reasoned `on_site` skip.
+Hosted golden passed 11/11 and `invariant-scan` passed 12 rules / 44 controls.
+The workflow contains no harvest or ingest command. The complete-log audit
+found no publisher origin or publisher-directed HTTP command; its two
+`usgaap.rss` matches were local `PIN MATCH` output for the committed
+observation.
+
+Step 3 has no satisfying assignment under executed manifest schema 2. A
+receipt added to `pinned_files` with the demanded `admission` was rejected:
+`pinned_files[271]: keys differ; missing=[], extra=['admission']`. The same
+receipt added to `artifacts` was rejected:
+`artifacts[2]: keys differ; missing=['expected'], extra=[]`; that required
+object is the SQLite-only document/integrity/fingerprint/canonical-id/cursor
+shape and cannot truthfully describe a JSON receipt. This is the sixth
+author-side rule with no satisfying assignment under Amendment 1's operator
+criterion, not an implementation or hosted-CI defect.
+
+The downloaded set has not entered the repository. No exact evidence-directory
+scope amendment is claimed, the pin count remains 271, RE-MEASURE remains
+unchecked, and R-CLOSE remains blocked pending an operator amendment to the
+impossible chained-admission clause.
 
 ---
 
