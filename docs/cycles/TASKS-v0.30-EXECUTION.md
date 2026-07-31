@@ -28,6 +28,20 @@ the one new control line are recorded in `STATE.md`. No objective, decision
 gate, acceptance criterion, declared-scope row, or standing prohibition
 changes.
 
+### 2026-07-31 · FLOOR-BIND operator outcome and measured completion
+
+Step 3 — executable offline floor bound and completion checked — 2026-07-31
+
+The operator selected outcome 1 on 2026-07-31: bind the executable offline
+1.78 floor and record the 1.86 net floor as an unexecuted claim with a trigger.
+`version-check` now derives 1.78 from the read-only local and hosted pins,
+normalizes their distinct string forms, binds the named manual registry of
+current restatements, and rejects zero extraction or stale prose through two
+R12 controls. Historical claims remain byte-preserved under the named permanent
+exclusion obligation. No hosted job, toolchain pin, evidence topology,
+objective, decision gate, acceptance criterion, declared-scope row, or standing
+prohibition changes.
+
 v0.29 closed `no-release` on 2026-07-31 and **every substantive claim in the Codex
 report was independently re-derived and held.** Several matched to the byte.
 `invariant-scan` moved **12 rules / 49 controls → 12 / 51** with R12 at **23**,
@@ -394,7 +408,8 @@ measured on.**
 | Postgres / pgvector / multi-host seam | unchanged | v0.30 · 2026-07-31 — E0's complete local matrix retained the single-writer SQLite and single-host topology; no manifest, schema, or production store source changed | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.30 · 2026-07-31 — E0 exercised only the first-party shell, changed no shell production source, and made no shell-replacement invariance claim | none |
 | L2 forced-command wrapper | an operator server session | v0.30 · 2026-07-31 — no model-profile command or operator server-administration session occurred | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.30 · 2026-07-31 — the real `invariant-scan --self-test` passed **12 rules / 51 controls** and exposed no spelling outside the registered vocabularies | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.30 · 2026-07-31 — FLOOR-BIND's real `invariant-scan --self-test` passed **12 rules / 54 controls** and exposed no spelling outside the registered vocabularies | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.30 · 2026-07-31 — the operator selected outcome 1; exact searches found zero `rustup run 1.86`, `cargo +1.86`, or workflow `toolchain: 1.86` constructions, so 1.86 remains an unexecuted claim rather than a project guarantee | none — deferred under operator outcome 1 |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.30 · 2026-07-31 — `config/core.json` is byte-unchanged, and no compliance review or admission decision occurred | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.30 · 2026-07-31 — no publication authorization exists; E0 created, moved, and deleted no ref and touched no historical publication object | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.30 · 2026-07-31 — no historical tag was published and the workflow is byte-unchanged, so the trigger is absent and the flag remains | none — **the flag stays** |
@@ -561,7 +576,7 @@ outcomes, none defaulted:
 **Done when** a restatement that disagrees with the executable pins fails
 automatically, and the false line is corrected rather than removed.
 
-- [ ] **FLOOR-BIND**
+- [x] **FLOOR-BIND**
 
 ---
 

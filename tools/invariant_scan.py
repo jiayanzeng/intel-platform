@@ -1621,6 +1621,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "trigger-boundary-order": (
         "Invariant R12 control site: trigger boundary relationship."
     ),
+    "rust-floor-restatement": (
+        "Invariant R12 control site: offline MSRV restatement binding."
+    ),
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
@@ -1675,10 +1678,29 @@ def _load_test_population_for_control(root: Path):
     return module
 
 
+def _load_version_check_for_control(root: Path):
+    path = root / "tools" / "version_check.py"
+    spec = importlib.util.spec_from_file_location(
+        "_invariant_scan_version_check",
+        path,
+    )
+    if spec is None or spec.loader is None:
+        raise ConfigError(f"{path.relative_to(root)}: cannot load version checker")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except (OSError, SyntaxError) as error:
+        raise ConfigError(
+            f"{path.relative_to(root)}: cannot execute version checker: {error}"
+        ) from error
+    return module
+
+
 def r12_findings(root: Path) -> list[str]:
     """Exercise lifecycle, population, and coverage rules against planted failures."""
     cycle_check = _load_cycle_check_for_control(root)
     test_population = _load_test_population_for_control(root)
+    version_check = _load_version_check_for_control(root)
     tag = "publication-control-tag"
     tag_object = "a" * 40
     tag_target = "b" * 40
@@ -2158,6 +2180,61 @@ def r12_findings(root: Path) -> list[str]:
                 "unregistered-forward-boundary"
             )
 
+        authority = version_check.OFFLINE_MSRV_AUTHORITIES[0]
+        authority_text = (root / authority.path).read_text()
+        no_authority_pins = authority.pattern.sub("", authority_text)
+        try:
+            version_check.offline_msrv_report(
+                root,
+                text_overrides={authority.path: no_authority_pins},
+            )
+        except ValueError as error:
+            zero_authority_detected = (
+                f"{authority.path}: {authority.label} yielded zero extracted "
+                "executable pins"
+                in str(error)
+            )
+        else:
+            zero_authority_detected = False
+        if not zero_authority_detected:
+            missed.setdefault("rust-floor-restatement", []).append(
+                "zero-authority-pins"
+            )
+
+        restatement = next(
+            item
+            for item in version_check.OFFLINE_MSRV_RESTATEMENTS
+            if item.path == "README.md"
+        )
+        restatement_text = (root / restatement.path).read_text()
+        restatement_match = restatement.pattern.search(restatement_text)
+        if restatement_match is None:
+            raise ConfigError(
+                "README.md: cannot plant offline MSRV restatement control"
+            )
+        stale_restatement = (
+            restatement_text[: restatement_match.start("version")]
+            + "1.77"
+            + restatement_text[restatement_match.end("version") :]
+        )
+        try:
+            version_check.offline_msrv_report(
+                root,
+                text_overrides={restatement.path: stale_restatement},
+            )
+        except ValueError as error:
+            stale_restatement_detected = (
+                "README.md: offline toolchain table states 1.77->1.77, but "
+                "executable offline MSRV pins derive 1.78"
+                in str(error)
+            )
+        else:
+            stale_restatement_detected = False
+        if not stale_restatement_detected:
+            missed.setdefault("rust-floor-restatement", []).append(
+                "stale-offline-restatement"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
@@ -2359,6 +2436,8 @@ def r12_findings(root: Path) -> list[str]:
             source_relative = "tools/test_population.py"
         elif group == "coverage-detection":
             source_relative = "apps/cored/src/main.rs"
+        elif group == "rust-floor-restatement":
+            source_relative = "tools/version_check.py"
         else:
             source_relative = "tools/cycle_check.py"
         source_path = root / source_relative
@@ -2376,6 +2455,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "review-export-retention planted controls"
         elif group == "trigger-boundary-order":
             finding_kind = "trigger-boundary-order planted controls"
+        elif group == "rust-floor-restatement":
+            finding_kind = "rust-floor-restatement planted controls"
         else:
             finding_kind = "publication planted controls"
         findings.append(

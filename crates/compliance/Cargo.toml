@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 # The only dependency. `texting_robots` was evaluated and skipped (STATE §6):
 # it pulls 45 transitive crates including the icu_*/idna_adapter chain whose
-# MSRV is 1.86, which would have raised the OFFLINE build floor from 1.75.
+# MSRV is 1.86, which would have raised the OFFLINE build floor from 1.78.
 async-trait = "0.1"
 tokio = { version = "1", features = ["time", "sync"] }
 

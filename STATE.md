@@ -1,6 +1,56 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; BOUNDARY-COVER is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 52 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **308** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the BOUNDARY-COVER checkbox, `checklist-audit` passed **233 checked / 3 retracted / 233 matched / 233 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; FLOOR-BIND is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 54 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **313** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the FLOOR-BIND checkbox, `checklist-audit` passed **234 checked / 3 retracted / 234 matched / 234 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+
+**v0.30 FLOOR-BIND derives the offline floor and records the net-floor
+residual (measured 2026-07-31).** The operator selected outcome 1 on
+2026-07-31: bind the executable offline 1.78 floor and retain the net 1.86
+floor as an explicitly unexecuted claim. This is the cheapest honest outcome:
+it binds the evidence already authorized in both lanes without changing a
+toolchain pin, adding a hosted job, or altering evidence topology. The decision
+gate did not trip. `run` and `.github/workflows/**` were read but are absent
+from the task diff.
+
+The existing `version-check` entry point extracted three executable offline
+pins: two raw `1.78.0` strings from `run` and one raw `1.78` string from the
+hosted MSRV job. Explicit normalization produced one derived value, `1.78`.
+Each authority is independently nonempty or the check fails. A named,
+hand-maintained registry binds **22** current restatements to that value.
+There is no honest general-purpose text derivation that can distinguish
+present authority from dated quotation, so
+`OFFLINE_MSRV_HISTORICAL_EXCLUSIONS` permanently names the excluded historical
+families: cycle documents, State archives, `CHANGELOG.md`, evidence and
+observations, dated `STATE.md` narrative outside the current run-reference
+correction, and historical clauses inside current `AGENTS.md`, `README.md`,
+`rust-toolchain.toml`, and workflow commentary. Maintaining that registry and
+exclusion list is a manual obligation.
+
+The stale run-reference claim remains visible in its original
+`offline needs >= 1.75` form and is followed by a current correction to 1.78;
+it was not erased or silently rewritten. The current rejected-dependency
+comment now uses the derived 1.78 baseline. The same run-reference block
+preserves its `49 Rust + 69 shell` v0.6 baseline and appends the measured
+v0.30 population, **146 Rust + 313 shell**.
+
+The rejection controls executed before acceptance. Removing every match from
+either authority file produced an explicit zero-extraction error, normalized
+pin disagreement was rejected, and changing the registered README
+restatement to 1.77 was rejected against derived 1.78. R12's two registered
+constructions independently disabled the zero-authority and stale-restatement
+branches and found the planted violations at the one line-354 control site.
+R12 passed **26** controls; the full self-test passed **12 rules / 54
+controls**. The first lifecycle run also rejected two production-checker
+metadata strings that hard-coded the active cycle; replacing them with
+lifecycle-neutral labels made the real checker pass.
+
+Exact searches found zero `rustup run 1.86`, `cargo +1.86`, or workflow
+`toolchain: 1.86` constructions. The `--features net` 1.86 statement is
+therefore in the active deferred table with the trigger selected by the
+operator; it is not reported as a project guarantee. The complete result
+passed all **20/20** local jobs, Python 3.11.4 and 3.12.13 at **313/313** each,
+and standalone golden **11/11**, delta **0**. No dependency, production
+behavior, public contract, route, schema, protected byte, publisher
+configuration, scheduler state, release authority, tag, or ref changed.
 
 **v0.30 BOUNDARY-COVER binds every module-global forward boundary (measured
 2026-07-31).** G1's decision gate did not trip: lowering identity made its
@@ -3983,7 +4033,8 @@ first live RSS harvest remains separately deferred to v0.26.
 ## 7. Run reference
 
 ```bash
-# toolchain (v0.6.2): offline needs >= 1.75; --features net needs >= 1.86.
+# toolchain (v0.6.2 claim, retained): offline needs >= 1.75; --features net needs >= 1.86.
+# current correction: offline needs >= 1.78; the net >= 1.86 floor remains an unexecuted claim.
 # Ubuntu 24.04 ships both, no rustup required:
 apt-get install -y rustc-1.91 cargo-1.91
 export PATH=/usr/lib/rust-1.91/bin:$PATH
@@ -3998,7 +4049,7 @@ PYTHONPATH=shell uvicorn intel_shell.app:app --port 8787   # public API on :8787
 python3 tools/mock_openai.py &
 LLM_BASE_URL=http://127.0.0.1:8899/v1 PYTHONPATH=shell python3 -m intel_shell.pipeline
 
-cargo test && PYTHONPATH=shell python3 -m pytest shell/tests   # 49 Rust + 69 shell
+cargo test && PYTHONPATH=shell python3 -m pytest shell/tests   # v0.6 baseline: 49 Rust + 69 shell; v0.30 measured: 146 Rust + 313 shell
 
 # v0.6 — per-source ingest (the `sources` filter is optional; omit it for whole sectors):
 curl -X POST localhost:8788/ingest -H 'content-type: application/json' \
