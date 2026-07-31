@@ -434,3 +434,112 @@ Entries are append-only; corrections are new dated entries.
   `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` remained unchanged. No release
   tag, publication ref, publisher request, scheduler, or model-profile command
   occurred.
+
+### 2026-07-31 · R-CLOSE — governed no-release cycle closure
+
+- owner: Codex
+- commit: 00ad3fe1390bac5d6b848581550c88d12dd2ea8e
+- governed review-export measurement: tree=`00ad3fe1390bac5d6b848581550c88d12dd2ea8e`; bytes=`2576273`
+- result: PASS. The operator selected `no-release` and added the governed
+  release-divergence trigger. The runbook records `Cycle closed: 2026-07-31`
+  and `Release disposition: no-release (as of 2026-07-31)`. Published v0.17.0
+  remains current.
+- divergence-governance acceptance: PASS. The trigger is: the unpublished
+  distance contains a measured runtime behaviour difference persisting across
+  three consecutive closed cycles, or acquires any public-surface change. The
+  dated v0.30 observation is persisted **two of three** (v0.29, v0.30) since
+  the v0.28 correction; no public-surface change is present, so the trigger
+  has not fired. The subject is present in both live governed tables.
+- disposition acceptance: PASS. A bounded difference exists: for a misordered
+  incoming window, one internal `/ingest` diagnostic field can carry the wrong
+  raw boundary string. No route, response shape, `/v1/*` value domain,
+  dependency, schema, or public surface moved, so patch classification would
+  apply if released. The authenticated candidate is a no-release tree and no
+  RE-MEASURE ran at a release commit, so publication was not authorized.
+- release-authority correction: one declared release-authority path,
+  `crates/compliance/Cargo.toml`, changed an explanatory comment from the
+  refuted 1.75 floor to the executable 1.78 floor. Every actual version
+  authority and value is byte-unchanged; the broader supplied byte claim was
+  not recorded as true.
+- publication-boundary acceptance: PASS. Immediately before closure, remote
+  `main` and the peeled v0.17.0 tag remained
+  `4af2841816dd3e43fb8423153b91aa22ccb87537`; annotated tag object remained
+  `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd`; and neutral ref
+  `refs/heads/codex/v0.30-evidence-2528498` remained candidate
+  `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab`. No tag, `main`, release ref, or
+  publication state moved.
+- scope acceptance: PASS. Used `allow` paths are `tools/cycle_check.py`,
+  `tools/version_check.py`, `tools/invariant_scan.py`,
+  `config/invariant-rules.json`, `crates/store/src/sqlite.rs`,
+  `shell/tests/**`, `AGENTS.md`, `ARCHITECTURE.md`, and
+  `rust-toolchain.toml`. Unused `allow` paths are `tools/export_check.py`,
+  `crates/**/tests/**`, and `repomix.config.json`. Only
+  `crates/*/Cargo.toml` among release-authority patterns is used, for the
+  comment correction above; the other seven are unused. Every `forbid` path
+  is unused. The newly forbidden `.github/workflows/**` is byte-identical.
+  The wholesale `docs/cycles/**` forbid protected every closed runbook and
+  progress record; standing precedence admitted only the active pair and
+  `STATE.md`.
+- gate acceptance: PASS. G1 executed and bound the derived forward-boundary
+  family. G2 executed the 1.78 authority and false-restatement rejection and
+  records operator outcome 1 for the unexecuted 1.86 claim. G3 executed the
+  real v1.0/v1.3 checker/export matrix. G4 bound latest-at-close to this
+  append-only progress authority and named the audit delta. G5 retained three
+  entry points and two interval observations rather than inventing a rate;
+  close adds one separately classified intra-cycle observation. G6 proved the
+  shared compile-time SQL declaration can reject drift before passing.
+- reviewer acceptance: PASS. All four draft defects remain classified as
+  reviewer errors: the unenumerated nine-MSRV-site claim, reconstruction
+  presented as the real retention checker, the latest-at-close control claim
+  based on only two assertions, and the incomplete no-history reviewer
+  construction presented as the complete checker.
+- expected-line acceptance: PASS. The cycle re-derived **11** existing
+  `expected_line` values from real self-test output: six in
+  `tools/cycle_check.py` and five in `crates/store/src/sqlite.rs`. The new
+  margin control site is registered separately rather than counted as shifted.
+- lifecycle acceptance: PASS. Before R-CLOSE was checked,
+  `checklist-audit` passed **238 checked / 3 retracted / 238 matched / 238
+  commits resolved**. With this append-only entry present, `cycle-check`,
+  `progress-check`, and `checklist-audit` pass at **239 checked / 3 retracted /
+  239 matched / 239 commits resolved**, with zero exemptions.
+- export-bound acceptance: PASS. The fixed-point implementation tree
+  `00ad3fe1390bac5d6b848581550c88d12dd2ea8e` passed **100 derived / 7 required /
+  153 exported** at **2,576,273 bytes**, leaving **423,727 bytes / 14.12%**
+  below the executable ceiling while retaining exactly v0.28–v0.30 and
+  excluding both protected byte classes. The four points derive **three**
+  observations: **−8,342**, **−57,342**, and the separately classified
+  activation-to-close **+111,828**; they are not one growth rate.
+- cycle-ending audit delta: the progress record grew from **28,276 bytes** to
+  **35,627 bytes**, a bounded **7,351-byte** repository delta. Its export
+  delta is likewise **7,351 bytes**; this append-only audit child is not a
+  newer governed implementation-tree measurement.
+- manifest acceptance: PASS. Schema validation reported **2 artifacts / 331
+  pinned files** in the byte-unchanged **191,395-byte** manifest. Two complete
+  close-time verifications took **0.12 s / 0.09 s real** and matched both
+  protected databases.
+- local-regression acceptance: PASS. Clean Python 3.11.4 and 3.12.13
+  environments each resolved all **21** constraints and passed **317
+  collected / 317 passed / 0 skipped**, with the same one accepted warning.
+  The focused SEC identity diagnostic measured **201 input / 201 kept / 0
+  dropped**, including **200 SEC kept / 0 dropped**. Registered invariant
+  self-test passed **12 rules / 55 controls**. The final closed-tree
+  `ci-local` passed all **20/20** jobs with warning-denied **146** workspace
+  tests, **62** net tests (**32 ingest + 30 cored**), locked Rust 1.78, clean
+  clippy/fmt/ShellCheck, protected artifacts, both Python populations, and
+  embedded golden **11/11**.
+- golden-E2E delta: **0**. The permission-complete standalone closing-tree run
+  and post-entry embedded run each passed **11/11**, byte-identical.
+- non-results: the initial structural closure check rejected the undisclosed
+  Step 7 amendment marker, insufficient no-release commit mappings, an
+  annotated-tag object misclassified as a commit, and three incorrect expanded
+  hashes before any closure commit. The corrected construction reduced that
+  output to only the two facts that truthfully required this audit child. The
+  first clean Python 3.11 install had no sandbox network and is not counted;
+  its permission-complete rerun passed. The first standalone golden run could
+  not bind loopback under the sandbox and is not counted; its
+  permission-complete rerun passed **11/11**.
+- final boundary acceptance: PASS. No publisher request, scheduler run,
+  cadence change, model-profile command, historical cycle edit, workflow edit,
+  production source, dependency, schema, manifest, protected byte, public
+  route, `/v1/*` serialized value domain, actual version value, tag, `main`,
+  release ref, or publication ref changed.
