@@ -2141,6 +2141,23 @@ def r12_findings(root: Path) -> list[str]:
                 "floor-before-freshness"
             )
 
+        unregistered_boundary_name = "PLANTED_UNREGISTERED_FORWARD_BOUNDARY"
+        setattr(cycle_check, unregistered_boundary_name, (0, 30))
+        errors = []
+        try:
+            cycle_check.check_trigger_boundary_relationship(errors)
+        finally:
+            delattr(cycle_check, unregistered_boundary_name)
+        if not any(
+            "tools/cycle_check.py module-scoped forward-boundary registry is "
+            f"missing {unregistered_boundary_name}"
+            in error
+            for error in errors
+        ):
+            missed.setdefault("trigger-boundary-order", []).append(
+                "unregistered-forward-boundary"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(

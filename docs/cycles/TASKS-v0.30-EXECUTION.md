@@ -15,6 +15,19 @@ the result-of-record rerun and full local matrix passed. No objective, decision
 gate, acceptance criterion, declared-scope row, or standing prohibition
 changes.
 
+### 2026-07-31 · BOUNDARY-COVER measured completion
+
+Step 2 — module-scoped boundary family derived and completion checked — 2026-07-31
+
+The implementation derives all `tools/cycle_check.py` module-global
+`*_FORWARD_BOUNDARY` names, requires each one in the semantic relationship
+registry, asserts identity and floor cannot precede freshness, and rejects a
+planted unregistered name. The namespace bound and its cross-module residual,
+the two R12 rejection controls, the five re-derived existing line values, and
+the one new control line are recorded in `STATE.md`. No objective, decision
+gate, acceptance criterion, declared-scope row, or standing prohibition
+changes.
+
 v0.29 closed `no-release` on 2026-07-31 and **every substantive claim in the Codex
 report was independently re-derived and held.** Several matched to the byte.
 `invariant-scan` moved **12 rules / 49 controls → 12 / 51** with R12 at **23**,
@@ -480,7 +493,7 @@ and not a latent one** — record the reclassification and treat it at P1.
 **Done when** adding an unregistered boundary constant fails automatically,
 demonstrated by execution rather than by argument.
 
-- [ ] **BOUNDARY-COVER**
+- [x] **BOUNDARY-COVER**
 
 ---
 

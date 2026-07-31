@@ -1,6 +1,68 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; E0 is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 51 controls**, and embedded plus standalone golden **11/11**. Clean-rebuilt Python 3.11.4 and 3.12.13 each collected/passed **306** with **0** skips; `tools/test_population.py` derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`, and both lanes retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; consecutive complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. `checklist-audit` remains **232 checked / 3 retracted / 232 matched / 232 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; BOUNDARY-COVER is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 52 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **308** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the BOUNDARY-COVER checkbox, `checklist-audit` passed **233 checked / 3 retracted / 233 matched / 233 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+
+**v0.30 BOUNDARY-COVER binds every module-global forward boundary (measured
+2026-07-31).** G1's decision gate did not trip: lowering identity made its
+declaration silently always-on inside the freshness gate, not a reachable
+runtime defect, so the finding remains latent rather than P1.
+
+`module_forward_boundaries()` now derives every
+`tools/cycle_check.py` module-global name ending in `_FORWARD_BOUNDARY`.
+The completeness check compares that derived set with one semantic registry.
+The measured derived and registered sets are byte-for-byte the same four
+names: `SCOPE_FORWARD_BOUNDARY`, `TRIGGER_FRESHNESS_FORWARD_BOUNDARY`,
+`TRIGGER_IDENTITY_FORWARD_BOUNDARY`, and `TRIGGER_FLOOR_FORWARD_BOUNDARY`.
+Scope and freshness are explicitly registered as independent with reasons;
+identity and floor each declare freshness as a prerequisite. The generic
+relationship evaluator therefore enforces both
+`TRIGGER_IDENTITY_FORWARD_BOUNDARY >=
+TRIGGER_FRESHNESS_FORWARD_BOUNDARY` and the existing floor relation without
+hand-writing either comparison.
+
+The derivation bound is deliberately and explicitly **module-scoped to
+`tools/cycle_check.py` globals**. An exhaustive declaration search under
+`tools/` found exactly the same four names and none outside that module today.
+A future `_FORWARD_BOUNDARY` constant in another tools module remains outside
+this binding; that namespace boundary is the named residual, not an assertion
+that every tools module is covered.
+
+The rejection constructions ran before the complete acceptance run. Injecting
+`PLANTED_UNREGISTERED_FORWARD_BOUNDARY` produced exactly:
+
+```
+tools/cycle_check.py module-scoped forward-boundary registry is missing PLANTED_UNREGISTERED_FORWARD_BOUNDARY
+```
+
+Moving identity to `(1, 2, 2)` while freshness and floor were `(1, 2, 4)`
+produced only:
+
+```
+TRIGGER_IDENTITY_FORWARD_BOUNDARY must be greater than or equal to TRIGGER_FRESHNESS_FORWARD_BOUNDARY
+```
+
+R12 now has **24** controls and the registry has **52** controls total.
+Disabling the generic ordering branch makes the existing
+`floor-before-freshness` construction fail; disabling the derived
+unregistered-name branch makes the new `unregistered-forward-boundary`
+construction fail. Both findings point to the one production marker at line
+1500. The edit shifted **five existing** `cycle_check.py` control locations:
+the boundary marker `1467 → 1500`, three freshness controls `1569 → 1646`,
+and the carry-forward control `1796 → 1873`. All five were re-derived from
+the real self-test failure/output; the new completeness control was registered
+at the derived line 1500.
+
+The four focused boundary/date tests passed **4/4**, including the prior
+initialized-population reproduction and the exhaustive missing-date
+`required_cycle_name` pair. The complete result passed Python 3.11.4 and
+3.12.13 at **308/308** each and all **20/20** local jobs. The first sandboxed
+local run failed only when its net wire test was denied a loopback bind; the
+authorized rerun passed that same test and the full matrix. The first sandboxed
+Python 3.12 run likewise measured eight permission failures from loopback binds
+and process-topology inspection; the authorized rerun passed **308/308**.
+Standalone golden passed **11/11**, delta **0**. No production source, route,
+public value domain, dependency, schema, manifest, protected byte, publisher
+configuration, scheduler state, version authority, tag, or ref changed.
 
 **v0.30 E0 rebuilds the entering state and settles G1–G6 (measured
 2026-07-31).** The preparatory activation began with exactly one worktree item:

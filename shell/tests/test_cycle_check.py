@@ -1238,6 +1238,52 @@ def test_trigger_floor_before_freshness_reports_instead_of_raising(
     assert "UnboundLocalError" not in error
 
 
+def test_forward_boundary_registry_derives_every_module_constant(
+    monkeypatch,
+) -> None:
+    boundaries = cycle_check.module_forward_boundaries()
+    relationships = cycle_check.FORWARD_BOUNDARY_RELATIONSHIPS
+    assert boundaries
+    assert set(boundaries) == set(relationships)
+    for dependencies, reason in relationships.values():
+        assert reason.strip()
+        if not dependencies:
+            assert reason.startswith("Independent:")
+
+    planted = "PLANTED_UNREGISTERED_FORWARD_BOUNDARY"
+    monkeypatch.setattr(cycle_check, planted, (0, 30), raising=False)
+    errors: list[str] = []
+    cycle_check.check_trigger_boundary_relationship(errors)
+    assert errors == [
+        "tools/cycle_check.py module-scoped forward-boundary registry is "
+        f"missing {planted}"
+    ]
+
+
+def test_trigger_identity_cannot_precede_freshness(monkeypatch) -> None:
+    monkeypatch.setattr(
+        cycle_check,
+        "TRIGGER_FRESHNESS_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
+    monkeypatch.setattr(
+        cycle_check,
+        "TRIGGER_IDENTITY_FORWARD_BOUNDARY",
+        (1, 2, 2),
+    )
+    monkeypatch.setattr(
+        cycle_check,
+        "TRIGGER_FLOOR_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
+    errors: list[str] = []
+    cycle_check.check_trigger_boundary_relationship(errors)
+    assert errors == [
+        "TRIGGER_IDENTITY_FORWARD_BOUNDARY must be greater than or equal to "
+        "TRIGGER_FRESHNESS_FORWARD_BOUNDARY"
+    ]
+
+
 def test_cycle_check_rejects_prior_cycle_trigger_observation(
     tmp_path: Path,
     capsys,

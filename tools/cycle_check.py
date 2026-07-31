@@ -1458,18 +1458,95 @@ def check_declared_scope(
 TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (0, 23)
 TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)
 TRIGGER_FLOOR_FORWARD_BOUNDARY = (0, 28)
+FORWARD_BOUNDARY_RELATIONSHIPS = {
+    "SCOPE_FORWARD_BOUNDARY": (
+        (),
+        "Independent: declared-scope activation does not consume trigger "
+        "table state.",
+    ),
+    "TRIGGER_FRESHNESS_FORWARD_BOUNDARY": (
+        (),
+        "Independent: trigger freshness is the base trigger-table activation.",
+    ),
+    "TRIGGER_IDENTITY_FORWARD_BOUNDARY": (
+        ("TRIGGER_FRESHNESS_FORWARD_BOUNDARY",),
+        "Identity is enforced only inside the trigger-freshness gate.",
+    ),
+    "TRIGGER_FLOOR_FORWARD_BOUNDARY": (
+        ("TRIGGER_FRESHNESS_FORWARD_BOUNDARY",),
+        "Population floors consume the rows initialized by trigger freshness.",
+    ),
+}
 DATED_DISPOSITIONS_HEADING = "### Dated operational-residual dispositions"
 DEFERRED_COMPLETIONS_HEADING = "## Deferred completions"
 ISO_DATE_TOKEN_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
 
 
+def module_forward_boundaries() -> dict[str, tuple[int, ...]]:
+    """Derive tools/cycle_check.py module-global forward boundaries.
+
+    This binding is deliberately module-scoped. A boundary declared in another
+    module under tools/ is outside this derived namespace and remains a named
+    residual rather than being silently represented as covered here.
+    """
+    return {
+        name: value
+        for name, value in globals().items()
+        if name.endswith("_FORWARD_BOUNDARY")
+    }
+
+
 def check_trigger_boundary_relationship(errors: list[str]) -> None:
     # Invariant R12 control site: trigger boundary relationship.
-    if TRIGGER_FLOOR_FORWARD_BOUNDARY < TRIGGER_FRESHNESS_FORWARD_BOUNDARY:
+    boundaries = module_forward_boundaries()
+    registered = set(FORWARD_BOUNDARY_RELATIONSHIPS)
+    for boundary_name in sorted(boundaries.keys() - registered):
         errors.append(
-            "TRIGGER_FLOOR_FORWARD_BOUNDARY must be greater than or equal to "
-            "TRIGGER_FRESHNESS_FORWARD_BOUNDARY"
+            "tools/cycle_check.py module-scoped forward-boundary registry is "
+            f"missing {boundary_name}"
         )
+    for boundary_name in sorted(registered - boundaries.keys()):
+        errors.append(
+            "tools/cycle_check.py module-scoped forward-boundary registry "
+            f"names absent constant {boundary_name}"
+        )
+
+    for boundary_name in sorted(boundaries.keys() & registered):
+        dependencies, reason = FORWARD_BOUNDARY_RELATIONSHIPS[boundary_name]
+        if not reason.strip():
+            errors.append(
+                f"{boundary_name} forward-boundary relationship requires a "
+                "stated reason"
+            )
+        if not dependencies and not reason.startswith("Independent:"):
+            errors.append(
+                f"{boundary_name} has no required relation and must be "
+                "registered as Independent with a stated reason"
+            )
+        if len(dependencies) != len(set(dependencies)):
+            errors.append(
+                f"{boundary_name} forward-boundary relationship repeats a "
+                "dependency"
+            )
+        for dependency_name in dependencies:
+            if dependency_name == boundary_name:
+                errors.append(
+                    f"{boundary_name} cannot depend on its own forward boundary"
+                )
+                continue
+            dependency_value = boundaries.get(dependency_name)
+            if dependency_value is None:
+                errors.append(
+                    f"{boundary_name} requires unknown forward boundary "
+                    f"{dependency_name}"
+                )
+                continue
+            boundary_value = boundaries[boundary_name]
+            if boundary_value < dependency_value:
+                errors.append(
+                    f"{boundary_name} must be greater than or equal to "
+                    f"{dependency_name}"
+                )
 
 
 def check_trigger_table(
