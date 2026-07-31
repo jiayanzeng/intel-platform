@@ -420,3 +420,88 @@ Entries are append-only; corrections are new dated entries.
   response shape, `/v1/*` value domain, dependency, schema, protected or
   pinned byte, publisher configuration, schedule cadence, scheduler state, or
   ref changed. No publisher request or scheduler run occurred.
+
+### 2026-07-31 · RE-MEASURE — neutral candidate authenticated on hosted CI
+
+- owner: Codex
+- commit: ec75706cb6a459dfb731aaddfcfee591ab7983a2
+- result: PASS. Exact evidence candidate
+  `9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` was pushed only to neutral ref
+  `refs/heads/codex/v0.29-evidence-9059eca`; hosted run **30600284114**,
+  attempt **1**, executed that exact candidate and ref.
+- hosted-matrix acceptance: PASS. Core, golden, lint, MSRV, net, shell 3.11,
+  and shell 3.12 all passed. Dependency drift skipped under its declared
+  report-only condition. The authenticated report required attestations,
+  accepted all **7** signed identities, rejected **0**, found no matrix
+  finding, and recorded the complete workflow-derived runner population.
+- neutral-ref acceptance: PASS. Remote `main` and the peeled v0.17.0 tag both
+  remained `4af2841816dd3e43fb8423153b91aa22ccb87537`; annotated tag object
+  `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` remained unchanged. No release
+  tag was created or moved. The workflow ran on the neutral source ref, not
+  `main`.
+- population acceptance: PASS. Fresh local Python 3.11.4 and 3.12.13 lanes
+  each collected and passed **306** with zero skips. For each hosted lane,
+  `tools/test_population.py` independently derived
+  `{"collected":306,"equivalent":true,"equivalent_passed":306,"hosted":{"on_site_skipped":1,"passed":305,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":306,"skipped":0},"schema_version":1}`.
+  The one hosted skip was named, carried that declared reason, and was marked
+  `on_site`.
+- receipt acceptance: PASS. Seven receipts and seven paired Sigstore bundles
+  were registered under `evidence/ci-runs/30600284114-1/` in
+  `pinned_files[]`, all with `supporting` grade and no `admission` key. Every
+  bundle verified its paired receipt bytes, repository, workflow signer,
+  candidate digest, neutral source ref, and GitHub-hosted runner identity.
+- release-report acceptance: PASS. The release-grade report is **35,166
+  bytes**, SHA-256
+  `91f1907ffdabfc46f7f46cebe41d85d9613a32440d78213ff1d96b987797de6e`,
+  requires attestations, and records **5 deferred / 2 promoted / 0 implemented
+  deferred subsystems**. Exact-path re-derivation passed **7** rows, **5**
+  source-determined dispositions, and **7** trigger texts.
+- manifest acceptance: PASS. The candidate verified the required
+  pre-registration **316** pins. After the operator's explicit 2026-07-31
+  authorization, the fourteen hosted files plus the report moved the manifest
+  to **331** pins and **191,395 bytes**. Manifest validation reported schema 2,
+  **2 artifacts / 331 pinned files**; `verify-artifacts` and
+  `evidence-report` passed, and both protected SQLite archives remained
+  byte-identical. Two consecutive complete verifications took **0.10 s /
+  0.10 s real**, leaving **857,181 bytes** to 1 MiB and **0.90 s / 0.90 s**
+  to the timing trigger. The validator was not changed.
+- no-publisher acceptance: PASS. Candidate workflow and complete hosted-log
+  searches found no SEC or arXiv publisher URL, no `harvest-arxiv`, and no
+  publisher-directed ingest command. The two `usgaap.rss` occurrences were
+  local `PIN MATCH` output for the committed observation; every `curl` command
+  was the immutable Rust toolchain action's `https://sh.rustup.rs` installer.
+  No publisher request or scheduler execution occurred.
+- scope acceptance: PASS. The dated amendment and the machine-readable scope
+  table name the exact `evidence/ci-runs/30600284114-1/**` and v0.29 report
+  paths and permit `config/protected-artifacts.json` only for the fifteen
+  authorized pin registrations. The amendment, executable scope, evidence,
+  report, and manifest change land together in this implementation commit. No
+  production source, protected database, publisher configuration, schedule,
+  identity, `main`, or release tag changed.
+- local-regression acceptance: PASS. Full permission-complete `ci-local`
+  passed **20/20** jobs with warning-denied **146** workspace tests, **62** net
+  tests (**32 ingest + 30 cored**), locked Rust 1.78, clean
+  clippy/fmt/ShellCheck, shell **306/306**, registered invariant self-test
+  **12 rules / 51 controls**, protected evidence, and embedded golden
+  **11/11**. `cycle-check`, manifest validation, `evidence-report`,
+  `verify-artifacts`, `git diff --check`, and authenticated report
+  re-derivation passed independently.
+- export-bound acceptance: PASS. The exact project-root entry point passed
+  **99 derived / 7 required / 152 exported** at **2,500,164 bytes**, leaving
+  **499,836 bytes / 16.66%** beneath the 3,000,000-byte ceiling and retaining
+  exactly v0.27–v0.29 without either excluded byte class.
+- golden-E2E delta: **0**. Hosted, embedded, and separately required
+  standalone golden all passed **11/11** byte-identically.
+- non-results: the first standalone local golden attempt was denied permission
+  to bind its isolated loopback core and was not counted; the identical
+  permission-complete entry point passed. The first project-root export attempt
+  could not resolve the pinned Repomix package registry inside the network
+  sandbox and was not counted; the permission-complete entry point passed.
+  One parallel report re-derivation wrapper yielded without a captured exit
+  status and was not counted; the direct final-path command passed. The first
+  post-commit scope check on provisional, unpushed object `ebbaa63…` correctly
+  rejected all sixteen newly registered paths because the prose amendment had
+  not yet been represented in the machine-readable table. Before any progress
+  entry or ref movement, that provisional object was replaced by this single
+  implementation commit carrying the exact three executable `allow` rows; the
+  same diff gate then passed.
