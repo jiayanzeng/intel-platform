@@ -1,6 +1,95 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; RE-MEASURE is complete on top of published v0.17.0.** Exact neutral candidate `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. Authenticated hosted run **30611170866**, attempt **1**, passed all seven executable jobs at that exact candidate; dependency drift skipped under its report-only condition. Both machine comparisons derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete RE-MEASURE verifications took **0.11 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the RE-MEASURE checkbox, `checklist-audit` passed **237 checked / 3 retracted / 237 matched / 237 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Neutral ref `refs/heads/codex/v0.30-evidence-2528498` alone points to the candidate; remote `main`, the v0.17.0 tag, and every publication ref remain unchanged. No publisher request, scheduler run, cadence change, manifest edit, version edit, or release tag occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is closed `no-release`; published v0.17.0 remains current and release divergence is governed.** Exact neutral candidate `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. Authenticated hosted run **30611170866**, attempt **1**, passed all seven executable jobs at that exact no-release candidate; dependency drift skipped under its report-only condition. Both machine comparisons derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete close-time verifications took **0.12 s / 0.09 s real** and both protected databases matched. The fixed-point R-CLOSE implementation-tree export measured **2,576,273 bytes / 153 files**, leaving **423,727 bytes / 14.12%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Immediately before closure, `checklist-audit` passed **238 checked / 3 retracted / 238 matched / 238 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Neutral ref `refs/heads/codex/v0.30-evidence-2528498` alone points to the candidate; remote `main`, the v0.17.0 tag, and every publication ref remain unchanged. The bounded internal diagnostic difference has persisted for two of three governed cycles with no public-surface change, so the new trigger has not fired. No publisher request, scheduler run, cadence change, manifest edit, version-value edit, release tag, or publication-ref movement occurred.
+
+**v0.30 R-CLOSE records the operator-selected governed no-release disposition
+(authorized and measured 2026-07-31).** The operator selected `no-release` and
+placed the published-to-working-head difference under a new governed trigger:
+**the unpublished distance contains a measured runtime behaviour difference
+persisting across three consecutive closed cycles, or acquires any
+public-surface change**. The dated v0.30 observation is **persisted two of three
+(v0.29, v0.30) since the v0.28 correction; no public-surface change is present;
+the trigger has not fired**.
+
+The bounded difference is real. For a misordered incoming window, published
+v0.17.0 can place the wrong raw boundary string in one internal `/ingest`
+diagnostic field. No route, response shape, `/v1/*` value domain, dependency,
+schema, or public surface moved, so patch classification would apply if the
+implementation were released. Publication is nevertheless not authorized:
+the authenticated candidate is a no-release tree, every actual version
+authority and value is byte-unchanged, and no RE-MEASURE ran at a release
+commit. One declared `release_authority` path is not byte-identical:
+`crates/compliance/Cargo.toml` corrects only its explanatory offline-floor
+comment from the refuted 1.75 to the executable 1.78 value.
+
+Immediately before closure, remote `main` and the peeled v0.17.0 tag both
+resolved to `4af2841816dd3e43fb8423153b91aa22ccb87537`, annotated tag object
+`df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` was unchanged, and neutral ref
+`refs/heads/codex/v0.30-evidence-2528498` resolved to
+`2528498ba7bdce3f280fa1a9c4d6fe266cac05ab`. No tag, `main`, release ref,
+publisher request, scheduler run, cadence change, or model-profile command
+occurred.
+
+The exact fixed-point R-CLOSE implementation-tree export passed **100 derived /
+7 required / 153 exported** at **2,576,273 bytes**, leaving **423,727 bytes /
+14.12%** below the **3,000,000-byte** ceiling. It retained exactly v0.28,
+v0.29, and v0.30 TASKS/PROGRESS pairs and excluded both the pinned SEC RSS body
+and every `docs/state-archive/**` byte. The R-CLOSE implementation State file
+measures **289,117 bytes**, below its **453,741-byte** second-archive boundary
+with **164,624 bytes** remaining.
+
+The export history now contains four measured points and **three derived
+observations**: v0.28 delivered **2,530,129**, v0.29 delivered **2,521,787**
+(**−8,342**), v0.30 activation audit
+`e7b2c58814e2223d9899b83b3f3491344ce85337` measured **2,464,445**
+(**−57,342**), and the R-CLOSE implementation tree measured **2,576,273**
+(**+111,828** intra-cycle). The first two observations are
+delivered-to-next-activation intervals; the third is activation-to-close.
+Their differing scope and signs do not support treating them as one growth
+rate.
+
+Every declared scope path is reconciled. Used `allow` paths are
+`tools/cycle_check.py`, `tools/version_check.py`, `tools/invariant_scan.py`,
+`config/invariant-rules.json`, `crates/store/src/sqlite.rs`,
+`shell/tests/**`, `AGENTS.md`, `ARCHITECTURE.md`, and
+`rust-toolchain.toml`. Unused `allow` paths are `tools/export_check.py`,
+`crates/**/tests/**`, and `repomix.config.json`. Only the
+`crates/*/Cargo.toml` release-authority pattern is used, for the comment
+correction above; the other seven release-authority patterns and every actual
+version value are unchanged. Every forbidden path is unused.
+`.github/workflows/**` stayed byte-identical. The wholesale `docs/cycles/**`
+forbid protected every closed cycle document; standing precedence admitted
+only the active runbook and progress record. `STATE.md` is the remaining used
+standing lifecycle path.
+
+G1–G6 retain measured answers. G1 executed and bound the derived forward-
+boundary family. G2 executed the 1.78 extraction and false-restatement
+rejection; operator outcome 1 leaves the unexecuted 1.86 claim deferred. G3
+executed the real v1.0/v1.3 checker/export matrix. G4 bound the governed export
+row to the append-only progress authority and named its fixed-point audit
+delta. G5 produced three entry points and two interval observations rather
+than a rate; the closing measurement adds one separately identified
+activation-to-close observation. G6 consolidated the two byte-identical SQL
+clauses into one compile-time declaration after proving the shared
+construction can reject drift.
+
+The four draft defects remain reviewer errors: the unenumerated nine-MSRV-site
+claim, calling a reconstruction the real retention checker, declaring no
+latest-at-close control after reading only two assertions, and claiming the
+complete checker ran against a construction without its required evidence or
+Git history. Across MARGIN-BIND and ORDER-CONST, **11** existing
+`expected_line` values were re-derived from real self-test output: six in
+`tools/cycle_check.py` and five in `crates/store/src/sqlite.rs`.
+
+Immediately before closure, `checklist-audit` passed **238 checked / 3
+retracted / 238 matched / 238 commits resolved**. Close-time artifact
+validation passed schema 2 with **2 artifacts / 331 pinned files** in the
+unchanged **191,395-byte** manifest; two complete checks took **0.12 s / 0.09 s
+real** and matched both protected databases. The final local lane passed
+**20/20**, both constrained Python lanes passed **317 collected / 317 passed /
+0 skipped** with the same one accepted warning, `invariant-scan` passed **12
+rules / 55 controls**, and standalone plus embedded golden passed **11/11**,
+delta **0**.
 
 **v0.30 RE-MEASURE authenticates the exact candidate on a neutral ref without
 publishing (measured 2026-07-31).** Steps 2–5 were complete, so the decision
