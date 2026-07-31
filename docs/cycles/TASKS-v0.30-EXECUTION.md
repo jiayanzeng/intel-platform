@@ -42,6 +42,18 @@ exclusion obligation. No hosted job, toolchain pin, evidence topology,
 objective, decision gate, acceptance criterion, declared-scope row, or standing
 prohibition changes.
 
+### 2026-07-31 · MARGIN-BIND measured completion
+
+Step 4 — governed export margin bound and completion checked — 2026-07-31
+
+The implementation binds the one governed export row to the active cycle's
+append-only progress authority at close, reports both open-cycle exemption
+states, rejects an empty or superseded closed referent, and names the
+cycle-ending audit delta. The registered R12 rejection, six re-derived existing
+line values, and one new control line are recorded in `STATE.md`. No objective,
+decision gate, acceptance criterion, declared-scope row, or standing
+prohibition changes.
+
 v0.29 closed `no-release` on 2026-07-31 and **every substantive claim in the Codex
 report was independently re-derived and held.** Several matched to the byte.
 `invariant-scan` moved **12 rules / 49 controls → 12 / 51** with R12 at **23**,
@@ -408,7 +420,7 @@ measured on.**
 | Postgres / pgvector / multi-host seam | unchanged | v0.30 · 2026-07-31 — E0's complete local matrix retained the single-writer SQLite and single-host topology; no manifest, schema, or production store source changed | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.30 · 2026-07-31 — E0 exercised only the first-party shell, changed no shell production source, and made no shell-replacement invariance claim | none |
 | L2 forced-command wrapper | an operator server session | v0.30 · 2026-07-31 — no model-profile command or operator server-administration session occurred | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.30 · 2026-07-31 — FLOOR-BIND's real `invariant-scan --self-test` passed **12 rules / 54 controls** and exposed no spelling outside the registered vocabularies | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.30 · 2026-07-31 — MARGIN-BIND's real `invariant-scan --self-test` passed **12 rules / 55 controls** and exposed no spelling outside the registered vocabularies | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.30 · 2026-07-31 — the operator selected outcome 1; exact searches found zero `rustup run 1.86`, `cargo +1.86`, or workflow `toolchain: 1.86` constructions, so 1.86 remains an unexecuted claim rather than a project guarantee | none — deferred under operator outcome 1 |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.30 · 2026-07-31 — `config/core.json` is byte-unchanged, and no compliance review or admission decision occurred | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.30 · 2026-07-31 — no publication authorization exists; E0 created, moved, and deleted no ref and touched no historical publication object | none — **no historical ref touched** |
@@ -417,7 +429,7 @@ measured on.**
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.30 · 2026-07-31 — the activation-to-E0 diff contains no `shell/intel_shell/**` path; the broad shell forbid and narrow release-authority precedence remain unchanged | none — recorded, not acted on |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.30 · 2026-07-31 — no operator decision declared the standing prose criteria insufficient; E0 records but does not automate them | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.30 · 2026-07-31 — activation State measured **257,422 bytes**, leaving **196,319** to 453,741; the exact activation export measured **2,464,445 bytes**, leaving **535,555** to its ceiling; neither trigger fired | **Step 1 — boundary re-derived; no archive** |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.30 · 2026-07-31 — **20** controls point into `tools/cycle_check.py` and **6** into `crates/store/src/sqlite.rs`; E0 edited neither file and re-derived **0** line values | none — recorded, not acted on |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.30 · 2026-07-31 — MARGIN-BIND's schema addition leaves **22** controls pointing into `tools/cycle_check.py` and **6** into `crates/store/src/sqlite.rs`; real self-test output re-derived **6** shifted existing `cycle_check.py` line values and registered the new margin control at line 1863 | **Step 4 — six shifted values re-derived; one new site registered** |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.30 · 2026-07-31 — real throwaway trees confirmed `v1.0` makes automated `cycle-check` fail while `export-check` passes, whereas `v1.3` makes `cycle-check` pass and operator-local `export-check` reject **51** outside-depth cycle documents plus the size ceiling; no automated lane catches the silent case | **Step 1 — settled by execution in both trees; recorded, not fixed** |
 | Published-release divergence with no governed trigger | an operator decision that the distance between published v0.17.0 and the working head warrants a governed row | v0.30 · 2026-07-31 — activation audit HEAD was **46 commits ahead / 0 behind** local `origin/main`; published v0.17.0 still peels to `4af2841816dd3e43fb8423153b91aa22ccb87537`, and no existing governed row watches that distance | none — recorded for **Step 7** |
 
@@ -626,7 +638,7 @@ disagrees with a measurement is the criterion that gets corrected.**
 **Done when** a governed row that lags its own cycle's records fails
 automatically, and the residual the rule cannot close is written down.
 
-- [ ] **MARGIN-BIND**
+- [x] **MARGIN-BIND**
 
 ---
 

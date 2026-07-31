@@ -304,6 +304,36 @@ Preserve the earlier measurement in its dated task or progress record and
 forward-correct the live row explicitly, so neither an increase nor a decrease
 can be selected opportunistically.
 
+Beginning with v0.30, the content binding is deliberately narrower than the
+date/cycle-identity rule. It covers only the `ARCHITECTURE.md` subject beginning
+`review-export size and retention bound`; every other governed row remains
+explicitly out of content-binding scope because its heterogeneous external
+measurement has no common repository authority. The covered row carries
+`Governed review-export bytes: \`<digits>\`` and its visible `export of **N
+bytes**` figure must agree. The active cycle's progress record supplies the
+independent authority through append-only fields of this exact form:
+
+```
+- governed review-export measurement: tree=`<40 hex>`; bytes=`<digits>`
+```
+
+At close, the row must equal the last such progress field, regardless of
+whether that value increased or decreased. While the cycle is open, a missing
+field takes the named `exempt-open-empty-progress` path because no latest-at-
+close referent exists yet; a present field takes
+`exempt-open-latest-at-close` because later measurements may still arrive.
+These exemptions are reported by `cycle-check` and expire at close. A closed
+cycle with no field is an error, not a vacuous pass.
+
+The figure is measured on the last tree measurable when the covered row is
+written. The single append-only progress entry written after the closing commit
+is the named **cycle-ending audit delta** and cannot be folded into that
+in-tree figure without asking a record to measure a tree containing itself.
+The closing audit records that bounded delta separately; it is not a newer
+governed export measurement. Whether the delivered export is larger or smaller,
+the signed delta is disclosed rather than using direction to select a preferred
+figure.
+
 Beginning with v0.28, both governed tables must contain at least one
 trigger-bearing row. Every trigger-bearing subject in the immediately prior
 execution runbook must remain in the active deferral table or appear in an

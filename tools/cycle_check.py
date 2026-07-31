@@ -1458,7 +1458,13 @@ def check_declared_scope(
 TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (0, 23)
 TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)
 TRIGGER_FLOOR_FORWARD_BOUNDARY = (0, 28)
+GOVERNED_EXPORT_FORWARD_BOUNDARY = (0, 30)
 FORWARD_BOUNDARY_RELATIONSHIPS = {
+    "GOVERNED_EXPORT_FORWARD_BOUNDARY": (
+        ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
+        "The governed export value is a content constraint on the "
+        "cycle-identified architecture trigger row.",
+    ),
     "SCOPE_FORWARD_BOUNDARY": (
         (),
         "Independent: declared-scope activation does not consume trigger "
@@ -1480,6 +1486,19 @@ FORWARD_BOUNDARY_RELATIONSHIPS = {
 DATED_DISPOSITIONS_HEADING = "### Dated operational-residual dispositions"
 DEFERRED_COMPLETIONS_HEADING = "## Deferred completions"
 ISO_DATE_TOKEN_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
+GOVERNED_EXPORT_SUBJECT_PREFIX = "review-export size and retention bound"
+GOVERNED_EXPORT_ROW_MARKER_RE = re.compile(
+    r"Governed review-export bytes:\s*`([0-9]+)`"
+)
+GOVERNED_EXPORT_ROW_PROSE_RE = re.compile(
+    r"\bexport of \*\*([0-9][0-9,]*) bytes\b"
+)
+GOVERNED_EXPORT_PROGRESS_PREFIX = "- governed review-export measurement:"
+GOVERNED_EXPORT_PROGRESS_RE = re.compile(
+    r"^- governed review-export measurement: "
+    r"tree=`([0-9a-f]{40})`; bytes=`([0-9]+)`$",
+    re.MULTILINE,
+)
 
 
 def module_forward_boundaries() -> dict[str, tuple[int, ...]]:
@@ -1701,6 +1720,155 @@ def check_trigger_freshness(
         required_cycle_name,
     )
     return architecture_rows, deferral_rows
+
+
+def governed_export_row_value(
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> int | None:
+    heading_matches = list(
+        re.finditer(
+            rf"^{re.escape(DATED_DISPOSITIONS_HEADING)}$",
+            text,
+            re.MULTILINE,
+        )
+    )
+    if len(heading_matches) != 1:
+        return None
+    section = text[heading_matches[0].end():]
+    next_heading = re.search(r"^#{1,3} ", section, re.MULTILINE)
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+
+    lines = section.splitlines()
+    header_index: int | None = None
+    subject_index: int | None = None
+    measured_index: int | None = None
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if "subject" not in normalized:
+            continue
+        header_index = index
+        subject_index = normalized.index("subject")
+        measured_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "measured" in cell
+            ),
+            None,
+        )
+        break
+    if (
+        header_index is None
+        or subject_index is None
+        or measured_index is None
+    ):
+        return None
+
+    matching_cells: list[str] = []
+    for line in lines[header_index + 1:]:
+        cells = markdown_table_cells(line)
+        if not cells:
+            if matching_cells:
+                break
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        if max(subject_index, measured_index) >= len(normalized):
+            continue
+        if normalized[subject_index].casefold().startswith(
+            GOVERNED_EXPORT_SUBJECT_PREFIX
+        ):
+            matching_cells.append(cells[measured_index])
+
+    if len(matching_cells) != 1:
+        errors.append(
+            f"{shown(path, root)}: expected exactly one governed export row "
+            f"whose subject starts {GOVERNED_EXPORT_SUBJECT_PREFIX!r}; "
+            f"found {len(matching_cells)}"
+        )
+        return None
+
+    measured = matching_cells[0]
+    marker_matches = GOVERNED_EXPORT_ROW_MARKER_RE.findall(measured)
+    prose_matches = GOVERNED_EXPORT_ROW_PROSE_RE.findall(measured)
+    if len(marker_matches) != 1 or len(prose_matches) != 1:
+        errors.append(
+            f"{shown(path, root)}: governed export row requires exactly one "
+            "machine byte marker and one visible 'export of **N bytes' value"
+        )
+        return None
+    marker_value = int(marker_matches[0])
+    prose_value = int(prose_matches[0].replace(",", ""))
+    if marker_value != prose_value:
+        errors.append(
+            f"{shown(path, root)}: governed export row machine value "
+            f"{marker_value} disagrees with visible value {prose_value}"
+        )
+        return None
+    return marker_value
+
+
+def check_governed_export_margin(
+    architecture_path: Path,
+    architecture_text: str,
+    progress_path: Path,
+    progress_text: str,
+    cycle_state: str,
+    root: Path,
+    errors: list[str],
+) -> str:
+    row_value = governed_export_row_value(
+        architecture_path,
+        architecture_text,
+        root,
+        errors,
+    )
+    measurements = list(GOVERNED_EXPORT_PROGRESS_RE.finditer(progress_text))
+    prefix_count = progress_text.count(GOVERNED_EXPORT_PROGRESS_PREFIX)
+    if prefix_count != len(measurements):
+        errors.append(
+            f"{shown(progress_path, root)}: malformed governed review-export "
+            f"measurement; found {prefix_count} field(s) but parsed "
+            f"{len(measurements)}"
+        )
+        return "invalid-progress-measurement"
+
+    if cycle_state == "open":
+        if not measurements:
+            return "exempt-open-empty-progress"
+        return "exempt-open-latest-at-close"
+    if cycle_state != "closed":
+        return "not-applicable"
+    if not measurements:
+        errors.append(
+            f"{shown(progress_path, root)}: closed cycle has no governed "
+            "review-export measurement; the open-cycle empty-progress "
+            "exemption is unavailable"
+        )
+        return "missing-closed-progress-measurement"
+    if row_value is None:
+        return "invalid-architecture-row"
+
+    latest = measurements[-1]
+    latest_tree = latest.group(1)
+    latest_value = int(latest.group(2))
+    # Invariant R12 control site: governed review-export latest-at-close.
+    if row_value != latest_value:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed review-export row is "
+            f"superseded: row={row_value}, latest_progress={latest_value}, "
+            f"tree={latest_tree}"
+        )
+        return "superseded"
+    return "bound"
 
 
 def governed_trigger_subjects(
@@ -2031,6 +2199,7 @@ def run(
 
     execution_files = execution_runbooks(root)
     active_state = "missing"
+    governed_export_state = "not-applicable"
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         architecture_trigger_rows = 0
@@ -2121,6 +2290,30 @@ def run(
                 f"{shown(identity.runbook, root)}: declared runbook cannot "
                 f"mix unchecked boxes with {CLOSING_HEADING!r}"
             )
+        if (
+            declared_scope_cycle_version(identity.name)
+            >= GOVERNED_EXPORT_FORWARD_BOUNDARY
+        ):
+            architecture_path = root / "ARCHITECTURE.md"
+            architecture_text = (
+                architecture_path.read_text()
+                if architecture_path.is_file()
+                else ""
+            )
+            progress_text = (
+                identity.progress.read_text()
+                if identity.progress.is_file()
+                else ""
+            )
+            governed_export_state = check_governed_export_margin(
+                architecture_path,
+                architecture_text,
+                identity.progress,
+                progress_text,
+                active_state,
+                root,
+                errors,
+            )
 
     for path in execution_files:
         if path == identity.runbook:
@@ -2187,6 +2380,7 @@ def run(
         f"local_tag_refs={'verified' if verify_local_tag_refs else 'not-requested'}, "
         f"runbook={shown(identity.runbook, root)}, "
         f"progress={shown(identity.progress, root)}, "
+        f"governed_export={governed_export_state}, "
         f"closed_execution={closed}, historical={len(plain_task_files)})"
     )
     return 0

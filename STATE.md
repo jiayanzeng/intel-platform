@@ -1,6 +1,68 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; FLOOR-BIND is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 54 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **313** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the FLOOR-BIND checkbox, `checklist-audit` passed **234 checked / 3 retracted / 234 matched / 234 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; MARGIN-BIND is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the MARGIN-BIND checkbox, `checklist-audit` passed **235 checked / 3 retracted / 235 matched / 235 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+
+**v0.30 MARGIN-BIND makes latest-at-close executable and names its residual
+(measured 2026-07-31).** The decision gate did not trip:
+`docs/state-archive/**` and `config/protected-artifacts.json` are absent from
+the task diff. This step changes how one live row is bound; it archives and
+registers nothing.
+
+The content rule is deliberately narrower than trigger freshness. Only the
+`ARCHITECTURE.md` subject beginning `review-export size and retention bound`
+is content-bound. Every other governed subject remains explicitly outside
+content-binding scope because its heterogeneous external fact has no common
+repository authority; its date and active-cycle identity checks remain in
+force. The covered row now carries a machine byte marker, and the checker
+first binds that marker to the row's visible `export of **N bytes**` value.
+At close it independently binds the row to the last append-only progress field
+of the form `tree=<40 hex>; bytes=<digits>`. One implementation cannot satisfy
+both sides by merely restating the row.
+
+The empty-record state is explicit. Before the task audit entry existed, the
+real active entry point passed with
+`governed_export=exempt-open-empty-progress`; an open cycle can still acquire a
+later close-time measurement. A focused construction with the same empty
+record in closed state produced the required error because the exemption
+expires at close. A present open-cycle field takes the separately named
+`exempt-open-latest-at-close` path, while closed state requires and compares
+the last field. The required workflow assigns the first machine-readable field
+to the separate audit append written only after the implementation commit
+exists. It is deliberately absent from this implementation tree and is not
+claimed as current here; that append records the already measured activation
+audit tree `e7b2c58814e2223d9899b83b3f3491344ce85337` at **2,464,445 bytes**.
+
+The operating contract now states the fixed point symmetrically. The governed
+figure is measured on the last tree measurable when the row is written,
+regardless of whether it increased or decreased. The one progress entry
+appended after the closing commit is the named **cycle-ending audit delta**;
+it is recorded separately and is not a newer governed measurement. v0.29's
+measured instance was **+4,965 export bytes**, exactly the size contribution
+of that one audit append. A later negative or positive delta must be disclosed
+with its sign rather than used to choose a preferred direction.
+
+Rejection ran before acceptance. Focused tests rejected both a superseded
+figure and a closed empty record **2/2**. R12 then rejected its
+`superseded-export-figure` mutation at the new line-1863 marker. The new fifth
+module-global forward boundary depends on trigger identity and remains
+automatically covered by the derived boundary registry. The edit shifted
+**six existing** `cycle_check.py` control values, all re-derived from real
+self-test output: two boundary controls `1500 → 1519`, three freshness
+controls `1646 → 1665`, and the carry-forward control `1873 → 2041`.
+The new margin control is registered at 1863. The resulting distribution is
+**22** controls into `cycle_check.py` and **6** into `sqlite.rs`; R12 passed
+**27** and the full self-test passed **12 rules / 55 controls**.
+
+The first complete lifecycle-test run passed 57 and failed two old fixture
+assumptions: the identity-order fixture had not initialized the fifth boundary,
+and the zero-population fixture did not clear the new export trigger. The first
+correction attempt contained an indentation error and did not collect tests.
+After correcting both fixtures and the indentation, the complete file passed
+**59/59**. The complete result passed all **20/20** local jobs and Python
+3.11.4 plus 3.12.13 at **317/317** each. Standalone golden passed **11/11**,
+delta **0**. No dependency, production behavior, public contract, route,
+schema, protected byte, publisher configuration, scheduler state, version
+authority, tag, or ref changed.
 
 **v0.30 FLOOR-BIND derives the offline floor and records the net-floor
 residual (measured 2026-07-31).** The operator selected outcome 1 on
@@ -4049,7 +4111,7 @@ PYTHONPATH=shell uvicorn intel_shell.app:app --port 8787   # public API on :8787
 python3 tools/mock_openai.py &
 LLM_BASE_URL=http://127.0.0.1:8899/v1 PYTHONPATH=shell python3 -m intel_shell.pipeline
 
-cargo test && PYTHONPATH=shell python3 -m pytest shell/tests   # v0.6 baseline: 49 Rust + 69 shell; v0.30 measured: 146 Rust + 313 shell
+cargo test && PYTHONPATH=shell python3 -m pytest shell/tests   # v0.6 baseline: 49 Rust + 69 shell; v0.30 measured: 146 Rust + 317 shell
 
 # v0.6 — per-source ingest (the `sources` filter is optional; omit it for whole sectors):
 curl -X POST localhost:8788/ingest -H 'content-type: application/json' \

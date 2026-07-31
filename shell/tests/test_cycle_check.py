@@ -22,6 +22,8 @@ def _progress(root: Path, cycle: str = "v1.2.3") -> Path:
 
 
 def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
+    fixture_export_bytes = len("cycle-check governed export fixture")
+    fixture_export_tree = "a" * 40
     root = tmp_path / "cycle"
     root.mkdir()
     cycle_documents_dir(root).mkdir(parents=True)
@@ -42,6 +44,10 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| baseline | refuted | none | no measurement required |\n"
         "| trigger baseline | active | active condition | "
         "v1.2.3 · 2026-07-30 — measured |\n"
+        "| review-export size and retention bound (fixture) | accepted | "
+        "export ceiling | v1.2.3 · 2026-07-30 — fixture export of "
+        f"**{fixture_export_bytes} bytes / 1 file**. Governed review-export "
+        f"bytes: `{fixture_export_bytes}`. |\n"
     )
     _runbook(root).write_text(
         "# Open cycle\n\n"
@@ -70,7 +76,11 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "**Done when** the original criterion passes.\n\n"
         "- [ ] unfinished task\n"
     )
-    _progress(root).write_text("# Progress\n")
+    _progress(root).write_text(
+        "# Progress\n\n"
+        "- governed review-export measurement: "
+        f"tree=`{fixture_export_tree}`; bytes=`{fixture_export_bytes}`\n"
+    )
     config = root / "config"
     config.mkdir()
     (config / "cycle-history.json").write_text(
@@ -691,6 +701,125 @@ def test_cycle_check_accepts_cycle_paths_only_in_declaration(
     assert cycle_check.run(_cycle_root(tmp_path)) == 0
 
 
+def _governed_export_text(byte_count: int) -> str:
+    return (
+        "# Architecture\n\n"
+        "### Dated operational-residual dispositions\n\n"
+        "| subject | disposition | trigger | measured observation |\n"
+        "|---|---|---|---|\n"
+        "| review-export size and retention bound (fixture) | accepted | "
+        "export ceiling | fixture export of "
+        f"**{byte_count} bytes / 1 file**. Governed review-export bytes: "
+        f"`{byte_count}`. |\n"
+    )
+
+
+def _governed_export_progress(
+    measurements: list[tuple[str, int]],
+) -> str:
+    fields = "".join(
+        "- governed review-export measurement: "
+        f"tree=`{tree}`; bytes=`{byte_count}`\n"
+        for tree, byte_count in measurements
+    )
+    return f"# Progress\n\n{fields}"
+
+
+def test_governed_export_margin_rejects_superseded_figure(
+    tmp_path: Path,
+) -> None:
+    row_value = len("earlier governed export")
+    latest_value = row_value + len("later")
+    architecture = tmp_path / "ARCHITECTURE.md"
+    progress = tmp_path / "PROGRESS.md"
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        architecture,
+        _governed_export_text(row_value),
+        progress,
+        _governed_export_progress(
+            [("a" * 40, row_value), ("b" * 40, latest_value)]
+        ),
+        "closed",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "superseded"
+    assert errors == [
+        "ARCHITECTURE.md: governed review-export row is superseded: "
+        f"row={row_value}, latest_progress={latest_value}, tree={'b' * 40}"
+    ]
+
+
+def test_governed_export_margin_names_open_empty_progress_exemption(
+    tmp_path: Path,
+) -> None:
+    row_value = len("open governed export")
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(row_value),
+        tmp_path / "PROGRESS.md",
+        "# Progress\n",
+        "open",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "exempt-open-empty-progress"
+    assert errors == []
+
+
+def test_governed_export_margin_rejects_closed_empty_progress(
+    tmp_path: Path,
+) -> None:
+    row_value = len("closed governed export")
+    progress = tmp_path / "PROGRESS.md"
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(row_value),
+        progress,
+        "# Progress\n",
+        "closed",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "missing-closed-progress-measurement"
+    assert errors == [
+        "PROGRESS.md: closed cycle has no governed review-export measurement; "
+        "the open-cycle empty-progress exemption is unavailable"
+    ]
+
+
+def test_governed_export_margin_accepts_last_progress_figure(
+    tmp_path: Path,
+) -> None:
+    prior_value = len("prior governed export")
+    latest_value = prior_value + len("newer")
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(latest_value),
+        tmp_path / "PROGRESS.md",
+        _governed_export_progress(
+            [("a" * 40, prior_value), ("b" * 40, latest_value)]
+        ),
+        "closed",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "bound"
+    assert errors == []
+
+
 def test_cycle_check_rejects_stale_review_export_retention_without_export(
     tmp_path: Path,
     capsys,
@@ -1276,6 +1405,11 @@ def test_trigger_identity_cannot_precede_freshness(monkeypatch) -> None:
         "TRIGGER_FLOOR_FORWARD_BOUNDARY",
         (1, 2, 4),
     )
+    monkeypatch.setattr(
+        cycle_check,
+        "GOVERNED_EXPORT_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
     errors: list[str] = []
     cycle_check.check_trigger_boundary_relationship(errors)
     assert errors == [
@@ -1365,6 +1499,11 @@ def test_cycle_check_rejects_zero_trigger_populations(
         architecture.read_text().replace(
             "| trigger baseline | active | active condition |",
             "| trigger baseline | active | none |",
+        ).replace(
+            "| review-export size and retention bound (fixture) | "
+            "accepted | export ceiling |",
+            "| review-export size and retention bound (fixture) | "
+            "accepted | none |",
         )
     )
     runbook = _runbook(root)

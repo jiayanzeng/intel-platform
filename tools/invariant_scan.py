@@ -1624,6 +1624,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "rust-floor-restatement": (
         "Invariant R12 control site: offline MSRV restatement binding."
     ),
+    "governed-export-margin": (
+        "Invariant R12 control site: governed review-export latest-at-close."
+    ),
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
@@ -2235,6 +2238,44 @@ def r12_findings(root: Path) -> list[str]:
                 "stale-offline-restatement"
             )
 
+        governed_row_value = len("planted governed export row")
+        governed_latest_value = governed_row_value + len("superseding")
+        governed_architecture = (
+            "# Architecture\n\n"
+            "### Dated operational-residual dispositions\n\n"
+            "| subject | disposition | trigger | measured observation |\n"
+            "|---|---|---|---|\n"
+            "| review-export size and retention bound (control) | accepted | "
+            "export ceiling | control export of "
+            f"**{governed_row_value} bytes / 1 file**. Governed "
+            f"review-export bytes: `{governed_row_value}`. |\n"
+        )
+        governed_progress = (
+            "# Progress\n\n"
+            "- governed review-export measurement: "
+            f"tree=`{'a' * 40}`; bytes=`{governed_row_value}`\n"
+            "- governed review-export measurement: "
+            f"tree=`{'b' * 40}`; bytes=`{governed_latest_value}`\n"
+        )
+        errors = []
+        cycle_check.check_governed_export_margin(
+            fixture / "ARCHITECTURE.md",
+            governed_architecture,
+            fixture / "PROGRESS.md",
+            governed_progress,
+            "closed",
+            fixture,
+            errors,
+        )
+        if not any(
+            "governed review-export row is superseded" in error
+            and f"latest_progress={governed_latest_value}" in error
+            for error in errors
+        ):
+            missed.setdefault("governed-export-margin", []).append(
+                "superseded-export-figure"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
@@ -2457,6 +2498,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "trigger-boundary-order planted controls"
         elif group == "rust-floor-restatement":
             finding_kind = "rust-floor-restatement planted controls"
+        elif group == "governed-export-margin":
+            finding_kind = "governed-export-margin planted controls"
         else:
             finding_kind = "publication planted controls"
         findings.append(
