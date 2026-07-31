@@ -354,3 +354,69 @@ Entries are append-only; corrections are new dated entries.
   response shape, `/v1/*` value domain, dependency, schema, protected or
   pinned byte, publisher configuration, scheduler state, or ref changed. No
   publisher request or scheduler run occurred.
+
+### 2026-07-31 · SCHEDULE-DESIGN — bounded later-cycle SEC clock design
+
+- owner: Codex
+- commit: 3a49f292b76ebe2583e5fc8d662241c4cf063f71
+- result: PASS. The operator selected outcome 1 on 2026-07-31: authorize a
+  bounded scheduled SEC window in a later cycle so the recurring 600-second
+  mode that has never run can be measured. This is design authorization only;
+  execution still requires an admitting later-cycle scope and a separate
+  explicit operator authorization.
+- bound/request acceptance: PASS. The design fixes one continuous
+  **1,260-second** window, one cored process, one scheduler process, fresh
+  absent unprotected database and scheduler-state paths, and one isolated
+  `quant-desk:ingest-source:sec-edgar-usgaap` job at **600 seconds**. At most
+  three loopback `/ingest` calls occur at approximately t+0/t+600/t+1200. One
+  process-scoped cache with the **86,400-second** positive robots TTL bounds
+  publisher traffic at **4 HTTP requests**: one robots plus three feed
+  requests. Any redirect, retry, fourth ingest, fifth publisher request, other
+  origin, or elapsed time above 1,260 seconds is a refusal.
+- evidence/refusal acceptance: PASS. The design requires reconciled scheduler,
+  state, loopback, publisher-request, response, policy, coverage, and database
+  evidence. It names executable preflight and runtime refusals for protected
+  targets, existing paths, process/port ownership, job inventory, cadence,
+  source admission, terms/robots/identity/limiter policy, network/HTTP failure,
+  origin and request counts, coverage outcomes, swallowed scheduler
+  exceptions, elapsed time, and cross-channel count disagreement.
+- judgement split acceptance: PASS. Current applicability of the terms record,
+  wall-clock window selection, and whether a bounded success justifies
+  recurring deployment remain operator judgements. No result can prove
+  peak-season density, deadline-day density, hours covered by neither live
+  sample, publisher-side receipt after TLS termination, or publisher-side
+  processing.
+- control-boundary acceptance: PASS. The record names the schedule/cadence
+  tests, scheduler tick/state tests, artifact/preflight controls,
+  admitted-source and live-path policy controls, HC8, R12 coverage topology,
+  the two cored pinned-window controls, ORDER-BIND, and
+  `audit_deferred.scheduler_measurement`, together with what each observes.
+  It states explicitly that no existing control enforces the whole wall-clock
+  envelope, reconciles the evidence channels, or counts actual publisher
+  requests; the later-cycle controller/observer must supply those checks.
+- focused execution acceptance: PASS. The scheduler, source-admission, and
+  harvest-preflight files passed **13/13** under each constrained Python lane.
+  Both named cored coverage controls executed and passed **2/2**. An earlier
+  `--exact` filter executed zero Rust tests and is a non-result; corrected
+  filters executed the named tests.
+- no-run/no-change acceptance: PASS. The permission-complete existing topology
+  measurement found **0 scheduler processes / 0 cored processes**, port 8788
+  not accepting, one supported simultaneous harvester, two configured / seven
+  expanded ordinary jobs, and serial execution. The default scheduler state is
+  absent. Both the activation-to-implementation range and worktree leave
+  `config/schedule.json` byte-identical.
+- complete-log acceptance: PASS. The complete current Codex session function
+  and custom-tool transcript was searched for publisher origins, publisher
+  URLs, publisher-directed HTTP clients, `/ingest`, scheduler, and harvest
+  commands. Every matching call was a documentation patch or `rg`/`jq`
+  inspection; no web tool or traffic-capable invocation occurred.
+- invariant/export acceptance: PASS. `cycle-check` passed; `invariant-scan`
+  passed **12/12 rules / 51 controls**. The exact SCHEDULE-DESIGN
+  implementation-tree export passed **99 derived / 7 required / 152 exported**
+  at **2,481,321 bytes**, leaving **518,679 bytes / 17.29%** headroom and
+  retaining v0.27–v0.29 without either excluded byte class.
+- golden-E2E delta: **0** — standalone **11/11**, byte-identical.
+- surface/protected/publisher acceptance: PASS. No production source, route,
+  response shape, `/v1/*` value domain, dependency, schema, protected or
+  pinned byte, publisher configuration, schedule cadence, scheduler state, or
+  ref changed. No publisher request or scheduler run occurred.
