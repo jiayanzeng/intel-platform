@@ -197,3 +197,69 @@ Entries are append-only; corrections are new dated entries.
   protected byte, publisher configuration, scheduler state, version authority,
   tag, or working-repository ref changed. No publisher request, scheduler, or
   model-profile command ran.
+
+### 2026-07-31 · FLOOR-BIND — bind the executable offline Rust floor
+
+- owner: Codex
+- commit: 31058371f3131cffe4ea06ff17783663ff1ad596
+- result: PASS. The existing `version-check` entry point now derives the
+  offline Rust floor from three executable pins, normalizes raw `1.78.0` and
+  `1.78` forms to one value, and binds **22** named current restatements to
+  derived 1.78.
+- decision-gate acceptance: PASS. `run` and `.github/workflows/**` were read
+  but are absent from the implementation diff. No hosted job, toolchain pin,
+  or evidence topology changed.
+- executable-authority acceptance: PASS. `run` yielded two raw `1.78.0`
+  pins, the hosted MSRV job yielded one raw `1.78` pin, and explicit
+  normalization derived one value, 1.78. `./run version-check` reported
+  `pins=3`, `raw=[1.78, 1.78.0]`, and `normalized=1.78`.
+- nonvacuity acceptance: PASS by rejection before acceptance. Removing all
+  matches from either authority file produced its named zero-extraction error;
+  changing the hosted pin to 1.79 produced an explicit normalized
+  disagreement. The focused rejection population passed **4/4** before the
+  complete green run.
+- restatement acceptance: PASS. The hand-maintained
+  `OFFLINE_MSRV_RESTATEMENTS` registry extracted **22** current statements,
+  all equal to derived 1.78. Changing its README statement to 1.77 was
+  rejected. The false live run-reference line remains as the retained
+  `offline needs >= 1.75` claim and is immediately followed by its 1.78
+  forward correction; the current rejected-dependency comment now uses the
+  derived baseline.
+- historical-record acceptance: PASS. No dated historical record was
+  rewritten. `OFFLINE_MSRV_HISTORICAL_EXCLUSIONS` names the permanent manual
+  exclusion obligation: cycle documents, State archives, `CHANGELOG.md`,
+  evidence and observations, dated State narrative outside the current
+  correction, and historical clauses inside current AGENTS, README,
+  toolchain, and workflow text.
+- existing-entrypoint acceptance: PASS. The binding executes inside
+  `version-check`, already present in local and hosted lifecycle lanes; no new
+  lane job was required.
+- registered-control acceptance: PASS after the direct rejections. R12 adds
+  independent `zero-authority-pins` and `stale-offline-restatement`
+  constructions. Disabling either production branch produced the named
+  finding at `tools/version_check.py:354`; R12 passed **26** controls and the
+  full self-test passed **12 rules / 54 controls**.
+- population-correction acceptance: PASS. The run-reference block preserves
+  `49 Rust + 69 shell` as the v0.6 baseline and appends the measured current
+  population, **146 Rust + 313 shell**. Python 3.11.4 and 3.12.13 each
+  collected and passed **313/313** with zero skips and the same one accepted
+  Starlette warning.
+- operator-decision acceptance: PASS. The operator selected outcome 1 on
+  2026-07-31 because it binds already-authorized executable evidence without
+  changing lane topology. Exact searches returned zero `rustup run 1.86`,
+  `cargo +1.86`, and workflow `toolchain: 1.86` constructions. The active
+  deferred table now carries the unexecuted net-floor claim and its
+  operator-selected trigger; it is not a project guarantee.
+- complete-suite acceptance: PASS. The clean local entry point passed all
+  **20/20** jobs, including warning-denied **146** workspace tests, **62** net
+  tests, locked Rust 1.78 check/test, clean rustc/clippy/fmt/ShellCheck,
+  shell **313/313**, protected artifacts, and embedded golden **11/11**.
+  The lifecycle checker and `version-check` passed after the final State and
+  runbook updates.
+- golden-E2E delta: **0** — embedded and final standalone executions each
+  passed **11/11** byte-identically.
+- surface/protected/publisher acceptance: PASS. No dependency, production
+  behavior, route, response shape, `/v1/*` value domain, schema, manifest,
+  protected byte, publisher configuration, scheduler state, version
+  authority, tag, or working-repository ref changed. No publisher request,
+  scheduler, or model-profile command ran.
