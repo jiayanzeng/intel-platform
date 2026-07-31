@@ -505,3 +505,79 @@ Entries are append-only; corrections are new dated entries.
   entry or ref movement, that provisional object was replaced by this single
   implementation commit carrying the exact three executable `allow` rows; the
   same diff gate then passed.
+
+### 2026-07-31 · R-CLOSE — no-release cycle closure
+
+- owner: Codex
+- commit: 20ddf90bb2b1d8654b410cdafe8f67e6d006a115
+- result: PASS. The operator selected `no-release`; the runbook records
+  `Cycle closed: 2026-07-31` and the dated no-release disposition. Published
+  v0.17.0 remains current.
+- disposition acceptance: PASS. The cycle adds no route, response shape,
+  `/v1/*` value domain, dependency, schema, or public surface. Published
+  v0.17.0 can report a wrong raw boundary string in one internal `/ingest`
+  diagnostic for a misordered window; no filing or archive row is lost. The
+  corrected derivation and v0.29 bindings remain intentionally unpublished.
+- publication-boundary acceptance: PASS. Immediately before closure, remote
+  `main` and the peeled v0.17.0 tag both remained
+  `4af2841816dd3e43fb8423153b91aa22ccb87537`, the annotated tag object remained
+  `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd`, and the neutral evidence ref
+  remained candidate `9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4`. No version
+  authority, tag, remote `main`, or release ref moved.
+- scope acceptance: PASS. Eleven `allow` paths were used:
+  `tools/cycle_check.py`, `crates/store/src/sqlite.rs`, `shell/tests/**`,
+  `config/invariant-rules.json`, `tools/invariant_scan.py`,
+  `repomix.config.json`, the exact hosted receipt directory and report,
+  the explicitly authorized manifest registration, `AGENTS.md`, and
+  `ARCHITECTURE.md`. `tools/export_check.py` and `crates/**/tests/**` were
+  unused. Every `release_authority` and `forbid` path was unused; the three
+  standing lifecycle paths carried only their declared records.
+- gate acceptance: PASS. G1–G7 retain their measured answers. G1 executed the
+  stale-glob export failure; G2 distinguished tracked intent from the
+  operator-local export; G3 executed the reversed-boundary traceback before
+  the named binding; G4 executed and bound all SQL/Rust ordering terms; G5
+  established latest-at-close observations; G6 produced the bounded design
+  with no traffic or cadence change; and G7 recorded the exact
+  internal-diagnostic-only published consequence.
+- reviewer acceptance: PASS. All six draft defects remain explicitly
+  classified as reviewer errors: the premature v0.28 closing heading, 14/15
+  governed-row mismatch, false local-main placement, newline-stripped byte
+  figures, repeated v0.29 reserved token, and stale v0.28 architecture
+  observations.
+- lifecycle acceptance: PASS. The pre-closure control passed **231
+  checked / 3 retracted / 231 matched / 231 commits resolved**. With this
+  append-only entry present, `cycle-check` and `progress-check` passed, and
+  `checklist-audit` passed **232 checked / 3 retracted / 232 matched / 232
+  commits resolved** with zero exemptions.
+- export-bound acceptance: PASS. The fixed-point R-CLOSE implementation-tree
+  export passed **99 derived / 7 required / 152 exported** at **2,516,822
+  bytes**, leaving **483,178 bytes / 16.11%** beneath the executable ceiling
+  and retaining exactly v0.27–v0.29 without either excluded byte class.
+- manifest acceptance: PASS. Close-time validation reported **2 artifacts /
+  331 pinned files** in a **191,395-byte** manifest. Two complete
+  verifications took **0.10 s / 0.10 s real** and matched both protected
+  databases.
+- local-regression acceptance: PASS. Full closed-tree `ci-local` passed all
+  **20/20** jobs with warning-denied **146** workspace tests, **62** net tests
+  (**32 ingest + 30 cored**), clean clippy/fmt/ShellCheck, locked Rust 1.78,
+  shell **306/306**, registered invariant self-test **12 rules / 51
+  controls**, protected evidence, persisted fingerprints, and embedded golden
+  **11/11**. Before the implementation commit, the independently rebuilt
+  constrained Python 3.11 and 3.12 lanes each passed **306/306** with zero
+  skips and the same one governed warning.
+- golden-E2E delta: **0**. Standalone closing-tree and post-entry embedded
+  golden both passed **11/11**, byte-identical.
+- non-results: the first final-lane invocation stopped before `ci-local`
+  because the cycle-list text beginning with bold `331` was parsed as a ninth
+  task named `331`; the record was corrected to ordinary prose, the detached
+  implementation-tree export was re-measured, and the full lane then passed.
+  An earlier sandboxed export attempt could not resolve the pinned Repomix
+  registry and is not counted; the permission-complete fixed-point command
+  passed. An intermediate provisional closure record included a tag-object
+  hash among no-release commit mappings and too few mappings; `cycle-check`
+  rejected it before any closure commit or ref movement, and the finalized
+  record passed.
+- final boundary acceptance: PASS. No publisher request, scheduler run,
+  model-server session, historical cycle edit, production source, dependency,
+  schema, protected database, golden input, public route, serialized value
+  domain, version authority, tag, or release ref changed.
