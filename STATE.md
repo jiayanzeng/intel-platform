@@ -1,6 +1,79 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; RE-MEASURE is complete and R-CLOSE awaits the operator's separate disposition.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.29 evidence candidate `9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` on neutral ref `refs/heads/codex/v0.29-evidence-9059eca` passed hosted run **30600284114**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. The completed evidence tree's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, shell **306/306**, `invariant-scan` **12 rules / 51 controls**, and embedded golden **11/11**. Fresh candidate Python 3.11 and 3.12 populations each collected/passed **306** with **0** skips; each comparator against its hosted lane derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`. Standalone golden passed **11/11**. The evidence manifest contains **331** `pinned_files[]` and measures **191,395 bytes**; two consecutive complete verifications took **0.10 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The completed RE-MEASURE implementation-tree review export measures **2,500,164 bytes / 152 files**, leaving **499,836 bytes / 16.66%** against its **3,000,000-byte** executable ceiling and retaining exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred; remote `main` and every release tag remain unchanged.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is closed with `no-release` disposition as of 2026-07-31; all eight ordered steps are complete on top of published v0.17.0.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; close-time remote inspection found both `main` and the peeled v0.17.0 tag unchanged at that closing commit. Authenticated v0.29 evidence candidate `9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` on neutral ref `refs/heads/codex/v0.29-evidence-9059eca` passed hosted run **30600284114**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. The completed evidence tree's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, shell **306/306**, `invariant-scan` **12 rules / 51 controls**, and embedded golden **11/11**. Fresh candidate Python 3.11 and 3.12 populations each collected/passed **306** with **0** skips; each comparator against its hosted lane derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`. Standalone golden passed **11/11**. The evidence manifest contains **331** `pinned_files[]` and measures **191,395 bytes**; two consecutive complete verifications took **0.10 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The R-CLOSE implementation-tree review export measures **2,516,822 bytes / 152 files**, leaving **483,178 bytes / 16.11%** against its **3,000,000-byte** executable ceiling and retaining exactly v0.27–v0.29 without either excluded byte class. No publisher request, scheduler run, cadence change, version edit, release tag, or publication-ref movement occurred.
+
+**v0.29 R-CLOSE records the operator-selected no-release disposition (measured
+2026-07-31).** The operator selected `no-release`. The measured cycle diff adds
+no route, response shape, `/v1/*` value domain, dependency, schema, or public
+surface. The published v0.17.0 defect remains precisely bounded: for a
+misordered incoming window, one internal `/ingest` diagnostic can report the
+wrong raw boundary string; no filing or archive row is lost, and no public
+field or serialized value domain changes. The correction and this cycle's
+bindings remain intentionally unpublished for a later release.
+
+Immediately before closure, remote `main` and the peeled v0.17.0 tag both
+resolved to `4af2841816dd3e43fb8423153b91aa22ccb87537`; annotated tag object
+`df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` was unchanged, and the neutral
+evidence ref resolved to candidate
+`9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4`. No version authority, tag,
+remote `main`, or release ref moved.
+
+Every declared permission is reconciled against activation-exclusive
+`1cf49cf8e1574b7ac6ac1c43ca16ee8794da7e38..R-CLOSE`. Used `allow` paths are
+`tools/cycle_check.py`, `crates/store/src/sqlite.rs`, `shell/tests/**`,
+`config/invariant-rules.json`, `tools/invariant_scan.py`,
+`repomix.config.json`, the exact `evidence/ci-runs/30600284114-1/**` receipt
+set, `evidence/v0.29/deferred-audit/report.json`, the explicitly authorized
+`config/protected-artifacts.json` registration, `AGENTS.md`, and
+`ARCHITECTURE.md`. Unused `allow` paths are `tools/export_check.py` and
+`crates/**/tests/**`. Every declared release authority and every `forbid` path
+is unused. The standing always-allowed `STATE.md`, active progress record, and
+active runbook are used only for their declared lifecycle records.
+
+G1 executed the stale retained-cycle glob and obtained the exact two-path
+`export-check` rejection. G2 measured a different object: the automatic check
+binds tracked retention intent without creating or inspecting the
+operator-local export. G3 reversed the two trigger-boundary constants and
+reproduced `UnboundLocalError` before the new binding produced a named
+configuration failure. G4 executed known-day, NULL-day, day-tie, raw-tie, and
+id-tie cases across SQL and Rust, then ORDER-BIND made either declaration's
+solo drift fail. G5 measured the stale-but-labelled v0.28 margin, selected the
+latest-at-close rule, and refreshed both governed tables. G6 produced a bounded
+later-cycle design of 1,260 seconds, at most three loopback ingests and four
+publisher requests; v0.29 executed no scheduler, sent no publisher traffic,
+and changed no cadence. G7 confirmed the published positional defect and its
+exact internal-diagnostic-only consequence stated above.
+
+The six draft defects remain explicitly classified as **reviewer errors**:
+(1) the supplied v0.28 draft used the reserved closing heading before closure;
+(2) it asserted 14 governed deferred rows while containing 15; (3) it placed
+`ddf08d20…` on local `main` when that commit was on the working branch and
+local `main` was 102 commits behind `origin/main`; (4) its State-region sizes
+were about seven bytes low because the review export strips trailing newlines;
+(5) the supplied v0.29 draft repeated the reserved closing token in prose and
+failed activation; and (6) it refreshed the runbook governed table but left
+all three trigger-bearing architecture rows identified as v0.28. These are
+preserved as reviewer errors, not promoted into product findings.
+
+The exact R-CLOSE implementation-tree export passes **99 derived / 7 required /
+152 exported** at **2,516,822 bytes**, leaving **483,178 bytes / 16.11%** below
+the **3,000,000-byte** ceiling while retaining exactly v0.27–v0.29 and excluding
+the pinned SEC RSS body and `docs/state-archive/**`. `checklist-audit` passed
+before closure at **231 checked / 3 retracted / 231 matched / 231 commits
+resolved**. The closing task is the one ordinary mandatory audit increment;
+the seventeen cycle-control boxes are closure proofs that `cycle-check`
+requires commit mappings for, but `checklist-audit` does not count them.
+
+Growth is derived from repository bytes, not the newline-stripping export.
+The activation tree's State was **224,029 bytes** and its manifest **182,774
+bytes**; R-CLOSE measures State at **257,422 bytes** and the manifest at
+**191,395 bytes**. Thus observed v0.29 State growth is **33,393 bytes/cycle**
+and manifest growth is **8,621 bytes/cycle**. The activation export was
+**2,411,393 bytes**, so the R-CLOSE export's observed retained-scope growth is
+**105,429 bytes**. State remains below its **453,741-byte** second-archive
+boundary with **196,319 bytes** remaining, or **5.88 cycles** if this cycle's
+State growth repeated; the independent export ceiling remains the executable
+gate.
 
 **v0.29 RE-MEASURE authenticates the exact neutral evidence candidate without
 publishing (authorized and measured 2026-07-31).** Candidate

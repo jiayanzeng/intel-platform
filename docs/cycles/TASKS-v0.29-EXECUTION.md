@@ -2,6 +2,14 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · R-CLOSE no-release authorization
+
+The operator selected **`no-release`** on 2026-07-31. This authorizes the
+closing record and its audit entry only; it does not authorize a version edit,
+tag, push to `main`, release-ref change, or publisher request. Published
+v0.17.0 remains current, and the authenticated v0.29 candidate remains on its
+neutral evidence ref.
+
 ### 2026-07-31 · Step 7 exact evidence scope and manifest authorization
 
 Step 7 — release-grade authenticated evidence measured and completion checked — 2026-07-31
@@ -469,23 +477,23 @@ measured on**, which is the discipline G5 exists to settle.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.29 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.29 · 2026-07-31 — E0 started no harvester and made no publisher request; only the existing sequential form remains exercised | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.29 · 2026-07-31 — E0 observed no live outage and created no last-known-good policy; the trigger is absent | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.29 · 2026-07-31 — the activation-to-E0 diff leaves forbidden `crates/ingest/src/**` byte-identical and no live request or 304 occurred | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.29 · 2026-07-31 — `crates/ingest/src/**` is forbidden and byte-identical; no connector review occurred | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.29 · 2026-07-31 — the v0.27 sequential two-origin result remains the only live execution; E0 made no publisher request | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.29 · 2026-07-31 — the operator selected a bounded later-cycle window so the never-run recurring mode can be measured; Step 6 fixes 1,260 seconds, at most three SEC `/ingest` calls and four publisher requests, but grants no execution authorization, changes no cadence, and issues no traffic | **Step 6 — design complete; execution remains separately gated** |
-| Postgres / pgvector / multi-host seam | unchanged | v0.29 · 2026-07-31 — E0 exercised the existing single-writer SQLite and single-host topology only | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.29 · 2026-07-31 — E0 exercised only the first-party shell and makes no shell-replacement invariance claim | none |
-| L2 forced-command wrapper | an operator server session | v0.29 · 2026-07-31 — E0 opened no operator server session | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.29 · 2026-07-31 — registered invariant self-test passed 12 rules / 49 controls and exposed no unregistered spelling | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.29 · 2026-07-31 — no compliance review completed and no admission decision is pending | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.29 · 2026-07-31 — no publication authorization was given and E0 moved no ref | none — **no historical ref touched** |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.29 · 2026-07-31 — both historical tags remain unpublished, so the trigger is absent | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — After the explicitly authorized Step 7 registration, the manifest has 331 pins and measures 191,395 bytes; two consecutive complete runs took 0.10 s / 0.10 s real, so neither trigger fired. This supersedes E0's 316-pin observation without erasing it. | **Step 1 and Step 7 — re-measured only** |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.29 · 2026-07-31 — the literal remains, while `shell/intel_shell/**` is forbidden and unchanged through E0 | none — recorded, not acted on |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.29 · 2026-07-31 — the contract still declares prose adjudication and E0 received no operator decision to replace it | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.29 · 2026-07-31 — MARGIN-TRUTH measures current State at 241,866 bytes, leaving 211,875 bytes / 9.41 cycles at E0's normalized 22,525-byte/cycle rate; the export ceiling has not fired and no archive byte changed | **Step 5 — boundary recorded; no archive** |
+| T7 robots single-flight | a second concurrent harvester | v0.29 · 2026-07-31 — Close-time transcript and hosted-evidence review found no publisher request and no concurrent harvester; only the existing sequential form remains exercised | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.29 · 2026-07-31 — No live outage, publisher request, or newly usable last-known-good policy occurred through close; the trigger is absent | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.29 · 2026-07-31 — The complete activation-to-close diff leaves forbidden `crates/ingest/src/**` byte-identical, and no live request or 304 occurred | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.29 · 2026-07-31 — The complete activation-to-close diff leaves forbidden `crates/ingest/src/**` byte-identical; no connector review occurred | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.29 · 2026-07-31 — The v0.27 sequential two-origin result remains the latest live execution; this cycle made no publisher request | none — complete, do not re-exercise |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.29 · 2026-07-31 — The operator selected a bounded later-cycle design only: 1,260 seconds, at most three SEC `/ingest` calls and four publisher requests. Close-time review confirms no execution authorization, cadence edit, scheduler run, or traffic in v0.29 | **Step 6 — design complete; execution remains separately gated** |
+| Postgres / pgvector / multi-host seam | unchanged | v0.29 · 2026-07-31 — The release-grade Step 7 report retains the single-writer SQLite, single-host topology: 0 scheduler processes, 0 cored processes, port 8788 not accepting, and no cross-host execution | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.29 · 2026-07-31 — The release-grade Step 7 report observed only the first-party shell path and makes no shell-replacement invariance claim | none |
+| L2 forced-command wrapper | an operator server session | v0.29 · 2026-07-31 — No operator server-administration session occurred through close | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.29 · 2026-07-31 — Closing invariant self-test passes 12 rules / 51 controls and exposes no spelling outside registered vocabulary | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.29 · 2026-07-31 — No compliance review completed and no admission decision is pending at close | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.29 · 2026-07-31 — No publication authorization was given; close-time remote inspection found no historical ref movement | none — **no historical ref touched** |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.29 · 2026-07-31 — Both historical tags remain unpublished at close, so the trigger is absent | none — **the flag stays** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — Close-time validation finds 331 pins in a 191,395-byte manifest; two consecutive complete runs took 0.10 s / 0.10 s real and matched both protected databases, so neither trigger fired | **Step 1 and Step 7 — re-measured only** |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.29 · 2026-07-31 — The complete activation-to-close diff leaves forbidden `shell/intel_shell/**` byte-identical, and the existing literal remains | none — recorded, not acted on |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.29 · 2026-07-31 — The operator applied the standing prose criteria and selected `no-release`; no decision declared prose adjudication insufficient and no executable control was added | none — recorded, not acted on |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.29 · 2026-07-31 — The R-CLOSE implementation tree measures State at 257,422 bytes, leaving 196,319 bytes; its exact 2,516,822-byte project-root export remains below 3,000,000 bytes, so neither trigger fired and no archive byte changed | **Step 5 — boundary recorded; no archive** |
 
 ---
 
@@ -765,29 +773,29 @@ default:
 
 **Done when** the disposition is authorized, recorded, and measured.
 
-- [ ] **R-CLOSE**
+- [x] **R-CLOSE**
 
 ---
 
 ## Cycle checklist
 
-- [ ] Worktree clean at entry; v0.28 closure and audit commits where E0 measures them
-- [ ] Retention glob updated at activation and the edit recorded
-- [ ] Every entering-state hypothesis measured and confirmed or corrected
-- [ ] G1–G7 each carry a measured answer; G1, G3, and G4 answered **by execution**
-- [ ] Every new binding demonstrated **rejecting** before demonstrated passing
-- [ ] No binding implemented as a self-consistency assertion
-- [ ] No expected value hardcoded in any test added or edited this cycle
-- [ ] No closed cycle document edited, moved, or deleted
-- [ ] `checklist-audit` total does not fall; every figure recorded
-- [ ] Export under 3,000,000 bytes at every measured point, each naming its tree
-- [ ] Golden **11/11** byte-identical at every step
-- [ ] SEC identity **200 kept / 0 dropped** unchanged
-- [ ] **316** pins verified; manifest bounds re-measured against 1 MiB / 1.00 s
-- [ ] Both Python lanes reported as collected/passed/skipped, comparator-derived
-- [ ] Deferred table rows all carry v0.29-identified observations
-- [ ] No publisher request, no scheduler run, no cadence change
-- [ ] Six reviewer errors preserved as such in the cycle record
+- [x] Worktree clean at entry; v0.28 closure and audit commits where E0 measures them
+- [x] Retention glob updated at activation and the edit recorded
+- [x] Every entering-state hypothesis measured and confirmed or corrected
+- [x] G1–G7 each carry a measured answer; G1, G3, and G4 answered **by execution**
+- [x] Every new binding demonstrated **rejecting** before demonstrated passing
+- [x] No binding implemented as a self-consistency assertion
+- [x] No expected value hardcoded in any test added or edited this cycle
+- [x] No closed cycle document edited, moved, or deleted
+- [x] `checklist-audit` total does not fall; every figure recorded
+- [x] Export under 3,000,000 bytes at every measured point, each naming its tree
+- [x] Golden **11/11** byte-identical at every step
+- [x] SEC identity **200 kept / 0 dropped** unchanged
+- [x] Protected manifest **331** pins verified; bounds re-measured against 1 MiB / 1.00 s
+- [x] Both Python lanes reported as collected/passed/skipped, comparator-derived
+- [x] Deferred table rows all carry v0.29-identified observations
+- [x] No publisher request, no scheduler run, no cadence change
+- [x] Six reviewer errors preserved as such in the cycle record
 
 ---
 
@@ -851,3 +859,108 @@ reach.
 **Six reviewer errors are recorded in this file's header** rather than here,
 because a provenance note is where a reader looks last and an error is what they
 should see first.
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-07-31
+- **Release disposition:** no-release (as of 2026-07-31)
+
+The operator selected `no-release`. Published v0.17.0 remains current; no
+version authority, tag, remote `main`, or release ref moved. Immediately before
+closure, remote `main` and the peeled v0.17.0 tag remained
+`4af2841816dd3e43fb8423153b91aa22ccb87537`, the annotated v0.17.0 tag was
+unchanged, and the neutral evidence ref remained candidate
+`9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4`.
+
+Every declared permission is reconciled. Used `allow` paths are
+`tools/cycle_check.py`, `crates/store/src/sqlite.rs`, `shell/tests/**`,
+`config/invariant-rules.json`, `tools/invariant_scan.py`,
+`repomix.config.json`, `evidence/ci-runs/30600284114-1/**`,
+`evidence/v0.29/deferred-audit/report.json`, the explicitly authorized
+`config/protected-artifacts.json`, `AGENTS.md`, and `ARCHITECTURE.md`. Unused
+`allow` paths are `tools/export_check.py` and `crates/**/tests/**`. All eight
+`release_authority` patterns and every `forbid` pattern are unused. The
+standing lifecycle paths `STATE.md`, this runbook, and its progress record are
+used.
+
+G1 executed the stale retention glob and obtained the two-path export
+rejection. G2 measured the automatic tracked-config binding as a different
+object from operator-local export inspection. G3 reproduced the latent
+`UnboundLocalError`, then bound the constants to a named failure. G4 executed
+the SQL/Rust known-day, NULL-day, and all tie-break terms, then bound their
+agreement. G5 selected and applied the latest-at-close governed-observation
+rule to both live tables. G6 produced the exact bounded later-cycle design but
+sent no publisher traffic, ran no scheduler, and changed no cadence. G7
+confirmed that published v0.17.0 can report a wrong raw boundary string in one
+internal `/ingest` diagnostic for a misordered window; no filing or archive row
+is lost, and no response shape or `/v1/*` value domain changes.
+
+The six draft defects are preserved as **reviewer errors**, not findings:
+
+1. The supplied v0.28 draft used the reserved closing heading before closure.
+2. It asserted 14 governed deferred rows while its table contained 15.
+3. It put `ddf08d20…` on local `main`; the commit was on the working branch and
+   local `main` was 102 commits behind `origin/main`.
+4. Its State-region byte figures were about seven bytes low because the review
+   export strips trailing newlines.
+5. The supplied v0.29 draft repeated the reserved closing token in prose and
+   failed activation.
+6. It refreshed the runbook governed table while leaving all three
+   trigger-bearing architecture rows identified as v0.28.
+
+The exact R-CLOSE implementation-tree export passed **99 derived / 7 required /
+152 exported** at **2,516,822 bytes**, below the **3,000,000-byte** ceiling,
+and retained exactly v0.27–v0.29 without either excluded byte class.
+`checklist-audit` passed immediately before closure at **231 checked / 3
+retracted / 231 matched / 231 commits resolved**. Close-time artifact
+validation passed at **2 artifacts / 331 pinned files**; two complete
+verifications took **0.10 s / 0.10 s real** and matched both databases.
+
+Intentionally unreleased implementation commits:
+
+1. Cycle activation:
+   `1cf49cf8e1574b7ac6ac1c43ca16ee8794da7e38`
+2. Activation lifecycle correction:
+   `b3228b1ed018e09693f0760a7faaa6d5df5bf788`
+3. Activation scope-fixture correction:
+   `b92902edf861e4a3a21eba509519c0b9b46b2870`
+4. E0 measurements and G1–G7 settlement:
+   `64ebc2eaa2955a6f0974a5654deddb97c31eece0`
+5. Retention binding:
+   `b06e1e583c580e2e7be96bbddd76c1d5e550282a`
+6. Trigger-boundary binding:
+   `ec4a05c1618b2baed6b835a39c84b9d44b7ba8ea`
+7. SQL/Rust ordering binding:
+   `5e7e87cc10c1e991d84c70834336fe6a41ceec7f`
+8. Current-margin rule and measurements:
+   `28aa96a48ae20126065921458a8a1d9b93f73e36`
+9. Bounded scheduled-window design:
+   `3a49f292b76ebe2583e5fc8d662241c4cf063f71`
+10. Hosted evidence registration:
+    `ec75706cb6a459dfb731aaddfcfee591ab7983a2`
+11. Clean entry and corrected activation hypotheses:
+    `b3228b1ed018e09693f0760a7faaa6d5df5bf788`
+12. Executed stale-retention rejection:
+    `b06e1e583c580e2e7be96bbddd76c1d5e550282a`
+13. Executed reversed-boundary rejection:
+    `ec4a05c1618b2baed6b835a39c84b9d44b7ba8ea`
+14. Executed SQL/Rust ordering rejection:
+    `5e7e87cc10c1e991d84c70834336fe6a41ceec7f`
+15. Latest-at-close measurement discipline:
+    `28aa96a48ae20126065921458a8a1d9b93f73e36`
+16. No-traffic scheduled-window boundary:
+    `3a49f292b76ebe2583e5fc8d662241c4cf063f71`
+17. Golden continuity:
+    `ec75706cb6a459dfb731aaddfcfee591ab7983a2`
+18. SEC identity continuity:
+    `ec75706cb6a459dfb731aaddfcfee591ab7983a2`
+19. Protected-artifact verification:
+    `ec75706cb6a459dfb731aaddfcfee591ab7983a2`
+20. Comparator-derived Python populations:
+    `ec75706cb6a459dfb731aaddfcfee591ab7983a2`
+21. Deferred-observation identity:
+    `28aa96a48ae20126065921458a8a1d9b93f73e36`
+22. Reviewer-error preservation:
+    `b3228b1ed018e09693f0760a7faaa6d5df5bf788`
+23. Closure evidence inputs:
+    `6b3f4c01369b2bf51b986dd5fefd1a46f6a74ecc`
