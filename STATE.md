@@ -1,6 +1,167 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is closed with `no-release` disposition as of 2026-07-31; all eight ordered steps are complete on top of published v0.17.0.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`; close-time remote inspection found both `main` and the peeled v0.17.0 tag unchanged at that closing commit. Authenticated v0.29 evidence candidate `9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` on neutral ref `refs/heads/codex/v0.29-evidence-9059eca` passed hosted run **30600284114**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. The completed evidence tree's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, shell **306/306**, `invariant-scan` **12 rules / 51 controls**, and embedded golden **11/11**. Fresh candidate Python 3.11 and 3.12 populations each collected/passed **306** with **0** skips; each comparator against its hosted lane derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`. Standalone golden passed **11/11**. The evidence manifest contains **331** `pinned_files[]` and measures **191,395 bytes**; two consecutive complete verifications took **0.10 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The R-CLOSE implementation-tree review export measures **2,516,822 bytes / 152 files**, leaving **483,178 bytes / 16.11%** against its **3,000,000-byte** executable ceiling and retaining exactly v0.27–v0.29 without either excluded byte class. No publisher request, scheduler run, cadence change, version edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; E0 is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 51 controls**, and embedded plus standalone golden **11/11**. Clean-rebuilt Python 3.11.4 and 3.12.13 each collected/passed **306** with **0** skips; `tools/test_population.py` derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`, and both lanes retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; consecutive complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. `checklist-audit` remains **232 checked / 3 retracted / 232 matched / 232 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+
+**v0.30 E0 rebuilds the entering state and settles G1–G6 (measured
+2026-07-31).** The preparatory activation began with exactly one worktree item:
+the operator-supplied v0.30 runbook. HEAD was v0.29 audit commit
+`d824be06582dfb76b9fe4b5d70ff33f4a505d6cc`, immediately after closure
+`20ddf90bb2b1d8654b410cdafe8f67e6d006a115`, exactly as drafted. The
+activation pair is `bea40e64849015fdfc9b471f2adb7ab3ce4fcbf7` plus audit
+`e7b2c58814e2223d9899b83b3f3491344ce85337`. Before the retention edit,
+the real checker emitted:
+`cycle-check: ERROR: repomix.config.json: review-export retention pattern for v0.30 must be 'docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-7]}{.md,.*.md,-*.md}'; found ['docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-6]}{.md,.*.md,-*.md}']`.
+That is the first new-cycle execution of v0.29's retention binding.
+
+The activation checker then rejected exactly the three architecture governed
+rows that still named v0.29. The first clean-rebuilt Python 3.11 run therefore
+collected 306, passed 305, failed that one current-table test, and skipped zero.
+It is a measured non-pass, not a green result. E0 rewrote all three rows with
+measured v0.30 observations as the activation section requires; the same clean
+environment then passed 306/306. Python 3.12 passed 306/306, and the full local
+entry point passed 20/20. The expected pre-rewrite identity rejection was the
+activation control being exercised, not an undisclosed product failure; after
+its required rewrite, no E0 decision gate remained tripped.
+
+**G1 — boundary-family membership is incomplete.** Exhaustive module search
+finds exactly four `*_FORWARD_BOUNDARY` declarations in `cycle_check.py`.
+All six pair dispositions are:
+
+- `SCOPE` versus each of `TRIGGER_FRESHNESS`, `TRIGGER_IDENTITY`, and
+  `TRIGGER_FLOOR`: independent; scope governs declared-diff enforcement and
+  shares no trigger-table population.
+- `TRIGGER_FRESHNESS <= TRIGGER_IDENTITY`: load-bearing. Identity is evaluated
+  only inside the freshness call, so identity must not precede the function
+  that can observe it.
+- `TRIGGER_FRESHNESS <= TRIGGER_FLOOR`: load-bearing and already asserted.
+  Floor consumes the populations initialized by freshness.
+- `TRIGGER_IDENTITY` versus `TRIGGER_FLOOR`: independent. Both depend on
+  freshness, but identity changes required cell content while floor changes
+  population/carry-forward enforcement.
+
+A no-hardlink throwaway clone first passed the real checker at the committed
+boundaries. Changing only
+`TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)` to `(0, 22)` left the real
+checker green at active v0.30. Replacing one v0.30 governed cell with v0.29
+still produced the exact identity rejection at `ARCHITECTURE.md:385`. The
+lowered cutoff is therefore **silently always-on whenever freshness is
+reachable**: no v0.22 input can reach the identity branch, and every v0.23+
+input already exceeds the lowered value. The declaration itself is
+unobservable, and no completeness rule notices it. This is latent rather than
+a reachable product defect; BOUNDARY-COVER owns it.
+
+**G2 — one enforced floor is falsely restated; the second is not enforced.**
+Executed extraction found three offline pins: `run:452` and `run:456` each
+carry `1.78.0`, and `.github/workflows/ci.yml:305` carries `1.78`; explicit
+normalization produced one value, `1.78`, with multiplicity three. The live
+`STATE.md` run-reference line instead said offline `>= 1.75`, so it is false.
+The net entry points use ambient/pinned 1.91: `run:430-440` has no toolchain
+selection and the hosted net job selects `1.91`. Exact searches for
+`rustup ... 1.86`, `cargo +1.86`, or a workflow `toolchain: 1.86` returned
+zero. The 1.86 floor is stated but not executed.
+
+The exhaustive tracked-text inventory contains **582** exact 1.78/1.86 lines:
+**300** in execution-cycle documents, **205** in the two State archives,
+**24** in live `STATE.md`, and **53** elsewhere. The present authorities and
+restatements are explicitly enumerable: the three executable pins above;
+`run:118,355-356,1020`; workflow current comments/job labels at
+`:49,133,203,267,282,294,297,309-315`; `rust-toolchain.toml:5-10,22,27,29`;
+`README.md:604,619-623,642`; `AGENTS.md:32,121,151-152,173,177`; the four
+current Rust/manifest compatibility comments; and live State reference
+sections at `:3489,3492-3493,3524-3525,3565,3763`. The remaining State
+matches are dated execution records; cycle documents, State archives,
+`CHANGELOG.md`, the v0.18 observation, and the v0.10 evidence report are
+historical records.
+
+No general text scan can distinguish current authority from historical
+quotation without encoded metadata: identical “1.78” syntax occurs in both,
+and several single lines intentionally contain a refuted 1.75 beside the
+current 1.78. Any binding must therefore carry a named, hand-maintained
+current-restatement registry and treat the historical set as a permanent
+exclusion obligation. Presenting that membership as derived would repeat this
+cycle's root defect. FLOOR-BIND owns the registry and the operator-only 1.86
+disposition.
+
+**G3 — retention derivations disagree across the version-family boundary.**
+Two real no-hardlink Git trees replaced the active v0.30 pair with synthetic
+runbook-add commits and ran both entry points:
+
+- At `v1.0`, `cycle-check` exited 1 with
+  `cannot retain depth 3 at 'v1.0'`; `export-check` passed at
+  **2,524,391 bytes / 152 files** with three retained cycles. The automated
+  local and hosted lifecycle lanes catch this loud activation block.
+- At `v1.3`, `cycle-check` passed. The real export grew to
+  **4,605,031 bytes / 203 files** and `export-check` rejected the ceiling plus
+  **51** cycle documents outside the derived last-three set. `export-check` is
+  operator-local, absent from `ci-local`, and absent from the workflow, so no
+  automated lane catches the silent under-exclusion.
+
+This confirms both reviewer-harness results against full Git trees. The
+version-family condition remains unreachable for every existing `v0.<n>`
+cycle and is recorded rather than fixed in this scope.
+
+**G4 — latest-at-close content has no executing control and has a fixed-point
+residual.** An exhaustive tracked-code search for the governed heading,
+trigger-row parser, latest-at-close wording, and export-row subject found only
+`tools/cycle_check.py`, `shell/tests/test_cycle_check.py`, and
+`tools/invariant_scan.py`. Production validates row population, own-cell ISO
+date, active-cycle literal, and carry-forward subject; the other two files
+exercise those same properties. No checker reads a governed row's numeric
+measurement or compares it with any cycle record.
+
+The v0.29 R-CLOSE implementation tree recorded a 2,516,822-byte export. Its
+audit child increased `PROGRESS-v0.29.md` from **33,185** to **38,150**
+repository bytes, exactly **4,965 bytes**. The delivered export is likewise
+2,521,787, exactly **4,965** above the recorded figure; the entry is 4,964
+export bytes plus its stripped trailing newline. A closing tree cannot record
+the size of a later tree containing that record. The bounded residual is
+therefore the repository-byte size of the one appended audit entry, measured
+against the named audit child—not an undisclosed promise of equality.
+MARGIN-BIND owns binding the live row to the latest export figure actually
+present in its own cycle progress record and naming the empty-record state.
+
+**G5 — three comparable points yield two observations, not a rate.** The exact
+sequence is v0.28 delivered **2,530,129**, v0.29 delivered **2,521,787**
+(delta **−8,342**), and v0.30 activation audit tree
+`e7b2c58814e2223d9899b83b3f3491344ce85337` **2,464,445** (delta
+**−57,342**). There are three points and only two delivered-to-next-activation
+interval observations; both are negative and neither supports a growth rate.
+The existing planning denominators are not observations: at 31,147 bytes/cycle
+the export has **17.19** cycles of headroom, while State at **257,422** has
+**196,319 bytes / 8.72 cycles** to its 453,741 boundary at 22,525
+bytes/cycle. State's archival boundary is nearer under those explicit
+denominators; neither trigger fired.
+
+**G6 — one compile-time SQL declaration is achievable.** Extracting the two
+ordering clause bodies produced byte-identical **123-byte** values with
+SHA-256
+`47c5f7d45b5b92974f3f33de54be41cfeb06305db8221c7877f1c0a944f453aa`.
+A `macro_rules!` query constructor can hold that clause once and expand two
+different select/tail literals through `concat!` at compile time. That requires
+neither runtime formatting nor allocation and preserves the two distinct
+queries, so ORDER-CONST is not skipped. Its blast radius remains one raw
+boundary string in an internal diagnostic.
+
+**Entering-state result.** Clean Python 3.11.4 and 3.12.13 environments each
+resolved all 21 constraints and passed **306 collected / 306 passed / 0
+skipped** with one warning. Their comparator derived
+`collected=306`, `equivalent=true`, and `equivalent_passed=306`. Full local CI
+passed **20/20**: warning-denied **146** workspace tests, **62** net tests
+(**32 ingest + 30 cored**), clean clippy/fmt/ShellCheck, locked Rust 1.78
+check/test, `invariant-scan` **12/51**, and embedded golden **11/11**.
+Standalone golden passed **11/11**, delta **0**. Focused SEC identity retained
+all **200 SEC** rows with **0 dropped** (201/201 including the separate
+filings-digest fixture).
+
+Manifest validation passed schema 2 with **2 artifacts / 331 pinned files**.
+Two complete checks took **0.09 s / 0.10 s real**, matched both databases, and
+left the **191,395-byte** manifest unchanged. `checklist-audit` passed
+**232/232** with three retractions and zero exemptions. Activation State was
+**3,811 lines / 257,422 bytes**. E0 re-derived **0** planted-control line
+numbers because it edited neither checker nor store. No publisher request,
+scheduler, model-profile command, cadence, dependency, schema, production
+source, manifest, protected byte, version authority, tag, or working-repository
+ref changed.
 
 **v0.29 R-CLOSE records the operator-selected no-release disposition (measured
 2026-07-31).** The operator selected `no-release`. The measured cycle diff adds

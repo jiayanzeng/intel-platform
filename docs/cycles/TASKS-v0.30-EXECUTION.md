@@ -1,5 +1,20 @@
 # TASKS-v0.30-EXECUTION.md — bind the population, not the instance
 
+## Runbook amendments
+
+### 2026-07-31 · E0 measured completion
+
+Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-07-31
+
+E0 confirmed the activation refs and stale-retention rejection, settled G1–G6
+with the real checker and export entry points, rewrote all twenty deferred
+hypotheses and the three architecture governed rows with v0.30 measurements,
+and completed the clean two-lane rebuild. The first clean Python 3.11 run's
+single expected pre-rewrite identity failure remains recorded as a non-pass;
+the result-of-record rerun and full local matrix passed. No objective, decision
+gate, acceptance criterion, declared-scope row, or standing prohibition
+changes.
+
 v0.29 closed `no-release` on 2026-07-31 and **every substantive claim in the Codex
 report was independently re-derived and held.** Several matched to the byte.
 `invariant-scan` moved **12 rules / 49 controls → 12 / 51** with R12 at **23**,
@@ -357,26 +372,26 @@ measured on.**
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.30 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.30 · 2026-07-31 — hypothesis carried forward; no publisher request or concurrent harvester is expected in a cycle whose scope forbids the ingest and scheduler paths | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.30 · 2026-07-31 — hypothesis carried forward; no live outage, publisher request, or newly usable last-known-good policy is expected | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.30 · 2026-07-31 — hypothesis carried forward; `crates/ingest/src/**` is forbidden and no live request is authorized | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.30 · 2026-07-31 — hypothesis carried forward; the mapping path is forbidden and no connector review is scheduled | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.30 · 2026-07-31 — hypothesis carried forward; the v0.27 sequential two-origin result remains the latest live execution | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.30 · 2026-07-31 — hypothesis carried forward; the bounded design exists and execution authorization was explicitly withheld from this cycle | none — design complete, execution separately gated |
-| Postgres / pgvector / multi-host seam | unchanged | v0.30 · 2026-07-31 — hypothesis carried forward; single-writer SQLite and single-host topology are unchanged | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.30 · 2026-07-31 — hypothesis carried forward; only the first-party shell path is exercised and no shell-replacement invariance is claimed | none |
-| L2 forced-command wrapper | an operator server session | v0.30 · 2026-07-31 — hypothesis carried forward; no operator server-administration session is scheduled | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.30 · 2026-07-31 — hypothesis carried forward; the closing invariant self-test is expected to expose no spelling outside registered vocabulary | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.30 · 2026-07-31 — hypothesis carried forward; no compliance review is in progress and no admission decision is pending | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.30 · 2026-07-31 — hypothesis carried forward; no publication authorization exists and no historical ref is touched | none — **no historical ref touched** |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.30 · 2026-07-31 — hypothesis carried forward; both historical tags remain unpublished so the trigger is absent | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.30 · 2026-07-31 — hypothesis carried forward; the manifest is unchanged at 331 pins and this cycle declares no registration | **Step 1 and Step 6 — re-measured only** |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.30 · 2026-07-31 — hypothesis carried forward; `shell/intel_shell/**` is forbidden except for release-authority precedence on the two version files | none — recorded, not acted on |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.30 · 2026-07-31 — hypothesis carried forward; the standing prose criteria are applied and no decision declares them insufficient | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.30 · 2026-07-31 — hypothesis carried forward; State is expected near 257,422 bytes leaving roughly 196,319, and the export is expected well beneath its ceiling | **Step 1 — boundary re-derived; no archive** |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.30 · 2026-07-31 — hypothesis carried forward; 20 controls point into `tools/cycle_check.py` and 6 into `crates/store/src/sqlite.rs`, and two steps edit the former | none — recorded, not acted on |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.30 · 2026-07-31 — hypothesis carried forward; every cycle to date is `v0.<n>` so neither behaviour is reachable; reviewer-side execution of the real derivation exhibited both, and the only check catching the silent case runs in no automated lane | **Step 1 — settled by execution in both trees; recorded, not fixed** |
-| Published-release divergence with no governed trigger | an operator decision that the distance between published v0.17.0 and the working head warrants a governed row | v0.30 · 2026-07-31 — hypothesis carried forward; the export ceiling and the manifest are governed by triggers and release staleness is not | none — recorded for **Step 7** |
+| T7 robots single-flight | a second concurrent harvester | v0.30 · 2026-07-31 — E0 ran no publisher path, no scheduler, and no concurrent harvester; the trigger did not occur | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.30 · 2026-07-31 — E0 issued no publisher request and observed no live outage or newly usable stale policy; the trigger did not occur | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.30 · 2026-07-31 — `crates/ingest/src/**` remains forbidden, E0 issued no live request, and no 304 was observed | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.30 · 2026-07-31 — the mapping path remains forbidden, no connector review occurred, and the activation-to-E0 diff contains no ingest source | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.30 · 2026-07-31 — no live runtime executed; the v0.27 sequential two-origin result remains the latest wire measurement | none — complete, do not re-exercise |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.30 · 2026-07-31 — no scheduler command or publisher request ran; the bounded design remains unexecuted and separately gated | none — design complete, execution separately gated |
+| Postgres / pgvector / multi-host seam | unchanged | v0.30 · 2026-07-31 — E0's complete local matrix retained the single-writer SQLite and single-host topology; no manifest, schema, or production store source changed | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.30 · 2026-07-31 — E0 exercised only the first-party shell, changed no shell production source, and made no shell-replacement invariance claim | none |
+| L2 forced-command wrapper | an operator server session | v0.30 · 2026-07-31 — no model-profile command or operator server-administration session occurred | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.30 · 2026-07-31 — the real `invariant-scan --self-test` passed **12 rules / 51 controls** and exposed no spelling outside the registered vocabularies | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.30 · 2026-07-31 — `config/core.json` is byte-unchanged, and no compliance review or admission decision occurred | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.30 · 2026-07-31 — no publication authorization exists; E0 created, moved, and deleted no ref and touched no historical publication object | none — **no historical ref touched** |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.30 · 2026-07-31 — no historical tag was published and the workflow is byte-unchanged, so the trigger is absent and the flag remains | none — **the flag stays** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.30 · 2026-07-31 — E0 measured **331** pins and **191,395 bytes**, leaving **857,181 bytes** to 1 MiB; two complete verifications took **0.09 s / 0.10 s real** and matched both databases | **Step 1 and Step 6 — re-measured only** |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.30 · 2026-07-31 — the activation-to-E0 diff contains no `shell/intel_shell/**` path; the broad shell forbid and narrow release-authority precedence remain unchanged | none — recorded, not acted on |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.30 · 2026-07-31 — no operator decision declared the standing prose criteria insufficient; E0 records but does not automate them | none — recorded, not acted on |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.30 · 2026-07-31 — activation State measured **257,422 bytes**, leaving **196,319** to 453,741; the exact activation export measured **2,464,445 bytes**, leaving **535,555** to its ceiling; neither trigger fired | **Step 1 — boundary re-derived; no archive** |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.30 · 2026-07-31 — **20** controls point into `tools/cycle_check.py` and **6** into `crates/store/src/sqlite.rs`; E0 edited neither file and re-derived **0** line values | none — recorded, not acted on |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.30 · 2026-07-31 — real throwaway trees confirmed `v1.0` makes automated `cycle-check` fail while `export-check` passes, whereas `v1.3` makes `cycle-check` pass and operator-local `export-check` reject **51** outside-depth cycle documents plus the size ceiling; no automated lane catches the silent case | **Step 1 — settled by execution in both trees; recorded, not fixed** |
+| Published-release divergence with no governed trigger | an operator decision that the distance between published v0.17.0 and the working head warrants a governed row | v0.30 · 2026-07-31 — activation audit HEAD was **46 commits ahead / 0 behind** local `origin/main`; published v0.17.0 still peels to `4af2841816dd3e43fb8423153b91aa22ccb87537`, and no existing governed row watches that distance | none — recorded for **Step 7** |
 
 ---
 
@@ -421,7 +436,7 @@ entry, **record and stop.**
 **Done when** every gate carries a measured answer and the entering state is
 either confirmed or corrected in `STATE.md`.
 
-- [ ] **E0**
+- [x] **E0**
 
 ---
 
