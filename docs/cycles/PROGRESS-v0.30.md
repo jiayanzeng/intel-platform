@@ -140,3 +140,60 @@ Entries are append-only; corrections are new dated entries.
   scheduler or model-profile command, and changed no cadence, dependency,
   schema, production source, manifest, protected byte, version authority, tag,
   or working-repository ref.
+
+### 2026-07-31 · BOUNDARY-COVER — derive and bind the boundary family
+
+- owner: Codex
+- commit: 30e31c7f2ce4fda46d8a54f6bcbd9c8c9717fc59
+- result: PASS. `module_forward_boundaries()` derives every
+  `tools/cycle_check.py` module-global name ending in `_FORWARD_BOUNDARY`;
+  the derived and registered sets are the same four names, and a fifth
+  unregistered name is now an automatic error.
+- decision-gate acceptance: PASS. G1 measured a lowered identity declaration
+  as silently always-on inside freshness, not a reachable runtime defect, so
+  no P1 reclassification applied.
+- derivation acceptance: PASS. An exhaustive `tools/` declaration search found
+  exactly four boundary constants, all in `cycle_check.py`, and direct
+  execution printed identical derived and registry memberships. No member list
+  participates in the derivation.
+- namespace-bound acceptance: PASS with a named residual. The production
+  docstring and R12 scope state that derivation is limited to
+  `tools/cycle_check.py` module globals. No current boundary lies outside that
+  namespace; a future boundary in another tools module remains explicitly
+  outside this binding.
+- semantic-relation acceptance: PASS. The registry states independent reasons
+  for scope and freshness and declares freshness as the prerequisite for both
+  identity and floor. The generic evaluator rejects identity or floor earlier
+  than freshness without a hand-written pair comparison.
+- rejection-before-acceptance: PASS. Before the complete green run, direct
+  injection produced `tools/cycle_check.py module-scoped forward-boundary
+  registry is missing PLANTED_UNREGISTERED_FORWARD_BOUNDARY`, and isolated
+  identity reversal produced `TRIGGER_IDENTITY_FORWARD_BOUNDARY must be
+  greater than or equal to TRIGGER_FRESHNESS_FORWARD_BOUNDARY`. R12 retains
+  `floor-before-freshness` and adds `unregistered-forward-boundary`; disabling
+  either production branch produces its named failure. R12 passed **24**
+  controls and the complete registry passed **12 rules / 52 controls**.
+- prior-control acceptance: PASS. The focused initialized-population,
+  derived-registry, identity-order, and exhaustive missing-date pair tests
+  passed **4/4**. The complete shell population passed **308/308** on Python
+  3.11.4 and **308/308** on Python 3.12.13, each with zero skips and the same
+  one governed Starlette warning.
+- expected-line acceptance: PASS from real self-test output. The edit shifted
+  **five existing** `cycle_check.py` values: boundary `1467 → 1500`, three
+  freshness controls `1569 → 1646`, and carry-forward `1796 → 1873`. All five
+  were re-derived; the new completeness control was registered at line 1500.
+- complete-suite acceptance: PASS. The first sandboxed `ci-local` attempt
+  failed only because the net wire test's loopback bind was denied; the
+  authorized rerun passed all **20/20** jobs, including warning-denied **146**
+  workspace tests, **62** net tests, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, shell **308/308**, protected artifacts, and
+  embedded golden **11/11**. The first sandboxed Python 3.12 run similarly
+  measured eight permission failures from loopback binds/process inspection;
+  its authorized rerun passed **308/308**.
+- golden-E2E delta: **0** — embedded and final standalone executions each
+  passed **11/11** byte-identically.
+- surface/protected/publisher acceptance: PASS. No production source, route,
+  response shape, `/v1/*` value domain, dependency, schema, manifest,
+  protected byte, publisher configuration, scheduler state, version authority,
+  tag, or working-repository ref changed. No publisher request, scheduler, or
+  model-profile command ran.
