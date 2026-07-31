@@ -1,6 +1,41 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active at E0; published v0.17.0 remains current and the release disposition awaits the Step 2 operator decision.** The E0 working tree based on activation audit commit `9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **317** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The exact activation-audit tree review export measured **2,544,715 bytes / 153 files**, leaving **455,285 bytes / 15.18%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **239 checked / 3 retracted / 239 matched / 239 commits resolved** before E0 was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. No publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active; the operator selected patch release v0.17.1 before implementation, while published v0.17.0 and all five version authorities remain current.** The E0 working tree based on activation audit commit `9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **317** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The exact activation-audit tree review export measured **2,544,715 bytes / 153 files**, leaving **455,285 bytes / 15.18%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **239 checked / 3 retracted / 239 matched / 239 commits resolved** before E0 was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. Step 2 changed only lifecycle records: no publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+
+**v0.31 DISPOSITION-FIRST selects patch release v0.17.1 before implementation
+(operator-selected 2026-07-31).** The operator selected `release v0.17.1`.
+The recorded reason is to ship the order-independent internal boundary
+derivation together with three cycles of executable binding corrections, not
+merely because the gates are green. The selection makes the release-shaped
+Step 6–Step 8 ordering available; it does not itself authorize Step 8's
+separate publication act.
+
+The classification was remeasured rather than inherited. The unpublished
+distance was compared with the published v0.17.0 tree for routes, response
+shapes, serialized `/v1/*` value domains, dependencies, and schema. None
+moved. The measured runtime difference remains bounded to which raw boundary
+string can appear in one internal loopback `/ingest` diagnostic for a
+misordered window. Therefore neither the named-surface rule nor the public
+value-domain criterion fires, and **patch** is the correct class.
+
+At the decision tree, `./run version-check` reported all five authorities still
+at **0.17.0**:
+
+```text
+apps/cored/Cargo.toml: 0.17.0
+shell/intel_shell/__init__.py: 0.17.0
+shell/intel_shell/app.py: 0.17.0
+STATE.md: 0.17.0
+CHANGELOG.md: 0.17.0
+```
+
+The release-authority diff from E0 audit commit
+`46e22f20ad1f87f7c7f4f2369fc16898cbdb3bdf` was empty. Remote-tracking
+`origin/main` and the peeled v0.17.0 tag both remained
+`4af2841816dd3e43fb8423153b91aa22ccb87537`; annotated tag object
+`df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` was unchanged. No version
+authority, version value, tag, `main`, release ref, or publication ref moved in
+this decision step.
 
 **v0.31 E0 rebuilds the entering state and settles G1–G6 (measured
 2026-07-31).** The pre-activation tracked tree was clean apart from the

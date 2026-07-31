@@ -3,6 +3,7 @@
 ## Runbook amendments
 
 Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-07-31
+Step 2 — operator selected patch release v0.17.1 to ship the boundary correction and executable bindings; all five authorities remain 0.17.0 — 2026-07-31
 
 **Three reviewer errors, all mine, recorded before anything else.**
 
@@ -444,7 +445,7 @@ by green gates, or by hosted evidence. Three outcomes, none defaulted:
 **Done when** the disposition is selected, dated, reasoned, and recorded, and
 every later step knows which shape it runs in.
 
-- [ ] **DISPOSITION-FIRST**
+- [x] **DISPOSITION-FIRST**
 
 ---
 
