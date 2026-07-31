@@ -38,6 +38,18 @@ fn archive_recency_cmp(left: &Document, right: &Document) -> std::cmp::Ordering 
         .then_with(|| left.id.cmp(&right.id))
 }
 
+macro_rules! archive_recency_sql {
+    ($select:literal, $tail:literal) => {
+        concat!(
+            $select,
+            "
+                 ORDER BY published_day IS NULL, published_day DESC,
+                          published_raw DESC, id DESC",
+            $tail
+        )
+    };
+}
+
 const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS documents (
     id            TEXT PRIMARY KEY,
@@ -295,12 +307,13 @@ impl SqliteStore {
 
         let held_newest_published_raw = conn
             .query_row(
-                "SELECT published_raw
+                archive_recency_sql!(
+                    "SELECT published_raw
                  FROM documents
-                 WHERE source_id = ?1 AND published_raw IS NOT NULL
-                 ORDER BY published_day IS NULL, published_day DESC,
-                          published_raw DESC, id DESC
-                 LIMIT 1",
+                 WHERE source_id = ?1 AND published_raw IS NOT NULL",
+                    "
+                 LIMIT 1"
+                ),
                 [source_id],
                 |row| row.get::<_, String>(0),
             )
@@ -1479,13 +1492,12 @@ mod tests {
         fn sql_recency_ids(store: &SqliteStore) -> Vec<String> {
             let conn = store.conn.lock().unwrap();
             let mut statement = conn
-                .prepare(
+                .prepare(archive_recency_sql!(
                     "SELECT id
                  FROM documents
-                 WHERE source_id = ?1 AND published_raw IS NOT NULL
-                 ORDER BY published_day IS NULL, published_day DESC,
-                          published_raw DESC, id DESC",
-                )
+                 WHERE source_id = ?1 AND published_raw IS NOT NULL",
+                    ""
+                ))
                 .unwrap();
             let rows = statement
                 .query_map(["techwire"], |row| row.get::<_, String>(0))

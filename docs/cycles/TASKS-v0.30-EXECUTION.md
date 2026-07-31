@@ -2,6 +2,18 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · ORDER-CONST measured completion
+
+Step 5 — archive SQL order declared once and completion checked — 2026-07-31
+
+The implementation expands one compile-time ordering literal into the
+production and test SQL call sites, preserves the cross-implementation
+rejection and unchanged misordered-window test, and re-derives all five shifted
+store control lines. The SEC identity population, public response/value-domain
+classification, complete local matrix, both Python lanes, and golden result are
+recorded in `STATE.md`. No objective, decision gate, acceptance criterion,
+declared-scope row, or standing prohibition changes.
+
 ### 2026-07-31 · E0 measured completion
 
 Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-07-31
@@ -429,7 +441,7 @@ measured on.**
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.30 · 2026-07-31 — the activation-to-E0 diff contains no `shell/intel_shell/**` path; the broad shell forbid and narrow release-authority precedence remain unchanged | none — recorded, not acted on |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.30 · 2026-07-31 — no operator decision declared the standing prose criteria insufficient; E0 records but does not automate them | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.30 · 2026-07-31 — activation State measured **257,422 bytes**, leaving **196,319** to 453,741; the exact activation export measured **2,464,445 bytes**, leaving **535,555** to its ceiling; neither trigger fired | **Step 1 — boundary re-derived; no archive** |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.30 · 2026-07-31 — MARGIN-BIND's schema addition leaves **22** controls pointing into `tools/cycle_check.py` and **6** into `crates/store/src/sqlite.rs`; real self-test output re-derived **6** shifted existing `cycle_check.py` line values and registered the new margin control at line 1863 | **Step 4 — six shifted values re-derived; one new site registered** |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.30 · 2026-07-31 — MARGIN-BIND plus ORDER-CONST leave **22** controls pointing into `tools/cycle_check.py` and **6** into `crates/store/src/sqlite.rs`; real self-test output re-derived **6** shifted existing cycle-checker values plus **5** shifted store values (**11 cumulative**) and registered the new margin control at line 1863 | **Step 4 and Step 5 — eleven shifted values re-derived; one new site registered** |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.30 · 2026-07-31 — real throwaway trees confirmed `v1.0` makes automated `cycle-check` fail while `export-check` passes, whereas `v1.3` makes `cycle-check` pass and operator-local `export-check` reject **51** outside-depth cycle documents plus the size ceiling; no automated lane catches the silent case | **Step 1 — settled by execution in both trees; recorded, not fixed** |
 | Published-release divergence with no governed trigger | an operator decision that the distance between published v0.17.0 and the working head warrants a governed row | v0.30 · 2026-07-31 — activation audit HEAD was **46 commits ahead / 0 behind** local `origin/main`; published v0.17.0 still peels to `4af2841816dd3e43fb8423153b91aa22ccb87537`, and no existing governed row watches that distance | none — recorded for **Step 7** |
 
@@ -679,7 +691,7 @@ not data loss. **Do not inflate this.**
 **Done when** one declaration produces both call sites, or the reason it cannot
 is recorded and nothing changed.
 
-- [ ] **ORDER-CONST**
+- [x] **ORDER-CONST**
 
 ---
 

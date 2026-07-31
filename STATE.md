@@ -1,6 +1,45 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; MARGIN-BIND is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the MARGIN-BIND checkbox, `checklist-audit` passed **235 checked / 3 retracted / 235 matched / 235 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; ORDER-CONST is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the ORDER-CONST checkbox, `checklist-audit` passed **236 checked / 3 retracted / 236 matched / 236 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+
+**v0.30 ORDER-CONST states the archive SQL order once at compile time
+(measured 2026-07-31).** The decision gate did not trip. A `macro_rules!`
+construction expands one literal ordering clause into the production
+coverage-boundary query and the test-side SQL derivation with `concat!`; it
+performs no runtime formatting or allocation and changes no query predicate,
+parameter, ordering term, or limit. Exact search found the clause once and two
+macro call sites. The task diff contains no `apps/cored/src/main.rs` or
+`crates/ingest/src/**` path.
+
+Rejection ran before acceptance. An initial focused `--exact` spelling matched
+zero tests and is explicitly a non-result. The corrected focused test passed
+**1/1**; changing only the shared SQL clause's `published_raw` direction from
+descending to ascending then failed **0/1**, with the SQL-derived id order on
+the left and Rust-derived order on the right. Restoring descending made the
+same cross-implementation test pass **1/1**. The unchanged
+`coverage_boundary_uses_archive_order_for_a_misordered_window` test also passed
+**1/1**.
+
+The SEC identity-guard diagnostic measured **201** aggregate inputs, **201
+kept**, and **0 dropped**: the required **200 SEC kept / 0 dropped** plus the
+one non-SEC fixture document. The refactor shifted five existing
+`sqlite.rs` planted-control positions, all re-derived from real self-test
+output: R1 `780 → 793`; R5 `230 → 242`, `229 → 241`, and `829 → 842`; and R7
+`397 → 410`. The R5 line-33 control did not move. All six store controls
+re-executed, R12 remained **27** controls, and the complete self-test passed
+**12 rules / 55 controls**. Across MARGIN-BIND and ORDER-CONST, **11** existing
+expected-line values have now been re-derived.
+
+The first complete local gate stopped at lifecycle validation because the
+deferred action said `Steps 4 and 5`, which did not contain a literal
+discharging `Step N`. Correcting it to `Step 4 and Step 5` made the complete
+result pass all **20/20** jobs. The first sandboxed Python 3.12 run passed 309
+and failed eight solely because loopback binds and `ps` inspection were denied;
+the authorized rerun passed **317/317**. Python 3.11 passed **317/317**.
+Standalone golden passed **11/11**, delta **0**. The `/ingest` response shape
+and every `/v1/*` value domain are unchanged. No production behavior,
+dependency, public route, schema, manifest, protected byte, publisher
+configuration, scheduler state, version authority, tag, or ref changed.
 
 **v0.30 MARGIN-BIND makes latest-at-close executable and names its residual
 (measured 2026-07-31).** The decision gate did not trip:
