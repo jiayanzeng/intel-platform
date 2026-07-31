@@ -2,6 +2,21 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · RE-MEASURE authenticated completion
+
+Step 6 — exact neutral candidate authenticated and completion checked — 2026-07-31
+
+Exact candidate `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` was pushed only
+to `refs/heads/codex/v0.30-evidence-2528498`. Hosted run **30611170866**,
+attempt **1**, passed all seven executable jobs; dependency drift skipped
+under its report-only condition. Seven signed identities were accepted, zero
+were rejected, the complete matrix was found, and both shell comparisons
+derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`.
+The candidate verified **331** pins and golden **11/11**. Receipts, bundles,
+and the generated report remained temporary; no manifest registration,
+workflow edit, publisher request, scheduler execution, `main` update, tag, or
+publication occurred.
+
 ### 2026-07-31 · ORDER-CONST measured completion
 
 Step 5 — archive SQL order declared once and completion checked — 2026-07-31
@@ -437,7 +452,7 @@ measured on.**
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.30 · 2026-07-31 — `config/core.json` is byte-unchanged, and no compliance review or admission decision occurred | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.30 · 2026-07-31 — no publication authorization exists; E0 created, moved, and deleted no ref and touched no historical publication object | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.30 · 2026-07-31 — no historical tag was published and the workflow is byte-unchanged, so the trigger is absent and the flag remains | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.30 · 2026-07-31 — E0 measured **331** pins and **191,395 bytes**, leaving **857,181 bytes** to 1 MiB; two complete verifications took **0.09 s / 0.10 s real** and matched both databases | **Step 1 and Step 6 — re-measured only** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.30 · 2026-07-31 — RE-MEASURE's exact candidate verified **331** pins and a **191,395-byte** manifest, leaving **857,181 bytes** to 1 MiB; two complete local verifications took **0.11 s / 0.10 s real** and matched both databases, while hosted core independently verified schema 2 with 2 artifacts / 331 pinned files | **Step 1 and Step 6 — re-measured only; no registration** |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.30 · 2026-07-31 — the activation-to-E0 diff contains no `shell/intel_shell/**` path; the broad shell forbid and narrow release-authority precedence remain unchanged | none — recorded, not acted on |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.30 · 2026-07-31 — no operator decision declared the standing prose criteria insufficient; E0 records but does not automate them | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.30 · 2026-07-31 — activation State measured **257,422 bytes**, leaving **196,319** to 453,741; the exact activation export measured **2,464,445 bytes**, leaving **535,555** to its ceiling; neither trigger fired | **Step 1 — boundary re-derived; no archive** |
@@ -719,7 +734,7 @@ moves, that is a finding and not a result.**
 
 **Done when** the candidate carries release-grade authenticated evidence.
 
-- [ ] **RE-MEASURE**
+- [x] **RE-MEASURE**
 
 ---
 

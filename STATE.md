@@ -1,6 +1,52 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; ORDER-CONST is complete on top of published v0.17.0.** The clean result-of-record passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. The manifest remains **331** pins / **191,395 bytes**; the E0 complete verifications took **0.09 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the ORDER-CONST checkbox, `checklist-audit` passed **236 checked / 3 retracted / 236 matched / 236 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. No publisher request, scheduler run, cadence change, manifest edit, version edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is active; RE-MEASURE is complete on top of published v0.17.0.** Exact neutral candidate `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. Authenticated hosted run **30611170866**, attempt **1**, passed all seven executable jobs at that exact candidate; dependency drift skipped under its report-only condition. Both machine comparisons derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete RE-MEASURE verifications took **0.11 s / 0.10 s real** and both protected databases matched. The exact activation audit tree export measured **2,464,445 bytes / 152 files**, leaving **535,555 bytes / 17.85%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Before the RE-MEASURE checkbox, `checklist-audit` passed **237 checked / 3 retracted / 237 matched / 237 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Neutral ref `refs/heads/codex/v0.30-evidence-2528498` alone points to the candidate; remote `main`, the v0.17.0 tag, and every publication ref remain unchanged. No publisher request, scheduler run, cadence change, manifest edit, version edit, or release tag occurred.
+
+**v0.30 RE-MEASURE authenticates the exact candidate on a neutral ref without
+publishing (measured 2026-07-31).** Steps 2–5 were complete, so the decision
+gate did not trip. Candidate
+`2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` had an empty worktree and passed
+the complete **20/20** local entry point before push. Its workflow SHA-256,
+`5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`,
+was byte-identical to v0.29's authenticated workflow. It was pushed only to
+`refs/heads/codex/v0.30-evidence-2528498`.
+
+Workflow-dispatch run **30611170866**, attempt **1**, used that exact head SHA
+and branch. Core, golden, lint, MSRV, net, shell 3.11, and shell 3.12 passed;
+dependency drift skipped under the unchanged report-only condition. The hosted
+core job verified schema 2 with **2 artifacts / 331 pinned files**, and hosted
+golden passed **11/11**.
+
+The release-grade audit required attestations and verified seven receipt/bundle
+pairs. It accepted **7** identities, rejected **0**, found an empty matrix
+finding set, and marked the single-run matrix complete across core, golden,
+lint, MSRV, net, and both shell matrices. Every receipt bound the repository,
+workflow signer, candidate digest, neutral source ref, and GitHub-hosted runner
+policy. The temporary report measured **37,000 bytes**, SHA-256
+`3a0f54257029b7299d4ff699278b2fda34f56fb5ae64eb378646f54e28d8fada`,
+and recorded **5 deferred / 2 promoted / 0 implemented deferred subsystems**.
+Exact-path re-derivation passed **7** rows, **5** source dispositions, and
+**7** triggers with release-grade attestations required.
+
+For each shell lane, `tools/test_population.py` independently derived:
+
+```
+{"collected":317,"equivalent":true,"equivalent_passed":317,"hosted":{"on_site_skipped":1,"passed":316,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":317,"skipped":0},"schema_version":1}
+```
+
+The one hosted skip is named, reasoned, and marked `on_site`; each local lane
+passed 317 with zero skips. The candidate's two complete artifact
+verifications passed in **0.11 s / 0.10 s real**. The manifest remains exactly
+**331 pins / 191,395 bytes**. In accordance with this cycle's scope, the
+downloaded receipts, bundles, and generated report stayed outside the
+repository: **no manifest registration occurred**. Post-run remote inspection
+found only the neutral ref at the candidate; remote `main` and the peeled
+v0.17.0 tag remained
+`4af2841816dd3e43fb8423153b91aa22ccb87537`, and annotated tag object
+`df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` remained unchanged. No publisher
+request, scheduler execution, production source, dependency, public contract,
+schema, manifest, protected byte, version authority, release tag, or
+publication ref changed.
 
 **v0.30 ORDER-CONST states the archive SQL order once at compile time
 (measured 2026-07-31).** The decision gate did not trip. A `macro_rules!`
