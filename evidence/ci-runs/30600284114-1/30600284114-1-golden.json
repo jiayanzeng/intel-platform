@@ -1,0 +1,12 @@
+{
+  "run_id": "30600284114",
+  "run_attempt": "1",
+  "job": "golden",
+  "workflow": "CI",
+  "repository": "jiayanzeng/intel-platform",
+  "event_sha": "9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4",
+  "sha": "9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4",
+  "conclusion": "success",
+  "runner_os": "Linux",
+  "completed_at": "2026-07-31T02:57:16Z"
+}

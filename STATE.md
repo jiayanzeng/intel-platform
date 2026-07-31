@@ -1,6 +1,62 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; SCHEDULE-DESIGN is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. Current focused results include SCHEDULE-DESIGN's **13/13** tests in each Python lane, **2/2** executed cored coverage controls, **24** store unit plus **2** integration tests, SEC identity **200 kept / 0 dropped**, `invariant-scan` **12 rules / 51 controls**, and standalone golden **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The SCHEDULE-DESIGN implementation-tree review export measures **2,481,321 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; RE-MEASURE is complete and R-CLOSE awaits the operator's separate disposition.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.29 evidence candidate `9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` on neutral ref `refs/heads/codex/v0.29-evidence-9059eca` passed hosted run **30600284114**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. The completed evidence tree's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, shell **306/306**, `invariant-scan` **12 rules / 51 controls**, and embedded golden **11/11**. Fresh candidate Python 3.11 and 3.12 populations each collected/passed **306** with **0** skips; each comparator against its hosted lane derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`. Standalone golden passed **11/11**. The evidence manifest contains **331** `pinned_files[]` and measures **191,395 bytes**; two consecutive complete verifications took **0.10 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The completed RE-MEASURE implementation-tree review export measures **2,500,164 bytes / 152 files**, leaving **499,836 bytes / 16.66%** against its **3,000,000-byte** executable ceiling and retaining exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred; remote `main` and every release tag remain unchanged.
+
+**v0.29 RE-MEASURE authenticates the exact neutral evidence candidate without
+publishing (authorized and measured 2026-07-31).** Candidate
+`9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` was pushed only to
+`refs/heads/codex/v0.29-evidence-9059eca`. Hosted workflow-dispatch run
+**30600284114**, attempt **1**, executed that exact candidate and ref. Core,
+golden, lint, MSRV, net, shell 3.11, and shell 3.12 all passed; the report-only
+dependency-drift job skipped under its declared condition. Remote `main` and
+the peeled v0.17.0 tag both remained
+`4af2841816dd3e43fb8423153b91aa22ccb87537`; no release tag was created or
+moved.
+
+Both fresh local shell lanes collected and passed **306** with zero skips.
+For each hosted lane, `tools/test_population.py` independently derived
+`{"collected":306,"equivalent":true,"equivalent_passed":306,"hosted":{"on_site_skipped":1,"passed":305,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":306,"skipped":0},"schema_version":1}`.
+The one hosted skip was named, carried that declared reason, and was marked
+`on_site`.
+
+All seven receipts and their seven paired Sigstore bundles are registered under
+`evidence/ci-runs/30600284114-1/` as `pinned_files[]` with `supporting` grade
+and no `admission` key. Each bundle verified the exact receipt bytes,
+repository, CI workflow signer, candidate digest, neutral source ref, and
+GitHub-hosted runner identity. The release-grade report at
+`evidence/v0.29/deferred-audit/report.json` is **35,166 bytes**, SHA-256
+`91f1907ffdabfc46f7f46cebe41d85d9613a32440d78213ff1d96b987797de6e`,
+requires attestations, accepted all **7** identities, rejected **0**, found no
+matrix finding, and recorded **5 deferred / 2 promoted / 0 implemented
+deferred subsystems**. A fully captured exact-path re-derivation passed **7**
+rows, **5** source-determined dispositions, and **7** trigger texts.
+
+The candidate itself verified the pre-registration **316** pins and hosted and
+standalone golden **11/11**. The operator explicitly authorized the dated
+amendment and fifteen new `pinned_files[]` records on 2026-07-31; manifest
+validation now reports schema 2, **2 artifacts / 331 pinned files**. The
+manifest is **191,395 bytes**, leaving **857,181 bytes** to 1 MiB, and two
+consecutive complete `verify-artifacts` runs passed at **0.10 s / 0.10 s
+real**, leaving **0.90 s / 0.90 s** to the timing trigger. Both protected
+SQLite artifacts remained byte-identical. The exact evidence paths and
+manifest allowance are scoped only to this registration; no validator,
+production source, protected database, publisher configuration, schedule, or
+identity changed.
+
+Complete workflow and hosted-log searches found no SEC or arXiv publisher URL,
+no `harvest-arxiv`, and no publisher-directed ingest command. The two
+`usgaap.rss` occurrences were local `PIN MATCH` output for the committed SEC
+observation. Every `curl` command was the immutable Rust toolchain action's
+`https://sh.rustup.rs` installer. No hosted or local publisher request or
+scheduler execution occurred.
+
+The completed evidence tree's permission-complete `ci-local` passed **20/20**
+jobs with warning-denied **146** workspace tests and **62** net tests (**32
+ingest + 30 cored**), locked Rust 1.78, clean clippy/fmt/ShellCheck, shell
+**306/306**, registered invariant self-test **12 rules / 51 controls**,
+protected evidence, and embedded golden **11/11**. The separately required
+standalone golden also passed **11/11**, delta **0**. Step 8 remains behind its
+separate operator-only disposition decision.
 
 **v0.29 SCHEDULE-DESIGN authorizes a bounded later-cycle experiment, not
 traffic now (operator decision and measurement 2026-07-31).** The operator

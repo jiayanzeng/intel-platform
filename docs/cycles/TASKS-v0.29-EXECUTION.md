@@ -2,6 +2,35 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · Step 7 exact evidence scope and manifest authorization
+
+Step 7 — release-grade authenticated evidence measured and completion checked — 2026-07-31
+
+Authenticated hosted run **30600284114**, attempt **1**, fixes Step 7's
+advance-notice placeholder to the exact path
+`evidence/ci-runs/30600284114-1/**`. On 2026-07-31 the operator explicitly
+authorized the required dated amendment and the addition of the fourteen
+authenticated receipt/bundle files plus
+`evidence/v0.29/deferred-audit/report.json` as fifteen `pinned_files[]`
+records. The declared scope therefore allows those two exact evidence paths
+and `config/protected-artifacts.json` solely for this pin-registration change.
+No validator, production source, protected database, publisher permission,
+publisher request, release ref, or other manifest use is admitted. The exact
+evidence directory, report, manifest pins, and this dated amendment land in
+the same implementation commit.
+
+The exact candidate was
+`9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4` on neutral ref
+`refs/heads/codex/v0.29-evidence-9059eca`. Hosted run **30600284114**, attempt
+**1**, passed all seven executable jobs; dependency drift skipped under its
+report-only condition. All seven signed identities were accepted, none was
+rejected, and the complete matrix was found. Both shell-lane comparisons
+derived `collected=306`, `equivalent=true`, and `equivalent_passed=306`:
+local passed 306 with zero skips, while hosted passed 305 plus the one named,
+reasoned, `on_site` skip. The candidate's **316** pins and hosted and standalone
+golden **11/11** checks passed. No publisher request, scheduler execution,
+release publication, `main` update, or tag occurred.
+
 ### 2026-07-31 · SCHEDULE-DESIGN operator selection and measured completion
 
 Step 6 — bounded later-cycle design authorized and completion checked — 2026-07-31
@@ -264,6 +293,9 @@ this reviewer having looked.** Said plainly rather than left implied.
 | `allow` | `config/invariant-rules.json` |
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `repomix.config.json` |
+| `allow` | `evidence/ci-runs/30600284114-1/**` |
+| `allow` | `evidence/v0.29/deferred-audit/report.json` |
+| `allow` | `config/protected-artifacts.json` |
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `release_authority` | `Cargo.toml` |
@@ -276,7 +308,6 @@ this reviewer having looked.** Said plainly rather than left implied.
 | `release_authority` | `README.md` |
 | `forbid` | `run` |
 | `forbid` | `tools/model_profiles.py` |
-| `forbid` | `config/protected-artifacts.json` |
 | `forbid` | `tools/evidence_artifacts.py` |
 | `forbid` | `apps/cored/src/main.rs` |
 | `forbid` | `crates/ingest/src/**` |
@@ -451,7 +482,7 @@ measured on**, which is the discipline G5 exists to settle.
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.29 · 2026-07-31 — no compliance review completed and no admission decision is pending | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.29 · 2026-07-31 — no publication authorization was given and E0 moved no ref | none — **no historical ref touched** |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.29 · 2026-07-31 — both historical tags remain unpublished, so the trigger is absent | none — **the flag stays** |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — E0 measured 316 pins and 182,774 bytes; complete runs took 0.11 s / 0.10 s real, so neither trigger fired | **Step 1 — re-measure only** |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.29 · 2026-07-31 — After the explicitly authorized Step 7 registration, the manifest has 331 pins and measures 191,395 bytes; two consecutive complete runs took 0.10 s / 0.10 s real, so neither trigger fired. This supersedes E0's 316-pin observation without erasing it. | **Step 1 and Step 7 — re-measured only** |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.29 · 2026-07-31 — the literal remains, while `shell/intel_shell/**` is forbidden and unchanged through E0 | none — recorded, not acted on |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.29 · 2026-07-31 — the contract still declares prose adjudication and E0 received no operator decision to replace it | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.29 · 2026-07-31 — MARGIN-TRUTH measures current State at 241,866 bytes, leaving 211,875 bytes / 9.41 cycles at E0's normalized 22,525-byte/cycle rate; the export ceiling has not fired and no archive byte changed | **Step 5 — boundary recorded; no archive** |
@@ -691,7 +722,7 @@ neutral ref, without publishing.
 
 **Done when** the candidate carries release-grade authenticated evidence.
 
-- [ ] **RE-MEASURE**
+- [x] **RE-MEASURE**
 
 ---
 
