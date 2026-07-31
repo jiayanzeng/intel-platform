@@ -1,6 +1,73 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active; the operator selected patch release v0.17.1 before implementation, while published v0.17.0 and all five version authorities remain current.** The E0 working tree based on activation audit commit `9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **317** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The exact activation-audit tree review export measured **2,544,715 bytes / 153 files**, leaving **455,285 bytes / 15.18%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **239 checked / 3 retracted / 239 matched / 239 commits resolved** before E0 was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. Step 2 changed only lifecycle records: no publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active after CLOSE-POINT; the operator selected patch release v0.17.1, while published v0.17.0 and all five version authorities remain current.** The Step 3 working tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 57 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **322** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=322`, `equivalent=true`, and `equivalent_passed=322`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest committed E0 implementation-tree review export measured **2,556,451 bytes / 153 files**, leaving **443,549 bytes / 14.78%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **241 checked / 3 retracted / 241 matched / 241 commits resolved** before CLOSE-POINT was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. CLOSE-POINT changed lifecycle tooling, tests, and contract records only: no publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+
+**v0.31 CLOSE-POINT binds the governed export at the exact checked tree
+(measured 2026-07-31).** The decision gate did not trip: E0 executed the
+v0.30 closing implementation commit failing while its audit child passed, so
+the finding remains the unsatisfiable two-commit rule and requires a checker
+correction. The task gate covers every acceptance criterion because it governs
+that complete closing sequence, both reported open exemptions, the closed
+comparison and its ceiling, the cycle-ending audit path, and the registered
+rejection controls.
+
+Rejection ran before acceptance. With the new expectations planted against the
+old checker, the focused governed-margin suite reported **5 passed / 3 failed**:
+the old function returned `bound` instead of
+`bound-with-cycle-ending-audit`, returned `bound` for an audit placed before
+the governed measurement, and exposed no `MAX_EXPORT_BYTES` authority. After
+the implementation, the same family passed **8/8**. The complete real-fixture
+release construction then passed **9/9** focused tests and exercised these
+four points:
+
+- release commit `R`: active/open,
+  `governed_export=exempt-open-latest-at-close`;
+- closing child `C`: closed, `governed_export=bound`;
+- annotated-tag checkout of the same `C`: closed,
+  `governed_export=bound`;
+- first post-push descendant: closed,
+  `governed_export=bound-with-cycle-ending-audit`.
+
+The fixed point uses no closed exemption. At each closed tree the architecture
+row equals the last governed measurement already visible in that exact tree.
+A release `C` may add the measurement of its already-existing parent `R`
+beside the agreeing row. A later audit records the closing-tree export only
+under the distinct exact field
+`cycle-ending review-export audit`, after the last governed field, so it does
+not supersede the comparison. The existing closed-empty construction still
+fails, the existing stale-row construction still fails, and both existing
+open states retain their named exemptions. There is therefore no closed commit
+at which a figure is unbound and no later-tree value a cycle may select
+opportunistically.
+
+The same entry point now imports the sole 3,000,000-byte
+`MAX_EXPORT_BYTES` authority and rejects a written governed figure above it.
+Its emitted error says explicitly that the comparison constrains the written
+figure at the checked tree and does not measure an export. Operator-local
+`export-check` remains the only control over actual Repomix bytes, retained
+paths, and excluded content.
+
+Registered R12 now executes the superseded figure, written-figure ceiling, and
+misordered cycle-ending-audit failures. The self-test passed **12 rules / 57
+controls**, with R12 at **29** controls. Real fail-before output re-derived
+**9** expected-line values: **7 shifted existing values** and the **2 new
+registered values**. The emitted mappings were trigger-boundary controls
+`1519 → 1526` twice; governed latest-at-tree `1863 → 1913`; new ceiling
+`1869`; new audit ordering `1898`; trigger freshness `1665 → 1672` three
+times; and deferred carry-forward `2041 → 2093`.
+
+Focused lifecycle tests passed **64/64** and invariant-scanner tests passed
+**22/22**. Full `ci-local` passed **20/20** with the Rust populations and
+warning gates named in the header. Both constrained shell lanes collected and
+passed **322**, skipped **0**, and the comparator emitted:
+
+```text
+test-population-compare: {"collected":322,"equivalent":true,"equivalent_passed":322,"hosted":{"on_site_skipped":0,"passed":322,"skipped":[]},"local":{"passed":322,"skipped":0},"schema_version":1}
+```
+
+Embedded golden passed **11/11**, delta **0**. The workflow, manifest,
+production source, protected bytes, version authorities, and publication refs
+remain unchanged.
 
 **v0.31 DISPOSITION-FIRST selects patch release v0.17.1 before implementation
 (operator-selected 2026-07-31).** The operator selected `release v0.17.1`.

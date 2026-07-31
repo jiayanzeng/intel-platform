@@ -4,6 +4,7 @@
 
 Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-07-31
 Step 2 — operator selected patch release v0.17.1 to ship the boundary correction and executable bindings; all five authorities remain 0.17.0 — 2026-07-31
+Step 3 — checked-tree export binding, written ceiling, and distinct cycle-ending audit path implemented and completion checked — 2026-07-31
 
 **Three reviewer errors, all mine, recorded before anything else.**
 
@@ -332,7 +333,7 @@ measured on.**
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.31 · 2026-07-31 — E0 changed no shell source or version literal; the path remains reachable only under the selected Step 6 release shape | Step 6 — reachable only as a release authority under one operator outcome |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.31 · 2026-07-31 — no such operator decision occurred; the prose-adjudication limitation remains unchanged | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.31 · 2026-07-31 — E0 measured the activation export at 2,544,715 bytes and State at 289,117 bytes, leaving 455,285 and 164,624 bytes respectively; neither trigger fired | Step 1 and Step 8 — boundary re-derived; no archive |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.31 · 2026-07-31 — E0 changed no checker or control schema and re-derived 0 expected-line values; later implementation steps own any shifts | Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.31 · 2026-07-31 — Step 3 re-derived 9 expected-line values from emitted fail-before output: 7 shifted existing values plus 2 new registered controls; 9 remains below the 57 controls protected | Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.31 · 2026-07-31 — active v0.31 remains inside the supported family; E0 separately executed a skipped-v0.x construction that exposed a distinct set/arithmetic divergence for Step 5 | Step 5 — settled under its own decision gate |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.31 · 2026-07-31 — v0.31 is open, so only v0.29 and v0.30 are post-correction closed-cycle persistence observations; no public-surface change exists and the trigger has not fired | Step 2 and Step 8 — disposition selected before implementation |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.31 · 2026-07-31 — E0 derived 75 tracked literal-bearing files / 683 occurrences: file-level precedence classified all files, with 0 unclassified and 6 multi-class; the historical tuple has no reader and within-file present-versus-history separation is not text-decidable | Step 4 — file-level partition bound; within-file residual named |
@@ -506,7 +507,7 @@ property, not the mechanism, is what this step owes.**
 **Done when** the closing sequence has no commit at which the rule has no
 satisfying assignment, demonstrated by execution rather than by argument.
 
-- [ ] **CLOSE-POINT**
+- [x] **CLOSE-POINT**
 
 ---
 

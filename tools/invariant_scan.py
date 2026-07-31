@@ -1627,6 +1627,12 @@ PUBLICATION_CONTROL_MARKERS = {
     "governed-export-margin": (
         "Invariant R12 control site: governed review-export latest-at-close."
     ),
+    "governed-export-ceiling": (
+        "Invariant R12 control site: governed written-figure export ceiling."
+    ),
+    "cycle-ending-export-audit": (
+        "Invariant R12 control site: cycle-ending review-export audit ordering."
+    ),
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
@@ -2276,6 +2282,69 @@ def r12_findings(root: Path) -> list[str]:
                 "superseded-export-figure"
             )
 
+        governed_audit_progress = (
+            "# Progress\n\n"
+            "- cycle-ending review-export audit: "
+            f"closing_tree=`{'c' * 40}`; bytes=`{governed_row_value}`; "
+            "audit_delta=`+0`\n"
+            "- governed review-export measurement: "
+            f"tree=`{'a' * 40}`; bytes=`{governed_row_value}`\n"
+        )
+        errors = []
+        cycle_check.check_governed_export_margin(
+            fixture / "ARCHITECTURE.md",
+            governed_architecture,
+            fixture / "PROGRESS.md",
+            governed_audit_progress,
+            "closed",
+            fixture,
+            errors,
+        )
+        if not any(
+            "cycle-ending review-export audit must follow the last governed "
+            "review-export measurement at the checked tree"
+            in error
+            for error in errors
+        ):
+            missed.setdefault("cycle-ending-export-audit", []).append(
+                "misordered-cycle-ending-audit"
+            )
+
+        over_ceiling_value = cycle_check.MAX_EXPORT_BYTES + len(
+            "planted written-figure excess"
+        )
+        over_ceiling_architecture = governed_architecture.replace(
+            f"**{governed_row_value} bytes",
+            f"**{over_ceiling_value} bytes",
+        ).replace(
+            f"review-export bytes: `{governed_row_value}`",
+            f"review-export bytes: `{over_ceiling_value}`",
+        )
+        over_ceiling_progress = (
+            "# Progress\n\n"
+            "- governed review-export measurement: "
+            f"tree=`{'a' * 40}`; bytes=`{over_ceiling_value}`\n"
+        )
+        errors = []
+        cycle_check.check_governed_export_margin(
+            fixture / "ARCHITECTURE.md",
+            over_ceiling_architecture,
+            fixture / "PROGRESS.md",
+            over_ceiling_progress,
+            "closed",
+            fixture,
+            errors,
+        )
+        if not any(
+            "constrains the written figure at the checked tree and does not "
+            "measure an export"
+            in error
+            for error in errors
+        ):
+            missed.setdefault("governed-export-ceiling", []).append(
+                "written-figure-over-ceiling"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
@@ -2500,6 +2569,10 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "rust-floor-restatement planted controls"
         elif group == "governed-export-margin":
             finding_kind = "governed-export-margin planted controls"
+        elif group == "governed-export-ceiling":
+            finding_kind = "governed-export-ceiling planted controls"
+        elif group == "cycle-ending-export-audit":
+            finding_kind = "cycle-ending-export-audit planted controls"
         else:
             finding_kind = "publication planted controls"
         findings.append(

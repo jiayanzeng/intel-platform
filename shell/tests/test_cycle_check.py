@@ -465,6 +465,68 @@ def test_cycle_check_accepts_tagged_closing_commit_protocol(
     assert cycle_check.run(root) == 0
 
 
+def test_governed_export_binding_covers_release_close_and_post_push(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, release_commit, closing_commit, tag_object = _tagged_closing_root(
+        tmp_path
+    )
+
+    subprocess.run(
+        ["git", "checkout", "-q", release_commit],
+        cwd=root,
+        check=True,
+    )
+    assert cycle_check.run(root) == 0
+    assert "governed_export=exempt-open-latest-at-close" in capsys.readouterr().out
+
+    subprocess.run(
+        ["git", "checkout", "-q", closing_commit],
+        cwd=root,
+        check=True,
+    )
+    assert cycle_check.run(root, verify_local_tag_refs=False) == 0
+    assert "governed_export=bound" in capsys.readouterr().out
+
+    subprocess.run(
+        ["git", "checkout", "-q", "v1.2.3^{}"],
+        cwd=root,
+        check=True,
+    )
+    assert cycle_check.run(root) == 0
+    assert "governed_export=bound" in capsys.readouterr().out
+
+    fixture_export_bytes = len("cycle-check governed export fixture")
+    cycle_ending_bytes = fixture_export_bytes + len("cycle ending delta")
+    progress = _progress(root)
+    progress.write_text(
+        progress.read_text()
+        + _cycle_ending_export_audit(
+            closing_commit,
+            cycle_ending_bytes,
+            cycle_ending_bytes - fixture_export_bytes,
+        )
+    )
+    state = root / "STATE.md"
+    hosted_run = str(len("post-push hosted run fixture"))
+    state.write_text(
+        state.read_text()
+        + "\n- **Post-push verification date:** 2026-07-29\n"
+        "- **Post-push release:** `v1.2.3`\n"
+        f"- **Post-push annotated tag object:** `{tag_object}`\n"
+        f"- **Post-push closing commit:** `{closing_commit}`\n"
+        f"- **Post-push hosted run:** `{hosted_run}`\n"
+    )
+    _commit_all(root, "post-push audit")
+
+    assert cycle_check.run(root) == 0
+    assert (
+        "governed_export=bound-with-cycle-ending-audit"
+        in capsys.readouterr().out
+    )
+
+
 def test_cycle_check_rejects_prechange_active_tag_object_field(
     tmp_path: Path,
     capsys,
@@ -725,6 +787,18 @@ def _governed_export_progress(
     return f"# Progress\n\n{fields}"
 
 
+def _cycle_ending_export_audit(
+    closing_tree: str,
+    byte_count: int,
+    audit_delta: int,
+) -> str:
+    return (
+        "- cycle-ending review-export audit: "
+        f"closing_tree=`{closing_tree}`; bytes=`{byte_count}`; "
+        f"audit_delta=`{audit_delta:+d}`\n"
+    )
+
+
 def test_governed_export_margin_rejects_superseded_figure(
     tmp_path: Path,
 ) -> None:
@@ -773,6 +847,26 @@ def test_governed_export_margin_names_open_empty_progress_exemption(
     assert errors == []
 
 
+def test_governed_export_margin_names_open_latest_exemption(
+    tmp_path: Path,
+) -> None:
+    row_value = len("open governed export with measurement")
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(row_value),
+        tmp_path / "PROGRESS.md",
+        _governed_export_progress([("a" * 40, row_value)]),
+        "open",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "exempt-open-latest-at-close"
+    assert errors == []
+
+
 def test_governed_export_margin_rejects_closed_empty_progress(
     tmp_path: Path,
 ) -> None:
@@ -818,6 +912,88 @@ def test_governed_export_margin_accepts_last_progress_figure(
 
     assert status == "bound"
     assert errors == []
+
+
+def test_governed_export_margin_names_cycle_ending_audit_path(
+    tmp_path: Path,
+) -> None:
+    row_value = len("governed before cycle-ending audit")
+    closing_value = row_value + len("closing tree delta")
+    progress_text = _governed_export_progress(
+        [("a" * 40, row_value)]
+    ) + _cycle_ending_export_audit(
+        "b" * 40,
+        closing_value,
+        closing_value - row_value,
+    )
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(row_value),
+        tmp_path / "PROGRESS.md",
+        progress_text,
+        "closed",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "bound-with-cycle-ending-audit"
+    assert errors == []
+
+
+def test_governed_export_margin_rejects_misordered_cycle_ending_audit(
+    tmp_path: Path,
+) -> None:
+    row_value = len("governed after premature audit")
+    audit = _cycle_ending_export_audit(
+        "a" * 40,
+        row_value,
+        row_value - row_value,
+    )
+    governed = _governed_export_progress([("b" * 40, row_value)])
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(row_value),
+        tmp_path / "PROGRESS.md",
+        audit + governed,
+        "closed",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "misordered-cycle-ending-audit"
+    assert errors == [
+        "PROGRESS.md: cycle-ending review-export audit must follow the last "
+        "governed review-export measurement at the checked tree"
+    ]
+
+
+def test_governed_export_margin_rejects_written_figure_over_ceiling(
+    tmp_path: Path,
+) -> None:
+    row_value = cycle_check.MAX_EXPORT_BYTES + len("over ceiling")
+    errors: list[str] = []
+
+    status = cycle_check.check_governed_export_margin(
+        tmp_path / "ARCHITECTURE.md",
+        _governed_export_text(row_value),
+        tmp_path / "PROGRESS.md",
+        _governed_export_progress([("a" * 40, row_value)]),
+        "closed",
+        tmp_path,
+        errors,
+    )
+
+    assert status == "recorded-figure-over-ceiling"
+    assert errors == [
+        "ARCHITECTURE.md: recorded governed review-export figure "
+        f"{row_value} exceeds the {cycle_check.MAX_EXPORT_BYTES}-byte ceiling; "
+        "this constrains the written figure at the checked tree and does not "
+        "measure an export"
+    ]
 
 
 def test_cycle_check_rejects_stale_review_export_retention_without_export(

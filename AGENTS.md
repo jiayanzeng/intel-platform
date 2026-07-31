@@ -317,22 +317,45 @@ independent authority through append-only fields of this exact form:
 - governed review-export measurement: tree=`<40 hex>`; bytes=`<digits>`
 ```
 
-At close, the row must equal the last such progress field, regardless of
-whether that value increased or decreased. While the cycle is open, a missing
-field takes the named `exempt-open-empty-progress` path because no latest-at-
-close referent exists yet; a present field takes
+At every closed tree checked by `cycle-check`, the row must equal the last such
+governed progress field already visible in that exact tree, regardless of
+whether the value increased or decreased. This is symmetric: neither a later
+audit child nor an earlier implementation parent may be selected
+opportunistically as the evaluation point. While the cycle is open, a missing
+field takes the named `exempt-open-empty-progress` path because no
+latest-at-close referent exists yet; a present field takes
 `exempt-open-latest-at-close` because later measurements may still arrive.
 These exemptions are reported by `cycle-check` and expire at close. A closed
-cycle with no field is an error, not a vacuous pass.
+cycle with no governed field is an error, not a vacuous pass.
 
-The figure is measured on the last tree measurable when the covered row is
-written. The single append-only progress entry written after the closing commit
-is the named **cycle-ending audit delta** and cannot be folded into that
-in-tree figure without asking a record to measure a tree containing itself.
-The closing audit records that bounded delta separately; it is not a newer
-governed export measurement. Whether the delivered export is larger or smaller,
-the signed delta is disclosed rather than using direction to select a preferred
-figure.
+The governed figure is measured on the last tree measurable when the covered
+row is written. Under a release close, closing child `C` may carry a governed
+measurement of its already-existing release parent `R`, and the row in `C`
+must agree with that field. Under a no-release close, the closing implementation
+tree keeps the row bound to the latest governed field it can already see. The
+separate append-only audit child records the later closing-tree measurement
+under this exact non-governing form:
+
+```
+- cycle-ending review-export audit: closing_tree=`<40 hex>`; bytes=`<digits>`; audit_delta=`<signed digits>`
+```
+
+Exactly zero or one such audit field may exist, only after the last governed
+field and only once the cycle is closed. Its `bytes` value names the measured
+closing tree and `audit_delta` discloses the signed delivered movement; the
+operator-local export command and its captured output are the evidence for
+those values. `cycle-check` parses the field, enforces its position, reports
+`bound-with-cycle-ending-audit`, and deliberately does not treat it as a newer
+governed measurement. This avoids asking a record to measure a tree containing
+itself while keeping both the closing implementation tree and its audit child
+bound.
+
+At every checked tree, `cycle-check` also compares the row's written figure
+against the single `MAX_EXPORT_BYTES` authority imported from
+`tools/export_check.py`. That automated check constrains the repository's
+written claim and explicitly does **not** create or measure an export.
+Operator-local `./run export-check` remains the real-byte, retained-set, and
+excluded-content control.
 
 Beginning with v0.28, both governed tables must contain at least one
 trigger-bearing row. Every trigger-bearing subject in the immediately prior

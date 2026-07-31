@@ -24,7 +24,7 @@ from tools.cycle_identity import (
     resolve_cycle,
     task_documents,
 )
-from tools.export_check import CYCLE_RETENTION_DEPTH
+from tools.export_check import CYCLE_RETENTION_DEPTH, MAX_EXPORT_BYTES
 from tools.progress_check import default_progress_path
 
 
@@ -1499,6 +1499,13 @@ GOVERNED_EXPORT_PROGRESS_RE = re.compile(
     r"tree=`([0-9a-f]{40})`; bytes=`([0-9]+)`$",
     re.MULTILINE,
 )
+CYCLE_ENDING_EXPORT_AUDIT_PREFIX = "- cycle-ending review-export audit:"
+CYCLE_ENDING_EXPORT_AUDIT_RE = re.compile(
+    r"^- cycle-ending review-export audit: "
+    r"closing_tree=`([0-9a-f]{40})`; bytes=`([0-9]+)`; "
+    r"audit_delta=`([+-][0-9]+)`$",
+    re.MULTILINE,
+)
 
 
 def module_forward_boundaries() -> dict[str, tuple[int, ...]]:
@@ -1840,8 +1847,42 @@ def check_governed_export_margin(
             f"{len(measurements)}"
         )
         return "invalid-progress-measurement"
+    cycle_ending_audits = list(
+        CYCLE_ENDING_EXPORT_AUDIT_RE.finditer(progress_text)
+    )
+    audit_prefix_count = progress_text.count(CYCLE_ENDING_EXPORT_AUDIT_PREFIX)
+    if audit_prefix_count != len(cycle_ending_audits):
+        errors.append(
+            f"{shown(progress_path, root)}: malformed cycle-ending "
+            f"review-export audit; found {audit_prefix_count} field(s) but "
+            f"parsed {len(cycle_ending_audits)}"
+        )
+        return "invalid-cycle-ending-audit"
+    if len(cycle_ending_audits) > 1:
+        errors.append(
+            f"{shown(progress_path, root)}: expected at most one cycle-ending "
+            f"review-export audit; found {len(cycle_ending_audits)}"
+        )
+        return "duplicate-cycle-ending-audit"
+    if row_value is None:
+        return "invalid-architecture-row"
+    # Invariant R12 control site: governed written-figure export ceiling.
+    if row_value > MAX_EXPORT_BYTES:
+        errors.append(
+            f"{shown(architecture_path, root)}: recorded governed "
+            f"review-export figure {row_value} exceeds the "
+            f"{MAX_EXPORT_BYTES}-byte ceiling; this constrains the written "
+            "figure at the checked tree and does not measure an export"
+        )
+        return "recorded-figure-over-ceiling"
 
     if cycle_state == "open":
+        if cycle_ending_audits:
+            errors.append(
+                f"{shown(progress_path, root)}: cycle-ending review-export "
+                "audit is unavailable while the active cycle is open"
+            )
+            return "open-cycle-ending-audit"
         if not measurements:
             return "exempt-open-empty-progress"
         return "exempt-open-latest-at-close"
@@ -1854,8 +1895,17 @@ def check_governed_export_margin(
             "exemption is unavailable"
         )
         return "missing-closed-progress-measurement"
-    if row_value is None:
-        return "invalid-architecture-row"
+    # Invariant R12 control site: cycle-ending review-export audit ordering.
+    if (
+        cycle_ending_audits
+        and cycle_ending_audits[0].start() < measurements[-1].end()
+    ):
+        errors.append(
+            f"{shown(progress_path, root)}: cycle-ending review-export audit "
+            "must follow the last governed review-export measurement at the "
+            "checked tree"
+        )
+        return "misordered-cycle-ending-audit"
 
     latest = measurements[-1]
     latest_tree = latest.group(1)
@@ -1868,6 +1918,8 @@ def check_governed_export_margin(
             f"tree={latest_tree}"
         )
         return "superseded"
+    if cycle_ending_audits:
+        return "bound-with-cycle-ending-audit"
     return "bound"
 
 
