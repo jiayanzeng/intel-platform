@@ -1,6 +1,184 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.30 is closed `no-release`; published v0.17.0 remains current and release divergence is governed.** Exact neutral candidate `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Python 3.11.4 and 3.12.13 each collected/passed **317** with **0** skips and retained the same one accepted `StarletteDeprecationWarning`. Authenticated hosted run **30611170866**, attempt **1**, passed all seven executable jobs at that exact no-release candidate; dependency drift skipped under its report-only condition. Both machine comparisons derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete close-time verifications took **0.12 s / 0.09 s real** and both protected databases matched. The fixed-point R-CLOSE implementation-tree export measured **2,576,273 bytes / 153 files**, leaving **423,727 bytes / 14.12%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.28–v0.30. Immediately before closure, `checklist-audit` passed **238 checked / 3 retracted / 238 matched / 238 commits resolved**. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Neutral ref `refs/heads/codex/v0.30-evidence-2528498` alone points to the candidate; remote `main`, the v0.17.0 tag, and every publication ref remain unchanged. The bounded internal diagnostic difference has persisted for two of three governed cycles with no public-surface change, so the new trigger has not fired. No publisher request, scheduler run, cadence change, manifest edit, version-value edit, release tag, or publication-ref movement occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active at E0; published v0.17.0 remains current and the release disposition awaits the Step 2 operator decision.** The E0 working tree based on activation audit commit `9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 55 controls**, and embedded plus standalone golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **317** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=317`, `equivalent=true`, and `equivalent_passed=317`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The exact activation-audit tree review export measured **2,544,715 bytes / 153 files**, leaving **455,285 bytes / 15.18%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **239 checked / 3 retracted / 239 matched / 239 commits resolved** before E0 was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. No publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+
+**v0.31 E0 rebuilds the entering state and settles G1–G6 (measured
+2026-07-31).** The pre-activation tracked tree was clean apart from the
+operator-supplied untracked v0.31 runbook. HEAD was v0.30 audit commit
+`5af3209bbab4116f15bfdef10c1e17befbf27e63`; its immediate parent was closing
+commit `00ad3fe1390bac5d6b848581550c88d12dd2ea8e`. Remote `origin/main` and the
+peeled v0.17.0 tag both resolved to
+`4af2841816dd3e43fb8423153b91aa22ccb87537`; local `main` was
+`eb2d9df...`, and HEAD was 60 commits ahead of and zero behind remote main.
+Activation implementation commit
+`f8141496c571da85b8dd7a5e022534b95bf561d8` contains only the supplied
+runbook, the active declaration, its progress skeleton, and the retention
+pattern correction. Audit commit
+`9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` records it. E0 began from a
+clean worktree, and the task gate covers every acceptance criterion because
+all are entering-state or local-gate measurements.
+
+Before correcting the stale retention pattern, the real entry point emitted
+the predicted line byte-for-byte:
+
+```text
+cycle-check: ERROR: repomix.config.json: review-export retention pattern for v0.31 must be 'docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-8]}{.md,.*.md,-*.md}'; found ['docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-7]}{.md,.*.md,-*.md}']
+```
+
+There was no prediction mismatch. The activated real entry point then
+reported `governed_export=exempt-open-empty-progress`. That is exactly the
+open-cycle branch required when the active progress record has no governed
+measurement; it is an exemption, not a closed-cycle pass.
+
+**G1 — the v0.30 latest-at-close construction is unsatisfiable across its real
+two-commit close.** A no-hardlink throwaway clone ran the real checker at each
+commit. At closing implementation commit
+`00ad3fe1390bac5d6b848581550c88d12dd2ea8e`, it exited 1 and emitted:
+
+```text
+cycle-check: ERROR: ARCHITECTURE.md: governed review-export row is superseded: row=2576273, latest_progress=2464445, tree=e7b2c58814e2223d9899b83b3f3491344ce85337
+cycle-check: FAIL (1 defect(s))
+```
+
+At audit child `5af3209bbab4116f15bfdef10c1e17befbf27e63`, it exited 0 and
+emitted:
+
+```text
+cycle-check: PASS (active=v0.30, state=closed, local_tag_refs=verified, runbook=docs/cycles/TASKS-v0.30-EXECUTION.md, progress=docs/cycles/PROGRESS-v0.30.md, governed_export=bound, closed_execution=28, historical=3)
+```
+
+`ARCHITECTURE.md` is byte-identical across the pair. The later progress append
+alone makes the 2,576,273-byte field visible. Therefore the closing value
+cannot satisfy the implementation commit, the earlier value cannot satisfy
+the audit child after its current measurement lands, and neither truthful
+value satisfies both evaluation points.
+
+**G2 — the unused exclusion tuple is not a rule, but a file-level partition is
+available with explicit precedence.** Exhaustive `git ls-files` search at
+activation audit tree `9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` found **75
+tracked files / 683 occurrences** of `1.78` or `1.86`.
+`OFFLINE_MSRV_HISTORICAL_EXCLUSIONS` has exactly one occurrence, its
+declaration at `tools/version_check.py:270`; no importer or reader exists.
+The complete classes are:
+
+- executable authorities: `run` and `.github/workflows/ci.yml`;
+- registered current restatements: those two files plus `AGENTS.md`,
+  `README.md`, `STATE.md`, `rust-toolchain.toml`,
+  `crates/compliance/Cargo.toml`, `crates/compliance/src/lib.rs`,
+  `crates/ingest/src/arxiv_oai.rs`, and
+  `crates/store/examples/cosine_bench.rs`;
+- control constructions: `shell/tests/test_version_check.py` and
+  `tools/invariant_scan.py`;
+- dated historical families: all literal-bearing `docs/cycles/**`,
+  `docs/state-archive/**`, `CHANGELOG.md`, the two literal-bearing
+  `evidence/**` reports, the literal-bearing `observations/**` report, and the
+  historical clauses within `.github/workflows/ci.yml`, `AGENTS.md`,
+  `README.md`, `STATE.md`, and `rust-toolchain.toml`.
+
+There are **0 unclassified files**. Six files are multiply classified:
+`.github/workflows/ci.yml` is authority, current restatement, and history;
+`run` is authority and current restatement; `AGENTS.md`, `README.md`,
+`STATE.md`, and `rust-toolchain.toml` are current restatement and history.
+Authority → current restatement → control construction → historical family is
+a complete deterministic file-level partition. Within those six mixed files,
+present-tense versus dated-history membership is not decidable from the
+identical literals alone. That within-file residual is distinct from, and does
+not reopen, the zero-gap file-level result.
+
+**G3 — arithmetic retention and the real runbook set can diverge inside
+`v0.x`.** A distinct-seed full Git construction made v0.33 active with no
+v0.32 and a closed synthetic v0.31. The real checker exited 0:
+
+```text
+cycle-check: PASS (active=v0.33, state=open, local_tag_refs=verified, runbook=docs/cycles/TASKS-v0.33-EXECUTION.md, progress=docs/cycles/PROGRESS-v0.33.md, governed_export=exempt-open-empty-progress, closed_execution=29, historical=3)
+```
+
+The real operator-local export entry point reached its checks and exited 1:
+
+```text
+export-check: ERROR: missing retained cycle document: docs/cycles/PROGRESS-v0.30.md
+export-check: ERROR: missing retained cycle document: docs/cycles/TASKS-v0.30-EXECUTION.md
+export-check: FAIL (2 defect(s); derived_sources=100, exported=151)
+```
+
+An initial sandboxed Repomix attempt failed DNS resolution and is explicitly a
+non-result; the permission-complete rerun above is the measurement. Only
+operator-local `export-check` catches this reachable skipped-cycle
+construction. `cycle-check` passes, and neither local nor hosted automated
+matrix contains `export-check`.
+
+**G4 — a figure-level ceiling check is implementable but deliberately
+narrow.** Exhaustive search found four `export-check` command/usage occurrences
+in `run`, zero in `ci_local_jobs`, zero in the workflow, and the sole
+`MAX_EXPORT_BYTES` authority in `tools/export_check.py` (definition,
+comparison, and result formatting). `tools/cycle_check.py` does not currently
+read it. An already-automated `cycle-check` can import that one authority and
+reject a recorded governed figure over the ceiling. Such a check constrains
+what the repository claims at the exact checked tree. It does **not** create or
+measure a Repomix export, enumerate exported paths, test retained documents,
+or detect excluded pinned SEC/state-archive bytes. The operator-local
+`export-check` remains the only real-byte control.
+
+**G5 — evaluation points in both closing shapes are now explicit.** Under the
+current rule, a no-release closing implementation commit is closed and runs
+the comparison against the last pre-existing progress field; for the truthful
+new closing figure it is unsatisfiable, as G1 executed. Its audit child is also
+closed and runs the comparison after the new field appears; it is satisfiable
+with the new row value. No single truthful row value satisfies both points.
+
+For a release, the untagged release commit `R` is still open, so the comparison
+is exempt (`exempt-open-latest-at-close` once prior measurements exist).
+Closing child `C` is closed and compares the row with the closing record's
+last visible governed field; assigning both to the export measured on `R` is
+satisfiable. The annotated-tag checkout reads the same `C` tree and remains
+satisfiable. The first post-push descendant again evaluates the closed active
+cycle and remains satisfiable while its required State/progress append adds no
+new governed-export field. A different later governed field would supersede
+the unchanged row and fail. The Step 3 correction must therefore repair the
+no-release implementation point without breaking `R`, `C`, tagged `C`, or the
+post-push descendant.
+
+**G6 — the export has a reclaiming mechanism; State does not.** The exact
+activation audit tree
+`9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` exported **153 files /
+2,544,715 bytes**, retained exactly v0.29–v0.31, reported **100 derived / 7
+required**, and left **455,285 bytes / 15.18%** headroom. The delivered series
+is v0.28 **2,530,129**, v0.29 **2,521,787** (−8,342), and v0.30
+**2,583,624** (+61,837): three points but only **two**
+delivered-to-delivered observations, with opposite signs. Activation is a
+separate v0.30-delivered-to-v0.31-activation observation of **−38,909**.
+Those observations do not establish one monotonic growth rate.
+
+Using the latest positive delivered export delta, the export ceiling is
+455,285 / 61,837 = **7.36 cycles** away. Activation `STATE.md` was **289,117
+bytes** against its **453,741-byte** archival boundary; using the latest State
+growth of 31,695 bytes, that boundary is 164,624 / 31,695 = **5.19 cycles**
+away and is nearer under those explicitly named denominators. Three-cycle
+retention returns old cycle-document bytes to every new export; no mechanism
+returns bytes to live `STATE.md` before another archive.
+
+The entering gates are green. `./run ci-local` passed **20/20** with **146**
+workspace and **62** net tests, clean warning-denied builds, locked Rust 1.78,
+clippy, fmt, ShellCheck, byte-compile, embedded golden **11/11**, and all
+artifact checks. Standalone golden passed **11/11**, delta **0**.
+`invariant-scan --self-test` passed **12 rules / 55 controls**. Focused SEC
+identity measured **201 input / 201 kept / 0 dropped**, including **200 SEC
+kept / 0 dropped**. Clean constrained Python 3.11.4 and 3.12.13 lanes each
+collected/passed **317**, failed **0**, skipped **0**, and retained the same one
+warning. The executed comparator reported:
+
+```text
+test-population-compare: {"collected":317,"equivalent":true,"equivalent_passed":317,"hosted":{"on_site_skipped":0,"passed":317,"skipped":[]},"local":{"passed":317,"skipped":0},"schema_version":1}
+```
+
+Schema validation reported **2 artifacts / 331 pinned files** in the unchanged
+**191,395-byte** manifest. Two permission-complete
+`./run verify-artifacts` executions took **0.10 s / 0.10 s real** and matched
+both databases. `checklist-audit` passed **239 checked / 3 retracted / 239
+matched / 239 commits resolved** before E0's checkbox. The four governed
+architecture rows and all 22 deferred rows now carry v0.31 measurements. E0
+changed no checker, so **0** planted-control expected-line values were
+re-derived.
 
 **v0.30 R-CLOSE records the operator-selected governed no-release disposition
 (authorized and measured 2026-07-31).** The operator selected `no-release` and

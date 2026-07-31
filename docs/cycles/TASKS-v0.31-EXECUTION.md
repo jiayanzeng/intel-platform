@@ -1,5 +1,9 @@
 # TASKS-v0.31-EXECUTION.md — name the commit, or the rule is not a rule
 
+## Runbook amendments
+
+Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-07-31
+
 **Three reviewer errors, all mine, recorded before anything else.**
 
 1. **v0.30 Step 4's acceptance criteria specified an equality without naming the
@@ -309,28 +313,28 @@ measured on.**
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.31 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — design complete, execution separately gated |
-| Postgres / pgvector / multi-host seam | unchanged | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| L2 forced-command wrapper | an operator server session | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — deferred under the v0.30 operator outcome |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — no historical ref touched |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — the flag stays |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | Step 1, Step 7, and Step 8 — re-measured only; no registration |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | Step 6 — reachable only as a release authority under one operator outcome |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | Step 1 and Step 8 — boundary re-derived; no archive |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute | Step 5 — settled under its own decision gate |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.31 · 2026-07-31 — carried-forward hypothesis for E0 to confirm or refute; **this is the third consecutive closed cycle and E0 must state whether the trigger has fired** | Step 2 and Step 8 — disposition selected before implementation |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.31 · 2026-07-31 — new row; E0 records the entering membership and Step 4 supplies its first control | Step 4 — file-level partition bound; within-file residual named |
+| T7 robots single-flight | a second concurrent harvester | v0.31 · 2026-07-31 — E0 observed no publisher request, scheduler run, or second concurrent harvester; the trigger did not fire | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.31 · 2026-07-31 — E0 made no publisher request and observed no qualifying outage or authorization; the trigger did not fire | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.31 · 2026-07-31 — production net paths are forbidden and E0 made no publisher request or live 304 observation; the trigger did not fire | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.31 · 2026-07-31 — the production ingest path is forbidden, unchanged, and no connector review occurred; the trigger did not fire | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.31 · 2026-07-31 — E0 contacted no publisher and observed neither a further origin nor concurrent harvesting; the trigger did not fire | none — complete, do not re-exercise |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.31 · 2026-07-31 — no bounded-window authorization was given and no scheduler ran; the trigger did not fire | none — design complete, execution separately gated |
+| Postgres / pgvector / multi-host seam | unchanged | v0.31 · 2026-07-31 — E0 measured no production, deployment, schema, or multi-host change; the seam remains unchanged | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.31 · 2026-07-31 — E0 observed no third-party shell and made no replacement-invariance claim; the trigger did not fire | none |
+| L2 forced-command wrapper | an operator server session | v0.31 · 2026-07-31 — E0 ran no model-profile command or operator server session; the trigger did not fire | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.31 · 2026-07-31 — E0's registered self-test found no observed outside-vocabulary spelling; the open-bottom limitation remains | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.31 · 2026-07-31 — exhaustive authority search still found no executable 1.86 lane and the cycle forbids evidence-topology changes; the trigger did not fire | none — deferred under the v0.30 operator outcome |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.31 · 2026-07-31 — configuration is unchanged and E0 performed no review or admission; the trigger did not fire | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.31 · 2026-07-31 — local identities remain present, no publication was authorized, and no historical ref moved; the trigger did not fire | none — no historical ref touched |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.31 · 2026-07-31 — both historical tags remain unpublished and the workflow byte is unchanged; the removal trigger did not fire | none — the flag stays |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.31 · 2026-07-31 — E0 measured 331 pins / 191,395 bytes and two complete 0.10 s / 0.10 s verifications; neither trigger fired | Step 1, Step 7, and Step 8 — re-measured only; no registration |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.31 · 2026-07-31 — E0 changed no shell source or version literal; the path remains reachable only under the selected Step 6 release shape | Step 6 — reachable only as a release authority under one operator outcome |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.31 · 2026-07-31 — no such operator decision occurred; the prose-adjudication limitation remains unchanged | none — recorded, not acted on |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.31 · 2026-07-31 — E0 measured the activation export at 2,544,715 bytes and State at 289,117 bytes, leaving 455,285 and 164,624 bytes respectively; neither trigger fired | Step 1 and Step 8 — boundary re-derived; no archive |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.31 · 2026-07-31 — E0 changed no checker or control schema and re-derived 0 expected-line values; later implementation steps own any shifts | Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.31 · 2026-07-31 — active v0.31 remains inside the supported family; E0 separately executed a skipped-v0.x construction that exposed a distinct set/arithmetic divergence for Step 5 | Step 5 — settled under its own decision gate |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.31 · 2026-07-31 — v0.31 is open, so only v0.29 and v0.30 are post-correction closed-cycle persistence observations; no public-surface change exists and the trigger has not fired | Step 2 and Step 8 — disposition selected before implementation |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.31 · 2026-07-31 — E0 derived 75 tracked literal-bearing files / 683 occurrences: file-level precedence classified all files, with 0 unclassified and 6 multi-class; the historical tuple has no reader and within-file present-versus-history separation is not text-decidable | Step 4 — file-level partition bound; within-file residual named |
 
 ---
 
@@ -375,7 +379,7 @@ entry, **record and stop.**
 **Done when** every gate carries a measured answer and the entering state is
 either confirmed or corrected in `STATE.md`.
 
-- [ ] **E0**
+- [x] **E0**
 
 ---
 
