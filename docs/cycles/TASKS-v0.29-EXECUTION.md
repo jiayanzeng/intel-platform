@@ -2,6 +2,22 @@
 
 ## Runbook amendments
 
+### 2026-07-31 · SCHEDULE-DESIGN operator selection and measured completion
+
+Step 6 — bounded later-cycle design authorized and completion checked — 2026-07-31
+
+The operator selected outcome 1: authorize a bounded scheduled SEC window in a
+later cycle so the never-run recurring mode can be measured under the design
+below. This is not execution authorization; the later cycle must separately
+admit and explicitly authorize traffic. The exact bound is 1,260 seconds,
+three SEC-only `/ingest` invocations, and four publisher HTTP requests (one
+robots plus three feed) in one cored process. Executable refusals, operator
+judgements, evidence reconciliation, named observing/non-observing controls,
+and the unprovable density periods are recorded in `STATE.md`. Step 6 changed
+no cadence or publisher configuration and issued no traffic. No objective,
+decision gate, acceptance criterion, scope row, or standing prohibition
+changes.
+
 ### 2026-07-31 · MARGIN-TRUTH measured completion
 
 Step 5 — current governed margins and next State boundary recorded; completion checked — 2026-07-31
@@ -427,7 +443,7 @@ measured on**, which is the discipline G5 exists to settle.
 | Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.29 · 2026-07-31 — the activation-to-E0 diff leaves forbidden `crates/ingest/src/**` byte-identical and no live request or 304 occurred | none — the gap stays recorded |
 | `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.29 · 2026-07-31 — `crates/ingest/src/**` is forbidden and byte-identical; no connector review occurred | none |
 | Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.29 · 2026-07-31 — the v0.27 sequential two-origin result remains the only live execution; E0 made no publisher request | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.29 · 2026-07-31 — G6 confirms the 600-second clock has never run and records a 1,260-second, at-most-three-invocation design with exact refusals; E0 executes no traffic | **Step 6 — design and recorded decision only** |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.29 · 2026-07-31 — the operator selected a bounded later-cycle window so the never-run recurring mode can be measured; Step 6 fixes 1,260 seconds, at most three SEC `/ingest` calls and four publisher requests, but grants no execution authorization, changes no cadence, and issues no traffic | **Step 6 — design complete; execution remains separately gated** |
 | Postgres / pgvector / multi-host seam | unchanged | v0.29 · 2026-07-31 — E0 exercised the existing single-writer SQLite and single-host topology only | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.29 · 2026-07-31 — E0 exercised only the first-party shell and makes no shell-replacement invariance claim | none |
 | L2 forced-command wrapper | an operator server session | v0.29 · 2026-07-31 — E0 opened no operator server session | none — remains scheduled |
@@ -648,7 +664,7 @@ defaulted:
 **Done when** the design exists, the decision is recorded, and nothing has been
 sent.
 
-- [ ] **SCHEDULE-DESIGN**
+- [x] **SCHEDULE-DESIGN**
 
 ---
 

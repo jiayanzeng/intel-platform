@@ -1,6 +1,110 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; MARGIN-TRUTH is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. Current focused results include **306/306** shell tests, **24** store unit plus **2** integration tests, SEC identity **200 kept / 0 dropped**, `invariant-scan` **12 rules / 51 controls**, and standalone golden **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The MARGIN-TRUTH implementation-tree review export measures **2,471,012 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.29 is active; SCHEDULE-DESIGN is complete on top of v0.28's recorded `no-release` close.** Annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets published closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. Authenticated v0.28 evidence candidate `47bb77c19420bf513b53b228e473d4accedc6cc9` on neutral ref `refs/heads/codex/v0.28-evidence-47bb77c` passed hosted run **30561513204**, attempt **1**: all seven executable jobs passed, dependency drift skipped under its report-only condition, attestations were required, **7** signed identities were accepted, **0** rejected, and the complete matrix was found. E0's local CI passed **20/20** jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), clean constrained Python 3.11 and 3.12 populations each collected/passed **303** with **0** skips and compared `equivalent=true`, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, and embedded golden **11/11**. Current focused results include SCHEDULE-DESIGN's **13/13** tests in each Python lane, **2/2** executed cored coverage controls, **24** store unit plus **2** integration tests, SEC identity **200 kept / 0 dropped**, `invariant-scan` **12 rules / 51 controls**, and standalone golden **11/11**. The evidence manifest contains **316** `pinned_files[]` and measures **182,774 bytes**; two E0 complete verifications took **0.11 s / 0.10 s real**, and both protected SQLite archives remain byte-identical. The SCHEDULE-DESIGN implementation-tree review export measures **2,481,321 bytes / 152 files** against its **3,000,000-byte** executable ceiling and retains exactly v0.27–v0.29 without either excluded byte class. No publisher request or scheduler run occurred.
+
+**v0.29 SCHEDULE-DESIGN authorizes a bounded later-cycle experiment, not
+traffic now (operator decision and measurement 2026-07-31).** The operator
+selected outcome **1** on 2026-07-31: authorize a bounded scheduled SEC window
+in a later cycle. The reason carried by that selection is to measure the
+recurring 600-second clock in the mode for which the existing cadence and
+coverage controls were built, because that mode has never run. This decision
+approves the design posture only. The later execution still requires a cycle
+whose declared scope admits it and a separate explicit operator authorization;
+it does not authorize a request in v0.29.
+
+**Exact bound.** The future experiment is one continuous **1,260-second**
+window with one cored process, one scheduler process, a fresh absent
+unprotected SQLite path, a fresh absent scheduler-state path, and an isolated
+schedule copy containing only
+`quant-desk:ingest-source:sec-edgar-usgaap` at exactly **600 seconds**. A fresh
+state makes the job due at approximately `t+0`, then at `t+600` and `t+1200`:
+at most **3** loopback `/ingest` requests. With one process-scoped
+`RobotsCache` and its **86,400-second** positive TTL, the publisher-side maximum
+is **4 HTTP requests**: one `/robots.txt` request before the first document
+request and at most three SEC feed requests. Redirects and retries are not
+budgeted; observing either is a refusal. An external watchdog ends the process
+at 1,260 seconds even if fewer than three invocations complete.
+
+The future evidence set must capture monotonic scheduler start/end and each due
+job; the scheduler state before/after; each loopback `/ingest` start and
+response; each publisher request's origin, path class, start time, status, and
+redirect/retry disposition; assigned User-Agent byte hash without the contact
+value; robots body hash and gate outcome; fetched/new/per-source `ok`; every
+coverage outcome and raw boundary pair; and database before/after document,
+distinct-id, canonical-id, and cursor counts. Counts must agree across the
+scheduler log, loopback observer, publisher-request observer, responses, state
+file, and database.
+
+**Executable preflight/refusal checks.**
+
+- `tools/evidence_artifacts.py validate` and two complete
+  `./run verify-artifacts` passes must precede the window.
+  `tools/evidence_artifacts.py protected` must reject either proposed data
+  target if it aliases a protected artifact; both fresh paths must be absent.
+- The existing process-topology measurement and `lsof` must find no foreign
+  port-8788 owner or concurrent scheduler. The isolated schedule must parse to
+  exactly one SEC source job at 600 seconds, and its dry-run inventory must
+  name no refresh, sector, full, or other-source job.
+- The admitted-source configuration, terms record, operator deny-list,
+  fetched robots policy, configured identity, process-scoped cache, and
+  per-host limiter must all pass before the first feed request. DNS, TLS,
+  timeout, robots, redirect, HTTP-status, identity, or rate-policy failure
+  refuses the result.
+- A client-side request observer must reject any origin other than the admitted
+  SEC origin, any redirect or retry, a fifth publisher request, or a fourth
+  `/ingest` invocation. The watchdog rejects elapsed time above 1,260 seconds.
+- The first successful non-empty window may report `first_window`. Every later
+  non-empty poll must report `overlap`; `gap_detected`, `empty_window`, a
+  source error, or a missing coverage record refuses the result. The coverage
+  observation still commits incoming documents by design; refusal means the
+  experiment is not evidence for recurring operation, not that committed rows
+  are rolled back.
+- Any `[scheduler] job ... failed:` line is a refusal even though the current
+  scheduler catches that exception, advances the clock, and records the
+  attempt. Any disagreement among request, response, state, log, or database
+  counts is also a refusal.
+
+**Named observation boundary.** Existing controls observe only parts of the
+future run. `test_admitted_sec_source_has_an_explicit_resolvable_cadence` and
+`test_architecture_sec_cadence_matches_schedule_and_rejects_mismatch` bind the
+committed 600-second source job and its architecture record.
+`Scheduler.tick`, `test_tick_runs_due_jobs_and_reschedules`, and
+`test_state_persists_and_reseeds` observe due ordering and attempted-run state.
+The artifact validator and harvest preflight controls protect the database
+target. `test_sec_edgar_usgaap_admission_is_exact_and_fail_closed_on_missing_robots`,
+the live-path robots/redirect/limiter controls, and HC8 observe admission and
+politeness. R12's coverage-topology controls, the two cored pinned-window tests,
+and ORDER-BIND's SQL/Rust test observe pre-insert per-source classification and
+boundary ordering. `audit_deferred.scheduler_measurement` observes process
+topology, not scheduler success.
+
+No existing control enforces the whole 1,260-second envelope, reconciles all
+five evidence channels, or counts actual publisher requests; the later-cycle
+controller/observer must do that. No client-side evidence can prove what the
+publisher received after TLS termination or how it processed a request.
+Success also cannot prove peak-season density, deadline-day density, or any
+hour covered by neither live sample. Whether the terms determination is still
+current at execution time, whether the chosen wall-clock window is appropriate,
+and whether a successful bounded sample justifies recurring deployment remain
+explicit operator judgements rather than executable checks.
+
+Step 6 itself executed only fixture/pure controls: **13/13** focused shell
+tests passed under each constrained Python lane, and the two named cored
+coverage tests passed **2/2**. An initial incorrectly exact-filtered Rust
+command executed **0 tests** and is a non-result; the corrected commands
+executed the named tests. The permission-complete deferred-audit topology
+measurement found **0** scheduler processes, **0** cored processes, port 8788
+not accepting, one supported simultaneous harvest caller, two configured /
+seven expanded ordinary jobs, and serial execution. The default scheduler
+state path is absent, and the activation-to-Step-6 diff leaves
+`config/schedule.json` byte-identical. A complete audit of this Codex session's
+function and custom-tool call transcript found no invocation of the scheduler,
+`harvest-arxiv`, a publisher endpoint, or a publisher-directed HTTP client.
+Every suspicious-string match was a documentation patch or an `rg`/`jq`
+inspection of those names; no web tool was called. Step 6 therefore sent
+nothing and changed no cadence. The exact SCHEDULE-DESIGN implementation-tree
+export measures **2,481,321 bytes**, leaving **518,679 bytes / 17.29%**
+headroom; it openly supersedes MARGIN-TRUTH's 2,471,012-byte observation.
 
 **v0.29 MARGIN-TRUTH makes governed observations current and records the next
 State boundary (measured 2026-07-31).** G5 held exactly. The v0.28 live row
