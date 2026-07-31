@@ -381,3 +381,56 @@ Entries are append-only; corrections are new dated entries.
   behavior, route, schema, manifest, protected byte, publisher configuration,
   scheduler state, version authority, tag, or working-repository ref changed.
   No publisher request, scheduler, or model-profile command ran.
+
+### 2026-07-31 · RE-MEASURE — neutral candidate authenticated on hosted CI
+
+- owner: Codex
+- commit: 84a958155997d93f801e07b94e75711e540fa69e
+- result: PASS. Exact evidence candidate
+  `2528498ba7bdce3f280fa1a9c4d6fe266cac05ab` was pushed only to neutral ref
+  `refs/heads/codex/v0.30-evidence-2528498`; hosted run **30611170866**,
+  attempt **1**, executed that exact candidate and ref.
+- decision-gate acceptance: PASS. Steps 2–5 were complete. The workflow was
+  forbidden and remained byte-identical to v0.29's authenticated definition
+  at SHA-256
+  `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+  The hosted job matrix and receipt identity population were unchanged.
+- hosted-matrix acceptance: PASS. Core, golden, lint, MSRV, net, shell 3.11,
+  and shell 3.12 all passed. Dependency drift skipped under its declared
+  report-only condition. Terminal run metadata named the exact candidate SHA,
+  neutral branch, workflow-dispatch event, attempt 1, and successful
+  conclusion.
+- attestation acceptance: PASS. The release-grade audit required
+  attestations, accepted all **7** signed identities, rejected **0**, found no
+  matrix finding, and marked the single-run matrix complete. Every receipt
+  bound its exact bytes, repository, workflow signer, candidate digest,
+  neutral source ref, and GitHub-hosted runner policy.
+- population acceptance: PASS. Local Python 3.11.4 and 3.12.13 each collected
+  and passed **317** with zero skips. For each hosted lane,
+  `tools/test_population.py` independently derived
+  `{"collected":317,"equivalent":true,"equivalent_passed":317,"hosted":{"on_site_skipped":1,"passed":316,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":317,"skipped":0},"schema_version":1}`.
+  The one hosted skip was named, carried that declared reason, and was marked
+  `on_site`.
+- release-report acceptance: PASS. The temporary release-grade report is
+  **37,000 bytes**, SHA-256
+  `3a0f54257029b7299d4ff699278b2fda34f56fb5ae64eb378646f54e28d8fada`,
+  and records **5 deferred / 2 promoted / 0 implemented deferred
+  subsystems**. Exact-path re-derivation passed **7** rows, **5** source
+  dispositions, and **7** triggers with attestations required.
+- manifest acceptance: PASS. Hosted core verified schema 2 with **2
+  artifacts / 331 pinned files** at the exact candidate. The unchanged local
+  manifest measured **191,395 bytes**, and two complete verifications passed
+  at **0.11 s / 0.10 s real**, matching both protected databases.
+- golden-E2E delta: **0** — the candidate's local embedded run and the final
+  post-record standalone run passed **11/11**; hosted golden also passed
+  **11/11**.
+- no-registration acceptance: PASS. Downloaded receipts, bundles, and the
+  generated report remained outside the repository. No evidence path or
+  manifest record was added, and `config/protected-artifacts.json` remains at
+  **331** pins.
+- neutral-ref/publisher acceptance: PASS. Post-run inspection found only the
+  neutral ref at the candidate. Remote `main` and the peeled v0.17.0 tag
+  remained `4af2841816dd3e43fb8423153b91aa22ccb87537`; annotated tag object
+  `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` remained unchanged. No release
+  tag, publication ref, publisher request, scheduler, or model-profile command
+  occurred.
