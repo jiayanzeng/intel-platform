@@ -263,3 +263,68 @@ Entries are append-only; corrections are new dated entries.
   protected byte, publisher configuration, scheduler state, version
   authority, tag, or working-repository ref changed. No publisher request,
   scheduler, or model-profile command ran.
+
+### 2026-07-31 · MARGIN-BIND — bind the governed export margin
+
+- owner: Codex
+- commit: 72ebc6dc4e4ac7ae401d171ebdc4680186424104
+- result: PASS. At close, the one content-governed architecture export row now
+  binds its visible and machine values to the last machine-readable export
+  figure in this active cycle's append-only progress record.
+- governed review-export measurement: tree=`e7b2c58814e2223d9899b83b3f3491344ce85337`; bytes=`2464445`
+- decision-gate acceptance: PASS. Neither `docs/state-archive/**` nor
+  `config/protected-artifacts.json` appears in the implementation diff. The
+  task archived and registered nothing.
+- independent-authority acceptance: PASS. The architecture row's
+  `Governed review-export bytes` marker is first bound to its visible
+  `export of **N bytes**` figure, then compared at close with the last exact
+  progress field above. The progress field names the independently measured
+  activation audit tree and its **2,464,445-byte** export; a row asserting
+  itself cannot satisfy the second derivation.
+- empty-state acceptance: PASS by execution. Before this audit field existed,
+  the real active entry point reported
+  `governed_export=exempt-open-empty-progress`. The focused open-empty
+  construction returned the same named exemption, while the identical empty
+  progress record in closed state produced a required error. With this field
+  present, the open cycle takes `exempt-open-latest-at-close`; both exemptions
+  expire at close.
+- fixed-point acceptance: PASS. `AGENTS.md` now states that the governed value
+  is the last tree measurable when the row is written, in either direction.
+  The subsequent append-only closing record is the named **cycle-ending audit
+  delta**, recorded separately rather than masquerading as a newer governed
+  measurement. The measured prior instance remains **+4,965 export bytes**,
+  exactly one v0.29 audit append.
+- rejection-before-acceptance: PASS. Focused tests first rejected a
+  superseded figure and a closed empty record **2/2**. R12 then rejected the
+  `superseded-export-figure` construction at `tools/cycle_check.py:1863`
+  before the complete acceptance population ran.
+- content-scope acceptance: PASS. Only the architecture subject beginning
+  `review-export size and retention bound` is content-bound. All other
+  governed subjects are explicitly outside the heterogeneous content rule
+  while retaining their existing date and active-cycle identity checks.
+- expected-line acceptance: PASS from real self-test output. The edit shifted
+  **six existing** cycle-checker values: two boundary controls
+  `1500 → 1519`, three freshness controls `1646 → 1665`, and carry-forward
+  `1873 → 2041`. The new margin control is registered at line 1863. The final
+  distribution is **22** controls into `cycle_check.py` and **6** into
+  `sqlite.rs`.
+- fixture-correction record: the first complete lifecycle-test run passed 57
+  and failed two old fixture assumptions: it omitted the fifth boundary and
+  left the new export trigger present in a zero-population construction. The
+  first correction attempt had an indentation error and collected no tests.
+  After both fixture and indentation corrections, the complete file passed
+  **59/59**.
+- complete-suite acceptance: PASS. Full R12 passed **27** controls and the
+  complete self-test passed **12 rules / 55 controls**. The clean local entry
+  point passed all **20/20** jobs, including warning-denied **146** workspace
+  tests, **62** net tests, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, shell **317/317**, protected artifacts, and
+  embedded golden **11/11**. Python 3.11.4 and 3.12.13 each collected and
+  passed **317** with zero skips and the same one accepted warning.
+- golden-E2E delta: **0** — embedded and final standalone executions each
+  passed **11/11** byte-identically.
+- surface/protected/publisher acceptance: PASS. No dependency, production
+  behavior, route, response shape, `/v1/*` value domain, schema, manifest,
+  protected byte, publisher configuration, scheduler state, version
+  authority, tag, or working-repository ref changed. No publisher request,
+  scheduler, or model-profile command ran.
