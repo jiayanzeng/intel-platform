@@ -328,3 +328,56 @@ Entries are append-only; corrections are new dated entries.
   protected byte, publisher configuration, scheduler state, version
   authority, tag, or working-repository ref changed. No publisher request,
   scheduler, or model-profile command ran.
+
+### 2026-07-31 · ORDER-CONST — declare archive recency SQL once
+
+- owner: Codex
+- commit: 1df89718d7c6c58ae0c4c4d50b2aec0c20627700
+- result: PASS. One `macro_rules!` construction now expands the one archive
+  ordering literal into both the production coverage-boundary query and the
+  test-side SQL derivation.
+- decision-gate acceptance: PASS. E0 proved the construction can use
+  compile-time `concat!` with no runtime formatting or allocation. The
+  implementation commit contains no `apps/cored/src/main.rs` or
+  `crates/ingest/src/**` path.
+- declaration/behavior acceptance: PASS. Exact search found one ordering
+  clause and two macro call sites. The select prefixes and tails remain
+  distinct compile-time literals; no predicate, parameter, ordering term, or
+  production limit changed.
+- rejection-before-acceptance: PASS with one earlier non-result recorded. An
+  initial incomplete `--exact` test name ran zero tests and was not treated as
+  evidence. The corrected cross-ordering test passed **1/1**; changing only
+  `published_raw DESC` to `ASC` in the shared SQL clause then failed **0/1**
+  with SQL-derived ids on the left and Rust-derived ids on the right.
+  Restoring `DESC` made the same test pass **1/1**.
+- prior-binding acceptance: PASS. The unchanged
+  `coverage_boundary_uses_archive_order_for_a_misordered_window` test passed
+  **1/1** after the refactor.
+- SEC-identity acceptance: PASS. The diagnostic measured **201** aggregate
+  inputs, **201 kept**, and **0 dropped**: **200 SEC kept / 0 dropped** plus
+  the one non-SEC fixture document.
+- expected-line acceptance: PASS from real self-test output. Five existing
+  store controls moved: R1 `780 → 793`; R5 `230 → 242`, `229 → 241`, and
+  `829 → 842`; and R7 `397 → 410`. The R5 line-33 control was unchanged. All
+  six store controls re-executed; R12 passed **27** controls and the full
+  self-test passed **12 rules / 55 controls**. The v0.30 cumulative shifted
+  count is **11**.
+- lifecycle correction record: the first complete local gate stopped before
+  builds because the deferred action's `Steps 4 and 5` wording named no
+  literal discharging `Step N`. Correcting that record to `Step 4 and Step 5`
+  made `cycle-check` pass. This was a measured non-pass, not a product failure.
+- complete-suite acceptance: PASS. The result-of-record `./run ci-local`
+  passed all **20/20** jobs, including warning-denied **146** workspace tests,
+  **62** net tests, locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck,
+  shell **317/317**, protected artifacts, and embedded golden **11/11**.
+  Python 3.11.4 passed **317/317**. A first sandboxed Python 3.12 run passed
+  309 and failed eight because loopback binds and `ps` were denied; the
+  authorized result-of-record rerun passed **317/317**, with zero skips and
+  the same one accepted warning.
+- golden-E2E delta: **0** — embedded and final standalone executions each
+  passed **11/11** byte-identically.
+- surface/protected/publisher acceptance: PASS. The `/ingest` response shape
+  and every `/v1/*` value domain are unchanged. No dependency, production
+  behavior, route, schema, manifest, protected byte, publisher configuration,
+  scheduler state, version authority, tag, or working-repository ref changed.
+  No publisher request, scheduler, or model-profile command ran.
