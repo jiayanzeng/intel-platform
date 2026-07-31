@@ -158,3 +158,43 @@ Entries are append-only; corrections are new dated entries.
   scheduler or model-profile command, and changed no cadence, production
   source, dependency, schema, manifest, protected byte, version value, tag,
   publication ref, or working-repository ref.
+
+### 2026-07-31 · DISPOSITION-FIRST — select patch release v0.17.1
+
+- owner: Codex
+- commit: 6a11b0e6dd2f2e121d395faf088537be620d6d63
+- result: PASS. The operator selected `release v0.17.1` before implementation.
+  The recorded reason is to ship the order-independent internal boundary
+  derivation together with three cycles of executable binding corrections,
+  rather than inheriting a release conclusion from green gates.
+- decision-gate acceptance: PASS. E0 is complete and its implementation/audit
+  pair exists. Step 2's gate contains every acceptance criterion because this
+  task changes only the two lifecycle records that state the operator's
+  decision, measured classification, and unchanged authorities/refs.
+- classification acceptance: PASS. E0 compared the unpublished distance with
+  published v0.17.0 and found no route, response-shape, serialized `/v1/*`
+  value-domain, dependency, or schema movement. The difference remains one raw
+  boundary string in an internal loopback `/ingest` diagnostic for a
+  misordered window. Neither release-classification trigger fires, so patch is
+  the measured class.
+- version acceptance: PASS. The selected exact version is **v0.17.1**.
+  `./run version-check` still reported all five authorities at **0.17.0**:
+  `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`,
+  `shell/intel_shell/app.py`, the `STATE.md` header, and `CHANGELOG.md`.
+  Their release-authority diff from the E0 audit commit was empty. Step 6 owns
+  their later movement.
+- lifecycle acceptance: PASS. `STATE.md` and the dated Step 2 runbook amendment
+  both record the selection, date, and reason. The active lifecycle check
+  passed with `governed_export=exempt-open-latest-at-close`.
+- publication acceptance: PASS. This selection chooses the release-shaped
+  Step 6–Step 8 workflow but does not itself authorize Step 8's separate
+  publication act. Remote-tracking `origin/main` and the peeled v0.17.0 tag
+  remained `4af2841816dd3e43fb8423153b91aa22ccb87537`; annotated tag object
+  `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` was unchanged. No version
+  authority, tag, `main`, release ref, or publication ref moved.
+- golden-E2E delta: **0**. The mandatory Step 2 standalone execution passed
+  **11/11** byte-identically.
+- boundary acceptance: PASS. The task changed no artifact beyond `STATE.md`
+  and the active runbook. It made no publisher request, scheduler run,
+  model-profile command, cadence change, manifest edit, production-source
+  edit, or protected-byte edit.
