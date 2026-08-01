@@ -410,3 +410,85 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref acceptance: PASS. The task made no publisher request, ran no
   scheduler or model-profile command, and created, moved, or deleted no
   publication ref.
+
+### 2026-08-01 · RE-MEASURE — authenticate the exact candidate on a fresh neutral ref
+
+- owner: Codex
+- commit: e248d2e4d2177a72a7c3746931505c6219fcff6f
+- result: PASS. Exact implementation commit
+  `e248d2e4d2177a72a7c3746931505c6219fcff6f` records authenticated hosted
+  evidence for no-release candidate
+  `1caace6e2470b51c371d67598b756a48f93d7968`, updates the latest governed
+  observations, and checks Step 6. It changes only Architecture, State, and the
+  active runbook; the authenticated candidate itself remains the preceding
+  Step 5 audit tree.
+- gate acceptance: PASS. Steps 2–5 were complete. The workflow remained
+  byte-unchanged at SHA-256
+  `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+  Its seven executable job identities, seven-receipt population, and seven
+  signed identities are identical to the prior cycle; dependency drift remains
+  the one job-level report-only skip. The candidate diff contains no production
+  source, workflow, manifest, dependency, release-value, or public-surface
+  change.
+- ref acceptance: PASS. Before publication, direct `git ls-remote` returned no
+  entry for fresh ref
+  `refs/heads/codex/v0.32-evidence-1caace6`. After the operator explicitly
+  approved the candidate push, remote readback resolved that ref to exact
+  candidate `1caace6e2470b51c371d67598b756a48f93d7968`. No existing ref was
+  reused, force-moved, or repurposed.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30693555131**, attempt
+  **1**, used branch `codex/v0.32-evidence-1caace6` and exact candidate SHA.
+  `core`, `golden`, `lint`, `msrv`, `net`, `shell/python=3.11`, and
+  `shell/python=3.12` all passed; every receipt, attestation, bundle, and
+  persistence step passed. Dependency drift skipped under its declared
+  report-only condition.
+- attestation acceptance: PASS. The repository's release-grade verifier
+  required paired attestations, consumed the downloaded ephemeral **7 receipts
+  / 7 Sigstore bundles**, accepted **7**, rejected **0**, and found the complete
+  runner matrix with no finding. Every signed identity binds repository
+  `jiayanzeng/intel-platform`, workflow
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest
+  `1caace6e2470b51c371d67598b756a48f93d7968`, and source ref
+  `refs/heads/codex/v0.32-evidence-1caace6`. The temporary report was 37,235
+  bytes with SHA-256
+  `c374b139010343c35ea96d233634b0566675ca967d7a7c88774377cb8b504fcb`
+  and remained outside the repository and manifest.
+- population acceptance: PASS. Exact-candidate local Python 3.11.4 and 3.12.13
+  each collected/passed **336**, failed **0**, and skipped **0**. Each hosted
+  lane collected **336**, passed **335**, and skipped the same named, reasoned
+  `on_site` node
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`.
+  For each lane `tools/test_population.py` derived `collected=336`,
+  `equivalent=true`, and `equivalent_passed=336`; every recorded figure is
+  comparator output rather than a log transcription.
+- candidate acceptance: PASS. The exact candidate passed local `ci-local`
+  **20/20**, including warning-denied 146 workspace tests, the focused SEC
+  diagnostic, 32 ingest-net plus 30 cored-net tests, locked Rust 1.78,
+  clippy/fmt/ShellCheck, invariant self-test **12 rules / 61 controls**, shell
+  336/336, protected artifacts exact, and embedded golden 11/11. The first
+  sandboxed `ci-local` and Python 3.12 attempts were permission non-results
+  because loopback binds and process inspection were denied; identical
+  permitted reruns supplied the passing measurements.
+- export acceptance: PASS. The project-root candidate export contained 153
+  files / **2,706,393 bytes**, retained exactly v0.30–v0.32, excluded both
+  protected byte classes, and left 293,607 bytes / 9.79% beneath the ceiling.
+- governed review-export measurement: tree=`1caace6e2470b51c371d67598b756a48f93d7968`; bytes=`2706393`
+- artifact acceptance: PASS. The schema-2 manifest remained **191,395 bytes**
+  with **2 artifacts / 331 pinned files**; every pin and both protected
+  databases matched the candidate. No manifest registration occurred.
+- published-state acceptance: PASS. A final post-run remote query again found
+  the evidence ref at the exact candidate, remote `main` and peeled `v0.17.1`
+  at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated
+  tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged.
+- lifecycle acceptance: PASS. After the state update, `cycle-check` read
+  `STATE.md` at 348,321 bytes and the unchanged manifest at 191,395 bytes,
+  reported both `bound`, and kept governed review export on
+  `exempt-open-latest-at-close`. `version-check` passed at 0.17.1 and
+  `invariant-scan --self-test` passed 12/12 rules / 61 controls.
+- golden-E2E delta: PASS. Golden passed byte-identical **11/11** on the exact
+  candidate locally and hosted, then passed the mandatory standalone post-task
+  run after the record update; delta **0**.
+- publisher/operation acceptance: PASS. Step 6 issued no publisher request,
+  ran no scheduler or model-profile command, and added no repository evidence
+  or manifest entry. Its only remote mutation was the explicitly approved fresh
+  evidence ref.
