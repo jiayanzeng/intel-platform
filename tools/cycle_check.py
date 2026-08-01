@@ -1610,8 +1610,12 @@ GOVERNED_EXPORT_MARGIN_SERIES_RE = re.compile(
     r"Review-export margin: kind=`(governed→governed)`; "
     r"prior_progress=`([^`\n]+)`; prior_bytes=`([0-9]+)`; "
     r"current_progress=`([^`\n]+)`; current_bytes=`([0-9]+)`; "
+    r"evaluated_progress=`([^`\n]+)`; evaluated_bytes=`([0-9]+)`; "
     r"denominator_bytes_per_cycle=`([0-9]+)`; "
     r"numerator_bytes=`([0-9]+)`; cycles=`([0-9]+\.[0-9]{2})`\."
+)
+GOVERNED_EXPORT_PROGRESS_PATH_RE = re.compile(
+    r"^docs/cycles/PROGRESS-v([0-9]+(?:\.[0-9]+)+)\.md$"
 )
 GOVERNED_EXPORT_PROGRESS_PREFIX = "- governed review-export measurement:"
 GOVERNED_EXPORT_PROGRESS_RE = re.compile(
@@ -2513,7 +2517,7 @@ def check_governed_export_margin_kind(
     root: Path,
     errors: list[str],
 ) -> None:
-    """Bind the visible cycle margin to two governed progress measurements."""
+    """Bind an evaluated margin to the latest positive same-kind basis."""
     matches = list(GOVERNED_EXPORT_MARGIN_SERIES_RE.finditer(architecture_text))
     if len(matches) != 1:
         errors.append(
@@ -2554,10 +2558,16 @@ def check_governed_export_margin_kind(
     prior_value = int(match.group(3))
     current_relative = Path(match.group(4))
     current_value = int(match.group(5))
-    denominator = int(match.group(6))
-    numerator = int(match.group(7))
-    displayed_cycles = Decimal(match.group(8))
-    relative_paths = (prior_relative, current_relative)
+    evaluated_relative = Path(match.group(6))
+    evaluated_value = int(match.group(7))
+    denominator = int(match.group(8))
+    numerator = int(match.group(9))
+    displayed_cycles = Decimal(match.group(10))
+    relative_paths = (
+        prior_relative,
+        current_relative,
+        evaluated_relative,
+    )
     if any(
         path.is_absolute()
         or ".." in path.parts
@@ -2578,7 +2588,20 @@ def check_governed_export_margin_kind(
         return
 
     recorded_values: list[int] = []
+    source_versions: list[tuple[int, ...]] = []
     for relative in relative_paths:
+        version_match = GOVERNED_EXPORT_PROGRESS_PATH_RE.fullmatch(
+            relative.as_posix()
+        )
+        if version_match is None:
+            errors.append(
+                f"{shown(architecture_path, root)}: governed export margin "
+                f"source {relative.as_posix()} has no parseable cycle version"
+            )
+            return
+        source_versions.append(
+            tuple(int(part) for part in version_match.group(1).split("."))
+        )
         source = root / relative
         if not source.is_file():
             errors.append(
@@ -2604,20 +2627,76 @@ def check_governed_export_margin_kind(
         recorded_values.append(int(source_measurements[-1].group(2)))
 
     # Invariant R12 control site: governed review-export same-kind margin.
-    if recorded_values != [prior_value, current_value]:
+    if recorded_values != [prior_value, current_value, evaluated_value]:
         errors.append(
             f"{shown(architecture_path, root)}: governed export margin mixes "
             "or misstates measurement series: "
-            f"declared={prior_value}→{current_value}, "
+            f"declared={prior_value}→{current_value}@{evaluated_value}, "
             f"recorded={recorded_values[0]}→{recorded_values[1]}"
+            f"@{recorded_values[2]}"
+        )
+        return
+
+    evaluated_version = source_versions[2]
+    if evaluated_version < source_versions[1]:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin "
+            "evaluation cycle precedes its denominator basis"
+        )
+        return
+
+    governed_series: dict[tuple[int, ...], tuple[Path, int]] = {}
+    for source in sorted((root / "docs" / "cycles").glob("PROGRESS-v*.md")):
+        relative = source.relative_to(root)
+        version_match = GOVERNED_EXPORT_PROGRESS_PATH_RE.fullmatch(
+            relative.as_posix()
+        )
+        if version_match is None:
+            continue
+        version = tuple(
+            int(part) for part in version_match.group(1).split(".")
+        )
+        if version > evaluated_version:
+            continue
+        source_text = source.read_text()
+        measurements = list(GOVERNED_EXPORT_PROGRESS_RE.finditer(source_text))
+        if measurements:
+            governed_series[version] = (
+                relative,
+                int(measurements[-1].group(2)),
+            )
+    positive_pairs: list[tuple[tuple[int, ...], Path, Path]] = []
+    for version, (relative, value) in governed_series.items():
+        if version[-1] == 0:
+            continue
+        previous_version = (*version[:-1], version[-1] - 1)
+        previous = governed_series.get(previous_version)
+        if previous is not None and value > previous[1]:
+            positive_pairs.append((version, previous[0], relative))
+    if not positive_pairs:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin has "
+            "no positive adjacent-cycle governed denominator basis"
+        )
+        return
+    _latest_version, latest_prior, latest_current = max(positive_pairs)
+    # Invariant R12 control site: governed review-export margin basis selection.
+    if (prior_relative, current_relative) != (latest_prior, latest_current):
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin must "
+            "use the latest positive adjacent-cycle governed pair; "
+            f"declared={prior_relative.as_posix()}→"
+            f"{current_relative.as_posix()}, latest={latest_prior.as_posix()}→"
+            f"{latest_current.as_posix()}"
         )
         return
 
     governed_values = GOVERNED_EXPORT_ROW_MARKER_RE.findall(architecture_text)
-    if len(governed_values) != 1 or int(governed_values[0]) != current_value:
+    if len(governed_values) != 1 or int(governed_values[0]) != evaluated_value:
         errors.append(
-            f"{shown(architecture_path, root)}: governed export margin current "
-            f"value {current_value} does not equal the governed row value"
+            f"{shown(architecture_path, root)}: governed export margin "
+            f"evaluated value {evaluated_value} does not equal the governed "
+            "row value"
         )
         return
     expected_denominator = current_value - prior_value
@@ -2628,7 +2707,7 @@ def check_governed_export_margin_kind(
             f"{expected_denominator}"
         )
         return
-    expected_numerator = MAX_EXPORT_BYTES - current_value
+    expected_numerator = MAX_EXPORT_BYTES - evaluated_value
     if numerator != expected_numerator:
         errors.append(
             f"{shown(architecture_path, root)}: governed export margin "

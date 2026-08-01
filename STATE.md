@@ -1,6 +1,92 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 6 is green; exact no-release candidate `2edb7694c2c6c1498b3903382c37aef68329150d` carries authenticated hosted evidence on fresh ref `codex/v0.33-evidence-2edb769`, while published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete exact-candidate local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 67 controls**, Python 3.11.4, and golden **11/11**. Hosted workflow-dispatch run **30705340282**, attempt **1**, passed all seven executable jobs and hosted golden **11/11**; dependency drift took its declared report-only skip. The repository release-grade verifier consumed **7 receipts / 7 Sigstore bundles**, accepted **7**, rejected **0**, and bound every identity to the exact candidate and source ref `refs/heads/codex/v0.33-evidence-2edb769`. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **346**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; each hosted lane collected **346**, passed **345**, and skipped the same named, reasoned `on_site` test. For each lane `tools/test_population.py` derived `collected=346`, `equivalent=true`, and `equivalent_passed=346`. The last fully matched checklist measurement, taken with the Step 6 box still open, is **259 checked / 3 retracted / 259 matched / 259 commits resolved**. All **332** pins and both protected databases matched; exact candidate export is **2,592,441 bytes / 153 files** with retained and excluded byte classes correct. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and the annotated tag ref at object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected database byte, public response/value-domain state, publication version, or publication ref changed through the candidate; the fresh evidence ref was the sole publication mutation.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 is closed with the operator-selected `no-release` disposition; published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Exact authenticated candidate `2edb7694c2c6c1498b3903382c37aef68329150d` retains its hosted evidence on `codex/v0.33-evidence-2edb769`; run **30705340282** passed all seven executable jobs, and the release-grade verifier accepted **7 receipts / 7 Sigstore bundles** with **0 rejected**. Closing pre-commit verification passed `cycle-check` with `state=closed` and governed export `bound`, `invariant-scan` **12 rules / 68 controls**, constrained Python 3.11.4 and 3.12.13 at **348/348** each, and golden **11/11**. The last fully matched pre-close checklist is **260 checked / 3 retracted / 260 matched / 260 commits resolved**; the append-only audit child will bind the closing commit and rerun the complete **20-check** entry point. All **332** pins and both protected databases match. The governed export remains the last closing-visible candidate measurement, **2,592,441 bytes / 153 files**, leaving **407,559 bytes / 13.59%**, or **5.29 cycles** on the latest positive adjacent same-kind denominator. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected database byte, public response/value-domain state, publication version, tag, or publication ref changed during close.
+
+**v0.33 R-CLOSE — operator-selected governed no-release closure (measured
+2026-08-01).** Release disposition: no-release (as of 2026-08-01). The
+operator selected `no-release` after the activation-exclusive and published
+diffs showed lifecycle/publication controls, focused tests, cycle and
+architecture records, retained-cycle configuration, the operator-selected
+State archival, and its exact structural manifest pin. No production source,
+workflow, dependency, release value, measured runtime behaviour, public route,
+response shape, or serialized `/v1/*` value-domain changed. That structural
+and archival distance is the reason for the disposition; it is not weakened to
+the statement that “nothing shipped.”
+
+The closing runbook binds its governed export row to the last field already
+visible in its tree: authenticated candidate
+`2edb7694c2c6c1498b3903382c37aef68329150d` at **2,592,441 bytes / 153
+files**. The remaining **407,559 bytes / 13.59%** equals **5.29 cycles** on the
+latest positive adjacent same-kind basis, v0.31→v0.32 at **77,014
+bytes/cycle**. The actual post-archive v0.32→v0.33 transition is **−113,952
+bytes**, so the corrected executable format separates the denominator basis
+from the v0.33 evaluation field and rejects both a misstated measurement and an
+older positive pair. The real closing-tree export is deliberately absent from
+the closing record and belongs only in the audit child's non-governing
+`cycle-ending review-export audit` field.
+
+Immediately before the close record, `STATE.md` measured **201,569 /
+453,741 bytes**, leaving **252,172 bytes**, or **8.09 cycles** at its latest
+positive same-kind **31,177-byte/cycle** denominator. The manifest measured
+**192,042 / 1,048,576 bytes**, leaving **856,534 bytes**, or **1,323.85
+cycles** at **647 bytes/cycle**. Manifest validation reported schema 2 / **2
+artifacts / 332 pinned files**; the exact **178,125-byte** State archive
+remained pinned at SHA-256
+`b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`.
+Two final complete verifications took **0.12 s / 0.10 s real** and matched all
+pins plus both protected databases, so neither manifest trigger fired. The
+pre-close checklist passed **260 / 3 / 260 / 260** and did not fall.
+
+Final direct remote readback left evidence ref
+`codex/v0.33-evidence-2edb769` at the exact candidate, remote `main` and peeled
+`v0.17.1` at published closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. `version-check`
+derived **0.17.1** from every release source, **22** current offline-MSRV
+restatements at 1.78, and **3** current release-version restatements. No version
+source, tag, `main`, or release ref changed.
+
+Permission reconciliation over activation
+`353a17e67c3cac5699f43dd65b15725e3e35d5e1..R-CLOSE` used
+`tools/cycle_check.py`, `tools/invariant_scan.py`,
+`config/invariant-rules.json`, `shell/tests/**`, `docs/state-archive/**`,
+`AGENTS.md`, `ARCHITECTURE.md`, `tools/evidence_artifacts.py`, and the
+conditionally authorized `config/protected-artifacts.json`. The conditional
+manifest permission activated only for selected Fidelity B. Unused allowances
+are `tools/version_check.py`, `tools/export_check.py`, and
+`repomix.config.json`. Every release-authority and `forbid` path is unused;
+standing status precedence accounts for `STATE.md` and the active
+runbook/progress pair. No publisher request, scheduler, service, model-profile
+command, protected database write, production-source change, or publication
+mutation occurred during close.
+
+Published v0.17.1 reset the divergence count to zero. The measured v0.33
+distance contains no runtime-behaviour difference and no public-surface
+change, so the count remains zero and no fresh publication-epoch count starts.
+This remains a dated operator adjudication whose record shape, freshness, and
+cycle identity are executable.
+
+The full pre-commit closing gates passed where the closing protocol permits
+them: `cycle-check` reported `state=closed` and governed export `bound`;
+`invariant-scan --self-test` passed **12 rules / 68 controls**; constrained
+Python 3.11.4 and 3.12.13 each collected/passed **348**, failed 0, skipped 0,
+with the same one accepted warning; and golden passed **11/11**. The first
+sandboxed Python runs failed eight tests only because loopback binds and `ps`
+were denied, and the first sandboxed golden could not bind; those attempts are
+`not measured`, while the identical permitted reruns supply the passing
+results. The closing box cannot acquire its matching real commit in the
+progress record until the closing commit exists; the append-only audit child
+resolves that protocol edge and reruns the complete entry point.
+
+Across the final tree, **25** of the **61** activation `expected_line` values
+differ and **7** controls were added, for **68 controls protected**. Step 7's
+last schema change re-derived **12** shifted existing values plus new emitted
+line **2683**. No expected line was calculated by offset. The four author
+defects remain visible in the active runbook header. The fourth is the Step 3
+format's inability to encode a truthful post-archive decrease while keeping a
+positive margin denominator; its real-entrypoint rejection is corrected by
+separating the evaluation source from the latest positive adjacent same-kind
+basis, without weakening the ceiling or latest-at-close binding.
 
 **v0.33 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-01).** The sole pre-activation worktree item was the operator-supplied

@@ -38,6 +38,17 @@ records and corrects that defect: `tools/evidence_artifacts.py` is narrowly
 allowed for an exact structural-archive registry and failure-capable tests;
 prefix admission remains forbidden.
 
+**r5 — 2026-08-01 — post-archive margin expressibility correction.** Step 7's
+real closing preflight measured the governed v0.32→v0.33 export transition as
+negative after the selected State archival. The Step 3 format required its
+`current` basis value to equal the governed row and required that basis delta
+to be positive, so the truthful latest evaluation could not be encoded. A
+real-entrypoint synthetic close carrying the negative delta exited 1 at that
+branch. The corrected format names the positive same-kind denominator basis
+separately from the evaluated governed progress field and rejects an older
+positive adjacent pair when a later one exists. The ceiling and closing-tree
+content binding are unchanged.
+
 Step 1 — rebuilt the exact entering state and settled G1–G6 — 2026-08-01
 
 The measured baseline corrected checklist 253 to 254, confirmed the delivered
@@ -58,9 +69,11 @@ Step 5 — operator-selected Cut B archived through v0.28 with a standing Fideli
 
 Step 6 — exact candidate authenticated on fresh neutral evidence ref — 2026-08-01
 
+Step 7 — no-release close and margin basis corrected — 2026-08-01
+
 ---
 
-**Three reviewer errors, all mine, recorded before anything else.**
+**Four reviewer errors, all mine, recorded before anything else.**
 
 1. **v0.32 G1 required each governed byte margin to be stated "in cycles under
    an explicitly named denominator." It never required the denominator to be
@@ -107,6 +120,17 @@ Step 6 — exact candidate authenticated on fresh neutral evidence ref — 2026-
    honestly describe the selected archive. r4 therefore permits the narrow
    validator and test change needed to register this exact structural archive;
    no prefix, alias, or mislabelled authorization grade is introduced.
+
+4. **Step 3 made the corrected same-kind margin's denominator endpoint double
+   as its current evaluation point, so an authorized archival decrease made
+   the closing criterion unexpressible.** The real `cycle-check` entry point
+   read a synthetic v0.33 row carrying the measured −113,952-byte transition
+   and rejected it because the denominator was non-positive. Selecting the
+   older row value would have violated latest-at-close, while projecting a
+   positive v0.33 growth rate would have invented a measurement. r5 separates
+   the latest positive adjacent governed basis from the governed evaluation
+   field and registers a failure-capable stale-pair control. This is an author
+   defect, not an export or archival finding.
 
 ---
 
@@ -277,7 +301,7 @@ edited to match what happened.
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.33 · 2026-08-01 — release-authority precedence admits the unchanged version literal while no shell source or release value changed | none — `shell/intel_shell/**` is forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.33 · 2026-08-01 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | **Second `STATE.md` archival** | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.33 · 2026-08-01 — under explicit operator authorization, Step 5 performed Cut B ahead of the trigger: the 178,125-byte archive plus 194,542-byte pre-record live complement reconstructed the 372,667-byte pre-cut State exactly. Step 6 then measured exact candidate export at 2,592,441 bytes and the post-record live State at 201,569 / 453,741 bytes; neither trigger clause fired | **Step 4 and Step 5 — completed ahead of the trigger; the unchanged condition governs recurrence** |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — Step 2's control-schema trigger fired and emitted mutation output re-derived 25 shifted existing values plus four new admission/selector values. Step 3's schema change then re-derived 29 shifted existing values plus one new same-kind-margin value at line 2401. Step 4's schema change re-derived 30 shifted existing values plus one new State-region value at line 2213. The latest shifted-existing count is fewer than the 67 registered controls protected | Step 2 and Step 3 and Step 4 — completed; count and re-derive from emitted output |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — Step 2's control-schema trigger fired and emitted mutation output re-derived 25 shifted existing values plus four new admission/selector values. Step 3's schema change then re-derived 29 shifted existing values plus one new same-kind-margin value at line 2401. Step 4's schema change re-derived 30 shifted existing values plus one new State-region value at line 2213. Step 7's margin-basis correction re-derived 12 shifted existing values plus the new basis-selection value at emitted line 2683; none was offset-computed. The latest shifted-existing count is fewer than the 68 registered controls protected | Step 2 and Step 3 and Step 4 and Step 7 — completed; count and re-derive from emitted output |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.33 · 2026-08-01 — v0.33 still matches `v0.<n>` and production uses the Git-derived tracked retained set; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.33 · 2026-08-01 — Step 6 classified exact authenticated candidate `2edb7694c2c6c1498b3903382c37aef68329150d` as lifecycle/docs/test/control/archive-pin distance only, with no measured runtime or public-surface change; v0.17.1's publication reset still leaves the epoch count at zero and no fresh count started | Step 7 — restate the epoch count under the v0.32 reset rule |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.33 · 2026-08-01 — contextual floor predicates found no unregistered live current restatement; trigger did not fire | none — completed control remains active |
@@ -688,7 +712,7 @@ by green gates, or by hosted evidence. Two outcomes, neither defaulted:
 **Done when** v0.33 is closed on a record that says what it did and what it
 deliberately did not.
 
-- [ ] **R-CLOSE**
+- [x] **R-CLOSE**
 
 ---
 
@@ -729,9 +753,9 @@ These hold for every step unless a step names its exception explicitly.
 - [x] Deferred table rewritten with v0.33 observations, **triggers unchanged**
 - [x] Every trigger-bearing `ARCHITECTURE.md` row carries a v0.33 measurement
 - [x] Governed export row carries a same-kind margin
-- [ ] Both governed byte boundaries re-measured post-archival
-- [ ] Closing record + append-only audit child, per the tagged-close protocol
-- [ ] Cycle-ending review-export audit field present in the audit child
+- [x] Both governed byte boundaries re-measured post-archival
+- [x] Closing record + append-only audit child, per the tagged-close protocol
+- [x] Cycle-ending review-export audit field present in the audit child
 
 ---
 
@@ -796,10 +820,10 @@ G4's fidelity question is one this reviewer raised without being able to check
 the existing archive's own integrity, and that limitation is stated rather than
 left implied.**
 
-**Two reviewer errors are recorded in this file's header** rather than here. The
-second was found by executing the runbook's own Step 5 before handing it over,
-which is the only reason r1's wrong cut point did not reach implementation.
-**A pre-flight is cheaper than a cycle.**
+**Four reviewer errors are recorded in this file's header** rather than here.
+The cut-point defect was found by executing the runbook's own Step 5 before
+hand-off, and the two later expressibility defects were found by executing the
+real validator and close entry points. **A pre-flight is cheaper than a cycle.**
 
 **One near-error, recorded because the discipline is cheap.** In drafting G3
 this reviewer initially concluded that `README.md`'s citation of `STATE §6b`
@@ -807,3 +831,129 @@ was a broken cross-reference, on the strength of a faulty heading grep. `§6b`
 exists at `STATE.md:5116`. The finding was corrected before it reached this
 runbook; it is noted here because a finding caught by better measurement is the
 same event as a finding caught too late, minus the cost.
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-01
+- **Release disposition:** no-release (as of 2026-08-01)
+
+The operator explicitly selected `no-release`. The measured distance from
+published v0.17.1 contains lifecycle and publication controls, focused tests,
+cycle and architecture records, retention configuration, the operator-selected
+State archival, and its exact structural manifest pin. It contains no
+production source, workflow, dependency, release value, measured runtime-
+behaviour difference, public route, response shape, or serialized `/v1/*`
+value-domain change. That intentionally structural and archival distance is
+the reason for the disposition; the weaker statement “nothing shipped” is not
+substituted for it.
+
+Published v0.17.1 remains current. Final direct remote inspection resolved
+`refs/heads/main` and peeled `refs/tags/v0.17.1` to published closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, the annotated tag ref to object
+`14912f1…`, and evidence ref
+`refs/heads/codex/v0.33-evidence-2edb769` to exact authenticated candidate
+`2edb7694c2c6c1498b3903382c37aef68329150d`. Every release-version authority
+still derives **0.17.1**; all eight declared release-authority paths are
+unchanged. No tag, `main`, release ref, version source, or publication identity
+moved during close.
+
+The closing tree's governed review-export row equals the last governed field it
+can already see: candidate
+`2edb7694c2c6c1498b3903382c37aef68329150d` at **2,592,441 bytes / 153
+files**, retaining exactly v0.31–v0.33 and excluding both protected byte
+classes. Its **407,559-byte / 13.59%** remainder is **5.29 cycles** on the
+latest positive adjacent same-kind governed basis, v0.31→v0.32 at **77,014
+bytes/cycle**. The actual v0.32→v0.33 governed transition is a post-archive
+**−113,952 bytes** and is recorded as such rather than used as a fictional
+positive denominator. The closing tree does not project its own export; that
+real measurement belongs only in the distinct non-governing
+`cycle-ending review-export audit` field of the append-only audit child.
+
+The two governed artifact byte boundaries were re-measured post-archival.
+Immediately before the closing record, `STATE.md` was **201,569 / 453,741
+bytes**, leaving **252,172 bytes**, or **8.09 cycles** at the latest positive
+same-kind **31,177-byte/cycle** denominator. The manifest was **192,042 /
+1,048,576 bytes**, leaving **856,534 bytes**, or **1,323.85 cycles** at its
+latest positive same-kind **647-byte/cycle** denominator. Schema validation
+reported **2 artifacts / 332 pinned files**; the archive remained exactly
+**178,125 bytes** at SHA-256
+`b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`.
+Two complete protected-artifact verifications took **0.12 s / 0.10 s real**
+and matched every pin plus both protected databases, so neither manifest
+trigger fired. `checklist-audit` passed **260 checked / 3 retracted / 260
+matched / 260 commits resolved** before the closing box was checked; it did
+not fall.
+
+Every declared permission is reconciled over activation commit
+`353a17e67c3cac5699f43dd65b15725e3e35d5e1` exclusive through R-CLOSE. Used
+`allow` paths are `tools/cycle_check.py`, `tools/invariant_scan.py`,
+`config/invariant-rules.json`, `shell/tests/**`, `docs/state-archive/**`,
+`AGENTS.md`, `ARCHITECTURE.md`, `tools/evidence_artifacts.py`, and the
+conditionally usable `config/protected-artifacts.json`; that conditional
+permission activated only for the operator-selected Fidelity B exact archive
+pin. Unused `allow` paths are `tools/version_check.py`,
+`tools/export_check.py`, and `repomix.config.json`. All eight
+`release_authority` paths are unused. Every `forbid` path is unused; standing
+precedence admits only `STATE.md` and this active runbook/progress pair. In
+particular, every closed cycle document, `.github/workflows/**`, `run`,
+`tools/model_profiles.py`, every production source family, publisher/scheduler
+configuration, observation, fixture, and protected database byte is unchanged.
+
+Successful publication of v0.17.1 reset the published-release divergence
+count to zero at closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`. The measured v0.33 distance has no
+runtime-behaviour difference and no public-surface change, so the count remains
+zero and no fresh publication-epoch count starts. This is the latest dated
+v0.33 operator adjudication; the executable checker continues to enforce the
+record's shape, freshness, and cycle identity rather than pretend to classify
+runtime semantics.
+
+At activation the invariant registry carried **61 controls**. The closed tree
+carries **68**: all **61** activation controls remain, **7** controls were
+added, and **25 existing `expected_line` values differ from activation**. Step
+7's final schema change re-derived **12 shifted existing values** and the new
+basis-selection value at emitted line **2683** from real mutation output; no
+line value was computed by offset. Both counts are smaller than the **68
+controls protected**. The four author defects remain classified and explained
+in this file's header, where they are visible; they are not repeated here as
+product findings.
+
+Intentionally unreleased implementation commits:
+
+1. Cycle activation:
+   `353a17e67c3cac5699f43dd65b15725e3e35d5e1`
+2. Activation audit record:
+   `05599c76f22ebd852cbac7e048f49bc33d994f60`
+3. E0 implementation:
+   `a966f554cd7db5a3fa33aaf369a727584dd0cd5f`
+4. E0 audit record:
+   `f3920d35e0c86fe97562029fffa5f92eea3b6b4d`
+5. PUBLICATION-STATUS implementation:
+   `118ba84d038866233b178147d4133a9cd63fa8bd`
+6. PUBLICATION-STATUS audit record:
+   `b25c9e9e06f4d6233ebf81ff0475c1a69a7b2372`
+7. MARGIN-KIND implementation:
+   `ae15a8c89b86e89bc3998b164837d669784fbd4f`
+8. MARGIN-KIND audit record:
+   `4ff05e28df7a40137ba135279af50dd1a2f32bbd`
+9. REGION-CONTRACT implementation:
+   `c74ad532f4dd1ea4c7a5c2d0ea5fc44bed3424e2`
+10. REGION-CONTRACT audit record:
+    `1121e90055f2fb189bb71404e8bd93f5b55e0a8b`
+11. ARCHIVE-CUT implementation:
+    `59f45c181d034ec6f4e78815224fff185824a0fb`
+12. ARCHIVE-CUT audit record and authenticated candidate:
+    `2edb7694c2c6c1498b3903382c37aef68329150d`
+13. RE-MEASURE implementation record:
+    `8f44d5298e9488d04a4e16c445ad15a70607f7ec`
+14. RE-MEASURE audit record:
+    `58b19c02470f22a87d8102fd9aaab74a5e37152d`
+15. Governed export measurement correction:
+    `75fc7323115717cb0e991a38d065824230ec9af1`
+
+The R-CLOSE implementation tree and its required append-only audit child are
+also intentionally unreleased. A commit cannot truthfully contain its own
+hash; the audit child therefore names the closing implementation commit after
+it exists and records that tree's real export measurement.

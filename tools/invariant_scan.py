@@ -1651,6 +1651,10 @@ PUBLICATION_CONTROL_MARKERS = {
     "governed-export-margin-kind": (
         "Invariant R12 control site: governed review-export same-kind margin."
     ),
+    "governed-export-margin-basis": (
+        "Invariant R12 control site: governed review-export margin basis "
+        "selection."
+    ),
     "state-region-contract": (
         "Invariant R12 control site: State archival permanent-tail boundary."
     ),
@@ -1779,6 +1783,7 @@ def _governed_margin_entry_output(root: Path, cycle_check) -> tuple[int, str]:
     margin = margin_matches[0]
     prior_source = root / margin.group(2)
     current_source = root / margin.group(4)
+    evaluated_source = root / margin.group(6)
     key = (
         cycle_source[start:end]
         + "\0"
@@ -1787,6 +1792,8 @@ def _governed_margin_entry_output(root: Path, cycle_check) -> tuple[int, str]:
         + prior_source.read_text()
         + "\0"
         + current_source.read_text()
+        + "\0"
+        + evaluated_source.read_text()
     )
     cached = _R12_GOVERNED_MARGIN_ENTRY_CACHE.get(key)
     if cached is not None:
@@ -1795,13 +1802,15 @@ def _governed_margin_entry_output(root: Path, cycle_check) -> tuple[int, str]:
     prior_value = int(margin.group(3)) + 1
     current_value = int(margin.group(5))
     denominator = current_value - prior_value
-    numerator = int(margin.group(7))
+    numerator = int(margin.group(9))
     cycles = numerator / denominator
     planted_marker = (
         "Review-export margin: kind=`governed→governed`; "
         f"prior_progress=`{margin.group(2)}`; prior_bytes=`{prior_value}`; "
         f"current_progress=`{margin.group(4)}`; "
         f"current_bytes=`{current_value}`; "
+        f"evaluated_progress=`{margin.group(6)}`; "
+        f"evaluated_bytes=`{margin.group(7)}`; "
         f"denominator_bytes_per_cycle=`{denominator}`; "
         f"numerator_bytes=`{numerator}`; cycles=`{cycles:.2f}`."
     )
@@ -1828,6 +1837,137 @@ def _governed_margin_entry_output(root: Path, cycle_check) -> tuple[int, str]:
         result = (status, output.getvalue())
 
     _R12_GOVERNED_MARGIN_ENTRY_CACHE[key] = result
+    return result
+
+
+_R12_GOVERNED_MARGIN_BASIS_ENTRY_CACHE: dict[str, tuple[int, str]] = {}
+
+
+def _governed_margin_basis_entry_output(
+    root: Path,
+    cycle_check,
+) -> tuple[int, str]:
+    """Plant an older positive pair and exercise it through cycle_check.run."""
+    cycle_source = (root / "tools" / "cycle_check.py").read_text()
+    marker = (
+        "    # Invariant R12 control site: governed review-export margin "
+        "basis selection."
+    )
+    start = cycle_source.index(marker)
+    end = cycle_source.index("\n\ndef governed_trigger_subjects", start)
+    architecture_text = (root / "ARCHITECTURE.md").read_text()
+    margin_matches = list(
+        cycle_check.GOVERNED_EXPORT_MARGIN_SERIES_RE.finditer(
+            architecture_text
+        )
+    )
+    if len(margin_matches) != 1:
+        raise ConfigError(
+            "ARCHITECTURE.md: margin-basis control requires one baseline "
+            "series marker"
+        )
+    margin = margin_matches[0]
+    evaluated_match = cycle_check.GOVERNED_EXPORT_PROGRESS_PATH_RE.fullmatch(
+        margin.group(6)
+    )
+    if evaluated_match is None:
+        raise ConfigError(
+            "ARCHITECTURE.md: margin-basis control requires a versioned "
+            "evaluation progress path"
+        )
+    evaluated_version = tuple(
+        int(part) for part in evaluated_match.group(1).split(".")
+    )
+    governed_series: dict[tuple[int, ...], tuple[Path, int]] = {}
+    source_texts: list[str] = []
+    for source in sorted((root / "docs" / "cycles").glob("PROGRESS-v*.md")):
+        relative = source.relative_to(root)
+        version_match = cycle_check.GOVERNED_EXPORT_PROGRESS_PATH_RE.fullmatch(
+            relative.as_posix()
+        )
+        if version_match is None:
+            continue
+        version = tuple(
+            int(part) for part in version_match.group(1).split(".")
+        )
+        if version > evaluated_version:
+            continue
+        source_text = source.read_text()
+        measurements = list(
+            cycle_check.GOVERNED_EXPORT_PROGRESS_RE.finditer(source_text)
+        )
+        if measurements:
+            governed_series[version] = (
+                relative,
+                int(measurements[-1].group(2)),
+            )
+            source_texts.append(source_text)
+    positive_pairs: list[
+        tuple[tuple[int, ...], Path, int, Path, int]
+    ] = []
+    for version, (relative, value) in governed_series.items():
+        if version[-1] == 0:
+            continue
+        previous = governed_series.get((*version[:-1], version[-1] - 1))
+        if previous is not None and value > previous[1]:
+            positive_pairs.append(
+                (version, previous[0], previous[1], relative, value)
+            )
+    if len(positive_pairs) < 2:
+        raise ConfigError(
+            "ARCHITECTURE.md: margin-basis control needs two positive "
+            "adjacent governed pairs"
+        )
+    _version, prior_path, prior_value, current_path, current_value = sorted(
+        positive_pairs
+    )[-2]
+    denominator = current_value - prior_value
+    numerator = int(margin.group(9))
+    cycles = numerator / denominator
+    planted_marker = (
+        "Review-export margin: kind=`governed→governed`; "
+        f"prior_progress=`{prior_path.as_posix()}`; "
+        f"prior_bytes=`{prior_value}`; "
+        f"current_progress=`{current_path.as_posix()}`; "
+        f"current_bytes=`{current_value}`; "
+        f"evaluated_progress=`{margin.group(6)}`; "
+        f"evaluated_bytes=`{margin.group(7)}`; "
+        f"denominator_bytes_per_cycle=`{denominator}`; "
+        f"numerator_bytes=`{numerator}`; cycles=`{cycles:.2f}`."
+    )
+    planted_architecture = (
+        architecture_text[: margin.start()]
+        + planted_marker
+        + architecture_text[margin.end() :]
+    )
+    key = (
+        cycle_source[start:end]
+        + "\0"
+        + planted_architecture
+        + "\0"
+        + "\0".join(source_texts)
+    )
+    cached = _R12_GOVERNED_MARGIN_BASIS_ENTRY_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    with tempfile.TemporaryDirectory(
+        prefix="invariant-scan-R12-margin-basis-entry-"
+    ) as raw:
+        fixture = Path(raw) / "tree"
+        _copy_tracked_tree(root, fixture)
+        (fixture / "ARCHITECTURE.md").write_text(planted_architecture)
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(
+            output
+        ):
+            status = cycle_check.run(
+                fixture,
+                verify_local_tag_refs=False,
+            )
+        result = (status, output.getvalue())
+
+    _R12_GOVERNED_MARGIN_BASIS_ENTRY_CACHE[key] = result
     return result
 
 
@@ -2226,6 +2366,19 @@ def r12_findings(root: Path) -> list[str]:
     ):
         missed.setdefault("governed-export-margin-kind", []).append(
             "mixed-kind-export-row"
+        )
+
+    basis_status, basis_output = _governed_margin_basis_entry_output(
+        root,
+        cycle_check,
+    )
+    if (
+        basis_status == 0
+        or "governed export margin must use the latest positive "
+        "adjacent-cycle governed pair" not in basis_output
+    ):
+        missed.setdefault("governed-export-margin-basis", []).append(
+            "stale-positive-margin-pair"
         )
 
     region_status, region_output = _state_region_entry_output(
@@ -3105,6 +3258,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "governed-export-margin planted controls"
         elif group == "governed-export-margin-kind":
             finding_kind = "governed-export-margin-kind planted controls"
+        elif group == "governed-export-margin-basis":
+            finding_kind = "governed-export-margin-basis planted controls"
         elif group == "state-region-contract":
             finding_kind = "state-region-contract planted controls"
         elif group == "governed-export-ceiling":

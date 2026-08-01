@@ -120,6 +120,8 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         f"prior_bytes=`{fixture_prior_export_bytes}`; "
         "current_progress=`docs/cycles/PROGRESS-v1.2.2.md`; "
         f"current_bytes=`{fixture_export_bytes}`; "
+        "evaluated_progress=`docs/cycles/PROGRESS-v1.2.3.md`; "
+        f"evaluated_bytes=`{fixture_export_bytes}`; "
         "denominator_bytes_per_cycle=`10`; "
         f"numerator_bytes=`{fixture_margin_numerator}`; "
         f"cycles=`{fixture_margin_cycles:.2f}`. |\n"
@@ -1320,7 +1322,105 @@ def test_governed_export_margin_kind_rejects_mixed_recorded_series(
 
     assert errors == [
         "ARCHITECTURE.md: governed export margin mixes or misstates "
-        "measurement series: declared=25→35, recorded=25→36"
+        "measurement series: declared=25→35@35, recorded=25→36@35"
+    ]
+
+
+def test_governed_export_margin_kind_accepts_post_archive_evaluation(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    evaluated = _progress(root)
+    evaluated_value = len("cycle-check governed export fixture") - 5
+    evaluated.write_text(
+        evaluated.read_text().replace(
+            "bytes=`35`",
+            f"bytes=`{evaluated_value}`",
+        )
+    )
+    architecture = root / "ARCHITECTURE.md"
+    text = architecture.read_text()
+    numerator = cycle_check.MAX_EXPORT_BYTES - evaluated_value
+    cycles = numerator / 10
+    text = text.replace(
+        "export of **35 bytes",
+        f"export of **{evaluated_value} bytes",
+    )
+    text = text.replace(
+        "Governed review-export bytes: `35`",
+        f"Governed review-export bytes: `{evaluated_value}`",
+    )
+    text = text.replace(
+        "evaluated_bytes=`35`",
+        f"evaluated_bytes=`{evaluated_value}`",
+    )
+    text = text.replace(
+        f"numerator_bytes=`{cycle_check.MAX_EXPORT_BYTES - 35}`",
+        f"numerator_bytes=`{numerator}`",
+    )
+    text = text.replace(
+        f"cycles=`{(cycle_check.MAX_EXPORT_BYTES - 35) / 10:.2f}`",
+        f"cycles=`{cycles:.2f}`",
+    )
+    architecture.write_text(text)
+    errors: list[str] = []
+
+    cycle_check.check_governed_export_margin_kind(
+        architecture,
+        architecture.read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == []
+
+
+def test_governed_export_margin_kind_rejects_stale_positive_basis(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    stale = cycle_documents_dir(root) / "PROGRESS-v1.2.0.md"
+    stale.write_text(
+        "# Stale governed margin fixture\n\n"
+        "- governed review-export measurement: "
+        f"tree=`{'7' * 40}`; bytes=`20`\n"
+    )
+    architecture = root / "ARCHITECTURE.md"
+    text = architecture.read_text()
+    numerator = cycle_check.MAX_EXPORT_BYTES - 35
+    text = text.replace(
+        "prior_progress=`docs/cycles/PROGRESS-v1.2.1.md`; prior_bytes=`25`",
+        "prior_progress=`docs/cycles/PROGRESS-v1.2.0.md`; prior_bytes=`20`",
+    )
+    text = text.replace(
+        "current_progress=`docs/cycles/PROGRESS-v1.2.2.md`; current_bytes=`35`",
+        "current_progress=`docs/cycles/PROGRESS-v1.2.1.md`; current_bytes=`25`",
+    )
+    text = text.replace(
+        "denominator_bytes_per_cycle=`10`",
+        "denominator_bytes_per_cycle=`5`",
+    )
+    text = text.replace(
+        f"cycles=`{numerator / 10:.2f}`",
+        f"cycles=`{numerator / 5:.2f}`",
+    )
+    architecture.write_text(text)
+    errors: list[str] = []
+
+    cycle_check.check_governed_export_margin_kind(
+        architecture,
+        architecture.read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == [
+        "ARCHITECTURE.md: governed export margin must use the latest positive "
+        "adjacent-cycle governed pair; "
+        "declared=docs/cycles/PROGRESS-v1.2.0.md→"
+        "docs/cycles/PROGRESS-v1.2.1.md, "
+        "latest=docs/cycles/PROGRESS-v1.2.1.md→"
+        "docs/cycles/PROGRESS-v1.2.2.md"
     ]
 
 

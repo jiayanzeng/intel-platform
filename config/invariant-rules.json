@@ -687,7 +687,7 @@
           ],
           "expected_fail": "trigger-boundary-order planted controls were not detected: floor-before-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1681
+          "expected_line": 1685
         },
         {
           "file": "tools/cycle_check.py",
@@ -697,7 +697,7 @@
           ],
           "expected_fail": "trigger-boundary-order planted controls were not detected: unregistered-forward-boundary",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1681
+          "expected_line": 1685
         },
         {
           "file": "tools/version_check.py",
@@ -758,17 +758,27 @@
           ],
           "expected_fail": "governed-export-margin planted controls were not detected: superseded-export-figure",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2497
+          "expected_line": 2501
         },
         {
           "file": "tools/cycle_check.py",
-          "find": "    if recorded_values != [prior_value, current_value]:\n",
+          "find": "    if recorded_values != [prior_value, current_value, evaluated_value]:\n",
           "replace_with": [
             "    if False:\n"
           ],
           "expected_fail": "governed-export-margin-kind planted controls were not detected: mixed-kind-export-row",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2606
+          "expected_line": 2629
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if (prior_relative, current_relative) != (latest_prior, latest_current):\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "governed-export-margin-basis planted controls were not detected: stale-positive-margin-pair",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 2683
         },
         {
           "file": "tools/cycle_check.py",
@@ -778,7 +788,7 @@
           ],
           "expected_fail": "state-region-contract planted controls were not detected: missing-permanent-tail-marker",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2213
+          "expected_line": 2217
         },
         {
           "file": "tools/cycle_check.py",
@@ -788,7 +798,7 @@
           ],
           "expected_fail": "governed-export-ceiling planted controls were not detected: written-figure-over-ceiling",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2453
+          "expected_line": 2457
         },
         {
           "file": "tools/cycle_check.py",
@@ -798,7 +808,7 @@
           ],
           "expected_fail": "artifact-byte-boundary planted controls were not detected: crossed-boundary-without-disposition",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2088
+          "expected_line": 2092
         },
         {
           "file": "tools/cycle_check.py",
@@ -809,7 +819,7 @@
           ],
           "expected_fail": "cycle-ending-export-audit planted controls were not detected: misordered-cycle-ending-audit",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2482
+          "expected_line": 2486
         },
         {
           "file": "tools/cycle_check.py",
@@ -819,7 +829,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date, header-only-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1827
+          "expected_line": 1831
         },
         {
           "file": "tools/cycle_check.py",
@@ -829,7 +839,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1827
+          "expected_line": 1831
         },
         {
           "file": "tools/cycle_check.py",
@@ -839,7 +849,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: stale-trigger-cycle-identity",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1827
+          "expected_line": 1831
         },
         {
           "file": "tools/cycle_check.py",
@@ -849,7 +859,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: silently-dropped-trigger-subject",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2817
+          "expected_line": 2896
         },
         {
           "file": "tools/test_population.py",
