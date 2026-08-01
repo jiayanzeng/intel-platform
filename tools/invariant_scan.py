@@ -1627,6 +1627,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "rust-floor-partition": (
         "Invariant R12 control site: Rust-floor tracked-file partition."
     ),
+    "rust-floor-context": (
+        "Invariant R12 control site: Rust-floor contextual value closure."
+    ),
     "governed-export-margin": (
         "Invariant R12 control site: governed review-export latest-at-close."
     ),
@@ -2367,6 +2370,29 @@ def r12_findings(root: Path) -> list[str]:
                 "unclassified-file"
             )
 
+        try:
+            version_check.rust_floor_partition_report(
+                root,
+                text_overrides={
+                    unclassified_path: (
+                        unclassified_text
+                        + "\n# planted offline needs >= 1.75\n"
+                    ),
+                },
+            )
+        except ValueError as error:
+            wrong_context_value_detected = (
+                f"{unclassified_path}: floor-shaped context value(s) "
+                "['1.75'] yielded zero file-level classifications"
+                in str(error)
+            )
+        else:
+            wrong_context_value_detected = False
+        if not wrong_context_value_detected:
+            missed.setdefault("rust-floor-context", []).append(
+                "wrong-context-value"
+            )
+
         governed_row_value = len("planted governed export row")
         governed_latest_value = governed_row_value + len("superseding")
         governed_architecture = (
@@ -2724,7 +2750,11 @@ def r12_findings(root: Path) -> list[str]:
             source_relative = "tools/test_population.py"
         elif group == "coverage-detection":
             source_relative = "apps/cored/src/main.rs"
-        elif group in {"rust-floor-restatement", "rust-floor-partition"}:
+        elif group in {
+            "rust-floor-restatement",
+            "rust-floor-partition",
+            "rust-floor-context",
+        }:
             source_relative = "tools/version_check.py"
         else:
             source_relative = "tools/cycle_check.py"
@@ -2747,6 +2777,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "rust-floor-restatement planted controls"
         elif group == "rust-floor-partition":
             finding_kind = "rust-floor-partition planted controls"
+        elif group == "rust-floor-context":
+            finding_kind = "rust-floor-context planted controls"
         elif group == "governed-export-margin":
             finding_kind = "governed-export-margin planted controls"
         elif group == "governed-export-ceiling":

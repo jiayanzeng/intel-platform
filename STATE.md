@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 2 makes both in-repository byte boundaries executable under the operator-selected reported-crossing disposition.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 59 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **330**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **330**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker now reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **248 checked / 3 retracted / 248 matched / 248 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 3 binds Rust-floor claims through a registered contextual value closure and reports its explicit domain.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 60 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **333**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **333**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **249 checked / 3 retracted / 249 matched / 249 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -199,6 +199,49 @@ registered self-test **12 rules / 59 controls**, protected artifacts exact, and
 embedded golden **11/11**. The standalone post-task `./run golden` also passed
 the same **11/11** assertions with no document, id, distance, signal, citation,
 license, or entitlement delta.
+
+**v0.32 Step 3 — Rust-floor contextual value closure (measured
+2026-08-01).** The E0 construction proved that the old exact-value detector
+could not see a newly tracked refuted floor statement. The shipped detector now
+unions its existing derived-value literal scan with two registered line-local
+context predicates: a minimum claim after a Rust/offline subject, and a floor
+followed by a value. Those predicates contain the general Rust-version grammar
+and no list of refuted answers. The check's own emitted bound now names both
+limits: classification remains file-level, so identical text cannot distinguish
+current prose from dated history inside one classified file; value closure is
+the derived floor literals plus the registered contexts, with arbitrary version
+numerals outside those contexts excluded.
+
+The rejection preceded acceptance. A tracked-file override under
+`tools/export_check.py` carrying E0's refuted figure in the registered minimum
+context failed with a `floor-shaped context value(s)` / zero-classification
+error. The same file carrying that numeral only as a release version remained
+outside the detector, demonstrating that the context construction was read and
+that arbitrary numerals were not swept in. The exact current tracked-set run
+recognized eleven context-only occurrences, but they occurred only in files
+the prior derived-value detector already matched: newly matched files **0**,
+new classification decisions **0**. Historical records retaining refuted
+figures stayed byte-unchanged and remained classified by the existing dated
+historical families.
+
+Focused version-check tests passed **10/10**. The previous zero-extraction,
+normalized pin-disagreement, stale registered-restatement, and unclassified
+derived-literal tests continued to reject. R12 gained a distinct contextual
+value-closure construction; its real mutation self-test passed **12/12 rules /
+60 controls**. Three existing `tools/version_check.py` `expected_line` values
+shifted and were re-derived from the successive emitted failures to **449,
+449, and 583**; the new context control resolves to **568**. The binding remains
+inside `./run version-check`, already executed by both local and hosted shell
+lanes. No toolchain pin, workflow, harness, evidence topology, dependency,
+production source, dated historical record, or release value changed.
+
+The clean constrained Python 3.11.4 and 3.12.13 suites each collected and
+passed **333**, with no failures or skips; the machine comparator derived
+`equivalent=true` and `equivalent_passed=333`. The complete local entry point
+passed all **20/20** jobs, including registered self-test **12 rules / 60
+controls** and embedded golden **11/11**. The standalone post-task
+`./run golden` also passed the same **11/11** assertions with no corpus or
+public-response delta.
 
 **v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
 two-commit tagged-close protocol (operator authorization and measurement

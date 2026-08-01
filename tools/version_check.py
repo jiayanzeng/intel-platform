@@ -30,6 +30,18 @@ class RustVersionSpec(NamedTuple):
     kind: str
 
 
+class RustFloorContextSpec(NamedTuple):
+    label: str
+    pattern: re.Pattern[bytes]
+
+
+class RustFloorContextMatch(NamedTuple):
+    start: int
+    end: int
+    raw: str
+    normalized: str
+
+
 class ExtractedRustVersion(NamedTuple):
     path: str
     label: str
@@ -54,6 +66,11 @@ class RustFloorPartitionReport(NamedTuple):
     tracked_files: int
     literal_versions: tuple[str, ...]
     literal_occurrences: int
+    context_versions: tuple[str, ...]
+    context_occurrences: int
+    context_only_occurrences: int
+    newly_matched_files: int
+    context_classification_decisions: int
     files: tuple[RustFloorFileClassification, ...]
 
 
@@ -319,6 +336,41 @@ RUST_FLOOR_PARTITION_BOUND = (
     "file-level only; within-file current restatements cannot be separated "
     "from dated historical quotations by identical literal text"
 )
+RUST_FLOOR_VALUE_CLOSURE_BOUND = (
+    "all tracked occurrences of the derived floor values plus line-local "
+    "matches from registered RUST_FLOOR_CONTEXTS; arbitrary version numerals "
+    "outside those contexts are excluded"
+)
+
+
+def _floor_context_pattern(expression: bytes) -> re.Pattern[bytes]:
+    version = (
+        rb"(?<![0-9.])(?P<version>"
+        + RUST_VERSION.encode()
+        + rb")(?![0-9.])"
+    )
+    return re.compile(expression + version, re.IGNORECASE)
+
+
+# This registry defines the value-closure domain. It names floor-shaped lexical
+# contexts, never values believed to be wrong. Dated historical files are still
+# classified at file granularity by OFFLINE_MSRV_HISTORICAL_EXCLUSIONS.
+RUST_FLOOR_CONTEXTS = (
+    RustFloorContextSpec(
+        "minimum claim after a Rust/offline subject",
+        _floor_context_pattern(
+            rb"\b(?:offline(?:\s+(?:build|path))?|--features\s+net|"
+            rb"rustc?|msrv)\b[^\n]{0,32}?\b(?:needs?|requires?|floor"
+            rb"(?:\s+(?:is|of|at|from|to))?|>=)\s*(?:>=\s*)?"
+        ),
+    ),
+    RustFloorContextSpec(
+        "floor followed by value",
+        _floor_context_pattern(
+            rb"\bfloor(?:\s+(?:is|of|at|from|to))?\s*(?:>=\s*)?"
+        ),
+    ),
+)
 
 
 def relative(path: Path) -> str:
@@ -435,6 +487,23 @@ def _rust_floor_literal_pattern(versions: set[str]) -> re.Pattern[bytes]:
     return re.compile(rb"(?<![0-9.])(?:" + alternatives + rb")(?![0-9.])")
 
 
+def _rust_floor_context_matches(
+    source: bytes,
+) -> tuple[RustFloorContextMatch, ...]:
+    matches: dict[tuple[int, int], RustFloorContextMatch] = {}
+    for context in RUST_FLOOR_CONTEXTS:
+        for match in context.pattern.finditer(source):
+            start, end = match.span("version")
+            raw = match.group("version").decode()
+            matches[(start, end)] = RustFloorContextMatch(
+                start=start,
+                end=end,
+                raw=raw,
+                normalized=normalized_rust_version(raw),
+            )
+    return tuple(matches[key] for key in sorted(matches))
+
+
 def rust_floor_partition_report(
     root: Path = ROOT,
     *,
@@ -455,15 +524,30 @@ def rust_floor_partition_report(
     restatement_paths = {spec.path for spec in OFFLINE_MSRV_RESTATEMENTS}
     tracked_paths = _tracked_paths(root)
     classified: list[RustFloorFileClassification] = []
+    context_versions: set[str] = set()
+    context_occurrences = 0
+    context_only_occurrences = 0
+    newly_matched_files = 0
+    context_classification_decisions = 0
 
     for path in tracked_paths:
         if path in overrides:
             source = overrides[path].encode()
         else:
             source = (root / path).read_bytes()
-        occurrences = len(literal_pattern.findall(source))
+        literal_matches = list(literal_pattern.finditer(source))
+        literal_spans = {match.span() for match in literal_matches}
+        context_matches = _rust_floor_context_matches(source)
+        context_spans = {(match.start, match.end) for match in context_matches}
+        context_only_spans = context_spans - literal_spans
+        occurrences = len(literal_spans | context_spans)
         if occurrences == 0:
             continue
+        context_versions.update(match.normalized for match in context_matches)
+        context_occurrences += len(context_spans)
+        context_only_occurrences += len(context_only_spans)
+        if context_spans and not literal_spans:
+            newly_matched_files += 1
 
         memberships: list[str] = []
         if path in authority_paths:
@@ -481,8 +565,23 @@ def rust_floor_partition_report(
         ):
             memberships.append("historical family")
 
+        # Invariant R12 control site: Rust-floor contextual value closure.
+        if context_only_spans and not literal_spans and not memberships:
+            context_classification_decisions += 1
+            contextual_values = sorted(
+                {
+                    match.normalized
+                    for match in context_matches
+                    if (match.start, match.end) in context_only_spans
+                }
+            )
+            raise ValueError(
+                f"{path}: floor-shaped context value(s) "
+                f"{contextual_values!r} yielded zero file-level "
+                "classifications"
+            )
         # Invariant R12 control site: Rust-floor tracked-file partition.
-        if not memberships:
+        if literal_spans and not memberships:
             raise ValueError(
                 f"{path}: Rust floor literal(s) yielded zero file-level "
                 "classifications"
@@ -505,6 +604,11 @@ def rust_floor_partition_report(
         tracked_files=len(tracked_paths),
         literal_versions=tuple(sorted(literal_versions)),
         literal_occurrences=sum(item.occurrences for item in classified),
+        context_versions=tuple(sorted(context_versions)),
+        context_occurrences=context_occurrences,
+        context_only_occurrences=context_only_occurrences,
+        newly_matched_files=newly_matched_files,
+        context_classification_decisions=context_classification_decisions,
         files=tuple(classified),
     )
 
@@ -649,7 +753,15 @@ def main() -> int:
         f"literal_occurrences={rust_floor_partition.literal_occurrences}, "
         f"multiply_classified={multiply_classified}, "
         f"precedence={' > '.join(RUST_FLOOR_CLASS_PRECEDENCE)}; "
-        f"bound={RUST_FLOOR_PARTITION_BOUND}"
+        f"bound={RUST_FLOOR_PARTITION_BOUND}; "
+        f"value_closure={RUST_FLOOR_VALUE_CLOSURE_BOUND}; "
+        f"context_values={list(rust_floor_partition.context_versions)!r}, "
+        f"context_occurrences={rust_floor_partition.context_occurrences}, "
+        f"context_only_occurrences="
+        f"{rust_floor_partition.context_only_occurrences}, "
+        f"newly_matched_files={rust_floor_partition.newly_matched_files}, "
+        f"classification_decisions="
+        f"{rust_floor_partition.context_classification_decisions}"
     )
 
     canonical_path = relative(CARGO_TOML)

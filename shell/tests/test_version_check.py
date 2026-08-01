@@ -102,6 +102,51 @@ def test_rust_floor_partition_classifies_every_tracked_literal_file() -> None:
         item.selected == item.memberships[0]
         for item in report.files
     )
+    assert "1.75" in report.context_versions
+    assert report.context_only_occurrences > 0
+    assert report.context_classification_decisions == 0
+
+
+def test_rust_floor_context_registry_does_not_enumerate_wrong_values() -> None:
+    patterns = b"\n".join(
+        context.pattern.pattern
+        for context in version_check.RUST_FLOOR_CONTEXTS
+    )
+
+    assert b"1.75" not in patterns
+    assert b"1.77" not in patterns
+
+
+def test_rust_floor_partition_rejects_a_wrong_context_value() -> None:
+    path = "tools/export_check.py"
+    original = (ROOT / path).read_text()
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            r"tools/export_check\.py: floor-shaped context value\(s\) "
+            r"\['1\.75'\] yielded zero file-level classifications"
+        ),
+    ):
+        version_check.rust_floor_partition_report(
+            ROOT,
+            text_overrides={
+                path: original + "\n# offline needs >= 1.75\n",
+            },
+        )
+
+
+def test_non_floor_version_context_stays_outside_value_closure() -> None:
+    path = "tools/export_check.py"
+    original = (ROOT / path).read_text()
+    report = version_check.rust_floor_partition_report(
+        ROOT,
+        text_overrides={
+            path: original + "\n# release version 1.75\n",
+        },
+    )
+
+    assert all(item.path != path for item in report.files)
 
 
 def test_rust_floor_partition_rejects_an_unclassified_file() -> None:
