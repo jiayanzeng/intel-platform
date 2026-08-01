@@ -1,6 +1,159 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is closed with `no-release` disposition as of 2026-08-01; published v0.17.1 remains current and the v0.32 commits are intentionally unreleased.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Exact no-release candidate `1caace6e2470b51c371d67598b756a48f93d7968` passed the complete local entry point **20/20** with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; hosted run **30693555131** passed all seven executable jobs, and each hosted shell lane passed **335** and skipped the one named `on_site` node. `tools/test_population.py` derived `collected=336`, `equivalent=true`, and `equivalent_passed=336` for both local/hosted pairs. Release-grade verification required attestations, accepted **7**, rejected **0**, and found the complete unchanged runner matrix. Close-time remote inspection confirms published v0.17.1 identity remained unmoved. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two close-time complete verifications took **0.19 s / 0.11 s real**. The last governed export remains exact candidate `1caace6e2470b51c371d67598b756a48f93d7968` at **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the closing tree's later measurement belongs only in the cycle-ending audit child. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. Immediately before closure, `checklist-audit` measured **253 checked / 3 retracted / 253 matched / 253 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 E0 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete E0 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 61 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=336`, `equivalent=true`, and `equivalent_passed=336` across the two lanes. The real checklist result is **254 checked / 3 retracted / 254 matched / 254 commits resolved**, correcting the v0.32 header's stale 253 figure. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its honest governed-to-governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, public response/value-domain state, or publication ref changed during activation or E0 measurement.
+
+**v0.33 E0 entering-state reconstruction and G1–G6 dispositions (measured
+2026-08-01).** The sole pre-activation worktree item was the operator-supplied
+untracked v0.33 runbook. Exact delivered v0.32 HEAD was audit child
+`70b7f93c94c67e43f6f4a29ede5823081955f3fa`, whose immediate parent was
+closing implementation `86b8db0b4026c23371317c7881dcc9497806c20b`.
+Direct `git ls-remote`, rather than a closing-record transcription, resolved
+remote `main` and peeled `v0.17.1` to
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, the tag ref to annotated object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d`, and local Git identified that
+object as `tag`; the published closing commit's immediate parent is release
+commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. An isolated clone of the exact
+delivered tree measured checklist **254 / 3 / 254 / 254**, rather than the
+entering hypothesis's 253, and registered invariants **12 rules / 61
+controls**. Its first sandboxed net lane was `not measured` because loopback
+bind was denied; the permitted rerun passed. Its protected-artifact lane was
+also `not measured` because the intentionally local databases were absent from
+the isolated clone; the real workspace supplied the two passing **0.09 s /
+0.10 s** measurements. A clean project-root `./run export-check` at exact
+audit child `70b7f93c94c67e43f6f4a29ede5823081955f3fa` measured **2,734,366
+bytes / 153 files**, confirming the reviewer's inferred tree identity and the
+exact **4,979-byte** increase over the recorded 2,729,387-byte closing-tree
+export. The activation checker named the governed-export state
+`exempt-open-empty-progress`. After all trigger rows were refreshed, the real
+complete entry point passed **20/20** with E0's task box still open and
+`invariant-scan --self-test` emitted **12/12 rules / 61 controls**. Python
+3.11.4 and 3.12.13 each emitted `collected=336`, `passed=336`, `failed=0`, and
+`skipped=[]`; the repository comparator, rather than a transcribed total,
+emitted `collected=336`, `equivalent=true`, and `equivalent_passed=336`.
+The required standalone post-task golden run passed **11/11**, delta **0**.
+
+**G1 — publication-family admission fails open.** At the real delivered-tree
+`./run cycle-check` entry point, the absent-header construction emitted:
+
+```text
+cycle-check: artifact-boundary: path=STATE.md bytes=350530 boundary=453741 state=bound checked_tree=worktree-over-HEAD-tree:b08c54cfe5b171b504c1a21e9b119db69798f629 timing=not-applicable
+cycle-check: artifact-boundary: path=config/protected-artifacts.json bytes=191395 boundary=1048576 state=bound checked_tree=worktree-over-HEAD-tree:b08c54cfe5b171b504c1a21e9b119db69798f629 timing=out-of-scope
+cycle-check: PASS (active=v0.32, state=closed, local_tag_refs=verified, runbook=docs/cycles/TASKS-v0.32-EXECUTION.md, progress=docs/cycles/PROGRESS-v0.32.md, artifact_boundaries=bound, governed_export=bound-with-cycle-ending-audit, closed_execution=30, historical=3)
+```
+
+The renamed-header construction emitted the same PASS with `STATE.md
+bytes=352904`. The absent-file construction emitted:
+
+```text
+cycle-check: ERROR: STATE.md: governed artifact is not a file
+cycle-check: FAIL (1 defect(s))
+cycle-check: artifact-boundary: path=config/protected-artifacts.json bytes=191395 boundary=1048576 state=bound checked_tree=worktree-over-HEAD-tree:b08c54cfe5b171b504c1a21e9b119db69798f629 timing=out-of-scope
+```
+
+Thus the publication family itself admits all three empty constructions. The
+complete checker rejects the absent file only through the independent governed-
+artifact boundary; it borrows no publication-family floor. The composite
+`ci-local` entry point rejects absent and renamed headers through
+`version-check`, which emitted `STATE.md: expected exactly one versioned As-of
+header, found 0`; its absent-file case emitted the filesystem error. That is a
+borrowed floor, not `cycle-check`'s own admission rule. `git log -G` measured
+the overstating Architecture sentence's introduction in v0.21 release commit
+`b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa` and its later wording change in
+v0.22 release commit `a83db73aac3d5ef1e9a427662340eb1eb8a49df1`.
+The introducing commit, v0.21 activation
+`df9abb939b81a24c038d30522ba63538cc1014e3`, and the current runbook share
+the same reviewer identity, so the overstatement is classified as a reviewer
+error rather than attributed elsewhere.
+
+**G2 — export margins by measurement kind.** The three comparable series are:
+
+- governed→governed: 2,629,379 → 2,706,393, a **77,014-byte** denominator;
+  **293,607 / 77,014 = 3.81 cycles**;
+- closing-tree→closing-tree: 2,649,103 → 2,729,387, an **80,284-byte**
+  denominator; **270,613 / 80,284 = 3.37 cycles**;
+- delivered→delivered: 2,654,404 → measured 2,734,366, a **79,962-byte**
+  denominator; **265,634 / 79,962 = 3.32 cycles**.
+
+The governed row can honestly carry governed→governed at close because the
+closing tree can see the latest governed progress field but cannot see its own
+closing-tree or delivered export. The historical **5.65** calculation performs
+its arithmetic correctly on a **51,989-byte mixed-kind subtraction**; it is a
+criterion/evaluation-point error, not a raw arithmetic or measurement error.
+The dated v0.32 record remains historical evidence and is corrected forward.
+
+**G3 — live and movable regions.** Exact delivered `STATE.md` was **5,368
+lines / 352,895 bytes**: immutable status header lines 1–4 were **2,405
+bytes**, the only archival-eligible dated append region at lines 5–4,982 was
+**306,676 bytes**, and permanent numbered tail lines 4,983–5,368 were
+**43,814 bytes**. The only registered current-restatement binding inside the
+tail was delivered line 5,320, read by `tools/version_check.py:291–299`.
+Derived live, non-historical `STATE §N` consumers were
+`.github/workflows/ci.yml:293` (§6b), `AGENTS.md:149` (§6),
+`ARCHITECTURE.md:6,94,458` (§2, §2, §6), `README.md:640` (§6b),
+`crates/compliance/Cargo.toml:7` (§6),
+`crates/compliance/src/lib.rs:24,897` (§5, §6),
+`crates/ingest/src/arxiv_oai.rs:28` (§5), `rust-toolchain.toml:31` (§5), and
+`tools/version_check.py:261,270` (§5). This corrects the reviewer inventory,
+which omitted the workflow and compliance-manifest consumers. There is no
+`## 3.` heading and exhaustive search found no live §3 consumer. Historical
+cycle and prior-archive references are evidence, not current consumers, and
+must be structurally excluded from the live derivation rather than silently
+treated as current bindings.
+
+At complete delivered-tree entry points, the over-cut and removed-restatement
+constructions made `version-check` reject with `STATE.md: current run-reference
+correction yielded zero extracted current restatements`; renamed `## 5.` and
+removal of §1, §2, §4, §5, and §6 both made it PASS at 0.17.1. In contrast,
+`cycle-check` PASSed all four constructions, reporting only their reduced
+artifact bytes. The existing restatement reader therefore protects its own
+line, incidentally catches this particular over-cut, and does not define an
+eligible archival region or protect section anchors. Step 4 must derive the
+header, append, and permanent-tail boundaries from live structure and derive
+current external references from tracked files; only then is “dated appends
+only” executable rather than asserted.
+
+**G4 — archive fidelity has no reader.** Exhaustive tracked search found
+`docs/state-archive/**` only in exclusion/retention prose and in the export and
+version-check historical-family exclusions. No tool, test, config, or manifest
+pin reads an archive's expected digest, complement, ordering, or truncation.
+Git detects an uncommitted mutation and retains history, but after a corrupt
+archive is committed no repository check detects that corruption against the
+claimed source bytes. The v0.21 archive's recorded SHA-256 and complement are
+one-time evidence, not a standing control. A second archive therefore needs
+either the same honestly bounded one-time verification or an executable pin;
+neither may be described as the other.
+
+**G5 — executable `STATE.md` readers.** `cycle_check.py` reads the publication
+header/post-push records and artifact bytes; a valid archival must preserve the
+header and newest publication evidence while reducing the byte count.
+`version_check.py` reads the versioned header, registered current MSRV
+restatement, and tracked floor partition; it permits removal of dated historical
+occurrences but requires those live authorities. `audit_deferred.py` scans
+`AGENTS.md`, `ARCHITECTURE.md`, `README.md`, and live `STATE.md` for the
+forbidden HC1-under-shell-replacement assertion; the proposed dated-region cut
+does not change its result. `export_check.py` and Repomix include live
+`STATE.md` while excluding `docs/state-archive/**`, so every archived byte is
+removed from the export. `invariant_scan.py` creates synthetic State fixtures
+for lifecycle controls and its credential scan still sees tracked archive
+bytes; it has no archive-fidelity reader. `checklist_audit.py` enumerates cycle
+runbooks and does not read `STATE.md`. Executing its real entry point before and
+after the measured Option B throwaway cut returned the identical **254 checked
+/ 3 retracted / 254 matched / 254 commits resolved**. The same throwaway cut
+left `version-check` PASS at 0.17.1 with **22** current MSRV restatements and
+**3** release restatements.
+
+**G6 — the two boundaries share one operation.** Live `STATE.md` closing-tree
+growth was 289,117 → 321,718 → 352,895 bytes; at the latest same-kind
+**31,177-byte** denominator its **100,846-byte** headroom is **3.23 cycles**.
+The delivered series 324,290 → 352,895 gives a 28,605-byte denominator and
+**3.53 cycles**. Export margins are the G2 same-kind **3.81 governed / 3.37
+closing / 3.32 delivered cycles**. The State archival trigger's first clause
+explicitly depends on the export-ceiling trigger, and archives are excluded
+from the export; therefore one cut disposes pressure on both. The measured
+Option B counterfactual removed **178,125 bytes** from each boundary, leaving
+live State at **174,770 bytes** and the exact delivered-tree export at
+**2,556,241 bytes**. The other measured cut points remain operator choices;
+no archive was created or selected during E0.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
