@@ -198,3 +198,74 @@ Entries are append-only; corrections are new dated entries.
   and the active runbook. It made no publisher request, scheduler run,
   model-profile command, cadence change, manifest edit, production-source
   edit, or protected-byte edit.
+
+### 2026-08-01 · CLOSE-POINT — bind the governed export to a checked tree
+
+- owner: Codex
+- commit: 33d5bb9e2b51a71d372600a7a0ef73ccba011200
+- result: PASS. The closed-cycle comparison now binds the architecture row to
+  the last governed progress measurement already visible in the exact checked
+  tree. A later, explicitly non-governing cycle-ending audit records the
+  closing-tree export without asking a record to measure a tree containing
+  itself.
+- decision-gate acceptance: PASS. G1 established that the former rule had no
+  satisfying assignment at a no-release implementation commit; G5 established
+  the release-shaped four-point sequence. The task changed only the declared
+  checker, controls, tests, contracts, and cycle records. It did not touch the
+  manifest, protected bytes, production source, dependencies, schema,
+  toolchains, publisher state, or refs.
+- rejection-before-acceptance: PASS. Before implementation, the focused
+  governed-export suite passed **5** and failed **3**: the checker ignored a
+  valid cycle-ending audit, accepted a misordered audit, and did not import or
+  enforce the export ceiling. After implementation, all **8/8** focused cases
+  passed.
+- closed-tree contract acceptance: PASS. The exact checked tree now selects
+  the last `governed review-export measurement` already present in that tree,
+  regardless of whether later bytes increase or decrease. A closed tree with
+  no governed field still fails, and a row superseded by the selected governed
+  field still fails. Open trees retain the named
+  `exempt-open-empty-progress` and `exempt-open-latest-at-close` paths.
+- cycle-ending-audit acceptance: PASS. The exact non-governing form is
+  `cycle-ending review-export audit` with closing tree, bytes, and signed
+  audit delta. The checker permits zero or one only after the final governed
+  field and only after closure, reports `bound-with-cycle-ending-audit`, and
+  never promotes it into the governed comparison.
+- release-sequence acceptance: PASS. A real-fixture four-state integration
+  exercised release parent `R` open and exempt, closing child `C` bound,
+  annotated-tag checkout `C` bound, and the first post-push descendant bound
+  with the cycle-ending audit. Together with the governed unit family, all
+  **9/9** release-sequence cases passed.
+- ceiling acceptance: PASS. `cycle-check` imports the single
+  `MAX_EXPORT_BYTES` authority from `tools/export_check.py` and rejects a
+  written governed-row figure above it at every checked tree. Its diagnostic
+  explicitly says this constrains the repository's written figure and does
+  not create or measure an export; operator-local `export-check` remains the
+  real-byte and retained-set control.
+- planted-control acceptance: PASS. Registered R12 now rejects both an
+  over-ceiling governed row and a cycle-ending audit placed before the final
+  governed field. The full self-test passed **12 rules / 57 controls**. From
+  the real self-test output, **9** `expected_line` values were re-derived:
+  seven shifted existing controls and the two new controls.
+- local-regression acceptance: PASS. `./run ci-local` passed **20/20**:
+  warning-denied **146** workspace tests and **62** net tests (**32 ingest +
+  30 cored**), locked Rust 1.78, clean clippy/fmt/ShellCheck, floor
+  byte-compilation, both protected archives, embedded golden **11/11**, and
+  every other registered job. Focused `test_cycle_check.py` passed **64** and
+  `test_invariant_scan.py` passed **22**.
+- population acceptance: PASS. Clean constrained Python **3.11.4** and
+  **3.12.13** lanes each collected/passed **322**, failed **0**, and skipped
+  **0**, with the same one accepted warning. The executed comparator derived
+  `{"collected":322,"equivalent":true,"equivalent_passed":322,"hosted":{"on_site_skipped":0,"passed":322,"skipped":[]},"local":{"passed":322,"skipped":0},"schema_version":1}`.
+- governed review-export measurement: tree=`33d5bb9e2b51a71d372600a7a0ef73ccba011200`; bytes=`2586197`
+- export acceptance: PASS. Exact CLOSE-POINT implementation tree
+  `33d5bb9e2b51a71d372600a7a0ef73ccba011200` produced **100 derived / 7
+  required / 153 exported / 2,586,197 bytes**, retained exactly three cycles,
+  and left **413,803 bytes / 13.79%** beneath the ceiling.
+- golden-E2E delta: **0**. Embedded and permission-complete standalone
+  executions passed **11/11** byte-identically. The first standalone attempt
+  was a non-result because the sandbox denied the core's loopback bind; the
+  exact entry point then passed with the documented local-network permission.
+- publisher/ref acceptance: PASS. CLOSE-POINT issued no publisher request,
+  ran no scheduler or model-profile command, changed no cadence, and created,
+  moved, or deleted no version, tag, release, publication, or working-repository
+  ref.
