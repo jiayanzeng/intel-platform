@@ -246,3 +246,42 @@ Entries are append-only; corrections are new dated entries.
   behaviour changed. Published-epoch divergence remains zero.
 - golden-E2E delta: **0**. The complete gate and required standalone
   `./run golden` each passed **11/11**.
+
+### 2026-08-02 · BUDGET-DERIVE — measurement-only export budget
+
+- owner: Codex
+- commit: 4db8f550b9425e73a50a28e49135d01686e7e7bf
+- result: PASS. State now records every adjacent pair supported by the tracked
+  governed, closing-tree audit, and exact delivered audit-child series, plus
+  full component attribution for the two delivered pairs that retain
+  serialized content. No export lever was selected.
+- series acceptance: PASS. Last-per-progress governed deltas are **+53,106 →
+  +77,014 → −113,952**; closing-tree audit deltas are **+80,284 → −101,041**;
+  exact delivered audit-child deltas are **+79,962 → −99,674**. The absent
+  earlier closing/delivered pair is named unsupported rather than invented.
+- component acceptance: PASS. Persistent component nets are **+67,805** and
+  **+86,946 bytes/cycle**. Each checker, version checker, control/test,
+  pre-archive State, architecture/contract, and manifest row records bytes,
+  its share of that named net, and its reclaim mechanism or absence.
+- reclaim acceptance: PASS. Recurring three-cycle retention turnover is
+  separately **+12,157 / −9,084**; the one-time State archive is separately
+  **−177,542**; retention-pattern/serialization movement is **+6**. Exact
+  reconciliations are **67,805 + 12,157 = 79,962** and **86,946 − 9,084 −
+  177,542 + 6 = −99,674**. No one-time reclaim enters a growth denominator.
+- projection acceptance: PASS. The exact delivered remainder of **365,308
+  bytes** is **4.20** cycles on latest persistent components, **4.69** on
+  latest post-retention steady net, **4.57** on the positive delivered pair,
+  and **4.63** on the two-transition steady mean. Exact delivered State's
+  **247,211-byte** remainder is **7.93** cycles on its latest positive growth
+  and **8.27** on its two-transition mean. Export arrives first under every
+  named denominator, confirming the reviewer ordering with Step 3's explicit
+  representativeness and epoch bounds.
+- lifecycle/scope acceptance: PASS. The real measurement-only `cycle-check`
+  passed with State **229,486 / 453,741 bytes**, manifest **192,042 /
+  1,048,576**, and governed export `exempt-open-empty-progress`. The
+  implementation wrote only `STATE.md` and the active runbook; this append is
+  the required separate progress record. It changed no ceiling, retention
+  depth, exclusion, production source, workflow, dependency, protected
+  artifact, publisher/scheduler/service/model-profile state, remote ref,
+  public surface, or runtime behaviour.
+- golden-E2E delta: **0**. Required standalone `./run golden` passed **11/11**.
