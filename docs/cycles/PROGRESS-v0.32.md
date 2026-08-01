@@ -264,3 +264,83 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref acceptance: PASS. The task made no publisher request, ran no
   scheduler or model-profile command, and created, moved, or deleted no
   publication ref.
+
+### 2026-08-01 · VERSION-COMPLETE — bind present-tense release restatements
+
+- owner: Codex
+- commit: a31aaab
+- result: PASS. Exact implementation commit
+  `a31aaab5a0efe1dd7d84efbf938f3f9981b3cd97` adds the named
+  `RELEASE_VERSION_RESTATEMENTS` registry and its production reader, binds the
+  three present-tense README statements to the canonical executable release
+  value, delegates Architecture §8 membership to the executed check, adds
+  focused tests and one R12 mutation control, corrects the live app-version
+  scope observation, records the result in State, and checks Step 4.
+- gate acceptance: PASS. `shell/intel_shell/**`, `run`,
+  `.github/workflows/**`, toolchain pins, evidence topology, and every release
+  value have no diff. The declared release-authority precedence was used only
+  to read the existing FastAPI version literal; no release move or source edit
+  was required. No dependency, manifest, schema, production behavior, public
+  response, or tag changed.
+- rejection-before-acceptance: PASS. The planted focused test replaced only
+  README's project-heading value with `9.9.9` and observed the production
+  rejection `README.md: project heading states 9.9.9, but executable release
+  authorities derive 0.17.1` before the complete acceptance suite ran. A
+  distinct zero-extraction construction also rejected, proving that the named
+  registry is read rather than merely declared.
+- README-binding acceptance: PASS. At exact implementation tree
+  `35ab1621ac094814393518e2cdc738c081b13f0e`, `./run version-check` reported
+  five agreeing executable authority values and `release-version current
+  restatements: 3 all derive 0.17.1;
+  registry=RELEASE_VERSION_RESTATEMENTS`. A README disagreement therefore
+  fails the same entry point executed by both lanes.
+- membership acceptance: PASS. G3 showed that heterogeneous current prose and
+  dated history cannot be partitioned honestly from bare literals. The
+  implementation keeps syntax-specific readers for executable authorities and
+  registers only the semantic present-tense prose obligation. The reader
+  requires exactly one match per registered statement and checks each result.
+- Architecture acceptance: PASS. §8 no longer enumerates the Rust, Python,
+  FastAPI, State, and changelog sources in a second prose authority list; it
+  delegates executable authority and current-restatement membership to
+  `./run version-check` and names dated history as outside that live set.
+- historical acceptance: PASS. README, all executable version authorities,
+  and dated historical release records remained byte-unchanged. No older
+  release identity was rewritten.
+- focused-test acceptance: PASS. `shell/tests/test_version_check.py` passed
+  13/13, covering agreement, disagreement, zero extraction, and all prior Rust
+  floor controls.
+- R12 acceptance: PASS. Registered control `stale-readme-version` disables the
+  production release-restatement mismatch branch and was caught by the real
+  mutation self-test. The final self-test passed 12/12 rules and 61 controls.
+  Step 4 shifted zero existing control sites; the new expected line was derived
+  from emitted output as `tools/version_check.py:695`. The cumulative shifted
+  existing-site count remains 12, fewer than the 61 controls protected.
+- development-failure disposition: PASS after correction. The first full
+  population comparison failed two tests in each lane because the new R12
+  control still used its deliberate line-1 placeholder and a patch had
+  accidentally changed R3's expected line from 1 to 695. The parameterized
+  control test emitted the exact R3 mismatch; R3 was restored to line 1 and the
+  new site was set to emitted line 695. The next self-test and both populations
+  passed. An initial `ci-local` after the task box was checked too early stopped
+  exactly at checklist-audit's missing-progress-entry defect; the box was
+  reopened and the acceptance run passed before it was checked again.
+- Python-population acceptance: PASS. Clean constrained Python 3.11.4 and
+  3.12.13 suites each collected/passed 336, failed 0, and skipped 0 with the
+  one accepted Starlette warning. `tools/test_population.py` derived
+  `collected=336`, `equivalent=true`, and `equivalent_passed=336`.
+- local-gate acceptance: PASS. With Step 4 still open, `./run ci-local` passed
+  all 20 jobs with warning-denied 146 workspace tests, the focused SEC identity
+  diagnostic, 32 ingest-net plus 30 cored-net tests, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, 12 invariant rules / 61 controls, shell 336/336,
+  protected artifacts exact, and embedded golden 11/11.
+- lifecycle acceptance: PASS. On the implementation tree, `cycle-check` read
+  `STATE.md` at 342,504 bytes and the unchanged manifest at 191,395 bytes,
+  reported both `bound`, and kept governed review export on
+  `exempt-open-latest-at-close`. The app-version deferred trigger is now
+  accurately recorded as fired by narrow release-authority precedence and
+  discharged by its existing syntax-derived reader without a source edit.
+- golden-E2E delta: PASS, byte-identical **11/11** in both the complete local
+  entry point and mandatory standalone post-task `./run golden`; delta **0**.
+- publisher/ref acceptance: PASS. The task made no publisher request, ran no
+  scheduler or model-profile command, and created, moved, or deleted no
+  publication ref.
