@@ -64,3 +64,74 @@ Entries are append-only; corrections are new dated entries.
   and direct read-only remote Git inspection. It issued no publisher request,
   ran no scheduler or model-profile command, and created, moved, or deleted no
   publication ref.
+
+### 2026-08-01 · E0 — entering state rebuilt; G1–G6 settled
+
+- owner: Codex
+- commit: a966f554cd7db5a3fa33aaf369a727584dd0cd5f
+- result: PASS. The exact delivered v0.32 tree, current publication identity,
+  all six runbook gates, both governed-byte pressures, and every v0.33 trigger
+  observation were measured and recorded before implementation work began.
+- entering-state acceptance: PASS with one corrected hypothesis. Exact
+  delivered HEAD was audit child `70b7f93c94c67e43f6f4a29ede5823081955f3fa`
+  over closing implementation `86b8db0b4026c23371317c7881dcc9497806c20b`.
+  Checklist was **254 checked / 3 retracted / 254 matched / 254 commits
+  resolved**, not 253. Registered invariant baseline was **12 rules / 61
+  controls**.
+- publication acceptance: PASS by direct read-only remote inspection. Remote
+  `main` and peeled `v0.17.1` both resolved to
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`; annotated object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` had Git type `tag`; its closing
+  commit's immediate parent was release commit
+  `7a621e39a069a1ef26438e841e7bb1ca2f34165b`.
+- delivered-export acceptance: PASS. Project-root `./run export-check` at exact
+  audit child `70b7f93c94c67e43f6f4a29ede5823081955f3fa` emitted **2,734,366 bytes /
+  153 files**, confirming the inferred tree and the exact **4,979-byte**
+  closing-tree-to-audit-child difference. Activation's real checker reported
+  the named governed state `exempt-open-empty-progress`.
+- G1 acceptance: PASS as a measured finding. At the real delivered-tree
+  `cycle-check`, absent and renamed headers both PASSed; absent `STATE.md`
+  failed only through the independent governed-artifact reader. `version-check`
+  rejected all three, proving composite protection is borrowed. `git log -G`
+  placed the overstating sentence in reviewer-authored v0.21 release commit
+  `b7c4b10eb506923e3ea854a32d1dc3f4c83b0eaa`, so it is classified as a
+  reviewer error.
+- G2 acceptance: PASS. Governed→governed **+77,014** leaves **3.81 cycles**;
+  closing→closing **+80,284** leaves **3.37**; delivered→delivered **+79,962**
+  leaves **3.32**. Only governed→governed is visible honestly at the governed
+  row's closing evaluation point. Historical 5.65 is a criterion/evaluation-
+  point error with correct arithmetic on mixed-kind inputs.
+- G3 acceptance: PASS. Exact delivered State decomposed to **2,405 header +
+  306,676 dated append + 43,814 permanent tail = 352,895 bytes** over 5,368
+  lines. All live external anchors and the registered restatement were derived;
+  no §3 reference exists. The inventory corrected two reviewer omissions:
+  `.github/workflows/ci.yml` and `crates/compliance/Cargo.toml`. At complete
+  entry points, `version-check` rejected over-cut/restatement removal but
+  accepted renamed §5/five-section removal, while `cycle-check` accepted all
+  four.
+- G4 acceptance: PASS as a bounded negative result. Exhaustive search found no
+  archive digest, complement, order, or truncation reader. Git history and the
+  v0.21 recorded SHA are not standing byte-fidelity controls.
+- G5 acceptance: PASS. Every executable State reader and archival effect is
+  recorded. Real checklist measurement before and after the Option B throwaway
+  cut remained **254 / 3 / 254 / 254**; post-cut `version-check` retained 22
+  current MSRV and 3 release restatements.
+- G6 acceptance: PASS. State has **3.23 closing / 3.53 delivered cycles** of
+  same-kind margin; export has **3.81 governed / 3.37 closing / 3.32 delivered
+  cycles**. Option B's measured counterfactual returns exactly **178,125
+  bytes** to each boundary, leaving State **174,770** and delivered-tree export
+  **2,556,241**. No option was selected and no archive was written.
+- trigger acceptance: PASS. All 24 active deferral rows and all four governed
+  Architecture rows carry dated v0.33 measurements with unchanged triggers.
+- test acceptance: PASS. The complete entry point passed **20/20** with E0's
+  box open; `invariant-scan --self-test` emitted **12/12 rules / 61 controls**.
+  Python 3.11.4 and 3.12.13 each emitted collected/passed **336**, failed 0,
+  skipped 0; `tools/test_population.py` derived `collected=336`,
+  `equivalent=true`, `equivalent_passed=336`. Two complete artifact runs
+  verified **331 pins / 2 artifacts** and both databases in **0.09 s / 0.10 s
+  real**. The first sandboxed net/Python attempts were `not measured` because
+  loopback/process inspection was denied; permitted reruns supplied the passing
+  results.
+- golden-E2E delta: **0**. The mandatory final standalone run passed **11/11**.
+- publisher/ref acceptance: PASS. No publisher request, scheduler, service,
+  model-profile command, archive write, or ref mutation occurred.
