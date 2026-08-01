@@ -14,6 +14,8 @@ Step 5 — publication-epoch reset defined; trigger truth and general cycle-endi
 
 Step 6 — exact candidate authenticated on fresh neutral evidence ref; seven signed identities and both shell populations verified; completion checked — 2026-08-01
 
+Step 7 — operator selected no-release; structural distance, scope, gates, reviewer errors, boundaries, and closing record reconciled; completion checked — 2026-08-01
+
 **Three reviewer errors, all mine, recorded before anything else.**
 
 1. **v0.31 Step 4 asked for a partition over "every tracked file containing a
@@ -356,15 +358,15 @@ measured on.**
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.32 · 2026-08-01 — exact-candidate local and hosted execution of `invariant-scan --self-test` found the registered 12-rule / 61-control vocabulary green and no new spelling; trigger did not fire | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.32 · 2026-08-01 — exact search found no executable Rust-1.86 lane construction and declared scope forbids workflow/run changes; trigger did not fire | none — deferred under the v0.30 operator outcome |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.32 · 2026-08-01 — configuration still names the existing two network sources and no compliance review or admission decision occurred; trigger did not fire | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.32 · 2026-08-01 — direct remote query found neither historical tag and no historical ref was created, moved, or deleted; trigger did not fire | none — no historical ref touched |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.32 · 2026-08-01 — both required remote tags remain absent and no hosted full-history run without the flag exists; trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.32 · 2026-08-01 — Step 6's exact-candidate gate read 191,395 bytes directly, reported `bound` with 857,181 bytes of margin, re-validated all 331 pins, and matched both protected databases; E0's latest explicitly timed complete verifications remain 0.17 s and 0.10 s, so neither trigger fired | Step 2 — measured directly rather than restated; no registration |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.32 · 2026-08-01 — close-time direct remote query found neither historical tag and no historical ref was created, moved, or deleted; trigger did not fire | none — no historical ref touched |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.32 · 2026-08-01 — close-time remote inspection found both required tags absent, and hosted run 30693555131 exercised the unchanged portable flag rather than a full-history run without it; trigger did not fire | none — the flag stays |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.32 · 2026-08-01 — close-time validation read 191,395 bytes directly, reported `bound` with 857,181 bytes of margin, re-validated all 331 pins, and matched both protected databases in complete runs taking 0.19 s and 0.11 s real, so neither trigger fired | Step 2 — measured directly rather than restated; no registration |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.32 · 2026-08-01 — the declared release-authority precedence permits the version literal in `shell/intel_shell/app.py`, so the narrow scope trigger fired. Step 4 read the unchanged FastAPI AST literal as one of five executable authorities and bound the registered prose restatements to its canonical value; no shell source or release value changed | Step 4 — existing syntax-derived authority reader retained; no source edit |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.32 · 2026-08-01 — no such operator decision was supplied; the public value-domain criterion remains prose-adjudicated and the trigger did not fire | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.32 · 2026-08-01 — Step 6's lifecycle checker read 348321 bytes directly and reported `bound`, leaving 105420 bytes; the exact candidate export remained below its ceiling at 2,706,393 bytes. This remains the nearest governed boundary; neither clause fired | Step 2 — measured directly; boundary made executable; no archive |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.32 · 2026-08-01 — the closing lifecycle checker read 352895 bytes directly and reported `bound`, leaving 100846 bytes; the last governed candidate export remained below its ceiling at 2,706,393 bytes. This remains the nearest governed boundary; neither clause fired | Step 2 — measured directly; boundary made executable; no archive |
 | Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.32 · 2026-08-01 — Steps 2–4 each added one R12 control, so the control-schema trigger fired three times. Step 4 shifted zero existing sites and derived its new site at line 695 from real self-test output; Step 5's decision gate ruled that no executable control exists and shifted zero sites. The cumulative 12 shifted existing `expected_line` values (nine in Step 2 and three in Step 3) remain fewer than the 61 controls protected | Step 2, Step 3, Step 4, and Step 5 — completed; shifted values re-derived and counted |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.32 · 2026-08-01 — active v0.32 still matches `v0.<n>`, so the first clause did not fire. The tracked retained-set binding supersedes silent under-exclusion in the production entry point; the cross-family parse limitation remains, while fallback-only constructions remain separately recorded below | none — recorded, not acted on |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.32 · 2026-08-01 — the trigger fired at v0.31; v0.17.1 publication disposed it and reset the consecutive count to zero at the published closing commit. Step 6's exact candidate diff contains no production source, workflow, manifest, dependency, or release-value change, and the post-run remote identities remained unchanged. No new runtime or public-surface difference exists in v0.32, so no fresh count has started. Classification, firing, and reset remain dated operator adjudications because the record has no independent runtime artifact to contradict it | Step 5 — completed by symmetric publication-epoch reset rule; no fake control built |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.32 · 2026-08-01 — the trigger fired at v0.31; v0.17.1 publication disposed it and reset the consecutive count to zero at the published closing commit. The operator selected no-release after the close-time diff found no production source, workflow, manifest, dependency, release-value, runtime-behaviour, or public-surface change. Under Step 5's publication-epoch reading the count remains zero and no fresh count has started. Classification, firing, and reset remain dated operator adjudications because the record has no independent runtime artifact to contradict it | Step 5 — completed by symmetric publication-epoch reset rule; no fake control built |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.32 · 2026-08-01 — Step 3 registered contextual floor predicates without enumerating refuted values; the E0 planted statement now fails through the real entry point, while a release-version numeral remains outside the emitted domain. The tracked set produced 22 contextual matches, 11 context-only matches, zero newly matched files, and zero classification decisions; no live current restatement fired the trigger | Step 3 — completed by contextual value closure and an explicit emitted bound |
 | Retention arithmetic fallback | the `retained_cycle_paths=None` branch produces an answer that differs from the tracked retained set in any construction a control or test relies on | v0.32 · 2026-08-01 — four readers enter the fallback: fixture setup and skipped-cycle coverage in `test_cycle_check.py`, plus stale-retention and skipped-retention plants in `invariant_scan.py`; production always supplies the Git-derived set, while synthetic divergence remains possible | none — recorded, not acted on |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.32 · 2026-08-01 — optionality is deliberate in the general checker: absence asserts neither zero delta nor a performed export, and the lifecycle entry point has no independent export bytes with which to make a conditional requirement non-vacuous. v0.32's runbook separately requires its closing-tree audit; the audit append's own contribution remains necessarily undisclosed | Step 5 — completed by explicit optionality ruling; no self-report control built |
@@ -739,37 +741,37 @@ by green gates, or by hosted evidence. Two outcomes, neither defaulted:
 
 **Done when** the disposition is authorized, recorded, and measured.
 
-- [ ] **R-CLOSE**
+- [x] **R-CLOSE**
 
 ---
 
 ## Cycle checklist
 
-- [ ] Worktree clean at entry; v0.31 release, closing, tag, and post-push commits where E0 measures them
-- [ ] Published `v0.17.1` identity re-measured independently, not inherited from the closing record
-- [ ] Stale retention glob rejection recorded verbatim before the activation edit
-- [ ] Every entering-state hypothesis measured and confirmed or corrected
-- [ ] G1–G6 each carry a measured answer; G1, G2, and G3 answered **by execution**
-- [ ] Every governed quantity present in the tree is measured from the tree
-- [ ] Every detector's domain stated in its own emitted text
-- [ ] Every new binding demonstrated **rejecting** before demonstrated passing
-- [ ] No declared membership left in code without a reader
-- [ ] No binding implemented as a self-consistency assertion
-- [ ] No binding whose membership is written by hand rather than derived, or else the registry has a named reader
-- [ ] No expected value hardcoded in any test added or edited this cycle
-- [ ] Re-derived planted-control line numbers counted and recorded at every step
-- [ ] Evidence candidate pushed to a fresh, self-describing ref; the ref named in the record
-- [ ] No closed cycle document edited, moved, or deleted
-- [ ] Workflow file byte-identical across the complete cycle diff
-- [ ] Manifest byte-identical across the complete cycle diff
-- [ ] `checklist-audit` total does not fall; every figure recorded
-- [ ] Export under 3,000,000 bytes at every measured point, each naming its tree
-- [ ] Golden **11/11** byte-identical at every step
-- [ ] SEC identity population unchanged
-- [ ] Both Python lanes reported as collected/passed/skipped, comparator-derived
-- [ ] Deferred table rows all carry v0.32-identified observations
-- [ ] No publisher request, no scheduler run, no cadence change
-- [ ] Three reviewer errors preserved as such in the cycle record
+- [x] Worktree clean at entry; v0.31 release, closing, tag, and post-push commits where E0 measures them
+- [x] Published `v0.17.1` identity re-measured independently, not inherited from the closing record
+- [x] Stale retention glob rejection recorded verbatim before the activation edit
+- [x] Every entering-state hypothesis measured and confirmed or corrected
+- [x] G1–G6 each carry a measured answer; G1, G2, and G3 answered **by execution**
+- [x] Every governed quantity present in the tree is measured from the tree
+- [x] Every detector's domain stated in its own emitted text
+- [x] Every new binding demonstrated **rejecting** before demonstrated passing
+- [x] No declared membership left in code without a reader
+- [x] No binding implemented as a self-consistency assertion
+- [x] No binding whose membership is written by hand rather than derived, or else the registry has a named reader
+- [x] No expected value hardcoded in any test added or edited this cycle
+- [x] Re-derived planted-control line numbers counted and recorded at every step
+- [x] Evidence candidate pushed to a fresh, self-describing ref; the ref named in the record
+- [x] No closed cycle document edited, moved, or deleted
+- [x] Workflow file byte-identical across the complete cycle diff
+- [x] Manifest byte-identical across the complete cycle diff
+- [x] `checklist-audit` total does not fall; every figure recorded
+- [x] Export under 3,000,000 bytes at every measured point, each naming its tree
+- [x] Golden **11/11** byte-identical at every step
+- [x] SEC identity population unchanged
+- [x] Both Python lanes reported as collected/passed/skipped, comparator-derived
+- [x] Deferred table rows all carry v0.32-identified observations
+- [x] No publisher request, no scheduler run, no cadence change
+- [x] Three reviewer errors preserved as such in the cycle record
 
 ---
 
@@ -882,3 +884,189 @@ than left implied.**
 **Three reviewer errors are recorded in this file's header** rather than here,
 because a provenance note is where a reader looks last and an error is what they
 should see first.
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-01
+- **Release disposition:** no-release (as of 2026-08-01)
+
+The operator selected `no-release` after the measured v0.32 distance from the
+published v0.17.1 closing tree showed only documentation, lifecycle controls,
+focused control tests, and cycle records. No production source, workflow,
+manifest, dependency, schema, version value, runtime behaviour, public route,
+response shape, or `/v1/*` serialized value domain changed. That structural
+distance is the reason for the disposition; “nothing shipped” is not
+substituted for it.
+
+Published v0.17.1 remains current. Immediately before closure, remote `main`
+and the peeled tag both resolved to published closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`; the existing annotated tag object
+`14912f1…` was unchanged. Fresh evidence ref
+`refs/heads/codex/v0.32-evidence-1caace6` resolved to authenticated candidate
+`1caace6e2470b51c371d67598b756a48f93d7968`. Neither deferred historical tag
+was present. No tag, `main`, release ref, publisher state, or other publication
+identity moved.
+
+The closing tree's governed review-export row equals the last governed field it
+can already see: candidate
+`1caace6e2470b51c371d67598b756a48f93d7968` at **2,706,393 bytes / 153
+files**, leaving **293,607 bytes / 9.79%** beneath the 3,000,000-byte ceiling
+while retaining exactly v0.30–v0.32 and excluding both protected byte classes.
+The closing tree does not project its own export. Its real export belongs only
+in the distinct `cycle-ending review-export audit` field in the append-only
+audit child. Immediately before closure, `STATE.md` measured
+**352895 bytes**, leaving **100846 bytes** to its
+453,741-byte archival boundary. `checklist-audit` passed at **253 checked / 3
+retracted / 253 matched / 253 commits resolved**.
+
+Close-time artifact validation passed at schema 2 / **2 artifacts / 331 pinned
+files** in the byte-unchanged **191,395-byte** manifest. Two complete
+verifications took **0.19 s / 0.11 s real** and matched both protected
+databases. Neither the byte nor timing trigger fired, and no manifest
+registration occurred.
+
+Every declared permission is reconciled over activation commit
+`9ecc8c17ffe5349a38f41df78a02acf7c46bd9ca` exclusive through R-CLOSE. Used
+`allow` paths are `tools/cycle_check.py`, `tools/version_check.py`,
+`tools/invariant_scan.py`, `config/invariant-rules.json`, `shell/tests/**`,
+`AGENTS.md`, and `ARCHITECTURE.md`. Unused `allow` paths are
+`tools/export_check.py` and `repomix.config.json`. All eight declared
+`release_authority` patterns—`Cargo.toml`, `Cargo.lock`,
+`crates/*/Cargo.toml`, `apps/*/Cargo.toml`,
+`shell/intel_shell/__init__.py`, `shell/intel_shell/app.py`, `CHANGELOG.md`,
+and `README.md`—are unused, and every actual version value is unchanged.
+
+Every `forbid` path is unused. In particular, `.github/workflows/**`, `run`,
+`tools/model_profiles.py`, `tools/evidence_artifacts.py`, every production
+source family, the protected manifest, publisher/scheduler configuration,
+observations, fixtures, and state archives are byte-unchanged. The wholesale
+`docs/cycles/**` forbid protected every closed cycle document; standing
+precedence admitted only this active runbook and progress record. The other
+standing lifecycle path, `STATE.md`, is used for measured status.
+
+G1 directly measured all three governed byte quantities and identified
+`STATE.md` as nearest. G2 executed contextual Rust-floor recognition against a
+wrong value before accepting its explicit value-closure bound. G3 executed the
+registered present-tense release-version reader and both disagreement and
+zero-extraction rejections. G4 ruled fresh-ref absence an operation-time
+criterion and Step 6 satisfied it with a signed digest and source-ref. G5
+reconciled the previous closing delta and retained the distinct audit-child
+boundary. G6 defined the publication-epoch reset and declined to present
+runtime-classification self-report as an executable control.
+
+The divergence row uses Step 5's publication-epoch reading: successful v0.17.1
+publication reset the count to zero at published closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`. The documentation/lifecycle-only
+v0.32 distance carries no measured runtime difference and starts no fresh
+count; no public-surface change exists. Firing, classification, and reset remain
+dated operator adjudications, while their record shape and freshness remain
+executable.
+
+The three draft defects remain explicitly classified as **reviewer errors**:
+(1) v0.31 specified a Rust-floor partition without specifying the detector's
+domain; (2) it hand-enumerated release authorities and omitted README's current
+restatement; and (3) it dropped the fresh evidence-ref requirement and allowed
+release evidence to bind a reused v0.23-named branch. They are reviewer errors,
+not findings.
+
+Across Steps 2–4, **12** existing `expected_line` values were re-derived from
+real emitted self-test output: nine in Step 2 and three in Step 3. Step 4
+shifted zero existing sites; Step 5 shipped no executable control. New control
+sites are separately registered rather than miscounted as shifted values.
+
+Intentionally unreleased implementation commits:
+
+1. Cycle activation:
+   `9ecc8c17ffe5349a38f41df78a02acf7c46bd9ca`
+2. Activation audit record:
+   `7ba89795403b2b8fab84ff53abeba6ad4a220d23`
+3. E0 implementation:
+   `4ba1de7f60e1161106380a3644dace61ff7907fa`
+4. E0 audit record:
+   `f17bb9a228b6fb0bb88f3172e9518fc164dc208e`
+5. BOUNDARY-MEASURE implementation:
+   `456f37d705d2aed2d5fcbc663a28f4b63400e326`
+6. BOUNDARY-MEASURE audit record:
+   `d100b9de471a08bf2d3b449f37346d89bcdaaf97`
+7. FLOOR-DOMAIN implementation:
+   `4811a5eae8ea2f7a3f129420e855d8f55c5ba51f`
+8. FLOOR-DOMAIN audit record:
+   `6b69896740046a9254a9738af3b9051929249d5b`
+9. VERSION-COMPLETE implementation:
+   `a31aaab5a0efe1dd7d84efbf938f3f9981b3cd97`
+10. VERSION-COMPLETE audit record:
+    `c3159a1feb36bc812563a70994242b758812b7cd`
+11. TRIGGER-STATE implementation:
+    `a619eb486e7ce7fb9bcdf865f588834a17e85940`
+12. TRIGGER-STATE audit record and authenticated candidate:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+13. RE-MEASURE implementation record:
+    `e248d2e4d2177a72a7c3746931505c6219fcff6f`
+14. RE-MEASURE audit record:
+    `bb3f1804fa2cedf4b226bc5793ad82eb6aa89032`
+
+Closing checklist evidence mappings:
+
+1. Entering worktree and v0.31 identity reconstruction:
+   `4ba1de7f60e1161106380a3644dace61ff7907fa`
+2. Independent published-v0.17.1 identity measurement:
+   `4ba1de7f60e1161106380a3644dace61ff7907fa`
+3. Stale-retention rejection evidence:
+   `9ecc8c17ffe5349a38f41df78a02acf7c46bd9ca`
+4. Entering-state hypothesis settlement:
+   `4ba1de7f60e1161106380a3644dace61ff7907fa`
+5. G1–G6 executed disposition record:
+   `4ba1de7f60e1161106380a3644dace61ff7907fa`
+6. Direct governed artifact byte measurement:
+   `456f37d705d2aed2d5fcbc663a28f4b63400e326`
+7. Detector-domain emission:
+   `4811a5eae8ea2f7a3f129420e855d8f55c5ba51f`
+8. Rejection-before-acceptance evidence:
+   `a31aaab5a0efe1dd7d84efbf938f3f9981b3cd97`
+9. Declared-membership reader:
+   `a31aaab5a0efe1dd7d84efbf938f3f9981b3cd97`
+10. Direct-value boundary rather than self-consistency:
+    `456f37d705d2aed2d5fcbc663a28f4b63400e326`
+11. Derived contextual membership:
+    `4811a5eae8ea2f7a3f129420e855d8f55c5ba51f`
+12. Non-hardcoded wrong-value construction:
+    `4811a5eae8ea2f7a3f129420e855d8f55c5ba51f`
+13. Re-derived planted-control line accounting:
+    `a31aaab5a0efe1dd7d84efbf938f3f9981b3cd97`
+14. Fresh self-describing evidence ref and signed identity:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+15. Closed-cycle document preservation:
+    `bb3f1804fa2cedf4b226bc5793ad82eb6aa89032`
+16. Byte-identical workflow evidence:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+17. Byte-identical manifest and protected-byte evidence:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+18. Non-falling checklist evidence before closure:
+    `bb3f1804fa2cedf4b226bc5793ad82eb6aa89032`
+19. Under-ceiling candidate export evidence:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+20. Golden 11/11 continuity:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+21. SEC identity continuity:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+22. Comparator-derived Python populations:
+    `1caace6e2470b51c371d67598b756a48f93d7968`
+23. v0.32-identified deferred observations:
+    `e248d2e4d2177a72a7c3746931505c6219fcff6f`
+24. No-publisher/no-scheduler operation record:
+    `bb3f1804fa2cedf4b226bc5793ad82eb6aa89032`
+25. Three-reviewer-error preservation:
+    `4ba1de7f60e1161106380a3644dace61ff7907fa`
+
+This closing implementation tree is also intentionally unreleased; it cannot
+truthfully contain its own object id. The append-only R-CLOSE audit child names
+it and records its measured export.
+
+No publisher request, scheduler run, cadence change, model-profile command,
+historical cycle edit, workflow edit, production source, dependency, schema,
+manifest, protected byte, golden input, public route, `/v1/*` serialized value
+domain, actual version value, tag, `main`, release ref, or publication ref
+changed. The one explicitly authorized remote mutation was the fresh Step 6
+evidence ref named above.

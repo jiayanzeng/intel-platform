@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 6 authenticated exact no-release candidate `1caace6e2470b51c371d67598b756a48f93d7968` on fresh evidence ref `codex/v0.32-evidence-1caace6`; R-CLOSE awaits the operator's disposition.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The exact candidate passed the complete local entry point **20/20** with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; hosted run **30693555131** passed all seven executable jobs, and each hosted shell lane passed **335** and skipped the one named `on_site` node. `tools/test_population.py` derived `collected=336`, `equivalent=true`, and `equivalent_passed=336` for both local/hosted pairs. Release-grade verification required attestations, accepted **7**, rejected **0**, and found the complete unchanged runner matrix. Post-run remote inspection confirms published v0.17.1 identity remained unmoved. The unchanged manifest remains **331** pins / **191,395 bytes**, and both protected databases match. Exact candidate `1caace6e2470b51c371d67598b756a48f93d7968` produced a **2,706,393-byte / 153-file** review export, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **252 checked / 3 retracted / 252 matched / 252 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is closed with `no-release` disposition as of 2026-08-01; published v0.17.1 remains current and the v0.32 commits are intentionally unreleased.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Exact no-release candidate `1caace6e2470b51c371d67598b756a48f93d7968` passed the complete local entry point **20/20** with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; hosted run **30693555131** passed all seven executable jobs, and each hosted shell lane passed **335** and skipped the one named `on_site` node. `tools/test_population.py` derived `collected=336`, `equivalent=true`, and `equivalent_passed=336` for both local/hosted pairs. Release-grade verification required attestations, accepted **7**, rejected **0**, and found the complete unchanged runner matrix. Close-time remote inspection confirms published v0.17.1 identity remained unmoved. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two close-time complete verifications took **0.19 s / 0.11 s real**. The last governed export remains exact candidate `1caace6e2470b51c371d67598b756a48f93d7968` at **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the closing tree's later measurement belongs only in the cycle-ending audit child. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. Immediately before closure, `checklist-audit` measured **253 checked / 3 retracted / 253 matched / 253 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -374,6 +374,74 @@ Its project-root export measured **2,706,393 bytes / 153 files**, leaving
 remote query again found the evidence ref at the candidate, `main` and peeled
 `v0.17.1` at the published closing commit, and the annotated object unchanged.
 No manifest registration occurred.
+
+**v0.32 R-CLOSE — governed no-release closure (operator authorization and
+measurement 2026-08-01).** Release disposition: no-release (as of 2026-08-01).
+The operator selected `no-release` after the activation-exclusive and published
+release diffs showed only documentation, lifecycle controls, focused control
+tests, and cycle records. No production source, workflow, manifest, dependency,
+schema, version value, public route, response shape, serialized value domain,
+or runtime behaviour changed. This measured structural distance is the reason
+for the disposition; it is not restated as the weaker claim that “nothing
+shipped.” Published v0.17.1 remains current, and all v0.32 implementation and
+audit commits are intentionally unreleased.
+
+The closing tree keeps the Architecture governed-export row bound to the last
+field it can already see: authenticated candidate
+`1caace6e2470b51c371d67598b756a48f93d7968` at **2,706,393 bytes / 153
+files**, **293,607 bytes / 9.79%** below the ceiling. It does not project or
+backfill its own export. The closing tree's real export is measured only after
+that tree exists and belongs in the distinct non-governing cycle-ending audit
+field in the append-only child. Immediately before closure, `STATE.md` measured
+**352895 bytes**, leaving **100846 bytes** to its
+453,741-byte governed archival boundary, and `checklist-audit` passed **253
+checked / 3 retracted / 253 matched / 253 commits resolved**.
+
+Close-time artifact validation again found schema 2 / **2 artifacts / 331
+pinned files** in the byte-unchanged **191,395-byte** manifest. Two complete
+verifications took **0.19 s / 0.11 s real** and matched both protected
+databases, so neither manifest trigger fired. Direct remote inspection resolved
+the fresh evidence ref to the authenticated candidate, remote `main` and peeled
+`v0.17.1` to published closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, and the annotated tag object
+unchanged. Neither deferred historical tag was present. No publication ref was
+moved.
+
+Every declared permission is reconciled over activation commit
+`9ecc8c17ffe5349a38f41df78a02acf7c46bd9ca` exclusive through R-CLOSE. Used
+`allow` paths are `tools/cycle_check.py`, `tools/version_check.py`,
+`tools/invariant_scan.py`, `config/invariant-rules.json`, `shell/tests/**`,
+`AGENTS.md`, and `ARCHITECTURE.md`. Unused `allow` paths are
+`tools/export_check.py` and `repomix.config.json`. All eight declared
+`release_authority` patterns are unused and every actual version value is
+unchanged. Every `forbid` path is unused; standing precedence admits only
+`STATE.md` and the active runbook/progress pair. In particular, every closed
+cycle document, `.github/workflows/**`, `run`, `tools/model_profiles.py`,
+`config/protected-artifacts.json`, every production source family, and every
+publisher/scheduler configuration path is byte-unchanged across the governed
+range.
+
+G1 directly measured all three governed byte quantities and identified
+`STATE.md` as nearest. G2 executed contextual Rust-floor recognition against a
+wrong value before accepting an explicit value-closure bound. G3 executed the
+registered present-tense release-version reader and its disagreement/zero-match
+rejections. G4 classified fresh-ref absence as an operation-time criterion and
+Step 6 satisfied it with signed digest and source-ref identity. G5 reconciled
+the prior closing delta and preserved the non-governing audit-child boundary.
+G6 defined the publication-epoch reset and correctly declined to present
+runtime classification self-report as an executable control. The live reading
+is that v0.17.1 publication reset the divergence count to zero and the
+documentation/lifecycle-only v0.32 distance starts no fresh count; no public
+surface change exists.
+
+The runbook's three draft defects remain classified as **reviewer errors**:
+(1) v0.31 specified a partition without specifying the Rust-floor detector's
+domain; (2) it hand-enumerated release authorities and omitted README's current
+restatement; and (3) it dropped the fresh evidence-ref requirement and allowed
+release evidence to bind a reused v0.23-named branch. They are not findings and
+are not silently dropped. Across Steps 2–4, **12** existing `expected_line`
+values were re-derived from real emitted self-test output—nine in Step 2 and
+three in Step 3. Step 4 shifted zero existing sites; Step 5 shipped no control.
 
 **v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
 two-commit tagged-close protocol (operator authorization and measurement
