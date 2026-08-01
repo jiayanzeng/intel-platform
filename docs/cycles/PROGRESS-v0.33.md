@@ -273,3 +273,67 @@ Entries are append-only; corrections are new dated entries.
   archive byte was written. No production source, workflow, dependency, schema,
   manifest, protected byte, publisher, scheduler, service, model profile,
   public response/value-domain state, or publication ref changed.
+
+### 2026-08-01 · ARCHIVE-CUT — Cut B with standing Fidelity B pin
+
+- owner: Codex
+- commit: 59f45c181d034ec6f4e78815224fff185824a0fb
+- result: PASS. Under explicit operator selection, historical State appends
+  through v0.28 moved to a byte-exact archive and the manifest now checks that
+  archive's exact digest and length on every verification run.
+- authorization acceptance: PASS. The operator selected `Cut B; Fidelity B` on
+  2026-08-01. The operation occurred ahead of its trigger; the recurrence
+  condition remains unchanged in the active deferred row.
+- schema-gate acceptance: PASS after one recorded author-side correction. Both
+  required pre-manifest validators passed, but a synthetic Option B pin made the
+  real entry point exit 2 because `pinned_files[331].path` admitted only
+  evidence, observation, or exact authorization paths while the runbook forbade
+  changing that validator. r4 records the third reviewer error and narrowly
+  registers only `docs/state-archive/STATE-through-v0.28.md` at structural
+  grade. Focused manifest tests passed **20/20**; the exact path passes while a
+  sibling archive name and wrong grade fail.
+- complement acceptance: PASS. Pre-cut HEAD
+  `1121e90055f2fb189bb71404e8bd93f5b55e0a8b` carried State at **5,679 lines /
+  372,667 bytes**, SHA-256
+  `d4af6dda99fded542c19de222df02e3878dbb15c44043b8f7be30092f0c6d248`.
+  The structurally derived movable range was bytes **150,684–328,808**. Archive
+  `docs/state-archive/STATE-through-v0.28.md` is **2,888 lines / 178,125 bytes**
+  at SHA-256
+  `b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`;
+  the pre-record live complement was **2,791 lines / 194,542 bytes** at SHA-256
+  `4e95f3beed3164610054dfd14df1b5b35a24d31c881b348c53146e250395d0c1`.
+  The executed comparison reported sum **372,667**, prefix equal, suffix equal,
+  **1,895-byte header equal**, and full reconstruction equal. The archive's
+  terminal blank separator is deliberately retained byte-exact; non-archive
+  staged diffs passed `git diff --check`.
+- binding acceptance: PASS. Post-cut `cycle-check` reported State **194,542 /
+  453,741 bytes**, regions **1,895 header / 148,789 eligible / 43,858 permanent
+  tail**, and manifest **192,042 / 1,048,576 bytes**, both `bound`. All derived
+  external anchors resolved and §3 remained unreferenced. `version-check`
+  passed **0.17.1** with **22** current offline-MSRV restatements at 1.78 and
+  **3** release restatements.
+- fidelity acceptance: PASS. The manifest is **192,042 bytes / 332 pins** at
+  SHA-256
+  `a5d990462ba59a252c9228db2c4d4532670debbcb7422c8771ef68fc22a0dd2b`.
+  Its real validator and two complete `./run verify-artifacts` runs matched the
+  archive, every other pin, and both protected databases in **0.11 s / 0.10 s
+  real**. The generic committed-pin mutation test includes the archive.
+- export acceptance: PASS with one named environment non-result. Exact staged
+  post-cut pre-record tree `91be7ac3b7c90f5407353136cde8e647f7af2f2f`
+  exported **2,584,353 bytes / 153 files**, retained three cycles, and excluded
+  the archive and pinned SEC body. The first sandboxed attempt failed DNS and
+  was not measured; the permitted rerun supplied the passing result.
+- checklist acceptance: PASS. Before and after the cut, with ARCHIVE-CUT still
+  open, checklist audit remained **258 checked / 3 retracted / 258 matched /
+  258 commits resolved**.
+- test acceptance: PASS. The complete entry point passed **20/20** with the task
+  box open and the invariant registry remained **12 rules / 67 controls**.
+  Python 3.11.4 and 3.12.13 each collected/passed **346**, failed 0, and skipped
+  0; `tools/test_population.py` derived `collected=346`, `equivalent=true`, and
+  `equivalent_passed=346`.
+- golden-E2E delta: **0**. The complete entry point and mandatory final
+  standalone run each passed **11/11**.
+- scope acceptance: PASS. The conditional manifest permission activated only
+  under selected Fidelity B. No production source, workflow, dependency,
+  runtime behavior, protected database byte, public surface, publisher,
+  scheduler, service, model profile, publication version, or ref changed.
