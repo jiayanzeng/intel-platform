@@ -1,6 +1,115 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.31 is active at the fully measured untagged v0.17.1 release commit; published v0.17.0 remains current until an authorized R-CLOSE.** The VERSION-SET tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **325** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=325`, `equivalent=true`, and `equivalent_passed=325`. The focused identity diagnostic retained **201/201** aggregate inputs, including **200 SEC kept / 0 dropped**. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest governed implementation-tree review export is CLOSE-POINT tree `33d5bb9e2b51a71d372600a7a0ef73ccba011200` at **2,586,197 bytes / 153 files**, leaving **413,803 bytes / 13.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **244 checked / 3 retracted / 244 matched / 244 commits resolved** after RETENTION-ONE; VERSION-SET remains unchecked in this tree because R-CLOSE requires this commit to remain the immediate parent of the later closing record. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. VERSION-SET changes release identities, the toolchain-regenerated workspace package lock, README release identity, and the changelog only: no route, response shape, public value domain, dependency resolution, schema, publisher request, scheduler run, cadence change, model-profile command, manifest edit, protected-byte edit, tag, or publication-ref movement occurred.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.31 is closed for release v0.17.1 under the operator-authorized tagged-closing protocol.** Exact release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b` is the closing commit's immediate parent and passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **325** with **0** skips and the same one accepted `StarletteDeprecationWarning`; hosted run **30685356489**, attempt **1**, passed all seven executable jobs at that exact release commit, required attestations, accepted **7**, rejected **0**, and both hosted shell populations were comparator-equivalent at **325**. The focused identity diagnostic retained **201/201** aggregate inputs, including **200 SEC kept / 0 dropped**. The unchanged manifest remains **331** pins / **191,395 bytes**, and both protected databases match. The latest governed review export is exact release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b` at **2,629,379 bytes / 153 files**, leaving **370,621 bytes / 12.35%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. The assembled closing records reconcile **247 checked / 3 retracted / 247 matched / 247 commits resolved**. The bounded internal diagnostic difference reaches its third consecutive closed-cycle observation at this close, so the governed divergence trigger fires and is disposed by the authorized v0.17.1 patch publication; no public response shape or `/v1/*` value domain changed. Workflow, manifest, production behavior sources, dependencies, schemas, publisher state, scheduler state, cadence, model-profile state, protected bytes, and historical cycle documents remain unchanged.
+
+**v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
+two-commit tagged-close protocol (operator authorization and measurement
+2026-08-01).** Release disposition: release (as of 2026-08-01). Exact release
+commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b` is the immediate parent of the
+closing tree. The annotated `v0.17.1` tag targets that closing tree and moves
+atomically with remote `main`; the tag-object identity and closing-commit hash
+are deliberately absent from this tree and belong in the first dated post-push
+append.
+
+The release commit and evidence candidate are the same object. Hosted
+workflow-dispatch run **30685356489**, attempt **1**, executed the unchanged
+workflow at exact SHA `7a621e39a069a1ef26438e841e7bb1ca2f34165b` on
+`refs/heads/codex/v0.23-action-migration`. All seven executable jobs passed;
+dependency drift skipped under its report-only condition. Release-grade
+verification required paired attestations, accepted **7** signed identities,
+rejected **0**, and found the complete runner matrix. The temporary verifier
+report was **37,157 bytes**, SHA-256
+`0ab408757fa870fac8629b24607c59e2092533e60a45af66f6f648fa514b4e6b`,
+and was not registered or committed.
+
+Each hosted Python 3.11 and 3.12 lane collected **325**, passed **324**, and
+skipped exactly
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+under the `on_site` marker with reason `on-site production audit requires
+protected corpora and built cored`. Against local **325 passed / 0 skipped**,
+the repository comparator independently reported for both lanes:
+
+```text
+test-population-compare: {"collected":325,"equivalent":true,"equivalent_passed":325,"hosted":{"on_site_skipped":1,"passed":324,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":325,"skipped":0},"schema_version":1}
+```
+
+The exact release parent also passed local `ci-local` **20/20**, clean
+constrained Python 3.11.4 and 3.12.13 at **325/325**, standalone golden
+**11/11**, and the focused threshold-16/feature-floor-26 identity diagnostic at
+**201 input / 201 kept / 0 dropped**, including **200 SEC kept / 0 dropped**.
+The hosted workflow SHA-256 remained
+`5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+Hosted and local evidence checks found schema 2, 2 protected archives, and 331
+unchanged pinned files; local exact-byte verification matched both archives.
+Golden remained byte-identical at **11/11**. No publisher request or harvest
+command appeared in the complete hosted log search.
+
+The operator-local export at exact release parent
+`7a621e39a069a1ef26438e841e7bb1ca2f34165b` passed **100 derived / 7 required /
+153 exported / 2,629,379 bytes**, retained exactly v0.29–v0.31, and rejected
+both excluded byte classes. It leaves **370,621 bytes / 12.35%** beneath the
+ceiling. The movement from the prior governed CLOSE-POINT tree is **+43,182
+bytes**; v0.30 delivered to the v0.31 release parent moved **+45,755 bytes**.
+The machine-readable governed progress field binds the written architecture
+figure to that exact release tree. The later exact closing-tree export is a
+different measurement and belongs only in the non-governing cycle-ending audit
+child.
+
+The divergence trigger fires at the close because the corrected internal
+`/ingest` raw-boundary behavior is still absent from the published v0.17.0 tree
+and v0.31 becomes the third consecutive post-correction closed cycle after
+v0.29 and v0.30. No public-surface change exists. The operator selected patch
+v0.17.1 before implementation and separately authorized publication after the
+exact release commit passed hosted evidence. The authorized atomic publication
+therefore disposes the fired trigger rather than projecting a fourth
+unpublished cycle.
+
+Every G1–G6 answer remains measured. G1 executed both commits of the real
+v0.30 closing pair and Step 3 repaired the impossible comparison by binding a
+release close to its already-existing parent measurement and separating the
+closing-tree audit. G2 exhaustively classified the tracked Rust-floor set and
+Step 4 made the previously unread historical exclusion a consumed path-family
+authority. G3 executed the skipped-cycle real-Git construction and Step 5 made
+the configured pattern consume the one tracked retained set without an export
+or brace-glob matcher. G4 constrains the written figure against the single
+ceiling authority while correctly leaving real-byte and excluded-content
+measurement operator-local. G5 enumerated and preserved satisfying assignments
+for no-release and tagged-release shapes. G6 retains exactly **two**
+delivered-to-delivered observations with opposite signs, **−8,342** and
+**+61,837**, while the later **+45,755** release-parent movement remains a
+separately named point. Retention can return bytes to the export; live State
+still has no reclaim mechanism.
+
+The three runbook-header errors remain reviewer errors. The first authored an
+unsatisfiable closing equality and is corrected by CLOSE-POINT. The second
+accepted a declaration with no reader and is corrected by EXCLUSION-READ. The
+third placed disposition after hosted evidence and is corrected by selecting
+v0.17.1 before implementation, then authenticating the release commit itself.
+They are neither product findings nor retraction proposals. The accepted
+retraction count remains **3**. Planted-control line numbers were re-derived
+only from emitted mutated-tree output: Step 3 **9**, Step 4 **3**, and Step 5
+**24**, for **36 total**.
+
+Scope use is reconciled by path. Lifecycle implementation used
+`tools/cycle_check.py`, `tools/export_check.py`, `tools/version_check.py`,
+`tools/invariant_scan.py`, `config/invariant-rules.json`,
+`shell/tests/test_cycle_check.py`, `shell/tests/test_version_check.py`,
+`repomix.config.json`, `AGENTS.md`, and `ARCHITECTURE.md`. Release-authority
+use was `Cargo.lock`, `apps/cored/Cargo.toml`,
+`shell/intel_shell/__init__.py`, `shell/intel_shell/app.py`, `CHANGELOG.md`, and
+`README.md`. Root `Cargo.toml`, every `crates/*/Cargo.toml`, and every other
+`apps/*/Cargo.toml` were unused. Standing record paths were `STATE.md` and the
+active TASKS/PROGRESS pair. Every forbid remained unchanged; the two shell
+version files are reachable through the declared release-authority precedence.
+No closed cycle document was edited, moved, renamed, or deleted.
+
+The cycle changed no route, response shape, public value domain, dependency
+resolution beyond cored's workspace version, schema, entitlement or licensing
+outcome, publisher configuration, scheduler configuration, cadence, model
+profile, manifest, protected byte, observation, fixture, golden input, or
+production behavior source. No publisher request, scheduler run, model-profile
+command, manifest registration, historical tag movement, or publication-ref
+movement occurred before the authorized closing action.
 
 **v0.31 VERSION-SET prepares the exact v0.17.1 release commit
 (measured 2026-08-01).** The gate did not trip because Step 2 selected release

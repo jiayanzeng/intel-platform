@@ -7,6 +7,9 @@ Step 2 — operator selected patch release v0.17.1 to ship the boundary correcti
 Step 3 — checked-tree export binding, written ceiling, and distinct cycle-ending audit path implemented and completion checked — 2026-07-31
 Step 4 — tracked Rust-floor file partition and historical-exclusion reader implemented and completion checked — 2026-08-01
 Step 5 — Git-tracked retained-set authority bound to the configured pattern without a glob matcher and completion checked — 2026-08-01
+Step 6 — release authorities moved to v0.17.1 at exact release commit 7a621e39a069a1ef26438e841e7bb1ca2f34165b and completion checked — 2026-08-01
+Step 7 — exact release commit authenticated by hosted run 30685356489 with seven accepted identities and completion checked — 2026-08-01
+Step 8 — operator authorized the tagged close and atomic publication of v0.17.1; completion checked — 2026-08-01
 
 **Three reviewer errors, all mine, recorded before anything else.**
 
@@ -317,28 +320,28 @@ measured on.**
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.31 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.31 · 2026-07-31 — E0 observed no publisher request, scheduler run, or second concurrent harvester; the trigger did not fire | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.31 · 2026-07-31 — E0 made no publisher request and observed no qualifying outage or authorization; the trigger did not fire | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.31 · 2026-07-31 — production net paths are forbidden and E0 made no publisher request or live 304 observation; the trigger did not fire | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.31 · 2026-07-31 — the production ingest path is forbidden, unchanged, and no connector review occurred; the trigger did not fire | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.31 · 2026-07-31 — E0 contacted no publisher and observed neither a further origin nor concurrent harvesting; the trigger did not fire | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.31 · 2026-07-31 — no bounded-window authorization was given and no scheduler ran; the trigger did not fire | none — design complete, execution separately gated |
-| Postgres / pgvector / multi-host seam | unchanged | v0.31 · 2026-07-31 — E0 measured no production, deployment, schema, or multi-host change; the seam remains unchanged | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.31 · 2026-07-31 — E0 observed no third-party shell and made no replacement-invariance claim; the trigger did not fire | none |
-| L2 forced-command wrapper | an operator server session | v0.31 · 2026-07-31 — E0 ran no model-profile command or operator server session; the trigger did not fire | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.31 · 2026-07-31 — E0's registered self-test found no observed outside-vocabulary spelling; the open-bottom limitation remains | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.31 · 2026-07-31 — exhaustive authority search still found no executable 1.86 lane and the cycle forbids evidence-topology changes; the trigger did not fire | none — deferred under the v0.30 operator outcome |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.31 · 2026-07-31 — configuration is unchanged and E0 performed no review or admission; the trigger did not fire | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.31 · 2026-07-31 — local identities remain present, no publication was authorized, and no historical ref moved; the trigger did not fire | none — no historical ref touched |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.31 · 2026-07-31 — both historical tags remain unpublished and the workflow byte is unchanged; the removal trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.31 · 2026-07-31 — E0 measured 331 pins / 191,395 bytes and two complete 0.10 s / 0.10 s verifications; neither trigger fired | Step 1, Step 7, and Step 8 — re-measured only; no registration |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.31 · 2026-07-31 — E0 changed no shell source or version literal; the path remains reachable only under the selected Step 6 release shape | Step 6 — reachable only as a release authority under one operator outcome |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.31 · 2026-07-31 — no such operator decision occurred; the prose-adjudication limitation remains unchanged | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.31 · 2026-07-31 — E0 measured the activation export at 2,544,715 bytes and State at 289,117 bytes, leaving 455,285 and 164,624 bytes respectively; neither trigger fired | Step 1 and Step 8 — boundary re-derived; no archive |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.31 · 2026-07-31 — Step 3 re-derived 9 expected-line values from emitted fail-before output: 7 shifted existing values plus 2 new registered controls; 9 remains below the 57 controls protected | Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.31 · 2026-07-31 — active v0.31 remains inside the supported family; E0 separately executed a skipped-v0.x construction that exposed a distinct set/arithmetic divergence for Step 5 | Step 5 — settled under its own decision gate |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.31 · 2026-07-31 — v0.31 is open, so only v0.29 and v0.30 are post-correction closed-cycle persistence observations; no public-surface change exists and the trigger has not fired | Step 2 and Step 8 — disposition selected before implementation |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.31 · 2026-07-31 — E0 derived 75 tracked literal-bearing files / 683 occurrences: file-level precedence classified all files, with 0 unclassified and 6 multi-class; the historical tuple has no reader and within-file present-versus-history separation is not text-decidable | Step 4 — file-level partition bound; within-file residual named |
+| T7 robots single-flight | a second concurrent harvester | v0.31 · 2026-08-01 — Cycle close and the complete hosted-log search observed no publisher request, scheduler run, or second concurrent harvester; the trigger did not fire | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.31 · 2026-08-01 — The completed cycle made no publisher request and received no qualifying outage authorization; the trigger did not fire | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.31 · 2026-08-01 — Production net paths remained forbidden and unchanged; no publisher request or live 304 observation occurred, so the trigger did not fire | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.31 · 2026-08-01 — The production ingest path remained forbidden and unchanged, and no connector review occurred; the trigger did not fire | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.31 · 2026-08-01 — The completed cycle contacted no publisher and observed neither a further origin nor concurrent harvesting; the trigger did not fire | none — complete, do not re-exercise |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.31 · 2026-08-01 — No bounded-window authorization was given and no scheduler ran through cycle close; the trigger did not fire | none — design complete, execution separately gated |
+| Postgres / pgvector / multi-host seam | unchanged | v0.31 · 2026-08-01 — Closing diff classification found no production, deployment, schema, or multi-host change; the seam remains unchanged | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.31 · 2026-08-01 — No third-party shell appeared and the closing record makes no replacement-invariance claim; the trigger did not fire | none |
+| L2 forced-command wrapper | an operator server session | v0.31 · 2026-08-01 — The completed cycle ran no model-profile command or operator server session; the trigger did not fire | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.31 · 2026-08-01 — The final registered self-test passed 12 rules / 58 controls and found no observed outside-vocabulary spelling; the open-bottom limitation remains | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.31 · 2026-08-01 — Final local and hosted topology remained unchanged, and exhaustive authority search still found no executable 1.86 lane; the trigger did not fire | none — deferred under the v0.30 operator outcome |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.31 · 2026-08-01 — Closing classification confirmed publisher configuration unchanged and found no review or admission; the trigger did not fire | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.31 · 2026-08-01 — Final remote enumeration still omitted both historical tags; no authorization was given and no historical ref moved, so the trigger did not fire | none — no historical ref touched |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.31 · 2026-08-01 — Both historical tags remain unpublished and workflow SHA-256 remains `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`; the removal trigger did not fire | none — the flag stays |
+| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.31 · 2026-08-01 — Step 8 re-measured 331 pins / 191,395 bytes and both protected archives exact; the latest timed pair remains E0's 0.10 s / 0.10 s, so neither trigger fired | Step 1, Step 7, and Step 8 — re-measured only; no registration |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.31 · 2026-08-01 — Step 6 used the release-authority precedence to move only the FastAPI version literal from 0.17.0 to 0.17.1; release classification and tests passed | Step 6 — completed as a release authority under the selected outcome |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.31 · 2026-08-01 — No operator decision requested an executable replacement; R-CLOSE prose adjudication confirmed patch because response shapes and public value domains are unchanged | none — recorded, not acted on |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.31 · 2026-08-01 — Exact release-parent export is 2,629,379 bytes and assembled closing-tree State is 321,718 bytes, leaving 370,621 and 132,023 bytes respectively; neither trigger fired | Step 1 and Step 8 — boundary re-derived; no archive |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.31 · 2026-08-01 — Steps 3, 4, and 5 re-derived respectively 9, 3, and 24 values from emitted fail-before output: 36 total remains below the final 58 controls protected | Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.31 · 2026-08-01 — v0.31 remained inside the supported family; Step 5 settled the separately executed skipped-v0.x set/arithmetic divergence without a glob matcher | Step 5 — settled under its own decision gate |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.31 · 2026-08-01 — The trigger fires as this close makes v0.31 the third consecutive post-correction closed cycle after v0.29 and v0.30; no public-surface change exists, and the operator-authorized v0.17.1 publication disposes the bounded internal difference | Step 2 and Step 8 — disposition selected before implementation and executed at close |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.31 · 2026-08-01 — Closing-tree `version-check` derived 75 tracked literal-bearing files / 670 occurrences, 0 unclassified, and 6 multi-class; Step 4's reader consumes the historical family, while within-file present-versus-history separation remains text-undecidable | Step 4 — file-level partition bound; within-file residual named |
 
 ---
 
@@ -651,7 +654,7 @@ else.**
 **Done when** a release commit exists whose version authorities agree, or the
 gate is recorded as tripped and nothing changed.
 
-- [ ] **VERSION-SET**
+- [x] **VERSION-SET**
 
 ---
 
@@ -686,7 +689,7 @@ the measurement must be of that commit, not of a neutral copy of its tree; under
 **Done when** the candidate carries release-grade authenticated evidence at the
 commit the selected disposition requires.
 
-- [ ] **RE-MEASURE**
+- [x] **RE-MEASURE**
 
 ---
 
@@ -730,35 +733,35 @@ the cycle closes `no-release` with that change of mind recorded and reasoned.
 
 **Done when** the disposition is authorized, recorded, and measured.
 
-- [ ] **R-CLOSE**
+- [x] **R-CLOSE**
 
 ---
 
 ## Cycle checklist
 
-- [ ] Worktree clean at entry; v0.30 closing and audit commits where E0 measures them
-- [ ] Stale retention glob rejection recorded verbatim before the activation edit
-- [ ] Every entering-state hypothesis measured and confirmed or corrected
-- [ ] G1–G6 each carry a measured answer; G1, G2, and G3 answered **by execution**
-- [ ] The release disposition selected and reasoned **before** any implementation step
-- [ ] Every new binding demonstrated **rejecting** before demonstrated passing
-- [ ] Every rule touched this cycle names the tree it is evaluated against
-- [ ] No declared membership left in code without a reader
-- [ ] No binding implemented as a self-consistency assertion
-- [ ] No binding whose membership is written by hand rather than derived
-- [ ] No expected value hardcoded in any test added or edited this cycle
-- [ ] Re-derived planted-control line numbers counted and recorded at every step
-- [ ] No closed cycle document edited, moved, or deleted
-- [ ] Workflow file byte-identical across the complete cycle diff
-- [ ] Manifest byte-identical across the complete cycle diff
-- [ ] `checklist-audit` total does not fall; every figure recorded
-- [ ] Export under 3,000,000 bytes at every measured point, each naming its tree
-- [ ] Golden **11/11** byte-identical at every step
-- [ ] SEC identity population unchanged
-- [ ] Both Python lanes reported as collected/passed/skipped, comparator-derived
-- [ ] Deferred table rows all carry v0.31-identified observations
-- [ ] No publisher request, no scheduler run, no cadence change
-- [ ] Three reviewer errors preserved as such in the cycle record
+- [x] Worktree clean at entry; v0.30 closing and audit commits where E0 measures them
+- [x] Stale retention glob rejection recorded verbatim before the activation edit
+- [x] Every entering-state hypothesis measured and confirmed or corrected
+- [x] G1–G6 each carry a measured answer; G1, G2, and G3 answered **by execution**
+- [x] The release disposition selected and reasoned **before** any implementation step
+- [x] Every new binding demonstrated **rejecting** before demonstrated passing
+- [x] Every rule touched this cycle names the tree it is evaluated against
+- [x] No declared membership left in code without a reader
+- [x] No binding implemented as a self-consistency assertion
+- [x] No binding whose membership is written by hand rather than derived
+- [x] No expected value hardcoded in any test added or edited this cycle
+- [x] Re-derived planted-control line numbers counted and recorded at every step
+- [x] No closed cycle document edited, moved, or deleted
+- [x] Workflow file byte-identical across the complete cycle diff
+- [x] Manifest byte-identical across the complete cycle diff
+- [x] `checklist-audit` total does not fall; every figure recorded
+- [x] Export under 3,000,000 bytes at every measured point, each naming its tree
+- [x] Golden **11/11** byte-identical at every step
+- [x] SEC identity population unchanged
+- [x] Both Python lanes reported as collected/passed/skipped, comparator-derived
+- [x] Deferred table rows all carry v0.31-identified observations
+- [x] No publisher request, no scheduler run, no cadence change
+- [x] Three reviewer errors preserved as such in the cycle record
 
 ---
 
@@ -857,6 +860,77 @@ through v0.27 are outside this reviewer's reach and that claim rests on
 `checklist-audit` and on Codex's measurement. Also unverifiable here: every
 figure Codex reported for the closing implementation tree, since only the audit
 child was delivered. **Said plainly rather than left implied.**
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-01
+- **Release disposition:** release (as of 2026-08-01)
+- **Release:** `v0.17.1`
+- **Release commit:** `7a621e39a069a1ef26438e841e7bb1ca2f34165b`
+- **Evidence candidate:** `7a621e39a069a1ef26438e841e7bb1ca2f34165b`
+- **Candidate hosted run:** `30685356489` attempt 1
+- **Publication authorization:** the operator explicitly authorized Step 8 on
+  2026-08-01 after the exact release commit passed release-grade hosted
+  verification. The annotated `v0.17.1` tag targets this closing commit, whose
+  immediate parent is the release commit above, and moves atomically with
+  `main`.
+- **Divergence-trigger disposition:** the trigger fires as this close makes
+  v0.31 the third consecutive post-correction closed cycle after v0.29 and
+  v0.30 while the bounded internal `/ingest` diagnostic correction is still
+  unpublished. No public-surface change exists. The fired trigger is disposed
+  by the operator-authorized patch publication of this exact closing tree.
+- **Closing evidence:** exact release commit
+  `7a621e39a069a1ef26438e841e7bb1ca2f34165b` passed the complete 20-job local
+  matrix, both clean 325-test Python lanes, focused 200 SEC kept / 0 dropped,
+  and golden 11/11. Hosted run `30685356489` passed all seven executable jobs;
+  release-grade verification required attestations, accepted 7 identities,
+  rejected 0, and found the complete matrix. Both hosted shell lanes were
+  comparator-equivalent at 325 tests. The workflow, manifest, all 331 pins,
+  both protected archives, routes, response shapes, and public value domains
+  remained unchanged.
+- **Governed export:** the exact release commit produced 153 files /
+  2,629,379 bytes, leaving 370,621 bytes / 12.35% beneath the 3,000,000-byte
+  ceiling and retaining exactly v0.29–v0.31. The progress record binds that
+  figure to the named release tree; the later closing-tree measurement belongs
+  only in the distinct cycle-ending audit child.
+- **Scope reconciliation:** used non-release permissions were
+  `tools/cycle_check.py`, `tools/export_check.py`, `tools/version_check.py`,
+  `tools/invariant_scan.py`, `config/invariant-rules.json`,
+  `shell/tests/test_cycle_check.py`, `shell/tests/test_version_check.py`,
+  `repomix.config.json`, `AGENTS.md`, and `ARCHITECTURE.md`. Used release
+  authorities were `Cargo.lock`, `apps/cored/Cargo.toml`,
+  `shell/intel_shell/__init__.py`, `shell/intel_shell/app.py`, `CHANGELOG.md`,
+  and `README.md`. The root `Cargo.toml`, every `crates/*/Cargo.toml`, and every
+  other `apps/*/Cargo.toml` were unused release-authority permissions. Every
+  forbidden path remained unchanged; the shell `app.py` change is solely the
+  declared release-authority literal, which wins over its production-source
+  forbid exactly as the scope contract states.
+- **G1–G6 disposition:** G1 executed the real v0.30 closing pair and Step 3
+  repaired the unsatisfiable evaluation point; G2 exhaustively exposed the dead
+  historical exclusion and Step 4 bound the complete tracked file partition;
+  G3 executed a skipped-cycle Git construction and Step 5 bound one retained
+  set without an export or glob matcher; G4 bound the written figure to the
+  single ceiling while preserving operator-local byte measurement; G5 proved
+  satisfying assignments for both no-release and tagged-release protocols;
+  G6 measured exactly two delivered-to-delivered growth observations with
+  opposite signs (**−8,342**, **+61,837**), plus the distinct
+  v0.30-delivered-to-v0.31-release-parent movement of **+45,755**. Retention can
+  return export bytes; live `STATE.md` still has no reclaim mechanism.
+- **Reviewer-error disposition:** all three header items remain reviewer
+  errors. The first authored an unsatisfiable closing-tree equality and is
+  corrected by CLOSE-POINT; the second accepted an unread declaration and is
+  corrected by EXCLUSION-READ; the third scheduled disposition after evidence
+  and is corrected by selecting v0.17.1 before implementation and measuring
+  its exact release commit before this authorized close. None is restated as a
+  product finding or retraction.
+- **Control accounting:** Step 3 re-derived 9 `expected_line` values, Step 4
+  re-derived 3, and Step 5 re-derived 24, for **36 total** across the cycle.
+  `checklist-audit` does not fall, the three accepted retractions remain three,
+  no closed cycle document moved, and no publisher request, scheduler run,
+  cadence change, model-profile command, manifest registration, or protected
+  byte edit occurred.
 
 **Three reviewer errors are recorded in this file's header** rather than here,
 because a provenance note is where a reader looks last and an error is what they

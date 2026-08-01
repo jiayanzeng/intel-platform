@@ -382,3 +382,116 @@ Entries are append-only; corrections are new dated entries.
   ran no scheduler or model-profile command, changed no cadence, and created,
   moved, or deleted no version, tag, release, publication, or working-repository
   ref.
+
+### 2026-08-01 · VERSION-SET — prepare exact v0.17.1 release commit
+
+- owner: Codex
+- commit: 7a621e39a069a1ef26438e841e7bb1ca2f34165b
+- result: PASS. Step 2 selected patch release v0.17.1, so the gate did not
+  trip. The Rust package, Python package, public FastAPI literal, `STATE.md`
+  header, and newest changelog release all agree at 0.17.1 under the existing
+  `version-check` entry point.
+- lockfile acceptance: PASS. `cargo check --workspace` regenerated
+  `Cargo.lock`; its only resolution diff is the workspace cored version
+  0.17.0 → 0.17.1. The lockfile was neither deleted nor hand-edited, and all
+  subsequent locked current and Rust 1.78 builds/tests passed.
+- surface acceptance: PASS. Against annotated v0.17.0,
+  `apps/cored/src/main.rs` and `crates/core/src/lib.rs` are byte-identical and
+  the FastAPI source changes only its version literal. `/ingest` keeps the same
+  route, response shape, field names, field types, and outcome domain; every
+  `/v1/*` route, response shape, serialized field, and value domain is
+  unchanged. The patch classification is therefore preserved.
+- regression acceptance: PASS. The exact release commit passed local
+  `ci-local` **20/20** with warning-denied workspace **146**, net **62**
+  (**32 ingest + 30 cored**), locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, `invariant-scan` **12 rules / 58 controls**,
+  shell **325/325**, protected artifacts, and embedded golden **11/11**.
+  Clean constrained Python 3.11.4 and 3.12.13 each collected/passed **325**,
+  failed **0**, and skipped **0**; their comparator derived
+  `collected=325`, `equivalent=true`, and `equivalent_passed=325`.
+- identity acceptance: PASS. The focused diagnostic measured threshold 16,
+  feature floor 26, **201 input / 201 kept / 0 dropped**, including **200 SEC
+  kept / 0 dropped**. Standalone golden passed **11/11**, delta **0**.
+- ref acceptance: PASS. VERSION-SET created no tag and moved no local or remote
+  release/publication ref. Its checkbox and this entry land in the closing
+  child so the measured release commit remains that child's immediate parent.
+
+### 2026-08-01 · RE-MEASURE — authenticate the exact release commit
+
+- owner: Codex
+- commit: 7a621e39a069a1ef26438e841e7bb1ca2f34165b
+- result: PASS. Candidate and release commit are the same exact object:
+  `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Workflow-dispatch run
+  **30685356489**, attempt **1**, passed all seven executable jobs; dependency
+  drift skipped under its unchanged report-only condition.
+- attestation acceptance: PASS. Release-grade verification required paired
+  attestations, accepted **7**, rejected **0**, and found the complete runner
+  matrix. The temporary 37,157-byte report had SHA-256
+  `0ab408757fa870fac8629b24607c59e2092533e60a45af66f6f648fa514b4e6b`;
+  it was not added to the repository or manifest.
+- population acceptance: PASS. Hosted Python 3.11 and 3.12 each collected
+  **325**, passed **324**, and skipped the same named, reasoned `on_site` node
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`.
+  Against local **325 passed / 0 skipped**, each executed comparator derived
+  `collected=325`, `equivalent=true`, and `equivalent_passed=325`.
+- candidate acceptance: PASS. Hosted version authorities all read 0.17.1;
+  `cycle-check`, registered invariants **12/12 rules / 58 controls**, locked
+  current and Rust 1.78 builds/tests, net **62**, lint/fmt, and golden **11/11**
+  passed. The manifest validated at schema 2 / 2 artifacts / 331 pinned files;
+  local exact-byte verification matched every pin and both protected archives.
+  No manifest registration occurred.
+- topology/ref acceptance: PASS. Workflow SHA-256 remained
+  `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+  The candidate branch alone moved to the exact release commit. Remote `main`
+  and annotated v0.17.0 remained at their prior objects, no v0.17.1 tag
+  existed, and complete hosted-log search found no publisher request or
+  harvest command.
+- golden-E2E delta: **0**.
+
+### 2026-08-01 · R-CLOSE — v0.17.1 tagged close
+
+- owner: Codex
+- commit: 7a621e39a069a1ef26438e841e7bb1ca2f34165b
+- result: PASS. The operator explicitly authorized Step 8 after exact-candidate
+  evidence completed. Release commit
+  `7a621e39a069a1ef26438e841e7bb1ca2f34165b` is the untagged immediate parent
+  of the closing tree; the closing record names it and omits the not-yet-created
+  tag-object field as required by R-CLOSE.
+- authorization/protocol acceptance: PASS. The authorized annotated
+  `v0.17.1` tag targets the closing child and moves atomically with remote
+  `main`. The first commit after that tagged close owns the complete dated
+  post-push record and the distinct cycle-ending export audit.
+- governed review-export measurement: tree=`7a621e39a069a1ef26438e841e7bb1ca2f34165b`; bytes=`2629379`
+- export acceptance: PASS. The exact release parent produced **100 derived / 7
+  required / 153 exported / 2,629,379 bytes**, retained exactly v0.29–v0.31,
+  rejected both excluded byte classes, and left **370,621 bytes / 12.35%**
+  beneath the ceiling. The prior governed-tree movement is **+43,182** and the
+  v0.30-delivered-to-release-parent movement is **+45,755**.
+- trigger acceptance: PASS. The governed divergence trigger fires at close
+  because v0.31 becomes the third consecutive post-correction closed cycle
+  while the bounded internal diagnostic correction is unpublished. No public
+  value domain changed. The authorized patch publication disposes the trigger.
+- scope acceptance: PASS. The closing record reconciles every allowed and
+  release-authority pattern as used or unused by path. No forbidden path moved
+  except the two shell version literals reached through the declared
+  release-authority precedence. Workflow, harness, authorization pins,
+  manifest, production behavior sources, schemas, publisher configuration,
+  protected bytes, observations, fixtures, and closed cycle documents stayed
+  unchanged.
+- gate/reviewer acceptance: PASS. G1–G6 retain their measured answers; G1, G2,
+  and G3 are execution-backed. The three runbook-header mistakes remain
+  reviewer errors with their corrections named. Step 3, Step 4, and Step 5
+  re-derived respectively **9 + 3 + 24 = 36** planted-control line values.
+- regression acceptance: PASS at the exact release parent: local matrix
+  **20/20**, Python **325/325** on both lanes, SEC **200 kept / 0 dropped**,
+  invariant **12/12 rules / 58 controls**, protected archives exact, and golden
+  **11/11**. Hosted release evidence passed seven executable jobs with **7
+  accepted / 0 rejected** signed identities and comparator-equivalent shell
+  populations.
+- control acceptance: PASS. The assembled closed worktree reconciles **247**
+  checked task records with **3** accepted retractions and no exemption; the
+  exact tagged closing tree is re-verified after its commit and tag exist.
+- publisher/non-exercise acceptance: PASS. No publisher request, scheduler run,
+  cadence change, model-profile command, manifest registration, dependency or
+  schema change, protected-byte edit, or historical ref movement occurred.
+- golden-E2E delta: **0**.
