@@ -1295,7 +1295,7 @@ def test_governed_export_margin_kind_accepts_recorded_governed_series(
     root = _cycle_root(tmp_path)
     errors: list[str] = []
 
-    cycle_check.check_governed_export_margin_kind(
+    report = cycle_check.check_governed_export_margin_kind(
         root / "ARCHITECTURE.md",
         (root / "ARCHITECTURE.md").read_text(),
         root,
@@ -1303,6 +1303,14 @@ def test_governed_export_margin_kind_accepts_recorded_governed_series(
     )
 
     assert errors == []
+    assert report == (
+        "governed-export-margin-basis: "
+        "selected=latest-positive-adjacent-governed-pair "
+        "representativeness=unbounded(single adjacent pair carries no "
+        "representativeness guarantee) "
+        "structural_epoch=unobserved(checker cannot detect a basis "
+        "predating a structural change)"
+    )
 
 
 def test_governed_export_margin_kind_rejects_mixed_recorded_series(

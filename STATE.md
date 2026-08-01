@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 2 has made State structural admission independent of its delegated semantic restatement and exposed every publication-status bound; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The REGION-FLOOR tree passed all **20/20** local jobs with checklist **262 checked / 3 retracted / 262 matched / 262 commits resolved**, `cycle-check` state `open`, governed export `exempt-open-empty-progress`, registered invariants **12 rules / 68 controls**, a clean constrained Python 3.11.4 population at **352/352**, zero Rust warnings, and golden **11/11** both inside `ci-local` and at the standalone entry point. All **332** pins and both protected databases match. The exact delivered v0.33 export remains **2,634,692 bytes / 153 files**, leaving **365,308 bytes**, or **4.69 cycles** on the measured 77,862-byte pre-reclaim denominator; it is now nearer than State's 7.93-cycle and manifest's 1,323.85-cycle margins. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 3 has made the governed export margin emit both denominator limits; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The BASIS-BOUND tree passed all **20/20** local jobs with its task box open, checklist **263 checked / 3 retracted / 263 matched / 263 commits resolved**, `cycle-check` state `open`, governed export `exempt-open-empty-progress`, registered invariants **12 rules / 68 controls**, a clean constrained Python 3.11.4 population at **352/352**, zero Rust warnings, and golden **11/11** both inside `ci-local` and at the standalone entry point. All **332** pins and both protected databases match. The exact delivered v0.33 export remains **2,634,692 bytes / 153 files**, leaving **365,308 bytes**, or **4.69 cycles** on the measured 77,862-byte pre-reclaim denominator; it is now nearer than State's 7.93-cycle and manifest's 1,323.85-cycle margins. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
 
 **v0.34 REGION-FLOOR — State structural admission no longer depends on the
 tail it protects (measured 2026-08-02).** E0's exact delivered-tree
@@ -54,6 +54,44 @@ controls**, the clean Python 3.11.4 shell population **352/352**, warning-denied
 current/net/MSRV Rust lanes, both protected databases and all **332** pins.
 Golden remained byte-stable at **11/11** inside `ci-local` and at the required
 standalone `./run golden` entry point.
+
+**v0.34 BASIS-BOUND — the margin entry point states what its denominator
+cannot prove (measured 2026-08-02).** The executable selection remains the
+latest positive adjacent same-kind governed pair, because it binds the recorded
+values and arithmetic without mixing delivered and governed kinds. The check
+now emits this successful-path bound verbatim:
+
+```text
+cycle-check: governed-export-margin-basis: selected=latest-positive-adjacent-governed-pair representativeness=unbounded(single adjacent pair carries no representativeness guarantee) structural_epoch=unobserved(checker cannot detect a basis predating a structural change)
+```
+
+A constraint was not selected because the repository evidence cannot support
+one. The governed series contains only two positive adjacent deltas, **53,106**
+and **77,014 bytes**, so a floor derived from them would be arbitrary rather
+than a representativeness guarantee. A trailing window would combine the
+v0.33 **−113,952-byte** one-time archive transition with steady growth, exactly
+the denominator error this cycle forbids. An epoch constraint would require an
+independent machine-readable archival event aligned to the progress series;
+none exists, and parsing the prose that makes the claim would turn the bound
+into self-attestation. The truthful outcome is therefore an emitted bound until
+future evidence supplies a defensible constraint. No dated historical margin
+figure was edited.
+
+The first complete gate correctly stopped at R12 control 37 because the new
+emitted-bound path shifted its stored source location. Replaying that exact
+mutation through `exercise_fail_before` emitted
+`tools/cycle_check.py:2935: ... silently-dropped-trigger-subject`; the one
+shifted existing `expected_line` was copied from that output. This step adds no
+control and changes no control construction, so the registered population
+remains **68** and the deferred control-schema trigger did not fire.
+
+After that named stopped attempt, the complete entry point passed **20/20**
+with BASIS-BOUND's task box still open: checklist **263 / 3 / 263 / 263**,
+registered invariants **12/12 rules / 68 controls**, warning-denied
+current/net/MSRV Rust lanes, clean Python 3.11.4 shell **352/352**, all **332**
+pins, both protected databases, and embedded golden **11/11**. The required
+standalone `./run golden` also passed **11/11**, for delta **0**. Focused
+lifecycle tests remained **85/85**.
 
 **v0.34 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-02).** The sole pre-activation worktree item was the operator-supplied

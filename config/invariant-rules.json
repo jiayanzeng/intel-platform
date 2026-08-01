@@ -859,7 +859,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: silently-dropped-trigger-subject",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2926
+          "expected_line": 2935
         },
         {
           "file": "tools/test_population.py",

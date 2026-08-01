@@ -19,6 +19,8 @@ Step 1 — rebuilt both entry states, executed G1–G2, derived G3–G6, and ref
 
 Step 2 — made State structural admission independent of its delegated semantic restatement and exposed every publication-status bound — 2026-08-02
 
+Step 3 — made the governed margin entry point emit both representativeness and structural-epoch limits — 2026-08-02
+
 ---
 
 **One reviewer error, mine, recorded before anything else.**
@@ -223,7 +225,7 @@ happened.
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.34 · 2026-08-02 — no shell source or release value changed; trigger did not fire | none — `shell/intel_shell/**` is forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.34 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.34 · 2026-08-02 — exact delivered State was 206,530 / 453,741 bytes, leaving 247,211 bytes or 7.93 cycles at the latest 31,177-byte same-kind growth; the delivered export was 2,634,692 / 3,000,000 bytes, leaving 365,308 bytes or 4.69 cycles at the latest 77,862-byte pre-reclaim growth. The export is nearer; neither trigger fired | Step 1 — G3 places the next archival availability in cycles |
-| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.34 · 2026-08-02 — Step 2's control-schema change fired and the full-tail R12 plant replaced the weaker marker-only construction. Real emitted mutation output re-derived 27 shifted existing `expected_line` values; none was offset-computed. The latest 27 remains 41 below the unchanged 68 controls protected, so the second clause did not fire | Step 2 — completed; every shifted value came from emitted output |
+| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.34 · 2026-08-02 — Step 3's emitted-bound source path added no control and changed no control schema. Its first complete gate stopped on one stale existing location; exact R12 control-37 replay emitted line 2935, which was copied rather than offset-computed. The latest 1 is 67 below the unchanged 68 controls protected, so neither trigger clause fired. Step 2's earlier 27-value schema-change re-derivation remains preserved in its dated task and progress record | Step 3 — completed; the one shifted value came from emitted output |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.34 · 2026-08-02 — v0.34 still matched `v0.<n>`; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.34 · 2026-08-02 — no measured runtime or public-surface change existed; the publication-epoch count remained zero | Step 7 — restate the epoch count under the v0.32 reset rule |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.34 · 2026-08-02 — contextual floor predicates found no unregistered live current restatement; trigger did not fire | none — completed control remains active |
@@ -362,7 +364,7 @@ v0.31→v0.32; **the v0.33 archival happened after it.**
 **Done when** the number that says how much room is left either cannot rest on
 an unrepresentative basis, or says out loud that it might.
 
-- [ ] **BASIS-BOUND**
+- [x] **BASIS-BOUND**
 
 ---
 

@@ -423,6 +423,18 @@ cycle may impose a stronger runbook-specific requirement. The latest
 append-only audit record's own byte contribution is necessarily undisclosed;
 another field would recreate the self-measurement fixed point.
 
+The governed export margin's executable denominator is the latest positive
+adjacent same-kind governed pair. That selection and its arithmetic are bound,
+but its representativeness and structural epoch are not: one adjacent pair
+cannot establish a representative rate, and the checker has no independent
+machine-readable event that identifies an archival or other structural change.
+The entry point therefore emits both limits beside every successful basis
+selection. A numeric floor would be an unsupported inference from only two
+positive pairs; a trailing window would mix the measured v0.33 one-time archive
+reclaim into steady growth; and an epoch rule would merely trust prose until an
+independent epoch authority exists. This is an explicit bound, not a claim that
+the selected pair predicts future growth.
+
 Published-release divergence is counted within a publication epoch. A
 successful authorized publication resets the consecutive closed-cycle count to
 zero at the published closing commit. Only a measured runtime-behaviour

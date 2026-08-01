@@ -2546,7 +2546,7 @@ def check_governed_export_margin_kind(
     architecture_text: str,
     root: Path,
     errors: list[str],
-) -> None:
+) -> str | None:
     """Bind an evaluated margin to the latest positive same-kind basis."""
     matches = list(GOVERNED_EXPORT_MARGIN_SERIES_RE.finditer(architecture_text))
     if len(matches) != 1:
@@ -2556,7 +2556,7 @@ def check_governed_export_margin_kind(
             "governed→governed is supported because closing and delivered "
             "exports have no common in-repository measurement authority"
         )
-        return
+        return None
 
     match = matches[0]
     line_start = architecture_text.rfind("\n", 0, match.start()) + 1
@@ -2583,7 +2583,7 @@ def check_governed_export_margin_kind(
             f"{shown(architecture_path, root)}: executable Review-export "
             "margin series must be in the governed export row's measured cell"
         )
-        return
+        return None
     prior_relative = Path(match.group(2))
     prior_value = int(match.group(3))
     current_relative = Path(match.group(4))
@@ -2609,13 +2609,13 @@ def check_governed_export_margin_kind(
             f"{shown(architecture_path, root)}: governed export margin "
             "progress sources must be safe docs/cycles/PROGRESS-v*.md paths"
         )
-        return
+        return None
     if prior_relative == current_relative:
         errors.append(
             f"{shown(architecture_path, root)}: governed export margin must "
             "name distinct prior and current progress sources"
         )
-        return
+        return None
 
     recorded_values: list[int] = []
     source_versions: list[tuple[int, ...]] = []
@@ -2628,7 +2628,7 @@ def check_governed_export_margin_kind(
                 f"{shown(architecture_path, root)}: governed export margin "
                 f"source {relative.as_posix()} has no parseable cycle version"
             )
-            return
+            return None
         source_versions.append(
             tuple(int(part) for part in version_match.group(1).split("."))
         )
@@ -2638,7 +2638,7 @@ def check_governed_export_margin_kind(
                 f"{shown(architecture_path, root)}: governed export margin "
                 f"source {relative.as_posix()} is not a file"
             )
-            return
+            return None
         source_text = source.read_text()
         source_measurements = list(
             GOVERNED_EXPORT_PROGRESS_RE.finditer(source_text)
@@ -2653,7 +2653,7 @@ def check_governed_export_margin_kind(
                 f"source {relative.as_posix()} has no valid governed "
                 "measurement series"
             )
-            return
+            return None
         recorded_values.append(int(source_measurements[-1].group(2)))
 
     # Invariant R12 control site: governed review-export same-kind margin.
@@ -2665,7 +2665,7 @@ def check_governed_export_margin_kind(
             f"recorded={recorded_values[0]}→{recorded_values[1]}"
             f"@{recorded_values[2]}"
         )
-        return
+        return None
 
     evaluated_version = source_versions[2]
     if evaluated_version < source_versions[1]:
@@ -2673,7 +2673,7 @@ def check_governed_export_margin_kind(
             f"{shown(architecture_path, root)}: governed export margin "
             "evaluation cycle precedes its denominator basis"
         )
-        return
+        return None
 
     governed_series: dict[tuple[int, ...], tuple[Path, int]] = {}
     for source in sorted((root / "docs" / "cycles").glob("PROGRESS-v*.md")):
@@ -2708,7 +2708,7 @@ def check_governed_export_margin_kind(
             f"{shown(architecture_path, root)}: governed export margin has "
             "no positive adjacent-cycle governed denominator basis"
         )
-        return
+        return None
     _latest_version, latest_prior, latest_current = max(positive_pairs)
     # Invariant R12 control site: governed review-export margin basis selection.
     if (prior_relative, current_relative) != (latest_prior, latest_current):
@@ -2719,7 +2719,7 @@ def check_governed_export_margin_kind(
             f"{current_relative.as_posix()}, latest={latest_prior.as_posix()}→"
             f"{latest_current.as_posix()}"
         )
-        return
+        return None
 
     governed_values = GOVERNED_EXPORT_ROW_MARKER_RE.findall(architecture_text)
     if len(governed_values) != 1 or int(governed_values[0]) != evaluated_value:
@@ -2728,7 +2728,7 @@ def check_governed_export_margin_kind(
             f"evaluated value {evaluated_value} does not equal the governed "
             "row value"
         )
-        return
+        return None
     expected_denominator = current_value - prior_value
     if expected_denominator <= 0 or denominator != expected_denominator:
         errors.append(
@@ -2736,7 +2736,7 @@ def check_governed_export_margin_kind(
             f"denominator {denominator} disagrees with same-kind delta "
             f"{expected_denominator}"
         )
-        return
+        return None
     expected_numerator = MAX_EXPORT_BYTES - evaluated_value
     if numerator != expected_numerator:
         errors.append(
@@ -2744,7 +2744,7 @@ def check_governed_export_margin_kind(
             f"numerator {numerator} disagrees with ceiling remainder "
             f"{expected_numerator}"
         )
-        return
+        return None
     expected_cycles = (
         Decimal(numerator) / Decimal(denominator)
     ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
@@ -2754,6 +2754,15 @@ def check_governed_export_margin_kind(
             f"{displayed_cycles} disagree with same-kind quotient "
             f"{expected_cycles}"
         )
+        return None
+    return (
+        "governed-export-margin-basis: "
+        "selected=latest-positive-adjacent-governed-pair "
+        "representativeness=unbounded(single adjacent pair carries no "
+        "representativeness guarantee) "
+        "structural_epoch=unobserved(checker cannot detect a basis "
+        "predating a structural change)"
+    )
 
 
 def governed_trigger_subjects(
@@ -3088,6 +3097,7 @@ def run(
     artifact_boundary_state = "not-applicable"
     artifact_boundary_reports: list[str] = []
     state_region_report: str | None = None
+    governed_export_basis_report: str | None = None
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         architecture_trigger_rows = 0
@@ -3225,7 +3235,7 @@ def run(
                 root,
                 errors,
             )
-            check_governed_export_margin_kind(
+            governed_export_basis_report = check_governed_export_margin_kind(
                 architecture_path,
                 architecture_text,
                 root,
@@ -3291,6 +3301,8 @@ def run(
         print(f"cycle-check: {report}")
     if state_region_report is not None:
         print(f"cycle-check: {state_region_report}")
+    if governed_export_basis_report is not None:
+        print(f"cycle-check: {governed_export_basis_report}")
     if publication_status_report is not None:
         print(f"cycle-check: {publication_status_report}")
 
