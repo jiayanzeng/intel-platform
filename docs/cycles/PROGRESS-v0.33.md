@@ -337,3 +337,84 @@ Entries are append-only; corrections are new dated entries.
   under selected Fidelity B. No production source, workflow, dependency,
   runtime behavior, protected database byte, public surface, publisher,
   scheduler, service, model profile, publication version, or ref changed.
+
+### 2026-08-01 · RE-MEASURE — exact candidate authenticated on a fresh evidence ref
+
+- owner: Codex
+- commit: 8f44d5298e9488d04a4e16c445ad15a70607f7ec
+- result: PASS. Exact implementation commit
+  `8f44d5298e9488d04a4e16c445ad15a70607f7ec` records release-grade hosted
+  evidence for no-release candidate
+  `2edb7694c2c6c1498b3903382c37aef68329150d`, refreshes the latest governed
+  observations, and checks Step 6. The authenticated candidate itself remains
+  the preceding Step 5 audit tree.
+- candidate/ref acceptance: PASS. Candidate HEAD was clean at tree
+  `916db4b88ec9086222913da33fdb3c06a17a5e40`. The operator explicitly
+  authorized fresh ref `refs/heads/codex/v0.33-evidence-2edb769`. The first
+  sandboxed query failed DNS and was not measured; before any push the
+  permitted `git ls-remote` exited zero with no matching ref. The sole
+  authorized push created that ref, and immediate plus final readback each
+  resolved it to the exact candidate. No existing ref was reused, force-moved,
+  or repurposed.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30705340282**, attempt
+  **1**, used branch `codex/v0.33-evidence-2edb769`, exact candidate SHA, and
+  evidence signing. `core`, `golden`, `lint`, `msrv`, `net`,
+  `shell/python=3.11`, and `shell/python=3.12` all passed; every receipt,
+  attestation, bundle-copy, and persistence step passed. Dependency drift
+  skipped under its declared report-only condition. The workflow remained
+  byte-unchanged at SHA-256
+  `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+- attestation acceptance: PASS. The repository release-grade verifier consumed
+  the downloaded ephemeral **7 receipts / 7 Sigstore bundles**, accepted **7**,
+  rejected **0**, and found the complete runner matrix with no finding. Every
+  accepted identity binds repository `jiayanzeng/intel-platform`, workflow
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml`, source and signer
+  digest `2edb7694c2c6c1498b3903382c37aef68329150d`, and source ref
+  `refs/heads/codex/v0.33-evidence-2edb769`. The temporary report was **37,297
+  bytes** with SHA-256
+  `6c96a0e04749459e752bef21bc4d4f7781dbc050929dbbb5f76782acd7981196`
+  and remained outside the repository and manifest.
+- population acceptance: PASS. Exact-candidate local Python 3.11.4 and 3.12.13
+  each collected/passed **346**, failed **0**, and skipped **0**. Each hosted
+  lane collected **346**, passed **345**, and skipped the same named, reasoned
+  `on_site` node
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  because `on-site production audit requires protected corpora and built
+  cored`. For each lane `tools/test_population.py` derived `collected=346`,
+  `equivalent=true`, and `equivalent_passed=346`; every written figure is
+  comparator output rather than a log transcription.
+- candidate acceptance: PASS. Exact candidate passed local `ci-local` **20/20**,
+  including warning-denied Rust and net lanes, locked Rust 1.78, clippy/fmt,
+  invariant self-test **12 rules / 67 controls**, shell 346/346, protected
+  artifacts exact, and embedded golden **11/11**. The first sandboxed
+  standalone golden could not bind loopback and was not measured; the identical
+  permitted rerun supplied the passing result.
+- export acceptance: PASS with one named environment non-result. The first
+  sandboxed project-root attempt failed registry DNS and was not measured. The
+  permitted exact-candidate run exported **153 files / 2,592,441 bytes**,
+  retained exactly three cycles, excluded both protected byte classes, and
+  reported **100 derived / 7 required** paths.
+- artifact acceptance: PASS. The schema-2 manifest remained **192,042 bytes**
+  with **2 artifacts / 332 pinned files**; every pin and both protected
+  databases matched the candidate. Hosted `core` independently passed manifest
+  validation. No Step 6 manifest registration occurred.
+- published-state acceptance: PASS. Final post-run remote query again found the
+  evidence ref at the exact candidate, remote `main` and peeled `v0.17.1` at
+  closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag
+  object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged.
+- lifecycle acceptance: PASS. After the record update, `cycle-check` read
+  `STATE.md` at **201,569 bytes** and the manifest at **192,042 bytes**, reported
+  both `bound`, kept all State anchors resolved, and retained the open-cycle
+  governed-export exemption. `version-check` passed at 0.17.1 with **22**
+  offline-MSRV and **3** release-version current restatements.
+- prohibited-action acceptance: PASS. Step 6 issued no publisher request, ran
+  no scheduler, service, or model-profile command, and performed no manifest
+  registration. Its only publication mutation was the explicitly authorized
+  creation of the fresh evidence ref.
+- scope acceptance: PASS. The published-distance file list contains only
+  lifecycle documentation, tests, controls, retained-cycle configuration, the
+  State archive, and its structural manifest pin: no production source,
+  workflow, dependency, release value, measured runtime-behaviour difference,
+  or public-surface change.
+- golden-E2E delta: **0**. Golden passed byte-identical **11/11** locally and
+  hosted, then passed the mandatory standalone post-record run.
