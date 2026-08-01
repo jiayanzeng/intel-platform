@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 3 has made the governed export margin emit both denominator limits; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The BASIS-BOUND tree passed all **20/20** local jobs with its task box open, checklist **263 checked / 3 retracted / 263 matched / 263 commits resolved**, `cycle-check` state `open`, governed export `exempt-open-empty-progress`, registered invariants **12 rules / 68 controls**, a clean constrained Python 3.11.4 population at **352/352**, zero Rust warnings, and golden **11/11** both inside `ci-local` and at the standalone entry point. All **332** pins and both protected databases match. The exact delivered v0.33 export remains **2,634,692 bytes / 153 files**, leaving **365,308 bytes**, or **4.69 cycles** on the measured 77,862-byte pre-reclaim denominator; it is now nearer than State's 7.93-cycle and manifest's 1,323.85-cycle margins. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 4 has derived the export budget without selecting a lever; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The most recent complete gate remains BASIS-BOUND at **20/20** local jobs with checklist **263 checked / 3 retracted / 263 matched / 263 commits resolved**, registered invariants **12 rules / 68 controls**, clean constrained Python 3.11.4 at **352/352**, and zero Rust warnings. The measurement-only BUDGET-DERIVE tree independently passed `cycle-check` with State **229,486 / 453,741 bytes**, governed export `exempt-open-empty-progress`, and standalone golden **11/11**. All **332** pins and both protected databases matched at the complete gate. The exact delivered v0.33 export remains **2,634,692 bytes / 153 files**, leaving **365,308 bytes**; fuller projections place its ceiling at **4.20–4.69 cycles**, ahead of the next State archive at **7.93–8.27 cycles**. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
 
 **v0.34 REGION-FLOOR — State structural admission no longer depends on the
 tail it protects (measured 2026-08-02).** E0's exact delivered-tree
@@ -92,6 +92,73 @@ current/net/MSRV Rust lanes, clean Python 3.11.4 shell **352/352**, all **332**
 pins, both protected databases, and embedded golden **11/11**. The required
 standalone `./run golden` also passed **11/11**, for delta **0**. Focused
 lifecycle tests remained **85/85**.
+
+**v0.34 BUDGET-DERIVE — every supported export pair, with reclaims separated
+(measured 2026-08-02).** Three independently recorded series cover all adjacent
+pairs their tracked records support. “Governed” means the last machine-readable
+field in each progress record; “closing audit” means its non-governing
+cycle-ending field; “delivered audit child” means E0's exact export of the
+append-only child actually delivered to the next cycle.
+
+| record class | v0.30→v0.31 | v0.31→v0.32 | v0.32→v0.33 |
+|---|---:|---:|---:|
+| governed last-per-progress | 2,576,273→2,629,379 = **+53,106** | 2,629,379→2,706,393 = **+77,014** | 2,706,393→2,592,441 = **−113,952** |
+| closing-tree cycle-ending audits | not recorded for v0.30 | 2,649,103→2,729,387 = **+80,284** | 2,729,387→2,628,346 = **−101,041** |
+| exact delivered audit children | not retained as an E0 export pair | 2,654,404→2,734,366 = **+79,962** | 2,734,366→2,634,692 = **−99,674** |
+
+Only the exact delivered audit-child exports retain enough serialized content
+to support component attribution. For those two supported pairs, persistent
+components are shown before either recurring retention turnover or the one-time
+State archive. Each percentage is the component's share of that column's named
+persistent net, **67,805** then **86,946 bytes/cycle**.
+
+| persistent component | v0.31→v0.32 bytes / share of 67,805 | v0.32→v0.33 bytes / share of 86,946 | reclaim mechanism |
+|---|---:|---:|---|
+| `cycle_check.py` + `invariant_scan.py` | +15,661 / 23.10% | +35,138 / 40.41% | none automatic; deliberate simplification only |
+| `version_check.py` | +7,715 / 11.38% | 0 / 0% | none automatic |
+| control tests, fixtures, and registry | +11,580 / 17.08% | +15,416 / 17.73% | none automatic; deliberate control retirement only |
+| live `STATE.md`, before archive | +28,605 / 42.19% | +31,177 / 35.86% | governed structural archive, shown separately below |
+| `ARCHITECTURE.md` + `AGENTS.md` | +4,244 / 6.26% | +4,568 / 5.25% | none automatic |
+| protected manifest | 0 / 0% | +647 / 0.74% | no deletion; append-only pins make growth effectively permanent |
+| **persistent net** | **+67,805 / 100%** | **+86,946 / 100%** | — |
+
+Reclaim and turnover are not growth denominators. The retention row is the net
+effect visible in the exact exports after adding the new retained cycle and
+evicting the oldest; the records do not preserve a serialized gross-add versus
+gross-eviction split, so none is invented.
+
+| separate reclaim or turnover | v0.31→v0.32 | v0.32→v0.33 | share denominator |
+|---|---:|---:|---|
+| three-cycle document turnover | +12,157 | −9,084 | 15.20% of +79,962 delivered net; −11.67% of +77,862 post-retention steady net |
+| one-time State archival reclaim | 0 | **−177,542** | 178.12% of the −99,674 delivered net |
+| retention-pattern / serialization movement | 0 | +6 | −0.006% of the −99,674 delivered net |
+
+The reconciliations are exact: **67,805 + 12,157 = 79,962** for v0.31→v0.32,
+and **86,946 − 9,084 − 177,542 + 6 = −99,674** for v0.32→v0.33. The second
+transition's gross persistent growth is therefore positive; its negative
+delivered result is a one-time archive effect, not a negative growth rate.
+
+Against the exact delivered v0.33 export remainder of **365,308 bytes**, the
+latest persistent-component denominator projects **4.20 cycles**
+(365,308 / 86,946), the latest post-retention steady denominator projects
+**4.69** (365,308 / 77,862), the positive delivered denominator projects
+**4.57** (365,308 / 79,962), and their two-transition steady mean of **78,912**
+projects **4.63**. The same delivered tree's State remainder is **247,211
+bytes**: its latest positive **31,177-byte** denominator projects **7.93
+cycles**, and its two-transition **29,891-byte** mean projects **8.27**. Thus
+the fuller series confirms, rather than contradicts, the reviewer's ordering:
+the export ceiling arrives first under every named denominator. These are
+projections with the Step 3 representativeness/epoch bounds, not forecasts.
+This step selects no lever, changes no ceiling or retention depth, and adds no
+exclusion.
+
+The real measurement-only `./run cycle-check` passed with the task box open,
+State at **229,486 / 453,741 bytes**, manifest **192,042 / 1,048,576**, the
+margin basis's two emitted bounds, and governed export
+`exempt-open-empty-progress`. The mandatory standalone golden anchor passed
+**11/11**, delta **0**. Only `STATE.md` and the active runbook were written;
+the progress record remains reserved for the separate post-implementation
+audit commit.
 
 **v0.34 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-02).** The sole pre-activation worktree item was the operator-supplied

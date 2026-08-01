@@ -21,6 +21,8 @@ Step 2 — made State structural admission independent of its delegated semantic
 
 Step 3 — made the governed margin entry point emit both representativeness and structural-epoch limits — 2026-08-02
 
+Step 4 — derived every supported governed, closing-audit, delivered, component, and reclaim export pair without selecting a lever — 2026-08-02
+
 ---
 
 **One reviewer error, mine, recorded before anything else.**
@@ -399,7 +401,7 @@ measurement.**
 **Done when** the budget is a measured series rather than a projection from one
 observation.
 
-- [ ] **BUDGET-DERIVE**
+- [x] **BUDGET-DERIVE**
 
 ---
 
