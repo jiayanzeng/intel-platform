@@ -136,3 +136,62 @@ Entries are append-only; corrections are new dated entries.
   scheduler or model-profile command, found no listener on 8788, and created,
   moved, or deleted no publication ref. Direct remote query still found neither
   historical `v0.8.0` nor `v0.10.2` tag.
+
+### 2026-08-01 · BOUNDARY-MEASURE — direct artifact byte boundaries
+
+- owner: Codex
+- commit: 456f37d
+- result: PASS. Exact implementation commit
+  `456f37d705d2aed2d5fcbc663a28f4b63400e326` implements the operator-selected
+  named reported crossing, adds one machine-readable authority containing the
+  two governed path/boundary pairs, reads both artifact sizes directly, and
+  checks the dated governed rows. It also records the operator decision,
+  measured State/Architecture outcomes, Step 2 amendment, and checked task.
+- gate acceptance: PASS. `config/protected-artifacts.json`,
+  `docs/state-archive/**`, `.github/workflows/**`, and `run` have no diff; no
+  archive, manifest edit, or new lane was required. No dependency, schema,
+  production source, public response, or value-domain change exists.
+- preimplementation rejection acceptance: PASS. Committed construction
+  `43945ffdb958fcebcfe44141758f99725dd7f2f2` set both live boundaries to one
+  byte while the artifacts exceeded them; the old real `./run cycle-check`
+  still returned PASS. This proved the prior entry point did not read the
+  constructed artifacts for either boundary.
+- direct-measurement acceptance: PASS. At exact implementation tree
+  `fbec13ee86bc36f85e096e53ee1c80654272fd31`, the real entry point reported
+  `STATE.md bytes=336654 boundary=453741 state=bound` and
+  `config/protected-artifacts.json bytes=191395 boundary=1048576 state=bound`,
+  with `checked_tree=HEAD-tree:fbec13ee86bc36f85e096e53ee1c80654272fd31`.
+  It reported State timing `not-applicable` and manifest timing
+  `out-of-scope`; no prose measurement supplies either compared byte count.
+- single-authority acceptance: PASS. The active runbook's governed artifact
+  byte-boundary section is the sole live executable boundary authority.
+  Governed trigger rows reference that authority without numeric boundary
+  restatements. The duplicate-authority fixture was rejected.
+- crossing-behaviour acceptance: PASS. Temporarily setting both authorities to
+  one byte made the real entry point reject both rows before any acceptance,
+  with two exact `requires a dated 'trigger-fired disposition:'` defects.
+  Adding dated dispositions made the same crossed construction pass and report
+  `trigger-fired-disposed` twice. Restoring the real boundaries reports
+  `bound` twice. Focused tests passed 70/70 across below-boundary,
+  duplicate-authority, missing-row, crossed-undisposed, and
+  crossed-disposed paths.
+- R12 acceptance: PASS. The registered control plants a one-byte crossed but
+  undisposed construction against the production check. The real self-test
+  passed 12/12 rules and 59 controls. Nine shifted existing `expected_line`
+  positions were re-derived from emitted production locations; the new control
+  resolves to `tools/cycle_check.py:2016`.
+- local-gate acceptance: PASS. `./run ci-local` passed all 20 jobs with
+  warning-denied 146 workspace tests, the focused SEC identity diagnostic, 32
+  ingest-net plus 30 cored-net tests, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, 12 invariant rules / 59 controls, shell 330/330,
+  protected artifacts exact, and embedded golden 11/11. Constrained Python
+  3.11.4 and 3.12.13 each collected/passed 330, failed 0, and skipped 0; the
+  machine comparator derived `collected=330`, `equivalent=true`, and
+  `equivalent_passed=330`. A prior sandboxed Python 3.11 invocation was `not
+  measured` because loopback binds and `ps` were denied; the exact permitted
+  rerun passed.
+- golden-E2E delta: PASS, byte-identical **11/11** in both the complete local
+  entry point and mandatory standalone post-task `./run golden`; delta **0**.
+- publisher/ref acceptance: PASS. The task made no publisher request, ran no
+  scheduler or model-profile command, and created, moved, or deleted no
+  publication ref.
