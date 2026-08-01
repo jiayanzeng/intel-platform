@@ -391,13 +391,17 @@ archives, and test/control constructions. Every derived anchor must resolve to
 a permanent-tail heading. Its entry-point report names all three byte regions,
 top-level sections, gaps, referenced sections, referenced gaps, and source
 sites; the present `3` gap is therefore reported with no reference rather than
-encoded as an exception. Missing-restatement cases remain delegated to
-`version_check`'s existing current-restatement reader so an over-cut or removed
-restatement retains its one established error. With that reader still green, a
-missing permanent-tail marker fails independently; this catches a cut that
-stops before the restatement without rebuilding the restatement control. R12
-removes the marker through the real lifecycle entry point and disables the new
-branch.
+encoded as an exception. Structural admission requires the status header and
+exactly one permanent-tail marker before any semantic result can affect the
+outcome. Missing-restatement cases remain delegated to `version_check`'s
+existing current-restatement reader, and the region report explicitly names
+that semantic state as `present` or `absent` with `version-check` as owner.
+Header, marker cardinality, headings, adjacency, overlap, anchors, external
+references, and ordinal order are structural; none depends on the semantic
+restatement. Complete tail removal therefore fails on the missing structural
+marker even though the delegated semantic state is absent. R12 removes the
+full tail through the real lifecycle entry point and disables the structural
+marker branch, proving that the planted construction would otherwise pass.
 
 Archive fidelity is a separate property from archival eligibility. Manifest
 schema v2 admits the v0.33 archive through an exact structural-archive registry,
@@ -464,6 +468,11 @@ object. The records are therefore correct and the remote is incomplete.
 Remove the hosted skip only after both exact objects are published and a
 full-history hosted `cycle-check` passes without it, or after contrary evidence
 causes the identities and affected claims to be forward-corrected.
+The checker makes each intentional non-reconciliation branch visible: no
+reachable closed release reports a `not-applicable` bound, portable hosted mode
+reports `not-requested` and names the admission and structure checks it retains,
+and a verified legacy release reports that R-CLOSE post-push records do not
+apply. These are explicit bounds, not silent successes.
 
 ### Dated operational-residual dispositions
 

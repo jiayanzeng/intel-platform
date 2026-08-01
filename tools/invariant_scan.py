@@ -1975,7 +1975,7 @@ _R12_STATE_REGION_ENTRY_CACHE: dict[str, tuple[int, str]] = {}
 
 
 def _state_region_entry_output(root: Path, cycle_check) -> tuple[int, str]:
-    """Remove the permanent-tail marker and exercise cycle_check.run."""
+    """Remove the full permanent tail and exercise cycle_check.run."""
     cycle_source = (root / "tools" / "cycle_check.py").read_text()
     marker = (
         "    # Invariant R12 control site: State archival permanent-tail "
@@ -1999,13 +1999,8 @@ def _state_region_entry_output(root: Path, cycle_check) -> tuple[int, str]:
     ) as raw:
         fixture = Path(raw) / "tree"
         _copy_tracked_tree(root, fixture)
-        (fixture / "STATE.md").write_text(
-            state_text.replace(
-                cycle_check.STATE_PERMANENT_TAIL_MARKER + "\n",
-                "",
-                1,
-            )
-        )
+        tail_start = state_text.index(cycle_check.STATE_PERMANENT_TAIL_MARKER)
+        (fixture / "STATE.md").write_text(state_text[:tail_start])
         output = io.StringIO()
         with contextlib.redirect_stdout(output), contextlib.redirect_stderr(
             output
@@ -2387,11 +2382,12 @@ def r12_findings(root: Path) -> list[str]:
     )
     if (
         region_status == 0
-        or "State archival permanent-tail marker required exactly once"
+        or "State archival structural permanent-tail marker required exactly "
+        "once"
         not in region_output
     ):
         missed.setdefault("state-region-contract", []).append(
-            "missing-permanent-tail-marker"
+            "missing-full-permanent-tail"
         )
 
     with tempfile.TemporaryDirectory(prefix="invariant-scan-R12-status-") as raw:

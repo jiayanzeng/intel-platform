@@ -592,11 +592,15 @@ def check_publication_status(
     execution_files: list[Path],
     errors: list[str],
     verify_local_tag_refs: bool = True,
-) -> None:
+) -> str | None:
     """Reconcile the status header with the newest reachable closed release."""
     release = newest_closed_release(execution_files)
     if release is None:
-        return
+        return (
+            "publication-status: local-tag-reconciliation=not-applicable "
+            "bound=no reachable closed release exists, so there is no "
+            "release ref to reconcile"
+        )
     runbook = release.runbook
     tag = release.tag
     release_commit = release.release_commit
@@ -643,7 +647,12 @@ def check_publication_status(
     # the State file and header shape exist; closed-runbook structure remains
     # checked by check_closed_execution().
     if not verify_local_tag_refs:
-        return
+        return (
+            "publication-status: local-tag-reconciliation=not-requested "
+            "bound=portable hosted mode lacks historical local tag objects; "
+            "State/header admission and closed-runbook structure remain "
+            "enforced"
+        )
 
     # A mutable ref cannot be truthfully pinned in the immutable commit whose
     # publication moves that same ref. Mutable-ref measurements belong in
@@ -782,7 +791,11 @@ def check_publication_status(
                 )
 
     if not release.uses_tagged_closing_commit:
-        return
+        return (
+            "publication-status: local-tag-reconciliation=verified "
+            f"protocol=legacy release={tag} bound=R-CLOSE post-push records "
+            "do not apply to a legacy release"
+        )
     head = git_output(root, "rev-parse", "HEAD")
     if head is None:
         errors.append(
@@ -828,6 +841,10 @@ def check_publication_status(
                 f"closing commit records {recorded_post_push_target}, but the "
                 f"measured ref is {measured_target}"
             )
+    return (
+        "publication-status: local-tag-reconciliation=verified "
+        f"protocol=tagged-closing release={tag}"
+    )
 
 
 def check_authority(
@@ -2205,6 +2222,12 @@ def check_state_archival_region_contract(
     """Derive and enforce State's header, movable append, and permanent tail."""
     header = STATE_HEADER_RE.search(state_text)
     if header is None:
+        errors.append(
+            f"{shown(state_path, root)}: State archival structural admission "
+            "requires the status header; semantic current-restatement "
+            "membership remains delegated to version-check and was not "
+            "evaluated"
+        )
         return None
     header_end = header.end()
     if state_text[header_end:].startswith("\n\n"):
@@ -2215,10 +2238,13 @@ def check_state_archival_region_contract(
     marker_matches = list(re.finditer(re.escape(STATE_PERMANENT_TAIL_MARKER), state_text))
     has_restatement = state_has_registered_current_restatement(root, state_text)
     # Invariant R12 control site: State archival permanent-tail boundary.
-    if len(marker_matches) != 1 and has_restatement:
+    if len(marker_matches) != 1:
         errors.append(
-            f"{shown(state_path, root)}: State archival permanent-tail marker "
-            f"required exactly once; found {len(marker_matches)}"
+            f"{shown(state_path, root)}: State archival structural "
+            "permanent-tail marker required exactly once; "
+            f"found {len(marker_matches)}; semantic current-restatement "
+            f"state={'present' if has_restatement else 'absent'} remains "
+            "delegated to version-check"
         )
         return None
     if not marker_matches:
@@ -2306,6 +2332,10 @@ def check_state_archival_region_contract(
     ) or "none"
     return (
         "state-region-contract: "
+        "structural=bound "
+        f"semantic_current_restatement="
+        f"{'present' if has_restatement else 'absent'} "
+        "semantic_owner=version-check "
         f"header_bytes={len(state_text[:header_end].encode())} "
         f"eligible_bytes={len(state_text[header_end:tail_start].encode())} "
         f"tail_bytes={len(state_text[tail_start:].encode())} "
@@ -3215,7 +3245,7 @@ def run(
         )
         check_authority(path, text, root, errors)
 
-    check_publication_status(
+    publication_status_report = check_publication_status(
         root,
         execution_files,
         errors,
@@ -3261,6 +3291,8 @@ def run(
         print(f"cycle-check: {report}")
     if state_region_report is not None:
         print(f"cycle-check: {state_region_report}")
+    if publication_status_report is not None:
+        print(f"cycle-check: {publication_status_report}")
 
     if errors:
         for error in errors:

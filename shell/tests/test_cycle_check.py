@@ -1440,6 +1440,8 @@ def test_state_region_contract_derives_external_reference_inventory(
 
     assert errors == []
     assert report is not None
+    assert "structural=bound" in report
+    assert "semantic_owner=version-check" in report
     assert "top_sections=1" in report
     assert "numbering_gaps=none" in report
     assert "referenced_sections=1" in report
@@ -1487,8 +1489,61 @@ def test_state_region_contract_rejects_missing_permanent_tail_marker(
 
     assert report is None
     assert errors == [
-        "STATE.md: State archival permanent-tail marker required exactly "
-        "once; found 0"
+        "STATE.md: State archival structural permanent-tail marker required "
+        "exactly once; found 0; semantic current-restatement state=present "
+        "remains delegated to version-check"
+    ]
+
+
+def test_state_region_contract_rejects_full_tail_without_semantic_floor(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root = _cycle_root(tmp_path)
+    state = root / "STATE.md"
+    state_text = state.read_text()
+    tail_start = state_text.index(cycle_check.STATE_PERMANENT_TAIL_MARKER)
+    monkeypatch.setattr(
+        cycle_check,
+        "state_has_registered_current_restatement",
+        lambda _root, _text: False,
+    )
+    errors: list[str] = []
+
+    report = cycle_check.check_state_archival_region_contract(
+        state,
+        state_text[:tail_start],
+        root,
+        errors,
+    )
+
+    assert report is None
+    assert errors == [
+        "STATE.md: State archival structural permanent-tail marker required "
+        "exactly once; found 0; semantic current-restatement state=absent "
+        "remains delegated to version-check"
+    ]
+
+
+def test_state_region_contract_names_missing_structural_header(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    state = root / "STATE.md"
+    errors: list[str] = []
+
+    report = cycle_check.check_state_archival_region_contract(
+        state,
+        "# State\n\nDated append with no status header.\n",
+        root,
+        errors,
+    )
+
+    assert report is None
+    assert errors == [
+        "STATE.md: State archival structural admission requires the status "
+        "header; semantic current-restatement membership remains delegated "
+        "to version-check and was not evaluated"
     ]
 
 
@@ -2477,6 +2532,77 @@ def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
     assert "annotated tag 'v1.1.0' does not resolve" in capsys.readouterr().err
 
     assert cycle_check.run(root, verify_local_tag_refs=False) == 0
+    output = capsys.readouterr().out
+    assert (
+        "publication-status: local-tag-reconciliation=not-requested "
+        "bound=portable hosted mode lacks historical local tag objects; "
+        "State/header admission and closed-runbook structure remain enforced"
+        in output
+    )
+
+
+def test_publication_status_names_no_release_bound(tmp_path: Path) -> None:
+    root = tmp_path / "no-release"
+    root.mkdir()
+    errors: list[str] = []
+
+    report = cycle_check.check_publication_status(root, [], errors)
+
+    assert errors == []
+    assert report == (
+        "publication-status: local-tag-reconciliation=not-applicable "
+        "bound=no reachable closed release exists, so there is no release "
+        "ref to reconcile"
+    )
+
+
+def test_publication_status_names_legacy_protocol_bound(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root = tmp_path / "legacy-release"
+    root.mkdir()
+    tag_object = "a" * 40
+    tag_target = "b" * 40
+    tag = "v1.0.0"
+    runbook = root / "TASKS-v1.0.0-EXECUTION.md"
+    runbook.write_text("# Legacy release fixture\n")
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        "**As of:** published release; annotated tag object is "
+        f"`{tag_object}` and tag target is `{tag_target}`.\n"
+    )
+    monkeypatch.setattr(
+        cycle_check,
+        "newest_closed_release",
+        lambda _files: cycle_check.ClosedRelease(
+            runbook=runbook,
+            tag=tag,
+            release_commit=tag_target,
+            recorded_tag_object=tag_object,
+        ),
+    )
+
+    def fake_git_output(_root: Path, *args: str) -> str | None:
+        values = {
+            ("rev-parse", tag): tag_object,
+            ("rev-parse", f"{tag}^{{}}"): tag_target,
+            ("cat-file", "-t", tag_object): "tag",
+        }
+        return values.get(args)
+
+    monkeypatch.setattr(cycle_check, "git_output", fake_git_output)
+    monkeypatch.setattr(cycle_check, "git_status", lambda *_args: (0, ""))
+    errors: list[str] = []
+
+    report = cycle_check.check_publication_status(root, [runbook], errors)
+
+    assert errors == []
+    assert report == (
+        "publication-status: local-tag-reconciliation=verified "
+        "protocol=legacy release=v1.0.0 bound=R-CLOSE post-push records do "
+        "not apply to a legacy release"
+    )
 
 
 def test_cycle_check_portable_mode_still_rejects_missing_release_commit(

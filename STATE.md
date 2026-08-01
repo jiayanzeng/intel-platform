@@ -1,6 +1,59 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 1 has reconstructed the exact entering state and settled G1–G6; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Exact delivered v0.33 audit child `e0ab6964f76b0a919c5214607ef141eb5b118deb` passed all **20/20** local jobs, and the active v0.34 E0 tree independently passed the same complete gate with checklist **261 checked / 3 retracted / 261 matched / 261 commits resolved**, `cycle-check` state `open`, governed export `exempt-open-empty-progress`, registered invariants **12 rules / 68 controls**, clean constrained Python 3.11.4 and 3.12.13 populations at **348/348** each, and golden **11/11**. `tools/test_population.py` derived `collected=348`, `equivalent=true`, and `equivalent_passed=348`; both lanes retained the single accepted warning. All **332** pins and both protected databases match. The exact delivered export is **2,634,692 bytes / 153 files**, leaving **365,308 bytes**, or **4.69 cycles** on the measured 77,862-byte pre-reclaim denominator; it is now nearer than State's 7.93-cycle and manifest's 1,323.85-cycle margins. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 2 has made State structural admission independent of its delegated semantic restatement and exposed every publication-status bound; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The REGION-FLOOR tree passed all **20/20** local jobs with checklist **262 checked / 3 retracted / 262 matched / 262 commits resolved**, `cycle-check` state `open`, governed export `exempt-open-empty-progress`, registered invariants **12 rules / 68 controls**, a clean constrained Python 3.11.4 population at **352/352**, zero Rust warnings, and golden **11/11** both inside `ci-local` and at the standalone entry point. All **332** pins and both protected databases match. The exact delivered v0.33 export remains **2,634,692 bytes / 153 files**, leaving **365,308 bytes**, or **4.69 cycles** on the measured 77,862-byte pre-reclaim denominator; it is now nearer than State's 7.93-cycle and manifest's 1,323.85-cycle margins. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+
+**v0.34 REGION-FLOOR — State structural admission no longer depends on the
+tail it protects (measured 2026-08-02).** E0's exact delivered-tree
+construction deleted the marker and all numbered State sections. Before this
+change, the real entry point emitted `state_regions=not-measured` and passed;
+only the separate semantic `version-check` zero-restatement rule failed in the
+composite lane. With the REGION-FLOOR implementation copied into the same
+full-tail construction, the real entry point now emits verbatim:
+
+```text
+cycle-check: ERROR: STATE.md: State archival structural permanent-tail marker required exactly once; found 0; semantic current-restatement state=absent remains delegated to version-check
+cycle-check: FAIL (1 defect(s))
+```
+
+The structural family now admits only a recognized status header and exactly
+one permanent-tail marker before proceeding to marker adjacency, region
+overlap, top-level headings, unique/increasing anchors, live external-reference
+resolution, and ordinal reporting. None of those structural decisions depends
+on the semantic restatement result. The existing delegation to
+`version_check.offline_msrv_report` remains: successful output reports
+`structural=bound semantic_current_restatement=present
+semantic_owner=version-check`, and a missing semantic restatement remains that
+tool's responsibility. Thus the duplicate semantic reader was not recreated.
+
+G1's other silent publication-status exits are now visible bounds in the
+entry-point output. With no reachable closed release, reconciliation reports
+`not-applicable` because no release ref exists. Portable hosted mode reports
+`not-requested`, names missing historical local tag objects as the bound, and
+states that State/header admission and closed-runbook structure remain
+enforced. A verified legacy release reports that R-CLOSE post-push records do
+not apply to its protocol. Current local output reports
+`local-tag-reconciliation=verified protocol=tagged-closing release=v0.17.1`.
+All error-bearing early returns remain named defects rather than bounds.
+
+Focused lifecycle tests passed **85/85**, including new full-tail, missing
+structural-header, no-release, portable-hosted, and legacy-protocol cases. R12
+now plants complete tail deletion through `cycle_check.run`; disabling the
+structural marker branch makes that construction disappear, proving the test
+double can violate the property. The registered suite passed **12/12 rules /
+68 controls**. The first self-test stopped on its expected stale location.
+Replaying every R12 mutation emitted the actual findings; **27** shifted
+existing `expected_line` values were copied from those outputs, and the final
+self-test passed all 68 controls. No location was offset-computed. No
+production source, workflow, dependency, publisher request, scheduler,
+service, model-profile command, release authority, protected artifact, public
+surface, or runtime behaviour changed.
+
+The complete Step 2 acceptance gate passed **20/20** local jobs, including
+checklist **262 / 3 / 262 / 262**, registered invariants **12/12 rules / 68
+controls**, the clean Python 3.11.4 shell population **352/352**, warning-denied
+current/net/MSRV Rust lanes, both protected databases and all **332** pins.
+Golden remained byte-stable at **11/11** inside `ci-local` and at the required
+standalone `./run golden` entry point.
 
 **v0.34 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-02).** The sole pre-activation worktree item was the operator-supplied
