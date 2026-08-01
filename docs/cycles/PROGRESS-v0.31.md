@@ -269,3 +269,67 @@ Entries are append-only; corrections are new dated entries.
   ran no scheduler or model-profile command, changed no cadence, and created,
   moved, or deleted no version, tag, release, publication, or working-repository
   ref.
+
+### 2026-08-01 · EXCLUSION-READ — make the historical exclusion load-bearing
+
+- owner: Codex
+- commit: 801a163ca18d4625639d835c582a2d28d6e4dff3
+- result: PASS. `OFFLINE_MSRV_HISTORICAL_EXCLUSIONS` is now a tuple of real
+  path patterns consumed by a file-level Rust-floor partition in the existing
+  `version-check` entry point. A tracked literal-bearing file outside all four
+  classes fails automatically.
+- decision-gate acceptance: PASS. The task added no local or hosted job,
+  changed no toolchain or executable offline pin, and altered no evidence
+  topology. `run`, `.github/workflows/**`, `rust-toolchain.toml`, the manifest,
+  every protected byte, and every dated historical cycle/State-archive/
+  evidence/observation file remained byte-unchanged.
+- rejection-before-acceptance: PASS. With the two acceptance tests present
+  against the old module, the focused file passed **5** and failed **2** because
+  the reader did not exist. After implementation, it passed **7/7**. A direct
+  planted tracked `tools/export_check.py` floor statement then emitted
+  `tools/export_check.py: Rust floor literal(s) yielded zero file-level
+  classifications`.
+- tracked-partition acceptance: PASS. The implementation commit derived **559
+  tracked paths** from `git ls-files` and found **75 literal-bearing files /
+  662 bounded occurrences**, **0 unclassified**, and **6 multiply classified**.
+  The six are `.github/workflows/ci.yml`, `run`, `AGENTS.md`, `README.md`,
+  `STATE.md`, and `rust-toolchain.toml`, matching E0's complete file set.
+- class acceptance: PASS. Precedence is executable authority → registered
+  current restatement → derived Python control construction → historical
+  family. Authority/restatement paths come from their existing registries,
+  control constructions come from executable Python calls to
+  `offline_msrv_report`, and the historical family consumes the formerly dead
+  exclusion declaration as path patterns. The tracked membership is derived,
+  not enumerated in a test.
+- bound acceptance: PASS. The entry point itself reports `file-level only;
+  within-file current restatements cannot be separated from dated historical
+  quotations by identical literal text`. The six mixed files therefore remain
+  deliberately outside any line-level claim.
+- planted-control acceptance: PASS. Registered R12 plants the same
+  unclassified-file condition; `invariant-scan --self-test` passed **12 rules /
+  58 controls**. Real mutated-tree output re-derived **3** shifted
+  `expected_line` values: the existing offline controls at **397 / 397** and
+  the new partition control at **484**. Combined focused version/invariant
+  tests passed **29/29**.
+- local-regression acceptance: PASS. The permission-complete `./run ci-local`
+  passed **20/20** with warning-denied **146** workspace tests and **62** net
+  tests (**32 ingest + 30 cored**), locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, floor byte-compilation, both protected
+  archives, shell **324/324**, embedded golden **11/11**, and every other
+  registered job.
+- population acceptance: PASS. Clean constrained Python **3.11.4** and
+  **3.12.13** lanes each collected/passed **324**, failed **0**, and skipped
+  **0**, with the same one accepted warning. The first sandboxed Python 3.11
+  install was a DNS-denied non-result; the permission-complete retry passed.
+  The executed comparator derived
+  `{"collected":324,"equivalent":true,"equivalent_passed":324,"hosted":{"on_site_skipped":0,"passed":324,"skipped":[]},"local":{"passed":324,"skipped":0},"schema_version":1}`.
+- authority acceptance: PASS. `version-check` read three executable offline
+  pins, normalized them to one value, and bound all **22** current
+  restatements. All five release authorities remain **0.17.0**; no dependency,
+  lockfile, schema, route, response shape, or `/v1/*` value domain moved.
+- golden-E2E delta: **0**. Embedded and mandatory standalone executions each
+  passed **11/11** byte-identically.
+- publisher/ref acceptance: PASS. EXCLUSION-READ issued no publisher request,
+  ran no scheduler or model-profile command, changed no cadence, and created,
+  moved, or deleted no version, tag, release, publication, or working-repository
+  ref.
