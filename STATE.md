@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 4 binds every registered present-tense release-version restatement to the executable authorities.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **336**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **250 checked / 3 retracted / 250 matched / 250 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 5 defines the publication-epoch divergence reset and records the non-executable trigger/audit boundaries.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **336**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **251 checked / 3 retracted / 251 matched / 251 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -286,6 +286,46 @@ public-response delta. An earlier `ci-local` invocation after prematurely
 checking the task box stopped at the expected missing-progress-entry defect and
 was not the acceptance run; the successful run used the runbook-prescribed
 open-box state before the implementation commit existed.
+
+**v0.32 Step 5 — publication-epoch reset and honest non-controls (measured
+2026-08-01).** G6's decision gate tripped for executable trigger truth: the
+published-release row is the only artifact asserting whether a runtime
+difference exists, so a checker reading that row has no independent fact with
+which to contradict it. Building a firing/reset check would therefore be a
+self-report dressed as a control. Step 2 already supplies the executable half
+for the two direct byte boundaries. Step 5 adds no code or R12 control and
+records that limit explicitly.
+
+The contract now defines the missing reset symmetrically. Successful authorized
+publication resets the consecutive closed-cycle count to zero at its published
+closing commit. Only a measured runtime-behaviour difference in the subsequent
+unpublished distance starts a fresh count at the first later closed cycle that
+carries it. Pre-publication cycles, a difference already shipped, documentation,
+evidence, lifecycle-only changes, and a closed cycle without a measured runtime
+difference do not start or continue the count; any public-surface change still
+fires immediately. v0.17.1 publication therefore reset the v0.31 count to zero,
+and v0.32 has not started a new count.
+
+The general cycle-ending export audit remains deliberately zero-or-one. When an
+operator measures the closing tree and finds a difference, the field truthfully
+discloses it; absence claims neither a zero delta nor that measurement occurred.
+`cycle-check` cannot create the operator-local export, so requiring the field
+only on a self-reported difference would be vacuous, while requiring it always
+would claim a measurement the entry point never performed. v0.32's own runbook
+independently requires its closing-tree audit. The audit append's own byte
+contribution remains necessarily undisclosed; another field would recreate the
+self-measurement fixed point. No executable control exists under this ruling,
+no `expected_line` moved, and the registered total remains **12 rules / 61
+controls**.
+
+With the task box open, `./run ci-local` passed all **20/20** jobs, including
+warning-denied **146** workspace tests, the focused SEC diagnostic, **32 + 30**
+net tests, locked Rust 1.78, clean clippy/fmt/ShellCheck, shell **336/336**,
+registered self-test **12 rules / 61 controls**, protected artifacts exact, and
+embedded golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 runs each
+collected/passed **336**, failed **0**, and skipped **0**; the direct repository
+comparison derived `equivalent=true` and `equivalent_passed=336`. The standalone
+post-task `./run golden` passed the same **11/11** assertions with delta zero.
 
 **v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
 two-commit tagged-close protocol (operator authorization and measurement

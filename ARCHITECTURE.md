@@ -364,6 +364,29 @@ retention, and excluded content remain owned by operator-local
 `./run export-check`. Registered R12 makes the stale-row, over-ceiling, and
 misordered-audit constructions fail.
 
+The cycle-ending audit's zero-or-one cardinality is deliberately optional in
+the general lifecycle checker. When a closing-tree export was actually measured
+and differs from the governed figure, the audit field is the truthful place to
+disclose that result. Its absence asserts neither a zero delta nor a performed
+measurement: the lifecycle checker does not create an export and therefore has
+no independent fact that could make a conditional requirement non-vacuous. A
+cycle may impose a stronger runbook-specific requirement. The latest
+append-only audit record's own byte contribution is necessarily undisclosed;
+another field would recreate the self-measurement fixed point.
+
+Published-release divergence is counted within a publication epoch. A
+successful authorized publication resets the consecutive closed-cycle count to
+zero at the published closing commit. Only a measured runtime-behaviour
+difference in the later unpublished distance starts a fresh count, at the first
+subsequent closed cycle carrying that difference. Pre-publication cycles, a
+difference already shipped by the publication, documentation/evidence/lifecycle
+changes, and a cycle with no measured runtime difference do not start or
+continue the count. A public-surface change still fires immediately. These
+classifications and the reset event are dated operator adjudications because no
+repository check can independently infer runtime meaning or remote publication
+truth from the row that reports them; executable freshness and identity checks
+do not pretend otherwise.
+
 Publication reconciliation is likewise a lifecycle control, not a new HC
 invariant. Legacy release headers through v0.15.5 carry immutable annotated-tag
 object and peeled-target facts; a tagged-closing header carries the already
@@ -398,7 +421,7 @@ causes the identities and affected claims to be forward-corrected.
 | review-export size and retention bound (v0.28) | **Accepted at a 3,000,000-byte ceiling and three-cycle retention depth — 2026-07-30** | the project-root review export exceeds **3,000,000 bytes**, its cycle-document set differs from the active cycle plus two immediately prior execution cycles, the pinned SEC RSS body reappears, or any `docs/state-archive/**` byte reappears | v0.32 · 2026-08-01 — Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced an operator-local project-root export of **2,617,984 bytes / 153 files**, leaving **382,016 bytes / 12.73%** headroom. `export_check` retained exactly the v0.30, v0.31, and v0.32 TASKS/PROGRESS pairs, rejected both excluded byte classes, and reported **100 derived / 7 required** paths. This is **36,420 bytes smaller** than v0.31's delivered export because the retention window advanced. At the latest delivered growth denominator of **70,780 bytes/cycle**, the remaining margin is **5.40 cycles**; the export trigger did not fire. Governed review-export bytes: `2617984`. |
 | protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-30** | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real** | v0.32 · 2026-08-01 — Step 2's lifecycle checker read the actual **191,395-byte** manifest and reported `bound`, leaving **857,181 bytes** to its byte boundary; E0 validation separately re-measured **331** pins, matched both protected databases, and timed two complete clean verifications at **0.17 s / 0.10 s real**, leaving **0.83 s / 0.90 s** to the timing trigger. The latest cycle delta is zero; at the last positive **8,621-byte/cycle** denominator the byte margin is **99.43 cycles**. Neither trigger fired. The lifecycle byte rule explicitly reports wall-clock timing as out of scope. |
 | shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-30** | the warning becomes an error/failure, or the next authorized constraints refresh changes FastAPI, Starlette, `httpx`, or `httpx2` | v0.32 · 2026-08-01 — Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **325**, failed **0**, and skipped **0**, with the same one accepted warning. `tools/test_population.py` independently derived `collected=325`, `equivalent=true`, and `equivalent_passed=325`. No dependency declaration or constraint changed from the published v0.17.1 closing tree, so neither trigger fired. |
-| published-release divergence | **Accepted under the operator-selected bound — 2026-07-31** | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.32 · 2026-08-01 — The trigger fired at v0.31 when the bounded internal `/ingest` diagnostic correction reached its third consecutive unpublished close, and v0.17.1 publication disposed it. Independent remote inspection resolves `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; the annotated object has Git type `tag`. No new runtime or public-surface difference exists in v0.32. The trigger defines no post-publication restart point; firing truth and any reset remain operator adjudications because no executable control distinguishes fired from unfired state. |
+| published-release divergence | **Accepted under the operator-selected bound; publication-epoch reset defined — 2026-08-01** | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.32 · 2026-08-01 — The trigger fired at v0.31 when the bounded internal `/ingest` diagnostic correction reached its third consecutive unpublished close, and v0.17.1 publication disposed it and reset the consecutive count to zero at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`. Independent remote inspection resolves `main` and peeled `v0.17.1` to that closing commit, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; the annotated object has Git type `tag`. No new runtime or public-surface difference exists in v0.32, so no fresh count has started. Firing, runtime classification, and reset remain dated operator adjudications; the executable checker enforces record shape, freshness, and cycle identity only. |
 | hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — Run `30456330833` passed **7/7** executable jobs on the migrated actions; all eight check runs had annotation count **0**, and the new **7-receipt / 7-bundle** set verified **7 accepted / 0 rejected**. |
 | hosted action immutability (`dtolnay/rust-toolchain@master`) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — All **6/6** workflow uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`, dated **2026-07-16T09:35:07-07:00**, and the same hosted evidence run verified. |
 | recorded-trigger freshness discipline | **Completed by v0.23 Step 5 — 2026-07-29** | none | 2026-07-29 — `cycle-check` now requires a valid dated measured observation for each trigger-bearing row in this table and the active v0.23-forward deferral table; registered R12 mutation **15** proves a missing date is rejected. |

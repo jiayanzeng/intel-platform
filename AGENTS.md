@@ -304,6 +304,20 @@ Preserve the earlier measurement in its dated task or progress record and
 forward-correct the live row explicitly, so neither an increase nor a decrease
 can be selected opportunistically.
 
+Beginning with v0.32, the published-release divergence count is scoped to a
+publication epoch. A successful authorized publication resets the consecutive
+closed-cycle count to zero at that published closing commit. A later measured
+runtime-behaviour difference starts a fresh count at the first subsequent
+closed cycle whose unpublished distance carries that difference; it never
+inherits cycles from before the publication. Documentation, evidence, and
+lifecycle-only changes, a difference already included in the published commit,
+and a closed cycle with no measured runtime-behaviour difference neither start
+nor continue the count. A public-surface change still fires the trigger
+immediately, independent of the consecutive-cycle count. Runtime classification,
+trigger firing, and the publication-reset fact remain dated operator
+adjudications: `cycle-check` enforces their record freshness and identity, not a
+self-reported truth it has no independent artifact to contradict.
+
 Beginning with v0.30, the content binding is deliberately narrower than the
 date/cycle-identity rule. It covers only the `ARCHITECTURE.md` subject beginning
 `review-export size and retention bound`; every other governed row remains
@@ -341,14 +355,24 @@ under this exact non-governing form:
 ```
 
 Exactly zero or one such audit field may exist, only after the last governed
-field and only once the cycle is closed. Its `bytes` value names the measured
-closing tree and `audit_delta` discloses the signed delivered movement; the
-operator-local export command and its captured output are the evidence for
-those values. `cycle-check` parses the field, enforces its position, reports
+field and only once the cycle is closed. That optionality is deliberate. When
+an operator actually measures the closing tree and its delivered export differs
+from the governed figure, the audit field is the truthful disclosure and its
+`bytes` value and `audit_delta` are backed by the operator-local command and
+captured output. An absent field makes no claim that the delta was zero or that
+the tree was measured: `cycle-check` cannot generate the export, so it has no
+independent fact with which to distinguish an unmeasured omission from a true
+zero. Requiring the field only when a self-reported difference exists would be
+a self-report dressed as a control; requiring it unconditionally would claim a
+measurement the lifecycle entry point does not perform. A cycle runbook may
+independently require its own audit, as v0.32 does. When present,
+`cycle-check` parses the field, enforces its position, reports
 `bound-with-cycle-ending-audit`, and deliberately does not treat it as a newer
 governed measurement. This avoids asking a record to measure a tree containing
 itself while keeping both the closing implementation tree and its audit child
-bound.
+bound. The append-only audit record's own byte contribution remains the one
+necessarily undisclosed delta; adding another field would recreate the fixed
+point.
 
 At every checked tree, `cycle-check` also compares the row's written figure
 against the single `MAX_EXPORT_BYTES` authority imported from
