@@ -34,6 +34,9 @@ CYCLE_DOCUMENT_RE = re.compile(
     r"^docs/cycles/(?:TASKS|PROGRESS)-"
     r"v[0-9]+(?:\.[0-9]+)*(?:-EXECUTION)?\.md$"
 )
+EXECUTION_RUNBOOK_PATH_RE = re.compile(
+    r"^docs/cycles/TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+)
 MAX_EXPORT_BYTES = 3_000_000
 CYCLE_RETENTION_DEPTH = 3
 EXCLUDED_EXPORT_FILENAMES = ("sec-edgar-usgaap.rss.xml",)
@@ -64,6 +67,28 @@ def tracked_source_paths(root: Path) -> set[str]:
     }
 
 
+def tracked_cycle_paths(root: Path) -> set[str]:
+    result = subprocess.run(
+        ["git", "ls-files", "-z", "--", "docs/cycles"],
+        cwd=root,
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.decode(errors="replace").strip()
+        raise ExportCheckError(
+            f"git ls-files for cycle documents failed with exit "
+            f"{result.returncode}{f': {detail}' if detail else ''}"
+        )
+    return {
+        path
+        for raw in result.stdout.split(b"\0")
+        if raw
+        if (path := raw.decode(errors="strict"))
+        if CYCLE_DOCUMENT_RE.fullmatch(path) is not None
+    }
+
+
 def exported_paths(export_path: Path) -> set[str]:
     try:
         text = export_path.read_text()
@@ -91,17 +116,17 @@ def expected_retained_cycle_paths(root: Path) -> set[str]:
     except CycleIdentityError as error:
         raise ExportCheckError(str(error)) from error
     active_version = cycle_name_version(identity.name)
+    tracked_cycles = tracked_cycle_paths(root)
     candidates = sorted(
         (
             version,
-            path,
+            root / raw_path,
         )
-        for path in execution_runbooks(root)
+        for raw_path in tracked_cycles
+        if EXECUTION_RUNBOOK_PATH_RE.fullmatch(raw_path) is not None
         if (
             (version := cycle_name_version(
-                path.name.removeprefix("TASKS-").removesuffix(
-                    "-EXECUTION.md"
-                )
+                EXECUTION_RUNBOOK_PATH_RE.fullmatch(raw_path).group(1)
             ))
             <= active_version
         )
@@ -121,8 +146,14 @@ def expected_retained_cycle_paths(root: Path) -> set[str]:
             raise ExportCheckError(
                 f"no progress record resolves for {runbook.relative_to(root)}"
             )
-        expected.add(runbook.relative_to(root).as_posix())
-        expected.add(progress.relative_to(root).as_posix())
+        runbook_path = runbook.relative_to(root).as_posix()
+        progress_path = progress.relative_to(root).as_posix()
+        if progress_path not in tracked_cycles:
+            raise ExportCheckError(
+                f"retained progress record is not tracked: {progress_path}"
+            )
+        expected.add(runbook_path)
+        expected.add(progress_path)
     return expected
 
 

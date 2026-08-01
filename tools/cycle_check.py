@@ -24,7 +24,12 @@ from tools.cycle_identity import (
     resolve_cycle,
     task_documents,
 )
-from tools.export_check import CYCLE_RETENTION_DEPTH, MAX_EXPORT_BYTES
+from tools.export_check import (
+    CYCLE_RETENTION_DEPTH,
+    MAX_EXPORT_BYTES,
+    ExportCheckError,
+    expected_retained_cycle_paths,
+)
 from tools.progress_check import default_progress_path
 
 
@@ -1055,12 +1060,46 @@ def numeric_glob_range(last: int) -> list[str]:
     return alternatives
 
 
-def expected_review_export_retention_pattern(cycle_name: str) -> str:
-    """Derive the one Repomix exclusion pattern from cycle identity and depth."""
+def expected_review_export_retention_pattern(
+    cycle_name: str,
+    retained_cycle_paths: set[str] | None = None,
+) -> str:
+    """Format the one exclusion pattern from a retained-cycle boundary."""
     version = declared_scope_cycle_version(cycle_name)
     if len(version) < 2:
         raise ValueError(f"cannot derive review retention for {cycle_name!r}")
-    last_excluded = version[-1] - CYCLE_RETENTION_DEPTH
+    if retained_cycle_paths is None:
+        first_retained = version[-1] - CYCLE_RETENTION_DEPTH + 1
+    else:
+        runbook_pattern = re.compile(
+            r"^docs/cycles/TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+        )
+        retained_versions = sorted(
+            declared_scope_cycle_version(match.group(1))
+            for path in retained_cycle_paths
+            if (match := runbook_pattern.fullmatch(path)) is not None
+        )
+        if len(retained_versions) != CYCLE_RETENTION_DEPTH:
+            raise ValueError(
+                f"tracked retained-cycle set for {cycle_name!r} must contain "
+                f"{CYCLE_RETENTION_DEPTH} execution runbooks; found "
+                f"{len(retained_versions)}"
+            )
+        if retained_versions[-1] != version:
+            raise ValueError(
+                f"tracked retained-cycle set does not end at {cycle_name!r}"
+            )
+        if any(
+            retained[:-1] != version[:-1]
+            for retained in retained_versions
+        ):
+            raise ValueError(
+                f"tracked retained-cycle set for {cycle_name!r} crosses a "
+                "version-family boundary that one exclusion pattern cannot "
+                "express"
+            )
+        first_retained = retained_versions[0][-1]
+    last_excluded = first_retained - 1
     alternatives = numeric_glob_range(last_excluded)
     if not alternatives:
         raise ValueError(
@@ -1087,8 +1126,19 @@ def check_review_export_retention_pattern(
             isinstance(pattern, str) for pattern in custom_patterns
         ):
             raise TypeError("ignore.customPatterns is not a string list")
-        expected = expected_review_export_retention_pattern(cycle_name)
-    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
+        retained_cycles = expected_retained_cycle_paths(root)
+        expected = expected_review_export_retention_pattern(
+            cycle_name,
+            retained_cycles,
+        )
+    except (
+        OSError,
+        json.JSONDecodeError,
+        KeyError,
+        TypeError,
+        ValueError,
+        ExportCheckError,
+    ) as error:
         errors.append(
             f"{shown(path, root)}: cannot derive review-export retention "
             f"pattern: {error}"
@@ -1102,7 +1152,8 @@ def check_review_export_retention_pattern(
     if retention_patterns != [expected]:
         errors.append(
             f"{shown(path, root)}: review-export retention pattern for "
-            f"{cycle_name} must be {expected!r}; found {retention_patterns!r}"
+            f"{cycle_name} must be {expected!r} to agree with the tracked "
+            f"retained-cycle set; found {retention_patterns!r}"
         )
 
 

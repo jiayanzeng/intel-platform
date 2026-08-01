@@ -2122,26 +2122,81 @@ def r12_findings(root: Path) -> list[str]:
             )
 
         active_retention_cycle = cycle_check.resolve_cycle(root).name
+        active_retention_version = (
+            cycle_check.declared_scope_cycle_version(active_retention_cycle)
+        )
+
+        def cycle_name(version: tuple[int, ...]) -> str:
+            return "v" + ".".join(str(part) for part in version)
+
+        def retention_control_root(
+            destination: Path,
+            active_name: str,
+            retained_versions: tuple[tuple[int, ...], ...],
+            configured_pattern: str,
+        ) -> Path:
+            destination.mkdir()
+            (destination / "AGENTS.md").write_text(
+                f"**Active cycle:** {active_name}\n"
+            )
+            cycles = destination / "docs" / "cycles"
+            cycles.mkdir(parents=True)
+            for retained_version in retained_versions:
+                retained_name = cycle_name(retained_version)
+                (cycles / f"TASKS-{retained_name}-EXECUTION.md").write_text(
+                    "# retained control cycle\n"
+                )
+                (cycles / f"PROGRESS-{retained_name}.md").write_text(
+                    "# retained control progress\n"
+                )
+            (destination / "repomix.config.json").write_text(
+                json.dumps(
+                    {
+                        "ignore": {
+                            "customPatterns": [configured_pattern]
+                        }
+                    }
+                )
+                + "\n"
+            )
+            for command in (["git", "init", "-q"], ["git", "add", "-A"]):
+                result = subprocess.run(
+                    command,
+                    cwd=destination,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                if result.returncode != 0:
+                    raise ConfigError(
+                        f"retention control {' '.join(command)} failed: "
+                        f"{result.stderr.strip()}"
+                    )
+            return destination
+
+        consecutive_retained = tuple(
+            (*active_retention_version[:-1], patch)
+            for patch in range(
+                active_retention_version[-1]
+                - cycle_check.CYCLE_RETENTION_DEPTH
+                + 1,
+                active_retention_version[-1] + 1,
+            )
+        )
         valid_retention_pattern = (
             cycle_check.expected_review_export_retention_pattern(
                 active_retention_cycle
             )
         )
-        (fixture / "repomix.config.json").write_text(
-            json.dumps(
-                {
-                    "ignore": {
-                        "customPatterns": [
-                            f"{valid_retention_pattern}.stale"
-                        ]
-                    }
-                }
-            )
-            + "\n"
+        stale_retention_root = retention_control_root(
+            fixture / "retention-stale",
+            active_retention_cycle,
+            consecutive_retained,
+            f"{valid_retention_pattern}.stale",
         )
         errors = []
         cycle_check.check_review_export_retention_pattern(
-            fixture,
+            stale_retention_root,
             active_retention_cycle,
             errors,
         )
@@ -2151,6 +2206,42 @@ def r12_findings(root: Path) -> list[str]:
         ):
             missed.setdefault("review-export-retention", []).append(
                 "stale-retention-pattern"
+            )
+
+        skipped_retention_version = (
+            *active_retention_version[:-1],
+            active_retention_version[-1] + 2,
+        )
+        skipped_retention_cycle = cycle_name(skipped_retention_version)
+        prior_retained = tuple(
+            (*active_retention_version[:-1], patch)
+            for patch in range(
+                active_retention_version[-1]
+                - cycle_check.CYCLE_RETENTION_DEPTH
+                + 2,
+                active_retention_version[-1] + 1,
+            )
+        )
+        skipped_retention_root = retention_control_root(
+            fixture / "retention-skipped",
+            skipped_retention_cycle,
+            (*prior_retained, skipped_retention_version),
+            cycle_check.expected_review_export_retention_pattern(
+                skipped_retention_cycle
+            ),
+        )
+        errors = []
+        cycle_check.check_review_export_retention_pattern(
+            skipped_retention_root,
+            skipped_retention_cycle,
+            errors,
+        )
+        if not any(
+            "agree with the tracked retained-cycle set" in error
+            for error in errors
+        ):
+            missed.setdefault("review-export-retention", []).append(
+                "skipped-cycle-retained-set"
             )
 
         original_freshness_boundary = (

@@ -3,6 +3,8 @@ import subprocess
 from fnmatch import fnmatchcase
 from pathlib import Path
 
+import pytest
+
 from tools import cycle_check
 from tools.cycle_identity import (
     cycle_documents_dir,
@@ -11,6 +13,42 @@ from tools.cycle_identity import (
     execution_runbooks,
     resolve_cycle,
 )
+
+
+@pytest.fixture(autouse=True)
+def _gitless_retained_cycle_authority(monkeypatch) -> None:
+    real_authority = cycle_check.expected_retained_cycle_paths
+
+    def retained_cycle_paths(root: Path) -> set[str]:
+        if (root / ".real-retention-authority").is_file():
+            return real_authority(root)
+        identity = resolve_cycle(root)
+        active_version = cycle_check.declared_scope_cycle_version(identity.name)
+        retained_versions = (
+            (*active_version[:-1], patch)
+            for patch in range(
+                active_version[-1] - cycle_check.CYCLE_RETENTION_DEPTH + 1,
+                active_version[-1] + 1,
+            )
+        )
+        return {
+            path
+            for version in retained_versions
+            for path in (
+                "docs/cycles/TASKS-v"
+                + ".".join(str(part) for part in version)
+                + "-EXECUTION.md",
+                "docs/cycles/PROGRESS-v"
+                + ".".join(str(part) for part in version)
+                + ".md",
+            )
+        }
+
+    monkeypatch.setattr(
+        cycle_check,
+        "expected_retained_cycle_paths",
+        retained_cycle_paths,
+    )
 
 
 def _runbook(root: Path, cycle: str = "v1.2.3") -> Path:
@@ -1012,6 +1050,55 @@ def test_cycle_check_rejects_stale_review_export_retention_without_export(
     error = capsys.readouterr().err
     assert "review-export retention pattern for v1.2.3 must be" in error
     assert ".stale" in error
+
+
+def test_cycle_check_rejects_skipped_cycle_retention_without_export(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    identity = resolve_cycle(root)
+    current_version = cycle_check.declared_scope_cycle_version(identity.name)
+    for offset in range(cycle_check.CYCLE_RETENTION_DEPTH - 1, 0, -1):
+        prior_name = "v" + ".".join(
+            str(part)
+            for part in (
+                *current_version[:-1],
+                current_version[-1] - offset,
+            )
+        )
+        cycle_runbook_path(root, prior_name).write_text(
+            "# Closed fixture cycle\n\n"
+            "## Cycle closing record\n\n"
+            "- **Cycle closed:** 2026-07-29\n"
+            "- **Release disposition:** no-release (as of 2026-07-29)\n\n"
+            "Intentionally unreleased implementation commits:\n"
+        )
+        cycle_progress_path(root, prior_name).write_text("# Progress\n")
+    (root / ".real-retention-authority").write_text("real Git authority\n")
+    _commit_cycle_root(root)
+    skipped_name = "v" + ".".join(
+        str(part)
+        for part in (*current_version[:-1], current_version[-1] + 1)
+    )
+    moved_runbook = cycle_runbook_path(root, skipped_name)
+    moved_progress = cycle_progress_path(root, skipped_name)
+    identity.runbook.rename(moved_runbook)
+    identity.progress.rename(moved_progress)
+    for path in (root / "AGENTS.md", root / "ARCHITECTURE.md", moved_runbook):
+        path.write_text(path.read_text().replace(identity.name, skipped_name))
+    config_path = root / "repomix.config.json"
+    config = json.loads(config_path.read_text())
+    config["ignore"]["customPatterns"] = [
+        cycle_check.expected_review_export_retention_pattern(skipped_name)
+    ]
+    config_path.write_text(json.dumps(config) + "\n")
+    _commit_all(root, "plant skipped cycle")
+
+    assert not list(root.glob("repomix-output-*.xml"))
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "agree with the tracked retained-cycle set" in error
 
 
 def test_cycle_check_does_not_fallback_to_root_documents(

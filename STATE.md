@@ -1,6 +1,61 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active after EXCLUSION-READ; the operator selected patch release v0.17.1, while published v0.17.0 and all five version authorities remain current.** The Step 4 working tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **324** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=324`, `equivalent=true`, and `equivalent_passed=324`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest governed implementation-tree review export is CLOSE-POINT tree `33d5bb9e2b51a71d372600a7a0ef73ccba011200` at **2,586,197 bytes / 153 files**, leaving **413,803 bytes / 13.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **242 checked / 3 retracted / 242 matched / 242 commits resolved** before EXCLUSION-READ was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. EXCLUSION-READ changed lifecycle tooling, tests, and contract records only: no publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+**As of:** 2026-08-01 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active after RETENTION-ONE; the operator selected patch release v0.17.1, while published v0.17.0 and all five version authorities remain current.** The Step 5 working tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **325** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=325`, `equivalent=true`, and `equivalent_passed=325`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest governed implementation-tree review export is CLOSE-POINT tree `33d5bb9e2b51a71d372600a7a0ef73ccba011200` at **2,586,197 bytes / 153 files**, leaving **413,803 bytes / 13.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **243 checked / 3 retracted / 243 matched / 243 commits resolved** before RETENTION-ONE was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. RETENTION-ONE changed lifecycle tooling, tests, and contract records only: no export, publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+
+**v0.31 RETENTION-ONE binds the configured pattern to one tracked retained set
+(measured 2026-08-01).** The decision gate did not trip. G3's cheap shape is
+achievable without parsing or matching the brace glob: `export-check` now
+derives cycle-document membership once from `git ls-files`, and
+`cycle-check` imports that same retained-path authority and formats the one
+configured exclusion boundary from its earliest retained execution runbook.
+No export exists or is read in either automated rejection fixture. The task
+gate therefore contains every acceptance criterion.
+
+Rejection ran before acceptance. The new skipped-cycle test executed against
+the old checker with active synthetic cycle `v1.2.4`; the old entry point
+returned **0** and the test failed its required `1` assertion. The construction
+tracks retained execution/progress pairs for `v1.2.1`, `v1.2.2`, and
+`v1.2.4`, deliberately omitting `v1.2.3`, while configuring the old arithmetic
+pattern. After implementation, the skipped-cycle case and the existing stale
+pattern case passed **2/2**. The new diagnostic names the corrective boundary:
+
+```text
+must be <derived pattern> to agree with the tracked retained-cycle set; found <configured patterns>
+```
+
+The throwaway test asserts that no `repomix-output-*.xml` exists. It uses a
+real initialized Git index for the retained-set derivation. A deliberately
+explicit synthetic authority remains confined to generic Gitless unit
+fixtures; the skipped-cycle test carries a sentinel that selects production
+Git derivation, so the acceptance construction cannot pass through the test
+double. Full focused cycle/export/invariant tests passed **95/95**.
+
+Registered R12's existing retention control now plants both
+`stale-retention-pattern` and `skipped-cycle-retained-set`; suppressing the
+guard exposes both names. This expands the reconstructible failure covered by
+the existing control rather than adding a duplicate control, so the full
+self-test remains **12 rules / 58 controls**. Every shifted line was derived
+from emitted mutated-tree output: **24** R12 `cycle_check.py` controls moved,
+including the joint retention failure at line **1151**. No expected line was
+advanced arithmetically.
+
+The permission-complete `./run ci-local` passed **20/20**, including **146**
+workspace tests, **62** net tests, warning-denied and Rust 1.78 lanes, clean
+clippy/fmt/ShellCheck, shell **325/325**, protected artifacts, and embedded
+golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 rebuilds each
+passed **325**, failed **0**, skipped **0**, and retained the same one warning.
+The executed comparator reported:
+
+```text
+test-population-compare: {"collected":325,"equivalent":true,"equivalent_passed":325,"hosted":{"on_site_skipped":0,"passed":325,"skipped":[]},"local":{"passed":325,"skipped":0},"schema_version":1}
+```
+
+Standalone golden passed **11/11**, for delta **0**. G3's earlier statement
+that only operator-local `export-check` caught the skipped-cycle construction
+is now superseded prospectively: `cycle-check` rejects it before any export is
+created. The task changes no route, public value domain, dependency, schema,
+manifest, protected byte, production source, publisher state, scheduler state,
+version authority, tag, or ref.
 
 **v0.31 EXCLUSION-READ makes the historical-floor declaration load-bearing
 (measured 2026-08-01).** The decision gate did not trip. The implementation
