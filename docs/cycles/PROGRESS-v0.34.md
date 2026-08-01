@@ -207,3 +207,42 @@ Entries are append-only; corrections are new dated entries.
   behaviour changed. Published-epoch divergence remains zero.
 - golden-E2E delta: **0**. The complete gate and required standalone
   `./run golden` each passed **11/11**.
+
+### 2026-08-02 · BASIS-BOUND — emitted governed-margin limits
+
+- owner: Codex
+- commit: 9b4f1da6e6723808d3f8a586443e7386a2dab96e
+- result: PASS. The governed margin retains its executable latest-positive-
+  adjacent same-kind selection and arithmetic, while the real `cycle-check`
+  entry point now emits both limits the selected denominator cannot prove.
+- emitted-bound acceptance: PASS. Successful output says a single adjacent
+  pair carries **no representativeness guarantee** and that the checker
+  **cannot detect a basis predating a structural change**. Focused lifecycle
+  tests passed **85/85** and assert the exact emitted report.
+- constraint-choice acceptance: PASS. Only two positive governed deltas exist,
+  **53,106** and **77,014 bytes**, so a numeric floor would not prove
+  representativeness. A trailing window would mix the v0.33 one-time
+  **−113,952-byte** archive reclaim into steady growth. No independent
+  machine-readable epoch authority aligns an archival event to governed
+  progress measurements, so an epoch rule would self-attest from prose. The
+  emitted bound is the evidence-supported outcome; difficulty was not the
+  rationale.
+- history acceptance: PASS. No dated historical margin figure was edited; the
+  limitation, rationale, and current result were recorded forward.
+- invariant acceptance: PASS after one expected stopped attempt. The first
+  complete gate stopped at R12 control 37 on a stale source location. Exact
+  mutation replay emitted `tools/cycle_check.py:2935`; the single shifted
+  existing `expected_line` was copied from that output, not calculated. No
+  control or control schema changed, the population remained **68**, and the
+  final registered suite passed **12/12 rules / 68 controls**.
+- full-gate acceptance: PASS with BASIS-BOUND's task box still open.
+  `./run ci-local` passed **20/20**, checklist **263 / 3 / 263 / 263**,
+  warning-denied current/net/MSRV Rust lanes, clippy, fmt, clean Python 3.11.4
+  shell **352/352**, all **332** pins, both protected databases, and embedded
+  golden **11/11**.
+- scope acceptance: PASS. No production source, workflow, dependency, release
+  authority, protected artifact, publisher request, scheduler, service,
+  model-profile command, remote ref, public response/value-domain, or runtime
+  behaviour changed. Published-epoch divergence remains zero.
+- golden-E2E delta: **0**. The complete gate and required standalone
+  `./run golden` each passed **11/11**.
