@@ -285,3 +285,45 @@ Entries are append-only; corrections are new dated entries.
   artifact, publisher/scheduler/service/model-profile state, remote ref,
   public surface, or runtime behaviour.
 - golden-E2E delta: **0**. Required standalone `./run golden` passed **11/11**.
+
+### 2026-08-02 · BUDGET-LEVER — operator-selected two-cycle retention
+
+- owner: Codex
+- commit: 638dc58b03606f02ecff18d290478bcc35df51fc
+- result: PASS. The operator explicitly selected Option A after its effect was
+  measured on an exact throwaway construction. The sole executable retention
+  depth, tracked Repomix exclusion, contributor operating rule, and live
+  Architecture trigger now agree on the active cycle plus one prior cycle.
+- selection acceptance: PASS. Exact baseline commit
+  `e8bf31f225f1cb977dd6a1ee45c6e062e62b96a4`, tree
+  `8fe4225fb7c53c8d146fb5a0725bdc19983d16de`, exported **2,629,024 bytes /
+  153 files / 3 retained cycles**. Construction tree
+  `c19876d08502a8aa4eb33e35d25ce2b7d67f32e5` exported **2,520,904 bytes /
+  151 files / 2 retained cycles**. The exact reclaim was **108,120 bytes**.
+- projection acceptance: PASS. At the same unchanged **77,862-byte**
+  post-retention steady denominator, margin moved **4.76 → 6.15 cycles
+  (+1.39)**. Same-basis checks were **4.27 → 5.51 (+1.24)** at the
+  **86,946-byte** persistent-component denominator and **4.64 → 5.99
+  (+1.35)** at the **79,962-byte** positive delivered denominator. Step 3's
+  representativeness and structural-epoch bounds continue to apply.
+- stale-pattern acceptance: PASS. With depth changed to two and the old
+  three-cycle pattern retained, the real entry point emitted exactly:
+  `cycle-check: ERROR: repomix.config.json: review-export retention pattern for v0.34 must be 'docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-2]}{.md,.*.md,-*.md}' to agree with the tracked retained-cycle set; found ['docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-1]}{.md,.*.md,-*.md}']`, followed by
+  `cycle-check: FAIL (1 defect(s))`.
+- actual-export acceptance: PASS. The finalized implementation worktree over
+  baseline tree `8fe4225fb7c53c8d146fb5a0725bdc19983d16de` passed the project-root
+  export twice at the stable result **100 derived / 7 required / 151 exported /
+  2,524,284 bytes / 2 retained cycles**.
+- full-gate acceptance: PASS with BUDGET-LEVER's task box still open.
+  `./run ci-local` passed **20/20**, checklist **265 / 3 / 265 / 265**,
+  registered invariants **12/12 rules / 68 controls**, warning-denied
+  current/net/MSRV Rust lanes, clippy, fmt, clean Python 3.11.4 shell
+  **352/352**, all **332** pins, both protected databases, and embedded golden
+  **11/11**.
+- boundary/scope acceptance: PASS. No governed byte boundary or ceiling moved;
+  Option E was not selected. No production source, workflow, dependency,
+  protected artifact, publisher request, scheduler, service, model-profile
+  command, public surface, runtime behaviour, release value, tag, or remote ref
+  changed. Dated historical three-cycle measurements remain unchanged.
+- golden-E2E delta: **0**. The complete gate and mandatory standalone
+  `./run golden` each passed **11/11**.
