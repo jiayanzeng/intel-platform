@@ -492,3 +492,77 @@ Entries are append-only; corrections are new dated entries.
   ran no scheduler or model-profile command, and added no repository evidence
   or manifest entry. Its only remote mutation was the explicitly approved fresh
   evidence ref.
+
+### 2026-08-01 · R-CLOSE — close v0.32 without release
+
+- owner: Codex
+- commit: 86b8db0b4026c23371317c7881dcc9497806c20b
+- result: PASS. The operator selected `no-release`; exact closing
+  implementation commit `86b8db0b4026c23371317c7881dcc9497806c20b`
+  records the dated disposition, closes the runbook, and leaves published
+  v0.17.1 current. The measured unpublished distance contains documentation,
+  lifecycle controls, focused control tests, and cycle records only—not a
+  production, workflow, manifest, dependency, release-value, runtime, public
+  route, response-shape, or serialized-value-domain change.
+- closing-record acceptance: PASS. The record names 2026-08-01 and
+  `no-release (as of 2026-08-01)`, enumerates all fourteen preceding v0.32
+  implementation/audit commits as intentionally unreleased, and states that
+  the closing implementation tree is also intentionally unreleased while
+  deferring its object id to this append-only child. Direct close-time remote
+  inspection kept `main` and peeled `v0.17.1` at published closing commit
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`, the existing annotated tag
+  object unchanged, and both deferred historical tags absent.
+- export-binding acceptance: PASS. The closing tree preserves the last
+  governed field it can already see—candidate
+  `1caace6e2470b51c371d67598b756a48f93d7968` at **2,706,393 bytes / 153
+  files**. The post-commit project-root `./run export-check` measured exact
+  closing tree `86b8db0b4026c23371317c7881dcc9497806c20b` at **2,729,387
+  bytes / 153 files**, under the 3,000,000-byte ceiling and **22,994 bytes**
+  above the governed candidate. That later figure appears only in the required
+  non-governing field below.
+- cycle-ending review-export audit: closing_tree=`86b8db0b4026c23371317c7881dcc9497806c20b`; bytes=`2729387`; audit_delta=`+22994`
+- scope acceptance: PASS. Over activation
+  `9ecc8c17ffe5349a38f41df78a02acf7c46bd9ca` exclusive through the closing
+  commit, used `allow` paths are `tools/cycle_check.py`,
+  `tools/version_check.py`, `tools/invariant_scan.py`,
+  `config/invariant-rules.json`, `shell/tests/**`, `AGENTS.md`, and
+  `ARCHITECTURE.md`; unused `allow` paths are `tools/export_check.py` and
+  `repomix.config.json`. All eight release-authority patterns and every
+  `forbid` path are unused. Standing precedence admits only `STATE.md` and the
+  active runbook/progress pair.
+- gate acceptance: PASS. G1 measured all governed byte quantities and named
+  `STATE.md` nearest; G2 executed the contextual floor domain and its wrong
+  value; G3 executed the present-tense version reader plus disagreement and
+  zero-match rejection; G4 classified fresh-ref absence as operation-time and
+  Step 6 satisfied it with signed digest/ref identity; G5 retained the
+  governed-versus-audit boundary; G6 selected the publication-epoch reset and
+  shipped no self-report control.
+- reviewer-error acceptance: PASS. All three draft defects remain explicitly
+  classified as reviewer errors: the v0.31 Rust-floor detector's unstated
+  domain, its hand-enumerated release-authority omission of README, and its
+  dropped fresh-ref requirement. None is relabeled as a finding or omitted.
+- control-line acceptance: PASS. The record totals **12** shifted existing
+  `expected_line` values re-derived from emitted self-test output—nine in Step
+  2 and three in Step 3. Step 4 shifted zero existing sites and Step 5 shipped
+  no executable control.
+- divergence acceptance: PASS. The dated v0.32 observation explicitly uses
+  Step 5's publication-epoch reading: v0.17.1 publication reset the count to
+  zero, and the documentation/lifecycle-only v0.32 distance carries no runtime
+  or public-surface difference, so the count remains zero.
+- state acceptance: PASS. Immediately before closure `STATE.md` measured
+  **352,895 bytes**, leaving **100,846 bytes** to its 453,741-byte boundary;
+  the manifest remained **191,395 bytes**, and two complete artifact
+  verifications took **0.19 s / 0.11 s** and matched **331 pins / 2
+  artifacts**. `checklist-audit` measured **253 checked / 3 retracted / 253
+  matched / 253 commits resolved**. The closing tree's own export is correctly
+  absent from `STATE.md` and supplied only by this audit child.
+- lifecycle acceptance: PASS. On the exact committed closing tree,
+  `cycle-check` reported `state=closed`, both artifact boundaries `bound`, and
+  `governed_export=bound`; `version-check` passed at 0.17.1 and
+  `invariant-scan --self-test` passed **12/12 rules / 61 controls**.
+- golden-E2E delta: PASS. The mandatory standalone closing-worktree
+  `./run golden` passed byte-identical **11/11**; delta **0**.
+- publisher/operation acceptance: PASS. R-CLOSE issued no publisher request,
+  ran no scheduler or model-profile command, moved no tag, `main`, release ref,
+  or publication ref, and edited no workflow, manifest, production source,
+  protected byte, dependency, schema, golden input, or closed cycle document.
