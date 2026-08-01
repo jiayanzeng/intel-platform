@@ -195,3 +195,72 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref acceptance: PASS. The task made no publisher request, ran no
   scheduler or model-profile command, and created, moved, or deleted no
   publication ref.
+
+### 2026-08-01 · FLOOR-DOMAIN — contextual Rust-floor value closure
+
+- owner: Codex
+- commit: 4811a5e
+- result: PASS. Exact implementation commit
+  `4811a5eae8ea2f7a3f129420e855d8f55c5ba51f` widens the tracked Rust-floor
+  partition with registered line-local floor contexts, emits the resulting
+  value-closure bound and false-positive metrics, adds focused tests and one
+  R12 mutation control, updates the live deferred observations, records the
+  measured result in State, and checks the Step 3 task.
+- gate acceptance: PASS. `run`, `.github/workflows/**`, all Rust toolchain
+  pins, and evidence topology have no diff. No hosted job, dependency,
+  production source, manifest, schema, public response, or release value
+  changed. The offline pins were read and remained byte-unchanged.
+- rejection-before-acceptance: PASS. Before accepting the widened detector, a
+  tracked-file override under `tools/export_check.py` appended the refuted E0
+  statement `offline needs >= 1.75`; the real
+  `rust_floor_partition_report` rejected it with `floor-shaped context
+  value(s) ['1.75'] yielded zero file-level classifications`. The same file
+  with only `release version 1.75` remained outside the domain, proving the
+  planted construction was read without sweeping arbitrary version numerals
+  into the check.
+- value-closure acceptance: PASS. `RUST_FLOOR_CONTEXTS` registers two
+  floor-shaped lexical predicates using the general Rust-version grammar and
+  contains neither refuted value asserted by the focused registry test. The
+  entry point now emits both the existing file-level history limit and the
+  explicit contextual value-closure limit.
+- false-positive acceptance: PASS. At exact implementation tree
+  `5bda16f55ac35dec3761c756bc1e4cc9d44b2384`, `./run version-check`
+  measured 561 tracked files, 77 derived-literal files, 699 union
+  occurrences, 22 contextual occurrences, 11 context-only occurrences, zero
+  newly matched files, and zero classification decisions. The registered
+  contexts are therefore triageable without a new file classification.
+- historical-record acceptance: PASS. Dated historical records retaining
+  refuted Rust-floor quotations were not rewritten. Their existing
+  historical-family classifications remain in force under the documented
+  file-level precedence.
+- regression acceptance: PASS. Focused `test_version_check.py` execution
+  passed 10/10. The zero-authority extraction, normalized pin disagreement,
+  stale registered restatement, and unclassified derived-literal
+  constructions all continued to reject.
+- R12 acceptance: PASS. Registered contextual control `wrong-context-value`
+  disables the new context-only rejection branch and was caught by the real
+  mutation self-test. The final self-test passed 12/12 rules and 60 controls.
+  Three shifted existing `tools/version_check.py` `expected_line` positions
+  were re-derived successively from emitted failures as 449, 449, and 583;
+  the new control resolves to line 568. The cumulative Step 2/Step 3 count is
+  12 shifted existing positions, fewer than the 60 controls protected.
+- lane-binding acceptance: PASS. The binding remains inside
+  `./run version-check`, already called by both local and hosted shell lanes;
+  neither lane topology changed.
+- local-gate acceptance: PASS. Clean constrained Python 3.11.4 and 3.12.13
+  suites each collected/passed 333, failed 0, and skipped 0 with the one
+  accepted Starlette warning. `tools/test_population.py` derived
+  `collected=333`, `equivalent=true`, and `equivalent_passed=333`.
+  `./run ci-local` passed all 20 jobs with warning-denied 146 workspace tests,
+  the focused SEC identity diagnostic, 32 ingest-net plus 30 cored-net tests,
+  locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, 12 invariant rules / 60
+  controls, protected artifacts exact, and embedded golden 11/11.
+- lifecycle acceptance: PASS. On the implementation tree, `cycle-check` read
+  `STATE.md` at 339,465 bytes and the unchanged manifest at 191,395 bytes,
+  reported both `bound`, and kept the governed review export on the named
+  `exempt-open-latest-at-close` path.
+- golden-E2E delta: PASS, byte-identical **11/11** in both the complete local
+  entry point and mandatory standalone post-task `./run golden`; delta **0**.
+- publisher/ref acceptance: PASS. The task made no publisher request, ran no
+  scheduler or model-profile command, and created, moved, or deleted no
+  publication ref.
