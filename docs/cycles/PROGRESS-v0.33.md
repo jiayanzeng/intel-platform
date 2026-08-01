@@ -135,3 +135,43 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The mandatory final standalone run passed **11/11**.
 - publisher/ref acceptance: PASS. No publisher request, scheduler, service,
   model-profile command, archive write, or ref mutation occurred.
+
+### 2026-08-01 · ADMIT-GATE — publication-status family fails closed
+
+- owner: Codex
+- commit: 118ba84d038866233b178147d4133a9cd63fa8bd
+- result: PASS. `cycle-check` now admits the publication-status family only
+  after a regular `STATE.md` file and a matching leading `**As of:**` header
+  exist, and selects the newest actual release across later no-release cycles.
+- fail-before acceptance: PASS. At the exact delivered-tree entry point, absent
+  and renamed headers passed while absent State failed only through the
+  independent artifact reader. With the fix copied into those same three
+  constructions, the entry point emitted distinct `publication admission
+  header required`, `publication admission header shape`, and `publication
+  admission file required` defects; the absent-file case correctly retained
+  its separate governed-artifact defect.
+- relationship acceptance: PASS. A check-site comment records that
+  `version_check.state_version()` independently binds the release version while
+  `cycle-check` binds publication status; neither hand-written regex is treated
+  as the other's family-admission floor.
+- invariant acceptance: PASS. R12 separately disables the three admission
+  outcomes and the newest-actual-release selector through the real
+  `cycle_check.run` entry point. Focused self-test passed **37/37 R12 controls**;
+  the full registry passed **12/12 rules / 65 controls**. Real emitted mutation
+  findings re-derived **25 shifted existing** `expected_line` values plus the
+  four new values: admission branches at line 603 and selector at line 562.
+- architecture acceptance: PASS. The live publication-reconciliation paragraph
+  now states the selector, admission outcomes, R12 coverage, and independent
+  version parser accurately. Git authorship measured the original v0.21
+  overstatement as this runbook reviewer's error, so it is corrected forward
+  without rewriting dated history.
+- test acceptance: PASS. Focused lifecycle tests passed **74/74** on constrained
+  Python 3.11.4 and independently on 3.12.13. The complete `./run ci-local`
+  entry point passed **20/20** with the task box still open. Both Python lanes
+  collected/passed **340**, failed 0, and skipped 0; the repository comparator
+  derived `collected=340`, `equivalent=true`, and `equivalent_passed=340`.
+- golden-E2E delta: **0**. The required standalone post-task run passed
+  **11/11**.
+- scope acceptance: PASS. No production source, workflow, dependency, schema,
+  manifest, protected byte, publisher, scheduler, service, model profile,
+  public response/value-domain state, or publication ref changed.
