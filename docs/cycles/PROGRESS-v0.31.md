@@ -495,3 +495,46 @@ Entries are append-only; corrections are new dated entries.
   cadence change, model-profile command, manifest registration, dependency or
   schema change, protected-byte edit, or historical ref movement occurred.
 - golden-E2E delta: **0**.
+
+### 2026-08-01 · POST-PUSH — v0.17.1 forward verification
+
+- owner: Codex
+- commit: f02379f03ccdfd1b019413234f2ad014d169fb04
+- result: PASS. Atomic publication moved remote `main` and annotated
+  `v0.17.1` together. Remote inspection resolves `main` and the peeled tag to
+  closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`; tag object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` is annotated, and the closing
+  commit's immediate parent is release commit
+  `7a621e39a069a1ef26438e841e7bb1ca2f34165b`.
+- hosted acceptance: PASS. Post-push workflow-dispatch run **30686179773**,
+  attempt **1**, completed successfully at exact published `main` SHA
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`. All seven executable jobs
+  passed; dependency drift skipped under its report-only condition. Receipt,
+  attestation, bundle, and artifact-persistence steps all passed.
+- population acceptance: PASS. Hosted Python 3.11 and 3.12 each collected
+  **325**, passed **324**, and skipped the same named, reasoned `on_site` node.
+  Against exact-closing-tree local **325 passed / 0 skipped**, both executed
+  comparators derived `collected=325`, `equivalent=true`, and
+  `equivalent_passed=325`.
+- cycle-ending review-export audit: closing_tree=`f02379f03ccdfd1b019413234f2ad014d169fb04`; bytes=`2649103`; audit_delta=`+19724`
+- export acceptance: PASS. Exact closing tree
+  `f02379f03ccdfd1b019413234f2ad014d169fb04` produced **100 derived / 7
+  required / 153 exported / 2,649,103 bytes**, retained exactly v0.29–v0.31,
+  and rejected both excluded byte classes. The signed delta is from the
+  2,629,379-byte governed release-parent measurement; this field is
+  deliberately non-governing and follows the last governed field exactly once.
+- control acceptance: PASS. Exact tagged closing tree passed local
+  `ci-local` **20/20**, `cycle-check` with local tag refs verified and governed
+  export bound, `checklist-audit` **247 checked / 3 retracted / 247 matched /
+  247 resolved**, `progress-check`, version-check at exact v0.17.1, invariant
+  **12 rules / 58 controls**, shell **325/325**, and golden **11/11**.
+- rhythm acceptance: PASS. This first child of the tagged closing commit is the
+  required append-only audit record. It is supported by local gates and the
+  published closing-tree hosted run; the audit child's own bytes are
+  intentionally hosted-verified at the next publication under the accepted
+  cycle-ending rhythm.
+- publisher/non-exercise acceptance: PASS. Complete post-push workflow made no
+  publisher request or harvest, and no scheduler, cadence, model-profile,
+  manifest, protected-byte, historical-ref, route, response-shape, or public
+  value-domain change occurred.
+- golden-E2E delta: **0**.

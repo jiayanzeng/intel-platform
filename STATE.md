@@ -11,6 +11,48 @@ atomically with remote `main`; the tag-object identity and closing-commit hash
 are deliberately absent from this tree and belong in the first dated post-push
 append.
 
+**v0.17.1 post-push forward verification (measured 2026-08-01).** Atomic
+publication moved remote `main` and annotated `v0.17.1` together. Remote
+inspection resolves `main` and the peeled tag to closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`; annotated tag object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d` has Git type `tag`, and the
+closing commit's immediate parent is release commit
+`7a621e39a069a1ef26438e841e7bb1ca2f34165b`.
+
+- **Post-push verification date:** 2026-08-01
+- **Post-push release:** `v0.17.1`
+- **Post-push annotated tag object:** `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`
+- **Post-push closing commit:** `f02379f03ccdfd1b019413234f2ad014d169fb04`
+- **Post-push hosted run:** `30686179773`
+
+Post-push run **30686179773**, attempt **1**, completed successfully on remote
+`main` at exact closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`.
+All seven executable jobs passed; dependency drift skipped under its declared
+report-only condition. Every receipt, attestation, bundle, and persistence step
+passed. The core job validated schema 2 / 2 artifacts / 331 pinned files;
+golden passed **11/11**; net passed **32 ingest + 30 cored**; current and locked
+Rust 1.78 builds/tests, clippy, fmt, and the complete shell lifecycle gates all
+passed.
+
+Each hosted shell lane collected **325**, passed **324**, and skipped the same
+one named, reasoned `on_site` test. Against exact-closing-tree local **325
+passed / 0 skipped**, `tools/test_population.py` independently derived this
+output for both Python 3.11 and 3.12:
+
+```text
+test-population-compare: {"collected":325,"equivalent":true,"equivalent_passed":325,"hosted":{"on_site_skipped":1,"passed":324,"skipped":[{"node_id":"tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt","reason":"on-site production audit requires protected corpora and built cored"}]},"local":{"passed":325,"skipped":0},"schema_version":1}
+```
+
+The exact published closing tree produced an operator-local review export of
+**2,649,103 bytes / 153 files**, retained exactly v0.29–v0.31, and passed **100
+derived / 7 required** plus both excluded-content controls. That is **+19,724
+bytes** from the governed release-parent measurement of 2,629,379 bytes. This
+is the distinct non-governing cycle-ending audit; it does not supersede the
+architecture row or its exact-tree governed progress field. The audit child is
+locally gated and deliberately not part of post-push run 30686179773; under the
+accepted cycle-ending rhythm it becomes hosted-verified at the next
+publication.
+
 The release commit and evidence candidate are the same object. Hosted
 workflow-dispatch run **30685356489**, attempt **1**, executed the unchanged
 workflow at exact SHA `7a621e39a069a1ef26438e841e7bb1ca2f34165b` on
