@@ -6,4 +6,4 @@ requires touching (or recompiling) the Rust core, whose internal JSON contract
 is wrapped by `core_client.CoreClient`.
 """
 
-__version__ = "0.17.0"
+__version__ = "0.17.1"

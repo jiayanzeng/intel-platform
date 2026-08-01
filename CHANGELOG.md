@@ -4,6 +4,48 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.1 — 2026-08-01
+
+### Fixed
+
+- Fixed-window coverage diagnostics now derive both the held-newest and
+  incoming-oldest raw boundary values from the archive's shared known-day,
+  day, raw-byte, and id recency order. A misordered incoming slice can no
+  longer report its final element as the oldest by position.
+- The SQL held-window order and Rust incoming-window order now share one
+  compile-time ordering declaration and a cross-implementation control. The
+  correction changes only diagnostic boundary selection: no filing or archive
+  row is rejected or discarded.
+- Closed-cycle review-export figures now bind to the last governed measurement
+  visible in the exact checked tree. A distinct, non-governing cycle-ending
+  audit records the later closing-tree measurement without creating an
+  impossible self-measuring record.
+
+### Executable lifecycle controls
+
+- Trigger freshness is bound to the active cycle and both governed tables must
+  contain a nonzero trigger-bearing population. Forward-boundary relationships,
+  the offline Rust 1.78 authorities and current restatements, and the tracked
+  file-level Rust-floor partition now reject planted disagreement.
+- Review-export retention derives one retained-cycle set from Git-tracked
+  runbooks. The configured pattern rejects stale and skipped-cycle
+  disagreement without creating or reading an export or reimplementing a
+  brace-glob matcher.
+- The written governed export figure is checked against the single 3,000,000
+  byte ceiling authority; the operator-local export remains the real-byte,
+  retained-set, and excluded-content control.
+
+### Compatibility
+
+- This is a patch release. `/ingest` keeps the same route, response shape,
+  field names, field types, and outcome domain; the changed raw strings are a
+  correction within the existing diagnostic fields. Every `/v1/*` route,
+  response shape, and serialized value domain is unchanged.
+- Dependency resolution, schemas, public entitlements and licensing outcomes,
+  golden inputs, and protected archives are unchanged. The SEC identity
+  population remains 200 kept / 0 dropped, and golden remains byte-identical
+  at 11/11.
+
 ## v0.17.0 — 2026-07-30
 
 ### Added

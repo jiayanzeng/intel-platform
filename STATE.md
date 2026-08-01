@@ -1,6 +1,57 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active after RETENTION-ONE; the operator selected patch release v0.17.1, while published v0.17.0 and all five version authorities remain current.** The Step 5 working tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **325** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=325`, `equivalent=true`, and `equivalent_passed=325`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest governed implementation-tree review export is CLOSE-POINT tree `33d5bb9e2b51a71d372600a7a0ef73ccba011200` at **2,586,197 bytes / 153 files**, leaving **413,803 bytes / 13.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **243 checked / 3 retracted / 243 matched / 243 commits resolved** before RETENTION-ONE was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. RETENTION-ONE changed lifecycle tooling, tests, and contract records only: no export, publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.31 is active at the fully measured untagged v0.17.1 release commit; published v0.17.0 remains current until an authorized R-CLOSE.** The VERSION-SET tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **325** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=325`, `equivalent=true`, and `equivalent_passed=325`. The focused identity diagnostic retained **201/201** aggregate inputs, including **200 SEC kept / 0 dropped**. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest governed implementation-tree review export is CLOSE-POINT tree `33d5bb9e2b51a71d372600a7a0ef73ccba011200` at **2,586,197 bytes / 153 files**, leaving **413,803 bytes / 13.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **244 checked / 3 retracted / 244 matched / 244 commits resolved** after RETENTION-ONE; VERSION-SET remains unchecked in this tree because R-CLOSE requires this commit to remain the immediate parent of the later closing record. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. VERSION-SET changes release identities, the toolchain-regenerated workspace package lock, README release identity, and the changelog only: no route, response shape, public value domain, dependency resolution, schema, publisher request, scheduler run, cadence change, model-profile command, manifest edit, protected-byte edit, tag, or publication-ref movement occurred.
+
+**v0.31 VERSION-SET prepares the exact v0.17.1 release commit
+(measured 2026-08-01).** The gate did not trip because Step 2 selected release
+v0.17.1. `version-check` read one agreeing value from each of its five
+authorities:
+
+```text
+apps/cored/Cargo.toml: 0.17.1
+shell/intel_shell/__init__.py: 0.17.1
+shell/intel_shell/app.py: 0.17.1
+STATE.md: 0.17.1
+CHANGELOG.md: 0.17.1
+```
+
+README's release identity and active-cycle links also moved to v0.17.1/v0.31.
+The toolchain command `cargo check --workspace` regenerated `Cargo.lock`; its
+only lockfile diff is cored **0.17.0 → 0.17.1**. The command compiled cored
+0.17.1 successfully. The lockfile was neither deleted nor hand-edited, and all
+subsequent locked current and Rust 1.78 checks/tests passed.
+
+The product-surface classification is measured against annotated v0.17.0's
+tree. `apps/cored/src/main.rs` and `crates/core/src/lib.rs` are byte-unchanged.
+The FastAPI source changes only its declared version literal. The sole
+behavioural production diff is the already-measured
+`crates/store/src/sqlite.rs` coverage-boundary correction: held-newest and
+incoming-oldest raw strings now use the same archive recency ordering even for
+a misordered slice. `/ingest` keeps the same route, response shape, fields,
+types, and outcome domain. Every `/v1/*` route, response shape, serialized
+field, and value domain is unchanged. Dependency resolution beyond the
+workspace cored version, schema, entitlements, licensing outcomes, and archive
+rows are unchanged, so patch classification remains correct.
+
+The focused shipped identity diagnostic printed threshold **16**, feature
+floor **26**, **201 input / 201 kept / 0 dropped**, including **200 SEC kept /
+0 dropped**. The permission-complete full matrix passed **20/20** with **146**
+workspace and **62** net tests, both warning-denied Rust lanes, clean
+clippy/fmt/ShellCheck, registered self-test **12 rules / 58 controls**, shell
+**325/325**, protected artifacts, and embedded golden **11/11**. Clean
+constrained Python 3.11.4 and 3.12.13 rebuilds each passed **325**, failed **0**,
+skipped **0**, and retained the same one warning. The comparator reported:
+
+```text
+test-population-compare: {"collected":325,"equivalent":true,"equivalent_passed":325,"hosted":{"on_site_skipped":0,"passed":325,"skipped":[]},"local":{"passed":325,"skipped":0},"schema_version":1}
+```
+
+Standalone golden passed **11/11**, delta **0**. No tag or local/remote release
+ref was created, moved, or deleted, and nothing was pushed. The Step 6 checkbox
+and progress entry deliberately do not appear in the release tree: Step 7 must
+measure this exact commit, and the specific R-CLOSE protocol requires the
+closing record to be its immediate child. Those lifecycle records therefore
+land in that closing child, not in an intervening audit commit.
 
 **v0.31 RETENTION-ONE binds the configured pattern to one tracked retained set
 (measured 2026-08-01).** The decision gate did not trip. G3's cheap shape is
