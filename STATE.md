@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 5 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete Step 5 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 67 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **346**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=346`, `equivalent=true`, and `equivalent_passed=346` across the two lanes. The last fully matched checklist measurement, taken with the Step 5 box still open as required, is **258 checked / 3 retracted / 258 matched / 258 commits resolved**. Operator-authorized Cut B archived **178,125 bytes** through v0.28 at SHA-256 `b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`; its pre-record live complement was **194,542 bytes** and reconstructed the **372,667-byte** pre-cut State exactly. Fidelity B raised the manifest to **332 pins / 192,042 bytes**; both protected databases and every pin matched in two complete runs taking **0.11 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, while exact post-cut pre-record tree `91be7ac3b7c90f5407353136cde8e647f7af2f2f` exported **2,584,353 bytes / 153 files**. No production source, workflow, dependency, runtime behavior, publisher, scheduler, service, model profile, protected database byte, public response/value-domain state, publication version, or ref changed through Step 5.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 6 is green; exact no-release candidate `2edb7694c2c6c1498b3903382c37aef68329150d` carries authenticated hosted evidence on fresh ref `codex/v0.33-evidence-2edb769`, while published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete exact-candidate local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 67 controls**, Python 3.11.4, and golden **11/11**. Hosted workflow-dispatch run **30705340282**, attempt **1**, passed all seven executable jobs and hosted golden **11/11**; dependency drift took its declared report-only skip. The repository release-grade verifier consumed **7 receipts / 7 Sigstore bundles**, accepted **7**, rejected **0**, and bound every identity to the exact candidate and source ref `refs/heads/codex/v0.33-evidence-2edb769`. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **346**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; each hosted lane collected **346**, passed **345**, and skipped the same named, reasoned `on_site` test. For each lane `tools/test_population.py` derived `collected=346`, `equivalent=true`, and `equivalent_passed=346`. The last fully matched checklist measurement, taken with the Step 6 box still open, is **259 checked / 3 retracted / 259 matched / 259 commits resolved**. All **332** pins and both protected databases matched; exact candidate export is **2,592,441 bytes / 153 files** with retained and excluded byte classes correct. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and the annotated tag ref at object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected database byte, public response/value-domain state, publication version, or publication ref changed through the candidate; the fresh evidence ref was the sole publication mutation.
 
 **v0.33 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-01).** The sole pre-activation worktree item was the operator-supplied
@@ -367,6 +367,59 @@ under explicit operator authorization. No production source, workflow,
 dependency, runtime behavior, protected database byte, public surface,
 publisher, scheduler, service, model profile, publication version, or ref
 changed.
+
+**v0.33 Step 6 — exact candidate authenticated on a fresh evidence ref
+(measured 2026-08-01).** With the worktree clean at exact candidate
+`2edb7694c2c6c1498b3903382c37aef68329150d` and tree
+`916db4b88ec9086222913da33fdb3c06a17a5e40`, the operator explicitly
+authorized publication to `refs/heads/codex/v0.33-evidence-2edb769`.
+The first sandboxed `git ls-remote` was a DNS non-result. Before any push, the
+permitted authoritative query exited zero with no matching ref. The one
+authorized push created only that fresh ref, and immediate plus final remote
+readback each resolved it to the exact candidate.
+
+Workflow-dispatch run **30705340282**, attempt **1**, used branch
+`codex/v0.33-evidence-2edb769`, exact candidate SHA, and evidence signing.
+`core`, `golden`, `lint`, `msrv`, `net`, `shell/python=3.11`, and
+`shell/python=3.12` all passed. Every receipt emission, attestation, bundle
+copy, and artifact-persistence step passed; dependency drift skipped under its
+declared report-only condition. The unchanged workflow SHA-256 is
+`5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+The repository's release-grade verifier consumed the downloaded ephemeral
+**7-receipt / 7-bundle** set, accepted **7**, rejected **0**, and found the
+complete runner matrix. Every accepted certificate binds repository
+`jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source and signer digest
+`2edb7694c2c6c1498b3903382c37aef68329150d`, and source ref
+`refs/heads/codex/v0.33-evidence-2edb769`. Its temporary **37,297-byte** report
+has SHA-256
+`6c96a0e04749459e752bef21bc4d4f7781dbc050929dbbb5f76782acd7981196`
+and remains outside the repository and protected manifest.
+
+Local Python 3.11.4 and 3.12.13 each collected/passed **346**, failed **0**,
+and skipped **0**. Each hosted lane collected **346**, passed **345**, and
+skipped the same named `on_site` node
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+for reason `on-site production audit requires protected corpora and built
+cored`. For each lane the repository comparator emitted `collected=346`,
+`equivalent=true`, and `equivalent_passed=346`; no count was transcribed from a
+log. The exact candidate passed local `ci-local` **20/20**, all **332** pins and
+both protected databases, and golden **11/11** locally and hosted. The first
+sandboxed local golden could not bind loopback and was not measured; its
+identical permitted rerun passed. The first sandboxed project-root export was
+also a DNS non-result; the permitted run measured **2,592,441 bytes / 153
+files**, retained exactly three cycles, and excluded the archive and pinned SEC
+body.
+
+Final direct remote measurement left the fresh evidence ref exact, remote
+`main` and peeled `v0.17.1` at closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, and the annotated tag ref at
+object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`. The published-distance file
+list contains only lifecycle documentation, tests, controls, retained-cycle
+configuration, and the structural archive pin: no production source, workflow,
+dependency, release value, runtime-behaviour, or public-surface change. Step 6
+issued no publisher request, ran no scheduler, service, or model-profile
+command, and performed no manifest registration.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
