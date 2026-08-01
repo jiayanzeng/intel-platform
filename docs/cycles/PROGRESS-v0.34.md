@@ -157,3 +157,53 @@ Entries are append-only; corrections are new dated entries.
   behaviour changed. Published-epoch divergence remains zero.
 - golden-E2E delta: **0**. The complete gate and required standalone post-task
   run each passed **11/11**.
+
+### 2026-08-02 · REGION-FLOOR — independent State structural admission
+
+- owner: Codex
+- commit: 02d8db86a2432222433cec29a1a51332911fc478
+- result: PASS. `cycle-check` now rejects loss of State's complete permanent
+  tail from its own structural admission path, keeps semantic current-
+  restatement ownership delegated to `version-check`, and emits an explicit
+  bound for every G1 publication-status path that has no local ref fact to
+  reconcile.
+- before/after acceptance: PASS. E0's exact delivered-tree full-tail deletion
+  passed `cycle-check` with `state_regions=not-measured`; only the composite
+  `version-check` lane rejected the lost restatement. With REGION-FLOOR copied
+  into the identical construction, `cycle-check` itself emitted the named
+  structural defect `permanent-tail marker required exactly once; found 0`
+  and `FAIL (1 defect(s))`.
+- structural/semantic acceptance: PASS. Emitted success text names
+  `structural=bound`, `semantic_current_restatement=present`, and
+  `semantic_owner=version-check`. Structural admission covers the status
+  header, permanent-tail marker, adjacency, region overlap, headings,
+  increasing anchors, external references, and ordinal report; the semantic
+  offline-MSRV restatement remains read only by `version-check`.
+- silent-exit acceptance: PASS. No reachable closed release emits
+  `not-applicable` with the no-ref bound; portable hosted mode emits
+  `not-requested` with the absent-local-tag-object bound and names the checks
+  that remain; a legacy release emits `verified protocol=legacy` and states
+  that R-CLOSE post-push does not apply. The current local tagged-closing path
+  emits `verified protocol=tagged-closing release=v0.17.1`.
+- planted-control acceptance: PASS. R12 removes the entire permanent tail and
+  observes the real `cycle_check.run` entry point; disabling the structural
+  marker branch makes the finding disappear. The initial self-test rejected a
+  stale expected location. Manual replay of every R12 mutation yielded **27**
+  shifted existing `expected_line` values, all copied from emitted findings
+  rather than offset-computed; the final suite passed **12/12 rules / 68
+  controls**.
+- focused-test acceptance: PASS. `shell/tests/test_cycle_check.py` passed
+  **85/85**, including the new full-tail, structural-header, no-release,
+  portable-hosted, and legacy-protocol cases.
+- full-gate acceptance: PASS with REGION-FLOOR's task box still open.
+  `./run ci-local` passed **20/20**, checklist **262 / 3 / 262 / 262**,
+  registered invariants **12/12 rules / 68 controls**, warning-denied
+  current/net/MSRV Rust lanes, clippy, fmt, clean Python 3.11.4 shell
+  **352/352**, all **332** pins, both protected databases, and embedded golden
+  **11/11**.
+- scope acceptance: PASS. No production source, workflow, dependency, release
+  authority, protected artifact, publisher request, scheduler, service,
+  model-profile command, remote ref, public response/value-domain, or runtime
+  behaviour changed. Published-epoch divergence remains zero.
+- golden-E2E delta: **0**. The complete gate and required standalone
+  `./run golden` each passed **11/11**.
