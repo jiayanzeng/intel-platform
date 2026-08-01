@@ -175,3 +175,45 @@ Entries are append-only; corrections are new dated entries.
 - scope acceptance: PASS. No production source, workflow, dependency, schema,
   manifest, protected byte, publisher, scheduler, service, model profile,
   public response/value-domain state, or publication ref changed.
+
+### 2026-08-01 · MARGIN-KIND — export margin uses one governed series
+
+- owner: Codex
+- commit: ae15a8c89b86e89bc3998b164837d669784fbd4f
+- result: PASS. The live governed export row now names and executes one
+  governed→governed series rather than combining candidate and delivered
+  measurements.
+- series acceptance: PASS. The checker reads the last governed fields in
+  `PROGRESS-v0.31.md` and `PROGRESS-v0.32.md`: **2,629,379 → 2,706,393**.
+  It requires the current term to equal the row marker and re-derives the
+  **77,014-byte/cycle** denominator, **293,607-byte** ceiling remainder, and
+  **3.81-cycle** two-decimal quotient. The row names both source records and
+  therefore states its evaluation points.
+- historical acceptance: PASS. The dated v0.32 **5.65** measurement was not
+  rewritten. The live v0.33 row corrects it forward as a mixed-kind criterion
+  and evaluation-point error, while the historical calculation remains evidence
+  of what was computed at that time.
+- executable-bound acceptance: PASS. Closing→closing and
+  delivered→delivered remain valid operator measurements but are excluded from
+  the machine marker because they lack a common repository progress authority.
+  The permitted marker is in the governed row's measured cell and every source,
+  term, delta, remainder, and quotient is re-read or re-derived.
+- invariant acceptance: PASS. R12 plants a row whose declared prior term no
+  longer matches its named governed progress series, executes the real
+  `cycle_check.run` entry point, and observes the plant disappear when the
+  comparison branch is disabled. Focused self-test passed **38/38 R12
+  controls**; the full registry passed **12/12 rules / 66 controls**. Mutation
+  output re-derived **29 shifted existing** line values and the one new value at
+  line **2401**; none was computed by offset.
+- test acceptance: PASS. Focused lifecycle tests passed **76/76** on Python
+  3.11.4. The complete entry point passed **20/20** with the task box open.
+  Python 3.11.4 and 3.12.13 each collected/passed **342**, failed 0, and skipped
+  0; `tools/test_population.py` derived `collected=342`, `equivalent=true`, and
+  `equivalent_passed=342`. The malformed no-`PYTHONPATH` invocation and the
+  sandbox-denied loopback/process-inspection invocation were non-results; the
+  correctly formed permitted command supplied the passing Python 3.12 result.
+- golden-E2E delta: **0**. The required standalone post-task run passed
+  **11/11**.
+- scope acceptance: PASS. No production source, workflow, dependency, schema,
+  manifest, protected byte, publisher, scheduler, service, model profile,
+  public response/value-domain state, or publication ref changed.
