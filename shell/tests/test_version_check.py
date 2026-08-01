@@ -149,6 +149,52 @@ def test_non_floor_version_context_stays_outside_value_closure() -> None:
     assert all(item.path != path for item in report.files)
 
 
+def test_release_version_restatements_agree_with_canonical() -> None:
+    canonical = version_check.state_version()
+    report = version_check.release_version_restatement_report(canonical)
+
+    assert report.canonical == canonical
+    assert len(report.restatements) == len(
+        version_check.RELEASE_VERSION_RESTATEMENTS
+    )
+    assert {item.version for item in report.restatements} == {canonical}
+
+
+def test_release_version_restatement_rejects_readme_disagreement() -> None:
+    canonical = version_check.state_version()
+    restatement = version_check.RELEASE_VERSION_RESTATEMENTS[0]
+    original = (ROOT / restatement.path).read_text()
+    stale = _replace_extracted_version(restatement, original, "9.9.9")
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            r"README\.md: project heading states 9\.9\.9, but executable "
+            r"release authorities derive 0\.17\.1"
+        ),
+    ):
+        version_check.release_version_restatement_report(
+            canonical,
+            text_overrides={restatement.path: stale},
+        )
+
+
+def test_release_version_restatement_reader_rejects_zero_extraction() -> None:
+    canonical = version_check.state_version()
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            r"README\.md: project heading yielded 0 current release-version "
+            r"restatements; expected exactly one"
+        ),
+    ):
+        version_check.release_version_restatement_report(
+            canonical,
+            text_overrides={"README.md": "# no current release identity\n"},
+        )
+
+
 def test_rust_floor_partition_rejects_an_unclassified_file() -> None:
     path = "tools/export_check.py"
     original = (ROOT / path).read_text()

@@ -1630,6 +1630,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "rust-floor-context": (
         "Invariant R12 control site: Rust-floor contextual value closure."
     ),
+    "release-version-restatement": (
+        "Invariant R12 control site: release-version restatement binding."
+    ),
     "governed-export-margin": (
         "Invariant R12 control site: governed review-export latest-at-close."
     ),
@@ -2393,6 +2396,42 @@ def r12_findings(root: Path) -> list[str]:
                 "wrong-context-value"
             )
 
+        release_restatement = version_check.RELEASE_VERSION_RESTATEMENTS[0]
+        release_text = (root / release_restatement.path).read_text()
+        release_match = release_restatement.pattern.search(release_text)
+        if release_match is None:
+            raise ConfigError(
+                "README.md: cannot plant release-version restatement control"
+            )
+        stale_release_restatement = (
+            release_text[: release_match.start("version")]
+            + "9.9.9"
+            + release_text[release_match.end("version") :]
+        )
+        canonical_release = tomllib.loads(
+            (root / "apps/cored/Cargo.toml").read_text()
+        )["package"]["version"]
+        try:
+            version_check.release_version_restatement_report(
+                canonical_release,
+                root,
+                text_overrides={
+                    release_restatement.path: stale_release_restatement
+                },
+            )
+        except ValueError as error:
+            stale_release_detected = (
+                "README.md: project heading states 9.9.9, but executable "
+                f"release authorities derive {canonical_release}"
+                in str(error)
+            )
+        else:
+            stale_release_detected = False
+        if not stale_release_detected:
+            missed.setdefault("release-version-restatement", []).append(
+                "stale-readme-version"
+            )
+
         governed_row_value = len("planted governed export row")
         governed_latest_value = governed_row_value + len("superseding")
         governed_architecture = (
@@ -2754,6 +2793,7 @@ def r12_findings(root: Path) -> list[str]:
             "rust-floor-restatement",
             "rust-floor-partition",
             "rust-floor-context",
+            "release-version-restatement",
         }:
             source_relative = "tools/version_check.py"
         else:
@@ -2779,6 +2819,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "rust-floor-partition planted controls"
         elif group == "rust-floor-context":
             finding_kind = "rust-floor-context planted controls"
+        elif group == "release-version-restatement":
+            finding_kind = "release-version-restatement planted controls"
         elif group == "governed-export-margin":
             finding_kind = "governed-export-margin planted controls"
         elif group == "governed-export-ceiling":

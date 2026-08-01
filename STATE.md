@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 3 binds Rust-floor claims through a registered contextual value closure and reports its explicit domain.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 60 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **333**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **333**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **249 checked / 3 retracted / 249 matched / 249 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 4 binds every registered present-tense release-version restatement to the executable authorities.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **336**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **250 checked / 3 retracted / 250 matched / 250 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -242,6 +242,50 @@ passed all **20/20** jobs, including registered self-test **12 rules / 60
 controls** and embedded golden **11/11**. The standalone post-task
 `./run golden` also passed the same **11/11** assertions with no corpus or
 public-response delta.
+
+**v0.32 Step 4 — present-tense release-version completeness (measured
+2026-08-01).** G3 established that heterogeneous release-version prose cannot
+be derived honestly from bare literals: the same value appears in current
+headings and tag descriptions as well as dated historical evidence. The shipped
+shape therefore retains the five syntax-derived executable authority readers
+and adds the named `RELEASE_VERSION_RESTATEMENTS` semantic registry with an
+executed reader. It extracts exactly the three current README statements and
+requires each to equal the canonical executable value. `ARCHITECTURE.md` §8
+now delegates authority and restatement membership to `./run version-check`
+instead of maintaining a second hand-written source list.
+
+The disagreement rejection preceded acceptance. Replacing only the README
+project-heading value with `9.9.9` made the focused lane pass its planted test
+by observing the production error `README.md: project heading states 9.9.9,
+but executable release authorities derive 0.17.1`. A separate zero-extraction
+test proves the registry is read rather than merely declared. The real current
+entry point reports **3** registered restatements, all deriving **0.17.1**, and
+focused version tests passed **13/13**. README and every executable version
+authority remained byte-unchanged; dated older releases were not rewritten.
+
+Registered R12 now disables the production mismatch branch and catches the
+resulting missed `stale-readme-version` plant. No existing control site moved;
+the new site's expected line **695** was derived from the emitted self-test
+failure. An initial population comparison exposed two invalid expected-line
+records—the deliberate new placeholder and an accidentally edited R3 value—and
+failed with two tests in both lanes. Restoring R3 to its emitted line **1** and
+binding the new site to **695** made the real self-test pass **12/12 rules / 61
+controls**. The clean constrained Python 3.11.4 and 3.12.13 populations then
+each collected and passed **336**, with zero failures or skips; the repository
+comparator derived exact equivalence at **336**. No shell source, release value,
+tag, dependency, workflow, toolchain pin, or evidence topology changed.
+
+With the task box still open, the complete `./run ci-local` entry point passed
+all **20/20** jobs: warning-denied Rust remained **146** workspace tests plus
+the focused SEC diagnostic and **32 + 30** net tests, locked Rust 1.78,
+clippy/fmt/ShellCheck, shell **336/336**, registered self-test **12 rules / 61
+controls**, protected artifacts exact, and embedded golden **11/11**. The
+standalone post-task `./run golden` then passed the same **11/11** assertions
+with no document, id, distance, signal, citation, license, entitlement, or
+public-response delta. An earlier `ci-local` invocation after prematurely
+checking the task box stopped at the expected missing-progress-entry defect and
+was not the acceptance run; the successful run used the runbook-prescribed
+open-box state before the implementation commit existed.
 
 **v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
 two-commit tagged-close protocol (operator authorization and measurement

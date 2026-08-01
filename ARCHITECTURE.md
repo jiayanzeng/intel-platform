@@ -473,9 +473,12 @@ set is part of the public contract even when route, field name, field type, and
 body shape stay fixed. This is a prose R-CLOSE adjudication, not an executable
 invariant rule.
 
-For an actual release, the Rust package, Python package, public FastAPI literal,
-`STATE.md` header, and newest `CHANGELOG.md` release must agree on the chosen
-version. A no-release close instead names the intentionally unreleased commits
-and leaves every version source and tag unchanged. Tag creation, target
+For an actual release, `./run version-check` owns the executable authority and
+registered present-tense restatement sets and requires every member to agree on
+the chosen version. This section deliberately delegates membership to that
+executed check instead of restating a second source list. Dated historical
+records are outside the current-restatement set and keep their original release
+identities. A no-release close instead names the intentionally unreleased
+commits and leaves every version source and tag unchanged. Tag creation, target
 selection, closing-record sequencing, the historical boundary, and post-push
 evidence are defined only by `AGENTS.md`'s R-CLOSE contract.

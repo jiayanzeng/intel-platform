@@ -613,6 +613,99 @@ def rust_floor_partition_report(
     )
 
 
+class ReleaseVersionRestatementSpec(NamedTuple):
+    path: str
+    label: str
+    pattern: re.Pattern[str]
+
+
+class ExtractedReleaseVersion(NamedTuple):
+    path: str
+    label: str
+    version: str
+
+
+class ReleaseVersionRestatementReport(NamedTuple):
+    canonical: str
+    restatements: tuple[ExtractedReleaseVersion, ...]
+
+
+RELEASE_VERSION = r"[0-9]+\.[0-9]+\.[0-9]+"
+
+# Present-tense prose is a semantic classification and cannot be derived from a
+# bare version literal without sweeping in dated history. This named registry
+# is therefore the maintenance obligation, and release_version_restatement_report
+# is its reader. Executable authorities remain derived by their syntax-specific
+# readers in main().
+RELEASE_VERSION_RESTATEMENTS = (
+    ReleaseVersionRestatementSpec(
+        "README.md",
+        "project heading",
+        re.compile(
+            rf"(?m)^# intel-platform \(v(?P<version>{RELEASE_VERSION}) "
+            r"— core-shell\)$"
+        ),
+    ),
+    ReleaseVersionRestatementSpec(
+        "README.md",
+        "selected release identity",
+        re.compile(
+            rf"`v(?P<version>{RELEASE_VERSION})` is the selected "
+            r"release identity\."
+        ),
+    ),
+    ReleaseVersionRestatementSpec(
+        "README.md",
+        "tag target description",
+        re.compile(
+            rf"annotated `v(?P<version>{RELEASE_VERSION})` tag targets that "
+            r"closing commit"
+        ),
+    ),
+)
+
+
+def release_version_restatement_report(
+    canonical_version: str,
+    root: Path = ROOT,
+    *,
+    text_overrides: dict[str, str] | None = None,
+) -> ReleaseVersionRestatementReport:
+    overrides = {} if text_overrides is None else text_overrides
+    extracted: list[ExtractedReleaseVersion] = []
+    for spec in RELEASE_VERSION_RESTATEMENTS:
+        if spec.path in overrides:
+            text = overrides[spec.path]
+        else:
+            text = (root / spec.path).read_text()
+        matches = list(spec.pattern.finditer(text))
+        if len(matches) != 1:
+            raise ValueError(
+                f"{spec.path}: {spec.label} yielded {len(matches)} current "
+                "release-version restatements; expected exactly one"
+            )
+        extracted.append(
+            ExtractedReleaseVersion(
+                path=spec.path,
+                label=spec.label,
+                version=matches[0].group("version"),
+            )
+        )
+
+    # Invariant R12 control site: release-version restatement binding.
+    for restatement in extracted:
+        if restatement.version != canonical_version:
+            raise ValueError(
+                f"{restatement.path}: {restatement.label} states "
+                f"{restatement.version}, but executable release authorities "
+                f"derive {canonical_version}"
+            )
+    return ReleaseVersionRestatementReport(
+        canonical=canonical_version,
+        restatements=tuple(extracted),
+    )
+
+
 def literal_string(node: ast.AST, path: Path, label: str) -> str:
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         return node.value
@@ -725,6 +818,11 @@ def main() -> int:
             relative(STATE): state_version(),
             relative(CHANGELOG): changelog_version(),
         }
+        canonical_path = relative(CARGO_TOML)
+        canonical_version = versions[canonical_path]
+        release_restatements = release_version_restatement_report(
+            canonical_version
+        )
         tag = nearest_tag()
     except (KeyError, OSError, SyntaxError, tomllib.TOMLDecodeError, ValueError) as error:
         print(f"version-check: ERROR: {error}", file=sys.stderr)
@@ -741,6 +839,12 @@ def main() -> int:
         "offline MSRV current restatements: "
         f"{len(msrv.restatements)} all derive {msrv.derived}; "
         "registry=OFFLINE_MSRV_RESTATEMENTS"
+    )
+    print(
+        "release-version current restatements: "
+        f"{len(release_restatements.restatements)} all derive "
+        f"{release_restatements.canonical}; "
+        "registry=RELEASE_VERSION_RESTATEMENTS"
     )
     multiply_classified = sum(
         len(item.memberships) > 1
@@ -764,8 +868,6 @@ def main() -> int:
         f"{rust_floor_partition.context_classification_decisions}"
     )
 
-    canonical_path = relative(CARGO_TOML)
-    canonical_version = versions[canonical_path]
     mismatches = [
         (path, version)
         for path, version in versions.items()
