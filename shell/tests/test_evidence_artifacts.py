@@ -347,10 +347,17 @@ def test_documented_manifest_container_capabilities_execute(
     _, manifest_path, manifest = _fixture(tmp_path)
     evidence = tmp_path / "evidence" / "report.json"
     observation = tmp_path / "observations" / "sample.txt"
+    archive = (
+        tmp_path
+        / "docs"
+        / "state-archive"
+        / "STATE-through-v0.28.md"
+    )
     authorization = tmp_path / "run"
     for path, content in (
         (evidence, '{"complete":true}\n'),
         (observation, "observed bytes\n"),
+        (archive, "archived State bytes\n"),
         (authorization, "#!/bin/sh\n"),
     ):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -358,6 +365,7 @@ def test_documented_manifest_container_capabilities_execute(
     for path, grade in (
         (evidence, "supporting"),
         (observation, "observation"),
+        (archive, "structural"),
         (authorization, "authorization"),
     ):
         manifest["pinned_files"].append(
@@ -374,7 +382,7 @@ def test_documented_manifest_container_capabilities_execute(
 
     both_shapes = _run(tmp_path, manifest_path, "validate")
     assert both_shapes.returncode == 0, both_shapes.stderr
-    assert "evidence-manifest: PASS (schema=2, artifacts=1, pinned_files=3)" in (
+    assert "evidence-manifest: PASS (schema=2, artifacts=1, pinned_files=4)" in (
         both_shapes.stdout
     )
 
@@ -491,7 +499,8 @@ def test_pin_path_rejects_unregistered_prefix(tmp_path: Path) -> None:
     assert checked.returncode == 2
     assert (
         "pinned_files[0].path: pinned files must live beneath evidence/, "
-        "observations/, or be an exact registered authorization surface"
+        "observations/, or be an exact registered structural archive or "
+        "authorization surface"
     ) in checked.stderr
     print(f"observation-pin-rejection-3: {checked.stderr.strip()}")
 
@@ -536,6 +545,54 @@ def test_only_registered_authorization_pins_may_live_outside_evidence(
     checked = _run(tmp_path, manifest_path, "validate")
     assert checked.returncode == 2
     assert "must live beneath evidence/" in checked.stderr
+
+
+def test_only_registered_structural_archive_pin_is_accepted(
+    tmp_path: Path,
+) -> None:
+    _, manifest_path, manifest = _fixture(tmp_path)
+    archive = (
+        tmp_path
+        / "docs"
+        / "state-archive"
+        / "STATE-through-v0.28.md"
+    )
+    archive.parent.mkdir(parents=True)
+    archive.write_text("archived State bytes\n")
+    manifest["pinned_files"].append(
+        {
+            "path": "docs/state-archive/STATE-through-v0.28.md",
+            "grade": "structural",
+            "sha256": _sha256(archive),
+            "bytes": archive.stat().st_size,
+            "purpose": "exact structural archive pin control",
+            "provenance": "created inside one disposable pytest directory",
+        }
+    )
+    _write_manifest(manifest_path, manifest)
+
+    allowed = _run(tmp_path, manifest_path, "validate")
+    assert allowed.returncode == 0, allowed.stderr
+
+    manifest["pinned_files"][0]["path"] = (
+        "docs/state-archive/STATE-through-v0.27.md"
+    )
+    _write_manifest(manifest_path, manifest)
+    unregistered = _run(tmp_path, manifest_path, "validate")
+    assert unregistered.returncode == 2
+    assert "exact registered structural archive" in unregistered.stderr
+
+    manifest["pinned_files"][0]["path"] = (
+        "docs/state-archive/STATE-through-v0.28.md"
+    )
+    manifest["pinned_files"][0]["grade"] = "supporting"
+    _write_manifest(manifest_path, manifest)
+    wrong_grade = _run(tmp_path, manifest_path, "validate")
+    assert wrong_grade.returncode == 2
+    assert (
+        "pinned_files[0].grade: expected one of ['structural']"
+        in wrong_grade.stderr
+    )
 
 
 def test_committed_pins_reject_one_byte_mutations(

@@ -26,6 +26,18 @@ measured observations are carried forward until E0 replaces them with v0.33
 measurements, the missing subject is restored, and each discharging step is
 named in the executable form. The checker was not weakened.
 
+**r4 — 2026-08-01 — Fidelity B expressibility correction.** The operator
+selected Cut B and Fidelity B. The required pre-manifest validators passed, but
+a synthetic `pinned_files[]` entry for the mandated
+`docs/state-archive/STATE-through-v0.28.md` path made the real manifest entry
+point exit 2 because schema v2 admitted only evidence, observation, and exact
+authorization paths. The runbook simultaneously forbade the only validator
+that could register the archive, so its Option B acceptance criterion was
+author-side unsatisfiable. In accordance with `AGENTS.md §7`, this amendment
+records and corrects that defect: `tools/evidence_artifacts.py` is narrowly
+allowed for an exact structural-archive registry and failure-capable tests;
+prefix admission remains forbidden.
+
 Step 1 — rebuilt the exact entering state and settled G1–G6 — 2026-08-01
 
 The measured baseline corrected checklist 253 to 254, confirmed the delivered
@@ -42,9 +54,11 @@ Step 3 — governed export margin bound to a same-kind progress series — 2026-
 
 Step 4 — State archival-region and external-reference contract completed — 2026-08-01
 
+Step 5 — operator-selected Cut B archived through v0.28 with a standing Fidelity B pin — 2026-08-01
+
 ---
 
-**Two reviewer errors, both mine, recorded before anything else.**
+**Three reviewer errors, all mine, recorded before anything else.**
 
 1. **v0.32 G1 required each governed byte margin to be stated "in cycles under
    an explicitly named denominator." It never required the denominator to be
@@ -81,6 +95,16 @@ Step 4 — State archival-region and external-reference contract completed — 2
    understated is the gap that is real: **section anchors have no protection at
    all, and I measured an archival that removes five of them passing every
    check.** Both corrections are carried below.
+
+3. **r2 offered Fidelity B as a manifest-only choice even though the manifest
+   schema could not express the required archive path, then explicitly forbade
+   changing that schema validator.** The real entry point rejected a synthetic
+   Option B plant with `pinned_files[331].path: pinned files must live beneath
+   evidence/, observations/, or be an exact registered authorization surface`.
+   Neither the SQLite `artifacts[]` shape nor an evidence-path alias can
+   honestly describe the selected archive. r4 therefore permits the narrow
+   validator and test change needed to register this exact structural archive;
+   no prefix, alias, or mislabelled authorization grade is introduced.
 
 ---
 
@@ -125,6 +149,7 @@ cycles of margin in hand rather than under boundary pressure.
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `allow` | `tools/export_check.py` |
+| `allow` | `tools/evidence_artifacts.py` |
 | `allow` | `repomix.config.json` |
 | `allow` | `config/protected-artifacts.json` |
 | `release_authority` | `Cargo.toml` |
@@ -138,7 +163,6 @@ cycles of margin in hand rather than under boundary pressure.
 | `forbid` | `run` |
 | `forbid` | `.github/workflows/**` |
 | `forbid` | `tools/model_profiles.py` |
-| `forbid` | `tools/evidence_artifacts.py` |
 | `forbid` | `apps/**/src/**` |
 | `forbid` | `crates/**/src/**` |
 | `forbid` | `crates/**/examples/**` |
@@ -247,10 +271,10 @@ edited to match what happened.
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.33 · 2026-08-01 — no compliance review or admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.33 · 2026-08-01 — neither historical tag was present remotely and no historical ref moved; trigger did not fire | none — no historical ref touched |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.33 · 2026-08-01 — both tags remained absent and no hosted verification changed the unchanged flag; trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.33 · 2026-08-01 — manifest was 191,395 bytes and two complete runs took 0.09 s and 0.10 s real; neither trigger fired | none unless Step 5 Option B is selected |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.33 · 2026-08-01 — operator-selected Fidelity B raised the manifest to 192,042 bytes / 332 pins; two complete runs matched every pin and both protected databases in 0.11 s and 0.10 s real, so neither trigger fired | Step 5 — completed with the exact through-v0.28 structural archive pin |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.33 · 2026-08-01 — release-authority precedence admits the unchanged version literal while no shell source or release value changed | none — `shell/intel_shell/**` is forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.33 · 2026-08-01 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
-| **Second `STATE.md` archival** | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.33 · 2026-08-01 — E0 measured `STATE.md` at 352,895 bytes and the last governed export at 2,706,393 bytes; neither clause fired, while the Option B counterfactual returns 178,125 bytes to each boundary | **Step 4 and Step 5 — execute ahead of the trigger under explicit operator authorization; the trigger text does not change** |
+| **Second `STATE.md` archival** | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.33 · 2026-08-01 — under explicit operator authorization, Step 5 performed Cut B ahead of the trigger: the 178,125-byte archive plus 194,542-byte pre-record live complement reconstructed the 372,667-byte pre-cut State exactly, and post-cut tree `91be7ac3b7c90f5407353136cde8e647f7af2f2f` exported 2,584,353 bytes; neither trigger clause had fired | **Step 4 and Step 5 — completed ahead of the trigger; the unchanged condition governs recurrence** |
 | Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — Step 2's control-schema trigger fired and emitted mutation output re-derived 25 shifted existing values plus four new admission/selector values. Step 3's schema change then re-derived 29 shifted existing values plus one new same-kind-margin value at line 2401. Step 4's schema change re-derived 30 shifted existing values plus one new State-region value at line 2213. The latest shifted-existing count is fewer than the 67 registered controls protected | Step 2 and Step 3 and Step 4 — completed; count and re-derive from emitted output |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.33 · 2026-08-01 — v0.33 still matches `v0.<n>` and production uses the Git-derived tracked retained set; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.33 · 2026-08-01 — v0.17.1 publication reset the count to zero, and the v0.33 activation/E0 distance carries no runtime or public-surface change; no fresh count started | Step 7 — restate the epoch count under the v0.32 reset rule |
@@ -581,7 +605,7 @@ operator's.
 **Done when** the archive exists, the live file is smaller by exactly the
 archived amount, and every binding into `STATE.md` still resolves.
 
-- [ ] **ARCHIVE-CUT**
+- [x] **ARCHIVE-CUT**
 
 ---
 

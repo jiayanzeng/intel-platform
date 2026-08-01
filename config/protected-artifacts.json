@@ -2749,6 +2749,14 @@
       "bytes": 35166,
       "purpose": "Authenticated release-posture v0.29 deferred-design audit receipt.",
       "provenance": "Clean exact-candidate measurement of evidence candidate 9059ecab338eaaccfd6376ec7ba5e5e22e18c6f4 on 2026-07-31 before the separate Step 8 disposition decision; accepted seven distinct successful receipts from run 30600284114 attempt 1 after each persisted Sigstore bundle verified its exact bytes, source digest, repository, workflow signer, neutral candidate source ref, and GitHub-hosted runner identity."
+    },
+    {
+      "path": "docs/state-archive/STATE-through-v0.28.md",
+      "grade": "structural",
+      "sha256": "b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886",
+      "bytes": 178125,
+      "purpose": "Byte-exact v0.33 Cut B archive of historical State appends through v0.28.",
+      "provenance": "Repository operator selected Cut B and Fidelity B on 2026-08-01. The pre-cut 372,667-byte State at HEAD 1121e90055f2fb189bb71404e8bd93f5b55e0a8b was reconstructed byte-exact from this 178,125-byte archive and the 194,542-byte live complement; the exact structural-archive registry makes SHA-256 and length standing checks."
     }
   ]
 }

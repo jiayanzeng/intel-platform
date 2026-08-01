@@ -523,8 +523,11 @@ Manifest schema v2 has two disjoint containers:
   date, captured wire command/output reference, operator approval, and
   retroactive status. Never edit or replace an earlier admission record.
 - **`pinned_files[]`** is for immutable bytes beneath `evidence/` or
-  `observations/`, plus exact registered authorization paths. Each entry carries
-  its applicable grade and byte facts, and **forbids `admission`**.
+  `observations/`, plus exact registered structural-archive and authorization
+  paths. Each entry carries its applicable grade and byte facts, and **forbids
+  `admission`**. The structural-archive registry is exact rather than a prefix:
+  v0.33 registers only `docs/state-archive/STATE-through-v0.28.md`, so another
+  archive name cannot silently inherit its pin grade.
 
 A task that requires a byte to be pinned must name `artifacts[]` or
 `pinned_files[]`. A requirement that neither container can express is an

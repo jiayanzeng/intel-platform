@@ -31,6 +31,9 @@ AUTHORIZATION_PIN_PATHS = {
     "run",
     "tools/model_profiles.py",
 }
+STRUCTURAL_ARCHIVE_PIN_PATHS = {
+    "docs/state-archive/STATE-through-v0.28.md",
+}
 
 
 class ManifestError(ValueError):
@@ -304,12 +307,15 @@ def _validate_pinned_file(value: Any, index: int) -> dict[str, Any]:
         allowed_grades = {"structural", "release", "supporting", "legacy"}
     elif beneath_observations:
         allowed_grades = {"observation"}
+    elif raw_path in STRUCTURAL_ARCHIVE_PIN_PATHS:
+        allowed_grades = {"structural"}
     elif raw_path in AUTHORIZATION_PIN_PATHS:
         allowed_grades = {"authorization"}
     else:
         raise ManifestError(
             f"{context}.path: pinned files must live beneath evidence/, "
-            "observations/, or be an exact registered authorization surface"
+            "observations/, or be an exact registered structural archive "
+            "or authorization surface"
         )
     if grade not in allowed_grades:
         raise ManifestError(
