@@ -50,3 +50,89 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref acceptance: PASS. Activation used only repository and local
   Git inspection. It issued no publisher request, ran no scheduler, and
   created, moved, or deleted no publication ref.
+
+### 2026-08-01 · E0 — rebuild entering state and settle G1–G6
+
+- owner: Codex
+- commit: 4ba1de7
+- result: PASS. The exact implementation commit is
+  `4ba1de7f60e1161106380a3644dace61ff7907fa`; it updates only
+  `ARCHITECTURE.md`, `STATE.md`, and the active runbook with measured entry
+  facts, dated trigger observations, the Step 1 amendment disclosure, and the
+  checked E0 completion.
+- local-gate acceptance: PASS. Clean constrained Python 3.11.4 and 3.12.13
+  rebuilds each resolved all 21 pinned packages, collected/passed 325, failed
+  0, skipped 0, and emitted the same one accepted Starlette warning. The
+  machine comparator derived `collected=325`, `equivalent=true`, and
+  `equivalent_passed=325`. The exact `./run ci-local` entry point passed all
+  20 jobs, including warning-denied current and locked Rust 1.78 lanes, 146
+  workspace tests plus the focused identity diagnostic, 32 ingest-net tests,
+  30 cored-net tests, clippy, fmt, ShellCheck, 12 invariant rules / 58 planted
+  controls, protected bytes, and its embedded golden 11/11. An earlier
+  sandboxed invocation was `not measured` because its loopback wire-server bind
+  was denied; the exact permitted rerun is the recorded pass.
+- published-state acceptance: PASS by independent remote measurement. Remote
+  `main` and peeled `v0.17.1` both resolved to closing commit
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`; annotated object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` had Git type `tag`; the
+  closing commit's immediate parent was release commit
+  `7a621e39a069a1ef26438e841e7bb1ca2f34165b`.
+- G1 acceptance: PASS by exhaustive search and direct measurement. No checker
+  compared `STATE.md` or the manifest against their prose boundaries. At exact
+  activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23`,
+  `STATE.md` was 324,290 bytes with 129,451 bytes / 3.68 cycles remaining at
+  +35,173 bytes/cycle; the manifest was 191,395 bytes with 857,181 bytes / an
+  unbounded latest-zero-delta estimate, or 99.43 cycles at the last positive
+  +8,621 bytes/cycle; the export was 2,617,984 bytes with 382,016 bytes / 5.40
+  cycles remaining at +70,780 bytes/cycle. `STATE.md` is nearest and its
+  estimate worsened.
+- governed review-export measurement: tree=`7ba89795403b2b8fab84ff53abeba6ad4a220d23`; bytes=`2617984`
+- G2 acceptance: PASS by execution of the real function and entry point in a
+  tracked throwaway clone. A staged file containing `offline needs >= 1.75`
+  returned verbatim `'wrong_floor_rows': [], 'wrong_floor_occurrences': 0`
+  and `version-check: PASS (0.17.1)`. The current detector's value-closure bound
+  is therefore unnamed; Step 3 owns contextual candidate recognition or an
+  explicit bound.
+- G3 acceptance: PASS by exhaustive derivation and execution. The tracked
+  current-version set was enumerated across Architecture, changelog, lockfile,
+  README, State, cored manifest, current/prior cycle records, and both shell
+  literals. A README-line-1-only change to `v9.9.9` in a throwaway exact-v0.31
+  clone left `version-check`, `cycle-check`, and `invariant-scan --self-test`
+  green, demonstrating that every shared local/hosted lifecycle entry point
+  ignores that present-tense restatement.
+- G4 acceptance: PASS. Local and remote `codex/*` refs were exhaustively
+  enumerated: the local reused branch named v0.23 targeted the activation audit,
+  its remote targeted the v0.31 post-push audit, and cycle-qualified remote
+  evidence refs existed only for v0.24 through v0.30. Run 30685356489's seven
+  receipts and seven Sigstore bundles verified 7/7 against signed v0.17.1
+  release digest and the reused source ref. Digest/ref claims are load-bearing;
+  the branch's later mutable target is not. Fresh-ref absence and readback are
+  executable only at operation time and cannot become durable in-tree history.
+- G5 acceptance: PASS. Direct Git blobs measured +2,729 progress bytes and
+  +2,572 State bytes from the v0.31 release parent to post-push audit; their
+  exact +5,301-byte sum reconciled the delivered export movement. This corrects
+  the entering two-newline hypothesis. A differing delivered export should
+  require the cycle-ending audit; the latest append's own contribution remains
+  necessarily undisclosed, because naming it recreates the fixed point.
+- G6 acceptance: PASS by exhaustive search. No executable control distinguishes
+  trigger firing from non-firing or defines a restart. The live v0.32 row now
+  says the trigger fired at v0.31, v0.17.1 publication disposed it, no new
+  runtime/public difference exists, and reset is undefined pending Step 5;
+  firing and reset remain operator adjudications.
+- activation/deferred acceptance: PASS. The stale-retention rejection matched
+  the predicted line byte-for-byte and remains quoted in State and activation
+  progress; the earlier untracked-runbook stop is recorded as `not measured`.
+  All 24 deferred rows now carry v0.32 measured observations, and all four
+  Architecture trigger rows carry v0.32 close-adjacent measurements. The real
+  activation entry point's governed exemption is recorded by the exact name
+  `exempt-open-empty-progress`.
+- artifact acceptance: PASS. Both direct manifest validations and complete
+  protected-byte verifications matched 331 pins and both databases; measured
+  real times were 0.17 s and 0.10 s. The manifest and protected bytes were not
+  edited.
+- golden-E2E delta: PASS, byte-identical **11/11** both inside `ci-local` and in
+  the mandatory standalone post-task `./run golden`; delta **0**.
+- publisher/ref acceptance: PASS. E0 issued no publisher request, ran no
+  scheduler or model-profile command, found no listener on 8788, and created,
+  moved, or deleted no publication ref. Direct remote query still found neither
+  historical `v0.8.0` nor `v0.10.2` tag.
