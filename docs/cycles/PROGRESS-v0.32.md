@@ -344,3 +344,69 @@ Entries are append-only; corrections are new dated entries.
 - publisher/ref acceptance: PASS. The task made no publisher request, ran no
   scheduler or model-profile command, and created, moved, or deleted no
   publication ref.
+
+### 2026-08-01 · TRIGGER-STATE — define reset and honest non-controls
+
+- owner: Codex
+- commit: a619eb4
+- result: PASS under the Step 5 decision-gate ruling. Exact implementation
+  commit `a619eb486e7ce7fb9bcdf865f588834a17e85940` defines publication-epoch
+  reset semantics in the operating contract and Architecture, records why
+  runtime trigger truth is not independently executable, deliberately settles
+  general cycle-ending audit optionality, updates the two live deferred rows,
+  records the measured outcome in State, and checks Step 5. It adds no code or
+  invariant control.
+- gate acceptance: PASS. G6 established that the governed row is the only
+  artifact asserting runtime classification and trigger firing. A checker
+  reading that row has no independent runtime fact with which to contradict
+  it, so an executable firing/reset rule would be a self-report dressed as a
+  control. Step 2 already supplies direct executable crossing behavior for the
+  two measurable artifact boundaries. The implementation therefore took the
+  runbook's explicit prose-only path and did not edit `tools/cycle_check.py`,
+  `tools/invariant_scan.py`, or `config/invariant-rules.json`.
+- reset acceptance: PASS. Successful authorized publication now resets the
+  consecutive closed-cycle count to zero at the published closing commit. A
+  fresh count starts only at the first subsequent close carrying a measured
+  runtime-behaviour difference. Pre-publication cycles, already-published
+  differences, documentation/evidence/lifecycle-only changes, and closes with
+  no measured runtime difference do not start or continue the count. A
+  public-surface change still fires immediately. This states both directions
+  symmetrically and prevents later selection of a favorable reading.
+- current-state acceptance: PASS. The live Architecture and deferred rows say
+  v0.17.1 publication disposed the v0.31 trigger and reset the count to zero at
+  closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`. v0.32 contains
+  no new runtime or public-surface difference, so no fresh count has started.
+  Runtime classification, firing, and reset remain dated operator
+  adjudications; executable controls enforce only record freshness and cycle
+  identity.
+- cycle-ending-audit acceptance: PASS by explicit optionality ruling. The
+  general checker continues to allow zero or one audit because absence claims
+  neither zero delta nor a performed export, and the checker does not generate
+  the operator-local bytes needed to distinguish omission from zero. Requiring
+  a field conditionally on its own self-report would be vacuous; requiring one
+  always would assert an unperformed measurement. v0.32's runbook independently
+  requires its closing-tree audit. The audit append's own byte contribution is
+  necessarily undisclosed, and another field would recreate the fixed point.
+- control acceptance: NOT APPLICABLE by the decision gate. No executable
+  property shipped, so no R12 control was added. Step 5 shifted zero
+  `expected_line` sites; the cumulative shifted-existing-site count remains 12
+  and the self-test remained 12/12 rules / 61 controls.
+- local-gate acceptance: PASS. With Step 5 open, `./run ci-local` passed all
+  20 jobs with warning-denied 146 workspace tests, the focused SEC diagnostic,
+  32 ingest-net plus 30 cored-net tests, locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, shell 336/336, protected artifacts exact, and
+  embedded golden 11/11.
+- Python-population acceptance: PASS. Clean constrained Python 3.11.4 and
+  3.12.13 suites each collected/passed 336, failed 0, and skipped 0 with the
+  one accepted Starlette warning. `tools/test_population.py` derived
+  `collected=336`, `equivalent=true`, and `equivalent_passed=336`.
+- lifecycle acceptance: PASS. At exact implementation tree
+  `03ee406ee287f41108cb5fa86fdab4399f3242cc`, `cycle-check` read `STATE.md`
+  at 345,186 bytes and the unchanged manifest at 191,395 bytes, reported both
+  `bound`, and kept governed review export on
+  `exempt-open-latest-at-close`.
+- golden-E2E delta: PASS, byte-identical **11/11** in both the complete local
+  entry point and mandatory standalone post-task `./run golden`; delta **0**.
+- publisher/ref acceptance: PASS. The task made no publisher request, ran no
+  scheduler or model-profile command, and created, moved, or deleted no
+  publication ref.
