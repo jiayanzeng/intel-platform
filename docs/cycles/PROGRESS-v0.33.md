@@ -419,3 +419,95 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. Golden passed byte-identical **11/11** locally and
   hosted, then passed the mandatory standalone post-record run.
 - governed review-export measurement: tree=`2edb7694c2c6c1498b3903382c37aef68329150d`; bytes=`2592441`
+
+### 2026-08-01 · R-CLOSE — operator-selected no-release closure
+
+- owner: Codex
+- commit: 70781081abd42ed9a49e22ed100efdb039a9b762
+- result: PASS. The exact closing implementation commit records the operator's
+  explicit `no-release` choice, closes v0.33 on a dated reasoned record, binds
+  the post-archive governed margin to its measured evaluation point, and
+  preserves published v0.17.1 unchanged.
+- disposition acceptance: PASS. The unpublished distance from published
+  v0.17.1 contains lifecycle/publication controls, focused tests, cycle and
+  architecture records, retained-cycle configuration, the operator-selected
+  State archival, and its exact structural manifest pin. It contains no
+  production source, workflow, dependency, release value, measured runtime-
+  behaviour difference, public route, response shape, or serialized `/v1/*`
+  value-domain change. This structural and archival distance is the reason for
+  no-release; “nothing shipped” was not substituted for it.
+- publication acceptance: PASS. Final direct remote readback kept evidence ref
+  `codex/v0.33-evidence-2edb769` at exact authenticated candidate
+  `2edb7694c2c6c1498b3903382c37aef68329150d`, remote `main` and peeled
+  `v0.17.1` at published closing commit
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. `version-check`
+  passed at 0.17.1 with **22** offline-MSRV and **3** release-version current
+  restatements; every declared release-authority path and actual version value
+  remained unchanged.
+- governed-export acceptance: PASS. The closing tree sees candidate
+  `2edb7694c2c6c1498b3903382c37aef68329150d` at **2,592,441 bytes / 153
+  files** as its last governed field, leaving **407,559 bytes / 13.59%** or
+  **5.29 cycles** at the latest positive adjacent same-kind v0.31→v0.32
+  denominator of **77,014 bytes/cycle**. The actual post-archive
+  v0.32→v0.33 transition is **−113,952 bytes**. The new basis/evaluation split
+  passed a post-archive focused construction and rejects both a misstated
+  measurement and a stale positive pair through the real entry point.
+- closing-export acceptance: PASS after one named environment non-result. The
+  first sandboxed exact-closing-tree project-root attempt failed registry DNS
+  and was not measured. The identical permitted run exported **153 files /
+  2,628,346 bytes**, retained exactly three cycles, excluded both protected
+  byte classes, and reported **100 derived / 7 required** paths. The
+  **+35,905-byte** difference from the closing-visible governed value is
+  recorded only in the non-governing cycle-ending audit field below.
+- artifact-boundary acceptance: PASS. The closing tree measured `STATE.md` at
+  **206,530 / 453,741 bytes** and the unchanged manifest at **192,042 /
+  1,048,576 bytes**. The pre-record same-kind margins were **8.09 State cycles**
+  at 31,177 bytes/cycle and **1,323.85 manifest cycles** at 647 bytes/cycle.
+  Manifest validation reported schema 2 / **2 artifacts / 332 pinned files**;
+  two complete verifications took **0.12 s / 0.10 s real** and matched every
+  pin plus both protected databases. The archive remained **178,125 bytes** at
+  SHA-256
+  `b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`.
+- scope acceptance: PASS. Used declared allowances are
+  `tools/cycle_check.py`, `tools/invariant_scan.py`,
+  `config/invariant-rules.json`, `shell/tests/**`, `docs/state-archive/**`,
+  `AGENTS.md`, `ARCHITECTURE.md`, `tools/evidence_artifacts.py`, and the
+  conditionally activated exact Fidelity B manifest path. Unused allowances
+  are `tools/version_check.py`, `tools/export_check.py`, and
+  `repomix.config.json`. Every release authority and `forbid` path is unused;
+  standing status precedence accounts for `STATE.md` and the active
+  runbook/progress pair.
+- divergence acceptance: PASS. Published v0.17.1 reset the epoch count to zero.
+  The measured v0.33 distance contains no runtime-behaviour difference and no
+  public-surface change, so the count remains zero and no fresh count starts.
+- reviewer/control acceptance: PASS. All four author defects are recorded in
+  the runbook header. Relative to activation, **25 / 61** existing
+  `expected_line` values differ and **7** controls were added, leaving **68
+  controls protected**. Step 7's emitted mutation output re-derived **12**
+  shifted existing values and the new basis-selection value at line **2683**;
+  none was offset-computed. Full self-test passed **12 rules / 68 controls**.
+- Python acceptance: PASS after named sandbox non-results. The first sandboxed
+  Python 3.11.4 and 3.12.13 lanes each failed the same eight tests because the
+  sandbox denied loopback binds and `ps`; those attempts are not measured. The
+  identical permitted lanes each collected/passed **348**, failed **0**, and
+  skipped **0**, with the same one accepted `StarletteDeprecationWarning`.
+- lifecycle acceptance: PASS. `cycle-check` reports `state=closed`, governed
+  export `bound-with-cycle-ending-audit`, both artifact boundaries `bound`,
+  all State anchors resolved, and **31** closed execution runbooks.
+  `checklist-audit` passes **261 checked / 3 retracted / 261 matched / 261
+  commits resolved** once this real closing-commit entry is present.
+- complete-entry-point acceptance: PASS. The permitted audit-child
+  `ci-local` run passed **20/20**, including warning-denied offline and net Rust
+  lanes, locked Rust 1.78, clippy, rustfmt, invariant self-test **12/68**,
+  shell **348/348**, embedded golden **11/11**, all protected artifacts, and
+  append-only progress validation.
+- prohibited-action acceptance: PASS. Step 7 issued no publisher request, ran
+  no scheduler, service, or model-profile command, wrote no protected database,
+  moved no ref, changed no version value, and edited no production, workflow,
+  dependency, closed-cycle, observation, or fixture path.
+- golden-E2E delta: **0**. The first sandboxed golden attempt could not bind
+  loopback and was not measured; the identical permitted pre-record rerun
+  passed byte-identical **11/11**. The complete entry point and mandatory
+  post-record standalone run each then passed **11/11**.
+- cycle-ending review-export audit: closing_tree=`70781081abd42ed9a49e22ed100efdb039a9b762`; bytes=`2628346`; audit_delta=`+35905`
