@@ -1,6 +1,197 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 is closed with the operator-selected `no-release` disposition; published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Exact authenticated candidate `2edb7694c2c6c1498b3903382c37aef68329150d` retains its hosted evidence on `codex/v0.33-evidence-2edb769`; run **30705340282** passed all seven executable jobs, and the release-grade verifier accepted **7 receipts / 7 Sigstore bundles** with **0 rejected**. Closing pre-commit verification passed `cycle-check` with `state=closed` and governed export `bound`, `invariant-scan` **12 rules / 68 controls**, constrained Python 3.11.4 and 3.12.13 at **348/348** each, and golden **11/11**. The last fully matched pre-close checklist is **260 checked / 3 retracted / 260 matched / 260 commits resolved**; the append-only audit child will bind the closing commit and rerun the complete **20-check** entry point. All **332** pins and both protected databases match. The governed export remains the last closing-visible candidate measurement, **2,592,441 bytes / 153 files**, leaving **407,559 bytes / 13.59%**, or **5.29 cycles** on the latest positive adjacent same-kind denominator. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected database byte, public response/value-domain state, publication version, tag, or publication ref changed during close.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 1 has reconstructed the exact entering state and settled G1–G6; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Exact delivered v0.33 audit child `e0ab6964f76b0a919c5214607ef141eb5b118deb` passed all **20/20** local jobs, and the active v0.34 E0 tree independently passed the same complete gate with checklist **261 checked / 3 retracted / 261 matched / 261 commits resolved**, `cycle-check` state `open`, governed export `exempt-open-empty-progress`, registered invariants **12 rules / 68 controls**, clean constrained Python 3.11.4 and 3.12.13 populations at **348/348** each, and golden **11/11**. `tools/test_population.py` derived `collected=348`, `equivalent=true`, and `equivalent_passed=348`; both lanes retained the single accepted warning. All **332** pins and both protected databases match. The exact delivered export is **2,634,692 bytes / 153 files**, leaving **365,308 bytes**, or **4.69 cycles** on the measured 77,862-byte pre-reclaim denominator; it is now nearer than State's 7.93-cycle and manifest's 1,323.85-cycle margins. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+
+**v0.34 E0 entering-state reconstruction and G1–G6 dispositions (measured
+2026-08-02).** The sole pre-activation worktree item was the operator-supplied
+untracked v0.34 runbook. Exact delivered v0.33 HEAD was audit child
+`e0ab6964f76b0a919c5214607ef141eb5b118deb`, whose immediate parent was
+closing implementation `70781081abd42ed9a49e22ed100efdb039a9b762`.
+Activation implementation `bb4257000cd6a752e807af9f48d0fe871e20d216`
+and audit `5e91545da0dcce215a019ea4dea7c1415fd2d6f6` established the declared
+v0.34 cycle and exact v0.32–v0.34 retained set without production or protected
+artifact changes. Direct `git ls-remote`, rather than the closing record,
+resolved remote `main` and peeled `v0.17.1` to
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, the tag ref to annotated object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d`, and local Git identified that
+object as `tag`; the published closing commit's immediate parent remains
+release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`.
+
+An isolated clone of exact audit child `e0ab6964f76b0a919c5214607ef141eb5b118deb`
+passed all **20/20** `ci-local` jobs after two named environment non-results: a
+DNS-denied dependency bootstrap and the empty environment that bootstrap left
+behind. The passing run measured checklist **261 checked / 3 retracted / 261
+matched / 261 commits resolved**, registered invariants **12 rules / 68
+controls**, warning-denied current/net/MSRV lanes, shell **348 collected / 347
+passed / one named `on_site` skip**, and embedded golden **11/11**. The exact
+tree's project-root `./run export-check` passed at **100 derived / 7 required /
+153 exported / 2,634,692 bytes**, confirming both the reviewer figure and the
+audit-child identity. Two independent real-workspace artifact verifications
+matched **332 pins / 2 artifacts**, the exact structural State archive, and
+both protected databases in **0.12 s / 0.10 s real**. No publisher request,
+scheduler, service, model-profile command, protected database write, remote
+ref mutation, or production-source change occurred.
+
+After all **four** Architecture trigger rows and **24** active deferred rows
+were refreshed to v0.34, the real active-tree `./run cycle-check` passed with
+the exact activation state `governed_export=exempt-open-empty-progress` and
+directly measured State at **218,338 / 453,741 bytes** and the manifest at
+**192,042 / 1,048,576 bytes**. Clean constrained Python 3.11.4 and 3.12.13
+lanes each emitted **348 collected / 348 passed / 0 failed / 0 skipped** and
+the same one accepted `StarletteDeprecationWarning`; the repository comparator
+emitted exactly `collected=348`, `equivalent=true`, and
+`equivalent_passed=348`. With E0's box still open, the complete active-tree
+entry point then passed all **20/20** jobs and checklist **261 / 3 / 261 /
+261**. The required standalone post-task golden run passed **11/11**, delta
+**0**. An earlier active-tree 3.11 attempt, before trigger freshness was
+rewritten, failed only the test that requires those v0.34 observations and is
+not the passing result.
+
+**G1 — the State-region guard has a circular floor.** Four throwaway copies of
+the exact delivered tree were passed to the real `./run cycle-check` entry
+point. Renaming `## 5.` to `## 50.` emitted verbatim:
+
+```text
+cycle-check: ERROR: STATE.md: external State section references do not resolve: crates/compliance/src/lib.rs:24=§5, crates/ingest/src/arxiv_oai.rs:28=§5, rust-toolchain.toml:31=§5, tools/version_check.py:261=§5, tools/version_check.py:270=§5
+cycle-check: FAIL (1 defect(s))
+```
+
+Deleting the marker and full permanent tail emitted verbatim:
+
+```text
+cycle-check: artifact-boundary: path=STATE.md bytes=162672 boundary=453741 state=bound checked_tree=worktree-over-HEAD-tree:d0fd5bcff81cbdba6111671f415c68ae07f0eb5d timing=not-applicable
+cycle-check: artifact-boundary: path=config/protected-artifacts.json bytes=192042 boundary=1048576 state=bound checked_tree=worktree-over-HEAD-tree:d0fd5bcff81cbdba6111671f415c68ae07f0eb5d timing=out-of-scope
+cycle-check: PASS (active=v0.33, state=closed, local_tag_refs=verified, runbook=docs/cycles/TASKS-v0.33-EXECUTION.md, progress=docs/cycles/PROGRESS-v0.33.md, artifact_boundaries=bound, state_regions=not-measured, governed_export=bound-with-cycle-ending-audit, closed_execution=31, historical=3)
+```
+
+Keeping the marker and §7 while removing §§1–6 emitted verbatim:
+
+```text
+cycle-check: ERROR: STATE.md: external State section references do not resolve: .github/workflows/ci.yml:293=§6b, AGENTS.md:149=§6, ARCHITECTURE.md:6=§2, ARCHITECTURE.md:94=§2, ARCHITECTURE.md:510=§6, README.md:640=§6b, crates/compliance/Cargo.toml:7=§6, crates/compliance/src/lib.rs:24=§5, crates/compliance/src/lib.rs:897=§6, crates/ingest/src/arxiv_oai.rs:28=§5, rust-toolchain.toml:31=§5, tools/version_check.py:261=§5, tools/version_check.py:270=§5
+cycle-check: FAIL (1 defect(s))
+```
+
+Duplicating the permanent-tail marker emitted verbatim:
+
+```text
+cycle-check: ERROR: STATE.md: State archival permanent-tail marker required exactly once; found 2
+cycle-check: FAIL (1 defect(s))
+```
+
+The full-tail deletion separately made `./run version-check` emit exactly
+`version-check: ERROR: STATE.md: current run-reference correction yielded zero
+extracted current restatements`. That semantic zero-extraction rule is the only
+composite floor; the State-region family itself examined nothing and passed.
+
+Every silent early return in the two named functions was enumerated at its
+entry point. `check_state_archival_region_contract` has two: an absent status
+header returns `None` silently inside this family, although the independent
+publication admission check rejects that construction on the delivered repo;
+and no marker plus no numbered top-level heading returns `None` silently and is
+reachable exactly as the full-tail construction demonstrates. Its other early
+returns all append named defects. `check_publication_status` has three silent
+early returns: no reachable closed release (reachable in a repository with no
+closed runbook, but impossible with the delivered 31); hosted
+`verify_local_tag_refs=False` (reachable deliberately after State/header family
+admission and bounded to skipping local historical-ref reconciliation); and a
+legacy newest release after legacy assertions (reachable for the historical
+pre-R-CLOSE protocol, but not when v0.17.1 is newest). Its remaining early
+returns append a named defect directly or return only after a called helper has
+done so. G1 therefore confirms the finding and authorizes Step 2; it does not
+trip the decision gate.
+
+**G2 — a tiny denominator is accepted and the basis has no epoch awareness.**
+The complete field-level governed sequence is **2,464,445 → 2,576,273
+(+111,828) → 2,556,451 (−19,822) → 2,586,197 (+29,746) → 2,629,379
+(+43,182) → 2,617,984 (−11,395) → 2,706,393 (+88,409) → 2,592,441
+(−113,952)**. Taking the last field in each tracked progress record—the series
+the checker governs—gives **2,576,273 → 2,629,379 (+53,106) → 2,706,393
+(+77,014) → 2,592,441 (−113,952)** for v0.30–v0.33. The selected latest
+positive pair, v0.31→v0.32, predates the v0.33 State archival; neither the
+progress fields nor `cycle-check` carry an archival epoch, so the check cannot
+know that.
+
+In a delivered-tree construction, v0.33's governed field was set to
+**2,709,393**, making the latest adjacent delta **+3,000**, and the row stated
+the exact **290,607 / 3,000 = 96.87-cycle** margin. The real entry point
+accepted it verbatim:
+
+```text
+cycle-check: PASS (active=v0.33, state=closed, local_tag_refs=verified, runbook=docs/cycles/TASKS-v0.33-EXECUTION.md, progress=docs/cycles/PROGRESS-v0.33.md, artifact_boundaries=bound, state_regions=bound, governed_export=bound-with-cycle-ending-audit, closed_execution=31, historical=3)
+```
+
+The rule proves source identity, adjacency, sign selection, and arithmetic; it
+does not prove that one adjacent positive delta represents future growth. G2
+confirms the finding and authorizes Step 3.
+
+**G3 — two delivered transitions separate steady growth from reclaim.** Exact
+delivered exports at v0.31 post-push audit `9625fb1f…`, v0.32 audit child
+`70b7f93c…`, and v0.33 audit child `e0ab6964…` measured respectively
+**2,654,404**, **2,734,366**, and **2,634,692 bytes**. Repomix file-content
+deltas reconcile both delivered transitions:
+
+| component | v0.31→v0.32 | v0.32→v0.33 before archival reclaim | share of latest 77,862-byte steady growth | reclaim mechanism |
+|---|---:|---:|---:|---|
+| `cycle_check.py` + `invariant_scan.py` | +15,661 | +35,138 | 45.12% | none automatic; only deliberate simplification/removal |
+| `version_check.py` | +7,715 | 0 | 0% | none automatic |
+| control tests, fixtures, and registry | +11,580 | +15,416 | 19.80% | none automatic; deliberate control retirement only |
+| live `STATE.md` before archive | +28,605 | +31,177 | 40.04% | yes, the governed structural archive operation |
+| `ARCHITECTURE.md` + `AGENTS.md` | +4,244 | +4,568 | 5.87% | none automatic |
+| protected manifest | 0 | +647 | 0.83% | no deletion; append-only pins make growth effectively permanent |
+| retained cycle documents | +12,157 | −9,084 | −11.67% | yes, three-cycle retention turns over the oldest pair |
+
+The first pair sums to its exact **+79,962-byte** delivered delta. In the
+second pair, the listed components sum to **+77,862 bytes** before reclaim;
+the archive removed **177,542 net live-State bytes**, and a **+6-byte**
+retention-pattern/serialization change reconciles the exact delivered
+**−99,674-byte** transition. Gross growth was not negative; archival reclaim
+temporarily hid it.
+
+Against delivered v0.33's **365,308-byte** export margin, the latest positive
+delivered denominator gives **365,308 / 79,962 = 4.57 cycles** and the latest
+post-archive steady-growth decomposition gives **365,308 / 77,862 = 4.69
+cycles**. Current State is **206,530 / 453,741 bytes**; at its latest positive
+same-kind **31,177-byte/cycle** growth, the **247,211-byte** remainder is
+**7.93 cycles** from the next archive. Averaging the two measured positive
+State deltas gives 8.27 cycles, while averaging the two steady export deltas
+gives 4.63. Under every named denominator the export ceiling arrives first.
+G3 confirms the reviewer order and authorizes Step 4's measurement-only budget
+derivation.
+
+**G4 — the ceiling is an internally enforced but externally uncalibrated
+proxy.** Exhaustive tracked search found the referent only in the dated v0.28
+runbook and progress record: external project-knowledge indexing reported
+**2,067 chunks against a 2,000 limit on 2026-07-30** beside a
+**4,975,987-byte** export. The live Architecture row retained the 3,000,000-byte
+ceiling but no longer stated that referent. `tools/export_check.py` can measure
+export bytes, path retention, and exclusions; no repository tool implements
+the external chunker, reads a current project-knowledge index, or maps bytes to
+chunks. The ceiling is therefore a conservative executable proxy, not a
+repository-measurable current capacity fact. G4 records that bound without
+moving the number; Step 5 alone owns any operator-selected lever.
+
+**G5 — control churn is material but not approaching its second trigger at a
+stable rate.** Across delivered v0.31–v0.33, registered controls are **58 → 61
+→ 68**, shifted-existing `expected_line` totals are **36 → 12 → 25**, and the
+physical combined sizes of `cycle_check.py` plus `invariant_scan.py` are
+**192,695 → 208,356 → 243,494 bytes** (**+15,661**, then **+35,138**). Shifted
+counts as a share of controls are **62.07% → 19.67% → 36.76%**. The latest
+count is **43 below** the 68 controls it protects; the observed changes are
+−24 then +13 rather than a monotonic approach, and even repeating the latest
++13 once would leave 38 below the contemporaneous control count before any new
+controls. The schema-change clause fired in prior cycles and was discharged by
+emitted mutations; the second clause did not fire and has no defensible linear
+arrival rate from these three observations.
+
+**G6 — the export is now the nearest governed byte boundary.** Exact delivered
+State leaves **247,211 bytes / 7.93 cycles** on the latest 31,177-byte positive
+State denominator. The delivered export leaves **365,308 bytes / 4.69 cycles**
+on the latest 77,862-byte pre-reclaim denominator. The manifest leaves
+**856,534 bytes / 1,323.85 cycles** on its latest 647-byte positive denominator.
+The ranking is therefore export, State, manifest. Exhaustive live-row search
+found no current Architecture disposition asserting the old order; the
+statement that State is nearest remains only in dated v0.32 State/runbook
+history and is not rewritten. This v0.34 observation supersedes it forward.
 
 **v0.33 R-CLOSE — operator-selected governed no-release closure (measured
 2026-08-01).** Release disposition: no-release (as of 2026-08-01). The
