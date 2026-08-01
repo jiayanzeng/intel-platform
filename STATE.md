@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 2 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete Step 2 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 65 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **340**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=340`, `equivalent=true`, and `equivalent_passed=340` across the two lanes. The last fully matched checklist measurement, taken with the Step 2 box still open as required, is **255 checked / 3 retracted / 255 matched / 255 commits resolved**, including E0 and correcting the v0.32 header's stale 253 figure. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its honest governed-to-governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, public response/value-domain state, or publication ref changed through Step 2.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 3 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete Step 3 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 66 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **342**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=342`, `equivalent=true`, and `equivalent_passed=342` across the two lanes. The last fully matched checklist measurement, taken with the Step 3 box still open as required, is **256 checked / 3 retracted / 256 matched / 256 commits resolved**, including E0 and Step 2 and correcting the v0.32 header's stale 253 figure. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its executable governed→governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, public response/value-domain state, or publication ref changed through Step 3.
 
 **v0.33 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-01).** The sole pre-activation worktree item was the operator-supplied
@@ -210,6 +210,40 @@ comparator emitted `collected=340`, `equivalent=true`, and
 source, workflow, dependency, schema, manifest, protected byte, public
 response/value-domain state, publication ref, publisher, scheduler, or model
 profile changed.
+
+**v0.33 Step 3 — the export margin is a progress-backed same-kind series
+(measured 2026-08-01).** The live Architecture row now carries one executable
+`governed→governed` series. Its prior term is the last governed field in
+`PROGRESS-v0.31.md`, **2,629,379 bytes**; its current term is the last governed
+field in `PROGRESS-v0.32.md`, **2,706,393 bytes**. The lifecycle checker reads
+both files, requires the current term to equal the row's governed byte marker,
+and re-derives **77,014 denominator bytes/cycle**, **293,607 numerator bytes**
+under the single 3,000,000-byte ceiling, and **3.81 cycles** after two-decimal
+rounding. Closing→closing and delivered→delivered remain legitimate operator
+measurements, but cannot occupy the executable row marker because they have no
+common in-repository progress authority. The dated v0.32 **5.65** record remains
+unchanged historical evidence and the live row corrects it forward.
+
+R12 plants a row whose declared prior term no longer matches its named governed
+progress series, runs the real `cycle_check.run` entry point, and disables the
+comparison to prove the plant would otherwise be missed. Focused R12 self-test
+passed **38/38 controls** and the complete registry now passes **12 rules / 66
+controls**. Each mutation's emitted finding re-derived **29 shifted existing
+`expected_line` values** and the one new same-kind value at line **2401**; no
+line was offset-calculated. The shifted-existing count remains below the 66
+controls protected.
+
+Focused lifecycle tests passed **76/76** on Python 3.11.4. The complete Step 3
+entry point passed **20/20** with its task box open. Its Python 3.11.4 lane and
+the independently permitted Python 3.12.13 lane each collected/passed **342**,
+failed **0**, and skipped **0**; the repository comparator emitted
+`collected=342`, `equivalent=true`, and `equivalent_passed=342`. An initial
+Python 3.12 command without `PYTHONPATH=shell` and a later sandboxed invocation
+whose loopback binds and `ps` call were denied are invocation non-results; the
+correct, permitted repository command supplies the passing measurement. Golden
+passed **11/11**, delta **0**. No production source, workflow, dependency,
+schema, manifest, protected byte, public response/value-domain state,
+publication ref, publisher, scheduler, service, or model profile changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked

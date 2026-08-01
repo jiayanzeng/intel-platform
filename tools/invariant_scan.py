@@ -1648,6 +1648,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "governed-export-margin": (
         "Invariant R12 control site: governed review-export latest-at-close."
     ),
+    "governed-export-margin-kind": (
+        "Invariant R12 control site: governed review-export same-kind margin."
+    ),
     "governed-export-ceiling": (
         "Invariant R12 control site: governed written-figure export ceiling."
     ),
@@ -1745,6 +1748,84 @@ def _publication_admission_entry_outputs(root: Path, cycle_check):
 
     _R12_PUBLICATION_ADMISSION_ENTRY_CACHE[key] = outputs
     return outputs
+
+
+_R12_GOVERNED_MARGIN_ENTRY_CACHE: dict[str, tuple[int, str]] = {}
+
+
+def _governed_margin_entry_output(root: Path, cycle_check) -> tuple[int, str]:
+    """Plant a mixed-kind row and exercise it through cycle_check.run."""
+    cycle_source = (root / "tools" / "cycle_check.py").read_text()
+    marker = (
+        "    # Invariant R12 control site: governed review-export "
+        "same-kind margin."
+    )
+    start = cycle_source.index(marker)
+    end = cycle_source.index("\n\ndef governed_trigger_subjects", start)
+    architecture_text = (root / "ARCHITECTURE.md").read_text()
+    margin_matches = list(
+        cycle_check.GOVERNED_EXPORT_MARGIN_SERIES_RE.finditer(
+            architecture_text
+        )
+    )
+    if len(margin_matches) != 1:
+        raise ConfigError(
+            "ARCHITECTURE.md: same-kind margin control requires one baseline "
+            "series marker"
+        )
+    margin = margin_matches[0]
+    prior_source = root / margin.group(2)
+    current_source = root / margin.group(4)
+    key = (
+        cycle_source[start:end]
+        + "\0"
+        + architecture_text
+        + "\0"
+        + prior_source.read_text()
+        + "\0"
+        + current_source.read_text()
+    )
+    cached = _R12_GOVERNED_MARGIN_ENTRY_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    prior_value = int(margin.group(3)) + 1
+    current_value = int(margin.group(5))
+    denominator = current_value - prior_value
+    numerator = int(margin.group(7))
+    cycles = numerator / denominator
+    planted_marker = (
+        "Review-export margin: kind=`governed→governed`; "
+        f"prior_progress=`{margin.group(2)}`; prior_bytes=`{prior_value}`; "
+        f"current_progress=`{margin.group(4)}`; "
+        f"current_bytes=`{current_value}`; "
+        f"denominator_bytes_per_cycle=`{denominator}`; "
+        f"numerator_bytes=`{numerator}`; cycles=`{cycles:.2f}`."
+    )
+    planted_architecture = (
+        architecture_text[: margin.start()]
+        + planted_marker
+        + architecture_text[margin.end() :]
+    )
+
+    with tempfile.TemporaryDirectory(
+        prefix="invariant-scan-R12-margin-entry-"
+    ) as raw:
+        fixture = Path(raw) / "tree"
+        _copy_tracked_tree(root, fixture)
+        (fixture / "ARCHITECTURE.md").write_text(planted_architecture)
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(
+            output
+        ):
+            status = cycle_check.run(
+                fixture,
+                verify_local_tag_refs=False,
+            )
+        result = (status, output.getvalue())
+
+    _R12_GOVERNED_MARGIN_ENTRY_CACHE[key] = result
+    return result
 
 
 def _load_cycle_check_for_control(root: Path):
@@ -2081,6 +2162,19 @@ def r12_findings(root: Path) -> list[str]:
     else:
         for name, group in missing_admission_scenarios:
             missed.setdefault(group, []).append(name)
+
+    margin_status, margin_output = _governed_margin_entry_output(
+        root,
+        cycle_check,
+    )
+    if (
+        margin_status == 0
+        or "governed export margin mixes or misstates measurement series"
+        not in margin_output
+    ):
+        missed.setdefault("governed-export-margin-kind", []).append(
+            "mixed-kind-export-row"
+        )
 
     with tempfile.TemporaryDirectory(prefix="invariant-scan-R12-status-") as raw:
         fixture = Path(raw)
@@ -2944,6 +3038,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "release-version-restatement planted controls"
         elif group == "governed-export-margin":
             finding_kind = "governed-export-margin planted controls"
+        elif group == "governed-export-margin-kind":
+            finding_kind = "governed-export-margin-kind planted controls"
         elif group == "governed-export-ceiling":
             finding_kind = "governed-export-ceiling planted controls"
         elif group == "artifact-byte-boundary":

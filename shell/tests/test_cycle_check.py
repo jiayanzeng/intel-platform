@@ -62,11 +62,24 @@ def _progress(root: Path, cycle: str = "v1.2.3") -> Path:
 def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     fixture_export_bytes = len("cycle-check governed export fixture")
     fixture_export_tree = "a" * 40
+    fixture_prior_export_bytes = fixture_export_bytes - 10
+    fixture_margin_numerator = cycle_check.MAX_EXPORT_BYTES - fixture_export_bytes
+    fixture_margin_cycles = fixture_margin_numerator / 10
     fixture_state_boundary = 2_048
     fixture_manifest_boundary = 2_048
     root = tmp_path / "cycle"
     root.mkdir()
     cycle_documents_dir(root).mkdir(parents=True)
+    (cycle_documents_dir(root) / "PROGRESS-v1.2.1.md").write_text(
+        "# Prior governed margin fixture\n\n"
+        "- governed review-export measurement: "
+        f"tree=`{'8' * 40}`; bytes=`{fixture_prior_export_bytes}`\n"
+    )
+    (cycle_documents_dir(root) / "PROGRESS-v1.2.2.md").write_text(
+        "# Current governed margin fixture\n\n"
+        "- governed review-export measurement: "
+        f"tree=`{'9' * 40}`; bytes=`{fixture_export_bytes}`\n"
+    )
     (root / "AGENTS.md").write_text(
         "# Contract\n\n"
         "**Active cycle:** v1.2.3\n\n"
@@ -91,7 +104,15 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| review-export size and retention bound (fixture) | accepted | "
         "export ceiling | v1.2.3 · 2026-07-30 — fixture export of "
         f"**{fixture_export_bytes} bytes / 1 file**. Governed review-export "
-        f"bytes: `{fixture_export_bytes}`. |\n"
+        f"bytes: `{fixture_export_bytes}`. Review-export margin: "
+        "kind=`governed→governed`; "
+        "prior_progress=`docs/cycles/PROGRESS-v1.2.1.md`; "
+        f"prior_bytes=`{fixture_prior_export_bytes}`; "
+        "current_progress=`docs/cycles/PROGRESS-v1.2.2.md`; "
+        f"current_bytes=`{fixture_export_bytes}`; "
+        "denominator_bytes_per_cycle=`10`; "
+        f"numerator_bytes=`{fixture_margin_numerator}`; "
+        f"cycles=`{fixture_margin_cycles:.2f}`. |\n"
     )
     _runbook(root).write_text(
         "# Open cycle\n\n"
@@ -1250,6 +1271,43 @@ def test_governed_export_margin_rejects_written_figure_over_ceiling(
         f"{row_value} exceeds the {cycle_check.MAX_EXPORT_BYTES}-byte ceiling; "
         "this constrains the written figure at the checked tree and does not "
         "measure an export"
+    ]
+
+
+def test_governed_export_margin_kind_accepts_recorded_governed_series(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    errors: list[str] = []
+
+    cycle_check.check_governed_export_margin_kind(
+        root / "ARCHITECTURE.md",
+        (root / "ARCHITECTURE.md").read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == []
+
+
+def test_governed_export_margin_kind_rejects_mixed_recorded_series(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    current = cycle_documents_dir(root) / "PROGRESS-v1.2.2.md"
+    current.write_text(current.read_text().replace("bytes=`35`", "bytes=`36`"))
+    errors: list[str] = []
+
+    cycle_check.check_governed_export_margin_kind(
+        root / "ARCHITECTURE.md",
+        (root / "ARCHITECTURE.md").read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == [
+        "ARCHITECTURE.md: governed export margin mixes or misstates "
+        "measurement series: declared=25→35, recorded=25→36"
     ]
 
 

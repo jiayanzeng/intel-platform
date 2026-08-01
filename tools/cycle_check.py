@@ -9,6 +9,7 @@ import json
 import re
 import subprocess
 import sys
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Callable, NamedTuple
 
@@ -1598,6 +1599,13 @@ GOVERNED_EXPORT_ROW_MARKER_RE = re.compile(
 GOVERNED_EXPORT_ROW_PROSE_RE = re.compile(
     r"\bexport of \*\*([0-9][0-9,]*) bytes\b"
 )
+GOVERNED_EXPORT_MARGIN_SERIES_RE = re.compile(
+    r"Review-export margin: kind=`(governed→governed)`; "
+    r"prior_progress=`([^`\n]+)`; prior_bytes=`([0-9]+)`; "
+    r"current_progress=`([^`\n]+)`; current_bytes=`([0-9]+)`; "
+    r"denominator_bytes_per_cycle=`([0-9]+)`; "
+    r"numerator_bytes=`([0-9]+)`; cycles=`([0-9]+\.[0-9]{2})`\."
+)
 GOVERNED_EXPORT_PROGRESS_PREFIX = "- governed review-export measurement:"
 GOVERNED_EXPORT_PROGRESS_RE = re.compile(
     r"^- governed review-export measurement: "
@@ -2294,6 +2302,146 @@ def check_governed_export_margin(
     return "bound"
 
 
+def check_governed_export_margin_kind(
+    architecture_path: Path,
+    architecture_text: str,
+    root: Path,
+    errors: list[str],
+) -> None:
+    """Bind the visible cycle margin to two governed progress measurements."""
+    matches = list(GOVERNED_EXPORT_MARGIN_SERIES_RE.finditer(architecture_text))
+    if len(matches) != 1:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export row requires "
+            "exactly one executable Review-export margin series; only "
+            "governed→governed is supported because closing and delivered "
+            "exports have no common in-repository measurement authority"
+        )
+        return
+
+    match = matches[0]
+    line_start = architecture_text.rfind("\n", 0, match.start()) + 1
+    line_end = architecture_text.find("\n", match.end())
+    if line_end < 0:
+        line_end = len(architecture_text)
+    margin_cells = markdown_table_cells(
+        architecture_text[line_start:line_end]
+    )
+    if (
+        not any(
+            normalized_table_cell(cell).casefold().startswith(
+                GOVERNED_EXPORT_SUBJECT_PREFIX
+            )
+            for cell in margin_cells
+        )
+        or not any(
+            match.group(0) in cell
+            and GOVERNED_EXPORT_ROW_MARKER_RE.search(cell) is not None
+            for cell in margin_cells
+        )
+    ):
+        errors.append(
+            f"{shown(architecture_path, root)}: executable Review-export "
+            "margin series must be in the governed export row's measured cell"
+        )
+        return
+    prior_relative = Path(match.group(2))
+    prior_value = int(match.group(3))
+    current_relative = Path(match.group(4))
+    current_value = int(match.group(5))
+    denominator = int(match.group(6))
+    numerator = int(match.group(7))
+    displayed_cycles = Decimal(match.group(8))
+    relative_paths = (prior_relative, current_relative)
+    if any(
+        path.is_absolute()
+        or ".." in path.parts
+        or not path.as_posix().startswith("docs/cycles/PROGRESS-v")
+        or path.suffix != ".md"
+        for path in relative_paths
+    ):
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin "
+            "progress sources must be safe docs/cycles/PROGRESS-v*.md paths"
+        )
+        return
+    if prior_relative == current_relative:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin must "
+            "name distinct prior and current progress sources"
+        )
+        return
+
+    recorded_values: list[int] = []
+    for relative in relative_paths:
+        source = root / relative
+        if not source.is_file():
+            errors.append(
+                f"{shown(architecture_path, root)}: governed export margin "
+                f"source {relative.as_posix()} is not a file"
+            )
+            return
+        source_text = source.read_text()
+        source_measurements = list(
+            GOVERNED_EXPORT_PROGRESS_RE.finditer(source_text)
+        )
+        if (
+            source_text.count(GOVERNED_EXPORT_PROGRESS_PREFIX)
+            != len(source_measurements)
+            or not source_measurements
+        ):
+            errors.append(
+                f"{shown(architecture_path, root)}: governed export margin "
+                f"source {relative.as_posix()} has no valid governed "
+                "measurement series"
+            )
+            return
+        recorded_values.append(int(source_measurements[-1].group(2)))
+
+    # Invariant R12 control site: governed review-export same-kind margin.
+    if recorded_values != [prior_value, current_value]:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin mixes "
+            "or misstates measurement series: "
+            f"declared={prior_value}→{current_value}, "
+            f"recorded={recorded_values[0]}→{recorded_values[1]}"
+        )
+        return
+
+    governed_values = GOVERNED_EXPORT_ROW_MARKER_RE.findall(architecture_text)
+    if len(governed_values) != 1 or int(governed_values[0]) != current_value:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin current "
+            f"value {current_value} does not equal the governed row value"
+        )
+        return
+    expected_denominator = current_value - prior_value
+    if expected_denominator <= 0 or denominator != expected_denominator:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin "
+            f"denominator {denominator} disagrees with same-kind delta "
+            f"{expected_denominator}"
+        )
+        return
+    expected_numerator = MAX_EXPORT_BYTES - current_value
+    if numerator != expected_numerator:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin "
+            f"numerator {numerator} disagrees with ceiling remainder "
+            f"{expected_numerator}"
+        )
+        return
+    expected_cycles = (
+        Decimal(numerator) / Decimal(denominator)
+    ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    if displayed_cycles != expected_cycles:
+        errors.append(
+            f"{shown(architecture_path, root)}: governed export margin cycles "
+            f"{displayed_cycles} disagree with same-kind quotient "
+            f"{expected_cycles}"
+        )
+
+
 def governed_trigger_subjects(
     text: str,
     heading: str,
@@ -2748,6 +2896,12 @@ def run(
                 identity.progress,
                 progress_text,
                 active_state,
+                root,
+                errors,
+            )
+            check_governed_export_margin_kind(
+                architecture_path,
+                architecture_text,
                 root,
                 errors,
             )
