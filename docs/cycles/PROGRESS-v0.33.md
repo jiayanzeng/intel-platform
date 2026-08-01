@@ -418,3 +418,4 @@ Entries are append-only; corrections are new dated entries.
   or public-surface change.
 - golden-E2E delta: **0**. Golden passed byte-identical **11/11** locally and
   hosted, then passed the mandatory standalone post-record run.
+- governed review-export measurement: tree=`2edb7694c2c6c1498b3903382c37aef68329150d`; bytes=`2592441`
