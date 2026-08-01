@@ -111,6 +111,14 @@ STATE_HEADER_RE = re.compile(
     r"^\*\*As of:\*\*.*?(?=\n\n|\Z)",
     re.MULTILINE | re.DOTALL,
 )
+STATE_LEADING_PARAGRAPH_RE = re.compile(
+    r"\A#[^\n]*\n\n(?P<paragraph>.*?)(?=\n\n|\Z)",
+    re.DOTALL,
+)
+STATE_AS_OF_HEADER_CANDIDATE_RE = re.compile(
+    r"^\*\*[^*\n]*\bas of\b[^*\n]*:\*\*",
+    re.IGNORECASE | re.MULTILINE,
+)
 PENDING_PUBLICATION_RE = re.compile(
     r"\bpublication\b[^\n]{0,240}?\b(?:pending|outstanding)\b",
     re.IGNORECASE,
@@ -537,7 +545,7 @@ def cycle_version(path: Path) -> tuple[int, ...] | None:
 def newest_closed_release(
     execution_files: list[Path],
 ) -> ClosedRelease | None:
-    closed: list[tuple[tuple[int, ...], Path, str]] = []
+    releases: list[tuple[tuple[int, ...], ClosedRelease]] = []
     for path in execution_files:
         text = path.read_text()
         version = cycle_version(path)
@@ -547,36 +555,41 @@ def newest_closed_release(
             or text.count(CLOSING_HEADING) != 1
         ):
             continue
-        closed.append(
-            (version, path, text.split(CLOSING_HEADING, 1)[1])
+        section = text.split(CLOSING_HEADING, 1)[1]
+        disposition = DATED_DISPOSITION_RE.search(section)
+        if disposition is None:
+            disposition = LEGACY_DISPOSITION_RE.search(section)
+        # Invariant R12 control site: newest closed release selection.
+        if disposition is None or disposition.group(1) != "release":
+            continue
+        release = RELEASE_RE.search(section)
+        commit = RELEASE_COMMIT_RE.search(section)
+        tag_objects = list(TAG_OBJECT_RE.finditer(section))
+        if release is None or commit is None or len(tag_objects) > 1:
+            continue
+        releases.append(
+            (
+                version,
+                ClosedRelease(
+                    runbook=path,
+                    tag=release.group(2),
+                    release_commit=commit.group(1),
+                    recorded_tag_object=(
+                        tag_objects[0].group(1) if tag_objects else None
+                    ),
+                ),
+            )
         )
-    if not closed:
+    if not releases:
         return None
-    _, path, section = max(closed, key=lambda item: item[0])
-    disposition = DATED_DISPOSITION_RE.search(section)
-    if disposition is None:
-        disposition = LEGACY_DISPOSITION_RE.search(section)
-    if disposition is None or disposition.group(1) != "release":
-        return None
-    release = RELEASE_RE.search(section)
-    commit = RELEASE_COMMIT_RE.search(section)
-    tag_objects = list(TAG_OBJECT_RE.finditer(section))
-    if release is None or commit is None or len(tag_objects) > 1:
-        return None
-    return ClosedRelease(
-        runbook=path,
-        tag=release.group(2),
-        release_commit=commit.group(1),
-        recorded_tag_object=(
-            tag_objects[0].group(1) if tag_objects else None
-        ),
-    )
+    return max(releases, key=lambda item: item[0])[1]
 
 
 def check_publication_status(
     root: Path,
     execution_files: list[Path],
     errors: list[str],
+    verify_local_tag_refs: bool = True,
 ) -> None:
     """Reconcile the status header with the newest reachable closed release."""
     release = newest_closed_release(execution_files)
@@ -587,13 +600,48 @@ def check_publication_status(
     release_commit = release.release_commit
     recorded_object = release.recorded_tag_object
     state_path = root / "STATE.md"
+    # Invariant R12 control site: publication-family admission gate.
     if not state_path.is_file():
+        errors.append(
+            f"{shown(state_path, root)}: publication admission file required: "
+            "STATE.md is absent or is not a regular file"
+        )
         return
     state_text = state_path.read_text()
     header_match = STATE_HEADER_RE.search(state_text)
     if header_match is None:
+        leading_match = STATE_LEADING_PARAGRAPH_RE.search(state_text)
+        leading = (
+            leading_match.group("paragraph")
+            if leading_match is not None
+            else ""
+        )
+        if STATE_AS_OF_HEADER_CANDIDATE_RE.search(leading) is not None:
+            errors.append(
+                f"{shown(state_path, root)}: publication admission header "
+                "shape: the leading as-of status header is present but does "
+                "not match STATE_HEADER_RE's required '**As of:**' form"
+            )
+        else:
+            errors.append(
+                f"{shown(state_path, root)}: publication admission header "
+                "required: STATE.md has no '**As of:**' status header"
+            )
         return
     header = header_match.group(0)
+
+    # This lifecycle gate intentionally does not delegate to
+    # version_check.state_version(). That tool independently parses the same
+    # header to bind the release version; this function parses publication
+    # status. Either hand-written regex can reject text the other accepts, so
+    # cycle-check must fail closed at its own family boundary.
+
+    # Portable hosted verification lacks historical local tag objects. It may
+    # skip ref reconciliation only after the family admission gate has proved
+    # the State file and header shape exist; closed-runbook structure remains
+    # checked by check_closed_execution().
+    if not verify_local_tag_refs:
+        return
 
     # A mutable ref cannot be truthfully pinned in the immutable commit whose
     # publication moves that same ref. Mutable-ref measurements belong in
@@ -2717,7 +2765,12 @@ def run(
         )
         check_authority(path, text, root, errors)
 
-    check_publication_status(root, execution_files, errors)
+    check_publication_status(
+        root,
+        execution_files,
+        errors,
+        verify_local_tag_refs,
+    )
 
     plain_task_files = [
         path

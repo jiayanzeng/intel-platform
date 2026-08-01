@@ -454,6 +454,73 @@ def _publication_errors(root: Path) -> list[str]:
     return errors
 
 
+def test_publication_status_admission_rejects_missing_state_file(
+    tmp_path: Path,
+) -> None:
+    root, _, _ = _publication_root(tmp_path)
+    (root / "STATE.md").unlink()
+
+    assert _publication_errors(root) == [
+        "STATE.md: publication admission file required: STATE.md is absent "
+        "or is not a regular file"
+    ]
+
+
+def test_publication_status_selects_release_before_later_no_release(
+    tmp_path: Path,
+) -> None:
+    root, commit, tag_object = _publication_root(tmp_path)
+    later = root / "docs" / "cycles" / "TASKS-v1.2.0-EXECUTION.md"
+    later.write_text(
+        "# Later no-release cycle\n\n"
+        "- [x] completed task\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** no-release (as of 2026-07-29)\n"
+    )
+    (root / "STATE.md").write_text(
+        "# State\n\n"
+        "**As of:** published. Annotated tag object is "
+        f"`{tag_object}`; tag target is `{commit}`.\n"
+    )
+
+    assert _publication_errors(root) == []
+    (root / "STATE.md").write_text("# State\n\nNo status header.\n")
+    assert _publication_errors(root) == [
+        "STATE.md: publication admission header required: STATE.md has no "
+        "'**As of:**' status header"
+    ]
+
+
+def test_publication_status_admission_rejects_absent_as_of_header(
+    tmp_path: Path,
+) -> None:
+    root, _, _ = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\nStatus paragraph without an as-of header.\n"
+    )
+
+    assert _publication_errors(root) == [
+        "STATE.md: publication admission header required: STATE.md has no "
+        "'**As of:**' status header"
+    ]
+
+
+def test_publication_status_admission_rejects_unmatched_as_of_header(
+    tmp_path: Path,
+) -> None:
+    root, _, _ = _publication_root(tmp_path)
+    (root / "STATE.md").write_text(
+        "# State\n\n**Recorded as of:** published.\n"
+    )
+
+    assert _publication_errors(root) == [
+        "STATE.md: publication admission header shape: the leading as-of "
+        "status header is present but does not match STATE_HEADER_RE's "
+        "required '**As of:**' form"
+    ]
+
+
 def test_publication_status_rejects_pending_reachable_release(
     tmp_path: Path,
 ) -> None:
@@ -2157,6 +2224,9 @@ def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
         "- **Release:** `v1.1.0`\n"
         f"- **Release commit:** `{commit}`\n"
         f"- **Annotated tag object:** `{'0' * 40}`\n"
+    )
+    (root / "STATE.md").write_text(
+        "# State\n\n**As of:** portable publication structure.\n"
     )
 
     assert cycle_check.run(root) == 1

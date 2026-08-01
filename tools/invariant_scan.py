@@ -1575,6 +1575,18 @@ def r11_findings(root: Path) -> list[str]:
 
 
 PUBLICATION_CONTROL_MARKERS = {
+    "publication-state-file-admission": (
+        "Invariant R12 control site: publication-family admission gate."
+    ),
+    "publication-header-admission": (
+        "Invariant R12 control site: publication-family admission gate."
+    ),
+    "publication-header-shape-admission": (
+        "Invariant R12 control site: publication-family admission gate."
+    ),
+    "publication-release-selection": (
+        "Invariant R12 control site: newest closed release selection."
+    ),
     "tagged-closing-protocol": (
         "Invariant R12 control site: tagged-closing protocol."
     ),
@@ -1658,6 +1670,81 @@ PUBLICATION_CONTROL_MARKERS = {
         "Invariant R12 control site: pre-insert per-source coverage detection."
     ),
 }
+
+
+_R12_PUBLICATION_ADMISSION_ENTRY_CACHE: dict[
+    str, dict[str, tuple[int, str]]
+] = {}
+
+
+def _publication_admission_entry_outputs(root: Path, cycle_check):
+    """Exercise cycle_check.run while caching unrelated R12 mutations.
+
+    The R12 self-test invokes this checker once per registered mutation. Most
+    mutations do not touch the admission gate, so the cache key is deliberately
+    limited to that gate's source and the State baseline it examines.
+    """
+    cycle_source = (root / "tools" / "cycle_check.py").read_text()
+    marker = "    # Invariant R12 control site: publication-family admission gate."
+    start = cycle_source.index(marker)
+    end = cycle_source.index("    # A mutable ref", start)
+    selection_marker = (
+        "        # Invariant R12 control site: newest closed release selection."
+    )
+    selection_start = cycle_source.index(selection_marker)
+    selection_end = cycle_source.index("    if not releases:", selection_start)
+    state_text = (root / "STATE.md").read_text()
+    key = (
+        cycle_source[selection_start:selection_end]
+        + "\0"
+        + cycle_source[start:end]
+        + "\0"
+        + state_text
+    )
+    cached = _R12_PUBLICATION_ADMISSION_ENTRY_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    outputs: dict[str, tuple[int, str]] = {}
+    with tempfile.TemporaryDirectory(
+        prefix="invariant-scan-R12-publication-entry-"
+    ) as raw:
+        fixture = Path(raw) / "tree"
+        _copy_tracked_tree(root, fixture)
+        state_path = fixture / "STATE.md"
+        header_match = cycle_check.STATE_HEADER_RE.search(state_text)
+        if header_match is None:
+            raise ConfigError(
+                "STATE.md: publication admission control requires a valid "
+                "baseline header"
+            )
+        cases = {
+            "absent-state-file": None,
+            "absent-as-of-header": state_text.replace(
+                header_match.group(0), "", 1
+            ),
+            "unmatched-as-of-header": state_text.replace(
+                "**As of:**", "**Recorded as of:**", 1
+            ),
+        }
+        for name, planted_text in cases.items():
+            if planted_text is None:
+                state_path.unlink(missing_ok=True)
+            else:
+                state_path.write_text(planted_text)
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output), contextlib.redirect_stderr(
+                output
+            ):
+                status = cycle_check.run(
+                    fixture,
+                    verify_local_tag_refs=False,
+                )
+            outputs[name] = (status, output.getvalue())
+            state_path.write_text(state_text)
+
+    _R12_PUBLICATION_ADMISSION_ENTRY_CACHE[key] = outputs
+    return outputs
 
 
 def _load_cycle_check_for_control(root: Path):
@@ -1961,6 +2048,40 @@ def r12_findings(root: Path) -> list[str]:
     )
 
     missed: dict[str, list[str]] = {}
+    admission_entry_outputs = _publication_admission_entry_outputs(
+        root,
+        cycle_check,
+    )
+    admission_scenarios = (
+        (
+            "absent-state-file",
+            "publication-state-file-admission",
+            "publication admission file required",
+        ),
+        (
+            "absent-as-of-header",
+            "publication-header-admission",
+            "publication admission header required",
+        ),
+        (
+            "unmatched-as-of-header",
+            "publication-header-shape-admission",
+            "publication admission header shape",
+        ),
+    )
+    missing_admission_scenarios: list[tuple[str, str]] = []
+    for name, group, expected in admission_scenarios:
+        status, output = admission_entry_outputs[name]
+        if status == 0 or expected not in output:
+            missing_admission_scenarios.append((name, group))
+    if len(missing_admission_scenarios) == len(admission_scenarios):
+        missed["publication-release-selection"] = [
+            name for name, _group in missing_admission_scenarios
+        ]
+    else:
+        for name, group in missing_admission_scenarios:
+            missed.setdefault(group, []).append(name)
+
     with tempfile.TemporaryDirectory(prefix="invariant-scan-R12-status-") as raw:
         fixture = Path(raw)
         state_path = fixture / "STATE.md"

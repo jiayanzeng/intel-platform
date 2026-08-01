@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 E0 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete E0 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 61 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=336`, `equivalent=true`, and `equivalent_passed=336` across the two lanes. The real checklist result is **254 checked / 3 retracted / 254 matched / 254 commits resolved**, correcting the v0.32 header's stale 253 figure. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its honest governed-to-governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, public response/value-domain state, or publication ref changed during activation or E0 measurement.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 2 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete Step 2 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 65 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **340**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=340`, `equivalent=true`, and `equivalent_passed=340` across the two lanes. The last fully matched checklist measurement, taken with the Step 2 box still open as required, is **255 checked / 3 retracted / 255 matched / 255 commits resolved**, including E0 and correcting the v0.32 header's stale 253 figure. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its honest governed-to-governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, public response/value-domain state, or publication ref changed through Step 2.
 
 **v0.33 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-01).** The sole pre-activation worktree item was the operator-supplied
@@ -154,6 +154,62 @@ Option B counterfactual removed **178,125 bytes** from each boundary, leaving
 live State at **174,770 bytes** and the exact delivered-tree export at
 **2,556,241 bytes**. The other measured cut points remain operator choices;
 no archive was created or selected during E0.
+
+**v0.33 Step 2 — publication-family admission is fail-closed (measured
+2026-08-01).** E0's required fail-before constructions remain recorded above:
+the old real `cycle-check` PASSed absent and renamed headers, while an absent
+State file was rejected only by the independent artifact reader. Entry-point
+tracing then exposed an additional cause: `newest_closed_release()` selected
+the newest closed cycle first and returned `None` when that cycle was
+`no-release`, instead of continuing to the newest actual release. On the
+delivered v0.32 baseline the publication family therefore stopped even before
+its State-file and header early returns. The selector now skips later
+no-release records and reconciles the newest actual release.
+
+With the fix installed in the same exact three delivered-tree throwaway
+constructions, the real entry point emitted these distinct family defects:
+
+```text
+cycle-check: ERROR: STATE.md: publication admission header required: STATE.md has no '**As of:**' status header
+cycle-check: FAIL (1 defect(s))
+
+cycle-check: ERROR: STATE.md: publication admission header shape: the leading as-of status header is present but does not match STATE_HEADER_RE's required '**As of:**' form
+cycle-check: FAIL (1 defect(s))
+
+cycle-check: ERROR: STATE.md: governed artifact is not a file
+cycle-check: ERROR: STATE.md: publication admission file required: STATE.md is absent or is not a regular file
+cycle-check: FAIL (2 defect(s))
+```
+
+The absent-file construction correctly retains the independent artifact defect
+and adds its own named publication-admission defect. The check-site comment
+records why this parser does not delegate to `version_check.state_version()`:
+the latter independently binds the release version, while this family binds
+publication status, and either hand-written regex may reject text the other
+accepts.
+
+Registered R12 now runs the real `cycle_check.run` entry point over all three
+admission constructions, disables each distinct branch, and separately
+disables the newest-release selector. Its focused mutation self-test passed
+**37/37 R12 controls**; the full registry has **65 controls**. Emitted
+self-test findings, not hand arithmetic, re-derived **25 shifted existing
+`tools/cycle_check.py` `expected_line` values** and the four new values: the
+three admission branches resolve to line **603**, the selector to line **562**.
+The shifted-existing count remains below the 65 controls protected. The
+Architecture overstatement introduced by the same reviewer in v0.21 is
+corrected forward; its dated historical text is not rewritten.
+
+Focused lifecycle tests passed **74/74** on constrained Python 3.11.4 and
+independently on 3.12.13. The complete Step 2 `./run ci-local` entry point,
+executed with the task box still open, passed all **20/20** jobs and emitted
+`invariant-scan` **12/12 rules / 65 controls**. The independently constrained
+Python 3.12.13 shell lane and the Python 3.11.4 lane embedded in `ci-local`
+each collected/passed **340**, failed **0**, and skipped **0**; the repository
+comparator emitted `collected=340`, `equivalent=true`, and
+`equivalent_passed=340`. Golden passed **11/11**, delta **0**. No production
+source, workflow, dependency, schema, manifest, protected byte, public
+response/value-domain state, publication ref, publisher, scheduler, or model
+profile changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked

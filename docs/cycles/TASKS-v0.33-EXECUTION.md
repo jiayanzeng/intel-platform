@@ -36,6 +36,8 @@ enumerated the complete live permanent-tail bindings, established that archive
 fidelity has no standing reader, and measured Option B returning 178,125 bytes
 to both State and export boundaries. No archival cut was selected or performed.
 
+Step 2 — publication-status admission and newest-release selection completed — 2026-08-01
+
 ---
 
 **Two reviewer errors, both mine, recorded before anything else.**
@@ -245,7 +247,7 @@ edited to match what happened.
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.33 · 2026-08-01 — release-authority precedence admits the unchanged version literal while no shell source or release value changed | none — `shell/intel_shell/**` is forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.33 · 2026-08-01 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | **Second `STATE.md` archival** | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.33 · 2026-08-01 — E0 measured `STATE.md` at 352,895 bytes and the last governed export at 2,706,393 bytes; neither clause fired, while the Option B counterfactual returns 178,125 bytes to each boundary | **Step 4 and Step 5 — execute ahead of the trigger under explicit operator authorization; the trigger text does not change** |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — E0 changed no control schema; 61 registered controls remained green, and Steps 2–3 own emitted-output re-derivation for their changes | Step 2 and Step 3 — count and re-derive from emitted output |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — Step 2's control-schema trigger fired: emitted mutation output re-derived 25 shifted existing values and four new admission/selector values, fewer than the 65 registered controls protected; Step 3 owns any later re-derivation | Step 2 and Step 3 — count and re-derive from emitted output |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.33 · 2026-08-01 — v0.33 still matches `v0.<n>` and production uses the Git-derived tracked retained set; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.33 · 2026-08-01 — v0.17.1 publication reset the count to zero, and the v0.33 activation/E0 distance carries no runtime or public-surface change; no fresh count started | Step 7 — restate the epoch count under the v0.32 reset rule |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.33 · 2026-08-01 — contextual floor predicates found no unregistered live current restatement; trigger did not fire | none — completed control remains active |
@@ -364,7 +366,7 @@ admits a rule family to execution is itself a rule.**
 **Done when** no construction of `STATE.md` causes the publication-status family
 to report clean by examining nothing.
 
-- [ ] **ADMIT-GATE**
+- [x] **ADMIT-GATE**
 
 ---
 
