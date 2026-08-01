@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 5 defines the publication-epoch divergence reset and records the non-executable trigger/audit boundaries.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **336**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **251 checked / 3 retracted / 251 matched / 251 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 6 authenticated exact no-release candidate `1caace6e2470b51c371d67598b756a48f93d7968` on fresh evidence ref `codex/v0.32-evidence-1caace6`; R-CLOSE awaits the operator's disposition.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The exact candidate passed the complete local entry point **20/20** with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 61 controls**, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **336**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; hosted run **30693555131** passed all seven executable jobs, and each hosted shell lane passed **335** and skipped the one named `on_site` node. `tools/test_population.py` derived `collected=336`, `equivalent=true`, and `equivalent_passed=336` for both local/hosted pairs. Release-grade verification required attestations, accepted **7**, rejected **0**, and found the complete unchanged runner matrix. Post-run remote inspection confirms published v0.17.1 identity remained unmoved. The unchanged manifest remains **331** pins / **191,395 bytes**, and both protected databases match. Exact candidate `1caace6e2470b51c371d67598b756a48f93d7968` produced a **2,706,393-byte / 153-file** review export, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32. The lifecycle checker reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **252 checked / 3 retracted / 252 matched / 252 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -326,6 +326,54 @@ embedded golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 runs each
 collected/passed **336**, failed **0**, and skipped **0**; the direct repository
 comparison derived `equivalent=true` and `equivalent_passed=336`. The standalone
 post-task `./run golden` passed the same **11/11** assertions with delta zero.
+
+**v0.32 Step 6 — exact-candidate hosted authentication on a fresh neutral ref
+(measured 2026-08-01).** The clean candidate was
+`1caace6e2470b51c371d67598b756a48f93d7968`. Before any ref movement,
+`git ls-remote` returned no entry for
+`refs/heads/codex/v0.32-evidence-1caace6`; remote `main` and peeled
+`v0.17.1` both resolved to closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, while annotated tag object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remained distinct. The operator
+explicitly approved publishing the measured candidate to that new ref. The
+post-push readback resolved it to the exact candidate, with the three published
+identities unchanged.
+
+Workflow-dispatch run **30693555131**, attempt **1**, executed at that exact
+branch and SHA. All seven executable jobs passed; dependency drift was the sole
+skip under its unchanged report-only condition. The workflow SHA-256 remained
+`5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`,
+and its job/matrix and receipt populations remained the prior cycle's seven
+identities: `core`, `golden`, `lint`, `msrv`, `net`, `shell/python=3.11`, and
+`shell/python=3.12`. Every receipt, attestation, bundle, and persistence step
+passed.
+
+The repository's release-grade verifier consumed the downloaded ephemeral
+**7 receipts / 7 Sigstore bundles**, required attestations, accepted **7**
+signed identities, rejected **0**, and found no matrix defect. Every accepted
+identity binds repository `jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source digest
+`1caace6e2470b51c371d67598b756a48f93d7968`, and source ref
+`refs/heads/codex/v0.32-evidence-1caace6`. Its temporary **37,235-byte** report
+had SHA-256
+`c374b139010343c35ea96d233634b0566675ca967d7a7c88774377cb8b504fcb`;
+it and the downloaded artifacts remain outside the repository and manifest.
+
+The exact candidate's local Python 3.11.4 and 3.12.13 lanes each collected and
+passed **336**, with zero failures and skips. Each hosted lane collected
+**336**, passed **335**, and skipped the same named, reasoned `on_site` node
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`.
+For both lanes the executed repository comparator derived `collected=336`,
+`equivalent=true`, and `equivalent_passed=336`; no figure was transcribed from
+the runner log.
+
+The candidate passed local `ci-local` **20/20**, all **331** pins and both
+protected archives matched, and golden passed **11/11** locally and hosted.
+Its project-root export measured **2,706,393 bytes / 153 files**, leaving
+**293,607 bytes / 9.79%** and retaining exactly v0.30–v0.32. A final post-run
+remote query again found the evidence ref at the candidate, `main` and peeled
+`v0.17.1` at the published closing commit, and the annotated object unchanged.
+No manifest registration occurred.
 
 **v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
 two-commit tagged-close protocol (operator authorization and measurement
