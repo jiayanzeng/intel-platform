@@ -333,3 +333,52 @@ Entries are append-only; corrections are new dated entries.
   ran no scheduler or model-profile command, changed no cadence, and created,
   moved, or deleted no version, tag, release, publication, or working-repository
   ref.
+
+### 2026-08-01 · RETENTION-ONE — bind the configured pattern to one retained set
+
+- owner: Codex
+- commit: 54f82286831a9b18321369f86c7d2485fd9cb41b
+- result: PASS. `export-check` now derives the cycle-document collection once
+  from `git ls-files`; `cycle-check` imports that same retained-path authority
+  and formats the configured exclusion boundary from its earliest retained
+  execution runbook. Arithmetic and the real retained runbook set therefore
+  cannot silently disagree on a skipped cycle.
+- decision-gate acceptance: PASS. G3's cheap shape required no brace-glob
+  parser or matcher. The task changed lifecycle tooling, tests, controls, and
+  records only; it created or read no export and changed no production source,
+  workflow, harness, dependency, schema, manifest, protected byte, or version
+  authority.
+- rejection-before-acceptance: PASS. Against the old checker, the new real-Git
+  skipped-cycle construction made active `v1.2.4`, omitted `v1.2.3`, and saw
+  the old entry point return **0**, failing the test's required **1** assertion.
+  After implementation, skipped-cycle and stale-pattern cases passed **2/2**
+  and the error required agreement with the tracked retained-cycle set.
+- no-export acceptance: PASS. The throwaway acceptance tree asserted no
+  `repomix-output-*.xml` existed. Its sentinel selects the production Git
+  authority rather than the explicit test double used by generic Gitless
+  fixtures.
+- stale-pattern acceptance: PASS. The existing active-cycle stale-pattern
+  rejection remains exercised and its diagnostic states both the derived
+  corrective pattern and the configured pattern found.
+- planted-control acceptance: PASS. Existing R12 retention control now exposes
+  both `stale-retention-pattern` and `skipped-cycle-retained-set` when the guard
+  is suppressed. Full self-test passed **12 rules / 58 controls**. All **24**
+  shifted `cycle_check.py` `expected_line` values came from real mutated-tree
+  output; the joint retention failure emitted at line **1151**.
+- focused acceptance: PASS. Combined cycle/export/invariant tests passed
+  **95/95**.
+- local-regression acceptance: PASS. Permission-complete `./run ci-local`
+  passed **20/20** with warning-denied **146** workspace tests and **62** net
+  tests (**32 ingest + 30 cored**), locked Rust 1.78, clean
+  rustc/clippy/fmt/ShellCheck, both protected archives, shell **325/325**,
+  embedded golden **11/11**, and every other registered job.
+- population acceptance: PASS. Clean constrained Python **3.11.4** and
+  **3.12.13** lanes each collected/passed **325**, failed **0**, and skipped
+  **0**, with the same one accepted warning. The executed comparator derived
+  `{"collected":325,"equivalent":true,"equivalent_passed":325,"hosted":{"on_site_skipped":0,"passed":325,"skipped":[]},"local":{"passed":325,"skipped":0},"schema_version":1}`.
+- golden-E2E delta: **0**. Embedded and mandatory standalone executions each
+  passed **11/11** byte-identically.
+- publisher/ref acceptance: PASS. RETENTION-ONE issued no publisher request,
+  ran no scheduler or model-profile command, changed no cadence, and created,
+  moved, or deleted no version, tag, release, publication, or working-repository
+  ref.
