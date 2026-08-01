@@ -217,3 +217,59 @@ Entries are append-only; corrections are new dated entries.
 - scope acceptance: PASS. No production source, workflow, dependency, schema,
   manifest, protected byte, publisher, scheduler, service, model profile,
   public response/value-domain state, or publication ref changed.
+
+### 2026-08-01 · REGION-CONTRACT — State archival regions and anchors execute
+
+- owner: Codex
+- commit: c74ad532f4dd1ea4c7a5c2d0ea5fc44bed3424e2
+- result: PASS. Before any archive byte moved, `cycle-check` gained a structural
+  three-region State contract and a tracked live external-reference inventory.
+- region acceptance: PASS. The status paragraph supplies the immutable header,
+  a unique marker immediately before the first numbered top-level heading
+  supplies the permanent-tail boundary, and only the bytes between are eligible.
+  The checker derives every byte count, heading, and numbering gap from live
+  text; it contains no hardcoded line, byte, or section-number list. With the
+  task box open the real entry point reported `header_bytes=1933`,
+  `eligible_bytes=322653`, `tail_bytes=43858`,
+  `top_sections=1,2,4,5,6,7`, and `numbering_gaps=3`.
+- reference acceptance: PASS. The tracked live derivation reported
+  `referenced_sections=2,5,6,6b`, `referenced_gaps=none`, and the exact sites
+  `.github/workflows/ci.yml:293=§6b,AGENTS.md:149=§6,ARCHITECTURE.md:6=§2,ARCHITECTURE.md:94=§2,ARCHITECTURE.md:500=§6,README.md:640=§6b,crates/compliance/Cargo.toml:7=§6,crates/compliance/src/lib.rs:24=§5,crates/compliance/src/lib.rs:897=§6,crates/ingest/src/arxiv_oai.rs:28=§5,rust-toolchain.toml:31=§5,tools/version_check.py:261=§5,tools/version_check.py:270=§5`.
+  Every anchor resolved; `## 3.` is absent and referenced by nothing. Cycle
+  records, archives, and test/control constructions are structurally excluded.
+- fail-before acceptance: PASS. Against Step 3, over-cut and restatement removal
+  each emitted exactly `version-check: ERROR: STATE.md: current run-reference
+  correction yielded zero extracted current restatements` while `cycle-check`
+  passed. Renaming `## 5.` and removing §1, §2, §4, §5, and §6 each made both
+  entry points pass.
+- fail-after acceptance: PASS. Over-cut retained the same sole version-check
+  error while lifecycle passed with `state_regions=not-measured`; restatement
+  removal retained the same sole error while lifecycle passed with
+  `state_regions=bound`. Neither acquired a duplicate defect. Renaming `## 5.`
+  retained `version-check: PASS (0.17.1)` and emitted exactly
+  `cycle-check: ERROR: STATE.md: external State section references do not
+  resolve: crates/compliance/src/lib.rs:24=§5,
+  crates/ingest/src/arxiv_oai.rs:28=§5, rust-toolchain.toml:31=§5,
+  tools/version_check.py:261=§5, tools/version_check.py:270=§5`, followed by
+  `cycle-check: FAIL (1 defect(s))`. Removing the five sections retained
+  `version-check: PASS (0.17.1)` and emitted exactly `cycle-check: ERROR:
+  STATE.md: State archival permanent-tail marker required exactly once; found
+  0`, followed by `cycle-check: FAIL (1 defect(s))`.
+- invariant acceptance: PASS. R12 removes the marker through the real lifecycle
+  entry point and disables the new branch. Focused self-test passed **39/39 R12
+  controls**; the full registry passed **12/12 rules / 67 controls**. Emitted
+  mutation output re-derived **30 shifted existing** line values plus the new
+  State-region value at line **2213**; the shifted-existing count is fewer than
+  the 67 controls protected.
+- test acceptance: PASS. Focused lifecycle tests passed **79/79** on Python
+  3.11.4. The complete entry point passed **20/20** with the task box open, and
+  checklist audit remained **257 checked / 3 retracted / 257 matched / 257
+  commits resolved**. Python 3.11.4 and 3.12.13 each collected/passed **345**,
+  failed 0, and skipped 0; `tools/test_population.py` derived `collected=345`,
+  `equivalent=true`, and `equivalent_passed=345`.
+- golden-E2E delta: **0**. The complete entry point and the required final
+  standalone run each passed **11/11**.
+- scope acceptance: PASS. `git status --short docs/state-archive` was empty; no
+  archive byte was written. No production source, workflow, dependency, schema,
+  manifest, protected byte, publisher, scheduler, service, model profile,
+  public response/value-domain state, or publication ref changed.
