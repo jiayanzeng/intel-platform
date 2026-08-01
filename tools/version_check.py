@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import ast
+from fnmatch import fnmatchcase
 import re
 import subprocess
 import sys
@@ -40,6 +41,20 @@ class OfflineMsrvReport(NamedTuple):
     derived: str
     pins: tuple[ExtractedRustVersion, ...]
     restatements: tuple[ExtractedRustVersion, ...]
+
+
+class RustFloorFileClassification(NamedTuple):
+    path: str
+    occurrences: int
+    memberships: tuple[str, ...]
+    selected: str
+
+
+class RustFloorPartitionReport(NamedTuple):
+    tracked_files: int
+    literal_versions: tuple[str, ...]
+    literal_occurrences: int
+    files: tuple[RustFloorFileClassification, ...]
 
 
 OFFLINE_MSRV_AUTHORITIES = (
@@ -267,14 +282,42 @@ OFFLINE_MSRV_RESTATEMENTS = (
     ),
 )
 
+NET_MSRV_LITERAL_SOURCE = RustVersionSpec(
+    "rust-toolchain.toml",
+    "unexecuted net-floor declaration",
+    re.compile(
+        rf"(?m)^#\s+--features net\s+: needs >= "
+        rf"(?P<version>{RUST_VERSION})\s*$"
+    ),
+    "declared Rust floor literal sources",
+)
+
+# These patterns are a hand-maintained semantic obligation because identical
+# literals cannot separate dated quotations from current prose. They are read
+# by rust_floor_partition_report; leaving one unmatched is harmless, while a
+# tracked literal-bearing file outside every class is an error.
 OFFLINE_MSRV_HISTORICAL_EXCLUSIONS = (
     "docs/cycles/**",
     "docs/state-archive/**",
     "CHANGELOG.md",
-    "evidence/** and observations/**",
-    "dated narrative in STATE.md outside the current run-reference correction",
-    "historical clauses inside current AGENTS.md, README.md, "
-    "rust-toolchain.toml, and workflow commentary",
+    "evidence/**",
+    "observations/**",
+    ".github/workflows/ci.yml",
+    "AGENTS.md",
+    "README.md",
+    "STATE.md",
+    "rust-toolchain.toml",
+)
+
+RUST_FLOOR_CLASS_PRECEDENCE = (
+    "executable authority",
+    "registered current restatement",
+    "control construction",
+    "historical family",
+)
+RUST_FLOOR_PARTITION_BOUND = (
+    "file-level only; within-file current restatements cannot be separated "
+    "from dated historical quotations by identical literal text"
 )
 
 
@@ -360,6 +403,110 @@ def offline_msrv_report(
                 f"offline MSRV pins derive {derived}"
             )
     return OfflineMsrvReport(derived, pins, restatements)
+
+
+def _tracked_paths(root: Path) -> tuple[str, ...]:
+    result = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "-z"],
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.decode(errors="replace").strip()
+        raise ValueError(f"git ls-files failed: {detail or 'unknown error'}")
+    return tuple(
+        raw.decode()
+        for raw in result.stdout.split(b"\0")
+        if raw
+    )
+
+
+def _rust_floor_literal_pattern(versions: set[str]) -> re.Pattern[bytes]:
+    forms = set(versions)
+    forms.update(
+        f"{version}.0"
+        for version in versions
+        if version.count(".") == 1
+    )
+    alternatives = b"|".join(
+        re.escape(form.encode())
+        for form in sorted(forms, key=lambda value: (-len(value), value))
+    )
+    return re.compile(rb"(?<![0-9.])(?:" + alternatives + rb")(?![0-9.])")
+
+
+def rust_floor_partition_report(
+    root: Path = ROOT,
+    *,
+    text_overrides: dict[str, str] | None = None,
+) -> RustFloorPartitionReport:
+    """Partition tracked Rust-floor literal files at file granularity only."""
+    overrides = {} if text_overrides is None else text_overrides
+    msrv = offline_msrv_report(root, text_overrides=overrides)
+    net_sources = _extract_rust_versions(
+        root,
+        NET_MSRV_LITERAL_SOURCE,
+        overrides,
+    )
+    literal_versions = {msrv.derived}
+    literal_versions.update(source.normalized for source in net_sources)
+    literal_pattern = _rust_floor_literal_pattern(literal_versions)
+    authority_paths = {spec.path for spec in OFFLINE_MSRV_AUTHORITIES}
+    restatement_paths = {spec.path for spec in OFFLINE_MSRV_RESTATEMENTS}
+    tracked_paths = _tracked_paths(root)
+    classified: list[RustFloorFileClassification] = []
+
+    for path in tracked_paths:
+        if path in overrides:
+            source = overrides[path].encode()
+        else:
+            source = (root / path).read_bytes()
+        occurrences = len(literal_pattern.findall(source))
+        if occurrences == 0:
+            continue
+
+        memberships: list[str] = []
+        if path in authority_paths:
+            memberships.append("executable authority")
+        if path in restatement_paths:
+            memberships.append("registered current restatement")
+        if Path(path).suffix == ".py" and re.search(
+            rb"\boffline_msrv_report\s*\(",
+            source,
+        ):
+            memberships.append("control construction")
+        if any(
+            fnmatchcase(path, pattern)
+            for pattern in OFFLINE_MSRV_HISTORICAL_EXCLUSIONS
+        ):
+            memberships.append("historical family")
+
+        # Invariant R12 control site: Rust-floor tracked-file partition.
+        if not memberships:
+            raise ValueError(
+                f"{path}: Rust floor literal(s) yielded zero file-level "
+                "classifications"
+            )
+        ordered = tuple(
+            class_name
+            for class_name in RUST_FLOOR_CLASS_PRECEDENCE
+            if class_name in memberships
+        )
+        classified.append(
+            RustFloorFileClassification(
+                path=path,
+                occurrences=occurrences,
+                memberships=ordered,
+                selected=ordered[0] if ordered else "",
+            )
+        )
+
+    return RustFloorPartitionReport(
+        tracked_files=len(tracked_paths),
+        literal_versions=tuple(sorted(literal_versions)),
+        literal_occurrences=sum(item.occurrences for item in classified),
+        files=tuple(classified),
+    )
 
 
 def literal_string(node: ast.AST, path: Path, label: str) -> str:
@@ -465,6 +612,7 @@ def nearest_tag() -> tuple[str, bool] | None:
 def main() -> int:
     try:
         msrv = offline_msrv_report()
+        rust_floor_partition = rust_floor_partition_report()
         cargo_data = tomllib.loads(CARGO_TOML.read_text())
         versions = {
             relative(CARGO_TOML): cargo_data["package"]["version"],
@@ -489,6 +637,19 @@ def main() -> int:
         "offline MSRV current restatements: "
         f"{len(msrv.restatements)} all derive {msrv.derived}; "
         "registry=OFFLINE_MSRV_RESTATEMENTS"
+    )
+    multiply_classified = sum(
+        len(item.memberships) > 1
+        for item in rust_floor_partition.files
+    )
+    print(
+        "Rust floor tracked-file partition: "
+        f"tracked={rust_floor_partition.tracked_files}, "
+        f"literal_files={len(rust_floor_partition.files)}, "
+        f"literal_occurrences={rust_floor_partition.literal_occurrences}, "
+        f"multiply_classified={multiply_classified}, "
+        f"precedence={' > '.join(RUST_FLOOR_CLASS_PRECEDENCE)}; "
+        f"bound={RUST_FLOOR_PARTITION_BOUND}"
     )
 
     canonical_path = relative(CARGO_TOML)

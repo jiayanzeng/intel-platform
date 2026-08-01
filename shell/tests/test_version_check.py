@@ -91,3 +91,34 @@ def test_offline_msrv_rejects_a_stale_current_restatement() -> None:
             ROOT,
             text_overrides={restatement.path: stale},
         )
+
+
+def test_rust_floor_partition_classifies_every_tracked_literal_file() -> None:
+    report = version_check.rust_floor_partition_report(ROOT)
+
+    assert report.files
+    assert all(item.memberships for item in report.files)
+    assert all(
+        item.selected == item.memberships[0]
+        for item in report.files
+    )
+
+
+def test_rust_floor_partition_rejects_an_unclassified_file() -> None:
+    path = "tools/export_check.py"
+    original = (ROOT / path).read_text()
+    derived = version_check.offline_msrv_report(ROOT).derived
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            r"tools/export_check\.py: Rust floor literal\(s\) yielded zero "
+            r"file-level classifications"
+        ),
+    ):
+        version_check.rust_floor_partition_report(
+            ROOT,
+            text_overrides={
+                path: original + f"\n# planted Rust floor {derived}\n",
+            },
+        )

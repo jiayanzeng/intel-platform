@@ -1,6 +1,70 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-07-31 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active after CLOSE-POINT; the operator selected patch release v0.17.1, while published v0.17.0 and all five version authorities remain current.** The Step 3 working tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 57 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **322** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=322`, `equivalent=true`, and `equivalent_passed=322`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest committed E0 implementation-tree review export measured **2,556,451 bytes / 153 files**, leaving **443,549 bytes / 14.78%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **241 checked / 3 retracted / 241 matched / 241 commits resolved** before CLOSE-POINT was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. CLOSE-POINT changed lifecycle tooling, tests, and contract records only: no publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+**As of:** 2026-08-01 · **Version:** v0.17.0 (core-shell) · **Status:** **v0.31 is active after EXCLUSION-READ; the operator selected patch release v0.17.1, while published v0.17.0 and all five version authorities remain current.** The Step 4 working tree passed all **20/20** local jobs with warning-denied **146** workspace tests and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 lanes each collected/passed **324** with **0** skips and the same one accepted `StarletteDeprecationWarning`; the machine comparator derived `collected=324`, `equivalent=true`, and `equivalent_passed=324`. The manifest remains **331** pins / **191,395 bytes**; two complete E0 verifications took **0.10 s / 0.10 s real** and both protected databases matched. The latest governed implementation-tree review export is CLOSE-POINT tree `33d5bb9e2b51a71d372600a7a0ef73ccba011200` at **2,586,197 bytes / 153 files**, leaving **413,803 bytes / 13.79%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.29–v0.31. `checklist-audit` passed **242 checked / 3 retracted / 242 matched / 242 commits resolved** before EXCLUSION-READ was checked. Published annotated tag object `df4fc3b044ca12335e773dcc0b9bdd4e0db90afd` still targets closing commit `4af2841816dd3e43fb8423153b91aa22ccb87537`, whose immediate parent is release commit `d5969207835c9f27f461d292b169ccb8d6ae5a46`. The bounded internal diagnostic difference has persisted through only two post-correction closed cycles, v0.29 and v0.30; v0.31 is open and no public-surface change exists, so the divergence trigger has not fired. EXCLUSION-READ changed lifecycle tooling, tests, and contract records only: no publisher request, scheduler run, cadence change, model-profile command, manifest edit, production-source edit, version-value edit, tag, or publication-ref movement occurred.
+
+**v0.31 EXCLUSION-READ makes the historical-floor declaration load-bearing
+(measured 2026-08-01).** The decision gate did not trip. The implementation
+does not add a local or hosted job, change either executable offline pin, alter
+a toolchain file, or change evidence topology. It lives in `version-check`,
+which the existing local matrix and hosted shell job already execute. The task
+gate therefore contains every acceptance criterion.
+
+Rejection ran before acceptance. With the two acceptance tests present against
+the old module, the focused file reported **5 passed / 2 failed** because no
+partition reader existed. After implementation, the focused file passed
+**7/7**, and an explicit planted tracked `tools/export_check.py` floor
+statement was rejected with:
+
+```text
+tools/export_check.py: Rust floor literal(s) yielded zero file-level classifications
+```
+
+The implemented reader derives **559 tracked paths** from `git ls-files`. It
+derives the literal values from the three existing normalized offline pins and
+the already-declared, explicitly unexecuted net-floor source; neither is
+written. The implementation-tree scan found **75 literal-bearing files / 662
+bounded literal occurrences**, **0 unclassified files**, and **6
+multiply-classified files**. The six remain `.github/workflows/ci.yml`, `run`,
+`AGENTS.md`, `README.md`, `STATE.md`, and `rust-toolchain.toml`, exactly the
+E0 file set.
+
+The declared precedence is executable authority → registered current
+restatement → derived Python control construction → historical family.
+Authority and restatement paths come from their existing registries; control
+construction is derived from executable Python use of `offline_msrv_report`;
+and `OFFLINE_MSRV_HISTORICAL_EXCLUSIONS` is now a tuple of real path patterns
+read by the partition. The check's own emitted bound is:
+
+```text
+file-level only; within-file current restatements cannot be separated from dated historical quotations by identical literal text
+```
+
+That residual is deliberate: the six mixed files are classified at file
+granularity, and no claim is made about identical lines within them. No dated
+historical cycle, State archive, evidence, or observation file was rewritten.
+Tests added no hard-coded expected floor value.
+
+Registered R12 now plants an unclassified tracked file and proves the guard
+rejects it. The full self-test passed **12 rules / 58 controls**. Real mutated
+tree output re-derived **3** shifted `expected_line` values: the two existing
+offline controls now emit at line **397**, and the new partition control emits
+at line **484**. Combined focused version/invariant tests passed **29/29**.
+
+The permission-complete `./run ci-local` passed **20/20**, including **146**
+workspace tests, **62** net tests, warning-denied and Rust 1.78 lanes, clean
+clippy/fmt/ShellCheck, shell **324/324**, protected artifacts, and embedded
+golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 rebuilds each
+passed **324**, failed **0**, skipped **0**, and retained the same one warning.
+The first sandboxed Python 3.11 install was a DNS-denied non-result; its
+permission-complete retry passed. The executed comparator reported:
+
+```text
+test-population-compare: {"collected":324,"equivalent":true,"equivalent_passed":324,"hosted":{"on_site_skipped":0,"passed":324,"skipped":[]},"local":{"passed":324,"skipped":0},"schema_version":1}
+```
+
+Golden delta is **0**. The task changes no route, public value domain,
+dependency, schema, manifest, protected byte, production source, publisher
+state, scheduler state, version authority, tag, or ref.
 
 **v0.31 CLOSE-POINT binds the governed export at the exact checked tree
 (measured 2026-07-31).** The decision gate did not trip: E0 executed the
@@ -155,8 +219,9 @@ cannot satisfy the implementation commit, the earlier value cannot satisfy
 the audit child after its current measurement lands, and neither truthful
 value satisfies both evaluation points.
 
-**G2 — the unused exclusion tuple is not a rule, but a file-level partition is
-available with explicit precedence.** Exhaustive `git ls-files` search at
+**G2 — E0 found the unused exclusion tuple was not a rule; EXCLUSION-READ now
+executes the available file-level partition with explicit precedence.**
+Exhaustive `git ls-files` search at
 activation audit tree `9ed9f9e8086f703d9d349878e6fe14320e5e7b9d` found **75
 tracked files / 683 occurrences** of `1.78` or `1.86`.
 `OFFLINE_MSRV_HISTORICAL_EXCLUSIONS` has exactly one occurrence, its
@@ -185,7 +250,11 @@ Authority → current restatement → control construction → historical family
 a complete deterministic file-level partition. Within those six mixed files,
 present-tense versus dated-history membership is not decidable from the
 identical literals alone. That within-file residual is distinct from, and does
-not reopen, the zero-gap file-level result.
+not reopen, the zero-gap file-level result. EXCLUSION-READ later made this
+classification executable in `version-check`: the historical tuple is now
+read as real path patterns, control constructions are derived from executable
+Python use, an unclassified tracked file raises, and the same six mixed files
+remain under the declared precedence.
 
 **G3 — arithmetic retention and the real runbook set can diverge inside
 `v0.x`.** A distinct-seed full Git construction made v0.33 active with no

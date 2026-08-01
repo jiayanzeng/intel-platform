@@ -5,6 +5,7 @@
 Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-07-31
 Step 2 — operator selected patch release v0.17.1 to ship the boundary correction and executable bindings; all five authorities remain 0.17.0 — 2026-07-31
 Step 3 — checked-tree export binding, written ceiling, and distinct cycle-ending audit path implemented and completion checked — 2026-07-31
+Step 4 — tracked Rust-floor file partition and historical-exclusion reader implemented and completion checked — 2026-08-01
 
 **Three reviewer errors, all mine, recorded before anything else.**
 
@@ -565,7 +566,7 @@ binding and that residual is named, not papered over.
 **Done when** a new file stating a Rust floor outside every declared class fails
 automatically, or the declaration no longer lives in code.
 
-- [ ] **EXCLUSION-READ**
+- [x] **EXCLUSION-READ**
 
 ---
 
