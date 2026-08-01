@@ -38,7 +38,7 @@ EXECUTION_RUNBOOK_PATH_RE = re.compile(
     r"^docs/cycles/TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
 )
 MAX_EXPORT_BYTES = 3_000_000
-CYCLE_RETENTION_DEPTH = 3
+CYCLE_RETENTION_DEPTH = 2
 EXCLUDED_EXPORT_FILENAMES = ("sec-edgar-usgaap.rss.xml",)
 EXCLUDED_EXPORT_PREFIXES = ("docs/state-archive/",)
 

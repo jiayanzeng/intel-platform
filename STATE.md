@@ -1,6 +1,47 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 4 has derived the export budget without selecting a lever; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The most recent complete gate remains BASIS-BOUND at **20/20** local jobs with checklist **263 checked / 3 retracted / 263 matched / 263 commits resolved**, registered invariants **12 rules / 68 controls**, clean constrained Python 3.11.4 at **352/352**, and zero Rust warnings. The measurement-only BUDGET-DERIVE tree independently passed `cycle-check` with State **229,486 / 453,741 bytes**, governed export `exempt-open-empty-progress`, and standalone golden **11/11**. All **332** pins and both protected databases matched at the complete gate. The exact delivered v0.33 export remains **2,634,692 bytes / 153 files**, leaving **365,308 bytes**; fuller projections place its ceiling at **4.20–4.69 cycles**, ahead of the next State archive at **7.93–8.27 cycles**. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 5 implemented and fully verified the operator-selected Option A review-export lever; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Option A changes retention from the active cycle plus two prior cycles to the active cycle plus one prior cycle; its exact preselection construction reclaimed **108,120 bytes**, moving margin from **4.76 to 6.15 cycles** at the unchanged **77,862-byte** post-retention steady denominator. The real implementation worktree export is **2,524,284 bytes / 151 files / 2 retained cycles**. The complete gate passed **20/20** local jobs with checklist **265 checked / 3 retracted / 265 matched / 265 commits resolved**, registered invariants **12 rules / 68 controls**, clean constrained Python 3.11.4 at **352/352**, and zero Rust warnings. Golden passed **11/11** in the complete gate and at the mandatory standalone entry point. All **332** pins and both protected databases matched. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No governed byte boundary, ceiling, production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+
+**v0.34 BUDGET-LEVER — operator-selected Option A reduces review retention
+from three cycles to two (measured 2026-08-02).** The operator explicitly
+selected Option A after the required construction measurement. Exact baseline
+commit `e8bf31f225f1cb977dd6a1ee45c6e062e62b96a4`, tree
+`8fe4225fb7c53c8d146fb5a0725bdc19983d16de`, exported **2,629,024 bytes /
+153 files / 3 retained cycles**. A throwaway construction changing only
+`CYCLE_RETENTION_DEPTH` from 3 to 2 and the matching Repomix exclusion through
+v0.32 produced tree `c19876d08502a8aa4eb33e35d25ce2b7d67f32e5` and exported
+**2,520,904 bytes / 151 files / 2 retained cycles**. The exact one-time reclaim
+is therefore **108,120 bytes**. At the same unchanged post-retention steady
+denominator of **77,862 bytes/cycle**, the available margin moves from
+**370,976 / 77,862 = 4.76 cycles** to **479,096 / 77,862 = 6.15 cycles**, an
+increase of **1.39 cycles**. The corroborating same-basis calculations are
+**4.27 → 5.51 (+1.24)** at the **86,946-byte** persistent-component
+denominator and **4.64 → 5.99 (+1.35)** at the **79,962-byte** positive
+delivered denominator. These retain Step 3's representativeness and structural-
+epoch bounds and are projections, not forecasts.
+
+The stale-pattern construction changed the executable depth while leaving the
+three-cycle Repomix pattern in place. The real `./run cycle-check` entry point
+rejected it verbatim:
+
+```text
+cycle-check: ERROR: repomix.config.json: review-export retention pattern for v0.34 must be 'docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-2]}{.md,.*.md,-*.md}' to agree with the tracked retained-cycle set; found ['docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-1]}{.md,.*.md,-*.md}']
+cycle-check: FAIL (1 defect(s))
+```
+
+The implementation moves the sole executable depth authority and tracked
+Repomix pattern together. The contributor contract and live Architecture
+trigger now describe exactly the active cycle plus one prior; dated historical
+three-cycle measurements remain unchanged. No boundary or ceiling moved,
+Option E was not selected, and no additional exclusion beyond the derived
+two-cycle policy was added. The real project-root export passed at **2,524,284
+bytes / 151 files / 2 retained cycles** on the implementation worktree over
+baseline tree `8fe4225fb7c53c8d146fb5a0725bdc19983d16de`. With the task box still
+open, the complete entry point passed **20/20** jobs, checklist **265 / 3 / 265
+/ 265**, registered invariants **12/12 rules / 68 controls**, clean constrained
+Python 3.11.4 **352/352**, warning-denied current/net/MSRV Rust lanes, all
+**332** pins, both protected databases, and embedded golden **11/11**. The
+mandatory standalone `./run golden` also passed **11/11**, delta **0**.
 
 **v0.34 REGION-FLOOR — State structural admission no longer depends on the
 tail it protects (measured 2026-08-02).** E0's exact delivered-tree

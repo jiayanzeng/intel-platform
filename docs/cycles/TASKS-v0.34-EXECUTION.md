@@ -23,6 +23,8 @@ Step 3 — made the governed margin entry point emit both representativeness and
 
 Step 4 — derived every supported governed, closing-audit, delivered, component, and reclaim export pair without selecting a lever — 2026-08-02
 
+Step 5 — implemented the operator-selected two-cycle review-export retention lever after exact construction measurement — 2026-08-02
+
 ---
 
 **One reviewer error, mine, recorded before anything else.**
@@ -459,7 +461,7 @@ operator's.
 
 **Done when** the budget question has a dated operator answer.
 
-- [ ] **BUDGET-LEVER**
+- [x] **BUDGET-LEVER**
 
 ---
 
