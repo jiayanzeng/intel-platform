@@ -62,6 +62,8 @@ def _progress(root: Path, cycle: str = "v1.2.3") -> Path:
 def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     fixture_export_bytes = len("cycle-check governed export fixture")
     fixture_export_tree = "a" * 40
+    fixture_state_boundary = 2_048
+    fixture_manifest_boundary = 2_048
     root = tmp_path / "cycle"
     root.mkdir()
     cycle_documents_dir(root).mkdir(parents=True)
@@ -82,6 +84,10 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| baseline | refuted | none | no measurement required |\n"
         "| trigger baseline | active | active condition | "
         "v1.2.3 · 2026-07-30 — measured |\n"
+        "| protected evidence-manifest growth (fixture) | accepted | "
+        "the manifest reaches its governed artifact byte boundary, or two "
+        "consecutive clean ./run verify-artifacts runs each take ≥1.00 s real "
+        "| v1.2.3 · 2026-07-30 — measured |\n"
         "| review-export size and retention bound (fixture) | accepted | "
         "export ceiling | v1.2.3 · 2026-07-30 — fixture export of "
         f"**{fixture_export_bytes} bytes / 1 file**. Governed review-export "
@@ -101,12 +107,21 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| `release_authority` | `CHANGELOG.md` |\n"
         "| `release_authority` | `shell/intel_shell/__init__.py` |\n"
         "| `release_authority` | `shell/intel_shell/app.py` |\n\n"
+        "### Governed artifact byte-boundary authority\n\n"
+        "- governed artifact byte boundary: path=`STATE.md`; bytes=`"
+        f"{fixture_state_boundary}`\n"
+        "- governed artifact byte boundary: "
+        "path=`config/protected-artifacts.json`; bytes=`"
+        f"{fixture_manifest_boundary}`\n\n"
         "## Deferred means deferred\n\n"
         "| Deferred item | Unchanged trigger | Measured 2026-07-29 | "
         "v1.2.3 action |\n"
         "|---|---|---|---|\n"
         "| Baseline item | none | no measurement required | none |\n"
         "| Trigger baseline | active condition | "
+        "v1.2.3 · 2026-07-30 — measured | none |\n"
+        "| Second `STATE.md` archival | the export ceiling trigger fires, or "
+        "`STATE.md` reaches its governed artifact byte boundary | "
         "v1.2.3 · 2026-07-30 — measured | none |\n\n"
         "## Step 1 · CHECK\n\n"
         "**Objective.** Preserve the contract.\n\n"
@@ -121,6 +136,8 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     )
     config = root / "config"
     config.mkdir()
+    (root / "STATE.md").write_text("# State\n\nFixture state.\n")
+    (config / "protected-artifacts.json").write_text("{}\n")
     (config / "cycle-history.json").write_text(
         json.dumps({"schema_version": 1, "artifacts": {}}) + "\n"
     )
@@ -183,6 +200,141 @@ def _commit_all(root: Path, message: str) -> str:
         text=True,
         capture_output=True,
     ).stdout.strip()
+
+
+def _cross_fixture_artifact_boundaries(
+    root: Path,
+    *,
+    disposed: bool,
+) -> None:
+    runbook = _runbook(root)
+    runbook_text = cycle_check.GOVERNED_ARTIFACT_BOUNDARY_RE.sub(
+        lambda match: (
+            "- governed artifact byte boundary: "
+            f"path=`{match.group(1)}`; bytes=`1`"
+        ),
+        runbook.read_text(),
+    )
+    if disposed:
+        runbook_text = runbook_text.replace(
+            "`STATE.md` reaches its governed artifact byte boundary | "
+            "v1.2.3 · 2026-07-30 — measured | none |",
+            "`STATE.md` reaches its governed artifact byte boundary | "
+            "v1.2.3 · 2026-07-30 — trigger-fired disposition: archive "
+            "decision recorded | none |",
+        )
+        architecture = root / "ARCHITECTURE.md"
+        architecture.write_text(
+            architecture.read_text().replace(
+                "consecutive clean ./run verify-artifacts runs each take "
+                "≥1.00 s real | v1.2.3 · 2026-07-30 — measured |",
+                "consecutive clean ./run verify-artifacts runs each take "
+                "≥1.00 s real | v1.2.3 · 2026-07-30 — trigger-fired "
+                "disposition: retention decision recorded |",
+            )
+        )
+    runbook.write_text(runbook_text)
+
+
+def test_cycle_check_reports_below_artifact_byte_boundaries(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    expected_tree = subprocess.run(
+        ["git", "rev-parse", "HEAD^{tree}"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+
+    assert cycle_check.run(root) == 0
+    output = capsys.readouterr().out
+    assert (
+        "artifact-boundary: path=STATE.md bytes=24 boundary=2048 "
+        f"state=bound checked_tree=HEAD-tree:{expected_tree} "
+        "timing=not-applicable"
+    ) in output
+    assert (
+        "artifact-boundary: path=config/protected-artifacts.json bytes=3 "
+        f"boundary=2048 state=bound checked_tree=HEAD-tree:{expected_tree} "
+        "timing=out-of-scope"
+    ) in output
+
+
+def test_cycle_check_rejects_duplicate_artifact_boundary_authority(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    authority = (
+        "- governed artifact byte boundary: path=`STATE.md`; bytes=`2048`"
+    )
+    runbook.write_text(
+        runbook.read_text().replace(authority, authority + "\n" + authority)
+    )
+    _commit_cycle_root(root)
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "boundary for 'STATE.md' is declared more than once" in error
+
+
+def test_cycle_check_rejects_missing_governed_artifact_row(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "| Second `STATE.md` archival | the export ceiling trigger fires, "
+            "or `STATE.md` reaches its governed artifact byte boundary | "
+            "v1.2.3 · 2026-07-30 — measured | none |\n",
+            "",
+        )
+    )
+    _commit_cycle_root(root)
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "expected exactly one governed trigger row" in error
+    assert "Second STATE.md archival" in error
+
+
+def test_cycle_check_rejects_crossed_artifact_boundaries_without_disposition(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _cross_fixture_artifact_boundaries(root, disposed=False)
+    _commit_cycle_root(root)
+
+    assert cycle_check.run(root) == 1
+    captured = capsys.readouterr()
+    assert "path=STATE.md bytes=24 boundary=1" in captured.out
+    assert (
+        "path=config/protected-artifacts.json bytes=3 boundary=1"
+        in captured.out
+    )
+    assert captured.err.count("requires a dated 'trigger-fired disposition:'") == 2
+
+
+def test_cycle_check_accepts_crossed_artifact_boundaries_with_disposition(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    _cross_fixture_artifact_boundaries(root, disposed=True)
+    _commit_cycle_root(root)
+
+    assert cycle_check.run(root) == 0
+    output = capsys.readouterr().out
+    assert output.count("state=trigger-fired-disposed") == 2
+    assert "artifact_boundaries=trigger-fired-disposed,trigger-fired-disposed" in output
 
 
 def _publication_root(tmp_path: Path) -> tuple[Path, str, str]:
@@ -1673,6 +1825,11 @@ def test_trigger_identity_cannot_precede_freshness(monkeypatch) -> None:
         "GOVERNED_EXPORT_FORWARD_BOUNDARY",
         (1, 2, 4),
     )
+    monkeypatch.setattr(
+        cycle_check,
+        "ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
     errors: list[str] = []
     cycle_check.check_trigger_boundary_relationship(errors)
     assert errors == [
@@ -1762,8 +1919,15 @@ def test_cycle_check_rejects_zero_trigger_populations(
         architecture.read_text().replace(
             "| trigger baseline | active | active condition |",
             "| trigger baseline | active | none |",
-        ).replace(
-            "| review-export size and retention bound (fixture) | "
+            ).replace(
+                "| protected evidence-manifest growth (fixture) | accepted | "
+                "the manifest reaches its governed artifact byte boundary, "
+                "or two consecutive clean ./run verify-artifacts runs each "
+                "take ≥1.00 s real |",
+                "| protected evidence-manifest growth (fixture) | accepted | "
+                "none |",
+            ).replace(
+                "| review-export size and retention bound (fixture) | "
             "accepted | export ceiling |",
             "| review-export size and retention bound (fixture) | "
             "accepted | none |",
@@ -1771,10 +1935,15 @@ def test_cycle_check_rejects_zero_trigger_populations(
     )
     runbook = _runbook(root)
     runbook.write_text(
-        runbook.read_text().replace(
-            "| Trigger baseline | active condition |",
-            "| Trigger baseline | none |",
-        )
+            runbook.read_text().replace(
+                "| Trigger baseline | active condition |",
+                "| Trigger baseline | none |",
+            ).replace(
+                "| Second `STATE.md` archival | the export ceiling trigger "
+                "fires, or `STATE.md` reaches its governed artifact byte "
+                "boundary |",
+                "| Second `STATE.md` archival | none |",
+            )
     )
 
     assert cycle_check.run(root) == 1

@@ -1510,7 +1510,13 @@ TRIGGER_FRESHNESS_FORWARD_BOUNDARY = (0, 23)
 TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)
 TRIGGER_FLOOR_FORWARD_BOUNDARY = (0, 28)
 GOVERNED_EXPORT_FORWARD_BOUNDARY = (0, 30)
+ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY = (0, 32)
 FORWARD_BOUNDARY_RELATIONSHIPS = {
+    "ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY": (
+        ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
+        "Artifact byte crossings consume cycle-identified governed trigger "
+        "rows and their dated dispositions.",
+    ),
     "GOVERNED_EXPORT_FORWARD_BOUNDARY": (
         ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
         "The governed export value is a content constraint on the "
@@ -1557,6 +1563,32 @@ CYCLE_ENDING_EXPORT_AUDIT_RE = re.compile(
     r"audit_delta=`([+-][0-9]+)`$",
     re.MULTILINE,
 )
+GOVERNED_ARTIFACT_BOUNDARY_PREFIX = "- governed artifact byte boundary:"
+GOVERNED_ARTIFACT_BOUNDARY_RE = re.compile(
+    r"^- governed artifact byte boundary: "
+    r"path=`([^`\n]+)`; bytes=`([0-9]+)`$",
+    re.MULTILINE,
+)
+TRIGGER_FIRED_DISPOSITION_RE = re.compile(
+    r"\btrigger-fired disposition:\s*(?!none(?:\b|$))[^.;|]+",
+    re.IGNORECASE,
+)
+GOVERNED_ARTIFACT_ROW_SPECS = {
+    "STATE.md": (
+        DEFERRED_HEADING,
+        "Deferred item",
+        "Second STATE.md archival",
+        "the export ceiling trigger fires, or STATE.md reaches its governed "
+        "artifact byte boundary",
+    ),
+    "config/protected-artifacts.json": (
+        DATED_DISPOSITIONS_HEADING,
+        "subject",
+        "protected evidence-manifest growth",
+        "the manifest reaches its governed artifact byte boundary, or two "
+        "consecutive clean ./run verify-artifacts runs each take ≥1.00 s real",
+    ),
+}
 
 
 def module_forward_boundaries() -> dict[str, tuple[int, ...]]:
@@ -1778,6 +1810,246 @@ def check_trigger_freshness(
         required_cycle_name,
     )
     return architecture_rows, deferral_rows
+
+
+def governed_trigger_row(
+    path: Path,
+    text: str,
+    heading: str,
+    subject_header: str,
+    subject_prefix: str,
+    root: Path,
+    errors: list[str],
+) -> tuple[str, str] | None:
+    heading_matches = list(
+        re.finditer(rf"^{re.escape(heading)}$", text, re.MULTILINE)
+    )
+    if len(heading_matches) != 1:
+        errors.append(
+            f"{shown(path, root)}: expected exactly one {heading!r} while "
+            f"resolving governed trigger row {subject_prefix!r}; found "
+            f"{len(heading_matches)}"
+        )
+        return None
+    heading_level = len(heading) - len(heading.lstrip("#"))
+    section = text[heading_matches[0].end():]
+    next_heading = re.search(
+        rf"^#{{1,{heading_level}}} ",
+        section,
+        re.MULTILINE,
+    )
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+
+    lines = section.splitlines()
+    header_index: int | None = None
+    subject_index: int | None = None
+    trigger_index: int | None = None
+    measured_index: int | None = None
+    expected_subject_header = subject_header.casefold()
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if expected_subject_header not in normalized:
+            continue
+        header_index = index
+        subject_index = normalized.index(expected_subject_header)
+        trigger_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "trigger" in cell
+            ),
+            None,
+        )
+        measured_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "measured" in cell
+            ),
+            None,
+        )
+        break
+    if (
+        header_index is None
+        or subject_index is None
+        or trigger_index is None
+        or measured_index is None
+    ):
+        errors.append(
+            f"{shown(path, root)}: {heading!r} must contain a markdown table "
+            f"with {subject_header}, trigger, and measured columns while "
+            f"resolving governed trigger row {subject_prefix!r}"
+        )
+        return None
+
+    matches: list[tuple[str, str]] = []
+    for line in lines[header_index + 1:]:
+        cells = markdown_table_cells(line)
+        if not cells:
+            if matches:
+                break
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        if max(subject_index, trigger_index, measured_index) >= len(normalized):
+            continue
+        if normalized[subject_index].casefold().startswith(
+            subject_prefix.casefold()
+        ):
+            matches.append(
+                (normalized[trigger_index], normalized[measured_index])
+            )
+    if len(matches) != 1:
+        errors.append(
+            f"{shown(path, root)}: expected exactly one governed trigger row "
+            f"whose subject starts {subject_prefix!r}; found {len(matches)}"
+        )
+        return None
+    return matches[0]
+
+
+def checked_tree_label(root: Path) -> str:
+    head_tree = git_output(root, "rev-parse", "HEAD^{tree}")
+    dirty = git_output(
+        root,
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    )
+    if head_tree is None:
+        return "unversioned-worktree"
+    if dirty == "":
+        return f"HEAD-tree:{head_tree}"
+    return f"worktree-over-HEAD-tree:{head_tree}"
+
+
+def check_governed_artifact_byte_boundaries(
+    active_path: Path,
+    active_text: str,
+    root: Path,
+    errors: list[str],
+    *,
+    checked_tree: str | None = None,
+) -> tuple[str, list[str]]:
+    matches = list(GOVERNED_ARTIFACT_BOUNDARY_RE.finditer(active_text))
+    prefix_count = active_text.count(GOVERNED_ARTIFACT_BOUNDARY_PREFIX)
+    if prefix_count != len(matches):
+        errors.append(
+            f"{shown(active_path, root)}: malformed governed artifact byte "
+            f"boundary; found {prefix_count} field(s) but parsed "
+            f"{len(matches)}"
+        )
+        return "invalid-authority", []
+
+    boundaries: dict[str, int] = {}
+    for match in matches:
+        relative, raw_bytes = match.groups()
+        if relative in boundaries:
+            errors.append(
+                f"{shown(active_path, root)}: governed artifact byte boundary "
+                f"for {relative!r} is declared more than once"
+            )
+            continue
+        boundaries[relative] = int(raw_bytes)
+    required = set(GOVERNED_ARTIFACT_ROW_SPECS)
+    if set(boundaries) != required:
+        errors.append(
+            f"{shown(active_path, root)}: governed artifact byte-boundary "
+            f"authority must name exactly {sorted(required)!r}; found "
+            f"{sorted(boundaries)!r}"
+        )
+        return "invalid-authority", []
+    if any(value <= 0 for value in boundaries.values()):
+        errors.append(
+            f"{shown(active_path, root)}: governed artifact byte boundaries "
+            "must be positive"
+        )
+        return "invalid-authority", []
+
+    tree = checked_tree or checked_tree_label(root)
+    architecture_path = root / "ARCHITECTURE.md"
+    architecture_text = (
+        architecture_path.read_text() if architecture_path.is_file() else ""
+    )
+    states: list[str] = []
+    reports: list[str] = []
+    for relative, boundary_bytes in boundaries.items():
+        heading, subject_header, subject_prefix, expected_trigger = (
+            GOVERNED_ARTIFACT_ROW_SPECS[relative]
+        )
+        row_path = active_path if heading == DEFERRED_HEADING else architecture_path
+        row_text = active_text if heading == DEFERRED_HEADING else architecture_text
+        row = governed_trigger_row(
+            row_path,
+            row_text,
+            heading,
+            subject_header,
+            subject_prefix,
+            root,
+            errors,
+        )
+        if row is None:
+            states.append("invalid-row")
+            continue
+        trigger, measured = row
+        if trigger.casefold() != expected_trigger.casefold():
+            errors.append(
+                f"{shown(row_path, root)}: governed trigger row "
+                f"{subject_prefix!r} must reference its single machine "
+                "artifact byte-boundary authority instead of restating it"
+            )
+
+        artifact = root / relative
+        if not artifact.is_file():
+            errors.append(
+                f"{shown(artifact, root)}: governed artifact is not a file"
+            )
+            states.append("missing-artifact")
+            continue
+        measured_bytes = artifact.stat().st_size
+        state = "bound"
+        # Invariant R12 control site: governed artifact byte boundary.
+        if measured_bytes >= boundary_bytes:
+            valid_dates = [
+                raw
+                for raw in ISO_DATE_TOKEN_RE.findall(measured)
+                if valid_iso_date(raw)
+            ]
+            if (
+                not valid_dates
+                or TRIGGER_FIRED_DISPOSITION_RE.search(measured) is None
+            ):
+                errors.append(
+                    f"{shown(artifact, root)}: measured {measured_bytes} bytes "
+                    f"at checked_tree={tree}, meeting or exceeding governed "
+                    f"boundary {boundary_bytes}; row {subject_prefix!r} "
+                    "requires a dated 'trigger-fired disposition:'"
+                )
+                state = "trigger-fired-undisposed"
+            else:
+                state = "trigger-fired-disposed"
+        states.append(state)
+        timing = (
+            "out-of-scope"
+            if relative == "config/protected-artifacts.json"
+            else "not-applicable"
+        )
+        reports.append(
+            f"artifact-boundary: path={relative} bytes={measured_bytes} "
+            f"boundary={boundary_bytes} state={state} checked_tree={tree} "
+            f"timing={timing}"
+        )
+    overall = (
+        "bound"
+        if states and all(state == "bound" for state in states)
+        else ",".join(states)
+    )
+    return overall, reports
 
 
 def governed_export_row_value(
@@ -2303,6 +2575,8 @@ def run(
     execution_files = execution_runbooks(root)
     active_state = "missing"
     governed_export_state = "not-applicable"
+    artifact_boundary_state = "not-applicable"
+    artifact_boundary_reports: list[str] = []
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         architecture_trigger_rows = 0
@@ -2395,6 +2669,18 @@ def run(
             )
         if (
             declared_scope_cycle_version(identity.name)
+            >= ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY
+        ):
+            artifact_boundary_state, artifact_boundary_reports = (
+                check_governed_artifact_byte_boundaries(
+                    identity.runbook,
+                    active_text,
+                    root,
+                    errors,
+                )
+            )
+        if (
+            declared_scope_cycle_version(identity.name)
             >= GOVERNED_EXPORT_FORWARD_BOUNDARY
         ):
             architecture_path = root / "ARCHITECTURE.md"
@@ -2468,6 +2754,9 @@ def run(
             f"inputs omit declared {shown(identity.progress, root)}"
         )
 
+    for report in artifact_boundary_reports:
+        print(f"cycle-check: {report}")
+
     if errors:
         for error in errors:
             print(f"cycle-check: ERROR: {error}", file=sys.stderr)
@@ -2483,6 +2772,7 @@ def run(
         f"local_tag_refs={'verified' if verify_local_tag_refs else 'not-requested'}, "
         f"runbook={shown(identity.runbook, root)}, "
         f"progress={shown(identity.progress, root)}, "
+        f"artifact_boundaries={artifact_boundary_state}, "
         f"governed_export={governed_export_state}, "
         f"closed_execution={closed}, historical={len(plain_task_files)})"
     )

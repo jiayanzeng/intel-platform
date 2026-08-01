@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; E0 re-established the entering state and settled G1–G6.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 58 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **325**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **325**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. `STATE.md` itself measured **324,290 bytes**, leaving **129,451 bytes / 3.68 cycles** at the latest +35,173-byte/cycle denominator and making it the nearest governed byte boundary. Checklist evidence remains **247 checked / 3 retracted / 247 matched / 247 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.32 is open; Step 2 makes both in-repository byte boundaries executable under the operator-selected reported-crossing disposition.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. The complete local entry point passed **20/20** jobs with warning-denied **146** workspace tests plus the focused SEC identity diagnostic and **62** net tests (**32** `intel-ingest`, including three replay tests, + **30** `cored`), locked Rust 1.78, clean rustc/clippy/fmt/ShellCheck, registered `invariant-scan` **12 rules / 59 controls**, and golden **11/11**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **330**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived equivalent populations at **330**. Independent remote inspection confirms published v0.17.1 identity. The unchanged manifest remains **331** pins / **191,395 bytes**, both protected databases match, and two complete verification runs took **0.17 s / 0.10 s real**. Exact activation-audit tree `7ba89795403b2b8fab84ff53abeba6ad4a220d23` produced a **2,617,984-byte / 153-file** review export, leaving **382,016 bytes / 12.73%** beneath the **3,000,000-byte** ceiling and retaining exactly v0.30–v0.32; the real lifecycle entry point reports governed state `exempt-open-empty-progress`. The lifecycle checker now reads `STATE.md` and `config/protected-artifacts.json` directly and reports both below their single governed authorities; the manifest timing clause is explicitly out of scope for this byte control. The latest complete checklist measurement is **248 checked / 3 retracted / 248 matched / 248 commits resolved**. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, or public response/value-domain state changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -140,6 +140,65 @@ that construction and was `not measured`, not a prediction mismatch. No
 publisher request, scheduled process, service, or model-profile command ran;
 port 8788 had no listener. Direct remote query found neither historical
 `v0.8.0` nor `v0.10.2` tag.
+
+**v0.32 Step 2 — governed artifact byte boundaries (measured 2026-08-01).**
+The operator selected crossing as a named reported state requiring a dated
+disposition. The active runbook now contains the single machine-readable
+authority for both governed paths: `STATE.md` at 453,741 bytes and
+`config/protected-artifacts.json` at 1,048,576 bytes. The current governed rows
+refer to that authority and no longer restate either numeric boundary;
+historical measurements remain dated evidence, not live declarations.
+
+The preimplementation rejection proof used committed construction
+`43945ffdb958fcebcfe44141758f99725dd7f2f2` with both boundaries set to one
+byte. The old real `./run cycle-check` still returned `PASS`, proving that it
+read neither artifact for this purpose. After implementation, the real entry
+point read the files directly and reported this below-boundary state against
+the named worktree/tree reference:
+
+```text
+cycle-check: artifact-boundary: path=STATE.md bytes=332554 boundary=453741 state=bound checked_tree=worktree-over-HEAD-tree:f399244157fd5dba99f6c72e50b6d5c2c99305b6 timing=not-applicable
+cycle-check: artifact-boundary: path=config/protected-artifacts.json bytes=191395 boundary=1048576 state=bound checked_tree=worktree-over-HEAD-tree:f399244157fd5dba99f6c72e50b6d5c2c99305b6 timing=out-of-scope
+```
+
+The rejection was demonstrated before acceptance. With both authorities
+temporarily set to one byte and neither governed row disposed, the same real
+entry point rejected both artifacts:
+
+```text
+cycle-check: ERROR: STATE.md: measured 332554 bytes at checked_tree=worktree-over-HEAD-tree:f399244157fd5dba99f6c72e50b6d5c2c99305b6, meeting or exceeding governed boundary 1; row 'Second STATE.md archival' requires a dated 'trigger-fired disposition:'
+cycle-check: ERROR: config/protected-artifacts.json: measured 191395 bytes at checked_tree=worktree-over-HEAD-tree:f399244157fd5dba99f6c72e50b6d5c2c99305b6, meeting or exceeding governed boundary 1; row 'protected evidence-manifest growth' requires a dated 'trigger-fired disposition:'
+cycle-check: FAIL (2 defect(s))
+```
+
+Adding explicit dated `trigger-fired disposition:` text to both governed rows
+made that same crossed construction pass while reporting
+`trigger-fired-disposed` for each artifact. Both constructions were then
+restored; the committed manifest bytes were never edited. Focused lifecycle
+tests passed **70/70**, including below-boundary, duplicate-authority,
+missing-row, crossed-undisposed, and crossed-disposed cases. The constrained
+Python 3.11.4 and 3.12.13 suites each reported `collected=330`, `passed=330`,
+`failed=0`, and `skipped=[]`; the machine comparator derived
+`equivalent=true` and `equivalent_passed=330`. An earlier sandboxed 3.11 run
+could not bind loopback servers or execute `ps` and was `not measured`; the
+exact permission-enabled rerun is the passing result.
+
+Registered R12 now plants the one-byte crossed-undisposed construction. The
+real self-test passed **12/12 rules / 59 controls**. Nine existing
+`expected_line` values shifted and were re-derived from the emitted production
+locations; the new control resolves to `tools/cycle_check.py:2016`. The change
+adds no archive, manifest edit, dependency, production source, or local/hosted
+lane job. The manifest timing trigger remains governed by its dated row and is
+explicitly outside this byte check's scope.
+
+After the code, tests, live rows, and State record were present, the complete
+`./run ci-local` entry point passed all **20/20** jobs. Its measurements include
+warning-denied **146** workspace tests, **32** net ingest tests plus **30** net
+`cored` tests, clean clippy/fmt/ShellCheck, locked Rust 1.78, shell **330/330**,
+registered self-test **12 rules / 59 controls**, protected artifacts exact, and
+embedded golden **11/11**. The standalone post-task `./run golden` also passed
+the same **11/11** assertions with no document, id, distance, signal, citation,
+license, or entitlement delta.
 
 **v0.31 R-CLOSE publishes the authenticated v0.17.1 correction under the
 two-commit tagged-close protocol (operator authorization and measurement

@@ -4,6 +4,8 @@
 
 Step 1 — G1–G6 measured, entering state rebuilt, and completion checked — 2026-08-01
 
+Step 2 — reported crossing selected; byte authorities, direct measurement, dated disposition, and R12 rejection control implemented; completion checked — 2026-08-01
+
 **Three reviewer errors, all mine, recorded before anything else.**
 
 1. **v0.31 Step 4 asked for a partition over "every tracked file containing a
@@ -44,7 +46,7 @@ what the repository *says* rather than what it *is*.
 | governed quantity | how it is available | what v0.31 does | consequence |
 |---|---|---|---|
 | `STATE.md` archival boundary | **the file's own byte count** | a hand-written figure in a prose cell | the nearest trigger of all is measured by nobody |
-| protected-manifest 1 MiB bound | **the file's own byte count** | a hand-written figure in a prose cell | same shape, more headroom |
+| protected-manifest byte bound | **the file's own byte count** | a hand-written figure in a prose cell | same shape, more headroom |
 | review-export ceiling | not in-repo; the export is generated | written figure bound to the ceiling, **bound disclosed** | correct — this one is honest |
 | Rust floor across tracked files | the tracked files themselves | read through a window cut to the shape of the right answer | a wrong floor is invisible |
 | release version restatements | the tracked files themselves | five names written by hand | a sixth restatement drifts silently |
@@ -146,7 +148,7 @@ E0 disagrees, E0 is right.**
   and **62** net (**32 ingest + 30 cored**); shell **325** collected / **325**
   passed / **0** skipped on both constrained lanes.
 - Manifest unchanged: **331** pins, **191,395** bytes *(export-derived)*, **2**
-  artifacts, schema 2, **857,181** bytes to 1 MiB.
+  artifacts, schema 2, **857,181** bytes to its governed boundary.
 - **The delivered review export is 2,654,404 bytes across 153 files** — exact,
   because it is the export file's own size. That is **88.48%** of the
   3,000,000-byte ceiling and **345,596** bytes of headroom.
@@ -158,7 +160,7 @@ E0 disagrees, E0 is right.**
   trailing newlines. **That post-push delta is a second post-closing movement
   and no field names it.** G5 owns what that means.
 - `STATE.md` is **324,290** bytes *(export-derived)* against the recorded
-  **453,741**-byte archival boundary, leaving **129,451**. Cycle growth was
+  governed archival boundary, leaving **129,451**. Cycle growth was
   289,117 → 324,290 = **+35,173**, so the boundary is **3.68 cycles** away at
   that denominator — **nearer than it was last cycle, and the estimate got
   worse, not better.**
@@ -323,6 +325,11 @@ audit total must not fall. The export must stay under 3,000,000 bytes at every
 measured point, and **every export figure recorded must name the tree it was
 measured on.**
 
+### Governed artifact byte-boundary authority
+
+- governed artifact byte boundary: path=`STATE.md`; bytes=`453741`
+- governed artifact byte boundary: path=`config/protected-artifacts.json`; bytes=`1048576`
+
 ---
 
 ## Deferred means deferred
@@ -343,11 +350,11 @@ measured on.**
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.32 · 2026-08-01 — configuration still names the existing two network sources and no compliance review or admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.32 · 2026-08-01 — direct remote query found neither historical tag and no historical ref was created, moved, or deleted; trigger did not fire | none — no historical ref touched |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.32 · 2026-08-01 — both required remote tags remain absent and no hosted full-history run without the flag exists; trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | 1 MiB manifest, or two consecutive `verify-artifacts` runs ≥1.00 s | v0.32 · 2026-08-01 — direct byte count is 191,395 with 857,181 bytes of margin; two complete verification runs took 0.17 s and 0.10 s, so neither trigger fired | Step 2 — measured directly rather than restated; no registration |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.32 · 2026-08-01 — the lifecycle checker read 191,395 bytes directly, reported `bound` with 857,181 bytes of margin, and explicitly reported timing `out-of-scope`; the separately measured complete verification times remain 0.17 s and 0.10 s, so neither trigger fired | Step 2 — measured directly rather than restated; no registration |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.32 · 2026-08-01 — declared scope forbids `shell/**` and activation changed no shell source; trigger did not fire | none — recorded, not acted on |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.32 · 2026-08-01 — no such operator decision was supplied; the public value-domain criterion remains prose-adjudicated and the trigger did not fire | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches 453,741 bytes | v0.32 · 2026-08-01 — direct count is 324,290 bytes with 129,451 bytes remaining; at the latest +35,173-byte/cycle denominator that is 3.68 cycles, down from v0.31 activation's 5.19-cycle estimate. This is the nearest governed boundary; neither clause fired | Step 2 — measured directly; boundary made executable; no archive |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.32 · 2026-08-01 — activation changed no control schema and re-derived zero shifted `expected_line` values; zero does not exceed the controls protected, so the trigger did not fire | Step 2, Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.32 · 2026-08-01 — the lifecycle checker read 336,654 bytes directly and reported `bound`, leaving 117,087 bytes; at the latest +35,173-byte/cycle denominator that is 3.33 cycles, down from v0.31 activation's 5.19-cycle estimate. This remains the nearest governed boundary; neither clause fired | Step 2 — measured directly; boundary made executable; no archive |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.32 · 2026-08-01 — Step 2 added one R12 control, so the control-schema trigger fired; all nine shifted existing `expected_line` values were re-derived from real self-test output and remain fewer than the 59 controls protected | Step 2, Step 3, Step 4, and Step 5 — shifted values re-derived and counted |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.32 · 2026-08-01 — active v0.32 still matches `v0.<n>`, so the first clause did not fire. The tracked retained-set binding supersedes silent under-exclusion in the production entry point; the cross-family parse limitation remains, while fallback-only constructions remain separately recorded below | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles, or acquires any public-surface change | v0.32 · 2026-08-01 — the trigger fired at v0.31 and was disposed by v0.17.1 publication; no new runtime or public-surface difference exists. The trigger defines no restart point, and exhaustive search confirms neither firing nor reset is executable; both remain operator adjudications pending Step 5 | Step 5 — reset semantics settled or recorded as unsettleable |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.32 · 2026-08-01 — a tracked planted `wrong-floor.md` containing `offline needs >= 1.75` produced `wrong_floor_rows: []`, `wrong_floor_occurrences: 0`, and `version-check: PASS`; value closure is therefore unmeasured although the live tree contains no new wrong restatement | Step 3 — detector domain widened or its closure bound named |
@@ -430,8 +437,8 @@ executable means deciding what a crossing does. Two outcomes, neither defaulted:
 
 - **Crossing is an error.** `cycle-check` fails once the measured size reaches
   the boundary, and the lane stays red until an archive lands. This is what a
-  trigger is for, and it means **the lifecycle blocks itself at 453,741 bytes
-  with no archive step currently scheduled.** Choose this only having accepted
+  trigger is for, and it means **the lifecycle blocks itself at the governed
+  boundary with no archive step currently scheduled.** Choose this only having accepted
   that consequence.
 - **Crossing is a named reported state requiring a dated disposition.** The
   check measures and reports; below the boundary it reports a bound state, at or
@@ -439,6 +446,11 @@ executable means deciding what a crossing does. Two outcomes, neither defaulted:
   trigger-fired disposition and fails only if that is absent. **This keeps the
   lane green while the operator decides, and it makes firing visible rather than
   optional.**
+
+**Operator decision — 2026-08-01.** The operator selected the named reported
+state. A crossing requires a dated `trigger-fired disposition:` in its governed
+row; with that disposition the lifecycle reports the crossing and remains
+green.
 
 The second outcome is the one that composes with Step 5; the first is the one
 that cannot be ignored. **Neither is recommended here** — the reason to choose
@@ -471,7 +483,7 @@ budget, and that is not a reviewer's call.
 **Done when** neither boundary can be misstated in a governed row without a
 lane noticing, demonstrated by execution rather than by argument.
 
-- [ ] **BOUNDARY-MEASURE**
+- [x] **BOUNDARY-MEASURE**
 
 ---
 
@@ -801,7 +813,8 @@ v0.31 sections.
 size **2,654,404** bytes and **153** files, exact; `STATE.md` at **324,289**
 export bytes and `config/protected-artifacts.json` at **191,394**, each one
 below its repository value under the one-byte-per-file rule, giving **324,290**
-against the 453,741 boundary and **191,395** against 1 MiB;
+against its governed boundary and **191,395** against the manifest's governed
+boundary;
 `docs/cycles/PROGRESS-v0.31.md` at **35,292** export bytes with its POST-PUSH
 entry at **2,727** and the `STATE.md` post-push block at **2,572**, whose sum of
 **5,299** plus two stripped newlines reconciles the delivered export against the

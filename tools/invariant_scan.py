@@ -1633,6 +1633,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "governed-export-ceiling": (
         "Invariant R12 control site: governed written-figure export ceiling."
     ),
+    "artifact-byte-boundary": (
+        "Invariant R12 control site: governed artifact byte boundary."
+    ),
     "cycle-ending-export-audit": (
         "Invariant R12 control site: cycle-ending review-export audit ordering."
     ),
@@ -2465,6 +2468,61 @@ def r12_findings(root: Path) -> list[str]:
                 "written-figure-over-ceiling"
             )
 
+        boundary_cycle = "v" + ".".join(
+            str(part)
+            for part in cycle_check.ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY
+        )
+        boundary_runbook = (
+            "# Boundary control\n\n"
+            "- governed artifact byte boundary: path=`STATE.md`; bytes=`1`\n"
+            "- governed artifact byte boundary: "
+            "path=`config/protected-artifacts.json`; bytes=`1`\n\n"
+            "## Deferred means deferred\n\n"
+            "| Deferred item | Unchanged trigger | measured observation |\n"
+            "|---|---|---|\n"
+            "| Second `STATE.md` archival | the export ceiling trigger fires, "
+            "or `STATE.md` reaches its governed artifact byte boundary | "
+            f"{boundary_cycle} · 2026-08-01 — measured |\n"
+        )
+        boundary_architecture = (
+            "# Architecture\n\n"
+            "### Dated operational-residual dispositions\n\n"
+            "| subject | disposition | trigger | measured observation |\n"
+            "|---|---|---|---|\n"
+            "| protected evidence-manifest growth | accepted | the manifest "
+            "reaches its governed artifact byte boundary, or two consecutive "
+            "clean `./run verify-artifacts` runs each take ≥1.00 s real | "
+            f"{boundary_cycle} · 2026-08-01 — measured |\n"
+        )
+        boundary_fixture = fixture / "artifact-byte-boundary"
+        (boundary_fixture / "config").mkdir(parents=True)
+        (boundary_fixture / "STATE.md").write_text("crossed\n")
+        (boundary_fixture / "config/protected-artifacts.json").write_text(
+            "{}\n"
+        )
+        (boundary_fixture / "ARCHITECTURE.md").write_text(
+            boundary_architecture
+        )
+        boundary_active = (
+            boundary_fixture / f"TASKS-{boundary_cycle}-EXECUTION.md"
+        )
+        boundary_active.write_text(boundary_runbook)
+        errors = []
+        cycle_check.check_governed_artifact_byte_boundaries(
+            boundary_active,
+            boundary_runbook,
+            boundary_fixture,
+            errors,
+            checked_tree="planted-tree",
+        )
+        if not any(
+            "requires a dated 'trigger-fired disposition:'" in error
+            for error in errors
+        ):
+            missed.setdefault("artifact-byte-boundary", []).append(
+                "crossed-boundary-without-disposition"
+            )
+
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
@@ -2693,6 +2751,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "governed-export-margin planted controls"
         elif group == "governed-export-ceiling":
             finding_kind = "governed-export-ceiling planted controls"
+        elif group == "artifact-byte-boundary":
+            finding_kind = "artifact-byte-boundary planted controls"
         elif group == "cycle-ending-export-audit":
             finding_kind = "cycle-ending-export-audit planted controls"
         else:
