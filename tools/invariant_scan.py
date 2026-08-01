@@ -1651,6 +1651,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "governed-export-margin-kind": (
         "Invariant R12 control site: governed review-export same-kind margin."
     ),
+    "state-region-contract": (
+        "Invariant R12 control site: State archival permanent-tail boundary."
+    ),
     "governed-export-ceiling": (
         "Invariant R12 control site: governed written-figure export ceiling."
     ),
@@ -1825,6 +1828,55 @@ def _governed_margin_entry_output(root: Path, cycle_check) -> tuple[int, str]:
         result = (status, output.getvalue())
 
     _R12_GOVERNED_MARGIN_ENTRY_CACHE[key] = result
+    return result
+
+
+_R12_STATE_REGION_ENTRY_CACHE: dict[str, tuple[int, str]] = {}
+
+
+def _state_region_entry_output(root: Path, cycle_check) -> tuple[int, str]:
+    """Remove the permanent-tail marker and exercise cycle_check.run."""
+    cycle_source = (root / "tools" / "cycle_check.py").read_text()
+    marker = (
+        "    # Invariant R12 control site: State archival permanent-tail "
+        "boundary."
+    )
+    start = cycle_source.index(marker)
+    end = cycle_source.index("\n\ndef governed_export_row_value", start)
+    state_text = (root / "STATE.md").read_text()
+    if state_text.count(cycle_check.STATE_PERMANENT_TAIL_MARKER) != 1:
+        raise ConfigError(
+            "STATE.md: region control requires one baseline permanent-tail "
+            "marker"
+        )
+    key = cycle_source[start:end] + "\0" + state_text
+    cached = _R12_STATE_REGION_ENTRY_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    with tempfile.TemporaryDirectory(
+        prefix="invariant-scan-R12-state-region-entry-"
+    ) as raw:
+        fixture = Path(raw) / "tree"
+        _copy_tracked_tree(root, fixture)
+        (fixture / "STATE.md").write_text(
+            state_text.replace(
+                cycle_check.STATE_PERMANENT_TAIL_MARKER + "\n",
+                "",
+                1,
+            )
+        )
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(
+            output
+        ):
+            status = cycle_check.run(
+                fixture,
+                verify_local_tag_refs=False,
+            )
+        result = (status, output.getvalue())
+
+    _R12_STATE_REGION_ENTRY_CACHE[key] = result
     return result
 
 
@@ -2174,6 +2226,19 @@ def r12_findings(root: Path) -> list[str]:
     ):
         missed.setdefault("governed-export-margin-kind", []).append(
             "mixed-kind-export-row"
+        )
+
+    region_status, region_output = _state_region_entry_output(
+        root,
+        cycle_check,
+    )
+    if (
+        region_status == 0
+        or "State archival permanent-tail marker required exactly once"
+        not in region_output
+    ):
+        missed.setdefault("state-region-contract", []).append(
+            "missing-permanent-tail-marker"
         )
 
     with tempfile.TemporaryDirectory(prefix="invariant-scan-R12-status-") as raw:
@@ -3040,6 +3105,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "governed-export-margin planted controls"
         elif group == "governed-export-margin-kind":
             finding_kind = "governed-export-margin-kind planted controls"
+        elif group == "state-region-contract":
+            finding_kind = "state-region-contract planted controls"
         elif group == "governed-export-ceiling":
             finding_kind = "governed-export-ceiling planted controls"
         elif group == "artifact-byte-boundary":

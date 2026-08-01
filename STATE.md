@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 3 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete Step 3 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 66 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **342**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=342`, `equivalent=true`, and `equivalent_passed=342` across the two lanes. The last fully matched checklist measurement, taken with the Step 3 box still open as required, is **256 checked / 3 retracted / 256 matched / 256 commits resolved**, including E0 and Step 2 and correcting the v0.32 header's stale 253 figure. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its executable governed→governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, manifest, protected byte, public response/value-domain state, or publication ref changed through Step 3.
+**As of:** 2026-08-01 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.33 Step 4 is green; published v0.17.1 remains current and every post-release commit remains intentionally unpublished.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; direct remote inspection at v0.33 activation resolved `main` and peeled `v0.17.1` to closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag ref to object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The complete Step 4 local entry point passed **20/20**, including warning-denied Rust and net lanes, registered `invariant-scan` **12 rules / 67 controls**, Python 3.11.4, and golden **11/11**. Local constrained Python 3.11.4 and 3.12.13 each collected/passed **345**, failed **0**, and skipped **0** with the same one accepted `StarletteDeprecationWarning`; `tools/test_population.py` derived `collected=345`, `equivalent=true`, and `equivalent_passed=345` across the two lanes. The last fully matched checklist measurement, taken with the Step 4 box still open as required, is **257 checked / 3 retracted / 257 matched / 257 commits resolved**. The unchanged manifest remains **331 pins / 191,395 bytes**; both protected databases matched in two complete v0.33 entering verifications taking **0.09 s / 0.10 s real**. The last governed review export remains **2,706,393 bytes / 153 files**, leaving **293,607 bytes / 9.79%** beneath the **3,000,000-byte** ceiling; its executable governed→governed denominator is **77,014 bytes/cycle**, leaving **3.81 cycles**, not the historically recorded mixed-kind 5.65 estimate. No production source, workflow, dependency, schema, publisher, scheduler, service, model profile, manifest, protected byte, archive byte, public response/value-domain state, or publication ref changed through Step 4.
 
 **v0.33 E0 entering-state reconstruction and G1–G6 dispositions (measured
 2026-08-01).** The sole pre-activation worktree item was the operator-supplied
@@ -244,6 +244,73 @@ correct, permitted repository command supplies the passing measurement. Golden
 passed **11/11**, delta **0**. No production source, workflow, dependency,
 schema, manifest, protected byte, public response/value-domain state,
 publication ref, publisher, scheduler, service, or model profile changed.
+
+**v0.33 Step 4 — State archival eligibility and external anchors are
+executable (measured 2026-08-01).** Before any archive byte moved, the live
+State acquired one structural permanent-tail marker. The lifecycle checker now
+derives the immutable header from the status paragraph, the eligible dated
+append from the bytes between that header and the marker, and the permanent
+numbered tail from the marker through EOF. It requires the marker exactly once,
+immediately before the first numbered top-level heading, forbids a numbered
+top-level heading in the eligible region, and derives headings and gaps without
+a hardcoded line, byte figure, or section-number list. With the task box open,
+the real entry point reported:
+
+```text
+cycle-check: state-region-contract: header_bytes=1933 eligible_bytes=322653 tail_bytes=43858 top_sections=1,2,4,5,6,7 numbering_gaps=3 referenced_sections=2,5,6,6b referenced_gaps=none reference_sites=.github/workflows/ci.yml:293=§6b,AGENTS.md:149=§6,ARCHITECTURE.md:6=§2,ARCHITECTURE.md:94=§2,ARCHITECTURE.md:500=§6,README.md:640=§6b,crates/compliance/Cargo.toml:7=§6,crates/compliance/src/lib.rs:24=§5,crates/compliance/src/lib.rs:897=§6,crates/ingest/src/arxiv_oai.rs:28=§5,rust-toolchain.toml:31=§5,tools/version_check.py:261=§5,tools/version_check.py:270=§5
+```
+
+Thus the tracked live inventory resolves every derived reference; `## 3.` is
+absent and is referenced by nothing. Cycle records, prior State archives, and
+test/control constructions are structurally excluded from this live inventory.
+The marker check delegates only the already-owned missing-restatement condition
+to `version-check`, so its permanent-tail floor is independently executable
+without duplicating the registered MSRV reader.
+
+The four required complete-entry-point constructions were first reproduced
+against Step 3. Before the fix, the over-cut and removed-restatement cases each
+made `version-check` reject with exactly:
+
+```text
+version-check: ERROR: STATE.md: current run-reference correction yielded zero extracted current restatements
+```
+
+while `cycle-check` passed both. Renaming `## 5.` and removing §1, §2, §4, §5,
+and §6 each made both `version-check` and `cycle-check` pass. After the fix, the
+over-cut retained the same sole `version-check` error and `cycle-check` passed
+with `state_regions=not-measured`; the removed-restatement construction retained
+the same sole error while `cycle-check` passed with `state_regions=bound`. No
+duplicate error was added to either existing rejection. Renaming `## 5.` kept
+`version-check: PASS (0.17.1)` and made the real lifecycle entry point emit:
+
+```text
+cycle-check: ERROR: STATE.md: external State section references do not resolve: crates/compliance/src/lib.rs:24=§5, crates/ingest/src/arxiv_oai.rs:28=§5, rust-toolchain.toml:31=§5, tools/version_check.py:261=§5, tools/version_check.py:270=§5
+cycle-check: FAIL (1 defect(s))
+```
+
+Removing §1, §2, §4, §5, and §6 kept `version-check: PASS (0.17.1)` and made
+the lifecycle entry point emit:
+
+```text
+cycle-check: ERROR: STATE.md: State archival permanent-tail marker required exactly once; found 0
+cycle-check: FAIL (1 defect(s))
+```
+
+R12 removes the marker through the real lifecycle entry point and disables the
+new branch. Focused R12 self-test passed **39/39 controls** and the complete
+registry now passes **12 rules / 67 controls**. Mutation output re-derived
+**30 shifted existing `expected_line` values** plus the new State-region value
+at line **2213**; the shifted-existing count remains fewer than the 67 controls
+protected. Focused lifecycle tests passed **79/79** on Python 3.11.4. The
+complete entry point passed **20/20** with the task box open; constrained Python
+3.11.4 and 3.12.13 each collected/passed **345**, failed **0**, and skipped
+**0**, and the repository comparator emitted `collected=345`,
+`equivalent=true`, and `equivalent_passed=345`. Checklist audit remained fully
+matched at **257 / 3 / 257 / 257**. Golden passed **11/11**, delta **0**. No
+byte was written under `docs/state-archive/**`, and no production source,
+workflow, dependency, schema, manifest, protected byte, public
+response/value-domain state, publication ref, publisher, scheduler, service,
+or model profile changed.
 
 **v0.32 E0 entering-state reconstruction and gate dispositions (measured
 2026-08-01).** The worktree was clean apart from the operator-supplied untracked
@@ -5223,6 +5290,7 @@ or public surface changed.
 
 **Historical state appends through v0.21 are archived byte-for-byte at `docs/state-archive/STATE-through-v0.21.md`.**
 
+<!-- STATE_ARCHIVE_PERMANENT_TAIL:START -->
 ## 1. Architecture
 
 ```text

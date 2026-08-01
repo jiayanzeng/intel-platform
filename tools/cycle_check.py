@@ -32,6 +32,7 @@ from tools.export_check import (
     expected_retained_cycle_paths,
 )
 from tools.progress_check import default_progress_path
+from tools import version_check
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1560,6 +1561,7 @@ TRIGGER_IDENTITY_FORWARD_BOUNDARY = (0, 28)
 TRIGGER_FLOOR_FORWARD_BOUNDARY = (0, 28)
 GOVERNED_EXPORT_FORWARD_BOUNDARY = (0, 30)
 ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY = (0, 32)
+STATE_REGION_CONTRACT_FORWARD_BOUNDARY = (0, 33)
 FORWARD_BOUNDARY_RELATIONSHIPS = {
     "ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY": (
         ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
@@ -1575,6 +1577,11 @@ FORWARD_BOUNDARY_RELATIONSHIPS = {
         (),
         "Independent: declared-scope activation does not consume trigger "
         "table state.",
+    ),
+    "STATE_REGION_CONTRACT_FORWARD_BOUNDARY": (
+        ("ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY",),
+        "The State archival-region contract consumes the already-governed "
+        "State artifact and adds structural eligibility and reference binding.",
     ),
     "TRIGGER_FRESHNESS_FORWARD_BOUNDARY": (
         (),
@@ -1627,6 +1634,15 @@ GOVERNED_ARTIFACT_BOUNDARY_RE = re.compile(
 )
 TRIGGER_FIRED_DISPOSITION_RE = re.compile(
     r"\btrigger-fired disposition:\s*(?!none(?:\b|$))[^.;|]+",
+    re.IGNORECASE,
+)
+STATE_PERMANENT_TAIL_MARKER = "<!-- STATE_ARCHIVE_PERMANENT_TAIL:START -->"
+STATE_NUMBERED_HEADING_RE = re.compile(
+    r"^(?P<level>##|###) (?P<section>[1-9][0-9]*[a-z]?)\.",
+    re.MULTILINE,
+)
+STATE_SECTION_REFERENCE_RE = re.compile(
+    r"\bSTATE(?:\.md)?\s+§(?P<section>[1-9][0-9]*[a-z]?)\b",
     re.IGNORECASE,
 )
 GOVERNED_ARTIFACT_ROW_SPECS = {
@@ -2106,6 +2122,195 @@ def check_governed_artifact_byte_boundaries(
         else ",".join(states)
     )
     return overall, reports
+
+
+def state_region_tracked_paths(root: Path) -> list[Path]:
+    """Return live tracked files, excluding historical cycle/archive records."""
+    listed = git_output(root, "ls-files")
+    if listed is None:
+        candidates = [path for path in root.rglob("*") if path.is_file()]
+    else:
+        candidates = [root / relative for relative in listed.splitlines()]
+    historical = {
+        path.resolve()
+        for path in (*task_documents(root), *progress_records(root))
+    }
+    return [
+        path
+        for path in candidates
+        if (
+            path.resolve() not in historical
+            and path.name != "STATE.md"
+            and "tests" not in path.resolve().relative_to(root.resolve()).parts
+            and not path.name.startswith("test_")
+        )
+        and not (
+            len(path.resolve().relative_to(root.resolve()).parts) >= 2
+            and path.resolve().relative_to(root.resolve()).parts[:2]
+            == ("docs", "state-archive")
+        )
+    ]
+
+
+def state_region_reference_inventory(
+    root: Path,
+) -> list[tuple[str, int, str]]:
+    """Derive live external State section references from tracked text."""
+    inventory: list[tuple[str, int, str]] = []
+    for path in state_region_tracked_paths(root):
+        try:
+            text = path.read_text()
+        except (OSError, UnicodeDecodeError):
+            continue
+        relative = shown(path, root)
+        for match in STATE_SECTION_REFERENCE_RE.finditer(text):
+            inventory.append(
+                (
+                    relative,
+                    text.count("\n", 0, match.start()) + 1,
+                    match.group("section").casefold(),
+                )
+            )
+    return sorted(inventory)
+
+
+def state_has_registered_current_restatement(
+    root: Path,
+    state_text: str,
+) -> bool:
+    """Delegate the current State restatement decision to version_check."""
+    try:
+        version_check.offline_msrv_report(
+            root,
+            text_overrides={"STATE.md": state_text},
+        )
+    except (OSError, ValueError) as error:
+        return (
+            "STATE.md: current run-reference correction yielded zero "
+            "extracted current restatements"
+        ) not in str(error)
+    return True
+
+
+def check_state_archival_region_contract(
+    state_path: Path,
+    state_text: str,
+    root: Path,
+    errors: list[str],
+) -> str | None:
+    """Derive and enforce State's header, movable append, and permanent tail."""
+    header = STATE_HEADER_RE.search(state_text)
+    if header is None:
+        return None
+    header_end = header.end()
+    if state_text[header_end:].startswith("\n\n"):
+        header_end += 2
+
+    headings = list(STATE_NUMBERED_HEADING_RE.finditer(state_text))
+    top_headings = [match for match in headings if match.group("level") == "##"]
+    marker_matches = list(re.finditer(re.escape(STATE_PERMANENT_TAIL_MARKER), state_text))
+    has_restatement = state_has_registered_current_restatement(root, state_text)
+    # Invariant R12 control site: State archival permanent-tail boundary.
+    if len(marker_matches) != 1 and has_restatement:
+        errors.append(
+            f"{shown(state_path, root)}: State archival permanent-tail marker "
+            f"required exactly once; found {len(marker_matches)}"
+        )
+        return None
+    if not marker_matches:
+        if not top_headings:
+            return None
+        tail_start = top_headings[0].start()
+        marker_end = tail_start
+    else:
+        tail_start = marker_matches[0].start()
+        marker_end = marker_matches[0].end()
+
+    tail_top_headings = [
+        match for match in top_headings if match.start() >= marker_end
+    ]
+    if not tail_top_headings:
+        errors.append(
+            f"{shown(state_path, root)}: State permanent tail has no numbered "
+            "top-level heading after its marker"
+        )
+        return None
+    first_top = tail_top_headings[0]
+    if state_text[marker_end:first_top.start()].strip():
+        errors.append(
+            f"{shown(state_path, root)}: State permanent-tail marker must "
+            "immediately precede its first numbered top-level heading"
+        )
+        return None
+    if any(match.start() < tail_start for match in top_headings):
+        errors.append(
+            f"{shown(state_path, root)}: numbered State top-level heading "
+            "appears in the archival-eligible region"
+        )
+        return None
+    if header_end >= tail_start:
+        errors.append(
+            f"{shown(state_path, root)}: State archival regions overlap or "
+            "leave no eligible dated-append region"
+        )
+        return None
+
+    anchors = [
+        match.group("section").casefold()
+        for match in headings
+        if match.start() >= marker_end
+    ]
+    duplicate_anchors = sorted(
+        anchor for anchor in set(anchors) if anchors.count(anchor) > 1
+    )
+    if duplicate_anchors:
+        errors.append(
+            f"{shown(state_path, root)}: duplicate permanent State section "
+            f"anchors: {','.join(duplicate_anchors)}"
+        )
+        return None
+    inventory = state_region_reference_inventory(root)
+    missing = [
+        f"{path}:{line}=§{section}"
+        for path, line, section in inventory
+        if section not in anchors
+    ]
+    if missing:
+        errors.append(
+            f"{shown(state_path, root)}: external State section references "
+            f"do not resolve: {', '.join(missing)}"
+        )
+        return None
+
+    top_numbers = [int(match.group("section")) for match in tail_top_headings]
+    if top_numbers != sorted(set(top_numbers)):
+        errors.append(
+            f"{shown(state_path, root)}: permanent State top-level section "
+            "ordinals must be unique and increasing"
+        )
+        return None
+    numbering_gaps = sorted(
+        set(range(top_numbers[0], top_numbers[-1] + 1)) - set(top_numbers)
+    )
+    referenced = sorted({section for _path, _line, section in inventory})
+    referenced_gaps = [
+        str(gap) for gap in numbering_gaps if str(gap) in referenced
+    ]
+    sites = ",".join(
+        f"{path}:{line}=§{section}"
+        for path, line, section in inventory
+    ) or "none"
+    return (
+        "state-region-contract: "
+        f"header_bytes={len(state_text[:header_end].encode())} "
+        f"eligible_bytes={len(state_text[header_end:tail_start].encode())} "
+        f"tail_bytes={len(state_text[tail_start:].encode())} "
+        f"top_sections={','.join(str(number) for number in top_numbers)} "
+        f"numbering_gaps={','.join(str(gap) for gap in numbering_gaps) or 'none'} "
+        f"referenced_sections={','.join(referenced) or 'none'} "
+        f"referenced_gaps={','.join(referenced_gaps) or 'none'} "
+        f"reference_sites={sites}"
+    )
 
 
 def governed_export_row_value(
@@ -2773,6 +2978,7 @@ def run(
     governed_export_state = "not-applicable"
     artifact_boundary_state = "not-applicable"
     artifact_boundary_reports: list[str] = []
+    state_region_report: str | None = None
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         architecture_trigger_rows = 0
@@ -2877,6 +3083,17 @@ def run(
             )
         if (
             declared_scope_cycle_version(identity.name)
+            >= STATE_REGION_CONTRACT_FORWARD_BOUNDARY
+        ):
+            state_path = root / "STATE.md"
+            state_region_report = check_state_archival_region_contract(
+                state_path,
+                state_path.read_text() if state_path.is_file() else "",
+                root,
+                errors,
+            )
+        if (
+            declared_scope_cycle_version(identity.name)
             >= GOVERNED_EXPORT_FORWARD_BOUNDARY
         ):
             architecture_path = root / "ARCHITECTURE.md"
@@ -2963,6 +3180,8 @@ def run(
 
     for report in artifact_boundary_reports:
         print(f"cycle-check: {report}")
+    if state_region_report is not None:
+        print(f"cycle-check: {state_region_report}")
 
     if errors:
         for error in errors:
@@ -2980,6 +3199,7 @@ def run(
         f"runbook={shown(identity.runbook, root)}, "
         f"progress={shown(identity.progress, root)}, "
         f"artifact_boundaries={artifact_boundary_state}, "
+        f"state_regions={'bound' if state_region_report else 'not-measured'}, "
         f"governed_export={governed_export_state}, "
         f"closed_execution={closed}, historical={len(plain_task_files)})"
     )

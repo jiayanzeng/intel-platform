@@ -486,7 +486,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: absent-state-file",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 604
+          "expected_line": 605
         },
         {
           "file": "tools/cycle_check.py",
@@ -497,7 +497,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: absent-as-of-header",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 604
+          "expected_line": 605
         },
         {
           "file": "tools/cycle_check.py",
@@ -507,7 +507,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: unmatched-as-of-header",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 604
+          "expected_line": 605
         },
         {
           "file": "tools/cycle_check.py",
@@ -518,7 +518,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: absent-state-file, absent-as-of-header, unmatched-as-of-header",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 563
+          "expected_line": 564
         },
         {
           "file": "tools/cycle_check.py",
@@ -528,7 +528,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: prechange-active-tag-object",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 421
+          "expected_line": 422
         },
         {
           "file": "tools/cycle_check.py",
@@ -538,7 +538,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-type",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 287
+          "expected_line": 288
         },
         {
           "file": "tools/cycle_check.py",
@@ -548,7 +548,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tagged-closing-parent",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 316
+          "expected_line": 317
         },
         {
           "file": "tools/cycle_check.py",
@@ -558,7 +558,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tagged-closing-tree",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 330
+          "expected_line": 331
         },
         {
           "file": "tools/cycle_check.py",
@@ -568,7 +568,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: origin-main",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 650
+          "expected_line": 651
         },
         {
           "file": "tools/cycle_check.py",
@@ -581,7 +581,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-object-required, tag-object-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 763
+          "expected_line": 764
         },
         {
           "file": "tools/cycle_check.py",
@@ -594,7 +594,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-target-required, tag-target-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 763
+          "expected_line": 764
         },
         {
           "file": "tools/cycle_check.py",
@@ -607,7 +607,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: release-commit-required, release-commit-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 763
+          "expected_line": 764
         },
         {
           "file": "tools/cycle_check.py",
@@ -617,7 +617,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: pending-publication",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 741
+          "expected_line": 742
         },
         {
           "file": "tools/cycle_check.py",
@@ -627,7 +627,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-ref-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 660
+          "expected_line": 661
         },
         {
           "file": "tools/cycle_check.py",
@@ -637,7 +637,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-target-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 668
+          "expected_line": 669
         },
         {
           "file": "tools/cycle_check.py",
@@ -647,7 +647,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: ancestry-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 725
+          "expected_line": 726
         },
         {
           "file": "tools/cycle_check.py",
@@ -657,7 +657,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: post-push-required, post-push-date-invalid, post-push-object-freshness, post-push-target-freshness, post-push-run-required",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 795
+          "expected_line": 796
         },
         {
           "file": "tools/cycle_check.py",
@@ -667,7 +667,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: v0.22-release-paths",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1389
+          "expected_line": 1390
         },
         {
           "file": "tools/cycle_check.py",
@@ -677,7 +677,7 @@
           ],
           "expected_fail": "review-export-retention planted controls were not detected: stale-retention-pattern, skipped-cycle-retained-set",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1200
+          "expected_line": 1201
         },
         {
           "file": "tools/cycle_check.py",
@@ -687,7 +687,7 @@
           ],
           "expected_fail": "trigger-boundary-order planted controls were not detected: floor-before-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1665
+          "expected_line": 1681
         },
         {
           "file": "tools/cycle_check.py",
@@ -697,7 +697,7 @@
           ],
           "expected_fail": "trigger-boundary-order planted controls were not detected: unregistered-forward-boundary",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1665
+          "expected_line": 1681
         },
         {
           "file": "tools/version_check.py",
@@ -758,7 +758,7 @@
           ],
           "expected_fail": "governed-export-margin planted controls were not detected: superseded-export-figure",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2292
+          "expected_line": 2497
         },
         {
           "file": "tools/cycle_check.py",
@@ -768,7 +768,17 @@
           ],
           "expected_fail": "governed-export-margin-kind planted controls were not detected: mixed-kind-export-row",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2401
+          "expected_line": 2606
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if len(marker_matches) != 1 and has_restatement:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "state-region-contract planted controls were not detected: missing-permanent-tail-marker",
+          "expected_file": "tools/cycle_check.py",
+          "expected_line": 2213
         },
         {
           "file": "tools/cycle_check.py",
@@ -778,7 +788,7 @@
           ],
           "expected_fail": "governed-export-ceiling planted controls were not detected: written-figure-over-ceiling",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2248
+          "expected_line": 2453
         },
         {
           "file": "tools/cycle_check.py",
@@ -788,7 +798,7 @@
           ],
           "expected_fail": "artifact-byte-boundary planted controls were not detected: crossed-boundary-without-disposition",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2072
+          "expected_line": 2088
         },
         {
           "file": "tools/cycle_check.py",
@@ -799,7 +809,7 @@
           ],
           "expected_fail": "cycle-ending-export-audit planted controls were not detected: misordered-cycle-ending-audit",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2277
+          "expected_line": 2482
         },
         {
           "file": "tools/cycle_check.py",
@@ -809,7 +819,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date, header-only-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1811
+          "expected_line": 1827
         },
         {
           "file": "tools/cycle_check.py",
@@ -819,7 +829,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1811
+          "expected_line": 1827
         },
         {
           "file": "tools/cycle_check.py",
@@ -829,7 +839,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: stale-trigger-cycle-identity",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1811
+          "expected_line": 1827
         },
         {
           "file": "tools/cycle_check.py",
@@ -839,7 +849,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: silently-dropped-trigger-subject",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2612
+          "expected_line": 2817
         },
         {
           "file": "tools/test_population.py",

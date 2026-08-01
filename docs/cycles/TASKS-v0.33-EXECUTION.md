@@ -40,6 +40,8 @@ Step 2 — publication-status admission and newest-release selection completed �
 
 Step 3 — governed export margin bound to a same-kind progress series — 2026-08-01
 
+Step 4 — State archival-region and external-reference contract completed — 2026-08-01
+
 ---
 
 **Two reviewer errors, both mine, recorded before anything else.**
@@ -249,7 +251,7 @@ edited to match what happened.
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.33 · 2026-08-01 — release-authority precedence admits the unchanged version literal while no shell source or release value changed | none — `shell/intel_shell/**` is forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.33 · 2026-08-01 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | **Second `STATE.md` archival** | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.33 · 2026-08-01 — E0 measured `STATE.md` at 352,895 bytes and the last governed export at 2,706,393 bytes; neither clause fired, while the Option B counterfactual returns 178,125 bytes to each boundary | **Step 4 and Step 5 — execute ahead of the trigger under explicit operator authorization; the trigger text does not change** |
-| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — Step 2's control-schema trigger fired and emitted mutation output re-derived 25 shifted existing values plus four new admission/selector values. Step 3's schema change then re-derived 29 shifted existing values plus one new same-kind-margin value at line 2401. The latest shifted-existing count is fewer than the 66 registered controls protected | Step 2 and Step 3 — completed; count and re-derive from emitted output |
+| Planted-control line numbers re-derived by hand | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.33 · 2026-08-01 — Step 2's control-schema trigger fired and emitted mutation output re-derived 25 shifted existing values plus four new admission/selector values. Step 3's schema change then re-derived 29 shifted existing values plus one new same-kind-margin value at line 2401. Step 4's schema change re-derived 30 shifted existing values plus one new State-region value at line 2213. The latest shifted-existing count is fewer than the 67 registered controls protected | Step 2 and Step 3 and Step 4 — completed; count and re-derive from emitted output |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.33 · 2026-08-01 — v0.33 still matches `v0.<n>` and production uses the Git-derived tracked retained set; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.33 · 2026-08-01 — v0.17.1 publication reset the count to zero, and the v0.33 activation/E0 distance carries no runtime or public-surface change; no fresh count started | Step 7 — restate the epoch count under the v0.32 reset rule |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.33 · 2026-08-01 — contextual floor predicates found no unregistered live current restatement; trigger did not fire | none — completed control remains active |
@@ -486,7 +488,7 @@ line 5320. An over-cut stopping one line short would pass.
 **Done when** a proposed cut that would break a binding fails a check instead of
 being caught by a reviewer.
 
-- [ ] **REGION-CONTRACT**
+- [x] **REGION-CONTRACT**
 
 ---
 

@@ -59,6 +59,16 @@ def _progress(root: Path, cycle: str = "v1.2.3") -> Path:
     return cycle_progress_path(root, cycle)
 
 
+def _state_with_regions(status: str) -> str:
+    return (
+        "# State\n\n"
+        f"**As of:** {status}\n\n"
+        "Fixture dated append.\n\n"
+        f"{cycle_check.STATE_PERMANENT_TAIL_MARKER}\n"
+        "## 1. Fixture permanent tail\n"
+    )
+
+
 def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     fixture_export_bytes = len("cycle-check governed export fixture")
     fixture_export_tree = "a" * 40
@@ -157,7 +167,7 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     )
     config = root / "config"
     config.mkdir()
-    (root / "STATE.md").write_text("# State\n\nFixture state.\n")
+    (root / "STATE.md").write_text(_state_with_regions("fixture state."))
     (config / "protected-artifacts.json").write_text("{}\n")
     (config / "cycle-history.json").write_text(
         json.dumps({"schema_version": 1, "artifacts": {}}) + "\n"
@@ -273,8 +283,9 @@ def test_cycle_check_reports_below_artifact_byte_boundaries(
 
     assert cycle_check.run(root) == 0
     output = capsys.readouterr().out
+    state_bytes = len((root / "STATE.md").read_bytes())
     assert (
-        "artifact-boundary: path=STATE.md bytes=24 boundary=2048 "
+        f"artifact-boundary: path=STATE.md bytes={state_bytes} boundary=2048 "
         f"state=bound checked_tree=HEAD-tree:{expected_tree} "
         "timing=not-applicable"
     ) in output
@@ -336,7 +347,8 @@ def test_cycle_check_rejects_crossed_artifact_boundaries_without_disposition(
 
     assert cycle_check.run(root) == 1
     captured = capsys.readouterr()
-    assert "path=STATE.md bytes=24 boundary=1" in captured.out
+    state_bytes = len((root / "STATE.md").read_bytes())
+    assert f"path=STATE.md bytes={state_bytes} boundary=1" in captured.out
     assert (
         "path=config/protected-artifacts.json bytes=3 boundary=1"
         in captured.out
@@ -436,9 +448,10 @@ def _tagged_closing_root(
         f"- **Release commit:** `{release_commit}`\n"
     )
     (root / "STATE.md").write_text(
-        "# State\n\n"
-        "**As of:** v1.2.3 is published. "
-        f"Release commit is `{release_commit}`.\n"
+        _state_with_regions(
+            "v1.2.3 is published. "
+            f"Release commit is `{release_commit}`."
+        )
     )
     closing_commit = _commit_all(root, "close cycle")
     subprocess.run(
@@ -1311,6 +1324,74 @@ def test_governed_export_margin_kind_rejects_mixed_recorded_series(
     ]
 
 
+def test_state_region_contract_derives_external_reference_inventory(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    (root / "README.md").write_text("Current design lives in STATE §1.\n")
+    errors: list[str] = []
+
+    report = cycle_check.check_state_archival_region_contract(
+        root / "STATE.md",
+        (root / "STATE.md").read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == []
+    assert report is not None
+    assert "top_sections=1" in report
+    assert "numbering_gaps=none" in report
+    assert "referenced_sections=1" in report
+    assert "README.md:1=§1" in report
+
+
+def test_state_region_contract_rejects_unresolved_external_reference(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    (root / "README.md").write_text("Missing design lives in STATE.md §2.\n")
+    errors: list[str] = []
+
+    report = cycle_check.check_state_archival_region_contract(
+        root / "STATE.md",
+        (root / "STATE.md").read_text(),
+        root,
+        errors,
+    )
+
+    assert report is None
+    assert errors == [
+        "STATE.md: external State section references do not resolve: "
+        "README.md:1=§2"
+    ]
+
+
+def test_state_region_contract_rejects_missing_permanent_tail_marker(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    state = root / "STATE.md"
+    state_text = state.read_text().replace(
+        f"{cycle_check.STATE_PERMANENT_TAIL_MARKER}\n",
+        "",
+    )
+    errors: list[str] = []
+
+    report = cycle_check.check_state_archival_region_contract(
+        state,
+        state_text,
+        root,
+        errors,
+    )
+
+    assert report is None
+    assert errors == [
+        "STATE.md: State archival permanent-tail marker required exactly "
+        "once; found 0"
+    ]
+
+
 def test_cycle_check_rejects_stale_review_export_retention_without_export(
     tmp_path: Path,
     capsys,
@@ -1955,6 +2036,11 @@ def test_trigger_identity_cannot_precede_freshness(monkeypatch) -> None:
         "ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY",
         (1, 2, 4),
     )
+    monkeypatch.setattr(
+        cycle_check,
+        "STATE_REGION_CONTRACT_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
     errors: list[str] = []
     cycle_check.check_trigger_boundary_relationship(errors)
     assert errors == [
@@ -2284,7 +2370,7 @@ def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
         f"- **Annotated tag object:** `{'0' * 40}`\n"
     )
     (root / "STATE.md").write_text(
-        "# State\n\n**As of:** portable publication structure.\n"
+        _state_with_regions("portable publication structure.")
     )
 
     assert cycle_check.run(root) == 1
