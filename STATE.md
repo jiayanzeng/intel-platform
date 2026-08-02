@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 remains incomplete: its second separately authorized candidate passed all 9 hosted identities and the three asserted floor receipts bind the declared toolchains, while the 0/9 release-grade result is diagnosed as a repository signer-workflow argument defect and corrected only in a later local tree now guarded by a standing historical preflight and an independent certificate-identity rejection control.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, and `8fae40e78afee6df80133f89bbbac4a074179ff5`; runs `30746841903`, `30754728135`, and `30757027882` and all three refs remain immutable non-results, and no receipt or bundle from them is release-grade evidence. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **366/366**, and embedded golden **11/11**. `tools/test_population.py` derived Python 3.11.4 / 3.12.13 equivalence at **366** collected and **366** equivalent passed. The latest authorized ref was pushed once and dispatched once; the verifier/preflight correction made no push, retry, governed export, release-grade population comparison, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command.
+**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 is complete: exact candidate `2e5b247e348f362b1cc3fa6a9aaa393d0025fc87` passed all 9 hosted identities, its 9 receipts and 9 Sigstore bundles were accepted 9/9 by the pinned release-grade verifier, and the three asserted floor receipts bind 1.78.0 / 1.86.0 / 1.85.0.** The standing immutable-v0.34 preflight passed 7/7 before dispatch and its wrong-signer negative control rejected. Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, `codex/v0.35-evidence-8fae40e`, and `codex/v0.35-evidence-2e5b247` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, `8fae40e78afee6df80133f89bbbac4a074179ff5`, and `2e5b247e348f362b1cc3fa6a9aaa393d0025fc87`. Runs `30746841903`, `30754728135`, and `30757027882` and their three refs remain immutable non-results; run `30762871542`, attempt 1, is the accepted Step 6 measurement. The exact candidate passed local **22/22**, hosted 9/9, both local/hosted Python comparators at **366** equivalent passed, all **332** pins and both databases, governed export **2,708,098 bytes / 151 files / 2 retained cycles**, and golden **11/11** locally and hosted. The sole remote mutations were the explicitly authorized one-time evidence-ref push and one hosted dispatch; no retry, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command occurred.
 
 **v0.35 Step 5a pre-implementation MSRV measurement gate (measured
 2026-08-02).** The operator-supplied r4 prompt required all three affected
@@ -443,6 +443,103 @@ at **9/9** with asserted **1.78.0 / 1.86.0 / 1.85.0** toolchains. Only the
 complete candidate attestation chain remains unvalidated. Step 6 stays
 unchecked; no bundle is admitted, and no push, ref creation/mutation, hosted
 retry, verifier relaxation, or Step 7 action occurred.
+
+**v0.35 Step 6 RE-MEASURE — exact candidate authenticated with independent
+certificate identities (measured 2026-08-03).** Candidate
+`2e5b247e348f362b1cc3fa6a9aaa393d0025fc87`, tree
+`5e8216fbf20614328b4f8e1e5615382cea5ef1da`, was clean in tracked content;
+the operator-supplied amendment remained untracked and was not included. A
+fresh pre-push `git ls-remote` exited **0** with no entry for
+`refs/heads/codex/v0.35-evidence-2e5b247`. The single authorized non-force
+push created that ref, and immediate readback resolved it exactly to the
+candidate. No existing ref was reused, moved, forced, deleted, or repurposed.
+
+Before dispatch, the standing `./run attestation-preflight` executed against
+the immutable accepted v0.34 7-receipt / 7-bundle set. Exact pinned `gh`
+**2.96.0** accepted **7/7** with every strict flag, and the deliberately wrong
+signer workflow was rejected by the separate negative control. Only after that
+pass, workflow-dispatch run **30762871542**, attempt **1**, was started once on
+the exact candidate/ref with evidence signing. All **9/9** blocking identities
+passed; every receipt emission, attestation, bundle-copy, and persistence step
+passed. Dependency drift skipped only under its declared report-only
+condition. The workflow is still **39,177 bytes** with unchanged SHA-256
+`4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`:
+the correction changed `tools/audit_deferred.py`, `run`, tests, and forward
+records, not `.github/workflows/ci.yml`.
+
+Three receipt values were asserted, not merely read: `msrv` equals
+`rustc_release=1.78.0`, `net-msrv-1-86` equals `1.86.0`, and
+`net-msrv-1-85` equals `1.85.0`; all three `jq -e` assertions exited **0**.
+The release-grade audit used canonical single-bundle JSON, qualified workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, exact source/signer
+digest `2e5b247e348f362b1cc3fa6a9aaa393d0025fc87`, exact source ref
+`refs/heads/codex/v0.35-evidence-2e5b247`, `--deny-self-hosted-runners`, and
+every other strict flag. It accepted **9**, rejected **0**, and found the
+complete matrix. Its operator-local **41,042-byte** report has SHA-256
+`dac7de5243968096ef49049ab2b400fdb6d489a8fa17091b0654fd5d3e9858d4`;
+it and the downloaded artifacts remain under `/private/tmp`, outside the
+repository and protected manifest.
+
+For every bundle, the verifier independently constructed and matched the
+expected certificate identity rather than accepting a self-reported
+expectation:
+
+- `30762871542-1-core.json.sigstore` →
+  `https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/codex/v0.35-evidence-2e5b247`
+- `30762871542-1-golden.json.sigstore` → the same exact expected URI
+- `30762871542-1-lint.json.sigstore` → the same exact expected URI
+- `30762871542-1-msrv.json.sigstore` → the same exact expected URI
+- `30762871542-1-net.json.sigstore` → the same exact expected URI
+- `30762871542-1-net-msrv-1-85.json.sigstore` → the same exact expected URI
+- `30762871542-1-net-msrv-1-86.json.sigstore` → the same exact expected URI
+- `30762871542-1-shell-py3.11.json.sigstore` → the same exact expected URI
+- `30762871542-1-shell-py3.12.json.sigstore` → the same exact expected URI
+
+The earlier “no prior weakening” statement is narrowed to what repository
+evidence actually retains. These **20** committed JSON reports name the
+qualified value in `measurements.ci_runner.expected_workflow` (the expected
+argument field) and in every accepted receipt's `certificate_identity` (the
+certificate SAN): `evidence/v0.10.3`, `v0.11.0`, `v0.12.0`, `v0.13.0`,
+`v0.14.0`, `v0.14.1`, `v0.15.0` through `v0.15.4`, and `v0.21` through
+`v0.29`, each at `deferred-audit/report.json`. At v0.34 close, however, the
+37,309-byte JSON report named in `docs/cycles/PROGRESS-v0.34.md` and this file
+was temporary and is not retained. The immutable v0.34 bundles retain the
+qualified `subjectAlternativeName` SAN, and the records retain the report hash
+and qualified workflow summary, but repository evidence does **not** retain the
+original `gh --signer-workflow` argument. Therefore the v0.34 conclusion is
+only that its certificate SANs were qualified; it does not claim that the
+historical CLI argument was qualified or that signer-workflow enforcement was
+as strong as recorded. The measured 2.95.0 rejection of a bare value establishes
+that version's behavior, not the unavailable historical invocation. No
+retraction or historical edit follows.
+
+Exact-candidate local Python 3.11.4 and 3.12.13 each passed **366/366**. Each
+hosted lane collected **366**, passed **365**, and skipped the same declared
+`on_site` node
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+for reason `on-site production audit requires protected corpora and built
+cored`. For each lane `tools/test_population.py` derived `collected=366`,
+`equivalent=true`, and `equivalent_passed=366`; no count was transcribed.
+
+The project-root exact-candidate export passed at **2,708,098 bytes / 151 files
+/ 2 retained cycles**, retaining exactly the v0.34 and v0.35 task/progress
+pairs, with **100** derived sources and all **7** required paths. The pinned SEC
+RSS body and every `docs/state-archive/**` byte were absent. The manifest is
+**193,057 bytes / 332 pins**, **+1,015 bytes** from v0.34; its only changed
+entry is the existing `run` authorization pin/provenance. Two complete
+candidate runs matched all pins and both protected databases in **0.13 s / 0.11
+s real**. Remote `main` and peeled `v0.17.1` remain
+`f02379f03ccdfd1b019413234f2ad014d169fb04`; annotated tag object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d` is unchanged.
+
+Hosted and exact-candidate local golden each passed **11/11**, delta **0**. A
+first detached-subject report setup lacked the ignored database copies and
+measured no receipt identity; byte-identical copies corrected that temporary
+subject. Two sandbox-only golden constructions respectively failed before
+assertions on unavailable package-network access and denied loopback bind; the
+permission-complete run passed. These are operator-local setup non-results,
+not hosted retries or identity failures. Step 6 is complete. No gate, lane,
+strict flag, exemption, or classification was relaxed; Step 7 was not entered.
 
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only

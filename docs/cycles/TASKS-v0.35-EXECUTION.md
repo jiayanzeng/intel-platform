@@ -93,6 +93,9 @@ separate authorization.
 rustup name, with the mismatch covered by R10's seventh executable control —
 2026-08-02.**
 
+**Step 6 — exact candidate `2e5b247e…` authenticated 9/9 on fresh evidence
+ref `codex/v0.35-evidence-2e5b247` — 2026-08-03.**
+
 **r8 — 2026-08-03 — Step 6 signed-attestation verifier non-result.** The
 second separately authorized exact candidate/ref produced hosted run
 `30757027882`, attempt 1. All nine blocking identities passed. Executed receipt
@@ -167,6 +170,25 @@ lanes pass and compare at **366/366**, all **332** pins match, and golden stays
 **11/11**. This is a prepared local correction only: Step 6 stays unchecked,
 no evidence is admitted, and no push, ref mutation, hosted retry, verifier
 relaxation, or Step 7 action occurred.
+
+**r12 — 2026-08-03 — Step 6 authenticated under the corrected verifier.** The
+standing v0.34 preflight passed **7/7** with every strict flag on exact pinned
+`gh` 2.96.0 and its wrong-signer negative control rejected before dispatch.
+One authorized push created fresh ref `codex/v0.35-evidence-2e5b247` at exact
+candidate `2e5b247e348f362b1cc3fa6a9aaa393d0025fc87`; immediate readback matched.
+Run **30762871542**, attempt 1, then passed all **9** blocking identities and
+persisted **9 receipts / 9 Sigstore bundles**. Executed assertions bound
+`msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and `net-msrv-1-85=1.85.0`. The
+release-grade verifier accepted **9/9**, rejected **0**, and independently
+matched the expected certificate URI for each bundle. Workflow SHA-256 remains
+the intended `4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`;
+the correction did not change the workflow. Both population comparisons derive
+**366** equivalent passed; export is **2,708,098 bytes / 151 files / 2 retained
+cycles**; all **332** pins and both databases match twice at **0.13 s / 0.11 s**;
+local and hosted golden pass **11/11**. Step 6 is complete; no retry, existing-ref
+mutation, gate/flag relaxation, or Step 7 action occurred. The v0.34 historical
+claim is deliberately limited to the retained qualified certificate SANs: its
+temporary JSON report and original CLI argument are not repository-retained.
 
 ---
 
@@ -535,18 +557,18 @@ column was edited to match what happened.**
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — Step 6's first hosted attempt exposed an installer/selector-name spelling outside R10's prior vocabulary. The strengthened real self-test now passes 12 rules / 73 controls; the seventh R10 control reconstructs exact action input `1.78` versus selector `1.78.0`. The trigger fired and its assigned correction is complete locally | **Step 5A — completed locally with the new spelling governed; hosted confirmation remains Step 6** |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-03 — run 30757027882 passed the real hosted Rust 1.86 success, Rust 1.85 declared-MSRV refutation, and Rust 1.78 offline lane; asserted receipts bind the three exact releases. Its release-grade verifier accepted 0/9 because every Sigstore check failed at issuer verification, so the full Step 6 evidence construction is a non-result and was not retried | **Step 5A — locally and hosted-toolchain measured; Step 6 remains open because release-grade attestation verification is unmeasured** |
-| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.35 · 2026-08-03 — exact `gh` 2.96.0 is installed; the immutable v0.34 positive preflight passes 7/7 with every strict flag and its deliberately wrong signer is rejected. No version bump was proposed, so the trigger did not fire | **Step 6 — before any fresh hosted-evidence authorization, execute the standing preflight; admit a bump only through an operator-reviewed pin and contract decision** |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-03 — authenticated run 30762871542 passed real hosted Rust 1.86 success, Rust 1.85 declared-MSRV refutation, and Rust 1.78 offline lanes. Executed assertions bind their receipts to 1.86.0 / 1.85.0 / 1.78.0, and the release-grade verifier accepted the complete 9/9 signed matrix | **Step 5A and Step 6 — completed; both floor properties and their authenticated hosted construction are measured** |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.35 · 2026-08-03 — exact `gh` 2.96.0 remains installed; before run 30762871542, the immutable v0.34 positive preflight passed 7/7 with every strict flag and its deliberately wrong signer was rejected. The corrected verifier then accepted the fresh candidate 9/9 with independent expected SAN matching. No version bump was proposed, so the trigger did not fire | **Step 6 — completed at the current pin; any later CLI or contract change remains a separate operator-reviewed decision** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.35 · 2026-08-02 — Step 5A changed exactly the existing `run` pin; the manifest is 192,703 bytes / 332 pins and schema plus complete verification matched every pin and both protected databases. `tools/model_profiles.py`, both `artifacts[]` entries, and every admission record are byte-identical. The latest timed pair remains Step 1's 0.11 s / 0.10 s real; neither trigger fired | **Step 5A — completed; the unchanged condition governs recurrence** |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.35 · 2026-08-03 — Step 6 measured exact candidate manifest at 193,057 bytes / 332 pins, +1,015 bytes from v0.34, with only the existing `run` pin/provenance changed. Two complete runs matched every pin and both protected databases in 0.13 s / 0.11 s real; neither trigger fired | **Step 6 — completed; the unchanged condition governs recurrence** |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.35 · 2026-08-02 — shell source remains forbidden and no release value changed; trigger did not fire | none — `shell/intel_shell/**` remains forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.35 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.35 · 2026-08-02 — Step 4 measured exact Step 3 audit-child State at 256,218 / 453,741 bytes and export at 2,551,288 / 3,000,000 bytes. Against exact delivered v0.34, the post-retention State denominator is +12,816 bytes/cycle; against the v0.34 governed field, the first adjacent governed pair wholly inside two-cycle retention is +24,108 bytes/cycle. Availability is 15.41 State cycles versus 18.61 export cycles, so State is nearer by 3.20 cycles. Neither trigger fired and no lever was selected | **Step 4 — completed; the unchanged condition governs recurrence** |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.35 · 2026-08-03 — exact authenticated candidate State is 293,367 / 453,741 bytes and its export is 2,708,098 / 3,000,000 bytes. At Step 4's one-pair +12,816 State and +24,108 export denominators, availability is 12.51 State cycles versus 12.11 export cycles, so export is now nearer by 0.41 cycles. Neither byte trigger fired and no new lever was authorized | **Step 4 measured the basis; Step 6 refreshed the candidate values; the unchanged condition governs recurrence** |
 | **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 6's finding fired the first clause and added one R10 mutant. All 73 controls derive their finding line from an authored anchor resolved exactly once against the constructed mutant; the new control makes action input `1.78` versus explicit selector `1.78.0` emit the measured installer mismatch. Zero `expected_line` or other absolute-line fields survive | **Step 5A — completed; Step 7 moves this subject to Deferred completions** |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.35 · 2026-08-02 — v0.35 still matches `v0.<n>`; trigger did not fire | none — recorded, not acted on |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-02 — the activation distance is lifecycle configuration and records only, with no runtime-behaviour or public-surface change; v0.17.1's reset leaves the epoch count at zero | **Step 7 — restate the epoch count under the v0.32 reset rule** |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-03 — Step 6 classified exact authenticated candidate 2e5b247e348f362b1cc3fa6a9aaa393d0025fc87 as lifecycle records/tests/controls, net-floor workflow, verifier/launcher tooling, and one `run` pin only, with no measured runtime-behaviour or public-surface change. v0.17.1's reset leaves the epoch count at zero; direct readback left main and the release tag unchanged | **Step 7 — restate the epoch count under the v0.32 reset rule** |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — before the installer-name correction, `version-check` reported 3 executable pins with raw `[1.78, 1.78.0]`; after it reports 3 with raw `[1.78.0]`. Both normalize to 1.78, and both trees report 22 offline-MSRV plus 3 release-version current restatements. The raw-set change is the intentional replacement of an unselectable action alias with the exact installed name; every tracked floor-literal file remains classified and the trigger did not fire | **Step 5A — completed; the registered membership remains governed** |
 | **Retention arithmetic fallback** | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.35 · 2026-08-02 — Step 3 deleted the optional branch, made the retained set mandatory, committed fixture cycle documents before derivation, and passed the real checker at the exact activation pattern. R12's new 69th control makes an optional parameter fail. The prior criterion was truthfully satisfied in Step 1; under this forward criterion the trigger did not fire | **Step 3 — completed; the corrected regression criterion remains governed** |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.35 · 2026-08-02 — v0.34 carries its required audit field and v0.35 remains open; the general optionality ruling is unchanged | none — the v0.32 ruling stands; **this runbook separately requires its own at Step 7** |
@@ -946,6 +968,22 @@ or acceptance of any downloaded artifact followed. Mandatory local record
 checks and standalone golden **11/11** passed. The run/ref are immutable,
 Step 6 remains unchecked, and Step 7 was not entered.
 
+**Third attempt disposition (2026-08-03): PASS.** After the standing immutable
+v0.34 preflight passed 7/7 with every strict flag and its wrong-signer negative
+control rejected, the operator authorized exact candidate `2e5b247e…`, tree
+`5e8216fb…`, to fresh ref `codex/v0.35-evidence-2e5b247`. A fresh absence check
+exited zero with no entry, the sole non-force push created the ref, and immediate
+readback matched exactly. Workflow-dispatch run **30762871542**, attempt 1,
+passed all **9** blocking identities and persisted **9 receipts / 9 Sigstore
+bundles**. Executed assertions bound the floor receipts to **1.78.0 / 1.86.0 /
+1.85.0**. The pinned release-grade verifier accepted **9/9**, rejected **0**,
+and independently matched the expected certificate identity for every bundle.
+Workflow SHA-256 remains the intended `4ebf2c21…`. Both shell comparators derive
+**366** equivalent passed, exact-candidate export is **2,708,098 bytes**, all
+**332** pins and both databases match twice, and local/hosted golden pass
+**11/11**. No retry, existing-ref mutation, verifier relaxation, or Step 7
+action occurred.
+
 **Objective.** Produce release-grade hosted evidence for the exact candidate on
 a fresh operator-authorized evidence ref.
 
@@ -1066,8 +1104,8 @@ governs any future admission.
 - [x] Step 4 · POST-LEVER BASIS
 - [x] Step 5 · NET-FLOOR — completed through Step 5A's corrective measurement
 - [x] Step 5A · NET-FLOOR-CORRECTION — completed locally
-- [ ] Step 6 · RE-MEASURE — second authorized run passed 9/9 hosted identities
-      but its release-grade verifier rejected 9/9 at issuer verification; no retry
+- [x] Step 6 · RE-MEASURE — run 30762871542 passed 9/9 hosted identities and
+      the corrected pinned release-grade verifier accepted all 9 signed bundles
 - [ ] Step 7 · R-CLOSE
 
 ---
