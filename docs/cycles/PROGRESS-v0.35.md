@@ -509,3 +509,77 @@ Entries are append-only; corrections are new dated entries.
   resolution, production source, public response, value domain, or release
   value changed. Step 6 is deliberately stopped at its separate authorization
   boundary.
+
+### 2026-08-02 · STEP-6-INSTALLER-NAME-CORRECTION — first attempt remains an 8/9 non-result
+
+- owner: Codex
+- commit: e6642869ee23efce9736d8f5e9a568fe6278975b
+- result: INCOMPLETE for Step 6; PASS for the narrow local correction exposed
+  by its first separately authorized attempt. Exact candidate
+  `7a444235dab5905bff6cc90a61815e31690c3a35` was authorized to fresh ref
+  `codex/v0.35-evidence-7a44423`. Pre-push `ls-remote` returned no entry, one
+  push created the ref, and immediate and final readback both returned the
+  exact candidate.
+- hosted-run acceptance: FAIL for Step 6, recorded as a construction
+  non-result rather than a floor result. Run **30754728135**, attempt **1**,
+  authenticated the exact SHA/ref and passed eight of nine blocking
+  identities, including real Rust 1.86 net success and Rust 1.85
+  declared-MSRV refutation. The offline `msrv` job stopped before compilation:
+  the action installed rustup name `1.78`, while the proof selected uninstalled
+  name `1.78.0`.
+- receipt/bundle acceptance: FAIL for Step 6's complete-matrix criterion. The
+  failed job's always-run receipt records `conclusion=failure` and effective
+  fallback `rustc_release=1.91.1`. All **9** receipt/bundle artifacts were
+  downloaded and inspected; none was accepted as release-grade evidence and
+  no expectation was reduced to make the run pass.
+- remaining Step 6 acceptance: NOT ACCEPTED after the hosted stop. The hosted
+  shell jobs and hosted golden passed, but no release-grade population
+  comparison, governed export field, complete verifier acceptance, or final
+  all-green exact-candidate record was asserted. Published `main`, peeled
+  `v0.17.1`, and annotated tag object were directly re-read unchanged. Step 6
+  stays unchecked.
+- immutability acceptance: PASS. Run **30754728135** and ref
+  `codex/v0.35-evidence-7a44423` remain fixed at their exact non-result; run
+  **30746841903** and ref `codex/v0.35-evidence-d33c251` also remain immutable.
+  No receipt/bundle from either run was accepted, and no corrected-candidate
+  ref was pushed or dispatched.
+- correction acceptance: PASS locally. The offline action now installs exact
+  rustup name `1.78.0`. R10 rejects any explicit floor selector whose action
+  installer uses a different name, and its seventh fail-before reconstruction
+  emits `blocking hosted floor lane 'msrv' selects toolchain 1.78.0 but action
+  installs 1.78`. The real scan passed **12 rules / 73 controls**, with zero
+  absolute `expected_line` fields.
+- topology/expectation acceptance: PASS unchanged. Local topology remains
+  **22 jobs / 30 checks**, hosted topology **8 blocking jobs / 29 checks**,
+  exemptions **59**, and total blocking identities **9**. Receipt emitters,
+  accepted-runner assertions, deferred-audit runner population, and receipt /
+  bundle expectations remain **9**, **9**, **9**, and **9 / 9**; the correction
+  moves none.
+- version acceptance: PASS. Before and after each contain **3** executable
+  pins; raw authorities move from `[1.78, 1.78.0]` to `[1.78.0]`, both normalize
+  to **1.78**, and both report **22** offline-MSRV plus **3** release-version
+  current restatements. The corrected workflow is **39,177 bytes** / SHA-256
+  `4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+- local-gate acceptance: PASS. `./run ci-local` passed all derived **22/22**
+  jobs, checklist **268 / 3 / 268 / 268**, explicit Rust 1.78 offline
+  check/test, Rust 1.86 net success, Rust 1.85 declared-MSRV refutation, zero
+  rustc/clippy warnings, constrained Python 3.11.4 **361/361**, embedded golden
+  **11/11**, all **332** pins, and both protected databases.
+- clean-shell acceptance: PASS. Clean Python 3.11.4 and 3.12.13 rebuilds each
+  resolved **21** constrained packages and passed **361/361**. The repository
+  comparator derived `equivalent=true`, `collected=361`,
+  `equivalent_passed=361`, and zero skips. A first sandbox-only 3.11 execution
+  could not bind eight loopback test servers; the permitted clean rerun is the
+  reported measurement.
+- artifact acceptance: PASS locally. Schema validation and complete protected
+  verification passed all **332** pins and both databases; no protected byte or
+  manifest entry changed in this correction.
+- golden-E2E delta: **0**. The mandatory standalone post-record run passed the
+  same byte-identical **11/11** assertions.
+- scope acceptance: PASS. The correction changes one action installer string,
+  R10 plus one reconstructible control, its exact version-authority test, and
+  forward State/runbook records. No gate, lane, exemption, blocking identity,
+  R10 classification, dependency, production source, protected byte, public
+  surface, publisher request, scheduler, service, or model-profile command was
+  relaxed or changed. The operator-supplied untracked amendment remains
+  untouched. A new exact candidate/fresh ref requires separate authorization.
