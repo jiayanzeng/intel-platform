@@ -652,3 +652,68 @@ Entries are append-only; corrections are new dated entries.
   production source, protected byte, public surface, publisher request,
   scheduler, service, or model-profile command occurred. The operator-supplied
   untracked amendment remains untouched.
+
+### 2026-08-03 · STEP-6-ATTESTATION-VERIFIER-DIAGNOSIS — classification (a)
+
+- owner: Codex
+- commit: 90838c16bd9c3cca8033966936ca02101c26235e
+- result: INCOMPLETE / DIAGNOSED. The decisive historical control selects
+  classification **(a): verifier/environment fault — evidence content sound,
+  chain unvalidatable on this host**. Step 6 remains unchecked; no evidence was
+  admitted and Step 7 was not entered.
+- decisive historical control: PASS for diagnosis. The same current executable,
+  `gh version 2.96.0 (2026-07-02)`, reverified the authenticated v0.34 candidate
+  `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` / ref
+  `refs/heads/codex/v0.34-evidence-1117dc6`. All **7/7** formerly passing
+  receipts/bundles now exit **1**. The original v0.34 record did not capture its
+  then-running `gh --version`, so that historical version remains unasserted.
+- representative stderr: the complete historical and current stderr streams
+  are each **45 bytes**: one leading blank line followed verbatim by
+  `Error: verifying with issuer "sigstore.dev"` and a trailing newline. Both
+  stdout streams are empty. The current representative is run 30757027882's
+  `msrv` receipt/bundle; the historical representative is run 30726156221's
+  `msrv` receipt/bundle.
+- verifier arguments: MATCH their decoded certificate claims. Both use
+  `--signer-workflow .github/workflows/ci.yml`. Historical
+  `--signer-digest` / `--source-digest` are
+  `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` and `--source-ref` is
+  `refs/heads/codex/v0.34-evidence-1117dc6`; current digest arguments are both
+  `8fae40e78afee6df80133f89bbbac4a074179ff5` and `--source-ref` is
+  `refs/heads/codex/v0.35-evidence-8fae40e`. Repository and GitHub-hosted
+  runner claims also match. No verifier flag was weakened or omitted.
+- workflow-digest diagnosis: PASS. The last passing cycle's workflow was
+  **26,967 bytes** / SHA-256
+  `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`;
+  the intended current workflow is **39,177 bytes** / SHA-256
+  `4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+  `--signer-digest` correctly uses the workflow's commit digest, not this file
+  byte hash. The workflow change therefore did not create a stale or wrongly
+  derived argument.
+- trust-root/TUF diagnosis: NOT stale and NOT expired. Relevant override and
+  no-cache variables are unset. `gh attestation trusted-root --verify-only`
+  exits **0** with empty stderr. Public-good root v15 / timestamp v744 expire
+  2026-11-20 / 2026-08-08; GitHub root v9 / timestamp v922 / snapshot v75
+  expire 2027-01-28 / 2026-08-08 / 2026-08-11. All exceed the measurement date.
+- classification acceptance: **(a)**. The same failure on the known-good
+  historical set rules out **(b)** repository argument derivation and **(c)** a
+  genuine signing-side fault specific to run 30757027882. This diagnosis does
+  not cryptographically validate either chain on this host.
+- measured-property acceptance: PASS and kept separate from the chain. Run
+  **30757027882** proves all **9/9** blocking identities, and executed receipt
+  assertions prove `msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+  `net-msrv-1-85=1.85.0`. Only the attestation chain remains unvalidated; no
+  receipt or bundle is release-grade evidence.
+- immutability acceptance: PASS. No push, ref creation/movement/deletion,
+  hosted retry, verifier-policy relaxation, evidence admission, or Step 7
+  action occurred. Run **30757027882** and ref
+  `codex/v0.35-evidence-8fae40e` remain immutable and re-verifiable later.
+- golden-E2E delta: **0**. A sandbox-only first execution could not bind the
+  loopback core and is a startup non-result; the permitted rerun passed all
+  **11/11** assertions.
+- local record gates: PASS. `cycle-check`, `version-check`, `checklist-audit`
+  at **268 / 3 / 268 / 268**, and diff hygiene pass. The audit append is local.
+- scope acceptance: PASS. Only `STATE.md`, the active runbook, and this active
+  progress record changed. No production source, workflow, gate, lane,
+  exemption, R10 classification, dependency, protected byte, public surface,
+  publisher request, scheduler, service, or model-profile command changed. The
+  operator-supplied untracked amendment remains untouched.
