@@ -182,3 +182,44 @@ Entries are append-only; corrections are new dated entries.
   publisher request, ran no scheduler, service, or model-profile command,
   wrote no protected byte, and changed no dependency, production source,
   release authority, or remote ref.
+
+### 2026-08-02 · ONE-RETENTION — one Git-derived retained-cycle authority
+
+- owner: Codex
+- commit: fc448a3770b0d18495b0ea7bb957b4d015c27270
+- result: PASS. Option A was feasible and selected. The formatter now requires
+  `retained_cycle_paths`; its arithmetic `None` branch is deleted. Every live
+  caller supplies a set derived by `expected_retained_cycle_paths` for that
+  construction's committed Git tree.
+- fixture acceptance: PASS. Cycle fixtures initialize Git and commit their
+  runbook/progress documents before deriving the configured retention pattern.
+  The autouse arithmetic substitute is gone. A skipped-cycle control obtains a
+  deliberately stale pattern from a separate consecutive tracked construction
+  and proves those bytes fail in the skipped tracked construction.
+- failure-control acceptance: PASS. R12 adds one real optional-parameter
+  mutation and rejects it as `optional-retained-set-parameter`, moving the
+  registry for a stated reason to **12 rules / 69 controls** and R12 to **41**
+  controls. No hand-typed absolute finding line was introduced.
+- criterion acceptance: PASS. The active deferral row is forward-corrected to
+  govern an omitted retained set or a live caller-supplied non-Git-derived set.
+  The prior wording remains truthfully recorded as fired in Step 1. Amendment
+  r2 clarifies that the no-edit instruction protects the closed v0.34 record;
+  no historical measurement was changed.
+- entry-point acceptance: PASS. Real `cycle-check` accepted the exact v0.35
+  boundary through `3[0-3]`. An isolated current-tool construction containing
+  only the stale `3[0-2]` pattern exited 1 and named both the required exact
+  pattern and the stale found value.
+- focused acceptance: PASS. `shell/tests/test_cycle_check.py` passed **85/85**;
+  focused R12 self-test passed **1/1 rule / 41 controls**.
+- gate acceptance: PASS with the ONE-RETENTION checkbox still open. `./run
+  ci-local` passed **20/20**, checklist **268 / 3 / 268 / 268**, zero Rust
+  warnings, registered invariants **12 rules / 69 controls**, constrained
+  Python 3.11.4 **357/357**, embedded golden **11/11**, all **332** pins, and
+  both protected databases.
+- golden-E2E delta: **0**. The mandatory standalone post-task run passed
+  byte-identical **11/11**.
+- publisher/ref acceptance: PASS. ONE-RETENTION changed only the lifecycle
+  checker, invariant harness and registry, focused tests, State, and active
+  runbook. It issued no publisher request, ran no scheduler, service, or
+  model-profile command, wrote no protected byte, and changed no dependency,
+  production source, public response, release authority, or remote ref.
