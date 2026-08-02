@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6's first separately authorized attempt is an immutable 8/9 construction non-result; the exact installer-name correction is locally complete and a new exact candidate/fresh ref requires a separate operator decision.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Failed evidence refs `codex/v0.35-evidence-d33c251` and `codex/v0.35-evidence-7a44423` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99` and `7a444235dab5905bff6cc90a61815e31690c3a35`; runs `30746841903` and `30754728135` and both refs remain immutable non-results. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **361/361**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 populations each passed **361/361** and the comparator derived equivalence at **361**. The first authorized ref was pushed once and dispatched once; no corrected-candidate ref has been pushed or dispatched, and no production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command changed.
+**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 remains incomplete: its second separately authorized candidate passed all 9 hosted identities and the three asserted floor receipts bind the declared toolchains, but the production release-grade verifier rejected all 9 Sigstore bundles at an issuer-verification construction failure.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, and `8fae40e78afee6df80133f89bbbac4a074179ff5`; runs `30746841903`, `30754728135`, and `30757027882` and all three refs remain immutable non-results, and no receipt or bundle from them is release-grade evidence. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **361/361**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 populations each passed **361/361** and the comparator derived equivalence at **361**. The latest authorized ref was pushed once and dispatched once; no retry, governed export, release-grade population comparison, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command occurred.
 
 **v0.35 Step 5a pre-implementation MSRV measurement gate (measured
 2026-08-02).** The operator-supplied r4 prompt required all three affected
@@ -187,6 +187,63 @@ could not bind eight loopback test servers and is a permission non-result; the
 permitted clean rerun produced the stated result. No corrected-candidate push
 or hosted dispatch occurred. A fresh exact candidate and fresh ref require a
 separate operator authorization before Step 6 can resume.
+
+**v0.35 Step 6 second authorized attempt — hosted checks green, release-grade
+attestation verification a construction non-result (measured 2026-08-03).**
+The operator authorized exact candidate
+`8fae40e78afee6df80133f89bbbac4a074179ff5` and only fresh ref
+`refs/heads/codex/v0.35-evidence-8fae40e`. A new pre-push `git ls-remote`
+exited **0** with no entry. One non-force push created the ref; immediate and
+final direct readback each resolved it to the exact candidate. The candidate
+tree is `06925e82b10e6706d38a9120e642898c06c25799`; its tracked worktree was
+clean, with only the operator-supplied amendment untracked.
+
+Workflow-dispatch run **30757027882**, attempt **1**, authenticated event
+`workflow_dispatch`, the exact SHA/ref, and completed with `conclusion=success`.
+All **9** blocking identities passed, including explicit Rust **1.78.0**
+offline proof/check/test, explicit Rust **1.86.0** net proof/success, explicit
+Rust **1.85.0** proof/declared-MSRV refutation, core, net, lint, golden, and
+both shell jobs. The report-only dependency-drift job was structurally skipped.
+The workflow is intentionally changed this cycle and remains **39,177 bytes**,
+SHA-256
+`4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+
+Exactly **9** receipts and **9** Sigstore bundles were downloaded. Executed
+`jq -e` assertions, not inspection, required and obtained these exact pairs:
+`msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+`net-msrv-1-85=1.85.0`. The other six receipts record `rustc_release=1.91.1`.
+Every receipt records `conclusion=success`, event and checkout SHA equal to the
+exact candidate, repository `jiayanzeng/intel-platform`, workflow `CI`, and a
+Linux runner.
+
+The required production release-grade verifier then ran once from a clean
+detached worktree at the exact candidate, with attestations required and exact
+repository, workflow path, signer/source digest, source ref, and hosted-runner
+requirements. It accepted **0** and rejected **9**. Every rejection reason was
+`GitHub attestation verification failed: Error: verifying with issuer
+"sigstore.dev"`; the derived matrix consequently reported all nine identities
+missing. This is an attestation-verification construction failure, not a
+judgment about the passed jobs or toolchain properties. The generated
+non-release-grade audit report is **32,751 bytes**, SHA-256
+`3d1593ace65bc76fc72bd041a8cf3a1106c013bffba23808176bf0cbe1968b94`,
+and remains operator-local under `/private/tmp`; it is not repository evidence.
+
+The operator's stop condition therefore fired. The verifier was not retried;
+no receipt or bundle was accepted as release-grade evidence, and the governed
+export, release-grade shell-population comparison, protected-artifact timing
+record, and governed progress field were **not measured**. Those are
+non-results, not passes. Mandatory local record checks passed: `cycle-check`,
+`version-check`, `checklist-audit` at **268 / 3 / 268 / 268**, diff hygiene,
+and standalone golden **11/11**, delta **0**. Step 6 remains unchecked and
+Step 7 was not entered. No gate, lane, exemption, blocking identity, or R10
+classification was relaxed.
+
+Final direct remote readback fixed the three evidence refs at their exact
+candidates, kept `main` and peeled `v0.17.1` at
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, and kept annotated tag object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d`. Runs **30746841903**,
+**30754728135**, and **30757027882** and their refs are immutable non-results.
+No receipt or bundle from any of them is release-grade evidence.
 
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only

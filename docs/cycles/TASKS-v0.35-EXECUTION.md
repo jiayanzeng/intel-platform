@@ -93,6 +93,19 @@ separate authorization.
 rustup name, with the mismatch covered by R10's seventh executable control —
 2026-08-02.**
 
+**r8 — 2026-08-03 — Step 6 signed-attestation verifier non-result.** The
+second separately authorized exact candidate/ref produced hosted run
+`30757027882`, attempt 1. All nine blocking identities passed. Executed receipt
+assertions bound `msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+`net-msrv-1-85=1.85.0`; nine receipts and nine Sigstore bundles were downloaded.
+The production release-grade verifier nevertheless accepted 0 and rejected 9:
+every GitHub attestation verification failed at `verifying with issuer
+"sigstore.dev"`. This is a verification-construction non-result, not a floor or
+job result. Per the operator's stop condition it was not retried, no evidence
+was accepted, and the governed export, release-grade population comparison,
+protected timing record, and governed field were not measured. The mandatory
+local record gates and standalone golden passed; Step 6 stays unchecked.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -460,7 +473,7 @@ column was edited to match what happened.**
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — Step 6's first hosted attempt exposed an installer/selector-name spelling outside R10's prior vocabulary. The strengthened real self-test now passes 12 rules / 73 controls; the seventh R10 control reconstructs exact action input `1.78` versus selector `1.78.0`. The trigger fired and its assigned correction is complete locally | **Step 5A — completed locally with the new spelling governed; hosted confirmation remains Step 6** |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — run 30754728135 proved the corrected hosted Rust 1.86 success and Rust 1.85 declared-MSRV refutation, while its offline 1.78 job failed before compilation on an action-input/selector-name mismatch. Ref `codex/v0.35-evidence-7a44423` is fixed at its exact 8/9 non-result. Local correction now installs exact `1.78.0`; another exact candidate and fresh ref require separate authorization | **Step 5A — locally corrected; Step 6 remains open for one separately authorized hosted confirmation** |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-03 — run 30757027882 passed the real hosted Rust 1.86 success, Rust 1.85 declared-MSRV refutation, and Rust 1.78 offline lane; asserted receipts bind the three exact releases. Its release-grade verifier accepted 0/9 because every Sigstore check failed at issuer verification, so the full Step 6 evidence construction is a non-result and was not retried | **Step 5A — locally and hosted-toolchain measured; Step 6 remains open because release-grade attestation verification is unmeasured** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
@@ -856,6 +869,20 @@ not a floor result. r7 records the local correction. The failed run/ref stay
 immutable, and Step 6 remains unchecked until another exact SHA and fresh ref
 receive separate operator authorization and all criteria pass.
 
+**Second attempt disposition (2026-08-03): INCOMPLETE.** Authorized run
+`30757027882`, attempt 1, authenticated exact candidate `8fae40e7…` on fresh
+ref `codex/v0.35-evidence-8fae40e`. All nine blocking identities and all nine
+receipt/bundle uploads passed. Executed assertions bound the three floor
+receipts to `1.78.0`, `1.86.0`, and `1.85.0`. The production release-grade
+verifier then accepted **0** and rejected **9**, each at
+`GitHub attestation verification failed: Error: verifying with issuer
+"sigstore.dev"`. This is an attestation-verification construction non-result.
+The stop condition fired: no retry, evidence acceptance, governed export,
+release-grade population comparison, protected timing record, governed field,
+or acceptance of any downloaded artifact followed. Mandatory local record
+checks and standalone golden **11/11** passed. The run/ref are immutable,
+Step 6 remains unchecked, and Step 7 was not entered.
+
 **Objective.** Produce release-grade hosted evidence for the exact candidate on
 a fresh operator-authorized evidence ref.
 
@@ -976,8 +1003,8 @@ governs any future admission.
 - [x] Step 4 · POST-LEVER BASIS
 - [x] Step 5 · NET-FLOOR — completed through Step 5A's corrective measurement
 - [x] Step 5A · NET-FLOOR-CORRECTION — completed locally
-- [ ] Step 6 · RE-MEASURE — first authorized attempt is an immutable 8/9
-      non-result; locally corrected candidate awaits separate SHA/ref authorization
+- [ ] Step 6 · RE-MEASURE — second authorized run passed 9/9 hosted identities
+      but its release-grade verifier rejected 9/9 at issuer verification; no retry
 - [ ] Step 7 · R-CLOSE
 
 ---
