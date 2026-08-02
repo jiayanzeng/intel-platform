@@ -24,10 +24,10 @@ def _replace_extracted_version(
     )
 
 
-def test_offline_msrv_normalizes_and_binds_current_restatements() -> None:
+def test_offline_msrv_binds_exact_authorities_and_current_restatements() -> None:
     report = version_check.offline_msrv_report(ROOT)
 
-    assert {pin.raw for pin in report.pins} == {"1.78", "1.78.0"}
+    assert {pin.raw for pin in report.pins} == {"1.78.0"}
     assert {pin.normalized for pin in report.pins} == {report.derived}
     assert report.derived == "1.78"
     assert len(report.pins) == 3

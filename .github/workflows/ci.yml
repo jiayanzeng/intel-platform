@@ -524,7 +524,7 @@ jobs:
           ref: ${{ inputs.audit_sha || github.sha }}
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c
         with:
-          toolchain: "1.78"
+          toolchain: "1.78.0"
       - uses: Swatinem/rust-cache@v2
 
       - name: prove Rust 1.78.0 toolchain

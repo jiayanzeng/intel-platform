@@ -858,7 +858,17 @@ def r10_report(root: Path) -> ParityReport:
                         f"{', '.join(shadowing_inputs)}; rust-toolchain.toml "
                         f"selects {pinned_toolchain}"
                     )
-        for toolchain in sorted(_cargo_toolchains(job_check_ids) - {"default"}):
+        selected_toolchains = sorted(
+            _cargo_toolchains(job_check_ids) - {"default"}
+        )
+        for toolchain in selected_toolchains:
+            if toolchain not in declared_toolchains:
+                installed = ", ".join(sorted(declared_toolchains)) or "<none>"
+                findings.append(
+                    f".github/workflows/ci.yml:{job.line}: blocking hosted "
+                    f"floor lane {job.id!r} selects toolchain {toolchain} but "
+                    f"action installs {installed}"
+                )
             proof_id = f"rust-toolchain-proof:{toolchain}={toolchain}"
             if proof_id not in job_check_ids:
                 findings.append(

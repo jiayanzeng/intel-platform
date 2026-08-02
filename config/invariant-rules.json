@@ -371,9 +371,9 @@
     },
     {
       "id": "R10",
-      "claim": "Every local ci-local check has a non-report-only hosted counterpart with the same effective toolchain and every blocking hosted verification has a local counterpart; shadowed hosted toolchain inputs and floor lanes without effective cargo/rustc version proof are findings; exemptions match declared structural criteria or an explicit named residual.",
+      "claim": "Every local ci-local check has a non-report-only hosted counterpart with the same effective toolchain and every blocking hosted verification has a local counterpart; shadowed hosted toolchain inputs, explicit selectors not installed under the same rustup name, and floor lanes without effective cargo/rustc version proof are findings; exemptions match declared structural criteria or an explicit named residual.",
       "source": "ARCHITECTURE.md:210",
-      "scope": "All entries produced by run's ci_local_jobs table and every step in jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions, with rustup-run and cargo-plus selection carried in cargo identities and default used only when neither is present. Every explicit floor lane must carry a matching cargo/rustc version proof. A blocking job whose toolchain action input differs from rust-toolchain.toml may not invoke unqualified cargo. Exemptions are derived for job-level continue-on-error, unconditional uses actions before a job's first command, the constrained shell-environment install, and the terminal always-run CI_RECEIPT_PATH persistence block. Operator-local protected database verification remains the sole named residual because its reason is environmental rather than structural.",
+      "scope": "All entries produced by run's ci_local_jobs table and every step in jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions, with rustup-run and cargo-plus selection carried in cargo identities and default used only when neither is present. Every explicit hosted floor selector must have an action toolchain input with the exact same rustup name and carry a matching cargo/rustc version proof. A blocking job whose toolchain action input differs from rust-toolchain.toml may not invoke unqualified cargo. Exemptions are derived for job-level continue-on-error, unconditional uses actions before a job's first command, the constrained shell-environment install, and the terminal always-run CI_RECEIPT_PATH persistence block. Operator-local protected database verification remains the sole named residual because its reason is environmental rather than structural.",
       "fail_before": [
         {
           "file": "run",
@@ -450,6 +450,16 @@
           "expected_fail": "blocking hosted floor lane 'net-msrv-1-86' selects 1.86.0 without an effective cargo/rustc version proof",
           "expected_file": ".github/workflows/ci.yml",
           "expected_anchor": "  net-msrv-1-86:\n    name: live-fetch MSRV succeeds (1.86)"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "find": "          toolchain: \"1.78.0\"\n",
+          "replace_with": [
+            "          toolchain: \"1.78\"\n"
+          ],
+          "expected_fail": "blocking hosted floor lane 'msrv' selects toolchain 1.78.0 but action installs 1.78",
+          "expected_file": ".github/workflows/ci.yml",
+          "expected_anchor": "  msrv:\n    name: MSRV floor (offline builds on 1.78)"
         }
       ],
       "fail_before_note": "invariant-scan: R10 FAIL: local and blocking hosted check sets diverged"

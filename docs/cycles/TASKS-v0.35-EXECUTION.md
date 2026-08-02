@@ -78,6 +78,21 @@ verifier path to the declared-scope table. The table now allows precisely
 `tools/audit_deferred.py`. No broader tools glob, scope precedence, checker,
 forbid, gate, lane, exemption, or classification changes.
 
+**r7 — 2026-08-02 — Step 6 installer/selector-name finding.** The first
+separately authorized corrected run, `30754728135`, proved the 1.86 success and
+1.85 declared-MSRV refutation under their named toolchains, but the offline job
+did not reach compilation: the action installed the rustup name `1.78` while
+the explicit proof selected the unavailable name `1.78.0`. Its failure receipt
+truthfully records `conclusion=failure` and fallback `rustc_release=1.91.1`.
+The run and ref are immutable 8/9 non-results. The action now installs the exact
+`1.78.0` name, and R10's seventh control reconstructs the mismatch. A new
+hosted attempt requires a different exact SHA and another fresh ref under
+separate authorization.
+
+**Step 5A — the action installer and explicit selector now share the exact
+rustup name, with the mismatch covered by R10's seventh executable control —
+2026-08-02.**
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -444,8 +459,8 @@ column was edited to match what happened.**
 | Postgres / pgvector / multi-host seam | unchanged | v0.35 · 2026-08-02 — no topology, dependency, schema, or production-source path changed | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — Step 5A's real self-test passed 12 rules / 72 controls. Three new R10 controls cover bare cargo under a shadowed action input, explicit 1.85 versus local 1.86, and removal of the effective-version proof; no unregistered spelling appeared and the trigger did not fire | none |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — after the operator classified historical hosted 1.78 evidence as unverifiable rather than false, Step 5A explicitly selected and proved every floor toolchain. Local Rust 1.86 passed the net graph and local Rust 1.85 failed only on declared `rust-version` 1.86 requirements. Failed run 30746841903 and ref `codex/v0.35-evidence-d33c251` remain immutable non-results; corrected hosted authentication is separately gated at Step 6 | **Step 5A — completed locally; Step 6 requires separate authorization for one exact SHA and fresh ref** |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — Step 6's first hosted attempt exposed an installer/selector-name spelling outside R10's prior vocabulary. The strengthened real self-test now passes 12 rules / 73 controls; the seventh R10 control reconstructs exact action input `1.78` versus selector `1.78.0`. The trigger fired and its assigned correction is complete locally | **Step 5A — completed locally with the new spelling governed; hosted confirmation remains Step 6** |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — run 30754728135 proved the corrected hosted Rust 1.86 success and Rust 1.85 declared-MSRV refutation, while its offline 1.78 job failed before compilation on an action-input/selector-name mismatch. Ref `codex/v0.35-evidence-7a44423` is fixed at its exact 8/9 non-result. Local correction now installs exact `1.78.0`; another exact candidate and fresh ref require separate authorization | **Step 5A — locally corrected; Step 6 remains open for one separately authorized hosted confirmation** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
@@ -453,10 +468,10 @@ column was edited to match what happened.**
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.35 · 2026-08-02 — shell source remains forbidden and no release value changed; trigger did not fire | none — `shell/intel_shell/**` remains forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.35 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.35 · 2026-08-02 — Step 4 measured exact Step 3 audit-child State at 256,218 / 453,741 bytes and export at 2,551,288 / 3,000,000 bytes. Against exact delivered v0.34, the post-retention State denominator is +12,816 bytes/cycle; against the v0.34 governed field, the first adjacent governed pair wholly inside two-cycle retention is +24,108 bytes/cycle. Availability is 15.41 State cycles versus 18.61 export cycles, so State is nearer by 3.20 cycles. Neither trigger fired and no lever was selected | **Step 4 — completed; the unchanged condition governs recurrence** |
-| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 5A fired the first clause by adding three R10 mutants. All 72 controls derive their finding line from an authored anchor resolved exactly once against the constructed mutant; the three new controls cover the shadowed bare-cargo construction, explicit 1.85/1.86 identity mismatch, and missing effective-version proof. Zero `expected_line` or other absolute-line fields survive | **Step 5A — completed; Step 7 moves this subject to Deferred completions** |
+| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 6's finding fired the first clause and added one R10 mutant. All 73 controls derive their finding line from an authored anchor resolved exactly once against the constructed mutant; the new control makes action input `1.78` versus explicit selector `1.78.0` emit the measured installer mismatch. Zero `expected_line` or other absolute-line fields survive | **Step 5A — completed; Step 7 moves this subject to Deferred completions** |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.35 · 2026-08-02 — v0.35 still matches `v0.<n>`; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-02 — the activation distance is lifecycle configuration and records only, with no runtime-behaviour or public-surface change; v0.17.1's reset leaves the epoch count at zero | **Step 7 — restate the epoch count under the v0.32 reset rule** |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — Step 5A measured the before and after populations independently: each reported 22 offline-MSRV and 3 release-version current restatements. The three new invariant-registry floor literals are classified as control constructions, the package-scoped floor commands do not become offline `--workspace` authorities, every tracked floor-literal file remains classified, and the trigger did not fire | **Step 5A — completed; the registered membership remains governed** |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — before the installer-name correction, `version-check` reported 3 executable pins with raw `[1.78, 1.78.0]`; after it reports 3 with raw `[1.78.0]`. Both normalize to 1.78, and both trees report 22 offline-MSRV plus 3 release-version current restatements. The raw-set change is the intentional replacement of an unselectable action alias with the exact installed name; every tracked floor-literal file remains classified and the trigger did not fire | **Step 5A — completed; the registered membership remains governed** |
 | **Retention arithmetic fallback** | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.35 · 2026-08-02 — Step 3 deleted the optional branch, made the retained set mandatory, committed fixture cycle documents before derivation, and passed the real checker at the exact activation pattern. R12's new 69th control makes an optional parameter fail. The prior criterion was truthfully satisfied in Step 1; under this forward criterion the trigger did not fire | **Step 3 — completed; the corrected regression criterion remains governed** |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.35 · 2026-08-02 — v0.34 carries its required audit field and v0.35 remains open; the general optionality ruling is unchanged | none — the v0.32 ruling stands; **this runbook separately requires its own at Step 7** |
 
@@ -831,6 +846,16 @@ pass.** If the corrected lane cannot pass honestly, that is the finding.
 
 **Depends on:** Steps 1–5 complete and boxed.
 
+**Attempt disposition (2026-08-02): INCOMPLETE.** Authorized run
+`30754728135`, attempt 1, authenticated exact candidate `7a444235…` on fresh
+ref `codex/v0.35-evidence-7a44423`. Eight of nine blocking identities passed.
+The 1.78 job stopped in its proof because the action installed rustup name
+`1.78` and `rustup run 1.78.0` correctly refused an uninstalled name; neither
+offline cargo command executed. This is a toolchain-construction non-result,
+not a floor result. r7 records the local correction. The failed run/ref stay
+immutable, and Step 6 remains unchecked until another exact SHA and fresh ref
+receive separate operator authorization and all criteria pass.
+
 **Objective.** Produce release-grade hosted evidence for the exact candidate on
 a fresh operator-authorized evidence ref.
 
@@ -951,7 +976,8 @@ governs any future admission.
 - [x] Step 4 · POST-LEVER BASIS
 - [x] Step 5 · NET-FLOOR — completed through Step 5A's corrective measurement
 - [x] Step 5A · NET-FLOOR-CORRECTION — completed locally
-- [ ] Step 6 · RE-MEASURE — awaiting separate exact-SHA/ref authorization
+- [ ] Step 6 · RE-MEASURE — first authorized attempt is an immutable 8/9
+      non-result; locally corrected candidate awaits separate SHA/ref authorization
 - [ ] Step 7 · R-CLOSE
 
 ---

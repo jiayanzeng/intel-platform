@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Steps 5 and 5A are locally complete; corrected hosted evidence now requires a separate operator decision on one exact candidate SHA and a fresh ref.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 72 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation is classified **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Failed evidence ref `codex/v0.35-evidence-d33c251` remains fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`; run `30746841903` and that ref remain immutable non-results. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **361/361**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 populations each passed **361/361** and the comparator derived equivalence at **361**; the mandatory standalone golden passed **11/11**, delta **0**. No remote ref moved, no push or hosted run occurred, and no production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6's first separately authorized attempt is an immutable 8/9 construction non-result; the exact installer-name correction is locally complete and a new exact candidate/fresh ref requires a separate operator decision.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Failed evidence refs `codex/v0.35-evidence-d33c251` and `codex/v0.35-evidence-7a44423` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99` and `7a444235dab5905bff6cc90a61815e31690c3a35`; runs `30746841903` and `30754728135` and both refs remain immutable non-results. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **361/361**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 populations each passed **361/361** and the comparator derived equivalence at **361**. The first authorized ref was pushed once and dispatched once; no corrected-candidate ref has been pushed or dispatched, and no production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command changed.
 
 **v0.35 Step 5a pre-implementation MSRV measurement gate (measured
 2026-08-02).** The operator-supplied r4 prompt required all three affected
@@ -129,6 +129,64 @@ permission/network non-results; their authorized reruns produced the stated
 measurements. No push, hosted dispatch, remote-ref change, or acceptance of
 run 30746841903 occurred. Step 6 remains a separate decision on one exact
 candidate SHA and one new ref.
+
+**v0.35 Step 6 first authorized attempt and installer-name correction
+(measured 2026-08-02).** The operator authorized exact candidate
+`7a444235dab5905bff6cc90a61815e31690c3a35` and fresh ref
+`refs/heads/codex/v0.35-evidence-7a44423`. The ref did not exist before the
+push, was pushed once, and immediate and final readback both resolved it to
+that exact candidate. Workflow-dispatch run **30754728135**, attempt **1**,
+authenticated the same `event_sha`, `sha`, and ref. Eight of nine blocking
+identities passed: core, net, golden, lint, Python 3.11, Python 3.12, the Rust
+1.86 net success, and the Rust 1.85 declared-MSRV refutation. The offline
+`msrv` identity failed before either cargo command executed.
+
+The failed proof is a construction non-result. The action input installed the
+rustup name `1.78`, while the proof invoked `rustup run 1.78.0`; rustup emitted
+`toolchain '1.78.0-x86_64-unknown-linux-gnu' is not installed` and stopped.
+The always-run receipt recorded `conclusion=failure` and the effective fallback
+`rustc_release=1.91.1`, so A13 makes the construction answerable from retained
+repository-shaped evidence. All nine receipt/bundle artifacts were downloaded
+and inspected locally; none was accepted as release-grade evidence. Run
+**30754728135** and ref `codex/v0.35-evidence-7a44423` are immutable non-results,
+just like run **30746841903** and ref `codex/v0.35-evidence-d33c251`.
+
+The local correction changes only the offline job's action input from `1.78`
+to the exact selector name `1.78.0`. R10 now rejects any explicit hosted floor
+selector whose action-installed toolchain name is not exactly identical; its
+seventh reconstructible control changes `1.78.0` back to `1.78` and emits
+`blocking hosted floor lane 'msrv' selects toolchain 1.78.0 but action installs
+1.78`. The registered self-test passes **12 rules / 73 controls**, still with
+zero absolute `expected_line` fields. No gate, lane, exemption, blocking
+identity, or R10 classification was relaxed. The local/hosted topology remains
+**22 jobs / 30 checks**, **8 blocking jobs / 29 checks**, **59** derived
+local-only exemptions, and **9** total blocking identities. Receipt emitters,
+accepted-runner assertions, deferred-audit runner populations, and receipt /
+bundle expectations remain **9**, **9**, **9**, and **9 / 9** respectively;
+the correction moves none of them.
+
+`version-check` measured **3** executable pins before and after the correction.
+The raw authority set changed from `[1.78, 1.78.0]` to `[1.78.0]`, while both
+trees normalize to offline floor **1.78** and report **22** offline-MSRV plus
+**3** release-version current restatements. The workflow is now **39,177
+bytes**, SHA-256
+`4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+The invariant registry is **64,886 bytes**, SHA-256
+`27377b5b6326dc92be5cdba7726ce9d559dcc3076b9e653a3a230625ba7e1f3e`.
+
+The corrected authoritative local gate passed all **22/22** jobs: explicit
+Rust 1.78 offline check/test, Rust 1.86 net success, Rust 1.85 declared-MSRV
+refutation, zero rustc/clippy warnings, checklist **268 / 3 / 268 / 268**,
+constrained Python 3.11.4 **361/361**, embedded golden **11/11**, all protected
+pins, and both protected databases. Clean Python 3.11.4 and 3.12.13 rebuilds
+each resolved **21** constrained packages and passed **361/361**; the
+machine-readable comparator derived `equivalent=true`, `collected=361`,
+`equivalent_passed=361`, and zero skips. The mandatory standalone golden passed
+the same **11/11** assertions, delta **0**. A sandbox-only first 3.11 execution
+could not bind eight loopback test servers and is a permission non-result; the
+permitted clean rerun produced the stated result. No corrected-candidate push
+or hosted dispatch occurred. A fresh exact candidate and fresh ref require a
+separate operator authorization before Step 6 can resume.
 
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only
