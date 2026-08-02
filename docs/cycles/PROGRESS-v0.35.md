@@ -583,3 +583,72 @@ Entries are append-only; corrections are new dated entries.
   surface, publisher request, scheduler, service, or model-profile command was
   relaxed or changed. The operator-supplied untracked amendment remains
   untouched. A new exact candidate/fresh ref requires separate authorization.
+
+### 2026-08-03 · STEP-6-ATTESTATION-VERIFIER-GATE — hosted 9/9, release-grade 0/9
+
+- owner: Codex
+- commit: 239eb38c0f773f8fa40c5e4dfcf576393e9193f5
+- result: INCOMPLETE. The second authorized Step 6 attempt passed every hosted
+  job but fired the operator's construction-non-result stop condition in the
+  production release-grade verifier. Step 6 remains unchecked; Step 7 was not
+  entered.
+- candidate/ref acceptance: PASS. Tracked HEAD was clean at exact candidate
+  `8fae40e78afee6df80133f89bbbac4a074179ff5`, tree
+  `06925e82b10e6706d38a9120e642898c06c25799`. A fresh pre-push
+  `git ls-remote` exited **0** with no entry for
+  `refs/heads/codex/v0.35-evidence-8fae40e`. One non-force push created it;
+  immediate and final readback each returned the exact candidate.
+- hosted-job acceptance: PASS. Run **30757027882**, attempt **1**, event
+  `workflow_dispatch`, exact SHA/ref, completed `success`. All **9** blocking
+  identities passed: core, net, lint, golden, both shell jobs, Rust 1.78
+  offline proof/check/test, Rust 1.86 net proof/success, and Rust 1.85
+  proof/declared-MSRV refutation. The report-only drift job was structurally
+  skipped.
+- workflow acceptance: PASS. The intended changed workflow is **39,177 bytes**
+  / SHA-256
+  `4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+- receipt/toolchain acceptance: PASS for the additional assertions. Exactly
+  **9** receipts and **9** bundles were downloaded. Executed `jq -e` assertions
+  returned zero only for `msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+  `net-msrv-1-85=1.85.0`. The other six receipts record `1.91.1`; all nine bind
+  success, Linux, repository, workflow, event SHA, and checkout SHA.
+- release-grade verifier acceptance: **FAIL — construction non-result.** The
+  production verifier ran once from a clean detached worktree at the exact
+  candidate with attestations and exact repository/workflow/source pins
+  required. It accepted **0** and rejected **9**; every reason was
+  `GitHub attestation verification failed: Error: verifying with issuer
+  "sigstore.dev"`. The resulting missing-all-nine matrix is not evidence that
+  a hosted job or floor failed.
+- verifier report disposition: NOT ADMITTED. The operator-local report is
+  **32,751 bytes** / SHA-256
+  `3d1593ace65bc76fc72bd041a8cf3a1106c013bffba23808176bf0cbe1968b94`.
+  It stays under `/private/tmp`, is not repository evidence, and none of the
+  downloaded receipts or bundles is accepted as release-grade.
+- shell-population acceptance: NOT MEASURED after the stop. Both hosted shell
+  jobs passed, but no release-grade local/hosted comparator output was produced;
+  no count is transcribed from the job display.
+- governed-export acceptance: NOT MEASURED after the stop. No project-root
+  candidate export was generated and no governed progress field was appended.
+- protected-timing acceptance: NOT MEASURED after the stop. No Step 6 real-time
+  pair or manifest-delta assertion was produced; no protected byte changed.
+- published-state acceptance: PASS. Final direct readback kept remote `main`
+  and peeled `v0.17.1` at
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`, annotated tag object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`, and fixed all three v0.35
+  evidence refs at their exact candidates.
+- immutability acceptance: PASS. Runs **30746841903**, **30754728135**, and
+  **30757027882** and refs `codex/v0.35-evidence-d33c251`,
+  `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain
+  immutable non-results for release-grade Step 6 evidence. No receipt or bundle
+  from any was admitted; the verifier was not retried.
+- golden-E2E delta: **0**. Exact candidate local golden passed **11/11** before
+  authorization, hosted golden passed, and the mandatory post-record local
+  golden passed the same **11/11** assertions.
+- local record gates: PASS. `cycle-check`, `version-check`, `checklist-audit`
+  at **268 / 3 / 268 / 268**, `progress-check`, and diff hygiene pass.
+- scope acceptance: PASS. The one authorized ref push and one hosted dispatch
+  were the only remote mutations. No retry, force, move, deletion, governed
+  export, Step 7 action, gate/lane/exemption/R10 relaxation, dependency,
+  production source, protected byte, public surface, publisher request,
+  scheduler, service, or model-profile command occurred. The operator-supplied
+  untracked amendment remains untouched.
