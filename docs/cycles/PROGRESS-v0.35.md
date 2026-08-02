@@ -223,3 +223,40 @@ Entries are append-only; corrections are new dated entries.
   runbook. It issued no publisher request, ran no scheduler, service, or
   model-profile command, wrote no protected byte, and changed no dependency,
   production source, public response, release authority, or remote ref.
+
+### 2026-08-02 · POST-LEVER BASIS — first two-cycle-epoch denominator
+
+- owner: Codex
+- commit: 2a34a2cc9452837607fb88c9ce4570d7ce67faaa
+- result: PASS. Exact Step 3 audit child
+  `cd9a119f309096d2d715a54fde6302a5f95362d0` exported **2,551,288 bytes /
+  151 files / 2 retained cycles**, with **100 derived / 7 required** paths and
+  both protected byte classes excluded. One sandboxed npm-DNS failure was a
+  non-result; the identical permission-complete project-root run passed.
+- series acceptance: PASS. State restates every append-only governed field and
+  the checker's last-field-per-cycle series with retention depth at every
+  point. The newest adjacent governed pair is v0.34→v0.35, **2,527,180 [2]
+  → 2,551,288 [2] = +24,108 bytes/cycle**. Published 77,014, 77,862,
+  86,946, and 79,962 denominators are marked epoch-stale because all were
+  measured under depth three.
+- reclaim acceptance: PASS by a controlled same-tree export pair. Depth two
+  emitted **2,551,288 bytes / 151 files**; the depth-three counterfactual
+  emitted **2,649,296 bytes / 153 files** and added only the v0.33 runbook and
+  progress pair. The real reclaim is **98,008 bytes**, refuting the supplied
+  97,951-byte figure by **57 bytes**.
+- boundary acceptance: PASS. The export's **448,712-byte** remainder is
+  **18.61 cycles** at +24,108. Exact-tree State is **256,218 / 453,741**;
+  exact delivered v0.34 State was 243,402, making its post-retention delta
+  +12,816 and its **197,523-byte** remainder **15.41 cycles**. State is nearer
+  by **3.20 cycles**. Each denominator is one adjacent pair and carries the
+  checker's unbounded-representativeness warning.
+- lever acceptance: PASS. The measured post-retention basis does not require
+  an immediate lever, so none was selected. No archive, `REQUIRED_PATHS`
+  change, manifest exclusion, or depth-one retention change was made.
+- golden-E2E delta: **0**. The mandatory standalone post-task run passed
+  byte-identical **11/11**.
+- publisher/ref acceptance: PASS. POST-LEVER BASIS changed only State and the
+  active runbook. It issued no publisher request, ran no scheduler, service,
+  or model-profile command, wrote no protected byte, and changed no code,
+  dependency, public response, release authority, or remote ref.
+- governed review-export measurement: tree=`cd9a119f309096d2d715a54fde6302a5f95362d0`; bytes=`2551288`
