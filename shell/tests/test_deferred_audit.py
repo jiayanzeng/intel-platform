@@ -127,6 +127,7 @@ def _receipt(
         "sha": sha,
         "conclusion": conclusion,
         "runner_os": "Linux",
+        "rustc_release": "1.91.0",
         "completed_at": "2026-07-26T00:00:00Z",
     }
     if matrix is not None:
@@ -393,6 +394,39 @@ def test_failed_receipt_is_visibly_rejected(tmp_path: Path) -> None:
         item["reason"] == "conclusion is not success: failure"
         for item in measurement["rejected_runner_receipts"]
     )
+
+
+@pytest.mark.parametrize(
+    ("rustc_release", "reason"),
+    [
+        (None, "missing/invalid fields: rustc_release"),
+        ("1.91", "rustc_release is not a numeric Rust release"),
+    ],
+)
+def test_current_receipt_requires_numeric_rustc_release(
+    tmp_path: Path,
+    rustc_release: str | None,
+    reason: str,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipt = tmp_path / "rustc-release.json"
+    _receipt(receipt, head)
+    payload = json.loads(receipt.read_text())
+    if rustc_release is None:
+        payload.pop("rustc_release")
+    else:
+        payload["rustc_release"] = rustc_release
+    receipt.write_text(json.dumps(payload) + "\n")
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        [receipt],
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+    )
+
+    assert measurement["accepted_runner_receipts"] == []
+    assert measurement["rejected_runner_receipts"][0]["reason"] == reason
 
 
 @pytest.mark.parametrize(
@@ -1200,6 +1234,7 @@ def test_every_workflow_job_emits_and_persists_a_receipt() -> None:
         == workflow_job_count
     )
     assert workflow.count('"matrix": "python=${{ matrix.python-version }}"') == 1
+    assert workflow.count('"rustc_release": "$rustc_release"') == workflow_job_count
     assert "publish_evidence:" in workflow
     assert "id-token: write" in workflow
     assert "attestations: write" in workflow

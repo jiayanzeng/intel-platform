@@ -332,9 +332,9 @@ def test_r10_reports_current_topology() -> None:
 
     assert report.findings == ()
     assert report.local_jobs == 22
-    assert report.local_checks == 24
+    assert report.local_checks == 30
     assert report.blocking_jobs == 8
-    assert report.hosted_checks == 23
+    assert report.hosted_checks == 29
 
     run_text = (ROOT / "run").read_text()
     functions = invariant_scan._bash_functions(run_text)
@@ -420,6 +420,27 @@ def test_r10_reports_current_topology() -> None:
             "receipt-attestation-persistence"
         ],
     )
+
+
+def test_r10_cargo_identity_carries_the_explicit_toolchain() -> None:
+    command = "cargo check -p cored --features net --locked --all-targets"
+    older = ".".join(("1", "85", "0"))
+    newer = ".".join(("1", "86", "0"))
+
+    one_eighty_five = invariant_scan._canonical_cargo_commands(
+        f"rustup run {older} {command}"
+    )
+    one_eighty_six = invariant_scan._canonical_cargo_commands(
+        f"rustup run {newer} {command}"
+    )
+
+    assert one_eighty_five == {
+        f"cargo:{older}:check:-p cored --features net --locked --all-targets"
+    }
+    assert one_eighty_six == {
+        f"cargo:{newer}:check:-p cored --features net --locked --all-targets"
+    }
+    assert one_eighty_five.isdisjoint(one_eighty_six)
 
 
 def test_ci_workflow_parser_derives_current_blocking_identities() -> None:

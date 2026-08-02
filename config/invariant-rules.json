@@ -371,9 +371,9 @@
     },
     {
       "id": "R10",
-      "claim": "Every local ci-local check has a non-report-only hosted counterpart and every blocking hosted verification has a local counterpart; exemptions match declared structural criteria or an explicit named residual.",
+      "claim": "Every local ci-local check has a non-report-only hosted counterpart with the same effective toolchain and every blocking hosted verification has a local counterpart; shadowed hosted toolchain inputs and floor lanes without effective cargo/rustc version proof are findings; exemptions match declared structural criteria or an explicit named residual.",
       "source": "ARCHITECTURE.md:210",
-      "scope": "All entries produced by run's ci_local_jobs table and every step in jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions. Exemptions are derived for job-level continue-on-error, unconditional uses actions before a job's first command, the constrained shell-environment install, and the terminal always-run CI_RECEIPT_PATH persistence block. Operator-local protected database verification remains the sole named residual because its reason is environmental rather than structural.",
+      "scope": "All entries produced by run's ci_local_jobs table and every step in jobs parsed from .github/workflows/ci.yml. Command entry points are normalized through run's actual dispatch/functions, with rustup-run and cargo-plus selection carried in cargo identities and default used only when neither is present. Every explicit floor lane must carry a matching cargo/rustc version proof. A blocking job whose toolchain action input differs from rust-toolchain.toml may not invoke unqualified cargo. Exemptions are derived for job-level continue-on-error, unconditional uses actions before a job's first command, the constrained shell-environment install, and the terminal always-run CI_RECEIPT_PATH persistence block. Operator-local protected database verification remains the sole named residual because its reason is environmental rather than structural.",
       "fail_before": [
         {
           "file": "run",
@@ -407,9 +407,49 @@
             "      - name: unpaired hosted check\n",
             "        run: cargo test -p intel-core --locked\n"
           ],
-          "expected_fail": "blocking hosted check 'net/unpaired hosted check' (cargo:test:-p intel-core --locked) has no local ci-local counterpart",
+          "expected_fail": "blocking hosted check 'net/unpaired hosted check' (cargo:default:test:-p intel-core --locked) has no local ci-local counterpart",
           "expected_file": ".github/workflows/ci.yml",
           "expected_anchor": "        run: cargo test -p intel-core --locked\n      - name: emit CI-runner receipt"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "find": "      - name: cargo check -p cored --features net --locked (1.86)\n        env:\n          RUSTFLAGS: \"\"\n        run: rustup run 1.86.0 cargo check -p cored --features net --locked --all-targets\n",
+          "replace_with": [
+            "      - name: cargo check -p cored --features net --locked (1.86)\n",
+            "        env:\n",
+            "          RUSTFLAGS: \"\"\n",
+            "        run: cargo check -p cored --features net --locked --all-targets\n"
+          ],
+          "expected_fail": "hosted job net-msrv-1-86 runs unqualified cargo under shadowed toolchain input 1.86.0; rust-toolchain.toml selects 1.91",
+          "expected_file": ".github/workflows/ci.yml",
+          "expected_anchor": "        run: cargo check -p cored --features net --locked --all-targets\n      - name: emit CI-runner receipt"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "find": "        run: rustup run 1.86.0 cargo check -p cored --features net --locked --all-targets\n",
+          "replace_with": [
+            "        run: rustup run 1.85.0 cargo check -p cored --features net --locked --all-targets\n"
+          ],
+          "expected_fail": "blocking hosted floor lane 'net-msrv-1-86' selects 1.85.0 without an effective cargo/rustc version proof",
+          "expected_file": ".github/workflows/ci.yml",
+          "expected_anchor": "  net-msrv-1-86:\n    name: live-fetch MSRV succeeds (1.86)"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "find": "      - name: prove Rust 1.86.0 toolchain\n        env:\n          RUSTFLAGS: \"\"\n        run: |\n          assert_rust_toolchain() {\n            local toolchain=\"$1\" expected_release=\"$2\"\n            local cargo_version rustc_verbose rustc_release\n            cargo_version=\"$(rustup run \"$toolchain\" cargo -V)\"\n",
+          "replace_with": [
+            "      - name: prove Rust 1.86.0 toolchain\n",
+            "        env:\n",
+            "          RUSTFLAGS: \"\"\n",
+            "        run: |\n",
+            "          assert_rust_toolchain() {\n",
+            "            local toolchain=\"$1\" expected_release=\"$2\"\n",
+            "            local cargo_version rustc_verbose rustc_release\n",
+            "            cargo_version=\"cargo $expected_release (version query removed)\"\n"
+          ],
+          "expected_fail": "blocking hosted floor lane 'net-msrv-1-86' selects 1.86.0 without an effective cargo/rustc version proof",
+          "expected_file": ".github/workflows/ci.yml",
+          "expected_anchor": "  net-msrv-1-86:\n    name: live-fetch MSRV succeeds (1.86)"
         }
       ],
       "fail_before_note": "invariant-scan: R10 FAIL: local and blocking hosted check sets diverged"

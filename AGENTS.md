@@ -210,6 +210,13 @@ python3.12 -m venv --clear .venv/py312
 PYTHONPATH=shell .venv/py312/bin/python -m pytest shell/tests -q
 ```
 
+An MSRV floor lane must select its toolchain at a precedence level above
+`rust-toolchain.toml`, for example with `rustup run <version> cargo ...`, and
+must prove the effective `cargo -V` and `rustc -vV` release before compiling.
+A `dtolnay/rust-toolchain` action `toolchain:` input only installs and selects
+the rustup default; it does not override the tracked toolchain file and is not
+by itself a floor selection.
+
 Both clean rebuilds were executed on 2026-07-25 with Python 3.11.4 and
 3.12.13. Their application/test resolutions were byte-identical and are
 enforced by `shell/constraints.txt`; `shell/requirements.txt` remains the

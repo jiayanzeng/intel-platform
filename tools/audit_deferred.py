@@ -1042,7 +1042,7 @@ def runner_receipt_measurement(
         "completed_at",
     )
     if legacy_job_counts is None:
-        required += ("workflow", "repository", "event_sha")
+        required += ("workflow", "repository", "event_sha", "rustc_release")
     for path in receipts:
         path_fields = _receipt_path_fields(
             path,
@@ -1153,6 +1153,17 @@ def runner_receipt_measurement(
                     **path_fields,
                     "sha": sha,
                     "reason": "sha is not a 40-64 character hexadecimal object id",
+                }
+            )
+            continue
+        if legacy_job_counts is None and re.fullmatch(
+            r"\d+\.\d+\.\d+", str(receipt["rustc_release"])
+        ) is None:
+            rejected.append(
+                {
+                    **path_fields,
+                    "sha": sha,
+                    "reason": "rustc_release is not a numeric Rust release",
                 }
             )
             continue

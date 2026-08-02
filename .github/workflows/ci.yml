@@ -91,6 +91,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -102,6 +107,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -142,15 +148,48 @@ jobs:
           toolchain: "1.86.0"
       - uses: Swatinem/rust-cache@v2
 
+      - name: prove Rust 1.86.0 toolchain
+        env:
+          RUSTFLAGS: ""
+        run: |
+          assert_rust_toolchain() {
+            local toolchain="$1" expected_release="$2"
+            local cargo_version rustc_verbose rustc_release
+            cargo_version="$(rustup run "$toolchain" cargo -V)"
+            rustc_verbose="$(rustup run "$toolchain" rustc -vV)"
+            printf '%s\n' "$cargo_version"
+            printf '%s\n' "$rustc_verbose"
+            rustc_release="$(printf '%s\n' "$rustc_verbose" | sed -n 's/^release: //p')"
+            if [ "$rustc_release" != "$expected_release" ]; then
+              echo "rustup run $toolchain selected rustc $rustc_release; expected $expected_release." >&2
+              return 1
+            fi
+            case "$cargo_version" in
+              "cargo $expected_release "*) ;;
+              *)
+                echo "rustup run $toolchain selected $cargo_version; expected cargo $expected_release." >&2
+                return 1
+                ;;
+            esac
+            EFFECTIVE_RUSTC_RELEASE="$rustc_release"
+          }
+          assert_rust_toolchain 1.86.0 1.86.0
+          echo "CI_RUSTC_RELEASE=$EFFECTIVE_RUSTC_RELEASE" >> "$GITHUB_ENV"
+
       - name: cargo check -p cored --features net --locked (1.86)
         env:
           RUSTFLAGS: ""
-        run: cargo check -p cored --features net --locked --all-targets
+        run: rustup run 1.86.0 cargo check -p cored --features net --locked --all-targets
       - name: emit CI-runner receipt
         if: always()
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -162,6 +201,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -197,6 +237,34 @@ jobs:
           toolchain: "1.85.0"
       - uses: Swatinem/rust-cache@v2
 
+      - name: prove Rust 1.85.0 toolchain
+        env:
+          RUSTFLAGS: ""
+        run: |
+          assert_rust_toolchain() {
+            local toolchain="$1" expected_release="$2"
+            local cargo_version rustc_verbose rustc_release
+            cargo_version="$(rustup run "$toolchain" cargo -V)"
+            rustc_verbose="$(rustup run "$toolchain" rustc -vV)"
+            printf '%s\n' "$cargo_version"
+            printf '%s\n' "$rustc_verbose"
+            rustc_release="$(printf '%s\n' "$rustc_verbose" | sed -n 's/^release: //p')"
+            if [ "$rustc_release" != "$expected_release" ]; then
+              echo "rustup run $toolchain selected rustc $rustc_release; expected $expected_release." >&2
+              return 1
+            fi
+            case "$cargo_version" in
+              "cargo $expected_release "*) ;;
+              *)
+                echo "rustup run $toolchain selected $cargo_version; expected cargo $expected_release." >&2
+                return 1
+                ;;
+            esac
+            EFFECTIVE_RUSTC_RELEASE="$rustc_release"
+          }
+          assert_rust_toolchain 1.85.0 1.85.0
+          echo "CI_RUSTC_RELEASE=$EFFECTIVE_RUSTC_RELEASE" >> "$GITHUB_ENV"
+
       - name: cargo check -p cored --features net --locked declares 1.86 floor
         env:
           RUSTFLAGS: ""
@@ -204,7 +272,7 @@ jobs:
           set +e
           output="$(
             {
-              cargo check -p cored --features net --locked --all-targets
+              rustup run 1.85.0 cargo check -p cored --features net --locked --all-targets
             } 2>&1
           )"
           status=$?
@@ -226,6 +294,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -237,6 +310,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -294,6 +368,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -305,6 +384,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -365,6 +445,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -376,6 +461,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -441,22 +527,55 @@ jobs:
           toolchain: "1.78"
       - uses: Swatinem/rust-cache@v2
 
+      - name: prove Rust 1.78.0 toolchain
+        env:
+          RUSTFLAGS: ""
+        run: |
+          assert_rust_toolchain() {
+            local toolchain="$1" expected_release="$2"
+            local cargo_version rustc_verbose rustc_release
+            cargo_version="$(rustup run "$toolchain" cargo -V)"
+            rustc_verbose="$(rustup run "$toolchain" rustc -vV)"
+            printf '%s\n' "$cargo_version"
+            printf '%s\n' "$rustc_verbose"
+            rustc_release="$(printf '%s\n' "$rustc_verbose" | sed -n 's/^release: //p')"
+            if [ "$rustc_release" != "$expected_release" ]; then
+              echo "rustup run $toolchain selected rustc $rustc_release; expected $expected_release." >&2
+              return 1
+            fi
+            case "$cargo_version" in
+              "cargo $expected_release "*) ;;
+              *)
+                echo "rustup run $toolchain selected $cargo_version; expected cargo $expected_release." >&2
+                return 1
+                ;;
+            esac
+            EFFECTIVE_RUSTC_RELEASE="$rustc_release"
+          }
+          assert_rust_toolchain 1.78.0 1.78.0
+          echo "CI_RUSTC_RELEASE=$EFFECTIVE_RUSTC_RELEASE" >> "$GITHUB_ENV"
+
       # No -D warnings here: an older compiler lints differently, and we are
       # asserting that it *builds*, not that it is lint-clean on 1.78.
       - name: cargo check --workspace --locked (1.78)
         env:
           RUSTFLAGS: ""
-        run: cargo check --workspace --locked
+        run: rustup run 1.78.0 cargo check --workspace --locked
 
       - name: cargo test --workspace --locked (1.78)
         env:
           RUSTFLAGS: ""
-        run: cargo test --workspace --locked
+        run: rustup run 1.78.0 cargo test --workspace --locked
       - name: emit CI-runner receipt
         if: always()
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -468,6 +587,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -564,6 +684,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-py${{ matrix.python-version }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -576,6 +701,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -627,6 +753,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -638,6 +769,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
@@ -709,6 +841,11 @@ jobs:
         run: |
           mkdir -p evidence/ci-runs
           checked_out_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+          rustc_release="${CI_RUSTC_RELEASE:-$(rustc -vV | sed -n 's/^release: //p')}"
+          if [[ ! "$rustc_release" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "cannot derive numeric rustc release for receipt: $rustc_release" >&2
+            exit 1
+          fi
           cat > "evidence/ci-runs/${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}.json" <<JSON
           {
             "run_id": "${{ github.run_id }}",
@@ -720,6 +857,7 @@ jobs:
             "sha": "$checked_out_sha",
             "conclusion": "${{ job.status }}",
             "runner_os": "${{ runner.os }}",
+            "rustc_release": "$rustc_release",
             "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON

@@ -251,8 +251,14 @@ RUN_DISPATCH = re.compile(
     r"(?P<target>[A-Za-z_][A-Za-z0-9_]*)\b"
 )
 CARGO_INVOCATION = re.compile(
-    r"\bcargo\s+(?P<verb>check|test|clippy|fmt|run)\s+"
+    r"\b(?:(?:rustup\s+run\s+(?P<rustup>[A-Za-z0-9._-]+)\s+)?"
+    r"cargo(?:\s+\+(?P<plus>[A-Za-z0-9._-]+))?)\s+"
+    r"(?P<verb>check|test|clippy|fmt|run)\s+"
     r"(?P<args>[^\n;&|]+)"
+)
+TOOLCHAIN_PROOF_CALL = re.compile(
+    r"\bassert_rust_toolchain\s+[\"']?(?P<toolchain>[A-Za-z0-9._-]+)"
+    r"[\"']?\s+[\"']?(?P<expected>[A-Za-z0-9._-]+)[\"']?"
 )
 RESIDUAL_LOCAL_CHECK_EXEMPTIONS = {
     "evidence-artifacts:verify": (
@@ -532,10 +538,39 @@ def _canonical_cargo_commands(text: str) -> set[str]:
                     "cargo-example:" + retained[example_index + 1]
                 )
                 continue
+        toolchain = match.group("rustup") or match.group("plus") or "default"
         commands.add(
-            "cargo:" + match.group("verb") + ":" + " ".join(retained)
+            "cargo:"
+            + toolchain
+            + ":"
+            + match.group("verb")
+            + ":"
+            + " ".join(retained)
         )
     return commands
+
+
+def _valid_toolchain_proof(body: str) -> bool:
+    required = (
+        'rustup run "$toolchain" cargo -V',
+        'rustup run "$toolchain" rustc -vV',
+        '[ "$rustc_release" != "$expected_release" ]',
+        '"cargo $expected_release "*',
+    )
+    return all(fragment in body for fragment in required)
+
+
+def _toolchain_proof_ids(text: str, proof_body: str | None = None) -> set[str]:
+    body = text if proof_body is None else proof_body
+    if not _valid_toolchain_proof(body):
+        return set()
+    return {
+        "rust-toolchain-proof:"
+        + match.group("toolchain")
+        + "="
+        + match.group("expected")
+        for match in TOOLCHAIN_PROOF_CALL.finditer(text)
+    }
 
 
 def _direct_check_ids(text: str) -> set[str]:
@@ -583,6 +618,9 @@ def _function_check_ids(
     visited.add(target)
     body = functions[target]
     checks = _direct_check_ids(body)
+    checks.update(
+        _toolchain_proof_ids(body, functions.get("assert_rust_toolchain"))
+    )
     for line in body.splitlines():
         stripped = line.strip()
         if not stripped or stripped.startswith("#"):
@@ -603,11 +641,40 @@ def _workflow_step_check_ids(
     if step.run is None:
         return set()
     checks = _direct_check_ids(step.run)
+    checks.update(_toolchain_proof_ids(step.run))
     for command in re.findall(r"(?:^|\s)\./run\s+([a-z0-9-]+)", step.run):
         target = dispatch.get(command)
         if target is not None:
             checks.update(_function_check_ids(target, functions))
     return checks
+
+
+def _cargo_toolchains(check_ids: set[str]) -> set[str]:
+    return {
+        check_id.split(":", 3)[1]
+        for check_id in check_ids
+        if check_id.startswith("cargo:")
+    }
+
+
+def _declared_job_toolchains(job: WorkflowJob) -> set[str]:
+    return {
+        match.group("toolchain")
+        for step in job.steps
+        for match in re.finditer(
+            r"(?m)^\s*toolchain:\s*[\"']?(?P<toolchain>[A-Za-z0-9._-]+)",
+            step.source,
+        )
+    }
+
+
+def _normalized_toolchain(value: str) -> tuple[int, ...] | str:
+    if re.fullmatch(r"\d+(?:\.\d+){1,2}", value):
+        parts = [int(part) for part in value.split(".")]
+        while len(parts) < 3:
+            parts.append(0)
+        return tuple(parts)
+    return value
 
 
 def _receipt_persistence_indices(job: WorkflowJob) -> frozenset[int]:
@@ -677,6 +744,8 @@ def r10_report(root: Path) -> ParityReport:
         run_text = run_path.read_text()
         functions = _bash_functions(run_text)
         workflow = parse_ci_workflow(workflow_path)
+        toolchain_file = tomllib.loads((root / "rust-toolchain.toml").read_text())
+        pinned_toolchain = str(toolchain_file["toolchain"]["channel"])
     except (OSError, ConfigError) as error:
         return ParityReport(
             findings=(f"run:1: cannot derive CI parity scope: {error}",),
@@ -714,6 +783,13 @@ def r10_report(root: Path) -> ParityReport:
                 f"{job.target} is unclassified"
             )
             continue
+        for toolchain in sorted(_cargo_toolchains(check_ids) - {"default"}):
+            proof_id = f"rust-toolchain-proof:{toolchain}={toolchain}"
+            if proof_id not in check_ids:
+                findings.append(
+                    f"run:{job.line}: local floor lane {job.label!r} selects "
+                    f"{toolchain} without an effective cargo/rustc version proof"
+                )
         local_sites.extend(
             CheckSite(check_id, "run", job.line, job.label)
             for check_id in sorted(check_ids)
@@ -734,6 +810,8 @@ def r10_report(root: Path) -> ParityReport:
             continue
         blocking_jobs += 1
         job_checks = 0
+        job_check_ids: set[str] = set()
+        job_check_sites: list[CheckSite] = []
         for index, step in enumerate(job.steps):
             decision = _hosted_step_exemption(job, index)
             if decision is not None:
@@ -752,7 +830,7 @@ def r10_report(root: Path) -> ParityReport:
                 )
                 continue
             job_checks += len(check_ids)
-            hosted_sites.extend(
+            sites = [
                 CheckSite(
                     check_id,
                     ".github/workflows/ci.yml",
@@ -760,7 +838,34 @@ def r10_report(root: Path) -> ParityReport:
                     f"{job.id}/{step.name}",
                 )
                 for check_id in sorted(check_ids)
-            )
+            ]
+            job_check_ids.update(check_ids)
+            job_check_sites.extend(sites)
+            hosted_sites.extend(sites)
+        declared_toolchains = _declared_job_toolchains(job)
+        shadowing_inputs = sorted(
+            toolchain
+            for toolchain in declared_toolchains
+            if _normalized_toolchain(toolchain)
+            != _normalized_toolchain(pinned_toolchain)
+        )
+        if shadowing_inputs:
+            for site in job_check_sites:
+                if site.id.startswith("cargo:default:"):
+                    findings.append(
+                        f"{site.file}:{site.line}: hosted job {job.id} runs "
+                        "unqualified cargo under shadowed toolchain input "
+                        f"{', '.join(shadowing_inputs)}; rust-toolchain.toml "
+                        f"selects {pinned_toolchain}"
+                    )
+        for toolchain in sorted(_cargo_toolchains(job_check_ids) - {"default"}):
+            proof_id = f"rust-toolchain-proof:{toolchain}={toolchain}"
+            if proof_id not in job_check_ids:
+                findings.append(
+                    f".github/workflows/ci.yml:{job.line}: blocking hosted "
+                    f"floor lane {job.id!r} selects {toolchain} without an "
+                    "effective cargo/rustc version proof"
+                )
         if job_checks == 0:
             findings.append(
                 f".github/workflows/ci.yml:{job.line}: blocking hosted job "

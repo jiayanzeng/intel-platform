@@ -442,13 +442,36 @@ ci_net_test() {
     cargo test -p cored --features net --locked
 }
 
+assert_rust_toolchain() {
+  local toolchain="$1" expected_release="$2"
+  local cargo_version rustc_verbose rustc_release
+  cargo_version="$(rustup run "$toolchain" cargo -V)"
+  rustc_verbose="$(rustup run "$toolchain" rustc -vV)"
+  printf '%s\n' "$cargo_version"
+  printf '%s\n' "$rustc_verbose"
+  rustc_release="$(printf '%s\n' "$rustc_verbose" | sed -n 's/^release: //p')"
+  if [ "$rustc_release" != "$expected_release" ]; then
+    red "rustup run $toolchain selected rustc $rustc_release; expected $expected_release."
+    return 1
+  fi
+  case "$cargo_version" in
+    "cargo $expected_release "*) ;;
+    *)
+      red "rustup run $toolchain selected $cargo_version; expected cargo $expected_release."
+      return 1
+      ;;
+  esac
+}
+
 ci_net_msrv_check() {
+  assert_rust_toolchain 1.86.0 1.86.0
   RUSTFLAGS="" rustup run 1.86.0 \
     cargo check -p cored --features net --locked --all-targets
 }
 
 ci_net_msrv_refute() {
   local output status
+  assert_rust_toolchain 1.85.0 1.85.0
   set +e
   output="$(
     {
@@ -481,10 +504,12 @@ ci_fmt() {
 }
 
 ci_msrv_check() {
+  assert_rust_toolchain 1.78.0 1.78.0
   RUSTFLAGS="" rustup run 1.78.0 cargo check --workspace --locked
 }
 
 ci_msrv_test() {
+  assert_rust_toolchain 1.78.0 1.78.0
   RUSTFLAGS="" rustup run 1.78.0 cargo test --workspace --locked
 }
 

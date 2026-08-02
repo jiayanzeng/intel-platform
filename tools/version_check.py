@@ -554,9 +554,9 @@ def rust_floor_partition_report(
             memberships.append("executable authority")
         if path in restatement_paths:
             memberships.append("registered current restatement")
-        if Path(path).suffix == ".py" and re.search(
-            rb"\boffline_msrv_report\s*\(",
-            source,
+        if path == "config/invariant-rules.json" or (
+            Path(path).suffix == ".py"
+            and re.search(rb"\boffline_msrv_report\s*\(", source)
         ):
             memberships.append("control construction")
         if any(

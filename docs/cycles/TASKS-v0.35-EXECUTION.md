@@ -62,6 +62,14 @@ earlier measured quantity as its expected result. A9 now requires the before
 and after populations to be derived and compared at their own trees; the
 historical Step 5 measurement is unchanged.
 
+**Step 5 — NET-FLOOR implementation completed through Step 5A's corrective
+toolchain selection and proof — 2026-08-02.**
+
+**Step 5A — all hosted and local floor commands explicitly select their
+toolchain, every floor lane proves its effective cargo/rustc release, R10
+distinguishes effective toolchains and carries six self-testing controls, and
+CI receipts bind `rustc_release` — 2026-08-02.**
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -423,19 +431,19 @@ column was edited to match what happened.**
 | Postgres / pgvector / multi-host seam | unchanged | v0.35 · 2026-08-02 — no topology, dependency, schema, or production-source path changed | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — the real self-test passed 12 rules / 68 controls and no new spelling appeared; trigger did not fire | none |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — local explicit 1.86/1.85 measurements produced the expected pass/refutation. Real hosted run 30746841903 then proved all three non-default floor jobs used the repository's 1.91 override: the named 1.86 green is void, the named 1.85 failure is a non-result for the floor, and the `msrv` job did not execute 1.78. Step 5A clause 4 requires operator adjudication before classification or correction; the trigger is not discharged | **Step 5A — BLOCKED at decision-gate clause 4; no lane, control, policy, or historical classification changes before operator adjudication** |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — Step 5A's real self-test passed 12 rules / 72 controls. Three new R10 controls cover bare cargo under a shadowed action input, explicit 1.85 versus local 1.86, and removal of the effective-version proof; no unregistered spelling appeared and the trigger did not fire | none |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — after the operator classified historical hosted 1.78 evidence as unverifiable rather than false, Step 5A explicitly selected and proved every floor toolchain. Local Rust 1.86 passed the net graph and local Rust 1.85 failed only on declared `rust-version` 1.86 requirements. Failed run 30746841903 and ref `codex/v0.35-evidence-d33c251` remain immutable non-results; corrected hosted authentication is separately gated at Step 6 | **Step 5A — completed locally; Step 6 requires separate authorization for one exact SHA and fresh ref** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.35 · 2026-08-02 — Step 5 changed exactly the existing `run` pin; the manifest is 192,370 bytes / 332 pins and schema plus complete verification matched every pin and both protected databases. `tools/model_profiles.py`, both `artifacts[]` entries, and every admission record are byte-identical. The latest timed pair remains Step 1's 0.11 s / 0.10 s real; neither trigger fired | **Step 5 — completed; the unchanged condition governs recurrence** |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.35 · 2026-08-02 — Step 5A changed exactly the existing `run` pin; the manifest is 192,703 bytes / 332 pins and schema plus complete verification matched every pin and both protected databases. `tools/model_profiles.py`, both `artifacts[]` entries, and every admission record are byte-identical. The latest timed pair remains Step 1's 0.11 s / 0.10 s real; neither trigger fired | **Step 5A — completed; the unchanged condition governs recurrence** |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.35 · 2026-08-02 — shell source remains forbidden and no release value changed; trigger did not fire | none — `shell/intel_shell/**` remains forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.35 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.35 · 2026-08-02 — Step 4 measured exact Step 3 audit-child State at 256,218 / 453,741 bytes and export at 2,551,288 / 3,000,000 bytes. Against exact delivered v0.34, the post-retention State denominator is +12,816 bytes/cycle; against the v0.34 governed field, the first adjacent governed pair wholly inside two-cycle retention is +24,108 bytes/cycle. Availability is 15.41 State cycles versus 18.61 export cycles, so State is nearer by 3.20 cycles. Neither trigger fired and no lever was selected | **Step 4 — completed; the unchanged condition governs recurrence** |
-| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 2's schema change fired the first clause and completed the assigned work. All 68 controls now derive their finding line from an authored anchor resolved exactly once against the constructed mutant; 40 retain the pre-existing named R12 control-site marker, registered anchors are never wholly supplied by `replace_with`, and zero `expected_line` or other absolute-line fields survive | **Step 2 — completed; Step 7 moves this subject to Deferred completions** |
+| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 5A fired the first clause by adding three R10 mutants. All 72 controls derive their finding line from an authored anchor resolved exactly once against the constructed mutant; the three new controls cover the shadowed bare-cargo construction, explicit 1.85/1.86 identity mismatch, and missing effective-version proof. Zero `expected_line` or other absolute-line fields survive | **Step 5A — completed; Step 7 moves this subject to Deferred completions** |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.35 · 2026-08-02 — v0.35 still matches `v0.<n>`; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-02 — the activation distance is lifecycle configuration and records only, with no runtime-behaviour or public-surface change; v0.17.1's reset leaves the epoch count at zero | **Step 7 — restate the epoch count under the v0.32 reset rule** |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — before and after the Step 5 lane additions, `version-check` reported 22 offline-MSRV and 3 release-version current restatements. The new package-scoped `rustup run` lines are not offline `--workspace` authorities, every tracked floor-literal file remains classified, and the trigger did not fire | **Step 5 — completed; the registered membership remains governed** |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — Step 5A measured the before and after populations independently: each reported 22 offline-MSRV and 3 release-version current restatements. The three new invariant-registry floor literals are classified as control constructions, the package-scoped floor commands do not become offline `--workspace` authorities, every tracked floor-literal file remains classified, and the trigger did not fire | **Step 5A — completed; the registered membership remains governed** |
 | **Retention arithmetic fallback** | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.35 · 2026-08-02 — Step 3 deleted the optional branch, made the retained set mandatory, committed fixture cycle documents before derivation, and passed the real checker at the exact activation pattern. R12's new 69th control makes an optional parameter fail. The prior criterion was truthfully satisfied in Step 1; under this forward criterion the trigger did not fire | **Step 3 — completed; the corrected regression criterion remains governed** |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.35 · 2026-08-02 — v0.34 carries its required audit field and v0.35 remains open; the general optionality ruling is unchanged | none — the v0.32 ruling stands; **this runbook separately requires its own at Step 7** |
 
@@ -625,11 +633,13 @@ cannot validate is reported with that bound attached, not upgraded by wishing.
 **Depends on:** Steps 1 (G4, G6, G7) and 2. **This is the cycle's largest
 scope loosening; read the Declared scope notes before starting.**
 
-**Gate disposition (2026-08-02): BLOCKED at clause 3.** Hosted run
+**Gate disposition (2026-08-02): clause 3 fired and the correction was assigned
+to Step 5A; Steps 5 and 5A are now complete locally.** Hosted run
 `30746841903` showed the named 1.85 job used the repository's 1.91 toolchain
 override, while R10 had accepted it as the local explicit-1.85 counterpart.
 The failed run and its fresh evidence ref are retained; neither may be reused,
-moved, or retried as completion evidence. No workaround was implemented.
+moved, or retried as completion evidence. No workaround was implemented; the
+later correction made the effective toolchain premise executable.
 
 **Objective.** Give the `--features net` MSRV floor a two-sided executable lane,
 correct the dependency gate that misplaces its cause, and re-pin `run`.
@@ -688,17 +698,19 @@ correct the dependency gate that misplaces its cause, and re-pin `run`.
 
 ## Step 5A · NET-FLOOR-CORRECTION 🤖
 
-**Depends on:** the r3 blocker record. Step 5 stays unboxed until Step 5a's
-acceptance criteria all pass.
+**Depends on:** the r3 blocker record. Step 5 remained unboxed until Step 5A's
+acceptance criteria all passed; both boxes now record that local completion.
 
-**Gate disposition (2026-08-02): BLOCKED at clause 4 before implementation or
-classification.** The real `msrv` job in run `30746841903` installed/defaulted
+**Gate disposition (2026-08-02): clause 4 fired, was recorded before
+classification, and the operator then classified the historical hosted evidence
+as UNVERIFIABLE rather than false and authorized local resumption. Step 5A is
+complete locally.** The real `msrv` job in run `30746841903` installed/defaulted
 1.78, reported that 1.91 remained active because of `rust-toolchain.toml`, and
-ran unqualified workspace cargo successfully. The same measurement voids the
-named 1.86 green and confirms the named 1.85 job also ran 1.91. Amendment r4 is
-appended above; no corrective lane, proof, control, pin, or policy edit was
-implemented. Operator adjudication of the measured hosted-1.78 evidence history
-is required before Step 5a may resume.
+ran unqualified workspace cargo successfully. The same measurement voided the
+named 1.86 green and confirmed the named 1.85 job also ran 1.91. The pre-fix
+block remains recorded in r4 and `STATE.md`; failed run `30746841903` and its
+ref remain immutable non-results. Corrected hosted authentication is not part of
+this local completion and remains separately gated at Step 6.
 
 **Objective.** Make every hosted floor lane execute, and prove it executed, the
 toolchain it names; make R10 unable to canonicalize two different effective
@@ -783,6 +795,11 @@ toolchains as counterparts.
   (report it from `ci_local_job_count`, derived, not typed); checklist four
   figures stated; both Python lanes through `tools/test_population.py`; golden
   **11/11**, delta **0**, on the mandatory standalone post-task run.
+- **A13 — receipt-bound effective toolchain.** Every CI-runner receipt records
+  the numeric `rustc -vV` `release` actually used as `rustc_release`, and the
+  receipt verifier rejects a missing, empty, or non-numeric value. State
+  whether this changes the verifier population, deferred-audit assertion, or
+  bundle expectation; if any moves, name every old and new value.
 
 **Scope.** No scope-table change is required. `.github/workflows/ci.yml`, `run`,
 `tools/invariant_scan.py`, `config/invariant-rules.json`, `shell/tests/**`,
@@ -917,9 +934,9 @@ governs any future admission.
 - [x] Step 2 · ANCHOR
 - [x] Step 3 · ONE-RETENTION
 - [x] Step 4 · POST-LEVER BASIS
-- [ ] Step 5 · NET-FLOOR — BLOCKED at decision-gate clause 3
-- [ ] Step 5A · NET-FLOOR-CORRECTION — BLOCKED at decision-gate clause 4
-- [ ] Step 6 · RE-MEASURE — ineligible while Steps 5/5a are blocked
+- [x] Step 5 · NET-FLOOR — completed through Step 5A's corrective measurement
+- [x] Step 5A · NET-FLOOR-CORRECTION — completed locally
+- [ ] Step 6 · RE-MEASURE — awaiting separate exact-SHA/ref authorization
 - [ ] Step 7 · R-CLOSE
 
 ---
