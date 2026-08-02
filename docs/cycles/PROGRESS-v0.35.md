@@ -799,3 +799,83 @@ Entries are append-only; corrections are new dated entries.
   classification, dependency, protected byte, production source, public
   surface, publisher request, scheduler, service, or model-profile command
   changed. The operator-supplied untracked amendment remains untouched.
+
+### 2026-08-03 · STEP-6-ATTESTATION-PREFLIGHT — corrected candidate prepared
+
+- owner: Codex
+- commit: a057cdca606e934c18df80358139a92a979295a0
+- result: INCOMPLETE / LOCALLY PREPARED. The standing historical preflight,
+  independent certificate-identity check, and exact-version admission control
+  are implemented at the named commit. Step 6 remains unchecked; no push, ref
+  creation or mutation, hosted retry, evidence admission, verifier relaxation,
+  or Step 7 action occurred.
+- standing-preflight acceptance: PASS. `./run attestation-preflight` checks the
+  embedded SHA-256 authorities and receipt facts for immutable accepted v0.34
+  run **30726156221**, then invokes the current release-grade wrapper with every
+  strict flag. The real downloaded set passed **7/7** on exact `gh` **2.96.0**.
+- negative-control acceptance: PASS. The same wrapper rejected the historical
+  `msrv` receipt/bundle when its signer workflow was deliberately changed to
+  `jiayanzeng/intel-platform/.github/workflows/not-the-accepted-ci.yml`. The
+  captured complete rejection, after stripping its one leading and one trailing
+  newline for the wrapper's diagnostic, was verbatim
+  `GitHub attestation verification failed: Error: verifying with issuer
+  "sigstore.dev"`. A planted permissive verifier makes this control fail; the
+  positive preflight alone cannot establish rejection behavior.
+- wrapper-regression acceptance: PASS. A planted construction that forwards
+  the repository-relative workflow unqualified makes the positive preflight
+  fail. Together with the permissive-verifier construction, the focused suite
+  passes **47/47** and demonstrates that both control paths execute.
+- certificate-identity acceptance: PASS. `verify_attestation_bundle`
+  independently constructs
+  `https://github.com/{owner}/{repo}/{workflow-path}@{source-ref}` and requires
+  the verified SAN set to equal it. The release-audit caller constructs its own
+  expectation from its inputs; it no longer copies
+  `certificate_identity` from the verifier return. The old mock SAN
+  `https://example.test/workflow` is now rejected at both boundaries.
+- older-CLI measurement: PASS for the bounded question. Official GitHub CLI
+  **2.95.0 (2026-06-17)** was downloaded, and its ZIP matched published
+  SHA-256
+  `3677f9c27965825f9c7d50395473c134edaea4b484373ef6b25de653570a0489`.
+  Against one authenticated v0.34 receipt/bundle and every other strict flag,
+  bare `.github/workflows/ci.yml` exited **1**, qualified
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml` exited **0**, and a
+  deliberately wrong qualified value exited **1**. Both negative stderr
+  streams were byte-identical **45-byte** values: one leading newline,
+  `Error: verifying with issuer "sigstore.dev"`, and one trailing newline.
+  Thus the tested immediate predecessor did not accept the bare value without
+  matching. All **20** retained reports with this identity use the qualified
+  form; repository evidence identifies no accepted prior weakening. No
+  retraction is proposed and no historical record was edited.
+- version-admission acceptance: PASS. Exact `gh` **2.96.0** drift now fails
+  with instructions to update the pin, pass the accepted historical 7/7 set
+  and wrong-signer negative control, and record the dated State/progress
+  decision. The active deferral table carries the version or contract change
+  as a trigger-bearing **Step 6** decision.
+- population acceptance: PASS locally. Clean Python 3.11.4 and 3.12.13 lanes
+  each passed **366/366**. `tools/test_population.py` derived
+  `collected=366`, `equivalent=true`, and `equivalent_passed=366`, with zero
+  skips in either lane.
+- local-gate acceptance: PASS. The final exact-tree `./run ci-local` passed all
+  derived **22/22** jobs, all **12** invariants and **73** planted controls,
+  warning-denied Rust lanes, the 1.78 and 1.86 floors, the 1.85 declared-MSRV
+  refutation, clippy, rustfmt, shell **366/366**, and embedded golden **11/11**.
+  Explicit artifact validation and `./run verify-artifacts` matched all
+  **332** pins and both protected SQLite artifacts.
+- topology and claim separation: PASS. Expected hosted blocking identities,
+  receipts, and bundles remain **9 / 9 / 9**. Run **30757027882** separately
+  proves the measured property at **9/9** with asserted toolchains
+  **1.78.0 / 1.86.0 / 1.85.0**; only its complete candidate attestation chain
+  is unvalidated, so none of its receipts or bundles is release-grade evidence.
+- golden-E2E delta: **0**. The standalone and embedded runs passed the same
+  **11/11** assertions.
+- immutability acceptance: PASS. Runs **30746841903**, **30754728135**, and
+  **30757027882**, plus refs `codex/v0.35-evidence-d33c251`,
+  `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e`, remain
+  immutable non-results. No remote object was created, moved, deleted, or
+  repurposed.
+- scope acceptance: PASS. The implementation changes only the verifier,
+  standing entry point, its executable tests, the required `run` authorization
+  pin/provenance, and forward State/runbook records. No workflow, gate, lane,
+  exemption, R10 classification, dependency, production source, public
+  surface, publisher request, scheduler, service, or model-profile command
+  changed. The operator-supplied untracked amendment remains untouched.
