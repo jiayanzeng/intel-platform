@@ -422,3 +422,90 @@ Entries are append-only; corrections are new dated entries.
   untouched. No protected byte, dependency, production source, public surface,
   remote ref, publisher request, scheduler, service, or model-profile command
   changed.
+
+### 2026-08-02 · STEP-5A-NET-FLOOR-CORRECTION — effective toolchains proved
+
+- owner: Codex
+- commit: 6beb51b76715d7e6c29d31b094e7a4a11de8445d
+- result: PASS for Step 5A's authorized local completion. The operator
+  classified historical hosted 1.78 evidence as **UNVERIFIABLE, not false**;
+  the retraction count remains **3**, the old v0.10/G2 sentence is unchanged,
+  and explicit local Rust 1.78 evidence continues to support the offline floor.
+  Git history derived `6005a19878d72518e2f982b5859d68520a4a9503` as
+  the first commit carrying the shadowable hosted form. Its hosted `msrv`
+  executions through `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99` are
+  non-results for 1.78 because the retained logs and old receipt schema cannot
+  establish their effective toolchain.
+- A1/A2 acceptance: PASS locally and by executable workflow construction.
+  `msrv`, `net-msrv-1-86`, and `net-msrv-1-85` use explicit
+  `rustup run <version> cargo`; each hosted job and corresponding local lane
+  prints `cargo -V` and `rustc -vV`, parses the rustc `release`, and fails on a
+  mismatch. Corrected local Rust **1.78.0** check/test and Rust **1.86.0** net
+  check exited zero. Corrected local Rust **1.85.0** net check exited nonzero
+  only on locked packages declaring Rust **1.86**. The corrected hosted form
+  remains unexecuted by operator instruction and is not claimed as evidence.
+- A3/A4 acceptance: PASS. R10 cargo identities include the effective toolchain
+  or `default`; a shadowed action input with bare cargo is a named finding.
+  The three new registered, anchor-derived mutations emitted verbatim:
+  `.github/workflows/ci.yml:182: hosted job net-msrv-1-86 runs unqualified cargo under shadowed toolchain input 1.86.0; rust-toolchain.toml selects 1.91`;
+  `.github/workflows/ci.yml:139: blocking hosted floor lane 'net-msrv-1-86' selects 1.85.0 without an effective cargo/rustc version proof`;
+  and `.github/workflows/ci.yml:139: blocking hosted floor lane 'net-msrv-1-86' selects 1.86.0 without an effective cargo/rustc version proof`.
+  Self-test passed **12 rules / 72 controls** with **0** absolute
+  `expected_line` fields.
+- A5/A6 acceptance: PASS at the authorized measurement boundary. Before
+  correction, hosted run **30746841903** proves all three jobs used Rust 1.91:
+  its 1.78 and 1.86 greens and 1.85 failure are immutable non-results. After
+  correction, the local floor entry points prove 1.78 offline check/test,
+  1.86 net success, and a declared-MSRV-only 1.85 refutation. No corrected
+  hosted result exists; Step 6 requires a separate exact-SHA/ref decision.
+- A7 acceptance: PASS. Schema validation and full protected-byte verification
+  pass. Exactly `run` changed, to **44,795 bytes** / SHA-256
+  `1f87371243698cb60fb24c07b21caf8ce7a86f927a46443b0b89f71de978ad7b`.
+  The manifest is **192,703 bytes** / SHA-256
+  `6407d619f3f93b9d11e52b8c2de2f28ce0621ea1bcc425a8e39a8913b85dd65d`,
+  with **332 pins / 2 artifacts / 2 admissions**. `tools/model_profiles.py`
+  remains **28,297 bytes** / SHA-256
+  `1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`;
+  both databases and every admission record are byte-identical.
+- A8 acceptance: PASS. The blocking identity set remains **9** and the
+  receipt/bundle expectation remains **9 / 9**. Local topology is now
+  **22 jobs / 30 checks**; hosted topology is **8 blocking jobs / 29 checks**;
+  the checker derives **59** local-only exemptions and no residual exemption.
+- A9 acceptance: PASS. Independent before and after `version-check` runs each
+  derived **3 executable pins / 22 offline-MSRV current restatements / 3
+  release-version current restatements**. Registry floor literals are control
+  constructions, package-scoped commands are not offline workspace
+  authorities, and no version authority moved.
+- A10 acceptance: PASS. `AGENTS.md` §4 now requires floor selection above
+  `rust-toolchain.toml` and states that an action `toolchain:` input alone does
+  not qualify.
+- A11 acceptance: PASS. Run **30746841903**, attempt **1**, and ref
+  `codex/v0.35-evidence-d33c251` remain immutable non-results. The ref was not
+  reused, moved, forced, or deleted; no receipt or bundle was accepted.
+- A12 acceptance: PASS with the task box open at measurement. `./run ci-local`
+  passed all derived **22/22** jobs, checklist **268 / 3 / 268 / 268**, zero
+  Rust and clippy warnings, constrained Python 3.11.4 **361/361**, embedded
+  golden **11/11**, all **332** pins, and both protected databases. Clean
+  Python 3.11.4 and 3.12.13 rebuilds resolved the same **21** packages and each
+  passed **361/361**; `tools/test_population.py` derived
+  `equivalent=true`, `equivalent_passed=361`, and no skips.
+- A13 acceptance: PASS. All **9** receipt emitters add numeric
+  `rustc_release`; the verifier rejects missing, empty, and non-numeric values.
+  The verifier test population moved **358 → 361** for the two new receipt
+  rejection nodes and the explicit-toolchain identity node. The accepted-runner
+  assertion stays **9** and the deferred-audit runner and bundle expectations
+  remain **9 / 9**. Workflow size/hash is **39,175 bytes** /
+  `600b194980231e80cce4a05a14ca043ac6a0b1adbafed747cd78b2fcdf50bd09`.
+- scope-contract acceptance: PASS after a real finding. The first
+  post-implementation `cycle-check` rejected `tools/audit_deferred.py` because
+  operator-added A13 required changing the verifier but omitted that path from
+  the declared-scope table. Runbook amendment r6 allows that exact file only;
+  no tools glob, forbid, checker, precedence, gate, lane, exemption, or R10
+  classification was weakened.
+- golden-E2E delta: **0**. The mandatory standalone post-task run passed the
+  same byte-identical **11/11** assertions.
+- publisher/ref acceptance: PASS. No push, hosted dispatch, remote-ref change,
+  publisher request, scheduler, service, model-profile command, dependency
+  resolution, production source, public response, value domain, or release
+  value changed. Step 6 is deliberately stopped at its separate authorization
+  boundary.

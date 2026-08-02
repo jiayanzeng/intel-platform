@@ -70,6 +70,14 @@ toolchain, every floor lane proves its effective cargo/rustc release, R10
 distinguishes effective toolchains and carries six self-testing controls, and
 CI receipts bind `rustc_release` — 2026-08-02.**
 
+**r6 — 2026-08-02 — A13 declared-scope correction.** The first real
+post-implementation `cycle-check` rejected `tools/audit_deferred.py`: A13
+requires the current receipt verifier to reject an absent or malformed
+`rustc_release`, but the operator-added criterion did not add that exact
+verifier path to the declared-scope table. The table now allows precisely
+`tools/audit_deferred.py`. No broader tools glob, scope precedence, checker,
+forbid, gate, lane, exemption, or classification changes.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -154,6 +162,7 @@ scar is named after.
 | `allow` | `.github/workflows/ci.yml` |
 | `allow` | `config/protected-artifacts.json` |
 | `allow` | `tools/version_check.py` |
+| `allow` | `tools/audit_deferred.py` |
 | `forbid` | `docs/state-archive/**` |
 | `forbid` | `tools/model_profiles.py` |
 | `forbid` | `tools/evidence_artifacts.py` |
@@ -171,7 +180,7 @@ scar is named after.
 | `forbid` | `docs/cycles/**` (except this runbook and `PROGRESS-v0.35.md`, by standing precedence) |
 | `release_authority` | `Cargo.toml`, `Cargo.lock`, `crates/*/Cargo.toml`, `apps/*/Cargo.toml`, `shell/intel_shell/__init__.py`, `shell/intel_shell/app.py`, `CHANGELOG.md`, `README.md` |
 
-**Three scope moves relative to v0.34, each with its reason and its cost.**
+**Four scope moves relative to v0.34, each with its reason and its cost.**
 
 - **`run` and `.github/workflows/ci.yml` move from `forbid` to `allow`.** Step 5
   cannot be hosted-only. R10's parity report emits
@@ -196,6 +205,10 @@ scar is named after.
   hypothesis, not a fact — Step 5 must measure it, and if the new lines are
   captured as offline authorities the fix belongs to the pattern, not to the
   lane's spelling.
+- **`tools/audit_deferred.py` moves to `allow` for A13's exact verifier
+  boundary.** A receipt field that emitters write but the release-grade
+  consumer does not require would repeat the project's unmeasured-claim
+  failure. The allowance is the exact verifier file, not a `tools/**` glob.
 
 ---
 
@@ -801,10 +814,12 @@ toolchains as counterparts.
   whether this changes the verifier population, deferred-audit assertion, or
   bundle expectation; if any moves, name every old and new value.
 
-**Scope.** No scope-table change is required. `.github/workflows/ci.yml`, `run`,
+**Scope.** The original A1–A12 paths — `.github/workflows/ci.yml`, `run`,
 `tools/invariant_scan.py`, `config/invariant-rules.json`, `shell/tests/**`,
-`AGENTS.md`, and `config/protected-artifacts.json` are already `allow` for
-v0.35.
+`AGENTS.md`, and `config/protected-artifacts.json` — were already `allow` for
+v0.35. Operator-added A13 additionally requires the exact
+`tools/audit_deferred.py` verifier path; r6 records that author-contract
+correction after the real diff gate rejected the omission.
 
 **Standing prohibitions carry unchanged**, and one is added: **no decision gate,
 lane, exemption, or R10 classification may be relaxed to make the corrected run
