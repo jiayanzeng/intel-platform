@@ -369,3 +369,56 @@ Entries are append-only; corrections are new dated entries.
   or model-profile command ran; no production source, dependency resolution,
   protected byte, public response, value domain, release value, lane, checker,
   or exemption changed.
+
+### 2026-08-02 · STEP-5A-MSRV-EVIDENCE-GATE — hosted 1.78 lane ran 1.91
+
+- owner: Codex
+- commit: 3b586eeb02346714727da18e4ae5597e88d5409c
+- result: BLOCKED at Step 5A decision-gate clause 4 before correction or
+  classification. The operator-supplied r4 prompt required measurement of all
+  three affected jobs at their real hosted entry points before implementation;
+  existing run **30746841903**, attempt **1**, supplies that measurement.
+- `msrv` measurement: the action input was **1.78** and the action installed
+  and defaulted that toolchain, but then emitted verbatim:
+  `info: note that the toolchain '1.91-x86_64-unknown-linux-gnu' is currently
+  in use (overridden by '/home/runner/work/intel-platform/intel-platform/rust-toolchain.toml')`.
+  The job subsequently invoked bare `cargo check --workspace --locked` and
+  bare `cargo test --workspace --locked`; both completed successfully. The
+  hosted job did not execute the 1.78 toolchain in this run.
+- net-floor measurement: `net-msrv-1-86` declared **1.86.0**, emitted the same
+  active-1.91 override note, invoked bare package-scoped cargo, and passed; its
+  earlier green is a **non-result** for the 1.86 floor. `net-msrv-1-85`
+  declared **1.85.0**, emitted the same override note, and its bare cargo check
+  compiled on 1.91; the wrapper then emitted `Rust 1.85 unexpectedly built the
+  net path; the declared 1.86 floor is false.` and failed. Because the command
+  did not execute 1.85, that failure is also a **non-result** for the floor.
+- decision-gate acceptance: PASS for the required stop. The new measurement is
+  recorded forward, but no judgment is made about whether any immutable
+  published record is false. The existing `STATE.md` v0.10/G2 sentence was not
+  edited, no retraction was proposed, and the explicit local 1.78 result remains
+  valid local evidence rather than being conflated with hosted evidence.
+- amendment acceptance: PASS after one author-contract correction. Exact r4
+  text and the complete Step 5A contract are now in the active runbook. The
+  checker requires machine-readable uppercase `Step 5A`. Its first execution
+  also rejected A9's stored Step 5 `3 / 22 / 3` quantity; amendment r5 replaces
+  that cross-step stored value with a same-tree before/after population
+  relation. No historical measurement changed.
+- implementation acceptance: NOT PERFORMED because clause 4 stopped the step.
+  No hosted/local selection or version-proof command, R10 identity or finding,
+  planted control, `AGENTS.md` rule, `run` byte, manifest pin, lane, exemption,
+  or classification changed. A1–A12 remain pending after operator adjudication.
+- failed-evidence preservation: PASS. Run **30746841903** was not retried and
+  none of its receipts or bundles was accepted. Ref
+  `codex/v0.35-evidence-d33c251` was not reused, moved, forced, or deleted. No
+  push or hosted dispatch occurred under Step 5A.
+- local record gates: PASS. `cycle-check`, `checklist-audit`, `version-check`,
+  and `git diff --check` passed. `version-check` derived **3 executable pins /
+  22 offline-MSRV current restatements / 3 release-version current
+  restatements**; no version authority or classifier moved.
+- golden-E2E delta: **0**. The mandatory standalone post-gate run passed
+  byte-identical **11/11**.
+- scope acceptance: PASS. The blocker implementation changed only State and
+  the active runbook. The operator-supplied untracked amendment file remains
+  untouched. No protected byte, dependency, production source, public surface,
+  remote ref, publisher request, scheduler, service, or model-profile command
+  changed.
