@@ -317,3 +317,55 @@ Entries are append-only; corrections are new dated entries.
   resolution, production source, public response, value domain, release
   value, or publication ref, and changed only the authorized existing `run`
   protected pin.
+
+### 2026-08-02 · NET-FLOOR-HOSTED-GATE — syntactic counterpart did not execute 1.85
+
+- owner: Codex
+- commit: a71813d01c225d05933aa57b24f3fd507b22c17e
+- result: BLOCKED at Step 5 decision-gate clause 3. This forward correction
+  supersedes the preceding local-only completion claim without rewriting it.
+  R10 classified a hosted command as the counterpart of the explicit local
+  1.85 construction even though the hosted command executed the repository's
+  1.91 override.
+- candidate/ref acceptance: PASS for the authorized mutation, not for hosted
+  evidence. Candidate `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`
+  was clean at tree `21718887d19bf1e2115d6fc8bb5348d0a72adb4b`.
+  Direct pre-push `ls-remote` exited zero with no entry for fresh ref
+  `refs/heads/codex/v0.35-evidence-d33c251`; the operator explicitly
+  authorized that exact candidate to that one ref. The sole push created it,
+  and immediate plus final readback each resolved it to the exact candidate.
+  The ref was not reused, forced, moved, or repurposed.
+- hosted measurement: FAIL. Workflow-dispatch run **30746841903**, attempt
+  **1**, targeted the exact candidate and evidence ref with evidence signing.
+  Eight of nine blocking identities passed, including the named 1.86 success
+  job; `live-fetch MSRV refutes (1.85)` failed because its `cargo check`
+  exited **0** after compiling the complete locked net graph. The report-only
+  dependency-drift job skipped under its declared condition.
+- root-cause measurement: the toolchain action installed and set default
+  1.85.0, then logged `toolchain '1.91-x86_64-unknown-linux-gnu' is currently
+  in use (overridden by .../rust-toolchain.toml)`. The job invoked bare
+  `cargo`, which therefore used 1.91. Its success is not a 1.85 pass and does
+  not refute the locally measured floor; it proves the named hosted lane did
+  not execute the construction it claimed.
+- parity acceptance: FAIL. Local `rustup run 1.85.0 cargo ...` and hosted bare
+  `cargo ...` canonicalized as counterparts despite different effective
+  toolchains. The decision-gate clause 3 classification gap is therefore
+  measured at the real hosted entry point. No lane, checker, exemption, or
+  claim was changed to route around it.
+- stop disposition: PASS. Step 5 is unboxed and marked BLOCKED; Step 6 is
+  ineligible. The failed run was not retried, no receipt or bundle was accepted
+  as release-grade evidence, and the created evidence ref remains immutable.
+- local measurements: PASS but insufficient for task completion. Exact-
+  candidate Python 3.11.4 and 3.12.13 populations each collected/passed
+  **358**, failed **0**, skipped **0**, with the same one accepted warning.
+  The mandatory post-finding standalone golden passed **11/11**, delta **0**.
+- published-state acceptance: PASS. Final direct readback kept remote `main`
+  and peeled `v0.17.1` at
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`, annotated tag object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`, and the failed-evidence ref at
+  its exact candidate. No tag or published ref moved.
+- scope acceptance: PASS after the stop. The blocker implementation changes
+  only State and the active runbook. No publisher request, scheduler, service,
+  or model-profile command ran; no production source, dependency resolution,
+  protected byte, public response, value domain, release value, lane, checker,
+  or exemption changed.
