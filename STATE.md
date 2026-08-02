@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 remains incomplete: its second separately authorized candidate passed all 9 hosted identities and the three asserted floor receipts bind the declared toolchains, while the 0/9 release-grade result is now diagnosed as a repository signer-workflow argument defect and corrected only in a later local tree.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, and `8fae40e78afee6df80133f89bbbac4a074179ff5`; runs `30746841903`, `30754728135`, and `30757027882` and all three refs remain immutable non-results, and no receipt or bundle from them is release-grade evidence. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **363/363**, and embedded golden **11/11**. Python 3.11.4 and 3.12.13 populations each passed **363/363**. The latest authorized ref was pushed once and dispatched once; the verifier correction made no push, retry, governed export, release-grade population comparison, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command.
+**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 remains incomplete: its second separately authorized candidate passed all 9 hosted identities and the three asserted floor receipts bind the declared toolchains, while the 0/9 release-grade result is diagnosed as a repository signer-workflow argument defect and corrected only in a later local tree now guarded by a standing historical preflight and an independent certificate-identity rejection control.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, and `8fae40e78afee6df80133f89bbbac4a074179ff5`; runs `30746841903`, `30754728135`, and `30757027882` and all three refs remain immutable non-results, and no receipt or bundle from them is release-grade evidence. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **366/366**, and embedded golden **11/11**. `tools/test_population.py` derived Python 3.11.4 / 3.12.13 equivalence at **366** collected and **366** equivalent passed. The latest authorized ref was pushed once and dispatched once; the verifier/preflight correction made no push, retry, governed export, release-grade population comparison, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command.
 
 **v0.35 Step 5a pre-implementation MSRV measurement gate (measured
 2026-08-02).** The operator-supplied r4 prompt required all three affected
@@ -360,6 +360,89 @@ The measured property remains separately proven by **9/9** passed hosted
 identities and executed receipt assertions for **1.78.0 / 1.86.0 / 1.85.0**.
 No push, ref creation or mutation, hosted retry, evidence admission, gate or
 verifier-policy relaxation, or Step 7 action occurred.
+
+**v0.35 Step 6 verifier preflight, independent certificate identity, and CLI
+history control (measured 2026-08-03).** `./run attestation-preflight` is now a
+standing executable prerequisite for any further hosted-evidence run. With no
+directory override it downloads immutable accepted run **30726156221**; it
+then requires the embedded SHA-256 authorities for all 7 receipts and 7
+bundles, the exact accepted receipt/run/repository/commit/job facts, and the
+current release verifier with every strict flag. Its source ref is derived from
+the historical progress records rather than hard-coded as a cycle literal. The
+real preflight over the already-downloaded bytes passed **7/7** on exact `gh`
+**2.96.0**.
+
+The positive preflight is paired with a separate executed negative control.
+The authenticated historical `msrv` receipt/bundle was submitted with
+deliberately wrong workflow
+`jiayanzeng/intel-platform/.github/workflows/not-the-accepted-ci.yml`; the
+current wrapper rejected it verbatim:
+
+```text
+GitHub attestation verification failed: Error: verifying with issuer "sigstore.dev"
+```
+
+The positive 7/7 result cannot prove that a verifier still rejects mismatches;
+this negative construction does. A planted wrapper regression that forwards
+the repository-relative workflow unqualified makes the preflight fail, and a
+planted permissive verifier that accepts the wrong workflow makes the negative
+control itself fail. Both constructions executed in the focused **47/47**
+suite.
+
+`verify_attestation_bundle` now independently constructs the exact expected
+certificate SAN as
+`https://github.com/{owner}/{repo}/{workflow-path}@{source-ref}` and requires
+the verified output to contain exactly that identity. The release-audit call
+site separately constructs the same expectation from its repository, workflow,
+and source-ref inputs; it no longer copies `certificate_identity` out of the
+verifier's return to create its own expected value. The prior mock SAN
+`https://example.test/workflow` is now an executed rejection both at the
+wrapper boundary and at the release-audit call site.
+
+The exact CLI pin now fails with its admission procedure: update the pin only
+after the historical 7/7 preflight, the wrong-signer negative control, and a
+dated State/progress decision pass. The active deferral table carries a
+trigger-bearing `gh` version/contract row assigned to **Step 6**, so an
+auto-update or proposed bump stops as a decision rather than surfacing during
+release verification. This changes no hosted identity, receipt, bundle, or
+deferred-audit population: their required values remain **9 / 9 / 9**, and the
+protected manifest remains **332** pins.
+
+The older-CLI question was measured, not inferred. Git history introduces
+`verify_attestation_bundle` at
+`2863d42ff31d5c964478bee1420df221d0dbab18` on 2026-07-26. The host's current
+2.96.0 executable link predates that commit; the immediately preceding
+official GitHub CLI release, **2.95.0 (2026-06-17)**, was downloaded from its
+release artifact and its ZIP matched the published SHA-256
+`3677f9c27965825f9c7d50395473c134edaea4b484373ef6b25de653570a0489`.
+Against the same authenticated historical receipt/bundle and every other
+strict flag, 2.95.0 produced these results:
+
+- bare `.github/workflows/ci.yml`: exit **1**, stdout **0 bytes**, stderr **45
+  bytes**;
+- qualified `jiayanzeng/intel-platform/.github/workflows/ci.yml`: exit **0**,
+  stdout **14,694 bytes**, stderr **0 bytes**;
+- deliberately wrong qualified workflow: exit **1**, stdout **0 bytes**,
+  stderr **45 bytes**.
+
+Both rejecting stderr streams are byte-identical: one leading newline,
+`Error: verifying with issuer "sigstore.dev"`, and one trailing newline.
+Thus measured 2.95.0 did **not** accept the bare form without matching. All
+**20** retained committed audit reports that carry a signer-workflow identity
+use the qualified `jiayanzeng/intel-platform/.github/workflows/ci.yml` form.
+Repository evidence therefore shows no accepted prior cycle whose workflow
+verification was weakened by a bare value; no retraction is proposed and no
+historical record was edited.
+
+The complete local entry point passed **22/22**, all **12** invariants and
+**73** planted controls, warning-denied Rust lanes, all **332** pins, and
+embedded golden **11/11**. Python 3.11.4 and 3.12.13 each passed **366/366**;
+`tools/test_population.py` derived `collected=366`, `equivalent=true`, and
+`equivalent_passed=366`. The measured hosted property remains separately proven
+at **9/9** with asserted **1.78.0 / 1.86.0 / 1.85.0** toolchains. Only the
+complete candidate attestation chain remains unvalidated. Step 6 stays
+unchecked; no bundle is admitted, and no push, ref creation/mutation, hosted
+retry, verifier relaxation, or Step 7 action occurred.
 
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only

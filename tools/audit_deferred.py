@@ -71,6 +71,78 @@ LEGACY_RUNNER_JOB_COUNTS = {
 }
 EXPECTED_RUNNER_WORKFLOW = "CI"
 PINNED_GH_ATTESTATION_VERSION = "2.96.0"
+ATTESTATION_VERSION_ADMISSION = (
+    "admit a new version only by updating "
+    "PINNED_GH_ATTESTATION_VERSION, passing ./run attestation-preflight "
+    "against the accepted historical 7/7 set and its wrong-signer negative "
+    "control, and "
+    "recording the trigger decision in STATE.md and the active progress log"
+)
+ATTESTATION_PREFLIGHT_RUN_ID = "30726156221"
+ATTESTATION_PREFLIGHT_RUN_ATTEMPT = "1"
+ATTESTATION_PREFLIGHT_REPOSITORY = "jiayanzeng/intel-platform"
+ATTESTATION_PREFLIGHT_COMMIT = (
+    "1117dc6db6ec0e55e8c8f078ca8059628f9f8262"
+)
+ATTESTATION_PREFLIGHT_WORKFLOW = ".github/workflows/ci.yml"
+ATTESTATION_PREFLIGHT_WRONG_WORKFLOW = (
+    ".github/workflows/not-the-accepted-ci.yml"
+)
+ATTESTATION_PREFLIGHT_ARTIFACT_SHA256 = {
+    "30726156221-1-core.json": (
+        "d93d5ee817ae728c59e621a5ccb30db8075f366b2eea6c320a9bf05eb6ce30ab"
+    ),
+    "30726156221-1-core.json.sigstore": (
+        "332b84baac83a6a86c26a5931704c5a2035264e6745abb2a055323df35ae8f39"
+    ),
+    "30726156221-1-golden.json": (
+        "195bae9d057b1cbc51472e630a95bceeeaf15e5f9342605eafddee7cdd8fd434"
+    ),
+    "30726156221-1-golden.json.sigstore": (
+        "5174715b12042b1eea172fdb82531971b0ecc21b58caeb3c6dbf44cbf81016eb"
+    ),
+    "30726156221-1-lint.json": (
+        "4e1986d2896aa67dd610204786eefc6e3359202d0f554daa307b1ee6908c014c"
+    ),
+    "30726156221-1-lint.json.sigstore": (
+        "afe64a544a2c88599320476a8e7073713419ac71d21b1eb0862cf61204e134cf"
+    ),
+    "30726156221-1-msrv.json": (
+        "dcb0b88fe34d0a6e15fe289d08a30c7b965a9ee6fb673d51d71c318b03fee50d"
+    ),
+    "30726156221-1-msrv.json.sigstore": (
+        "c402db9e0cb248bf3187433eb3a2efa4537a6de959c1cd7287154d69e9f19040"
+    ),
+    "30726156221-1-net.json": (
+        "a892c0d8459a5f48ccf542f082e12cf727ea3bb19f066e6f4677cf7834b39299"
+    ),
+    "30726156221-1-net.json.sigstore": (
+        "a849cd92b10e91a2fd4207d352dc60399f4723633a2dff7a4bd17adf95f692dc"
+    ),
+    "30726156221-1-shell-py3.11.json": (
+        "7bc210950d92ea9d30712b098793adc6cf8072d92161cd714537a5c63205a1c4"
+    ),
+    "30726156221-1-shell-py3.11.json.sigstore": (
+        "a54d244dac25cd9c252c45a96d871218dc3ebc4e1a5fa76732d0e357142935eb"
+    ),
+    "30726156221-1-shell-py3.12.json": (
+        "b8aacc2adb7f1951c0f4b103aa1ea0b83bd0fb09c4bc6cf536e7fad191993d06"
+    ),
+    "30726156221-1-shell-py3.12.json.sigstore": (
+        "e443d8675fff04957145c18fb44a0955cd405cc44c9dc48f2075a4d67131d69e"
+    ),
+}
+ATTESTATION_PREFLIGHT_IDENTITIES = frozenset(
+    {
+        ("core", None),
+        ("golden", None),
+        ("lint", None),
+        ("msrv", None),
+        ("net", None),
+        ("shell", "python=3.11"),
+        ("shell", "python=3.12"),
+    }
+)
 SOURCE_DETERMINISTIC_ROW_IDS = (
     "T7 robots single-flight",
     "Postgres",
@@ -204,6 +276,24 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def attestation_preflight_source_ref() -> str:
+    """Derive the accepted historical evidence ref from progress records."""
+    suffix = ATTESTATION_PREFLIGHT_COMMIT[:7]
+    pattern = re.compile(
+        rf"refs/heads/codex/v[0-9]+(?:\.[0-9]+)+-evidence-{suffix}"
+    )
+    references: set[str] = set()
+    for record in progress_paths():
+        references.update(pattern.findall(record.read_text()))
+    if len(references) != 1:
+        raise AuditFailure(
+            "attestation preflight requires exactly one historically recorded "
+            f"source ref for candidate {ATTESTATION_PREFLIGHT_COMMIT}; found "
+            f"{sorted(references)}"
+        )
+    return next(iter(references))
 
 
 def require_text(path: Path, literals: list[str]) -> str:
@@ -905,6 +995,28 @@ def qualified_signer_workflow(repository: str, signer_workflow: str) -> str:
     )
 
 
+def expected_certificate_identity(
+    repository: str,
+    signer_workflow: str,
+    source_ref: str,
+) -> str:
+    """Construct GitHub's exact workflow certificate URI from expectations."""
+    qualified_workflow = qualified_signer_workflow(
+        repository,
+        signer_workflow,
+    )
+    hosted_prefix = "github.com/"
+    if qualified_workflow.startswith(hosted_prefix):
+        qualified_workflow = qualified_workflow[len(hosted_prefix) :]
+    elif not qualified_workflow.startswith(f"{repository}/"):
+        raise AuditFailure(
+            "GitHub certificate identity requires github.com as its host"
+        )
+    if not source_ref or any(character.isspace() for character in source_ref):
+        raise AuditFailure("GitHub certificate source ref is invalid")
+    return f"https://github.com/{qualified_workflow}@{source_ref}"
+
+
 def gh_attestation_cli() -> tuple[str, dict[str, str]]:
     """Require and describe the exact GitHub CLI verifier implementation."""
     gh = shutil.which("gh")
@@ -931,7 +1043,8 @@ def gh_attestation_cli() -> tuple[str, dict[str, str]]:
     if observed != PINNED_GH_ATTESTATION_VERSION:
         raise AuditFailure(
             "GitHub CLI attestation verifier version mismatch: required "
-            f"{PINNED_GH_ATTESTATION_VERSION}, observed {observed}"
+            f"{PINNED_GH_ATTESTATION_VERSION}, observed {observed}; "
+            f"{ATTESTATION_VERSION_ADMISSION}"
         )
     return gh, {
         "command": "gh attestation verify",
@@ -957,6 +1070,11 @@ def verify_attestation_bundle(
     qualified_workflow = qualified_signer_workflow(
         repository,
         signer_workflow,
+    )
+    expected_identity = expected_certificate_identity(
+        repository,
+        qualified_workflow,
+        source_ref,
     )
     try:
         bundle_document = json.loads(bundle.read_text())
@@ -1046,6 +1164,7 @@ def verify_attestation_bundle(
             isinstance(identity, str) and identity
             for identity in identities
         )
+        or identities != {expected_identity}
         or source_digests != {source_digest}
         or source_refs != {source_ref}
         or signer_digests != {source_digest}
@@ -1055,11 +1174,225 @@ def verify_attestation_bundle(
             "certificate identity or source revision"
         )
     return {
-        "certificate_identity": next(iter(identities)),
+        "certificate_identity": expected_identity,
         "signer_digest": source_digest,
         "source_digest": source_digest,
         "source_ref": source_ref,
     }
+
+
+def _attestation_preflight_artifacts(
+    artifacts_dir: Path,
+    artifact_hashes: dict[str, str],
+) -> dict[str, Path]:
+    if not artifacts_dir.is_dir():
+        raise AuditFailure(
+            f"attestation preflight artifact directory is missing: {artifacts_dir}"
+        )
+    resolved: dict[str, Path] = {}
+    for name, expected_digest in artifact_hashes.items():
+        matches = [
+            path
+            for path in artifacts_dir.rglob(name)
+            if path.is_file()
+        ]
+        if len(matches) != 1:
+            raise AuditFailure(
+                "attestation preflight requires exactly one immutable "
+                f"{name}; found {len(matches)}"
+            )
+        observed_digest = sha256(matches[0])
+        if observed_digest != expected_digest:
+            raise AuditFailure(
+                f"attestation preflight byte mismatch for {name}: expected "
+                f"{expected_digest}, observed {observed_digest}"
+            )
+        resolved[name] = matches[0]
+    return resolved
+
+
+def attestation_preflight(
+    artifacts_dir: Path,
+    *,
+    artifact_hashes: dict[str, str] | None = None,
+    attestation_verifier: (
+        Callable[
+            [Path, Path, str, str, str, str],
+            dict[str, str],
+        ]
+        | None
+    ) = None,
+) -> dict[str, Any]:
+    """Verify the accepted historical positive set and negative control."""
+    _, verifier_contract = gh_attestation_cli()
+    source_ref = attestation_preflight_source_ref()
+    expected_hashes = (
+        ATTESTATION_PREFLIGHT_ARTIFACT_SHA256
+        if artifact_hashes is None
+        else artifact_hashes
+    )
+    artifacts = _attestation_preflight_artifacts(
+        artifacts_dir,
+        expected_hashes,
+    )
+    receipt_names = sorted(
+        name for name in expected_hashes if not name.endswith(".sigstore")
+    )
+    if len(receipt_names) != 7:
+        raise AuditFailure(
+            "attestation preflight contract must contain exactly 7 receipts"
+        )
+    verifier = attestation_verifier or verify_attestation_bundle
+    expected_certificate = expected_certificate_identity(
+        ATTESTATION_PREFLIGHT_REPOSITORY,
+        ATTESTATION_PREFLIGHT_WORKFLOW,
+        source_ref,
+    )
+    observed_identities: set[tuple[str, str | None]] = set()
+    verified_receipts: list[str] = []
+    for name in receipt_names:
+        receipt_path = artifacts[name]
+        bundle_name = f"{name}.sigstore"
+        bundle_path = artifacts.get(bundle_name)
+        if bundle_path is None:
+            raise AuditFailure(
+                f"attestation preflight bundle contract is missing {bundle_name}"
+            )
+        try:
+            receipt = json.loads(receipt_path.read_text())
+        except (OSError, json.JSONDecodeError) as error:
+            raise AuditFailure(
+                f"attestation preflight receipt is unreadable: {name}: {error}"
+            ) from error
+        expected_fields = {
+            "run_id": ATTESTATION_PREFLIGHT_RUN_ID,
+            "run_attempt": ATTESTATION_PREFLIGHT_RUN_ATTEMPT,
+            "workflow": EXPECTED_RUNNER_WORKFLOW,
+            "repository": ATTESTATION_PREFLIGHT_REPOSITORY,
+            "event_sha": ATTESTATION_PREFLIGHT_COMMIT,
+            "sha": ATTESTATION_PREFLIGHT_COMMIT,
+            "conclusion": "success",
+            "runner_os": "Linux",
+        }
+        if not isinstance(receipt, dict) or any(
+            receipt.get(field) != value
+            for field, value in expected_fields.items()
+        ):
+            raise AuditFailure(
+                "attestation preflight receipt fields do not match the "
+                f"accepted historical set: {name}"
+            )
+        job = receipt.get("job")
+        matrix = receipt.get("matrix")
+        if not isinstance(job, str) or (
+            matrix is not None and not isinstance(matrix, str)
+        ):
+            raise AuditFailure(
+                f"attestation preflight receipt identity is invalid: {name}"
+            )
+        observed_identities.add((job, matrix))
+        identity = verifier(
+            receipt_path,
+            bundle_path,
+            ATTESTATION_PREFLIGHT_REPOSITORY,
+            ATTESTATION_PREFLIGHT_WORKFLOW,
+            ATTESTATION_PREFLIGHT_COMMIT,
+            source_ref,
+        )
+        expected_identity = {
+            "certificate_identity": expected_certificate,
+            "signer_digest": ATTESTATION_PREFLIGHT_COMMIT,
+            "source_digest": ATTESTATION_PREFLIGHT_COMMIT,
+            "source_ref": source_ref,
+        }
+        if identity != expected_identity:
+            raise AuditFailure(
+                f"attestation preflight verifier identity mismatch: {name}"
+            )
+        verified_receipts.append(name)
+    if observed_identities != ATTESTATION_PREFLIGHT_IDENTITIES:
+        raise AuditFailure(
+            "attestation preflight runner identities do not equal the accepted "
+            f"historical 7-job set: observed={sorted(observed_identities)}"
+        )
+
+    representative = (
+        f"{ATTESTATION_PREFLIGHT_RUN_ID}-"
+        f"{ATTESTATION_PREFLIGHT_RUN_ATTEMPT}-msrv.json"
+    )
+    try:
+        verifier(
+            artifacts[representative],
+            artifacts[f"{representative}.sigstore"],
+            ATTESTATION_PREFLIGHT_REPOSITORY,
+            ATTESTATION_PREFLIGHT_WRONG_WORKFLOW,
+            ATTESTATION_PREFLIGHT_COMMIT,
+            source_ref,
+        )
+    except AuditFailure as error:
+        wrong_signer_rejection = str(error)
+    else:
+        raise AuditFailure(
+            "attestation preflight negative control did not fire: the known-"
+            "good historical bundle was accepted with a deliberately wrong "
+            "signer workflow"
+        )
+    return {
+        "run_id": ATTESTATION_PREFLIGHT_RUN_ID,
+        "verified": len(verified_receipts),
+        "expected": 7,
+        "verifier": verifier_contract,
+        "wrong_signer_rejection": wrong_signer_rejection,
+    }
+
+
+def run_attestation_preflight(artifacts_dir: Path | None) -> int:
+    if artifacts_dir is not None:
+        result = attestation_preflight(artifacts_dir.resolve())
+    else:
+        gh, _ = gh_attestation_cli()
+        with tempfile.TemporaryDirectory(
+            prefix="intel-v034-attestation-preflight-"
+        ) as directory:
+            downloaded = subprocess.run(
+                [
+                    gh,
+                    "run",
+                    "download",
+                    ATTESTATION_PREFLIGHT_RUN_ID,
+                    "--repo",
+                    ATTESTATION_PREFLIGHT_REPOSITORY,
+                    "--dir",
+                    directory,
+                ],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if downloaded.returncode != 0:
+                detail = downloaded.stderr.strip() or downloaded.stdout.strip()
+                raise AuditFailure(
+                    "cannot download immutable historical attestation "
+                    "preflight set"
+                    + (f": {detail}" if detail else "")
+                )
+            result = attestation_preflight(Path(directory))
+    print(
+        "ATTESTATION PREFLIGHT PASS: accepted historical run "
+        f"{result['run_id']} verified {result['verified']}/{result['expected']} "
+        "with every strict flag"
+    )
+    print(
+        "ATTESTATION NEGATIVE CONTROL PASS: deliberately wrong signer "
+        f"rejected verbatim: {result['wrong_signer_rejection']}"
+    )
+    print(
+        "attestation verifier: required gh "
+        f"{result['verifier']['required_cli_version']}; observed gh "
+        f"{result['verifier']['observed_cli_version']}"
+    )
+    return 0
 
 
 def runner_receipt_measurement(
@@ -1129,6 +1462,11 @@ def runner_receipt_measurement(
         expected_workflow = qualified_signer_workflow(
             expected_repository,
             expected_workflow,
+        )
+        expected_certificate = expected_certificate_identity(
+            expected_repository,
+            expected_workflow,
+            expected_source_ref or "",
         )
         if attestation_verifier is None:
             _, verifier_contract = gh_attestation_cli()
@@ -1377,11 +1715,7 @@ def runner_receipt_measurement(
                 )
                 continue
             expected_identity = {
-                "certificate_identity": (
-                    identity.get("certificate_identity")
-                    if isinstance(identity, dict)
-                    else None
-                ),
+                "certificate_identity": expected_certificate,
                 "signer_digest": expected_source_digest,
                 "source_digest": expected_source_digest,
                 "source_ref": expected_source_ref,
@@ -1389,11 +1723,6 @@ def runner_receipt_measurement(
             if (
                 not isinstance(identity, dict)
                 or identity != expected_identity
-                or not isinstance(
-                    identity.get("certificate_identity"),
-                    str,
-                )
-                or not identity["certificate_identity"]
             ):
                 rejected.append(
                     {
@@ -2302,6 +2631,14 @@ def main() -> int:
             "with a committed deferred-audit receipt"
         ),
     )
+    group.add_argument(
+        "--attestation-preflight",
+        action="store_true",
+        help=(
+            "verify the immutable accepted historical 7/7 bundle set with "
+            "every strict flag and execute its wrong-signer negative control"
+        ),
+    )
     parser.add_argument(
         "--subject-root",
         type=Path,
@@ -2373,7 +2710,38 @@ def main() -> int:
         "--expected-source-ref",
         help="GitHub source repository ref required in authenticated mode",
     )
+    parser.add_argument(
+        "--preflight-artifacts-dir",
+        type=Path,
+        help=(
+            "existing accepted historical artifact directory for attestation "
+            "preflight; when omitted, gh downloads immutable run 30726156221"
+        ),
+    )
     args = parser.parse_args()
+    if args.attestation_preflight:
+        if (
+            args.subject_root
+            or args.runner_receipts_dir
+            or args.evidence_repository
+            or args.expected_head
+            or args.evidence_grade
+            or args.attestation_bundles_dir
+            or args.require_attestations
+            or args.expected_repository
+            or args.expected_workflow
+            or args.expected_source_digest
+            or args.expected_source_ref
+        ):
+            raise AuditFailure(
+                "production audit overrides do not apply to the attestation "
+                "preflight"
+            )
+        return run_attestation_preflight(args.preflight_artifacts_dir)
+    if args.preflight_artifacts_dir is not None:
+        raise AuditFailure(
+            "--preflight-artifacts-dir requires --attestation-preflight"
+        )
     if args.control:
         if (
             args.subject_root

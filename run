@@ -15,6 +15,8 @@
 #   ./run probe-providers bounded identity/capability probe for both model roles
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
 #   ./run invariant-scan  execute registered static repository invariants
+#   ./run attestation-preflight
+#                         verify accepted history before hosted evidence
 #   ./run models intel    prepare the shared GPU server for intel-platform
 #
 # The offline commands need only the Rust toolchain and Python 3.11+. The live
@@ -603,6 +605,10 @@ cmd_audit_deferred() {
   return "$status"
 }
 
+cmd_attestation_preflight() {
+  python3 tools/audit_deferred.py --attestation-preflight "$@"
+}
+
 cored_debug_bin() {
   local target_dir="${CARGO_TARGET_DIR:-target}"
   case "$target_dir" in
@@ -1101,6 +1107,11 @@ intel-platform — ./run <command>
                    over disposable protected archives; thresholds required
     audit-deferred audit all seven deferred-design triggers; exact cosine is
                    measured over disposable protected-archive copies
+    attestation-preflight [--preflight-artifacts-dir DIR]
+                   before any hosted evidence run, verify the immutable
+                   accepted historical 7/7 set with every strict flag and
+                   prove a wrong signer is
+                   rejected; downloads run 30726156221 when DIR is omitted
     config         show resolved model endpoints and safe harvest DB (no keys)
     api            run the public shell with model configuration from .env
     build          build cored (offline)
@@ -1140,6 +1151,7 @@ intel-platform — ./run <command>
     ./run benchmark-view --help
     ./run audit-deferred --output evidence/<cycle>/deferred-audit/report.json
     ./run audit-deferred --rederive path/to/committed-report.json
+    ./run attestation-preflight
     ./run verify-llm                       # endpoints/keys come from .env
 EOF
 }
@@ -1167,6 +1179,7 @@ case "$cmd" in
   evidence-report) cmd_evidence_report "$@" ;;
   benchmark-view) cmd_benchmark_view "$@" ;;
   audit-deferred) cmd_audit_deferred "$@" ;;
+  attestation-preflight) cmd_attestation_preflight "$@" ;;
   demo)          cmd_demo "$@" ;;
   golden)        cmd_golden "$@" ;;
   build)         cmd_build "$@" ;;

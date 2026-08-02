@@ -144,6 +144,30 @@ none is admitted: the corrected verifier is later than candidate `8fae40e7…`,
 the complete chain remains unvalidated, Step 6 stays unchecked, and no push,
 ref mutation, hosted retry, policy relaxation, or Step 7 action occurred.
 
+**r11 — 2026-08-03 — standing historical verifier preflight and independent
+certificate identity.** `./run attestation-preflight` now byte-checks the
+immutable accepted v0.34 **7-receipt / 7-bundle** set, verifies all seven with
+the current wrapper and every strict flag, and separately requires one
+deliberately wrong signer workflow to be rejected. The real positive control
+passed **7/7** on pinned `gh` 2.96.0; the negative control rejected with
+`GitHub attestation verification failed: Error: verifying with issuer
+"sigstore.dev"`. Planted wrapper-qualification and permissive-verifier
+regressions prove the two controls can fail. The verifier and its release-audit
+caller independently construct
+`https://github.com/{owner}/{repo}/{workflow-path}@{source-ref}` and reject the
+old `https://example.test/workflow` mock SAN. Exact-version drift now names the
+admission procedure, and the deferral table carries the pin/contract as a
+trigger-bearing Step 6 decision. Official `gh` 2.95.0 was checksum-verified and
+measured against the same historical bundle: bare and wrong-qualified workflow
+values each failed with the same complete 45-byte stderr, while the qualified
+value passed. All 20 retained reports carrying the identity use the qualified
+form, so repository evidence shows no prior accepted-cycle weakening and no
+retraction or historical edit follows. Local CI passes **22/22**, both Python
+lanes pass and compare at **366/366**, all **332** pins match, and golden stays
+**11/11**. This is a prepared local correction only: Step 6 stays unchecked,
+no evidence is admitted, and no push, ref mutation, hosted retry, verifier
+relaxation, or Step 7 action occurred.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -512,6 +536,7 @@ column was edited to match what happened.**
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — Step 6's first hosted attempt exposed an installer/selector-name spelling outside R10's prior vocabulary. The strengthened real self-test now passes 12 rules / 73 controls; the seventh R10 control reconstructs exact action input `1.78` versus selector `1.78.0`. The trigger fired and its assigned correction is complete locally | **Step 5A — completed locally with the new spelling governed; hosted confirmation remains Step 6** |
 | **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-03 — run 30757027882 passed the real hosted Rust 1.86 success, Rust 1.85 declared-MSRV refutation, and Rust 1.78 offline lane; asserted receipts bind the three exact releases. Its release-grade verifier accepted 0/9 because every Sigstore check failed at issuer verification, so the full Step 6 evidence construction is a non-result and was not retried | **Step 5A — locally and hosted-toolchain measured; Step 6 remains open because release-grade attestation verification is unmeasured** |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.35 · 2026-08-03 — exact `gh` 2.96.0 is installed; the immutable v0.34 positive preflight passes 7/7 with every strict flag and its deliberately wrong signer is rejected. No version bump was proposed, so the trigger did not fire | **Step 6 — before any fresh hosted-evidence authorization, execute the standing preflight; admit a bump only through an operator-reviewed pin and contract decision** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |

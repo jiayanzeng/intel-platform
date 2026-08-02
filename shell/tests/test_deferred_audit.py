@@ -537,7 +537,10 @@ def test_authenticated_duplicated_shell_leg_does_not_promote(
         expected_source_digest=head,
         expected_source_ref="refs/heads/main",
         attestation_verifier=lambda *_: {
-            "certificate_identity": "https://example.test/workflow",
+            "certificate_identity": (
+                "https://github.com/example/repo/.github/workflows/"
+                "ci.yml@refs/heads/main"
+            ),
             "signer_digest": head,
             "source_digest": head,
             "source_ref": "refs/heads/main",
@@ -677,7 +680,10 @@ def test_authenticated_complete_matrix_promotes(
             )
         )
         return {
-            "certificate_identity": "https://example.test/workflow",
+            "certificate_identity": (
+                "https://github.com/example/repo/.github/workflows/"
+                "ci.yml@refs/heads/main"
+            ),
             "signer_digest": source_digest,
             "source_digest": source_digest,
             "source_ref": source_ref,
@@ -742,6 +748,48 @@ def test_authenticated_complete_matrix_promotes(
         "example/repo/.github/workflows/ci.yml"
     )
     assert measurement["attestation_verifier"] == verifier_contract
+
+
+def test_authenticated_matrix_rejects_verifier_self_reported_wrong_san(
+    tmp_path: Path,
+) -> None:
+    repo, _, _, head = _synthetic_repository(tmp_path)
+    receipts = _receipt_matrix(tmp_path, head)
+    for receipt in receipts:
+        receipt.with_name(f"{receipt.name}.sigstore").write_text(
+            "synthetic signed bundle\n"
+        )
+
+    measurement = audit_deferred.runner_receipt_measurement(
+        receipts,
+        repository=repo,
+        audited_head=head,
+        released_commit=head,
+        attestation_bundles_dir=tmp_path,
+        require_attestations=True,
+        expected_repository="example/repo",
+        expected_workflow=".github/workflows/ci.yml",
+        expected_source_digest=head,
+        expected_source_ref="refs/heads/main",
+        attestation_verifier=lambda *_: {
+            "certificate_identity": "https://example.test/workflow",
+            "signer_digest": head,
+            "source_digest": head,
+            "source_ref": "refs/heads/main",
+        },
+    )
+
+    assert measurement["observed_runner_executions"] == 0
+    assert measurement["accepted_runner_receipts"] == []
+    assert len(measurement["rejected_runner_receipts"]) == 9
+    assert all(
+        item["reason"]
+        == (
+            "GitHub attestation verifier returned incomplete or mismatched "
+            "signer identity"
+        )
+        for item in measurement["rejected_runner_receipts"]
+    )
 
 
 def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
@@ -837,7 +885,159 @@ def test_authenticated_matrix_rejects_mismatched_source_digest(
     )
 
 
-def test_sigstore_bundle_is_reemitted_as_documented_single_json(
+def _synthetic_attestation_preflight_set(
+    tmp_path: Path,
+) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    identities = sorted(
+        audit_deferred.ATTESTATION_PREFLIGHT_IDENTITIES,
+        key=lambda item: (item[0], item[1] or ""),
+    )
+    for job, matrix in identities:
+        suffix = job
+        if matrix is not None:
+            suffix = f"{job}-py{matrix.partition('=')[2]}"
+        name = (
+            f"{audit_deferred.ATTESTATION_PREFLIGHT_RUN_ID}-"
+            f"{audit_deferred.ATTESTATION_PREFLIGHT_RUN_ATTEMPT}-{suffix}.json"
+        )
+        receipt = {
+            "run_id": audit_deferred.ATTESTATION_PREFLIGHT_RUN_ID,
+            "run_attempt": audit_deferred.ATTESTATION_PREFLIGHT_RUN_ATTEMPT,
+            "job": job,
+            "workflow": audit_deferred.EXPECTED_RUNNER_WORKFLOW,
+            "repository": audit_deferred.ATTESTATION_PREFLIGHT_REPOSITORY,
+            "event_sha": audit_deferred.ATTESTATION_PREFLIGHT_COMMIT,
+            "sha": audit_deferred.ATTESTATION_PREFLIGHT_COMMIT,
+            "conclusion": "success",
+            "runner_os": "Linux",
+            "completed_at": "2026-08-02T00:00:00Z",
+        }
+        if matrix is not None:
+            receipt["matrix"] = matrix
+        receipt_path = tmp_path / name
+        receipt_path.write_text(json.dumps(receipt) + "\n")
+        bundle_path = tmp_path / f"{name}.sigstore"
+        bundle_path.write_text(json.dumps({"bundle": name}) + "\n")
+        hashes[name] = audit_deferred.sha256(receipt_path)
+        hashes[bundle_path.name] = audit_deferred.sha256(bundle_path)
+    return hashes
+
+
+def _preflight_identity() -> dict[str, str]:
+    return {
+        "certificate_identity": audit_deferred.expected_certificate_identity(
+            audit_deferred.ATTESTATION_PREFLIGHT_REPOSITORY,
+            audit_deferred.ATTESTATION_PREFLIGHT_WORKFLOW,
+            audit_deferred.attestation_preflight_source_ref(),
+        ),
+        "signer_digest": audit_deferred.ATTESTATION_PREFLIGHT_COMMIT,
+        "source_digest": audit_deferred.ATTESTATION_PREFLIGHT_COMMIT,
+        "source_ref": audit_deferred.attestation_preflight_source_ref(),
+    }
+
+
+def test_attestation_preflight_planted_wrapper_regression_fires(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    artifact_hashes = _synthetic_attestation_preflight_set(tmp_path)
+    verifier_contract = {
+        "required_cli_version": "2.96.0",
+        "observed_cli_version": "2.96.0",
+    }
+    monkeypatch.setattr(
+        audit_deferred,
+        "gh_attestation_cli",
+        lambda: ("/usr/bin/gh", verifier_contract),
+    )
+
+    def strict_wrapper(
+        _: Path,
+        __: Path,
+        repository: str,
+        workflow: str,
+        ___: str,
+        ____: str,
+    ) -> dict[str, str]:
+        qualified = audit_deferred.qualified_signer_workflow(
+            repository,
+            workflow,
+        )
+        if qualified.endswith("not-the-accepted-ci.yml"):
+            raise audit_deferred.AuditFailure(
+                "strict verifier rejected deliberately wrong signer workflow"
+            )
+        assert qualified == (
+            "jiayanzeng/intel-platform/.github/workflows/ci.yml"
+        )
+        return _preflight_identity()
+
+    passing = audit_deferred.attestation_preflight(
+        tmp_path,
+        artifact_hashes=artifact_hashes,
+        attestation_verifier=strict_wrapper,
+    )
+    assert passing["verified"] == 7
+
+    def regressed_wrapper(
+        _: Path,
+        __: Path,
+        ___: str,
+        workflow: str,
+        ____: str,
+        _____: str,
+    ) -> dict[str, str]:
+        if workflow == audit_deferred.ATTESTATION_PREFLIGHT_WORKFLOW:
+            raise audit_deferred.AuditFailure(
+                "strict verifier rejected regressed bare signer workflow"
+            )
+        return _preflight_identity()
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match="strict verifier rejected regressed bare signer workflow",
+    ):
+        audit_deferred.attestation_preflight(
+            tmp_path,
+            artifact_hashes=artifact_hashes,
+            attestation_verifier=regressed_wrapper,
+        )
+
+
+def test_attestation_preflight_negative_control_rejects_permissive_verifier(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    artifact_hashes = _synthetic_attestation_preflight_set(tmp_path)
+    monkeypatch.setattr(
+        audit_deferred,
+        "gh_attestation_cli",
+        lambda: (
+            "/usr/bin/gh",
+            {
+                "required_cli_version": "2.96.0",
+                "observed_cli_version": "2.96.0",
+            },
+        ),
+    )
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match=(
+            "attestation preflight negative control did not fire: the known-"
+            "good historical bundle was accepted with a deliberately wrong "
+            "signer workflow"
+        ),
+    ):
+        audit_deferred.attestation_preflight(
+            tmp_path,
+            artifact_hashes=artifact_hashes,
+            attestation_verifier=lambda *_: _preflight_identity(),
+        )
+
+
+def test_sigstore_bundle_reemission_rejects_mismatched_certificate_san(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -885,14 +1085,21 @@ def test_sigstore_bundle_is_reemitted_as_documented_single_json(
     )
     monkeypatch.setattr(audit_deferred.subprocess, "run", verify)
 
-    audit_deferred.verify_attestation_bundle(
-        receipt,
-        bundle,
-        "example/repo",
-        ".github/workflows/ci.yml",
-        "a" * 40,
-        "refs/heads/main",
-    )
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match=(
+            "GitHub attestation verification returned an inconsistent "
+            "certificate identity or source revision"
+        ),
+    ):
+        audit_deferred.verify_attestation_bundle(
+            receipt,
+            bundle,
+            "example/repo",
+            ".github/workflows/ci.yml",
+            "a" * 40,
+            "refs/heads/main",
+        )
 
     assert verified_bundle is not None
     assert not verified_bundle.exists()
@@ -1011,7 +1218,11 @@ def test_gh_attestation_cli_rejects_version_drift(
         audit_deferred.AuditFailure,
         match=(
             "GitHub CLI attestation verifier version mismatch: required "
-            "2.96.0, observed 2.95.0"
+            "2.96.0, observed 2.95.0; admit a new version only by updating "
+            "PINNED_GH_ATTESTATION_VERSION, passing ./run "
+            "attestation-preflight against the accepted historical 7/7 set "
+            "and its wrong-signer negative control, and recording the "
+            "trigger decision in STATE.md and the active progress log"
         ),
     ):
         audit_deferred.gh_attestation_cli()
