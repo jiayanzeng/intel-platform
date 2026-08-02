@@ -456,8 +456,8 @@ def test_complete_release_matrix_from_one_run_promotes(tmp_path: Path) -> None:
         if row["id"] == "CI-runner evidence"
     )
 
-    assert measurement["observed_runner_executions"] == 7
-    assert len(measurement["accepted_runner_receipts"]) == 7
+    assert measurement["observed_runner_executions"] == 9
+    assert len(measurement["accepted_runner_receipts"]) == 9
     assert measurement["rejected_runner_receipts"] == []
     assert measurement["matrix_findings"] == []
     assert {
@@ -605,7 +605,7 @@ def test_authenticated_matrix_requires_every_bundle(tmp_path: Path) -> None:
 
     assert measurement["observed_runner_executions"] == 0
     assert measurement["accepted_runner_receipts"] == []
-    assert len(measurement["rejected_runner_receipts"]) == 7
+    assert len(measurement["rejected_runner_receipts"]) == 9
     assert all(
         "required attestation bundle is missing" in item["reason"]
         for item in measurement["rejected_runner_receipts"]
@@ -662,13 +662,13 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
         attestation_verifier=verifier,
     )
 
-    assert measurement["observed_runner_executions"] == 7
-    assert len(measurement["accepted_runner_receipts"]) == 7
+    assert measurement["observed_runner_executions"] == 9
+    assert len(measurement["accepted_runner_receipts"]) == 9
     assert all(
         receipt["attestation_verified"]
         for receipt in measurement["accepted_runner_receipts"]
     )
-    assert len(verified) == 7
+    assert len(verified) == 9
     assert {call[2] for call in verified} == {"example/repo"}
     assert {call[3] for call in verified} == {
         "github.com/example/repo/.github/workflows/ci.yml"
@@ -716,7 +716,7 @@ def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
     )
 
     assert measurement["observed_runner_executions"] == 0
-    assert len(measurement["rejected_runner_receipts"]) == 7
+    assert len(measurement["rejected_runner_receipts"]) == 9
     assert all(
         item["reason"]
         == "GitHub attestation verification failed: invalid bundle"
@@ -772,7 +772,7 @@ def test_authenticated_matrix_rejects_mismatched_source_digest(
     )
 
     assert measurement["observed_runner_executions"] == 0
-    assert len(measurement["rejected_runner_receipts"]) == 7
+    assert len(measurement["rejected_runner_receipts"]) == 9
     assert all(
         item["reason"].endswith("source digest mismatch")
         for item in measurement["rejected_runner_receipts"]

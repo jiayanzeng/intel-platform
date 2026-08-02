@@ -350,6 +350,8 @@ workspace check (-D warnings)|ci_workspace_check
 workspace test (-D warnings)|ci_workspace_test
 net check (-D warnings)|ci_net_check
 net test (-D warnings)|ci_net_test
+net floor success|ci_net_msrv_check
+net floor refutation|ci_net_msrv_refute
 clippy|ci_clippy
 rustfmt|ci_fmt
 Rust 1.78 locked check|ci_msrv_check
@@ -438,6 +440,36 @@ ci_net_test() {
     cargo test -p intel-ingest --features net --locked
   INTEL_CRAWLER_CONTACT="crawler-tests@unit.test" RUSTFLAGS="-D warnings" \
     cargo test -p cored --features net --locked
+}
+
+ci_net_msrv_check() {
+  RUSTFLAGS="" rustup run 1.86.0 \
+    cargo check -p cored --features net --locked --all-targets
+}
+
+ci_net_msrv_refute() {
+  local output status
+  set +e
+  output="$(
+    {
+      RUSTFLAGS="" rustup run 1.85.0 \
+        cargo check -p cored --features net --locked --all-targets
+    } 2>&1
+  )"
+  status=$?
+  set -e
+  printf '%s\n' "$output"
+  if [ "$status" -eq 0 ]; then
+    red "Rust 1.85 unexpectedly built the net path; the declared 1.86 floor is false."
+    return 1
+  fi
+  case "$output" in
+    *"idna_adapter@1.2.2 requires rustc 1.86"*) ;;
+    *)
+      red "Rust 1.85 failed without the locked idna_adapter@1.2.2 rust-version declaration."
+      return 1
+      ;;
+  esac
 }
 
 ci_clippy() {

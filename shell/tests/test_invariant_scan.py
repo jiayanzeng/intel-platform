@@ -301,14 +301,10 @@ def test_rule_id_without_an_implemented_check_exits_two(
     assert "no implemented check for R99" in capsys.readouterr().out
 
 
-def test_r10_derives_every_exemption_without_pinning_its_count() -> None:
+def test_r10_derives_every_exemption_basis() -> None:
     report = invariant_scan.r10_report(ROOT)
 
     assert report.findings == ()
-    assert report.local_jobs == 20
-    assert report.local_checks == 24
-    assert report.blocking_jobs == 6
-    assert report.hosted_checks == 23
     assert len(report.exemptions) == len(report.exemption_bases)
     structural = set(invariant_scan.EXEMPTION_CRITERIA)
     residual_prefix = "named-local-check:"
@@ -329,6 +325,16 @@ def test_r10_derives_every_exemption_without_pinning_its_count() -> None:
         invariant_scan.EXEMPTION_CRITERIA["report-only-job"] in exemption
         for exemption in report.exemptions
     )
+
+
+def test_r10_reports_current_topology() -> None:
+    report = invariant_scan.r10_report(ROOT)
+
+    assert report.findings == ()
+    assert report.local_jobs == 22
+    assert report.local_checks == 24
+    assert report.blocking_jobs == 8
+    assert report.hosted_checks == 23
 
     run_text = (ROOT / "run").read_text()
     functions = invariant_scan._bash_functions(run_text)
@@ -427,6 +433,8 @@ def test_ci_workflow_parser_derives_current_blocking_identities() -> None:
         ("lint", None),
         ("msrv", None),
         ("net", None),
+        ("net-msrv-1-85", None),
+        ("net-msrv-1-86", None),
         ("shell", "python=3.11"),
         ("shell", "python=3.12"),
     }

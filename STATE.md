@@ -1,6 +1,77 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 4 POST-LEVER BASIS is complete: the first adjacent governed pair wholly inside two-cycle retention measures +24,108 bytes/cycle, and no further lever is selected.** The current exact export is **2,551,288 bytes / 151 files / 2 retained cycles**; State, not the export, is now the nearer governed byte boundary by **3.20 cycles** on their respective post-retention denominators. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete local entry point is Step 3's **20/20**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **357/357**, and embedded golden **11/11**; the mandatory standalone golden passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 5 NET-FLOOR is complete: Rust 1.86 builds the locked net graph while Rust 1.85 refutes on explicit dependency MSRV declarations.** Local CI derives **22 jobs / 24 checks** and hosted CI **8 blocking jobs / 23 checks** with no new R10 exemption; the release-grade evidence topology is **9 receipts / 9 bundles**. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete local entry point is Step 5's **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **358/358**, and embedded golden **11/11**; the mandatory standalone golden also passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no production source, dependency resolution, public response, value domain, release value, or publication ref changed. The only protected-manifest movement is the required existing `run` pin.
+
+**v0.35 NET-FLOOR — two-sided executable live-fetch MSRV (measured
+2026-08-02).** All three decision-gate clauses
+passed. The exact negative command
+`RUSTFLAGS="" rustup run 1.85.0 cargo check -p cored --features net --locked
+--all-targets` exited nonzero and named the declaring packages, including
+`idna_adapter@1.2.2 requires rustc 1.86` plus each locked ICU 2.2.0 crate's
+1.86 requirement. This was a declared-`rust-version` refutation, not a
+lockfile, registry, network, or unrelated compile failure. The matching
+`rustup run 1.86.0` command exited **0** after compiling the complete graph.
+The floor is genuinely **1.86**.
+
+`cargo tree` measured the locked edge as `cored` → `intel-ingest` →
+`reqwest` 0.11.27 → `url` 2.5.8 → `idna` 1.1.0 → `idna_adapter` 1.2.2
+→ `icu_collections` / `icu_normalizer` / `icu_properties` 2.2.0. The
+shipped offline `intel-compliance` tree remains its seven-crate
+`async-trait`/`tokio` graph with no ICU edge. `AGENTS.md` dependency clause 1
+now places the chain in the net graph and retains `texting_robots` as the
+explicit counterfactual reason it was not admitted into the offline graph.
+
+The launcher adds a success lane and a failure-capable refutation lane; the
+workflow adds matching blocking jobs `net-msrv-1-86` and `net-msrv-1-85`.
+R10 initially found a real classification gap because redirect tokens produced
+different command identities. The corrected grouping keeps redirection off the
+command line seen by the canonicalizer. R10 then reported no finding at
+**local_jobs=22, local_checks=24, blocking_jobs=8, hosted_checks=23**, with no
+new residual exemption. The two new local and two new hosted jobs reuse the
+existing canonical net check, so only job counts move. The misleading topology
+test is split: one test derives exemption bases; a separate test explicitly
+pins and names the four current topology figures.
+
+The hosted identity set is now **9**: `core`, `golden`, `lint`, `msrv`, `net`,
+`net-msrv-1-85`, `net-msrv-1-86`, and the two shell matrices. Therefore Step 6
+expects **9 receipt JSON files / 9 Sigstore bundles**. The executable source is
+`blocking_job_identities`; its exact-set assertion is in
+`test_ci_workflow_parser_derives_current_blocking_identities`. The dynamic
+success, rejection, and verifier population assertions in
+`shell/tests/test_deferred_audit.py` now each state **9**; immutable historical
+seven-job evidence remains unchanged.
+
+Before edits, `version-check` reported **3 executable pins**, **22 offline-MSRV
+current restatements**, and **3 release-version current restatements**. After
+the new floor commands and present-tense corrections it reports the same
+**3 / 22 / 3**. The package-scoped net `rustup run` lines do not match the
+offline authority's required `--workspace --locked` shape, and no pattern edit
+was needed.
+
+Manifest validation and complete artifact verification passed before the
+manifest proposal. Afterward, exactly the existing `run` entry moved from
+**43,125 bytes / `44314ddf…`** to **43,907 bytes /
+`a05562dd1612678aa7c78f1aa8efe09e4c2e4392175c2363b25778577f36b818`**.
+The manifest is **192,370 bytes**, delta **+328**, at SHA-256
+`b4b1973d8231c1e006a622741f8f84d24a148547f331c4713649a6011282a09c`;
+schema remains **2 artifacts / 332 pinned files** and complete verification
+matches every pin plus both protected databases. `tools/model_profiles.py`
+remains byte-identical at **28,297 bytes /
+`1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df`**.
+No `artifacts[]` entry or admission record moved. The intended workflow bytes
+are **32,533** at SHA-256
+`74a1dc3d690d1dfedeb3d0193d40df0df3256ba1f52ccae7751b2cb21b3fd3a8`.
+R10/1's adjacent-context anchor necessarily changed after the two job-table
+rows were inserted; it is now the unique planted target line itself. No
+control, expected finding, or absolute finding line changed.
+
+The focused invariant and deferred-audit suites passed **68/68**. With the
+Step 5 box still open, the complete `./run ci-local` entry point passed all
+derived **22/22** jobs: invariant-scan **12 rules / 69 controls**, checklist
+**268 / 3 / 268 / 268**, constrained Python 3.11.4 **358/358** with the same
+one accepted warning, every protected byte and both protected databases, and
+embedded golden **11/11**. The separately required standalone `./run golden`
+passed the same **11/11** assertions, delta **0**.
 
 **v0.35 POST-LEVER BASIS — first two-cycle-epoch denominator (measured
 2026-08-02).** Exact Step 3 audit child
@@ -3512,7 +3583,7 @@ verified locally; no CI runner evidence** · **T5 built, measured, and rejected*
 
 - ~~**Robots policy is configured, not discovered.**~~ **RESOLVED in v0.7 (T2)** — see §2.11 and §6b.
 - ~~**"Rust 1.75 + `--locked` still builds the offline path."**~~ **FALSE, and it is the most important correction in this document.** The committed `Cargo.lock` is format **v4**, unparseable by cargo before **1.78**, so the claim could never have held — it had simply never been run. **The offline floor is now declared as 1.78**, measured locally across 1.75/1.76/1.78/1.91 and observed on the v0.10/G2 runner as Rust 1.78.0. Re-encoding the lock to v3 *does* buy back 1.75 (75 tests green, resolution byte-identical) but cargo ≥ 1.78 rewrites it to v4 on the next lock modification, so that floor cannot be held. **The general lesson: a claimed property that nothing executes is not a property, it is a wish** — the same failure that let `--features net` sit broken for two cycles and that let "robots-compliant" mean "compliant with a policy we wrote ourselves."
-- **The `--features net` floor is 1.86, and the error lies about why.** `icu_* 2.2.0` (via `idna_adapter`) declare `rust-version = 1.86`; edition2024 stabilizing in 1.85 is necessary but **not** sufficient. Worse, the failure surfaces at *dependency-download* time as `error: failed to download replaced source registry 'crates-io'`, which sends you looking at the registry instead of at MSRVs. Reproduced again this cycle on 1.75.
+- ~~**The `--features net` 1.86 floor had no executable lane.**~~ **RESOLVED in v0.35 Step 5.** The locked net graph is `cored` → `intel-ingest` → `reqwest` 0.11.27 → `url` 2.5.8 → `idna` 1.1.0 → `idna_adapter` 1.2.2 → `icu_*` 2.2.0. Rust 1.86 builds it; Rust 1.85 exits on the dependencies' explicit `requires rustc 1.86` declarations, including `idna_adapter@1.2.2`. Local and hosted lane pairs execute both sides. The older registry-download failure was a non-result, not evidence of the floor.
 - **Correction to a v0.5 note** (unchanged from v0.6): `/v1/ask`'s `context_suppressed` names `techwire::tw-004`, not `osdaily::osd-004`, for the question actually tested. Suppression at context assembly is **rank-aware by design**, so which copy of a syndicated story is dropped depends on which one the query ranked higher. Treat *"one of the pair is suppressed"* as the golden, not a specific id.
 - **`Day` values changed scale (T9.3).** `published_day` is days-since-1970. Pre-v0.6 archives spanning a month boundary would need a rebuild — **checked in v0.7: no such archive exists**, so no tool was built (T8.3).
 - ~~**`dedup_near` recomputes every fingerprint on every pass.**~~ **RESOLVED in v0.8/T3.** The store materializes the fingerprint and `/view` passes it into `dedup_near`; a deliberately violating test double proves the function consumes the supplied value rather than recomputing it.
@@ -3751,7 +3822,7 @@ first live RSS harvest remains separately deferred to v0.26.
 
 ```bash
 # toolchain (v0.6.2 claim, retained): offline needs >= 1.75; --features net needs >= 1.86.
-# current correction: offline needs >= 1.78; the net >= 1.86 floor remains an unexecuted claim.
+# current correction: offline needs >= 1.78; net >= 1.86 is executed by paired 1.86-pass / 1.85-declared-MSRV-refute lanes.
 # Ubuntu 24.04 ships both, no rustup required:
 apt-get install -y rustc-1.91 cargo-1.91
 export PATH=/usr/lib/rust-1.91/bin:$PATH

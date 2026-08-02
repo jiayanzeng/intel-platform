@@ -383,7 +383,7 @@
           ],
           "expected_fail": "local ci-local check 'net test (-D warnings)' target true is unclassified",
           "expected_file": "run",
-          "expected_anchor": "net test (-D warnings)|true\nclippy|ci_clippy"
+          "expected_anchor": "net test (-D warnings)|true\nnet floor success|ci_net_msrv_check"
         },
         {
           "file": ".github/workflows/ci.yml",

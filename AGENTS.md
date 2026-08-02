@@ -148,9 +148,14 @@ where it does; here is what you must never do.
 Before adding any crate, evaluate it against all three and record the result in
 the decision log (`STATE.md §6`). A crate is **rejected** if it:
 
-1. **raises the MSRV floor** (offline build must stay ≥ 1.78; watch for the
-   `icu_*` 2.2.0 chain via `idna` / `idna_adapter`, which declares 1.86 and lives
-   in the *offline* graph through `intel-compliance`), or
+1. **raises either MSRV floor** (the offline build must stay ≥ 1.78; the
+   live-fetch `net` graph is separately pinned at 1.86 by `cored` →
+   `intel-ingest` → `reqwest` 0.11.27 → `url` 2.5.8 → `idna` 1.1.0 →
+   `idna_adapter` 1.2.2 → `icu_*` 2.2.0, whose locked crates declare 1.86).
+   The earlier `intel-compliance` warning was a counterfactual: adding
+   `texting_robots` would have pulled that expensive chain into the offline
+   graph, which is one reason it was rejected; the shipped seven-crate
+   `intel-compliance` graph does not contain ICU, or
 2. **adds excessive transitive dependencies** (compare against the receiving
    crate's current tree — `intel-compliance` has 7 crates total; `intel-ingest`
    has 16), or
@@ -177,6 +182,10 @@ cargo test  --workspace --locked
 # the live-fetch path (MSRV floor 1.86) — the path that sat broken unwatched
 cargo check -p cored --features net --locked --all-targets
 cargo test  -p intel-ingest --features net --locked
+
+# the live-fetch floor itself — success at 1.86, declared-MSRV refusal at 1.85
+RUSTFLAGS="" rustup run 1.86.0 cargo check -p cored --features net --locked --all-targets
+RUSTFLAGS="" rustup run 1.85.0 cargo check -p cored --features net --locked --all-targets
 
 # lint (clean and blocking in CI since T6)
 cargo clippy --workspace --locked --all-targets -- -D warnings
