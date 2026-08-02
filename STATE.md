@@ -1,17 +1,37 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 5 NET-FLOOR is complete: Rust 1.86 builds the locked net graph while Rust 1.85 refutes on explicit dependency MSRV declarations.** Local CI derives **22 jobs / 24 checks** and hosted CI **8 blocking jobs / 23 checks** with no new R10 exemption; the release-grade evidence topology is **9 receipts / 9 bundles**. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete local entry point is Step 5's **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **358/358**, and embedded golden **11/11**; the mandatory standalone golden also passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no production source, dependency resolution, public response, value domain, release value, or publication ref changed. The only protected-manifest movement is the required existing `run` pin.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 5 NET-FLOOR is BLOCKED at decision-gate clause 3: hosted run 30746841903 proved the named 1.85 job actually used the repository's Rust 1.91 override, so R10 classified a syntactic counterpart that was not an executed toolchain counterpart.** Local CI still derives **22 jobs / 24 checks** and hosted CI **8 blocking jobs / 23 checks** with no residual exemption, but the candidate run passed only **8/9** blocking identities and is not release-grade evidence. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The newly created evidence ref `codex/v0.35-evidence-d33c251` remains fixed at exact failed-evidence candidate `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`; it will not be reused or moved. The latest complete local entry point remains **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **358/358**, and embedded golden **11/11**. Exact-candidate clean Python 3.11.4 and 3.12.13 populations each passed **358/358**, and the post-finding standalone golden passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no production source, dependency resolution, public response, value domain, release value, `main`, or tag changed. The only protected-manifest movement remains the existing `run` pin.
 
-**v0.35 NET-FLOOR — two-sided executable live-fetch MSRV (measured
-2026-08-02).** All three decision-gate clauses
-passed. The exact negative command
+**v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
+2026-08-02).** This is a forward correction to the earlier local-only
+completion claim. Authorized workflow-dispatch run **30746841903**, attempt
+**1**, targeted exact candidate
+`d33c251d477aa4b1ee6b5b2ebd531b1fda428e99` on fresh ref
+`refs/heads/codex/v0.35-evidence-d33c251`. Eight of nine blocking identities
+passed, including the new named 1.86 job. The named 1.85 refutation job failed
+because its `cargo check` exited **0** after compiling the complete graph.
+
+The action installed and set default toolchain 1.85.0, but its own log then
+reported: `toolchain '1.91-x86_64-unknown-linux-gnu' is currently in use
+(overridden by .../rust-toolchain.toml)`. The step invoked bare `cargo`, so it
+ran the repository override rather than 1.85. Its successful compilation is
+therefore not a 1.85 pass and does not fire decision-gate clause 1; it proves
+the hosted lane did not execute the construction it claimed. R10 nevertheless
+canonicalized that bare hosted command as the counterpart of local `rustup run
+1.85.0 cargo`. This is the decision-gate clause 3 classification gap. Step 5
+is unboxed and blocked; Step 6 cannot authenticate this candidate. No lane was
+changed, no failed run was retried, and the evidence ref was neither reused nor
+moved.
+
+The local pre-hosted measurements remain valid but are insufficient to
+complete the task. The exact negative command
 `RUSTFLAGS="" rustup run 1.85.0 cargo check -p cored --features net --locked
 --all-targets` exited nonzero and named the declaring packages, including
 `idna_adapter@1.2.2 requires rustc 1.86` plus each locked ICU 2.2.0 crate's
 1.86 requirement. This was a declared-`rust-version` refutation, not a
 lockfile, registry, network, or unrelated compile failure. The matching
 `rustup run 1.86.0` command exited **0** after compiling the complete graph.
-The floor is genuinely **1.86**.
+The local floor measurement is **1.86**; the hosted floor remains unmeasured.
 
 `cargo tree` measured the locked edge as `cored` → `intel-ingest` →
 `reqwest` 0.11.27 → `url` 2.5.8 → `idna` 1.1.0 → `idna_adapter` 1.2.2

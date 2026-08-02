@@ -30,6 +30,14 @@ criterion and a new v0.35 measurement.
 **Step 3 — arithmetic retention fallback deleted; every live caller and fixture
 uses the Git-derived retained set — 2026-08-02.**
 
+**r3 — 2026-08-02 — Step 5 hosted-counterpart gate finding.** The first
+authorized evidence run exposed that `rust-toolchain.toml` overrides the
+toolchain action's default. The named hosted 1.85 job invoked bare `cargo` and
+therefore ran 1.91, while R10 still classified it as the counterpart of the
+local explicit `rustup run 1.85.0 cargo` construction. This records the
+decision-gate clause 3 finding without changing the gate, lane, or checker.
+Step 5 is unboxed and blocked; the created evidence ref is not reusable.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -392,7 +400,7 @@ column was edited to match what happened.**
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — the real self-test passed 12 rules / 68 controls and no new spelling appeared; trigger did not fire | none |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — Step 5 discharged this self-discharging trigger. Local and hosted lane pairs now require the locked net graph to build on 1.86 and require 1.85 to fail specifically on `idna_adapter@1.2.2 requires rustc 1.86`; the local measurements produced exactly those outcomes | **Step 5 — completed; the executable pair remains governed by R10 parity** |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — local explicit 1.86/1.85 measurements produced the expected pass/refutation, but hosted run 30746841903 proved the named 1.85 job ran the repository's 1.91 override. R10 classified a syntactic counterpart that was not an executed toolchain counterpart; the trigger is not discharged | **Step 5 — BLOCKED at decision-gate clause 3; do not change the lane or checker without operator direction** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
@@ -593,6 +601,12 @@ cannot validate is reported with that bound attached, not upgraded by wishing.
 **Depends on:** Steps 1 (G4, G6, G7) and 2. **This is the cycle's largest
 scope loosening; read the Declared scope notes before starting.**
 
+**Gate disposition (2026-08-02): BLOCKED at clause 3.** Hosted run
+`30746841903` showed the named 1.85 job used the repository's 1.91 toolchain
+override, while R10 had accepted it as the local explicit-1.85 counterpart.
+The failed run and its fresh evidence ref are retained; neither may be reused,
+moved, or retried as completion evidence. No workaround was implemented.
+
 **Objective.** Give the `--features net` MSRV floor a two-sided executable lane,
 correct the dependency gate that misplaces its cause, and re-pin `run`.
 
@@ -770,8 +784,8 @@ governs any future admission.
 - [x] Step 2 · ANCHOR
 - [x] Step 3 · ONE-RETENTION
 - [x] Step 4 · POST-LEVER BASIS
-- [x] Step 5 · NET-FLOOR
-- [ ] Step 6 · RE-MEASURE
+- [ ] Step 5 · NET-FLOOR — BLOCKED at decision-gate clause 3
+- [ ] Step 6 · RE-MEASURE — ineligible while Step 5 is blocked
 - [ ] Step 7 · R-CLOSE
 
 ---
