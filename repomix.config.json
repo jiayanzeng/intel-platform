@@ -18,7 +18,7 @@
       "evidence/**",
       "observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml",
       "docs/state-archive/**",
-      "docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-2]}{.md,.*.md,-*.md}",
+      "docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-3]}{.md,.*.md,-*.md}",
       "repomix-output-*.xml"
     ]
   },
