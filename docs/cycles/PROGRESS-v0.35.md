@@ -717,3 +717,85 @@ Entries are append-only; corrections are new dated entries.
   exemption, R10 classification, dependency, protected byte, public surface,
   publisher request, scheduler, service, or model-profile command changed. The
   operator-supplied untracked amendment remains untouched.
+
+### 2026-08-03 · STEP-6-ATTESTATION-VERIFIER-FIX — classification (b)
+
+- owner: Codex
+- commit: 48a716fecdf857fb4b8eca35fa574c20563b78b3
+- result: INCOMPLETE / LOCALLY CORRECTED. Three separating controls supersede
+  the preceding classification (a) with **(b), an argument-derivation fault in
+  the repository**. The durable fix is local and later than authenticated
+  candidate `8fae40e7…`; Step 6 remains unchecked and Step 7 was not entered.
+- bundle-name control: PASS for diagnosis. One authenticated v0.34 bundle's
+  bytes were held constant. Raw `.sigstore` exited **1** with complete stderr
+  `Error: bundle file extension not supported, must be json or jsonl`;
+  `.sigstore.json` and `.bundle.jsonl` each exited **1** with complete stderr
+  `Error: verifying with issuer "sigstore.dev"`. Decoder selection was not the
+  issuer failure, but the archival suffix is not accepted directly and the old
+  wrapper depended on an undocumented extension behavior.
+- one-flag argument bisection: PASS for diagnosis. With a supported bundle
+  name, dropping only `--signer-workflow` exited **0**. Independently dropping
+  any of `--signer-digest`, `--source-digest`, `--source-ref`, or
+  `--deny-self-hosted-runners` still exited **1** at the issuer. These were
+  diagnostic controls only; no relaxed invocation was accepted as evidence.
+- signer-workflow confirmation: PASS with every strict flag retained. Replacing
+  bare `.github/workflows/ci.yml` with documented
+  `jiayanzeng/intel-platform/.github/workflows/ci.yml` exited **0**; the optional
+  `github.com/`-qualified form also exited **0**. The certificate's qualified
+  workflow identity, signer/source digest, source ref, repository, and hosted
+  runner claims all match the corrected invocation.
+- CLI-contract control: PASS. `gh attestation verify --help` on exact current
+  `gh` **2.96.0** documents `--repo owner/repo`,
+  `--signer-workflow [host/]owner/repo/path/to/workflow`, single-JSON or JSONL
+  bundles, and every remaining verifier flag/value form as used. `gh auth
+  status` exited **0** for active keyring account `jiayanzeng`, HTTPS Git, and
+  scopes `gist`, `read:org`, `repo`, and `workflow`; masked token text was not
+  copied into the repository. Because the controls were not clean, no older CLI
+  installation was attempted.
+- classification acceptance: **(b)**. The wrapper accepted and forwarded a
+  repository-relative signer path that current `gh` does not accept as a signer
+  identity. The earlier statement that the bare argument matched the certificate
+  claim is forward-corrected: the certificate carries the fully qualified URI.
+  Neither a verifier/environment fault nor a signing-side fault is retained.
+- durable-fix acceptance: PASS locally. `tools/audit_deferred.py` pins exact
+  `gh` **2.96.0** and rejects drift before bundle verification; qualifies bare
+  workflow paths against the expected owner/repository; validates qualified
+  forms; parses persisted `.sigstore` bytes; and re-emits canonical
+  single-bundle JSON instead of copying them under a JSONL decoder suffix.
+  Future release audit records contain `required_cli_version`,
+  `observed_cli_version`, `bundle_input_format`, and
+  `signer_workflow_format`.
+- executable-control acceptance: PASS. Tests prove the version-drift refusal,
+  required/observed version record, workflow qualification, canonical JSON
+  conversion, and report integration. The focused suite passes **44/44**.
+- representative-wrapper acceptance: PASS for diagnosis only. With the original
+  bare workflow input and every strict verifier flag, the corrected wrapper
+  exited **0** for one v0.34 representative and one run **30757027882**
+  representative, returning each exact certificate identity, signer/source
+  digest, and source ref. Neither result was admitted as release-grade.
+- measured-property acceptance: PASS and kept separate from the chain. Run
+  **30757027882** proves **9/9** blocking identities; executed receipt assertions
+  prove **1.78.0 / 1.86.0 / 1.85.0**. The complete nine-bundle release-grade
+  chain remains unvalidated because the corrected verifier is not in the
+  authenticated candidate. Receipt, bundle, and blocking-identity expectations
+  remain **9 / 9 / 9**.
+- local-gate acceptance: PASS. `./run ci-local` passed all derived **22/22**
+  jobs, **12/12** invariants and **73** planted controls, warning-denied current,
+  net, 1.78 and 1.86 builds/tests, the 1.85 declared-MSRV refutation, clippy,
+  rustfmt, protected evidence, and Python 3.11.4 **363/363**. Python 3.12.13
+  separately passed **363/363** with the same accepted dependency warning.
+- golden-E2E delta: **0**. The embedded and mandatory standalone runs each
+  passed the same **11/11** assertions.
+- local record gates: PASS. `cycle-check`, `version-check`, `checklist-audit`
+  at **268 / 3 / 268 / 268**, `progress-check`, byte-compilation, and diff
+  hygiene pass.
+- immutability acceptance: PASS. No push, ref creation/movement/deletion,
+  hosted retry, evidence admission, governed export, release-grade population
+  comparison, verifier-policy relaxation, or Step 7 action occurred. Run
+  **30757027882** and ref `codex/v0.35-evidence-8fae40e` remain immutable.
+- scope acceptance: PASS. The implementation changes only the exact allowed
+  verifier and its tests; forward status changes only `STATE.md`, the active
+  runbook, and this progress record. No workflow, gate, lane, exemption, R10
+  classification, dependency, protected byte, production source, public
+  surface, publisher request, scheduler, service, or model-profile command
+  changed. The operator-supplied untracked amendment remains untouched.
