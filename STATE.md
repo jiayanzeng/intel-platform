@@ -1,6 +1,45 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 3 ONE-RETENTION is complete: the arithmetic fallback is deleted and every retained-cycle boundary now comes from one Git-tracked authority.** The registered suite now carries **12 rules / 69 controls** because R12 executes a new optional-parameter failure construction. Exactly **0** hand-typed absolute finding-line fields survive. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The complete local entry point passed **20/20** with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **357/357**, and embedded golden **11/11**; the mandatory standalone golden also passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 4 POST-LEVER BASIS is complete: the first adjacent governed pair wholly inside two-cycle retention measures +24,108 bytes/cycle, and no further lever is selected.** The current exact export is **2,551,288 bytes / 151 files / 2 retained cycles**; State, not the export, is now the nearer governed byte boundary by **3.20 cycles** on their respective post-retention denominators. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete local entry point is Step 3's **20/20**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **357/357**, and embedded golden **11/11**; the mandatory standalone golden passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+
+**v0.35 POST-LEVER BASIS — first two-cycle-epoch denominator (measured
+2026-08-02).** Exact Step 3 audit child
+`cd9a119f309096d2d715a54fde6302a5f95362d0` produced a project-root export of
+**2,551,288 bytes / 151 files / 2 retained cycles**, with **100** derived and
+**7** required paths and both protected byte classes excluded. The first
+sandboxed invocation failed npm registry DNS and is a non-result; the identical
+permission-complete invocation passed.
+
+The complete append-only governed-field series, with the retention depth in
+force at each point, is **2,464,445 [3] → 2,576,273 [3] → 2,556,451 [3]
+→ 2,586,197 [3] → 2,629,379 [3] → 2,617,984 [3] → 2,706,393 [3]
+→ 2,592,441 [3] → 2,527,180 [2] → 2,551,288 [2]**. The checker's
+last-field-per-cycle series is **2,576,273 [3] → 2,629,379 [3] (+53,106)
+→ 2,706,393 [3] (+77,014) → 2,592,441 [3] (−113,952) → 2,527,180
+[2] (−65,261 across the lever) → 2,551,288 [2] (+24,108)**. Thus the
+latest positive adjacent same-kind governed pair is now v0.34→v0.35 and is
+wholly within the two-cycle epoch. The published **77,014**, **77,862**,
+**86,946**, and **79,962 bytes/cycle** denominators are all explicitly stale:
+each was measured with three-cycle retention and its recurring v0.33-era
+turnover term.
+
+At the same exact tree, controlled Repomix exports differed only in the
+retention pattern. Two-cycle retention emitted **2,551,288 bytes / 151 files**;
+the three-cycle counterfactual emitted **2,649,296 bytes / 153 files** and added
+exactly `TASKS-v0.33-EXECUTION.md` plus `PROGRESS-v0.33.md`. The real export
+reclaim is therefore **98,008 bytes**, refuting the reviewer's **97,951-byte**
+figure by **57 bytes**. The raw two-file payload alone is not the export
+measurement; Repomix framing is part of the delivered bytes.
+
+The export ceiling has **448,712 bytes** remaining and is **18.61 cycles** away
+on the new **24,108-byte/cycle** governed denominator. State at the same tree is
+**256,218 / 453,741 bytes**. Exact delivered v0.34 State was **243,402 bytes**,
+so its post-retention same-kind denominator is **12,816 bytes/cycle** and its
+**197,523-byte** remainder is **15.41 cycles**. State is therefore nearer by
+**3.20 cycles**. Both rates are one-pair measurements: the checker's
+representativeness remains unbounded, and one v0.35 observation is not a trend.
+The new basis does not indicate an immediate lever, so this step selects none;
+the archive, manifest-exclusion, and depth-one tradeoffs remain unexercised.
 
 **v0.35 ONE-RETENTION — one Git-derived retained-cycle authority (measured
 2026-08-02).** Option A was feasible and selected. The formatter's
