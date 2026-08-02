@@ -136,3 +136,49 @@ Entries are append-only; corrections are new dated entries.
   scheduler, service, or model-profile command, changed no dependency,
   production source, public response, release value, or protected byte, and
   created, moved, or deleted no remote ref.
+
+### 2026-08-02 · ANCHOR — mutant-derived planted-control locations
+
+- owner: Codex
+- commit: 457f53384451febfd95609d9c8fb8da0f1de5747
+- result: PASS. Registry schema v4 replaces all 68 `expected_line` integers
+  with authored `expected_anchor` literals and optional zero-based line offsets.
+  The self-test resolves each anchor exactly once only after constructing its
+  mutant, then independently builds the expected finding.
+- geometry acceptance: PASS. All **68** mutant anchors are unique: **43** are
+  one-line and **25** are multi-line; **8** carry nonzero offsets. R1/1 uses a
+  nine-line anchor at offset 3. All 40 R12 controls retain their pre-existing
+  named control-site marker, with R12/39 extending it by one unchanged line.
+  No registered anchor is wholly supplied by its `replace_with`.
+- non-unique acceptance: PASS through the real `./run invariant-scan` entry
+  point. Temporary R1 registries emitted exactly `expected_anchor occurs 0
+  times in constructed mutant; expected exactly 1` and `expected_anchor occurs
+  2 times in constructed mutant; expected exactly 1`, each at
+  `crates/store/src/sqlite.rs`, and each exited 1.
+- wrong-line acceptance: PASS. A constructed R7 checker moved its real finding
+  from line 410 to line 411; self-test exited 1 and printed both the missing
+  expected line and the observed one-line-late finding.
+- mutant-boundary acceptance: PASS. A temporary R3 anchor existing only in
+  `replace_with` resolved and passed **1/1 rule / 1 control**. A temporary R7
+  anchor existing only in the original file was absent after mutation and
+  received the zero-occurrence rejection.
+- registered-suite acceptance: PASS at **12/12 rules / 68 controls**; no
+  control was added, removed, or weakened. The focused
+  `shell/tests/test_invariant_scan.py` suite passed **27/27**.
+- absolute-line acceptance: PASS. `config/invariant-rules.json` contains **0**
+  `expected_line` or other hand-typed absolute finding-line fields; there are
+  no survivors to name.
+- gate acceptance: PASS with the ANCHOR checkbox still open. `./run ci-local`
+  passed **20/20**, checklist **268 / 3 / 268 / 268**, zero Rust warnings,
+  constrained Python 3.11.4 **357/357**, embedded golden **11/11**, every pin,
+  and both protected databases.
+- trigger acceptance: PASS. The unchanged planted-line trigger fired on the
+  schema change and its assigned work completed. The active row records that
+  Step 7 will move the subject into the dated Deferred completions table.
+- golden-E2E delta: **0**. The mandatory standalone post-task run passed
+  byte-identical **11/11**.
+- publisher/ref acceptance: PASS. ANCHOR changed only the registered lifecycle
+  tool, registry, focused tests, State, and active runbook. It issued no
+  publisher request, ran no scheduler, service, or model-profile command,
+  wrote no protected byte, and changed no dependency, production source,
+  release authority, or remote ref.
