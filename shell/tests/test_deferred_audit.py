@@ -646,7 +646,10 @@ def test_authenticated_matrix_requires_every_bundle(tmp_path: Path) -> None:
     )
 
 
-def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
+def test_authenticated_complete_matrix_promotes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     repo, _, _, head = _synthetic_repository(tmp_path)
     receipts = _receipt_matrix(tmp_path, head)
     for receipt in receipts:
@@ -680,6 +683,26 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
             "source_ref": source_ref,
         }
 
+    verifier_contract = {
+        "command": "gh attestation verify",
+        "required_cli_version": "2.96.0",
+        "observed_cli_version": "2.96.0",
+        "bundle_input_format": "canonical single-bundle JSON",
+        "signer_workflow_format": (
+            "[host/]owner/repository/.github/workflows/<file>"
+        ),
+    }
+    monkeypatch.setattr(
+        audit_deferred,
+        "gh_attestation_cli",
+        lambda: ("/usr/bin/gh", verifier_contract),
+    )
+    monkeypatch.setattr(
+        audit_deferred,
+        "verify_attestation_bundle",
+        verifier,
+    )
+
     measurement = audit_deferred.runner_receipt_measurement(
         receipts,
         repository=repo,
@@ -688,12 +711,9 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
         attestation_bundles_dir=tmp_path,
         require_attestations=True,
         expected_repository="example/repo",
-        expected_workflow=(
-            "github.com/example/repo/.github/workflows/ci.yml"
-        ),
+        expected_workflow=".github/workflows/ci.yml",
         expected_source_digest=head,
         expected_source_ref="refs/heads/main",
-        attestation_verifier=verifier,
     )
 
     assert measurement["observed_runner_executions"] == 9
@@ -705,7 +725,7 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
     assert len(verified) == 9
     assert {call[2] for call in verified} == {"example/repo"}
     assert {call[3] for call in verified} == {
-        "github.com/example/repo/.github/workflows/ci.yml"
+        "example/repo/.github/workflows/ci.yml"
     }
     assert {call[4] for call in verified} == {head}
     assert {call[5] for call in verified} == {"refs/heads/main"}
@@ -718,6 +738,10 @@ def test_authenticated_complete_matrix_promotes(tmp_path: Path) -> None:
         }.issubset(receipt)
         for receipt in measurement["accepted_runner_receipts"]
     )
+    assert measurement["expected_workflow"] == (
+        "example/repo/.github/workflows/ci.yml"
+    )
+    assert measurement["attestation_verifier"] == verifier_contract
 
 
 def test_authenticated_matrix_rejects_invalid_bundle(tmp_path: Path) -> None:
@@ -813,21 +837,24 @@ def test_authenticated_matrix_rejects_mismatched_source_digest(
     )
 
 
-def test_sigstore_bundle_uses_supported_ephemeral_extension(
+def test_sigstore_bundle_is_reemitted_as_documented_single_json(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     receipt = tmp_path / "receipt.json"
     receipt.write_text('{"receipt": true}\n')
     bundle = tmp_path / "receipt.json.sigstore"
-    bundle.write_text('{"bundle": true}\n')
+    bundle.write_text('{\n  "bundle": true\n}\n')
     verified_bundle: Path | None = None
 
     def verify(args: list[str], **_: object) -> subprocess.CompletedProcess:
         nonlocal verified_bundle
         verified_bundle = Path(args[args.index("--bundle") + 1])
-        assert verified_bundle.name.endswith(".jsonl")
-        assert verified_bundle.read_bytes() == bundle.read_bytes()
+        assert verified_bundle.name.endswith(".json")
+        assert verified_bundle.read_text() == '{"bundle":true}\n'
+        assert args[args.index("--signer-workflow") + 1] == (
+            "example/repo/.github/workflows/ci.yml"
+        )
         output = [
             {
                 "verificationResult": {
@@ -851,14 +878,18 @@ def test_sigstore_bundle_uses_supported_ephemeral_extension(
             "",
         )
 
-    monkeypatch.setattr(audit_deferred.shutil, "which", lambda _: "/usr/bin/gh")
+    monkeypatch.setattr(
+        audit_deferred,
+        "gh_attestation_cli",
+        lambda: ("/usr/bin/gh", {}),
+    )
     monkeypatch.setattr(audit_deferred.subprocess, "run", verify)
 
     audit_deferred.verify_attestation_bundle(
         receipt,
         bundle,
         "example/repo",
-        "github.com/example/repo/.github/workflows/ci.yml",
+        ".github/workflows/ci.yml",
         "a" * 40,
         "refs/heads/main",
     )
@@ -906,7 +937,11 @@ def test_sigstore_verifier_pins_source_revision_and_returns_identity(
             "",
         )
 
-    monkeypatch.setattr(audit_deferred.shutil, "which", lambda _: "/usr/bin/gh")
+    monkeypatch.setattr(
+        audit_deferred,
+        "gh_attestation_cli",
+        lambda: ("/usr/bin/gh", {}),
+    )
     monkeypatch.setattr(audit_deferred.subprocess, "run", verify)
 
     identity = audit_deferred.verify_attestation_bundle(
@@ -924,6 +959,62 @@ def test_sigstore_verifier_pins_source_revision_and_returns_identity(
         "source_digest": "a" * 40,
         "source_ref": "refs/heads/main",
     }
+
+
+def test_gh_attestation_cli_records_the_exact_pin(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        audit_deferred.shutil,
+        "which",
+        lambda _: "/usr/bin/gh",
+    )
+    monkeypatch.setattr(
+        audit_deferred.subprocess,
+        "run",
+        lambda args, **_: subprocess.CompletedProcess(
+            args,
+            0,
+            "gh version 2.96.0 (2026-07-02)\n",
+            "",
+        ),
+    )
+
+    executable, contract = audit_deferred.gh_attestation_cli()
+
+    assert executable == "/usr/bin/gh"
+    assert contract["required_cli_version"] == "2.96.0"
+    assert contract["observed_cli_version"] == "2.96.0"
+    assert contract["bundle_input_format"] == "canonical single-bundle JSON"
+
+
+def test_gh_attestation_cli_rejects_version_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        audit_deferred.shutil,
+        "which",
+        lambda _: "/usr/bin/gh",
+    )
+    monkeypatch.setattr(
+        audit_deferred.subprocess,
+        "run",
+        lambda args, **_: subprocess.CompletedProcess(
+            args,
+            0,
+            "gh version 2.95.0 (2026-06-01)\n",
+            "",
+        ),
+    )
+
+    with pytest.raises(
+        audit_deferred.AuditFailure,
+        match=(
+            "GitHub CLI attestation verifier version mismatch: required "
+            "2.96.0, observed 2.95.0"
+        ),
+    ):
+        audit_deferred.gh_attestation_cli()
 
 
 def test_production_rejects_wrong_head_before_measurement(

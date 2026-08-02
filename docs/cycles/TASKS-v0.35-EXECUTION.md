@@ -124,6 +124,26 @@ run-specific signing-side fault. The hosted property remains separately proven:
 unchecked, no hosted retry or ref mutation occurred, and Step 7 remains
 unentered.
 
+**r10 — 2026-08-03 — controls supersede r9 with classification (b) and a
+durable local verifier correction.** Direct bundle-name controls showed raw
+`.sigstore` is rejected by extension while byte-identical `.sigstore.json` and
+`.bundle.jsonl` both reach the same issuer failure. One-flag-at-a-time bisection
+then found that only dropping `--signer-workflow` passes; restoring all strict
+flags with documented
+`jiayanzeng/intel-platform/.github/workflows/ci.yml` also passes. Current `gh`
+2.96.0 documents `[host/]owner/repo/path/to/workflow`, so the repository's bare
+path was the defect: classification **(b), repository argument derivation**,
+not environment or signing side. The verifier now pins exact `gh` 2.96.0,
+records required/observed version and input contract, canonicalizes the workflow
+identity, and parses/re-emits a documented single-bundle JSON document instead
+of copying archival bytes to an extension-selected JSONL decoder. Focused tests
+pass **44/44**; full local CI passes **22/22**, both Python lanes pass
+**363/363**, and golden remains **11/11**. Representative historical and current
+bundles pass the corrected wrapper diagnostically with every strict flag, but
+none is admitted: the corrected verifier is later than candidate `8fae40e7…`,
+the complete chain remains unvalidated, Step 6 stays unchecked, and no push,
+ref mutation, hosted retry, policy relaxation, or Step 7 action occurred.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else

@@ -70,6 +70,7 @@ LEGACY_RUNNER_JOB_COUNTS = {
     "shell": 2,
 }
 EXPECTED_RUNNER_WORKFLOW = "CI"
+PINNED_GH_ATTESTATION_VERSION = "2.96.0"
 SOURCE_DETERMINISTIC_ROW_IDS = (
     "T7 robots single-flight",
     "Postgres",
@@ -867,6 +868,82 @@ def _receipt_path_fields(
     return fields
 
 
+def qualified_signer_workflow(repository: str, signer_workflow: str) -> str:
+    """Return gh's documented [host/]owner/repo/workflow identity."""
+    repository = repository.strip()
+    workflow = signer_workflow.strip()
+    if re.fullmatch(r"[^/\s]+/[^/\s]+", repository) is None:
+        raise AuditFailure(
+            "GitHub attestation repository must use owner/repository format"
+        )
+    if (
+        not workflow
+        or workflow.startswith("/")
+        or ".." in Path(workflow).parts
+        or any(character.isspace() for character in workflow)
+    ):
+        raise AuditFailure("GitHub signer workflow identity is invalid")
+    workflow_path = ".github/workflows/"
+    if workflow.startswith(workflow_path) and len(workflow) > len(workflow_path):
+        return f"{repository}/{workflow}"
+    repository_workflow = f"{repository}/{workflow_path}"
+    if (
+        workflow.startswith(repository_workflow)
+        and len(workflow) > len(repository_workflow)
+    ):
+        return workflow
+    host_repository_workflow = re.fullmatch(
+        rf"[^/\s]+/{re.escape(repository)}/{re.escape(workflow_path)}.+",
+        workflow,
+    )
+    if host_repository_workflow is not None:
+        return workflow
+    raise AuditFailure(
+        "GitHub signer workflow must use "
+        "[host/]owner/repository/.github/workflows/<file> or a repository-"
+        "relative .github/workflows/<file>"
+    )
+
+
+def gh_attestation_cli() -> tuple[str, dict[str, str]]:
+    """Require and describe the exact GitHub CLI verifier implementation."""
+    gh = shutil.which("gh")
+    if gh is None:
+        raise AuditFailure(
+            "authenticated receipt verification requires the GitHub CLI"
+        )
+    measured = subprocess.run(
+        [gh, "--version"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    first_line = measured.stdout.splitlines()[0] if measured.stdout else ""
+    match = re.fullmatch(r"gh version ([^\s]+) \(.+\)", first_line)
+    observed = match.group(1) if match is not None else None
+    if measured.returncode != 0 or observed is None:
+        detail = measured.stderr.strip() or measured.stdout.strip()
+        raise AuditFailure(
+            "cannot measure GitHub CLI attestation verifier version"
+            + (f": {detail}" if detail else "")
+        )
+    if observed != PINNED_GH_ATTESTATION_VERSION:
+        raise AuditFailure(
+            "GitHub CLI attestation verifier version mismatch: required "
+            f"{PINNED_GH_ATTESTATION_VERSION}, observed {observed}"
+        )
+    return gh, {
+        "command": "gh attestation verify",
+        "required_cli_version": PINNED_GH_ATTESTATION_VERSION,
+        "observed_cli_version": observed,
+        "bundle_input_format": "canonical single-bundle JSON",
+        "signer_workflow_format": (
+            "[host/]owner/repository/.github/workflows/<file>"
+        ),
+    }
+
+
 def verify_attestation_bundle(
     receipt: Path,
     bundle: Path,
@@ -876,19 +953,33 @@ def verify_attestation_bundle(
     source_ref: str,
 ) -> dict[str, str]:
     """Verify one persisted GitHub provenance bundle against its receipt."""
-    gh = shutil.which("gh")
-    if gh is None:
+    gh, _ = gh_attestation_cli()
+    qualified_workflow = qualified_signer_workflow(
+        repository,
+        signer_workflow,
+    )
+    try:
+        bundle_document = json.loads(bundle.read_text())
+    except (OSError, json.JSONDecodeError) as error:
         raise AuditFailure(
-            "authenticated receipt verification requires the GitHub CLI"
+            "GitHub attestation bundle is not a readable JSON document: "
+            f"{error}"
+        ) from error
+    if not isinstance(bundle_document, dict):
+        raise AuditFailure(
+            "GitHub attestation bundle must contain one JSON object"
         )
     with tempfile.TemporaryDirectory(
         prefix="intel-attestation-verify-"
     ) as directory:
-        # `gh attestation verify` selects its bundle decoder by extension.
-        # Persisted artifacts use `.sigstore`; preserve those bytes and expose
-        # an ephemeral supported name to the verifier.
-        verifier_bundle = Path(directory) / f"{receipt.name}.bundle.jsonl"
-        shutil.copyfile(bundle, verifier_bundle)
+        # Persisted artifacts use an archival `.sigstore` suffix. Parse and
+        # re-emit the documented single-bundle JSON format so verification does
+        # not depend on the persisted name or a decoder selected by extension.
+        verifier_bundle = Path(directory) / f"{receipt.name}.bundle.json"
+        verifier_bundle.write_text(
+            json.dumps(bundle_document, separators=(",", ":"), sort_keys=True)
+            + "\n"
+        )
         verified = subprocess.run(
             [
                 gh,
@@ -900,7 +991,7 @@ def verify_attestation_bundle(
                 "--repo",
                 repository,
                 "--signer-workflow",
-                signer_workflow,
+                qualified_workflow,
                 "--signer-digest",
                 source_digest,
                 "--deny-self-hosted-runners",
@@ -1031,6 +1122,16 @@ def runner_receipt_measurement(
             "expected repository, expected workflow, source digest, and "
             "source ref"
         )
+    verifier_contract: dict[str, str] | None = None
+    if require_attestations:
+        assert expected_repository is not None
+        assert expected_workflow is not None
+        expected_workflow = qualified_signer_workflow(
+            expected_repository,
+            expected_workflow,
+        )
+        if attestation_verifier is None:
+            _, verifier_contract = gh_attestation_cli()
     verifier = attestation_verifier or verify_attestation_bundle
     required = (
         "run_id",
@@ -1421,6 +1522,11 @@ def runner_receipt_measurement(
         "matrix_findings": matrix_findings,
         "single_run_matrix_complete": matrix_complete,
         "attestations_required": require_attestations,
+        **(
+            {"attestation_verifier": verifier_contract}
+            if verifier_contract is not None
+            else {}
+        ),
         "expected_repository": expected_repository,
         "expected_workflow": expected_workflow,
         "expected_source_digest": expected_source_digest,
@@ -2252,7 +2358,12 @@ def main() -> int:
     )
     parser.add_argument(
         "--expected-workflow",
-        help="GitHub signer workflow identity required in authenticated mode",
+        help=(
+            "GitHub signer workflow required in authenticated mode; accepts "
+            "[host/]owner/repository/.github/workflows/<file> or a "
+            "repository-relative .github/workflows/<file> that is qualified "
+            "against --expected-repository"
+        ),
     )
     parser.add_argument(
         "--expected-source-digest",

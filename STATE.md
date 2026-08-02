@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 remains incomplete: its second separately authorized candidate passed all 9 hosted identities and the three asserted floor receipts bind the declared toolchains, but the production release-grade verifier rejected all 9 Sigstore bundles at an issuer-verification construction failure.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, and `8fae40e78afee6df80133f89bbbac4a074179ff5`; runs `30746841903`, `30754728135`, and `30757027882` and all three refs remain immutable non-results, and no receipt or bundle from them is release-grade evidence. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **361/361**, and embedded golden **11/11**. Clean Python 3.11.4 and 3.12.13 populations each passed **361/361** and the comparator derived equivalence at **361**. The latest authorized ref was pushed once and dispatched once; no retry, governed export, release-grade population comparison, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command occurred.
+**As of:** 2026-08-03 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 6 remains incomplete: its second separately authorized candidate passed all 9 hosted identities and the three asserted floor receipts bind the declared toolchains, while the 0/9 release-grade result is now diagnosed as a repository signer-workflow argument defect and corrected only in a later local tree.** Every local and hosted Rust floor command explicitly selects its toolchain above `rust-toolchain.toml`, proves the effective Cargo and rustc releases, and every CI-runner receipt binds the numeric `rustc_release`. Local CI derives **22 jobs / 30 checks** and hosted CI **8 blocking jobs / 29 checks** with no residual exemption; the complete workflow has **9** blocking identities. The registered suite passes **12 rules / 73 controls**, with exactly **0** hand-typed absolute finding-line fields. The historical hosted 1.78 attestation remains **UNVERIFIABLE, not false**; the retraction count remains **3**, the local explicit-1.78 floor evidence survives, and the old v0.10/G2 sentence is unchanged. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence refs `codex/v0.35-evidence-d33c251`, `codex/v0.35-evidence-7a44423`, and `codex/v0.35-evidence-8fae40e` remain fixed at `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`, `7a444235dab5905bff6cc90a61815e31690c3a35`, and `8fae40e78afee6df80133f89bbbac4a074179ff5`; runs `30746841903`, `30754728135`, and `30757027882` and all three refs remain immutable non-results, and no receipt or bundle from them is release-grade evidence. The corrected local entry point passed **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **363/363**, and embedded golden **11/11**. Python 3.11.4 and 3.12.13 populations each passed **363/363**. The latest authorized ref was pushed once and dispatched once; the verifier correction made no push, retry, governed export, release-grade population comparison, Step 7 action, production source, dependency resolution, public response, value domain, release value, publisher request, scheduler, service, or model-profile command.
 
 **v0.35 Step 5a pre-implementation MSRV measurement gate (measured
 2026-08-02).** The operator-supplied r4 prompt required all three affected
@@ -294,6 +294,72 @@ identities passed, and executed receipt assertions established
 separation does not admit any receipt or bundle as release-grade evidence:
 Step 6 remains unchecked, run **30757027882** and its ref remain immutable, no
 hosted retry or ref mutation occurred, and Step 7 was not entered.
+
+**v0.35 Step 6 attestation-verifier diagnosis — forward correction to
+classification (b), repository argument derivation (measured 2026-08-03).**
+The preceding classification (a) was premature: applying the same current
+wrapper to both bundle sets entangled the wrapper with its external CLI. Three
+subsequent controls separate them and supersede that classification without
+editing its dated record.
+
+Control 1 bypassed `verify_attestation_bundle` and passed one authenticated
+v0.34 bundle's byte-identical contents directly to `gh` 2.96.0 under three
+names. Raw `.sigstore` exited **1** with complete stderr `Error: bundle file
+extension not supported, must be json or jsonl`; `.sigstore.json` and the
+wrapper's `.bundle.jsonl` each reached verification and exited **1** with
+complete stderr `Error: verifying with issuer "sigstore.dev"`. Thus the raw
+archival suffix is unsupported and the wrapper's extension dependency is real,
+but decoder selection did not cause the issuer failure.
+
+Control 2 held the supported `.sigstore.json` input and all other arguments
+constant while dropping exactly one strict policy flag at a time. Dropping
+`--signer-workflow` alone exited **0**; dropping any one of
+`--signer-digest`, `--source-digest`, `--source-ref`, or
+`--deny-self-hosted-runners` still exited **1** at the issuer. Restoring every
+strict flag while changing only the signer workflow from bare
+`.github/workflows/ci.yml` to documented
+`jiayanzeng/intel-platform/.github/workflows/ci.yml` exited **0**. The optional
+host-qualified `github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml`
+also exited **0**. No policy flag was relaxed in either passing confirmation.
+
+Control 3 captured the 2.96.0 help contract. `--repo` requires
+`owner/repo`; `--signer-workflow` requires
+`[host/]owner/repo/path/to/workflow`; the digest, source-ref, hosted-runner, and
+JSON-output flags are accepted as used; and `--bundle` accepts a single JSON
+bundle or JSON Lines. The repository's bare signer-workflow value violated that
+contract. `gh auth status` exited **0** with the active `jiayanzeng` keyring
+account, HTTPS Git operations, and `gist`, `read:org`, `repo`, and `workflow`
+scopes; the masked token text is not recorded. Because the controls identify a
+repository fault, no older CLI installation was attempted.
+
+The explicit classification is **(b), argument-derivation fault in the
+repository**. The old statement that the bare signer-workflow argument matched
+the decoded certificate claim was wrong: the certificate names the fully
+qualified workflow URI, while current `gh` interprets a bare path as an invalid
+signer identity and collapses that mismatch into the issuer error. The current
+run is not a signing-side fault, and no verifier/environment classification is
+retained.
+
+The durable local correction pins the release-grade verifier to exact `gh`
+**2.96.0** and refuses version drift before examining a bundle. It canonicalizes
+a repository-relative workflow into the documented owner/repository form,
+validates already-qualified forms, parses each persisted `.sigstore` document,
+and re-emits canonical single-bundle JSON instead of copying bytes under a
+decoder-selecting `.jsonl` suffix. Future audit records include the required and
+observed CLI version, canonical bundle input format, and signer-workflow format.
+Executable tests prove the version mismatch refusal, workflow qualification,
+canonical JSON conversion, and audit-record fields.
+
+The corrected wrapper, given the original bare-path input and every strict
+flag, diagnostically verified one v0.34 representative and one run
+**30757027882** representative, each returning its exact certificate identity,
+signer/source digest, and source ref. Neither result admits a bundle: the
+corrected verifier is not in candidate `8fae40e7…`, the complete nine-bundle
+release-grade population remains unvalidated, and Step 6 remains unchecked.
+The measured property remains separately proven by **9/9** passed hosted
+identities and executed receipt assertions for **1.78.0 / 1.86.0 / 1.85.0**.
+No push, ref creation or mutation, hosted retry, evidence admission, gate or
+verifier-policy relaxation, or Step 7 action occurred.
 
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only
