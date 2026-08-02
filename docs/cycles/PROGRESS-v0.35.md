@@ -260,3 +260,60 @@ Entries are append-only; corrections are new dated entries.
   or model-profile command, wrote no protected byte, and changed no code,
   dependency, public response, release authority, or remote ref.
 - governed review-export measurement: tree=`cd9a119f309096d2d715a54fde6302a5f95362d0`; bytes=`2551288`
+
+### 2026-08-02 · NET-FLOOR — executable Rust 1.86 boundary
+
+- owner: Codex
+- commit: d4e60eb5e5997d996f5d13c8204a85886230fd53
+- result: PASS. The exact negative command `RUSTFLAGS="" rustup run 1.85.0
+  cargo check -p cored --features net --locked --all-targets` exited nonzero
+  on the locked packages' declared MSRV, including
+  `idna_adapter@1.2.2 requires rustc 1.86` and the ICU 2.2.0 declarations.
+  The identical `rustup run 1.86.0` command exited **0** after compiling the
+  complete graph. Neither result was a registry, network, lockfile, or
+  unrelated compile failure; the measured net floor is genuinely **1.86**.
+- dependency acceptance: PASS. `cargo tree` measured `cored → intel-ingest →
+  reqwest 0.11.27 → url 2.5.8 → idna 1.1.0 → idna_adapter 1.2.2 → icu_*`
+  2.2.0. `intel-compliance` remains a seven-crate offline graph with no ICU
+  edge. `AGENTS.md` now states that measured net edge and keeps
+  `texting_robots` only as the rejected-dependency counterfactual.
+- parity acceptance: PASS. The launcher and hosted workflow each add a
+  success lane and a failure-capable refutation lane. R10 reports
+  **local_jobs=22, local_checks=24, blocking_jobs=8, hosted_checks=23**, with
+  no new residual exemption or finding. The four topology figures are now
+  pinned only by a separately named current-topology test; exemption-base
+  derivation remains count-independent.
+- topology acceptance: PASS. The exact hosted identity set is now **9**:
+  `core`, `golden`, `lint`, `msrv`, `net`, `net-msrv-1-85`,
+  `net-msrv-1-86`, and both shell matrices. Step 6 therefore requires
+  **9 receipt JSON files / 9 Sigstore bundles**. The workflow parser's
+  exact-set test and each dynamic deferred-audit success, rejection, and
+  verifier population assertion now derive that figure; historical seven-job
+  evidence is unchanged.
+- version acceptance: PASS. Before and after the edit, `version-check`
+  reported **3 executable pins / 22 offline-MSRV current restatements / 3
+  release-version current restatements**. The package-scoped net `rustup run`
+  commands are not offline `--workspace --locked` authorities, so no registry
+  pattern changed.
+- protected-byte acceptance: PASS. Pre-proposal schema validation and complete
+  artifact verification passed. Exactly the existing `run` pin changed, to
+  **43,907 bytes / `a05562dd1612678aa7c78f1aa8efe09e4c2e4392175c2363b25778577f36b818`**.
+  The manifest is **192,370 bytes**, delta **+328**, with **2 artifacts / 332
+  pinned files**. Both `artifacts[]` entries, every admission record, and
+  `tools/model_profiles.py` at **28,297 bytes / `1920761c…`** are
+  byte-identical. The workflow is **32,533 bytes / `74a1dc3d…`**.
+- focused acceptance: PASS. The invariant and deferred-audit suites passed
+  **68/68**. Registered invariant self-test remains **12 rules / 69 controls**
+  with **0** hand-typed absolute finding-line fields.
+- gate acceptance: PASS with the Step 5 checkbox still open. `./run ci-local`
+  passed all derived **22/22** jobs, checklist **268 / 3 / 268 / 268**, zero
+  Rust warnings, constrained Python 3.11.4 **358/358** with the same one
+  accepted warning, embedded golden **11/11**, all **332** pins, and both
+  protected databases.
+- golden-E2E delta: **0**. The mandatory standalone post-task run passed the
+  same byte-identical **11/11** assertions.
+- publisher/ref acceptance: PASS. NET-FLOOR issued no publisher request, ran
+  no scheduler, service, or model-profile command, changed no dependency
+  resolution, production source, public response, value domain, release
+  value, or publication ref, and changed only the authorized existing `run`
+  protected pin.
