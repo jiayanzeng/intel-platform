@@ -1,6 +1,70 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 5 implemented and fully verified the operator-selected Option A review-export lever; the cycle is open and published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Option A changes retention from the active cycle plus two prior cycles to the active cycle plus one prior cycle; its exact preselection construction reclaimed **108,120 bytes**, moving margin from **4.76 to 6.15 cycles** at the unchanged **77,862-byte** post-retention steady denominator. The real implementation worktree export is **2,524,284 bytes / 151 files / 2 retained cycles**. The complete gate passed **20/20** local jobs with checklist **265 checked / 3 retracted / 265 matched / 265 commits resolved**, registered invariants **12 rules / 68 controls**, clean constrained Python 3.11.4 at **352/352**, and zero Rust warnings. Golden passed **11/11** in the complete gate and at the mandatory standalone entry point. All **332** pins and both protected databases matched. Direct remote inspection kept `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04` and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No governed byte boundary, ceiling, production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, tag, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 6 is green; exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` carries authenticated hosted evidence on fresh ref `codex/v0.34-evidence-1117dc6`, while published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Hosted workflow-dispatch run **30726156221**, attempt **1**, passed all seven executable jobs and hosted golden **11/11**; dependency drift took its declared report-only skip. The repository release-grade verifier consumed **7 receipts / 7 Sigstore bundles**, accepted **7**, rejected **0**, and bound every identity to the exact candidate and source ref. Exact-candidate local Python 3.11.4 and 3.12.13 each collected/passed **352**, failed **0**, and skipped **0**; each hosted lane collected **352**, passed **351**, and skipped the same named, reasoned `on_site` test. Both repository comparator runs derived `collected=352`, `equivalent=true`, and `equivalent_passed=352`. The most recent complete local entry point remains Step 5's **20/20** gate with checklist **265 / 3 / 265 / 265**, registered invariants **12 rules / 68 controls**, and zero Rust warnings; exact-candidate checklist with Step 6 still open passed **266 / 3 / 266 / 266**. All **332** pins and both protected databases matched; exact candidate export is **2,527,180 bytes / 151 files / 2 retained cycles**. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No governed byte boundary, ceiling, production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, or publication ref changed through the candidate; the fresh evidence ref was the sole remote mutation.
+
+**v0.34 RE-MEASURE — exact candidate authenticated on a fresh evidence ref
+(measured 2026-08-02).** The worktree was clean at exact candidate
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262`, tree
+`05ef0cce218ce03a69a07558c5ce25edf7d8331f`. Before any push, direct
+`git ls-remote` exited zero with no entry for
+`refs/heads/codex/v0.34-evidence-1117dc6`. The operator then explicitly
+authorized publication of that exact candidate to that one fresh ref. The
+single push created it, and immediate plus final readback each resolved it to
+the candidate. No existing ref was reused, forced, moved, or repurposed.
+
+Workflow-dispatch run **30726156221**, attempt **1**, used branch
+`codex/v0.34-evidence-1117dc6`, exact candidate SHA, and evidence signing.
+`core`, `golden`, `lint`, `msrv`, `net`, `shell/python=3.11`, and
+`shell/python=3.12` all passed. Every receipt emission, attestation, bundle-copy,
+and artifact-persistence step passed; dependency drift skipped under its
+declared report-only condition. The workflow remained byte-unchanged at
+SHA-256 `5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`.
+The repository's release-grade verifier consumed the downloaded ephemeral
+**7-receipt / 7-bundle** set, accepted **7**, rejected **0**, and found the
+complete runner matrix. Every accepted certificate binds repository
+`jiayanzeng/intel-platform`, workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, source and signer digest
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262`, and source ref
+`refs/heads/codex/v0.34-evidence-1117dc6`. The temporary **37,309-byte** report
+has SHA-256
+`52580016656c9e5fa686b16ecf7f3afdadea47a7892070eeb2ec744d9f68b68c`
+and remains outside the repository and protected manifest. An earlier tool-
+orchestration attempt produced neither a report nor captured exit evidence and
+is a non-result; the identical interactive rerun exited zero and is the
+measurement reported here.
+
+The first post-record `cycle-check` stopped because the draft Architecture row
+named `docs/cycles/PROGRESS-v0.34.md` as its evaluated source before that
+progress file could legally contain the post-implementation governed field. It
+emitted `governed export margin source docs/cycles/PROGRESS-v0.34.md has no
+valid governed measurement series`. The implementation record therefore stays
+bound to the last governed field already visible in v0.33. After this commit
+exists, the separate append-only Step 6 progress entry adds the v0.34 candidate
+measurement; the open-cycle exemption then applies until Step 7 forward-updates
+the live row. The checker and historical field were not weakened or invented.
+
+Exact-candidate local Python 3.11.4 and 3.12.13 each collected/passed **352**,
+failed **0**, and skipped **0**. Each hosted lane collected **352**, passed
+**351**, and skipped the same named `on_site` node
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+for reason `on-site production audit requires protected corpora and built
+cored`. For each lane `tools/test_population.py` emitted `collected=352`,
+`equivalent=true`, and `equivalent_passed=352`; no count was transcribed from a
+runner log. The exact candidate locally matched all **332** pins and both
+protected databases, passed `cycle-check`, and exported **2,527,180 bytes /
+151 files / 2 retained cycles** with both protected byte classes excluded.
+Golden passed **11/11** on the exact candidate locally and hosted, delta **0**.
+
+Final direct remote measurement left the fresh evidence ref exact, remote
+`main` and peeled `v0.17.1` at closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, and the annotated tag ref at
+object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`. The
+candidate distance contains lifecycle documentation, tests, controls, and
+retained-cycle configuration, but no production source, workflow, dependency,
+release value, measured runtime-behaviour difference, or public-surface change.
+Step 6 issued no publisher request, ran no scheduler, service, or model-profile
+command, and performed no manifest registration or protected-byte write. Its
+only remote mutation was the explicitly authorized fresh evidence ref.
 
 **v0.34 BUDGET-LEVER — operator-selected Option A reduces review retention
 from three cycles to two (measured 2026-08-02).** The operator explicitly
