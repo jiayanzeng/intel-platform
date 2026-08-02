@@ -879,3 +879,109 @@ Entries are append-only; corrections are new dated entries.
   exemption, R10 classification, dependency, production source, public
   surface, publisher request, scheduler, service, or model-profile command
   changed. The operator-supplied untracked amendment remains untouched.
+
+### 2026-08-03 · RE-MEASURE — exact candidate authenticated 9/9
+
+- owner: Codex
+- commit: 62ff490732059a375fef0560266dbb56542193e6
+- result: PASS. Exact candidate
+  `2e5b247e348f362b1cc3fa6a9aaa393d0025fc87`, tree
+  `5e8216fbf20614328b4f8e1e5615382cea5ef1da`, now carries complete
+  release-grade hosted evidence on its one fresh immutable evidence ref. Step
+  6 is checked; Step 7 was not entered.
+- preflight acceptance: PASS. Before dispatch, exact pinned `gh` **2.96.0**
+  ran the standing immutable v0.34 control: **7/7** known-good bundles verified
+  with every strict flag and the deliberately wrong signer workflow was
+  rejected. No verifier version or contract bump was proposed.
+- candidate/ref acceptance: PASS. Tracked candidate content was clean; the
+  operator-supplied untracked amendment was excluded. Immediately before the
+  push, `git ls-remote` exited **0** with no entry for fresh ref
+  `refs/heads/codex/v0.35-evidence-2e5b247`. The single authorized non-force
+  push created exactly that ref, and immediate readback resolved it to the
+  exact candidate. Final readback after all Step 6 measurements and the
+  standalone post-record golden again resolved it to the exact candidate. No
+  ref was reused, forced, moved, deleted, or repurposed.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30762871542**, attempt
+  **1**, used exact candidate/ref with evidence signing. All **9/9** blocking
+  identities passed, all **9 receipts / 9 Sigstore bundles** persisted, and
+  dependency drift skipped only under its declared report-only condition.
+- toolchain-assertion acceptance: PASS. Executed `jq -e` assertions, rather
+  than reads, proved `msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+  `net-msrv-1-85=1.85.0`; all three exited **0**.
+- workflow acceptance: PASS. `.github/workflows/ci.yml` remains **39,177
+  bytes** / SHA-256
+  `4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+  It did not move: the correction changed the verifier, `run`, tests, and
+  forward records, not the workflow.
+- release-grade verifier acceptance: PASS. The pinned repository verifier used
+  canonical single-bundle JSON and every strict flag, accepted **9**, rejected
+  **0**, and found the complete identity matrix. The temporary report is
+  **41,042 bytes** / SHA-256
+  `dac7de5243968096ef49049ab2b400fdb6d489a8fa17091b0654fd5d3e9858d4`;
+  it and the downloaded artifacts remain outside the repository and manifest.
+- independent identity acceptance: PASS. The independently constructed exact
+  expectation was
+  `https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/codex/v0.35-evidence-2e5b247`.
+  It matched each bundle separately:
+  `30762871542-1-core.json.sigstore`,
+  `30762871542-1-golden.json.sigstore`,
+  `30762871542-1-lint.json.sigstore`,
+  `30762871542-1-msrv.json.sigstore`,
+  `30762871542-1-net.json.sigstore`,
+  `30762871542-1-net-msrv-1-85.json.sigstore`,
+  `30762871542-1-net-msrv-1-86.json.sigstore`,
+  `30762871542-1-shell-py3.11.json.sigstore`, and
+  `30762871542-1-shell-py3.12.json.sigstore`. Each also binds the exact
+  repository, signer/source digest, source ref, and GitHub-hosted runner.
+- historical-strength acceptance: PASS. The qualified **argument expectation**
+  field `measurements.ci_runner.expected_workflow` and qualified certificate
+  **SAN** field `certificate_identity` coexist in these 20 committed reports:
+  `evidence/v0.10.3`, `v0.11.0`, `v0.12.0`, `v0.13.0`, `v0.14.0`,
+  `v0.14.1`, `v0.15.0`–`v0.15.4`, and `v0.21`–`v0.29`, each beneath
+  `deferred-audit/report.json`. No v0.34 JSON report is retained: its progress
+  and State records name a temporary report's hash and qualified workflow
+  summary, while its immutable bundles retain only the qualified certificate
+  SAN. The v0.34 conclusion is therefore limited to qualified SANs; it does
+  not assert the unavailable original CLI argument or equivalent historical
+  enforcement strength. No retraction or historical edit was made.
+- population acceptance: PASS. Local Python 3.11.4 and 3.12.13 each passed
+  **366/366**. Each hosted lane collected **366**, passed **365**, and skipped
+  the same declared `on_site` node
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  for reason `on-site production audit requires protected corpora and built
+  cored`. Both `tools/test_population.py` comparisons derived
+  `collected=366`, `equivalent=true`, and `equivalent_passed=366`.
+- export acceptance: PASS. Project-root exact-candidate export measured
+  **2,708,098 bytes / 151 files / 2 retained cycles**, exactly the v0.34 and
+  v0.35 task/progress pairs, with **100** derived source paths and all **7**
+  required paths. The pinned SEC RSS body and `docs/state-archive/**` were
+  absent.
+- governed review-export measurement: tree=`2e5b247e348f362b1cc3fa6a9aaa393d0025fc87`; bytes=`2708098`
+- protected-artifact acceptance: PASS. The exact candidate manifest is
+  **193,057 bytes / 332 pins**, **+1,015 bytes** from v0.34, and only the
+  existing `run` pin/provenance changed. Two complete runs matched all pins and
+  both protected databases in **0.13 s / 0.11 s real**; hosted `core` passed
+  schema validation.
+- published-state acceptance: PASS. Direct remote readback kept `main` and
+  peeled `v0.17.1` at
+  `f02379f03ccdfd1b019413234f2ad014d169fb04` and the annotated tag object at
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`.
+- local construction disclosures: the first detached-subject release report
+  stopped before measuring a receipt because the ignored protected databases
+  had not yet been copied. Byte-identical protected copies completed that
+  temporary subject, after which the verifier accepted 9/9. Two sandbox-only
+  golden starts respectively stopped before assertions on unavailable package
+  network and denied loopback bind; the permission-complete exact-candidate run
+  passed. No hosted run or identity was retried.
+- golden-E2E delta: **0**. Hosted and permission-complete exact-candidate local
+  golden each passed **11/11**. The mandatory standalone post-record result is
+  recorded by the completion checks below before this audit append is
+  committed.
+- immutability acceptance: PASS. Runs **30746841903**, **30754728135**, and
+  **30757027882** and their three refs remain immutable non-results. Run
+  **30762871542** was dispatched exactly once; its evidence ref was pushed
+  exactly once and was never touched again.
+- scope acceptance: PASS. No gate, lane, strict verifier flag, exemption, or
+  R10 classification was relaxed. No production source, dependency, public
+  surface, publisher request, scheduler, service, or model-profile command
+  changed or ran. Step 7 remains unchecked pending the operator's disposition.
