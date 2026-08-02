@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "rules": [
     {
       "id": "R1",
@@ -29,7 +29,8 @@
           ],
           "expected_fail": "canonical identity helper call is outside the production caller allow-list; found assign_canonical_ids_tx in rebuild_identity_with_limit",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 793
+          "expected_anchor": "    fn rebuild_identity_with_limit(&self, max_distance: u32) -> rusqlite::Result<usize> {\n        let mut conn = self.conn.lock().unwrap();\n        let tx = conn.transaction()?;\n        let changed = assign_canonical_ids_tx(&tx, max_distance)?;\n        tx.commit()?;\n        Ok(changed)\n    }\n\n    /// Test-only threshold seam for boundary and differential controls.",
+          "expected_anchor_line_offset": 3
         }
       ],
       "fail_before_note": "invariant-scan: R1 FAIL: apps/cored/src/main.rs:1267: production assign_canonical_ids call outside the store"
@@ -49,7 +50,8 @@
           ],
           "expected_fail": "TcpListener bind outside the validated bind_addresses path",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1512
+          "expected_anchor": "\n    let _unvalidated = tokio::net::TcpListener::bind(\"0.0.0.0:0\").await;",
+          "expected_anchor_line_offset": 1
         }
       ],
       "fail_before_note": "invariant-scan: R2 FAIL: apps/cored/src/main.rs:1267: TcpListener bind outside the validated bind_addresses path"
@@ -69,7 +71,7 @@
           ],
           "expected_fail": "LLM client import",
           "expected_file": "crates/core/src/lib.rs",
-          "expected_line": 1
+          "expected_anchor": "use async_openai::Client;\n//! intel-core: the shared vocabulary of the platform.\n//!"
         }
       ],
       "fail_before_note": "invariant-scan: R3 FAIL: crates/core/src/lib.rs:16: LLM client import"
@@ -89,7 +91,8 @@
           ],
           "expected_fail": "provider-key-shaped value",
           "expected_file": "README.md",
-          "expected_line": 3
+          "expected_anchor": "\nsk-proj-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "expected_anchor_line_offset": 1
         }
       ],
       "fail_before_note": "invariant-scan: R4 FAIL: README.md:1: provider-key-shaped value"
@@ -112,7 +115,7 @@
           ],
           "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found INGEST_FUZZ_LIMIT",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 242
+          "expected_anchor": "            assign_canonical_ids_tx(&tx, INGEST_FUZZ_LIMIT)?;\n        }\n        tx.commit()?;"
         },
         {
           "file": "crates/store/src/sqlite.rs",
@@ -123,7 +126,7 @@
           ],
           "expected_fail": "second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 33
+          "expected_anchor": "const SECOND_DEDUP_MAX_DISTANCE: u32 = 17;\n\nfn archive_recency_cmp(left: &Document, right: &Document) -> std::cmp::Ordering {"
         },
         {
           "file": "crates/store/src/sqlite.rs",
@@ -136,7 +139,7 @@
           ],
           "expected_fail": "assign_canonical_ids_tx distance argument must be DEDUP_MAX_DISTANCE; found 16",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 241
+          "expected_anchor": "            assign_canonical_ids_tx(&tx, 16)?;\n        }\n        tx.commit()?;"
         },
         {
           "file": "crates/view/src/lib.rs",
@@ -146,7 +149,7 @@
           ],
           "expected_fail": "view default dedup_max_distance=17 differs from store DEDUP_MAX_DISTANCE=16",
           "expected_file": "crates/view/src/lib.rs",
-          "expected_line": 44
+          "expected_anchor": "            dedup_max_distance: 17,\n            discovery_min_docs: 2,"
         },
         {
           "file": "crates/extract/src/lib.rs",
@@ -156,7 +159,8 @@
           ],
           "expected_fail": "DEDUP_MIN_FEATURES=25 differs from measured floor 26",
           "expected_file": "crates/extract/src/lib.rs",
-          "expected_line": 24
+          "expected_anchor": "/// range.\npub const DEDUP_MIN_FEATURES: usize = 25;",
+          "expected_anchor_line_offset": 1
         },
         {
           "file": "crates/extract/src/lib.rs",
@@ -166,7 +170,7 @@
           ],
           "expected_fail": "dedup_eligible must compare both feature counts to DEDUP_MIN_FEATURES",
           "expected_file": "crates/extract/src/lib.rs",
-          "expected_line": 58
+          "expected_anchor": "pub fn dedup_eligible(left_features: usize, right_features: usize) -> bool {"
         },
         {
           "file": "crates/extract/src/lib.rs",
@@ -176,7 +180,7 @@
           ],
           "expected_fail": "dedup_near must call dedup_eligible",
           "expected_file": "crates/extract/src/lib.rs",
-          "expected_line": 106
+          "expected_anchor": "pub fn dedup_near(mut docs: Vec<(Document, u64)>, max_distance: u32) -> DedupResult {"
         },
         {
           "file": "crates/store/src/sqlite.rs",
@@ -188,7 +192,7 @@
           ],
           "expected_fail": "assign_canonical_ids_tx must call intel_extract::dedup_eligible",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 842
+          "expected_anchor": "fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite::Result<usize> {"
         }
       ],
       "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
@@ -207,7 +211,7 @@
           ],
           "expected_fail": "model-profile authorization block differs from AGENTS.md",
           "expected_file": "docs/intel-platform-OPERATIONS.md",
-          "expected_line": 407
+          "expected_anchor": "**Server model-profile authority — L1 now, L2 deferred.** The operator selected"
         }
       ],
       "fail_before_note": "invariant-scan: R6 FAIL: docs/intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
@@ -226,7 +230,7 @@
           ],
           "expected_fail": "documents_by_ids must not be public",
           "expected_file": "crates/store/src/sqlite.rs",
-          "expected_line": 410
+          "expected_anchor": "    pub fn documents_by_ids(&self, ids: &[&str]) -> rusqlite::Result<Vec<Document>> {\n        if ids.is_empty() {"
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -236,7 +240,7 @@
           ],
           "expected_fail": "production document hydration must call documents_by_ids_in_sectors; found documents_by_ids",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1251
+          "expected_anchor": "        .documents_by_ids(&fused_ids)\n        .map_err(internal)?;"
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -246,7 +250,7 @@
           ],
           "expected_fail": "production document hydration must call documents_by_ids_in_sectors; found documents_by_ids",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1298
+          "expected_anchor": "        .documents_by_ids(&requested_ids)\n        .map_err(internal)?;"
         }
       ],
       "fail_before_note": "invariant-scan: R7 FAIL: document hydration was unscoped or documents_by_ids was public"
@@ -304,7 +308,8 @@
           ],
           "expected_fail": "TcpListener::bind occurs before build_robots_cache",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1474
+          "expected_anchor": "    let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));\n    let listener = tokio::net::TcpListener::bind(&bind_addresses[..])",
+          "expected_anchor_line_offset": 1
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -314,7 +319,8 @@
           ],
           "expected_fail": "expected exactly one build_robots_cache call in production main; found 0",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1474
+          "expected_anchor": "    let limiter = Arc::new(HostLimiters::per_second(DEFAULT_RPS));\n    let robots_cache = None;",
+          "expected_anchor_line_offset": 1
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -327,7 +333,8 @@
           ],
           "expected_fail": "production main contains 2 TcpListener::bind calls; expected exactly one",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 1472
+          "expected_anchor": "        loopback_only(&bind).unwrap_or_else(|error| panic!(\"cored refused to start: {error}\"));\n    let _early_listener = tokio::net::TcpListener::bind(&bind_addresses[..])",
+          "expected_anchor_line_offset": 1
         }
       ],
       "fail_before_note": "invariant-scan: R8 FAIL: crawler identity construction did not precede the listener bind"
@@ -356,7 +363,8 @@
           ],
           "expected_fail": "test-support is enabled outside [dev-dependencies]; found section [dependencies]",
           "expected_file": "apps/cored/Cargo.toml",
-          "expected_line": 15
+          "expected_anchor": "intel-registry = { path = \"../../crates/registry\" }\nintel-store = { path = \"../../crates/store\", features = [\"test-support\"] }",
+          "expected_anchor_line_offset": 1
         }
       ],
       "fail_before_note": "invariant-scan: R9 FAIL: apps/cored/Cargo.toml: test-support escaped dev-dependencies"
@@ -375,7 +383,7 @@
           ],
           "expected_fail": "local ci-local check 'net test (-D warnings)' target true is unclassified",
           "expected_file": "run",
-          "expected_line": 352
+          "expected_anchor": "net test (-D warnings)|true\nclippy|ci_clippy"
         },
         {
           "file": ".github/workflows/ci.yml",
@@ -386,7 +394,7 @@
           ],
           "expected_fail": "blocking hosted step net/'cargo test -p intel-ingest --features net --locked' is unclassified and not exempt",
           "expected_file": ".github/workflows/ci.yml",
-          "expected_line": 221
+          "expected_anchor": "        run: true\n\n      - name: cargo test -p cored --features net --locked"
         },
         {
           "file": ".github/workflows/ci.yml",
@@ -401,7 +409,7 @@
           ],
           "expected_fail": "blocking hosted check 'net/unpaired hosted check' (cargo:test:-p intel-core --locked) has no local ci-local counterpart",
           "expected_file": ".github/workflows/ci.yml",
-          "expected_line": 228
+          "expected_anchor": "        run: cargo test -p intel-core --locked\n      - name: emit CI-runner receipt"
         }
       ],
       "fail_before_note": "invariant-scan: R10 FAIL: local and blocking hosted check sets diverged"
@@ -421,7 +429,7 @@
           ],
           "expected_fail": "production shell reads core-owned configuration \"config/entities.json\" directly",
           "expected_file": "shell/intel_shell/pipeline.py",
-          "expected_line": 26
+          "expected_anchor": "_CORE_GAZETTEER_CONTROL = open(\"config/entities.json\", encoding=\"utf-8\")\nfrom .enrichment import entity_candidates"
         },
         {
           "file": "shell/intel_shell/pipeline.py",
@@ -432,7 +440,7 @@
           ],
           "expected_fail": "production shell reads core-owned configuration \"config/core.json\" directly",
           "expected_file": "shell/intel_shell/pipeline.py",
-          "expected_line": 26
+          "expected_anchor": "_CORE_CONFIG_CONTROL = open(\"config/core.json\", encoding=\"utf-8\")\nfrom .enrichment import entity_candidates"
         },
         {
           "file": "shell/intel_shell/pipeline.py",
@@ -443,7 +451,7 @@
           ],
           "expected_fail": "production shell reads core-owned configuration \"CORE_CONFIG\" directly",
           "expected_file": "shell/intel_shell/pipeline.py",
-          "expected_line": 26
+          "expected_anchor": "_CORE_CONFIG_ENV_CONTROL = open(os.environ[\"CORE_CONFIG\"], encoding=\"utf-8\")\nfrom .enrichment import entity_candidates"
         },
         {
           "file": "shell/intel_shell/pipeline.py",
@@ -454,7 +462,7 @@
           ],
           "expected_fail": "production shell reads core-owned configuration \"CORE_ENTITIES\" directly",
           "expected_file": "shell/intel_shell/pipeline.py",
-          "expected_line": 26
+          "expected_anchor": "_CORE_ENTITIES_ENV_CONTROL = open(os.environ[\"CORE_ENTITIES\"], encoding=\"utf-8\")\nfrom .enrichment import entity_candidates"
         },
         {
           "file": "shell/intel_shell/pipeline.py",
@@ -466,7 +474,7 @@
           ],
           "expected_fail": "production shell reads core-owned configuration \"CORE_ENTITIES\" directly",
           "expected_file": "shell/intel_shell/pipeline.py",
-          "expected_line": 27
+          "expected_anchor": "_CORE_ENTITIES_HANDLE_CONTROL = open(_CORE_ENTITIES_PATH_CONTROL, encoding=\"utf-8\")\nfrom .enrichment import entity_candidates"
         }
       ],
       "fail_before_note": "invariant-scan: R11 FAIL: production shell read core-owned configuration directly"
@@ -486,7 +494,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: absent-state-file",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 609
+          "expected_anchor": "    # Invariant R12 control site: publication-family admission gate."
         },
         {
           "file": "tools/cycle_check.py",
@@ -497,7 +505,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: absent-as-of-header",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 609
+          "expected_anchor": "    # Invariant R12 control site: publication-family admission gate."
         },
         {
           "file": "tools/cycle_check.py",
@@ -507,7 +515,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: unmatched-as-of-header",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 609
+          "expected_anchor": "    # Invariant R12 control site: publication-family admission gate."
         },
         {
           "file": "tools/cycle_check.py",
@@ -518,7 +526,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: absent-state-file, absent-as-of-header, unmatched-as-of-header",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 564
+          "expected_anchor": "        # Invariant R12 control site: newest closed release selection."
         },
         {
           "file": "tools/cycle_check.py",
@@ -528,7 +536,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: prechange-active-tag-object",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 422
+          "expected_anchor": "        # Invariant R12 control site: tagged-closing protocol."
         },
         {
           "file": "tools/cycle_check.py",
@@ -538,7 +546,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-type",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 288
+          "expected_anchor": "    # Invariant R12 control site: annotated closing-tag type."
         },
         {
           "file": "tools/cycle_check.py",
@@ -548,7 +556,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tagged-closing-parent",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 317
+          "expected_anchor": "    # Invariant R12 control site: tagged-closing parent agreement."
         },
         {
           "file": "tools/cycle_check.py",
@@ -558,7 +566,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tagged-closing-tree",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 331
+          "expected_anchor": "    # Invariant R12 control site: tagged-closing tree agreement."
         },
         {
           "file": "tools/cycle_check.py",
@@ -568,7 +576,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: origin-main",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 660
+          "expected_anchor": "    # Invariant R12 control site: origin-main prohibition."
         },
         {
           "file": "tools/cycle_check.py",
@@ -581,7 +589,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-object-required, tag-object-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 773
+          "expected_anchor": "    # Invariant R12 control site: required and fresh immutable assertions."
         },
         {
           "file": "tools/cycle_check.py",
@@ -594,7 +602,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-target-required, tag-target-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 773
+          "expected_anchor": "    # Invariant R12 control site: required and fresh immutable assertions."
         },
         {
           "file": "tools/cycle_check.py",
@@ -607,7 +615,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: release-commit-required, release-commit-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 773
+          "expected_anchor": "    # Invariant R12 control site: required and fresh immutable assertions."
         },
         {
           "file": "tools/cycle_check.py",
@@ -617,7 +625,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: pending-publication",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 751
+          "expected_anchor": "    # Invariant R12 control site: pending-publication prohibition."
         },
         {
           "file": "tools/cycle_check.py",
@@ -627,7 +635,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-ref-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 670
+          "expected_anchor": "    # Invariant R12 control site: unavailable annotated-tag ref."
         },
         {
           "file": "tools/cycle_check.py",
@@ -637,7 +645,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: tag-target-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 678
+          "expected_anchor": "    # Invariant R12 control site: unavailable annotated-tag target."
         },
         {
           "file": "tools/cycle_check.py",
@@ -647,7 +655,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: ancestry-unavailable",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 735
+          "expected_anchor": "    # Invariant R12 control site: unavailable publication ancestry."
         },
         {
           "file": "tools/cycle_check.py",
@@ -657,7 +665,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: post-push-required, post-push-date-invalid, post-push-object-freshness, post-push-target-freshness, post-push-run-required",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 809
+          "expected_anchor": "    # Invariant R12 control site: required and fresh post-push record."
         },
         {
           "file": "tools/cycle_check.py",
@@ -667,7 +675,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: v0.22-release-paths",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1407
+          "expected_anchor": "        # Invariant R12 control site: declared cycle scope."
         },
         {
           "file": "tools/cycle_check.py",
@@ -677,7 +685,7 @@
           ],
           "expected_fail": "review-export-retention planted controls were not detected: stale-retention-pattern, skipped-cycle-retained-set",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1218
+          "expected_anchor": "    # Invariant R12 control site: review-export retention configuration."
         },
         {
           "file": "tools/cycle_check.py",
@@ -687,7 +695,7 @@
           ],
           "expected_fail": "trigger-boundary-order planted controls were not detected: floor-before-freshness",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1702
+          "expected_anchor": "    # Invariant R12 control site: trigger boundary relationship."
         },
         {
           "file": "tools/cycle_check.py",
@@ -697,7 +705,7 @@
           ],
           "expected_fail": "trigger-boundary-order planted controls were not detected: unregistered-forward-boundary",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1702
+          "expected_anchor": "    # Invariant R12 control site: trigger boundary relationship."
         },
         {
           "file": "tools/version_check.py",
@@ -708,7 +716,7 @@
           ],
           "expected_fail": "rust-floor-restatement planted controls were not detected: zero-authority-pins",
           "expected_file": "tools/version_check.py",
-          "expected_line": 449
+          "expected_anchor": "    # Invariant R12 control site: offline MSRV restatement binding."
         },
         {
           "file": "tools/version_check.py",
@@ -718,7 +726,7 @@
           ],
           "expected_fail": "rust-floor-restatement planted controls were not detected: stale-offline-restatement",
           "expected_file": "tools/version_check.py",
-          "expected_line": 449
+          "expected_anchor": "    # Invariant R12 control site: offline MSRV restatement binding."
         },
         {
           "file": "tools/version_check.py",
@@ -728,7 +736,7 @@
           ],
           "expected_fail": "rust-floor-partition planted controls were not detected: unclassified-file",
           "expected_file": "tools/version_check.py",
-          "expected_line": 583
+          "expected_anchor": "        # Invariant R12 control site: Rust-floor tracked-file partition."
         },
         {
           "file": "tools/version_check.py",
@@ -738,7 +746,7 @@
           ],
           "expected_fail": "rust-floor-context planted controls were not detected: wrong-context-value",
           "expected_file": "tools/version_check.py",
-          "expected_line": 568
+          "expected_anchor": "        # Invariant R12 control site: Rust-floor contextual value closure."
         },
         {
           "file": "tools/version_check.py",
@@ -748,7 +756,7 @@
           ],
           "expected_fail": "release-version-restatement planted controls were not detected: stale-readme-version",
           "expected_file": "tools/version_check.py",
-          "expected_line": 695
+          "expected_anchor": "    # Invariant R12 control site: release-version restatement binding."
         },
         {
           "file": "tools/cycle_check.py",
@@ -758,7 +766,7 @@
           ],
           "expected_fail": "governed-export-margin planted controls were not detected: superseded-export-figure",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2531
+          "expected_anchor": "    # Invariant R12 control site: governed review-export latest-at-close."
         },
         {
           "file": "tools/cycle_check.py",
@@ -768,7 +776,7 @@
           ],
           "expected_fail": "governed-export-margin-kind planted controls were not detected: mixed-kind-export-row",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2659
+          "expected_anchor": "    # Invariant R12 control site: governed review-export same-kind margin."
         },
         {
           "file": "tools/cycle_check.py",
@@ -778,7 +786,7 @@
           ],
           "expected_fail": "governed-export-margin-basis planted controls were not detected: stale-positive-margin-pair",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2713
+          "expected_anchor": "    # Invariant R12 control site: governed review-export margin basis selection."
         },
         {
           "file": "tools/cycle_check.py",
@@ -788,7 +796,7 @@
           ],
           "expected_fail": "state-region-contract planted controls were not detected: missing-full-permanent-tail",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2240
+          "expected_anchor": "    # Invariant R12 control site: State archival permanent-tail boundary."
         },
         {
           "file": "tools/cycle_check.py",
@@ -798,7 +806,7 @@
           ],
           "expected_fail": "governed-export-ceiling planted controls were not detected: written-figure-over-ceiling",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2487
+          "expected_anchor": "    # Invariant R12 control site: governed written-figure export ceiling."
         },
         {
           "file": "tools/cycle_check.py",
@@ -808,7 +816,7 @@
           ],
           "expected_fail": "artifact-byte-boundary planted controls were not detected: crossed-boundary-without-disposition",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2109
+          "expected_anchor": "        # Invariant R12 control site: governed artifact byte boundary."
         },
         {
           "file": "tools/cycle_check.py",
@@ -819,7 +827,7 @@
           ],
           "expected_fail": "cycle-ending-export-audit planted controls were not detected: misordered-cycle-ending-audit",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2516
+          "expected_anchor": "    # Invariant R12 control site: cycle-ending review-export audit ordering."
         },
         {
           "file": "tools/cycle_check.py",
@@ -829,7 +837,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date, header-only-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1848
+          "expected_anchor": "        # Invariant R12 control site: trigger freshness."
         },
         {
           "file": "tools/cycle_check.py",
@@ -839,7 +847,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: missing-trigger-measurement-date",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1848
+          "expected_anchor": "        # Invariant R12 control site: trigger freshness."
         },
         {
           "file": "tools/cycle_check.py",
@@ -849,7 +857,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: stale-trigger-cycle-identity",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 1848
+          "expected_anchor": "        # Invariant R12 control site: trigger freshness."
         },
         {
           "file": "tools/cycle_check.py",
@@ -859,7 +867,7 @@
           ],
           "expected_fail": "publication planted controls were not detected: silently-dropped-trigger-subject",
           "expected_file": "tools/cycle_check.py",
-          "expected_line": 2935
+          "expected_anchor": "        # Invariant R12 control site: deferred trigger carry-forward."
         },
         {
           "file": "tools/test_population.py",
@@ -869,7 +877,7 @@
           ],
           "expected_fail": "test-population planted controls were not detected: unmarked-skip",
           "expected_file": "tools/test_population.py",
-          "expected_line": 99
+          "expected_anchor": "        # Invariant R12 control site: test-population equivalence."
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -881,7 +889,7 @@
           ],
           "expected_fail": "coverage-detection planted controls were not detected: overlap-before-insert",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 899
+          "expected_anchor": "                    // Invariant R12 control site: pre-insert per-source coverage detection.\n                    let assessed = st"
         },
         {
           "file": "apps/cored/src/main.rs",
@@ -891,7 +899,7 @@
           ],
           "expected_fail": "coverage-detection planted controls were not detected: per-source-partition",
           "expected_file": "apps/cored/src/main.rs",
-          "expected_line": 898
+          "expected_anchor": "                    // Invariant R12 control site: pre-insert per-source coverage detection."
         }
       ],
       "fail_before_note": "invariant-scan: R12 FAIL: a lifecycle, review-retention, governed-margin, population, or coverage planted failure was not detected"

@@ -165,7 +165,8 @@ class FailBefore:
     replace_with: tuple[str, ...]
     expected_fail: str
     expected_file: str
-    expected_line: int
+    expected_anchor: str
+    expected_anchor_line_offset: int
 
 
 @dataclass(frozen=True)
@@ -3298,8 +3299,8 @@ def load_rules(path: Path) -> list[Rule]:
         raise ConfigError(
             f"{path}: root keys must be exactly schema_version and rules"
         )
-    if raw["schema_version"] != 3:
-        raise ConfigError(f"{path}: schema_version must be 3")
+    if raw["schema_version"] != 4:
+        raise ConfigError(f"{path}: schema_version must be 4")
     if not isinstance(raw["rules"], list) or not raw["rules"]:
         raise ConfigError(f"{path}: rules must be a non-empty array")
 
@@ -3313,14 +3314,15 @@ def load_rules(path: Path) -> list[Rule]:
         "fail_before",
         "fail_before_note",
     }
-    control_fields = {
+    required_control_fields = {
         "file",
         "find",
         "replace_with",
         "expected_fail",
         "expected_file",
-        "expected_line",
+        "expected_anchor",
     }
+    optional_control_fields = {"expected_anchor_line_offset"}
     for index, item in enumerate(raw["rules"]):
         where = f"{path}:rules[{index}]"
         if not isinstance(item, dict) or set(item) != fields:
@@ -3339,12 +3341,24 @@ def load_rules(path: Path) -> list[Rule]:
         controls: list[FailBefore] = []
         for control_index, control in enumerate(controls_raw):
             control_where = f"{where}.fail_before[{control_index}]"
-            if not isinstance(control, dict) or set(control) != control_fields:
+            if (
+                not isinstance(control, dict)
+                or not required_control_fields.issubset(control)
+                or set(control) - required_control_fields
+                != set(control) & optional_control_fields
+            ):
                 raise ConfigError(
-                    f"{control_where}: keys must be exactly "
-                    f"{sorted(control_fields)}"
+                    f"{control_where}: keys must be exactly required "
+                    f"{sorted(required_control_fields)} plus optional "
+                    f"{sorted(optional_control_fields)}"
                 )
-            for field in {"file", "find", "expected_fail", "expected_file"}:
+            for field in {
+                "file",
+                "find",
+                "expected_fail",
+                "expected_file",
+                "expected_anchor",
+            }:
                 if (
                     not isinstance(control[field], str)
                     or not control[field].strip()
@@ -3371,13 +3385,22 @@ def load_rules(path: Path) -> list[Rule]:
                     f"{control_where}.expected_file: must equal the mutated "
                     "file"
                 )
+            anchor_offset = control.get("expected_anchor_line_offset", 0)
             if (
-                not isinstance(control["expected_line"], int)
-                or isinstance(control["expected_line"], bool)
-                or control["expected_line"] < 1
+                not isinstance(anchor_offset, int)
+                or isinstance(anchor_offset, bool)
+                or anchor_offset < 0
             ):
                 raise ConfigError(
-                    f"{control_where}.expected_line: must be a positive integer"
+                    f"{control_where}.expected_anchor_line_offset: must be a "
+                    "non-negative integer"
+                )
+            anchor_line_count = control["expected_anchor"].count("\n") + 1
+            if anchor_offset >= anchor_line_count:
+                raise ConfigError(
+                    f"{control_where}.expected_anchor_line_offset: "
+                    f"{anchor_offset} is outside the "
+                    f"{anchor_line_count}-line expected_anchor"
                 )
             replacement = control["replace_with"]
             if (
@@ -3400,7 +3423,8 @@ def load_rules(path: Path) -> list[Rule]:
                     replace_with=tuple(replacement),
                     expected_fail=control["expected_fail"],
                     expected_file=control["expected_file"],
-                    expected_line=control["expected_line"],
+                    expected_anchor=control["expected_anchor"],
+                    expected_anchor_line_offset=anchor_offset,
                 )
             )
         seen.add(item["id"])
@@ -3527,25 +3551,53 @@ def _apply_control(root: Path, control: FailBefore) -> None:
     path.write_text(text.replace(control.find, "".join(control.replace_with), 1))
 
 
+def resolve_expected_anchor(root: Path, control: FailBefore) -> int:
+    """Derive the expected finding line from the already-constructed mutant."""
+    path = root / control.expected_file
+    try:
+        text = path.read_text()
+    except OSError as error:
+        raise ConfigError(
+            f"{control.expected_file}: cannot resolve expected anchor: {error}"
+        ) from error
+    occurrences = text.count(control.expected_anchor)
+    if occurrences != 1:
+        raise ConfigError(
+            f"{control.expected_file}: expected_anchor occurs {occurrences} "
+            "times in constructed mutant; expected exactly 1"
+        )
+    anchor_start = text.index(control.expected_anchor)
+    return (
+        text.count("\n", 0, anchor_start)
+        + 1
+        + control.expected_anchor_line_offset
+    )
+
+
 def exercise_fail_before(
     root: Path,
     rule: Rule,
     control: FailBefore,
-) -> tuple[int, str]:
+) -> tuple[int, str, int]:
     with tempfile.TemporaryDirectory(prefix=f"invariant-scan-{rule.id}-") as raw:
         copied_root = Path(raw) / "tree"
         _copy_tracked_tree(root, copied_root)
         _apply_control(copied_root, control)
+        expected_line = resolve_expected_anchor(copied_root, control)
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             status = run_rules(copied_root, [rule])
-        return status, output.getvalue()
+        return status, output.getvalue(), expected_line
 
 
-def expected_control_finding(rule: Rule, control: FailBefore) -> str:
+def expected_control_finding(
+    rule: Rule,
+    control: FailBefore,
+    expected_line: int,
+) -> str:
     return (
         f"invariant-scan: {rule.id} FAIL: {control.expected_file}:"
-        f"{control.expected_line}: {control.expected_fail}"
+        f"{expected_line}: {control.expected_fail}"
     )
 
 
@@ -3570,7 +3622,11 @@ def self_test(
         for index, control in enumerate(rule.fail_before, start=1):
             controls_run += 1
             try:
-                status, output = exercise_fail_before(root, rule, control)
+                status, output, expected_line = exercise_fail_before(
+                    root,
+                    rule,
+                    control,
+                )
             except ConfigError as error:
                 print(
                     f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: {error}"
@@ -3588,16 +3644,26 @@ def self_test(
                     f"rule exited {status}, expected 1"
                 )
                 return 1
-            expected_finding = expected_control_finding(rule, control)
+            expected_finding = expected_control_finding(
+                rule,
+                control,
+                expected_line,
+            )
             if expected_finding not in output.splitlines():
+                observed = [
+                    line
+                    for line in output.splitlines()
+                    if line.startswith(f"invariant-scan: {rule.id} FAIL:")
+                ]
                 print(
                     f"invariant-scan: SELF-TEST {rule.id}/{index} FAIL: "
-                    f"missing expected finding {expected_finding!r}"
+                    f"missing expected finding {expected_finding!r}; "
+                    f"observed={observed!r}"
                 )
                 return 1
             print(
                 f"invariant-scan: SELF-TEST {rule.id}/{index} PASS: "
-                f"{control.expected_file}:{control.expected_line}: "
+                f"{control.expected_file}:{expected_line}: "
                 f"{control.expected_fail}"
             )
 

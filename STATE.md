@@ -1,6 +1,57 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 1 is complete: the entering state is reconstructed, G1–G7 are settled, and the complete local gate passed 20/20.** Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete invariant entry point passed **12 rules / 68 controls** with zero Rust warnings; checklist audit passed **268 checked / 3 retracted / 268 matched / 268 commits resolved**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **352**, failed **0**, skipped **0**, and emitted the same one accepted warning; the repository comparator derived `collected=352`, `equivalent=true`, and `equivalent_passed=352`. All **332** pins and both protected databases matched in paired checks of **0.11 s / 0.10 s real**. Exact delivered v0.34 audit child `d8d20b81b9ea9027dada74ce047a7cd92815e9f3` exported **2,559,695 bytes / 151 files / 2 retained cycles**. The live governed row remains bound to the exact authenticated v0.34 candidate at **2,527,180 bytes / 151 files / 2 retained cycles** until a post-retention adjacent pair exists. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 2 ANCHOR is complete: all 68 planted-control lines derive from mutant anchors, the focused suite passed 27/27, and the complete local gate passed 20/20.** Exactly **0** hand-typed absolute finding-line fields survive. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete local entry point passed **12 rules / 68 controls**, zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **357/357**, and embedded golden **11/11**. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+
+**v0.35 ANCHOR — planted-control locations derive from constructed mutants
+(measured 2026-08-02).** Registry schema v4 replaces every `expected_line`
+integer with an authored `expected_anchor` and optional zero-based
+`expected_anchor_line_offset`, defaulting to zero. The harness first copies the
+tracked tree, applies the fail-before mutation, requires the literal anchor
+exactly once in that mutant, derives its file-global line from the anchor start
+plus the checked offset, and only then constructs the expected finding. Rule
+output is never read to produce that expectation.
+
+All **68** controls have unique mutant anchors and the control count is
+unchanged. **43** anchors are one line and **25** are multi-line; **8** use a
+nonzero line offset. R1/1 uses a nine-line anchor with offset **3**, retaining
+the measured helper-relative target while extending beyond `replace_with` into
+unchanged context. All 40 R12 controls retain their pre-existing named control-
+site marker: 39 use the marker alone, while R12/39 extends it by one unchanged
+line. An executable registry-wide assertion confirms no registered anchor is
+wholly a substring of its own `replace_with`. The count of `expected_line`
+fields or any other hand-typed absolute finding-line field in
+`config/invariant-rules.json` is **0**; there are no survivors to justify.
+
+The real entry point rejected zero- and two-occurrence anchors verbatim:
+
+```text
+invariant-scan: SELF-TEST R1/1 FAIL: crates/store/src/sqlite.rs: expected_anchor occurs 0 times in constructed mutant; expected exactly 1
+invariant-scan: SELF-TEST R1/1 FAIL: crates/store/src/sqlite.rs: expected_anchor occurs 2 times in constructed mutant; expected exactly 1
+```
+
+A constructed R7 checker reporting every real finding one line late was caught
+before a pass could be trusted:
+
+```text
+invariant-scan: SELF-TEST R7/1 FAIL: missing expected finding 'invariant-scan: R7 FAIL: crates/store/src/sqlite.rs:410: documents_by_ids must not be public'; observed=['invariant-scan: R7 FAIL: crates/store/src/sqlite.rs:411: documents_by_ids must not be public']
+```
+
+The mutant/original boundary is independently exercised in both directions. A
+temporary R3 control anchored only on planted `use async_openai::Client;`
+resolved in the mutant and passed its **1/1-rule / 1-control** self-test. A
+temporary R7 control anchored on the original private
+`fn documents_by_ids(...)` declaration was absent after mutation and failed
+with the same zero-occurrence rejection. The focused
+`shell/tests/test_invariant_scan.py` suite passed **27/27**. No control was
+added, removed, or weakened.
+
+With the Step 2 checkbox deliberately still open, `./run ci-local` passed all
+**20/20** jobs, including registered invariants **12 rules / 68 controls**,
+checklist **268 / 3 / 268 / 268**, warning-denied current/net/MSRV Rust lanes,
+constrained Python 3.11.4 **357/357** with the same one accepted warning,
+embedded golden **11/11**, all **332** pins, and both protected databases.
+The mandatory standalone post-task golden passed byte-identical **11/11**,
+delta **0**.
 
 **v0.35 E0 — entering-state reconstruction and G1–G7 dispositions (measured
 2026-08-02).** The entering worktree was clean apart from the operator-supplied

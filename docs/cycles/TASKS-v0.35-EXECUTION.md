@@ -16,6 +16,9 @@ unchanged.
 **Step 1 — entering state reconstructed; G1–G7 settled and all governed
 observations refreshed — 2026-08-02.**
 
+**Step 2 — all 68 planted-control locations derive from unique mutant anchors;
+zero absolute line fields survive — 2026-08-02.**
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -386,7 +389,7 @@ column was edited to match what happened.**
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.35 · 2026-08-02 — shell source remains forbidden and no release value changed; trigger did not fire | none — `shell/intel_shell/**` remains forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.35 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.35 · 2026-08-02 — Step 1 measured State at 243,402 / 453,741 bytes and exact delivered v0.34 at 2,559,695 / 3,000,000 export bytes; neither trigger fired and Step 4 owns the post-retention projection | **Step 4 — re-place the availability in cycles on a post-retention basis** |
-| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 1 changed no control schema; all 68 controls retain absolute line fields, 67 mutant target lines are unique, and R1/1 requires a unique four-line anchor. Neither trigger clause fired yet | **Step 2 — remove the coupling; this row is expected to close** |
+| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 2's schema change fired the first clause and completed the assigned work. All 68 controls now derive their finding line from an authored anchor resolved exactly once against the constructed mutant; 40 retain the pre-existing named R12 control-site marker, registered anchors are never wholly supplied by `replace_with`, and zero `expected_line` or other absolute-line fields survive | **Step 2 — completed; Step 7 moves this subject to Deferred completions** |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.35 · 2026-08-02 — v0.35 still matches `v0.<n>`; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-02 — the activation distance is lifecycle configuration and records only, with no runtime-behaviour or public-surface change; v0.17.1's reset leaves the epoch count at zero | **Step 7 — restate the epoch count under the v0.32 reset rule** |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — `version-check` reported 22 offline-MSRV and 3 release-version current restatements with no unregistered current floor statement; trigger did not fire | **Step 5 — the new lanes add Rust-floor literals; measure membership before and after** |
@@ -753,7 +756,7 @@ governs any future admission.
 - [x] ACTIVATE — runbook committed, declaration moved to v0.35, progress
       skeleton created, retention pattern advanced to `3[0-3]`
 - [x] Step 1 · E0
-- [ ] Step 2 · ANCHOR
+- [x] Step 2 · ANCHOR
 - [ ] Step 3 · ONE-RETENTION
 - [ ] Step 4 · POST-LEVER BASIS
 - [ ] Step 5 · NET-FLOOR
