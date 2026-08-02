@@ -689,6 +689,19 @@
         },
         {
           "file": "tools/cycle_check.py",
+          "find": "def expected_review_export_retention_pattern(\n    cycle_name: str,\n    retained_cycle_paths: set[str],\n) -> str:\n",
+          "replace_with": [
+            "def expected_review_export_retention_pattern(\n",
+            "    cycle_name: str,\n",
+            "    retained_cycle_paths: set[str] | None = None,\n",
+            ") -> str:\n"
+          ],
+          "expected_fail": "review-export-retention planted controls were not detected: optional-retained-set-parameter",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "    # Invariant R12 control site: review-export retention configuration."
+        },
+        {
+          "file": "tools/cycle_check.py",
           "find": "            if boundary_value < dependency_value:\n",
           "replace_with": [
             "            if False:\n"

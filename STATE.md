@@ -1,6 +1,62 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 2 ANCHOR is complete: all 68 planted-control lines derive from mutant anchors, the focused suite passed 27/27, and the complete local gate passed 20/20.** Exactly **0** hand-typed absolute finding-line fields survive. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete local entry point passed **12 rules / 68 controls**, zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **357/357**, and embedded golden **11/11**. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 3 ONE-RETENTION is complete: the arithmetic fallback is deleted and every retained-cycle boundary now comes from one Git-tracked authority.** The registered suite now carries **12 rules / 69 controls** because R12 executes a new optional-parameter failure construction. Exactly **0** hand-typed absolute finding-line fields survive. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The complete local entry point passed **20/20** with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **357/357**, and embedded golden **11/11**; the mandatory standalone golden also passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+
+**v0.35 ONE-RETENTION — one Git-derived retained-cycle authority (measured
+2026-08-02).** Option A was feasible and selected. The formatter's
+`retained_cycle_paths` parameter is now mandatory; the `None` branch and its
+patch-number arithmetic are deleted. Production already obtains the set from
+`tools/export_check.py::expected_retained_cycle_paths(root)`. The cycle-check
+fixtures now initialize Git, commit their cycle documents, obtain that same
+tracked set, and only then derive the configured pattern. The autouse fixture
+that substituted a second arithmetic implementation is gone.
+
+The skipped-cycle control no longer calls the formatter through a fallback.
+It builds one consecutive Git-tracked construction to obtain the deliberately
+wrong configured pattern, then proves that applying those bytes to a different
+Git-tracked skipped-cycle construction is rejected. Every actual formatter
+call receives the set derived for its own construction. The focused
+`shell/tests/test_cycle_check.py` suite passed **85/85**.
+
+R12 adds one failure-capable control, moving the registry from **68 to 69**
+controls for a recorded reason. `r12_findings` inspects the executable callable
+signature and rejects any default on `retained_cycle_paths`; the planted
+optional-parameter mutation fired at the real entry point:
+
+```text
+invariant-scan: SELF-TEST R12/20 PASS: tools/cycle_check.py:1215: review-export-retention planted controls were not detected: optional-retained-set-parameter
+```
+
+R12 as a whole passed **1/1 rule / 41 controls**. This is the executable proof
+that an omitted-set path cannot silently return: the property is not inferred
+from a search. The full registered total is now **12 rules / 69 controls**;
+the added control uses the existing unique review-retention marker anchor and
+introduces no absolute line field.
+
+The real v0.35 checker accepted the activation pattern
+`docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-3]}{.md,.*.md,-*.md}`.
+An isolated current-tool construction replacing only that pattern with the
+stale boundary emitted verbatim:
+
+```text
+cycle-check: ERROR: repomix.config.json: review-export retention pattern for v0.35 must be 'docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-3]}{.md,.*.md,-*.md}' to agree with the tracked retained-cycle set; found ['docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-2]}{.md,.*.md,-*.md}']
+cycle-check: FAIL (1 defect(s))
+```
+
+The prior retention-fallback trigger was worded around the very branch it
+governed and Step 1 truthfully measured it as satisfied. The active row is
+forward-corrected to fire if the formatter again accepts an omitted set or a
+live caller supplies a set not Git-derived for its root. Step 1 had already
+obeyed its own mandate to replace the active v0.34 placeholder, so runbook
+amendment r2 applies Step 3's “do not edit” instruction to the immutable closed
+v0.34 records; none was changed.
+
+With the Step 3 checkbox deliberately still open, `./run ci-local` passed all
+**20/20** jobs: registered invariants **12 rules / 69 controls**, checklist
+**268 / 3 / 268 / 268**, warning-denied current/net/MSRV Rust lanes, constrained
+Python 3.11.4 **357/357** with the same one accepted warning, embedded golden
+**11/11**, all **332** pins, and both protected databases. The mandatory
+standalone post-task golden then passed byte-identical **11/11**, delta **0**.
 
 **v0.35 ANCHOR — planted-control locations derive from constructed mutants
 (measured 2026-08-02).** Registry schema v4 replaces every `expected_line`

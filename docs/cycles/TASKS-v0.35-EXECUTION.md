@@ -19,6 +19,17 @@ observations refreshed — 2026-08-02.**
 **Step 2 — all 68 planted-control locations derive from unique mutant anchors;
 zero absolute line fields survive — 2026-08-02.**
 
+**r2 — 2026-08-02 — Step 3 criterion-history clarification.** Step 1 required
+every active observation placeholder naming v0.34 to be rewritten with a
+measured v0.35 observation, so Step 3's instruction not to edit “the dated
+v0.34 cell” cannot refer to a cell that still exists in this active runbook.
+It is applied to the immutable v0.34 runbook and historical State record,
+neither of which is edited. The active row receives the required forward
+criterion and a new v0.35 measurement.
+
+**Step 3 — arithmetic retention fallback deleted; every live caller and fixture
+uses the Git-derived retained set — 2026-08-02.**
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -393,7 +404,7 @@ column was edited to match what happened.**
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.35 · 2026-08-02 — v0.35 still matches `v0.<n>`; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-02 — the activation distance is lifecycle configuration and records only, with no runtime-behaviour or public-surface change; v0.17.1's reset leaves the epoch count at zero | **Step 7 — restate the epoch count under the v0.32 reset rule** |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — `version-check` reported 22 offline-MSRV and 3 release-version current restatements with no unregistered current floor statement; trigger did not fire | **Step 5 — the new lanes add Rust-floor literals; measure membership before and after** |
-| **Retention arithmetic fallback** | the `retained_cycle_paths=None` branch produces an answer that differs from the tracked retained set in any construction a control or test relies on | v0.35 · 2026-08-02 — Step 1 executed the existing `retention-skipped` control and confirmed its fallback differs from the tracked set; the trigger as written is satisfied and Step 3 owns the forward criterion correction | **Step 3 — the trigger as written is already satisfied; correct the criterion, do not edit the dated cell** |
+| **Retention arithmetic fallback** | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.35 · 2026-08-02 — Step 3 deleted the optional branch, made the retained set mandatory, committed fixture cycle documents before derivation, and passed the real checker at the exact activation pattern. R12's new 69th control makes an optional parameter fail. The prior criterion was truthfully satisfied in Step 1; under this forward criterion the trigger did not fire | **Step 3 — completed; the corrected regression criterion remains governed** |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.35 · 2026-08-02 — v0.34 carries its required audit field and v0.35 remains open; the general optionality ruling is unchanged | none — the v0.32 ruling stands; **this runbook separately requires its own at Step 7** |
 
 ---
@@ -757,7 +768,7 @@ governs any future admission.
       skeleton created, retention pattern advanced to `3[0-3]`
 - [x] Step 1 · E0
 - [x] Step 2 · ANCHOR
-- [ ] Step 3 · ONE-RETENTION
+- [x] Step 3 · ONE-RETENTION
 - [ ] Step 4 · POST-LEVER BASIS
 - [ ] Step 5 · NET-FLOOR
 - [ ] Step 6 · RE-MEASURE

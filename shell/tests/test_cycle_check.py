@@ -15,42 +15,6 @@ from tools.cycle_identity import (
 )
 
 
-@pytest.fixture(autouse=True)
-def _gitless_retained_cycle_authority(monkeypatch) -> None:
-    real_authority = cycle_check.expected_retained_cycle_paths
-
-    def retained_cycle_paths(root: Path) -> set[str]:
-        if (root / ".real-retention-authority").is_file():
-            return real_authority(root)
-        identity = resolve_cycle(root)
-        active_version = cycle_check.declared_scope_cycle_version(identity.name)
-        retained_versions = (
-            (*active_version[:-1], patch)
-            for patch in range(
-                active_version[-1] - cycle_check.CYCLE_RETENTION_DEPTH + 1,
-                active_version[-1] + 1,
-            )
-        )
-        return {
-            path
-            for version in retained_versions
-            for path in (
-                "docs/cycles/TASKS-v"
-                + ".".join(str(part) for part in version)
-                + "-EXECUTION.md",
-                "docs/cycles/PROGRESS-v"
-                + ".".join(str(part) for part in version)
-                + ".md",
-            )
-        }
-
-    monkeypatch.setattr(
-        cycle_check,
-        "expected_retained_cycle_paths",
-        retained_cycle_paths,
-    )
-
-
 def _runbook(root: Path, cycle: str = "v1.2.3") -> Path:
     return cycle_runbook_path(root, cycle)
 
@@ -89,6 +53,13 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "# Current governed margin fixture\n\n"
         "- governed review-export measurement: "
         f"tree=`{'9' * 40}`; bytes=`{fixture_export_bytes}`\n"
+    )
+    _runbook(root, "v1.2.2").write_text(
+        "# Closed fixture cycle\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** no-release (as of 2026-07-29)\n\n"
+        "Intentionally unreleased implementation commits:\n"
     )
     (root / "AGENTS.md").write_text(
         "# Contract\n\n"
@@ -174,13 +145,16 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     (config / "cycle-history.json").write_text(
         json.dumps({"schema_version": 1, "artifacts": {}}) + "\n"
     )
+    _commit_cycle_root(root)
+    retained_cycles = cycle_check.expected_retained_cycle_paths(root)
     (root / "repomix.config.json").write_text(
         json.dumps(
             {
                 "ignore": {
                     "customPatterns": [
                         cycle_check.expected_review_export_retention_pattern(
-                            "v1.2.3"
+                            "v1.2.3",
+                            retained_cycles,
                         )
                     ]
                 }
@@ -1437,6 +1411,7 @@ def test_state_region_contract_derives_external_reference_inventory(
 ) -> None:
     root = _cycle_root(tmp_path)
     (root / "README.md").write_text("Current design lives in STATE §1.\n")
+    subprocess.run(["git", "add", "README.md"], cwd=root, check=True)
     errors: list[str] = []
 
     report = cycle_check.check_state_archival_region_contract(
@@ -1461,6 +1436,7 @@ def test_state_region_contract_rejects_unresolved_external_reference(
 ) -> None:
     root = _cycle_root(tmp_path)
     (root / "README.md").write_text("Missing design lives in STATE.md §2.\n")
+    subprocess.run(["git", "add", "README.md"], cwd=root, check=True)
     errors: list[str] = []
 
     report = cycle_check.check_state_archival_region_contract(
@@ -1596,7 +1572,6 @@ def test_cycle_check_rejects_skipped_cycle_retention_without_export(
             "Intentionally unreleased implementation commits:\n"
         )
         cycle_progress_path(root, prior_name).write_text("# Progress\n")
-    (root / ".real-retention-authority").write_text("real Git authority\n")
     _commit_cycle_root(root)
     skipped_name = "v" + ".".join(
         str(part)
@@ -1611,7 +1586,8 @@ def test_cycle_check_rejects_skipped_cycle_retention_without_export(
     config_path = root / "repomix.config.json"
     config = json.loads(config_path.read_text())
     config["ignore"]["customPatterns"] = [
-        cycle_check.expected_review_export_retention_pattern(skipped_name)
+        "docs/cycles/{TASKS,PROGRESS}-v1.2.{[0-2]}"
+        "{.md,.*.md,-*.md}"
     ]
     config_path.write_text(json.dumps(config) + "\n")
     _commit_all(root, "plant skipped cycle")
@@ -1821,7 +1797,9 @@ def test_cycle_check_accepts_suffixed_deferred_step_reference(
         + "\n## Step 1A · FOLLOW-UP\n\n"
         "**Objective.** Discharge the deferred action.\n\n"
         "**Acceptance criteria.** The action is discharged.\n\n"
-        "**Done when** the action is complete.\n"
+        "**Done when** the action is complete.\n\n"
+        "## Runbook amendments\n\n"
+        "Step 1A — fixture follow-up added — 2026-07-30\n"
     )
 
     assert cycle_check.run(root) == 0
@@ -1985,7 +1963,8 @@ def test_activation_anchor_is_exclusive_and_next_commit_is_checked(
     runbook.write_text(
         runbook.read_text().replace(
             "| `allow` | `**` |",
-            "| `allow` | `AGENTS.md` |",
+            "| `allow` | `AGENTS.md` |\n"
+            "| `allow` | `repomix.config.json` |",
         )
     )
     _commit_cycle_root(root)
@@ -2035,7 +2014,9 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
         + "\n## Step 2 · RE-MEASURE\n\n"
         "**Objective.** Re-measure the release commit.\n\n"
         "**Acceptance criteria.** Hosted counts captured.\n\n"
-        "**Done when** the counts are recorded.\n"
+        "**Done when** the counts are recorded.\n\n"
+        "## Runbook amendments\n\n"
+        "Step 2 — fixture re-measure added — 2026-07-30\n"
     )
 
     assert cycle_check.run(root) == 0
@@ -2452,6 +2433,8 @@ def test_cycle_check_accepts_same_commit_quantity_relation(
             "**Acceptance criteria.** Hosted counts equal local counts at "
             "the same commit.",
         )
+        + "\n## Runbook amendments\n\n"
+        "Step 1 — fixture criterion changed — 2026-07-30\n"
     )
 
     assert cycle_check.run(root) == 0

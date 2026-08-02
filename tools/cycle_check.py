@@ -1129,43 +1129,40 @@ def numeric_glob_range(last: int) -> list[str]:
 
 def expected_review_export_retention_pattern(
     cycle_name: str,
-    retained_cycle_paths: set[str] | None = None,
+    retained_cycle_paths: set[str],
 ) -> str:
     """Format the one exclusion pattern from a retained-cycle boundary."""
     version = declared_scope_cycle_version(cycle_name)
     if len(version) < 2:
         raise ValueError(f"cannot derive review retention for {cycle_name!r}")
-    if retained_cycle_paths is None:
-        first_retained = version[-1] - CYCLE_RETENTION_DEPTH + 1
-    else:
-        runbook_pattern = re.compile(
-            r"^docs/cycles/TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+    runbook_pattern = re.compile(
+        r"^docs/cycles/TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+    )
+    retained_versions = sorted(
+        declared_scope_cycle_version(match.group(1))
+        for path in retained_cycle_paths
+        if (match := runbook_pattern.fullmatch(path)) is not None
+    )
+    if len(retained_versions) != CYCLE_RETENTION_DEPTH:
+        raise ValueError(
+            f"tracked retained-cycle set for {cycle_name!r} must contain "
+            f"{CYCLE_RETENTION_DEPTH} execution runbooks; found "
+            f"{len(retained_versions)}"
         )
-        retained_versions = sorted(
-            declared_scope_cycle_version(match.group(1))
-            for path in retained_cycle_paths
-            if (match := runbook_pattern.fullmatch(path)) is not None
+    if retained_versions[-1] != version:
+        raise ValueError(
+            f"tracked retained-cycle set does not end at {cycle_name!r}"
         )
-        if len(retained_versions) != CYCLE_RETENTION_DEPTH:
-            raise ValueError(
-                f"tracked retained-cycle set for {cycle_name!r} must contain "
-                f"{CYCLE_RETENTION_DEPTH} execution runbooks; found "
-                f"{len(retained_versions)}"
-            )
-        if retained_versions[-1] != version:
-            raise ValueError(
-                f"tracked retained-cycle set does not end at {cycle_name!r}"
-            )
-        if any(
-            retained[:-1] != version[:-1]
-            for retained in retained_versions
-        ):
-            raise ValueError(
-                f"tracked retained-cycle set for {cycle_name!r} crosses a "
-                "version-family boundary that one exclusion pattern cannot "
-                "express"
-            )
-        first_retained = retained_versions[0][-1]
+    if any(
+        retained[:-1] != version[:-1]
+        for retained in retained_versions
+    ):
+        raise ValueError(
+            f"tracked retained-cycle set for {cycle_name!r} crosses a "
+            "version-family boundary that one exclusion pattern cannot "
+            "express"
+        )
+    first_retained = retained_versions[0][-1]
     last_excluded = first_retained - 1
     alternatives = numeric_glob_range(last_excluded)
     if not alternatives:
