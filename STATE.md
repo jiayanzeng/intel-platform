@@ -1,6 +1,124 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 is closed on the operator-selected `no-release` disposition; exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` remains authenticated on fresh evidence ref `codex/v0.34-evidence-1117dc6`, while published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Hosted workflow-dispatch run **30726156221**, attempt **1**, passed all seven executable jobs and hosted golden **11/11**; dependency drift took its declared report-only skip. The repository release-grade verifier consumed **7 receipts / 7 Sigstore bundles**, accepted **7**, rejected **0**, and bound every identity to the exact candidate and source ref. Exact-candidate local Python 3.11.4 and 3.12.13 each collected/passed **352**, failed **0**, and skipped **0**; each hosted lane collected **352**, passed **351**, and skipped the same named, reasoned `on_site` test. Both repository comparator runs derived `collected=352`, `equivalent=true`, and `equivalent_passed=352`. The most recent complete local entry point remains Step 5's **20/20** gate with registered invariants **12 rules / 68 controls** and zero Rust warnings; pre-close checklist passed **267 / 3 / 267 / 267**. All **332** pins and both protected databases matched in final paired checks of **0.10 s / 0.09 s real**; the closing-visible governed candidate export is **2,527,180 bytes / 151 files / 2 retained cycles**. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. The v0.34 distance is intentionally lifecycle-only: no governed byte boundary, ceiling, production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, or publication ref changed; the fresh evidence ref was the sole remote mutation.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 1 is complete: the entering state is reconstructed, G1–G7 are settled, and the complete local gate passed 20/20.** Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The v0.34 evidence ref `codex/v0.34-evidence-1117dc6` still resolves to exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. The latest complete invariant entry point passed **12 rules / 68 controls** with zero Rust warnings; checklist audit passed **268 checked / 3 retracted / 268 matched / 268 commits resolved**. Clean constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **352**, failed **0**, skipped **0**, and emitted the same one accepted warning; the repository comparator derived `collected=352`, `equivalent=true`, and `equivalent_passed=352`. All **332** pins and both protected databases matched in paired checks of **0.11 s / 0.10 s real**. Exact delivered v0.34 audit child `d8d20b81b9ea9027dada74ce047a7cd92815e9f3` exported **2,559,695 bytes / 151 files / 2 retained cycles**. The live governed row remains bound to the exact authenticated v0.34 candidate at **2,527,180 bytes / 151 files / 2 retained cycles** until a post-retention adjacent pair exists. No publisher request, scheduler, service, or model-profile command ran; no protected byte, dependency, production source, public response, value domain, release value, or publication ref changed.
+
+**v0.35 E0 — entering-state reconstruction and G1–G7 dispositions (measured
+2026-08-02).** The entering worktree was clean apart from the operator-supplied
+untracked v0.35 runbook. Exact audit child
+`d8d20b81b9ea9027dada74ce047a7cd92815e9f3` had immediate parent
+`6a19d31dd00143fc85a5e6c157dceb90ce40e946`. Direct remote inspection—not the
+closing record—resolved `main` and peeled `v0.17.1` to closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, its immediate parent to release
+commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`, annotated tag ref `v0.17.1` to
+object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` of Git type `tag`, and evidence
+ref `codex/v0.34-evidence-1117dc6` to
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. Exact historical tags `v0.8.0`
+and `v0.10.2` were absent. The project-root export at the exact audit child
+measured **2,559,695 bytes / 151 files / 2 retained cycles**, confirming both
+the reviewer's delivered-export figure and the audit-child identity rather
+than inferring either from the 7,323-byte difference.
+
+G1 constructed every registered mutant against repository bytes with its
+trailing newline preserved. The measured geometry was:
+
+| rule | controls | unique target lines | named control-site target lines | minimum unique widths |
+|---|---:|---:|---:|---|
+| R1 | 1 | 0 | 0 | 4 lines, target offset 3 |
+| R2 | 1 | 1 | 0 | 1 |
+| R3 | 1 | 1 | 0 | 1 |
+| R4 | 1 | 1 | 0 | 1 |
+| R5 | 8 | 8 | 0 | 1 for all 8 |
+| R6 | 1 | 1 | 0 | 1 |
+| R7 | 3 | 3 | 0 | 1 for all 3 |
+| R8 | 3 | 3 | 0 | 1 for all 3 |
+| R9 | 1 | 1 | 0 | 1 |
+| R10 | 3 | 3 | 0 | 1 for all 3 |
+| R11 | 5 | 5 | 0 | 1 for all 5 |
+| R12 | 40 | 40 | 40 | 1 for all 40 |
+| **total** | **68** | **67** | **40** | **67 one-line; R1/1 four-line** |
+
+Thus all 40 R12 targets really are named control-site lines; the reviewer
+hypothesis is confirmed. R1/1's expected line occurred twice, while the unique
+four-line mutant anchor begins at planted `fn rebuild_identity_with_limit` and
+derives the target at zero-based offset 3. `invariant-scan --self-test` then
+executed and rejected every planted construction: **12/12 rules / 68 controls**.
+
+G2 executed both retention branches. For active v0.35 the Git-derived tracked
+set `{v0.34,v0.35}` and the fallback each produce the boundary through v0.33.
+For a skipped v0.36 construction whose tracked set is `{v0.34,v0.36}`, the
+tracked branch still ends at v0.33 while the arithmetic fallback ends at v0.34.
+Production `cycle_check.py` calls the helper with the Git-derived set. The
+generic fixture and deliberate skipped-cycle test in
+`shell/tests/test_cycle_check.py` reach the fallback. The R12
+`retention-skipped` construction deliberately relies on that divergence to
+make the real checker reject the stale fallback-shaped pattern; its trigger as
+written is therefore satisfied and Step 3 owns the criterion correction.
+
+G3 found no honest post-retention trend denominator yet. The published
+**77,014**, **77,862**, **86,946**, and **79,962 bytes/cycle** bases were all
+measured while three execution cycles were retained and are epoch-stale after
+v0.34's move to two. Exact delivered v0.34 is the sole delivered point in the
+new epoch, so no adjacent same-kind post-retention pair exists and none was
+synthesized. The live row stays bound to its last valid governed field; Step 4
+owns the first new adjacent basis.
+
+G4 read the executable workflow and launcher. The `net` job pins Rust **1.91**;
+the `msrv` job pins Rust **1.78** and builds only the offline workspace graph.
+The report-only `drift` job has `continue-on-error: true`, writes its MSRV text
+only to `$GITHUB_STEP_SUMMARY`, and no job or check consumes that text. The
+locked net path is `cored → intel-ingest → reqwest 0.11.27 → url 2.5.8 → idna
+1.1.0 → idna_adapter 1.2.2`; locked `icu_collections`, `icu_normalizer`,
+`icu_locale_core`, `icu_normalizer_data`, `icu_properties`,
+`icu_properties_data`, and `icu_provider` 2.2.0 each declare Rust **1.86**.
+The offline
+`intel-compliance` graph remains its seven-crate `async-trait`/`tokio` graph
+and contains no ICU edge. A sandboxed metadata attempt that could not download
+platform packages was a network non-result, not evidence about the graph.
+
+G5 classified, without changing any trigger, all **28** governed rows as
+**21 event-shaped / 5 authorization-shaped / 2 self-discharging**. The four
+Architecture rows are event-shaped. The two self-discharging rows are the
+explicit Rust 1.86 net execution and historical `v0.8.0`/`v0.10.2`
+publication, both assigned work in this cycle. The authorization-shaped rows
+are EDGAR extension mapping, the first recurring scheduled SEC run, admission
+of a third configured publisher, permission to change the public version
+literal in `app.py`, and release-classification adjudication. Every remaining
+deferred row is event-shaped; a row that also names authorization remains
+event-shaped when an external outage, runtime topology, publisher, or other
+event is independently necessary. This taxonomy describes trigger shape; it
+does not claim the work or external event occurred.
+
+G6 measured `r10_report` at **local_jobs=20, local_checks=24,
+blocking_jobs=6, hosted_checks=23**, with 45 declared exemptions and no
+finding. Step 5's two versioned net lanes will move only `local_jobs` from 20
+to 22 and `blocking_jobs` from 6 to 8; they exercise an existing canonical net
+check, so neither unique-check count moves. G7's manifest/lockfile trace
+therefore refutes the dependency-gate prose that says ICU is presently in the
+offline graph through `intel-compliance`; it is a rejected-dependency
+counterfactual, while the real edge is net-only through `intel-ingest`.
+
+All four Architecture rows and all 24 active deferral rows now carry dated
+v0.35 measurements, with trigger text unchanged. Version checking derived
+0.17.1 with **22** offline-MSRV and **3** release-version current
+restatements. The unchanged **192,042-byte / 332-pin** manifest passed schema
+validation and two complete artifact checks in **0.11 s / 0.10 s real**. Clean
+constrained Python 3.11.4 and 3.12.13 lanes each collected/passed **352**,
+failed **0**, skipped **0**, and emitted the same one accepted warning;
+`tools/test_population.py` derived `collected=352`, `equivalent=true`, and
+`equivalent_passed=352`. The initial sandboxed 3.11 lane failed only on denied
+loopback/`ps` access and the then-stale observations, so it is recorded as an
+environment/pre-refresh non-result. No dependency declaration or constraint
+changed.
+
+With the Step 1 checkbox deliberately still open, the real `./run ci-local`
+entry point passed all **20/20** jobs: version and cycle consistency, checklist
+audit **268 / 3 / 268 / 268**, all **12 rules / 68 controls**, deferred
+re-derivation, Python-floor compile, ShellCheck, warning-denied current/net/MSRV
+Rust lanes, clippy, rustfmt, constrained Python 3.11.4 **352/352**, embedded
+golden **11/11**, all pins and both databases, persisted fingerprints, and the
+activation progress record. No gate was waived or interpreted from a partial
+runner. The mandatory standalone post-task golden then passed byte-identical
+**11/11**, delta **0**.
 
 **v0.34 R-CLOSE — operator-selected no-release closure (measured
 2026-08-02).** The operator explicitly selected `no-release`. The measured

@@ -13,6 +13,9 @@ The unchanged `STATE.md` and `config/protected-artifacts.json` boundaries are
 restored below. The checker, either boundary value, and every trigger remain
 unchanged.
 
+**Step 1 — entering state reconstructed; G1–G7 settled and all governed
+observations refreshed — 2026-08-02.**
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -358,37 +361,37 @@ governed.
 
 ## Deferred means deferred
 
-Every trigger is carried **unchanged**. The observation column below still names
-**v0.34**; that is the expected activation state described above. **E0 rewrites
-every cell with a measured v0.35 observation and the literal active cycle name.
-No trigger column is edited to match what happened.**
+Every trigger is carried **unchanged**. At activation the observation column
+still named **v0.34**, as expected above. **E0 has now rewritten every cell with
+a measured v0.35 observation and the literal active cycle name. No trigger
+column was edited to match what happened.**
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.35 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.34 · 2026-08-02 — no harvester started, no publisher request; trigger did not fire | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.34 · 2026-08-02 — no publisher request, outage exercise, or authorization; trigger did not fire | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.34 · 2026-08-02 — scope forbade the net request path and no live 304 was observed; trigger did not fire | none — the gap stays recorded |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.34 · 2026-08-02 — production source remained forbidden and no connector review occurred; trigger did not fire | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.34 · 2026-08-02 — fixture/test runtimes only; trigger did not fire | none — complete, do not re-exercise |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.34 · 2026-08-02 — no scheduler or service ran and no authorization was supplied; trigger did not fire | none — the 600-second clock still has never issued a request |
-| Postgres / pgvector / multi-host seam | unchanged | v0.34 · 2026-08-02 — no topology, dependency, schema, or production-source path changed | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.34 · 2026-08-02 — none appeared; trigger did not fire | none |
-| L2 forced-command wrapper | an operator server session | v0.34 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.34 · 2026-08-02 — registered 12-rule / 68-control vocabulary passed and no new spelling appeared; trigger did not fire | none |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.34 · 2026-08-02 — no executable Rust-1.86 lane was added; trigger did not fire | **Step 5 — this cycle is that scoped cycle; the trigger is self-discharging and G5 records that separately** |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.34 · 2026-08-02 — neither occurred; trigger did not fire | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.34 · 2026-08-02 — neither historical tag was present remotely and no historical ref moved; trigger did not fire | none — no historical ref touched; G5 classifies it |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.34 · 2026-08-02 — both tags remained absent and the flag remained unchanged; trigger did not fire | none — the flag stays |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.34 · 2026-08-02 — unchanged 192,042-byte / 332-pin manifest; latest timed pair 0.10 s / 0.09 s real; neither trigger fired | **Step 5 — the `run` pin changes; the manifest is `allow` for exactly one `pinned_files[]` entry** |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.34 · 2026-08-02 — no shell source or release value changed; trigger did not fire | none — `shell/intel_shell/**` remains forbidden |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.34 · 2026-08-02 — no such decision was supplied; trigger did not fire | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.34 · 2026-08-02 — State 236,944 / 453,741 bytes; governed export 2,527,180 / 3,000,000 at 6.14 cycles; neither fired | **Step 4 — re-place the availability in cycles on a post-retention basis** |
-| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.34 · 2026-08-02 — the Step 2 control-schema change fired the first clause; 27 / 68 existing values differed, all re-derived from emitted output; the count remains 41 below the controls protected | **Step 2 — remove the coupling; this row is expected to close** |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.34 · 2026-08-02 — v0.34 still matched `v0.<n>`; trigger did not fire | none — recorded, not acted on |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.34 · 2026-08-02 — lifecycle-only distance; v0.17.1's reset leaves the epoch count at zero and no fresh count started | **Step 7 — restate the epoch count under the v0.32 reset rule** |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.34 · 2026-08-02 — contextual floor predicates found no unregistered live current restatement; trigger did not fire | **Step 5 — the new lanes add Rust-floor literals; measure membership before and after** |
-| **Retention arithmetic fallback** | the `retained_cycle_paths=None` branch produces an answer that differs from the tracked retained set in any construction a control or test relies on | v0.34 · 2026-08-02 — production supplied the Git-derived set while synthetic fallback divergence remained possible; trigger did not fire | **Step 3 — the trigger as written is already satisfied; correct the criterion, do not edit the dated cell** |
-| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.34 · 2026-08-02 — the general checker retained deliberate optionality and v0.34 separately recorded its required audit field | none — the v0.32 ruling stands; **this runbook separately requires its own at Step 7** |
+| T7 robots single-flight | a second concurrent harvester | v0.35 · 2026-08-02 — Step 1 started no harvester and made no publisher request; trigger did not fire | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.35 · 2026-08-02 — Step 1 made no publisher request, observed no outage, and received no authorization; trigger did not fire | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.35 · 2026-08-02 — production net request source remains forbidden and no live 304 was observed; trigger did not fire | none — the gap stays recorded |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.35 · 2026-08-02 — production ingest source remains forbidden and no connector review occurred; trigger did not fire | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.35 · 2026-08-02 — Step 1 used repository checks and fixture/test runtimes only; no further origin or concurrency appeared | none — complete, do not re-exercise |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.35 · 2026-08-02 — no scheduler or service ran and no bounded-window authorization was supplied; trigger did not fire | none — the 600-second clock still has never issued a request |
+| Postgres / pgvector / multi-host seam | unchanged | v0.35 · 2026-08-02 — no topology, dependency, schema, or production-source path changed | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
+| L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — the real self-test passed 12 rules / 68 controls and no new spelling appeared; trigger did not fire | none |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — Step 1 confirmed the lane is not present yet; this self-discharging trigger remains assigned to Step 5 | **Step 5 — this cycle is that scoped cycle; the trigger is self-discharging and G5 records that separately** |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.35 · 2026-08-02 — unchanged 192,042-byte / 332-pin manifest; Step 1's complete timed pair was 0.11 s / 0.10 s real; neither trigger fired | **Step 5 — the `run` pin changes; the manifest is `allow` for exactly one `pinned_files[]` entry** |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.35 · 2026-08-02 — shell source remains forbidden and no release value changed; trigger did not fire | none — `shell/intel_shell/**` remains forbidden |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.35 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.35 · 2026-08-02 — Step 1 measured State at 243,402 / 453,741 bytes and exact delivered v0.34 at 2,559,695 / 3,000,000 export bytes; neither trigger fired and Step 4 owns the post-retention projection | **Step 4 — re-place the availability in cycles on a post-retention basis** |
+| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.35 · 2026-08-02 — Step 1 changed no control schema; all 68 controls retain absolute line fields, 67 mutant target lines are unique, and R1/1 requires a unique four-line anchor. Neither trigger clause fired yet | **Step 2 — remove the coupling; this row is expected to close** |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.35 · 2026-08-02 — v0.35 still matches `v0.<n>`; trigger did not fire | none — recorded, not acted on |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.35 · 2026-08-02 — the activation distance is lifecycle configuration and records only, with no runtime-behaviour or public-surface change; v0.17.1's reset leaves the epoch count at zero | **Step 7 — restate the epoch count under the v0.32 reset rule** |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.35 · 2026-08-02 — `version-check` reported 22 offline-MSRV and 3 release-version current restatements with no unregistered current floor statement; trigger did not fire | **Step 5 — the new lanes add Rust-floor literals; measure membership before and after** |
+| **Retention arithmetic fallback** | the `retained_cycle_paths=None` branch produces an answer that differs from the tracked retained set in any construction a control or test relies on | v0.35 · 2026-08-02 — Step 1 executed the existing `retention-skipped` control and confirmed its fallback differs from the tracked set; the trigger as written is satisfied and Step 3 owns the forward criterion correction | **Step 3 — the trigger as written is already satisfied; correct the criterion, do not edit the dated cell** |
+| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.35 · 2026-08-02 — v0.34 carries its required audit field and v0.35 remains open; the general optionality ruling is unchanged | none — the v0.32 ruling stands; **this runbook separately requires its own at Step 7** |
 
 ---
 
@@ -749,7 +752,7 @@ governs any future admission.
 
 - [x] ACTIVATE — runbook committed, declaration moved to v0.35, progress
       skeleton created, retention pattern advanced to `3[0-3]`
-- [ ] Step 1 · E0
+- [x] Step 1 · E0
 - [ ] Step 2 · ANCHOR
 - [ ] Step 3 · ONE-RETENTION
 - [ ] Step 4 · POST-LEVER BASIS
