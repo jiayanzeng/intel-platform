@@ -106,6 +106,24 @@ was accepted, and the governed export, release-grade population comparison,
 protected timing record, and governed field were not measured. The mandatory
 local record gates and standalone golden passed; Step 6 stays unchecked.
 
+**r9 — 2026-08-03 — Step 6 verifier diagnosis selects classification (a).**
+With the same current `gh` 2.96.0 on the same host, the previously authenticated
+v0.34 seven-bundle set now failed **7/7** with the same complete 45-byte stderr
+as a current representative: `Error: verifying with issuer "sigstore.dev"`.
+The exact historical and current signer-workflow, signer/source digest, and
+source-ref arguments each match their decoded certificate claims; the intended
+workflow-byte SHA-256 change to
+`4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`
+is not a signer-digest input. TUF roots, timestamps, and the GitHub snapshot are
+unexpired, and `gh attestation trusted-root --verify-only` exits zero. This is
+classification **(a), a verifier/environment fault with content sound but the
+chain unvalidatable on this host**, not repository argument derivation or a
+run-specific signing-side fault. The hosted property remains separately proven:
+9/9 identities passed and executed receipt assertions establish 1.78.0 /
+1.86.0 / 1.85.0. No bundle is admitted as release-grade; Step 6 stays
+unchecked, no hosted retry or ref mutation occurred, and Step 7 remains
+unentered.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else

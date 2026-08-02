@@ -245,6 +245,56 @@ candidates, kept `main` and peeled `v0.17.1` at
 **30754728135**, and **30757027882** and their refs are immutable non-results.
 No receipt or bundle from any of them is release-grade evidence.
 
+**v0.35 Step 6 attestation-verifier diagnosis — classification (a), verifier /
+environment fault (measured 2026-08-03).** The decisive same-host control used
+the currently installed `gh version 2.96.0 (2026-07-02)` to reverify the known-
+good v0.34 **7-receipt / 7-bundle** set at authenticated candidate
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262` and ref
+`refs/heads/codex/v0.34-evidence-1117dc6`. All seven now exit **1**. A
+representative historical bundle's complete stderr is the same **45 bytes** as
+the current run's representative `msrv` bundle:
+
+```
+Error: verifying with issuer "sigstore.dev"
+```
+
+Both invocations passed `.github/workflows/ci.yml` as `--signer-workflow`.
+For v0.34, `--signer-digest` and `--source-digest` were
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262` and `--source-ref` was
+`refs/heads/codex/v0.34-evidence-1117dc6`; for v0.35 they were respectively
+`8fae40e78afee6df80133f89bbbac4a074179ff5`, the same candidate digest, and
+`refs/heads/codex/v0.35-evidence-8fae40e`. Direct certificate decoding showed
+that each set's signer workflow URI, signer digest, source digest, source ref,
+repository, and GitHub-hosted runner claim equal the arguments supplied. The
+workflow-byte change is intended: v0.34 was **26,967 bytes** / SHA-256
+`5a7160f15a9eaa57daa9cc8ce666c1a1c2b8cc39728ea2308474e0d66f2b6791`,
+whereas the v0.35 candidate is **39,177 bytes** / SHA-256
+`4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+`--signer-digest` correctly denotes the workflow's commit digest, not the
+workflow file's SHA-256; no stale or wrongly derived verifier argument was
+found.
+
+The trust-root control also excludes a stale or expired TUF cache. No Sigstore
+TUF override or no-cache environment variable is set;
+`gh attestation trusted-root --verify-only` exited **0** with empty stderr.
+The refreshed public-good root v15 expires 2026-11-20 and timestamp v744 expires
+2026-08-08; the GitHub root v9 expires 2027-01-28, timestamp v922 expires
+2026-08-08, and snapshot v75 expires 2026-08-11. All were current at the
+2026-08-03 measurement. The original v0.34 successful record did not capture
+its then-running `gh --version`, so no historical binary-version claim is
+invented; both decisive rechecks used the same current executable.
+
+The historical set's failure selects **(a) verifier/environment fault —
+evidence content sound, chain unvalidatable on this host**. It rules out **(b)**
+repository argument derivation and **(c)** a signing-side fault specific to run
+30757027882. The measured property is proven separately: all **9/9** blocking
+identities passed, and executed receipt assertions established
+`msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+`net-msrv-1-85=1.85.0`. Only the attestation chain remains unvalidated. That
+separation does not admit any receipt or bundle as release-grade evidence:
+Step 6 remains unchecked, run **30757027882** and its ref remain immutable, no
+hosted retry or ref mutation occurred, and Step 7 was not entered.
+
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only
 completion claim. Authorized workflow-dispatch run **30746841903**, attempt
