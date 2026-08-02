@@ -38,6 +38,30 @@ local explicit `rustup run 1.85.0 cargo` construction. This records the
 decision-gate clause 3 finding without changing the gate, lane, or checker.
 Step 5 is unboxed and blocked; the created evidence ref is not reusable.
 
+**r4 — 2026-08-02 — Step 5 corrective amendment: hosted floor lanes must select
+and prove their toolchain.** r3 recorded that `rust-toolchain.toml` overrides
+the toolchain action's default at unqualified `cargo` invocations. Reviewer
+re-measurement of the tracked workflow finds the same defect in **three** jobs,
+not one: `net-msrv-1-85` (failed, diagnosed), `net-msrv-1-86` (passed on 1.91;
+its green is void), and `msrv` (passed on 1.91; the hosted 1.78 offline-floor
+attestation may be void). The operator authorizes Step 5a to select the
+toolchain explicitly in every affected hosted job, to make each floor lane
+assert its own effective toolchain, and to strengthen R10 so an unqualified
+`cargo` invocation under a shadowed toolchain input is a finding rather than a
+parity match. **No decision gate is weakened, no lane is deleted, no exemption
+is added, and the failed run and its evidence ref remain immutable
+non-results.** Hosted re-measurement requires a new evidence ref under separate
+exact authorization.
+
+Step 5A — corrective contract added; clause 4 measurement gate recorded — 2026-08-02
+
+**r5 — 2026-08-02 — Step 5A same-commit criterion correction.** The first real
+`cycle-check` after integrating the operator-supplied Step 5A contract rejected
+A9's stored `3 / 22 / 3` value from Step 5. A later step may not carry an
+earlier measured quantity as its expected result. A9 now requires the before
+and after populations to be derived and compared at their own trees; the
+historical Step 5 measurement is unchanged.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -400,7 +424,7 @@ column was edited to match what happened.**
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.35 · 2026-08-02 — no third-party shell or replacement-invariance claim appeared; trigger did not fire | none |
 | L2 forced-command wrapper | an operator server session | v0.35 · 2026-08-02 — no model-profile command or server session occurred; trigger did not fire | none — remains scheduled |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.35 · 2026-08-02 — the real self-test passed 12 rules / 68 controls and no new spelling appeared; trigger did not fire | none |
-| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — local explicit 1.86/1.85 measurements produced the expected pass/refutation, but hosted run 30746841903 proved the named 1.85 job ran the repository's 1.91 override. R10 classified a syntactic counterpart that was not an executed toolchain counterpart; the trigger is not discharged | **Step 5 — BLOCKED at decision-gate clause 3; do not change the lane or checker without operator direction** |
+| **`--features net` Rust 1.86 execution** | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.35 · 2026-08-02 — local explicit 1.86/1.85 measurements produced the expected pass/refutation. Real hosted run 30746841903 then proved all three non-default floor jobs used the repository's 1.91 override: the named 1.86 green is void, the named 1.85 failure is a non-result for the floor, and the `msrv` job did not execute 1.78. Step 5A clause 4 requires operator adjudication before classification or correction; the trigger is not discharged | **Step 5A — BLOCKED at decision-gate clause 4; no lane, control, policy, or historical classification changes before operator adjudication** |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.35 · 2026-08-02 — neither a third-publisher review nor admission decision occurred; trigger did not fire | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.35 · 2026-08-02 — direct remote inspection found neither historical tag and no historical ref moved; the self-discharging trigger did not fire | none — no historical ref touched; G5 classifies it |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.35 · 2026-08-02 — both tags remain absent and the flag remains unchanged; trigger did not fire | none — the flag stays |
@@ -662,6 +686,115 @@ correct the dependency gate that misplaces its cause, and re-pin `run`.
 
 ---
 
+## Step 5A · NET-FLOOR-CORRECTION 🤖
+
+**Depends on:** the r3 blocker record. Step 5 stays unboxed until Step 5a's
+acceptance criteria all pass.
+
+**Gate disposition (2026-08-02): BLOCKED at clause 4 before implementation or
+classification.** The real `msrv` job in run `30746841903` installed/defaulted
+1.78, reported that 1.91 remained active because of `rust-toolchain.toml`, and
+ran unqualified workspace cargo successfully. The same measurement voids the
+named 1.86 green and confirms the named 1.85 job also ran 1.91. Amendment r4 is
+appended above; no corrective lane, proof, control, pin, or policy edit was
+implemented. Operator adjudication of the measured hosted-1.78 evidence history
+is required before Step 5a may resume.
+
+**Objective.** Make every hosted floor lane execute, and prove it executed, the
+toolchain it names; make R10 unable to canonicalize two different effective
+toolchains as counterparts.
+
+**Decision gate — four clauses, any one stops the step.**
+
+1. **If a corrected lane's result contradicts the local measurement, the finding
+   is the claim, not the lane.** Record the measured floor and stop.
+2. **A nonzero exit is not a refutation unless its captured output names a
+   declared `rust-version`.** A lockfile-format rejection, registry or network
+   error, or unrelated compile error is a **non-result** (HC12's exact lesson:
+   the 1.75 failure surfaced as `failed to download replaced source registry
+   'crates-io'`).
+3. **If the strengthened R10 cannot express the property**, stop and record it as
+   an author-side unsatisfiable requirement rather than narrowing the property to
+   what the current canonicalization happens to support.
+4. **If the `msrv` measurement shows the hosted 1.78 lane has been running 1.91**,
+   record the measurement and **stop before classifying it.** Whether any
+   published record is thereby false is an operator adjudication, not an agent's.
+
+**Acceptance criteria.**
+
+- **A1 — explicit selection in all three jobs.** `msrv`, `net-msrv-1-86`, and
+  `net-msrv-1-85` select their toolchain at a precedence level above
+  `rust-toolchain.toml`. Prefer `rustup run <ver> cargo …`, matching `run`'s
+  local lanes in the part that carries the semantics. If `cargo +<ver>` or
+  `RUSTUP_TOOLCHAIN` is chosen instead, state why and make R10 canonicalize the
+  chosen spelling.
+- **A2 — every floor lane proves its own toolchain.** Each affected job and each
+  corresponding `run` lane emits the effective `cargo -V` / `rustc -vV` and
+  **fails** if the reported version does not match the declared one. This is the
+  criterion my Step 5 lacked: the lane's premise becomes executable instead of
+  assumed. **Parity note:** adding this to hosted steps without adding it locally
+  will produce an R10 finding, so `run` changes and its pin changes with it.
+- **A3 — R10 carries the effective toolchain in the check identity.** A cargo
+  check id includes the selected toolchain (`default` when none is selected), so
+  a 1.85 construction and a 1.86 construction cannot match. Additionally, an
+  unqualified cargo invocation in a job whose declared `toolchain:` input differs
+  from the tracked `rust-toolchain.toml` channel is a **finding**, named as such —
+  not an exemption, not a match.
+- **A4 — three planted failures, each executed.** (i) Revert one hosted step to
+  bare `cargo` under a non-default toolchain input; R10 must emit the shadowed-
+  toolchain finding. (ii) Plant a local/hosted pair whose explicit toolchains
+  differ (1.85 vs 1.86); they must no longer canonicalize as counterparts —
+  **this is the actual bug and it must be the actual test.** (iii) Plant a lane
+  whose `cargo -V` assertion is removed; A2's guard must fail. Capture each
+  emitted text verbatim. Register whichever of these belong in
+  `config/invariant-rules.json` with a reconstructible `fail_before`, under
+  Step 2's anchor schema — **no absolute line field may be reintroduced.**
+- **A5 — the `msrv` measurement.** Run the corrected `msrv` job and report the
+  effective toolchain before and after correction. State plainly whether the
+  hosted 1.78 offline floor had been executing. Do not edit `STATE.md`'s v0.10/G2
+  line; record the new measurement forward and stop for the operator.
+- **A6 — the 1.86 lane is re-measured, not re-asserted.** Its prior green is
+  recorded as a **non-result** in the same entry that records the 1.85 failure.
+  Both lanes report their effective toolchain.
+- **A7 — protected bytes.** Exactly the existing `run` pin may change, and only
+  if `run` changes. `tools/model_profiles.py`, both `artifacts[]` entries, every
+  `admission` record, and the pin count **332** are byte-identical at close. Run
+  `python3 tools/evidence_artifacts.py validate` and `./run verify-artifacts`
+  before proposing the change. If `run` does not change, assert its pin is
+  byte-identical rather than silently omitting the check.
+- **A8 — topology unchanged.** The hosted identity set stays at **9**; Step 6's
+  9-receipt / 9-bundle expectation is unchanged. If it moves, every derived
+  assertion moves with it and each is named.
+- **A9 — `version-check` before and after**, with executable-pin and
+  current-restatement populations derived and stated at each tree. The before
+  and after populations must be equal unless Step 5A deliberately changes a
+  version authority or its classification. The new `rustup run` lines are
+  package-scoped and should not match the offline `--workspace --locked`
+  authority patterns. **Measure it; if they match, the fix belongs to the
+  pattern, not to the lane's spelling.**
+- **A10 — `AGENTS.md` §4** gains the precedence rule beside the command block:
+  a floor lane must select its toolchain above `rust-toolchain.toml`, and an
+  action `toolchain:` input does not qualify.
+- **A11 — the failed run is preserved as a non-result.** Run `30746841903` is
+  recorded as a measured failure. Evidence ref
+  `codex/v0.35-evidence-d33c251` is **not** reused, moved, forced, or deleted.
+  No receipt or bundle from that run is accepted as release-grade evidence.
+- **A12 — gates.** Full `./run ci-local` passes at the derived job total
+  (report it from `ci_local_job_count`, derived, not typed); checklist four
+  figures stated; both Python lanes through `tools/test_population.py`; golden
+  **11/11**, delta **0**, on the mandatory standalone post-task run.
+
+**Scope.** No scope-table change is required. `.github/workflows/ci.yml`, `run`,
+`tools/invariant_scan.py`, `config/invariant-rules.json`, `shell/tests/**`,
+`AGENTS.md`, and `config/protected-artifacts.json` are already `allow` for
+v0.35.
+
+**Standing prohibitions carry unchanged**, and one is added: **no decision gate,
+lane, exemption, or R10 classification may be relaxed to make the corrected run
+pass.** If the corrected lane cannot pass honestly, that is the finding.
+
+---
+
 ## Step 6 · RE-MEASURE — Authenticate the exact candidate 🤖
 
 **Depends on:** Steps 1–5 complete and boxed.
@@ -785,7 +918,8 @@ governs any future admission.
 - [x] Step 3 · ONE-RETENTION
 - [x] Step 4 · POST-LEVER BASIS
 - [ ] Step 5 · NET-FLOOR — BLOCKED at decision-gate clause 3
-- [ ] Step 6 · RE-MEASURE — ineligible while Step 5 is blocked
+- [ ] Step 5A · NET-FLOOR-CORRECTION — BLOCKED at decision-gate clause 4
+- [ ] Step 6 · RE-MEASURE — ineligible while Steps 5/5a are blocked
 - [ ] Step 7 · R-CLOSE
 
 ---

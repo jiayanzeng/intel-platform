@@ -1,6 +1,35 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 5 NET-FLOOR is BLOCKED at decision-gate clause 3: hosted run 30746841903 proved the named 1.85 job actually used the repository's Rust 1.91 override, so R10 classified a syntactic counterpart that was not an executed toolchain counterpart.** Local CI still derives **22 jobs / 24 checks** and hosted CI **8 blocking jobs / 23 checks** with no residual exemption, but the candidate run passed only **8/9** blocking identities and is not release-grade evidence. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. The newly created evidence ref `codex/v0.35-evidence-d33c251` remains fixed at exact failed-evidence candidate `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`; it will not be reused or moved. The latest complete local entry point remains **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **358/358**, and embedded golden **11/11**. Exact-candidate clean Python 3.11.4 and 3.12.13 populations each passed **358/358**, and the post-finding standalone golden passed **11/11**, delta **0**. No publisher request, scheduler, service, or model-profile command ran; no production source, dependency resolution, public response, value domain, release value, `main`, or tag changed. The only protected-manifest movement remains the existing `run` pin.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.35 Step 5a NET-FLOOR-CORRECTION is BLOCKED at decision-gate clause 4: real hosted run 30746841903 proves the `msrv` job installed/defaulted 1.78 but executed its unqualified workspace check and test under the repository's Rust 1.91 override.** The same run proves the named 1.86 success green is void because it also executed 1.91, while the named 1.85 failure exposed the same override. This is a measurement of evidence, not a classification of the 1.78 floor or any published record; the existing v0.10/G2 sentence is unchanged pending operator adjudication. Local CI still derives **22 jobs / 24 checks** and hosted CI **8 blocking jobs / 23 checks** with no residual exemption, but the candidate run passed only **8/9** blocking identities and is not release-grade evidence. The registered suite remains **12 rules / 69 controls**, with exactly **0** hand-typed absolute finding-line fields. Published v0.17.1 remains current at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, whose immediate parent is release commit `7a621e39a069a1ef26438e841e7bb1ca2f34165b`; annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` remains Git type `tag`. Evidence ref `codex/v0.35-evidence-d33c251` remains fixed at exact failed-evidence candidate `d33c251d477aa4b1ee6b5b2ebd531b1fda428e99`; it will not be reused or moved. The latest complete local entry point remains **22/22**, with zero Rust warnings, checklist **268 / 3 / 268 / 268**, constrained Python 3.11.4 **358/358**, and embedded golden **11/11**. Exact-candidate clean Python 3.11.4 and 3.12.13 populations each passed **358/358**; the Step 5a gate-record golden passed **11/11**, delta **0**. No corrective lane, R10, exemption, `AGENTS.md`, protected byte, production source, dependency resolution, public response, value domain, release value, remote ref, hosted run, publisher request, scheduler, service, or model-profile command changed under Step 5a.
+
+**v0.35 Step 5a pre-implementation MSRV measurement gate (measured
+2026-08-02).** The operator-supplied r4 prompt required all three affected
+jobs to be measured at the real entry point before implementation. Existing
+workflow-dispatch run **30746841903**, attempt **1**, provides that measurement:
+
+- `msrv` declared action input **1.78**. The action installed it and set it as
+  the rustup default, then logged that `1.91-x86_64-unknown-linux-gnu` was
+  `currently in use (overridden by .../rust-toolchain.toml)`. The job invoked
+  bare `cargo check --workspace --locked` and bare `cargo test --workspace
+  --locked`; both completed successfully under the active 1.91 override. The
+  hosted 1.78 floor lane therefore did not execute 1.78 in this run.
+- `net-msrv-1-86` declared action input **1.86.0**, emitted the same active-1.91
+  override note, invoked bare package-scoped cargo, and passed. Its green is a
+  **non-result** for the 1.86 floor.
+- `net-msrv-1-85` declared action input **1.85.0**, emitted the same active-1.91
+  override note, invoked bare package-scoped cargo, and compiled successfully;
+  its wrapper then failed because it expected a declared-MSRV refusal. It is a
+  measured failed lane and a **non-result** for the 1.85 floor.
+
+This fires Step 5a decision-gate clause 4. Work stopped before classification
+or correction. No inference is made here about whether a published record is
+false, no retraction is proposed, and the existing `STATE.md` v0.10/G2
+hosted-1.78 sentence is byte-unchanged. The locally explicit Rust 1.78 lane
+remains valid local evidence and is not falsified by this hosted measurement.
+Amendment r4 is recorded in the active runbook, but no selection, proof, R10,
+planted-control, pin, or `AGENTS.md` implementation is permitted until the
+operator adjudicates the measured 1.78 evidence history. Step 5 stays unboxed;
+Step 6 and Step 7 remain ineligible and unauthorized.
 
 **v0.35 NET-FLOOR — blocked hosted toolchain counterpart (measured
 2026-08-02).** This is a forward correction to the earlier local-only
