@@ -408,3 +408,110 @@ Entries are append-only; corrections are new dated entries.
   explicitly authorized fresh evidence ref.
 - golden-E2E delta: **0**. Golden passed byte-identical **11/11** locally on the
   exact candidate, hosted, and at the mandatory standalone post-record run.
+
+### 2026-08-02 · R-CLOSE — operator-selected no-release closure
+
+- owner: Codex
+- commit: 6a19d31dd00143fc85a5e6c157dceb90ce40e946
+- result: PASS. Exact closing implementation commit
+  `6a19d31dd00143fc85a5e6c157dceb90ce40e946` records the operator's explicit
+  `no-release` choice, closes v0.34 on a dated reasoned record, binds the live
+  governed row to its last visible progress measurement, and preserves
+  published v0.17.1 unchanged.
+- disposition acceptance: PASS. The unpublished distance from published
+  v0.17.1 contains lifecycle controls, focused lifecycle tests, cycle and
+  architecture records, and the operator-selected two-cycle review-export
+  configuration. It contains no production source, workflow, dependency,
+  release value, measured runtime-behaviour difference, public route, response
+  shape, or serialized `/v1/*` value-domain change. This structural distance
+  is the reason for no-release; “nothing shipped” was not substituted for it.
+- publication acceptance: PASS. Final direct remote readback kept evidence ref
+  `codex/v0.34-evidence-1117dc6` at exact authenticated candidate
+  `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`, remote `main` and peeled
+  `v0.17.1` at published closing commit
+  `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object
+  `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. `version-check`
+  passed at 0.17.1 with **22** offline-MSRV and **3** release-version current
+  restatements; all eight release-authority paths and every version value are
+  unchanged from activation.
+- governed-export acceptance: PASS. The closing tree sees exact candidate
+  `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` at **2,527,180 bytes / 151
+  files / 2 retained cycles** as its last governed field, leaving **472,820
+  bytes / 15.76%** or **6.14 cycles** at the corrected latest-positive-
+  adjacent same-kind v0.31→v0.32 denominator of **77,014 bytes/cycle**. The
+  full governed series adds v0.33→v0.34 at **−65,261 bytes**. The entry point
+  reports its one-pair representativeness and structural-epoch bounds.
+- closing-export acceptance: PASS after one named environment non-result. The
+  first sandboxed exact-closing-tree project-root attempt failed registry DNS
+  and was not measured. The identical permitted run at closing commit
+  `6a19d31dd00143fc85a5e6c157dceb90ce40e946`, tree
+  `068cb1dc82fad65e68a4335593c28322d0671659`, exported **151 files /
+  2,552,372 bytes / 2 retained cycles**, excluded both protected byte classes,
+  and reported **100 derived / 7 required** paths. The **+25,192-byte**
+  difference from the closing-visible governed value is recorded only in the
+  non-governing cycle-ending audit field below.
+- artifact-boundary acceptance: PASS. Immediately before the closing record,
+  State measured **236,944 / 453,741 bytes**, leaving **216,797 bytes / 6.95
+  cycles** at its 31,177-byte same-kind denominator. The unchanged manifest
+  measured **192,042 / 1,048,576 bytes**, leaving **856,534 bytes / 1,323.85
+  cycles** at 647 bytes/cycle. The export at 6.14 cycles is the nearest
+  governed boundary. Two complete artifact checks took **0.10 s / 0.09 s
+  real**, matched **332 pins / 2 artifacts** plus both protected databases, and
+  left the State archive exactly **178,125 bytes** at SHA-256
+  `b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`
+  and the manifest at SHA-256
+  `a5d990462ba59a252c9228db2c4d4532670debbcb7422c8771ef68fc22a0dd2b`.
+- scope acceptance: PASS. Used declared allowances are
+  `tools/cycle_check.py`, `tools/invariant_scan.py`,
+  `config/invariant-rules.json`, `shell/tests/**`, `AGENTS.md`,
+  `ARCHITECTURE.md`, `tools/export_check.py`, and `repomix.config.json`;
+  `tools/version_check.py` is the sole unused allowance. Every release
+  authority and `forbid` path is unused. Standing status precedence accounts
+  for `STATE.md` and the active runbook/progress pair. In particular both
+  forbidden protected paths are byte-unchanged and no production, workflow,
+  dependency, closed-cycle, observation, or fixture path changed.
+- divergence acceptance: PASS. Published v0.17.1 reset the epoch count to
+  zero. The measured v0.34 distance contains no runtime-behaviour difference
+  and no public-surface change, so the count remains zero and no fresh count
+  starts.
+- reviewer/control acceptance: PASS. The single reviewer error remains in the
+  runbook header. Relative to activation, the registry remains **68 controls**
+  and **27 / 68** existing `expected_line` values differ; every value came from
+  emitted mutation output. G5's retained series is controls **58 → 61 → 68**,
+  shifted-existing expectations **36 → 12 → 25**, combined checker bytes
+  **192,695 → 208,356 → 243,494**, and ratios **62.07% → 19.67% → 36.76%**.
+  It is non-monotonic, supports no linear approach rate, and leaves the cycle
+  count 41 below the controls protected.
+- draft-control acceptance: PASS. The first real closing check rejected three
+  draft-shape defects: the no-release commit heading was not canonical, the
+  full annotated-tag-object hash was parsed as a purported commit, and the
+  governed row lacked exactly one canonical visible `export of **N bytes`
+  phrase. The final draft corrected all three without changing the checker;
+  `cycle-check` then passed `state=closed` and `governed_export=bound`.
+- pre-commit gate acceptance: PASS with the audit mapping necessarily absent.
+  All **19** independently executable `ci-local` jobs passed: version/cycle,
+  invariants **12 rules / 68 controls**, deferred evidence, Python floor,
+  ShellCheck, warning-denied current/net checks and tests, clippy/fmt, both Rust
+  1.78 locked lanes, shell, golden, artifacts, fingerprints, and the existing
+  progress record. Python 3.11.4 and 3.12.13 each passed **352/352** with the
+  same accepted warning. The sandboxed net and Python attempts were non-results
+  because local binds and `ps` were denied; the identical permission-complete
+  lanes supplied the passing results.
+- lifecycle acceptance: PASS. `cycle-check` reports `state=closed`, governed
+  export `bound-with-cycle-ending-audit`, both artifact boundaries `bound`, all
+  State anchors resolved, and **32** closed execution runbooks.
+  `checklist-audit` passes **268 checked / 3 retracted / 268 matched / 268
+  commits resolved** once this real closing-commit entry is present.
+- complete-entry-point acceptance: PASS. The audit-child `ci-local` run passed
+  **20/20**, including warning-denied offline and net Rust lanes, locked Rust
+  1.78, clippy/rustfmt, invariant self-test **12/68**, shell **352/352**,
+  embedded golden **11/11**, every protected artifact, and append-only progress
+  validation.
+- prohibited-action acceptance: PASS. Step 7 issued no publisher request, ran
+  no scheduler, service, or model-profile command, wrote no protected byte,
+  moved no ref, changed no version value, and edited no production, workflow,
+  dependency, closed-cycle, observation, or fixture path.
+- golden-E2E delta: **0**. The pre-record standalone run passed byte-identical
+  **11/11**; the complete entry point and mandatory post-record standalone run
+  each passed **11/11**.
+- cycle-ending review-export audit: closing_tree=`6a19d31dd00143fc85a5e6c157dceb90ce40e946`; bytes=`2552372`; audit_delta=`+25192`
