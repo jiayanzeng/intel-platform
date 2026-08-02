@@ -27,6 +27,8 @@ Step 5 — implemented the operator-selected two-cycle review-export retention l
 
 Step 6 — authenticated the exact candidate on a fresh operator-authorized evidence ref — 2026-08-02
 
+Step 7 — closed v0.34 on the operator-selected no-release disposition — 2026-08-02
+
 ---
 
 **One reviewer error, mine, recorded before anything else.**
@@ -230,8 +232,8 @@ happened.
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.34 · 2026-08-02 — Step 6 reverified the unchanged 192,042-byte / 332-pin manifest at exact authenticated candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`, locally matching every pin and both protected databases while hosted `core` passed schema validation; no registration occurred. The latest complete timed pair remains Step 1's 0.12 s / 0.10 s real, so neither trigger fired | none — the archive pin is registered and the manifest is `forbid` this cycle |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.34 · 2026-08-02 — no shell source or release value changed; trigger did not fire | none — `shell/intel_shell/**` is forbidden |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.34 · 2026-08-02 — no such operator decision was supplied; trigger did not fire | none — recorded, not acted on |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.34 · 2026-08-02 — Step 6 measured exact candidate State at 232,313 / 453,741 bytes, leaving 221,428 bytes or 7.10 cycles at the latest 31,177-byte same-kind growth. Its two-cycle export was 2,527,180 / 3,000,000 bytes, leaving 472,820 bytes or 6.07 cycles at the latest 77,862-byte post-retention steady denominator. The export remains nearer; neither trigger fired | Step 1 — G3 places the next archival availability in cycles |
-| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.34 · 2026-08-02 — Step 3's emitted-bound source path added no control and changed no control schema. Its first complete gate stopped on one stale existing location; exact R12 control-37 replay emitted line 2935, which was copied rather than offset-computed. The latest 1 is 67 below the unchanged 68 controls protected, so neither trigger clause fired. Step 2's earlier 27-value schema-change re-derivation remains preserved in its dated task and progress record | Step 3 — completed; the one shifted value came from emitted output |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.34 · 2026-08-02 — immediately before the closing record, State measured 236,944 / 453,741 bytes, leaving 216,797 bytes or 6.95 cycles at the latest 31,177-byte same-kind growth. The last governed field visible to the closing tree is the exact Step 6 candidate export at 2,527,180 / 3,000,000 bytes, leaving 472,820 bytes or 6.14 cycles at the corrected latest-positive-adjacent governed denominator of 77,014 bytes/cycle. The export is the nearest governed byte boundary; neither trigger fired | Step 1 — G3 places the next archival availability in cycles |
+| **Planted-control line numbers re-derived by hand** | a control-schema change, or a cycle in which the re-derived count exceeds the controls it protects | v0.34 · 2026-08-02 — the Step 2 control-schema change fired the first clause and its required mutation replay completed from emitted output. Across activation through the closing worktree, 27 / 68 existing `expected_line` values differ, no control was added or removed, and every changed value was re-derived from real emitted findings. The count remains 41 below the controls protected. G5's retained trend is controls 58 → 61 → 68, shifted-existing expectations 36 → 12 → 25, combined checker bytes 192,695 → 208,356 → 243,494, and ratios 62.07% → 19.67% → 36.76%; it is non-monotonic and supports no linear approach rate | Step 3 — completed; every shifted value came from emitted output |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.34 · 2026-08-02 — v0.34 still matched `v0.<n>`; trigger did not fire | none — recorded, not acted on |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.34 · 2026-08-02 — Step 6 classified exact authenticated candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` as lifecycle documentation, tests, controls, and retained-cycle configuration only, with no measured runtime or public-surface change; v0.17.1's publication reset still leaves the epoch count at zero and no fresh count started | Step 7 — restate the epoch count under the v0.32 reset rule |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.34 · 2026-08-02 — contextual floor predicates found no unregistered live current restatement; trigger did not fire | none — completed control remains active |
@@ -544,7 +546,7 @@ green gates, or by hosted evidence. Two outcomes, neither defaulted:
 **Done when** v0.34 is closed on a record that says what it did and what it
 deliberately did not.
 
-- [ ] **R-CLOSE**
+- [x] **R-CLOSE**
 
 ---
 
@@ -575,18 +577,18 @@ deliberately did not.
 
 ## Cycle checklist
 
-- [ ] Worktree clean at entry apart from this untracked runbook
-- [ ] `AGENTS.md` active-cycle declaration advanced to **v0.34**
-- [ ] `PROGRESS-v0.34.md` created and appended per step, after each
+- [x] Worktree clean at entry apart from this untracked runbook
+- [x] `AGENTS.md` active-cycle declaration advanced to **v0.34**
+- [x] `PROGRESS-v0.34.md` created and appended per step, after each
       implementation commit exists
-- [ ] Retention advanced; the activation rejection text recorded verbatim if the
+- [x] Retention advanced; the activation rejection text recorded verbatim if the
       stale-glob construction is exercised
-- [ ] All six gates settled with measured answers
-- [ ] Deferred table rewritten with v0.34 observations, **triggers unchanged**
-- [ ] Every trigger-bearing `ARCHITECTURE.md` row carries a v0.34 measurement
-- [ ] Nearest governed byte boundary restated with a dated measurement
-- [ ] Closing record + append-only audit child, per the tagged-close protocol
-- [ ] Cycle-ending review-export audit field present in the audit child
+- [x] All six gates settled with measured answers
+- [x] Deferred table rewritten with v0.34 observations, **triggers unchanged**
+- [x] Every trigger-bearing `ARCHITECTURE.md` row carries a v0.34 measurement
+- [x] Nearest governed byte boundary restated with a dated measurement
+- [x] Closing record + append-only audit child, per the tagged-close protocol
+- [x] Cycle-ending review-export audit field present in the audit child
 
 ---
 
@@ -645,3 +647,131 @@ assert.
 **One reviewer error is recorded in this file's header** rather than here,
 because a provenance note is where a reader looks last and an error is what they
 should see first.
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-02
+- **Release disposition:** no-release (as of 2026-08-02)
+
+The operator explicitly selected `no-release`. The measured distance from
+published v0.17.1 contains lifecycle controls, focused lifecycle tests, cycle
+and architecture records, and the operator-selected review-export retention
+configuration. It contains no production source, workflow, dependency,
+release value, measured runtime-behaviour difference, public route, response
+shape, or serialized `/v1/*` value-domain change. That intentionally
+structural distance is the reason for the disposition; the weaker statement
+“nothing shipped” is not substituted for it.
+
+Published v0.17.1 remains current. Final direct remote inspection resolved
+`refs/heads/main` and peeled `refs/tags/v0.17.1` to published closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, annotated tag object
+`14912f1…`, and evidence ref
+`refs/heads/codex/v0.34-evidence-1117dc6` to exact authenticated candidate
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. Every release-version authority
+still derives **0.17.1**; all eight declared release-authority paths are
+unchanged from activation. No tag, `main`, release ref, version source, or
+publication identity moved during close.
+
+The closing tree's governed review-export row equals the last governed field
+it can already see: candidate
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262` at **2,527,180 bytes / 151
+files / 2 retained cycles**, with both protected byte classes excluded. Its
+**472,820-byte / 15.76%** remainder is **6.14 cycles** on the corrected latest
+positive adjacent same-kind governed basis, v0.31→v0.32 at **77,014
+bytes/cycle**. The full series adds v0.33→v0.34 at **−65,261 bytes**; neither
+that retention-reclaim transition nor v0.32→v0.33's **−113,952-byte** archival
+transition is used as a fictional positive denominator. The checker reports
+that a single adjacent pair has no representativeness guarantee and cannot
+detect a basis predating a structural change. The closing tree does not
+project its own export; that real measurement belongs only in the distinct
+non-governing `cycle-ending review-export audit` field of the append-only audit
+child.
+
+Immediately before the closing record, `STATE.md` measured **236,944 /
+453,741 bytes**, leaving **216,797 bytes**, or **6.95 cycles** at its latest
+positive same-kind **31,177-byte/cycle** denominator. The manifest remained
+**192,042 / 1,048,576 bytes**, leaving **856,534 bytes**, or **1,323.85
+cycles** at its latest positive same-kind **647-byte/cycle** denominator.
+Therefore the governed export at **6.14 cycles** is the nearest byte boundary.
+Schema validation reported **2 artifacts / 332 pinned files**; two complete
+verifications took **0.10 s / 0.09 s real** and matched every pin plus both
+protected databases. The forbidden State archive remains byte-identical at
+**178,125 bytes**, SHA-256
+`b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`,
+and the forbidden manifest remains byte-identical at SHA-256
+`a5d990462ba59a252c9228db2c4d4532670debbcb7422c8771ef68fc22a0dd2b`.
+Neither boundary or timing trigger fired. Before the closing box was checked,
+`checklist-audit` passed **267 checked / 3 retracted / 267 matched / 267
+commits resolved**; it did not fall.
+
+Every declared permission is reconciled over activation commit
+`bb4257000cd6a752e807af9f48d0fe871e20d216` exclusive through R-CLOSE.
+Used `allow` paths are `tools/cycle_check.py`, `tools/invariant_scan.py`,
+`config/invariant-rules.json`, `shell/tests/**`, `AGENTS.md`,
+`ARCHITECTURE.md`, `tools/export_check.py`, and `repomix.config.json`. The
+unused `allow` path is `tools/version_check.py`. All eight
+`release_authority` paths are unused. Every `forbid` path is unused; standing
+precedence admits only `STATE.md` and this active runbook/progress pair. In
+particular `docs/state-archive/**`, `config/protected-artifacts.json`, every
+closed cycle document, `.github/workflows/**`, `run`,
+`tools/model_profiles.py`, `tools/evidence_artifacts.py`, every production
+source family, publisher/scheduler configuration, observation, fixture, and
+protected database byte is unchanged.
+
+Successful publication of v0.17.1 reset the published-release divergence
+count to zero at closing commit
+`f02379f03ccdfd1b019413234f2ad014d169fb04`. The measured v0.34 distance has
+no runtime-behaviour difference and no public-surface change, so the count
+remains zero and no fresh publication-epoch count starts. This is the latest
+dated v0.34 operator adjudication; the executable checker continues to enforce
+the record's shape, freshness, and cycle identity rather than pretend to
+classify runtime semantics.
+
+At activation and close the invariant registry carries **68 controls**: none
+was added or removed, and **27 existing `expected_line` values differ from
+activation**. Every shifted value was re-derived from real emitted mutation
+output; none was computed by offset. The cycle-wide **27 / 68** count remains
+41 below the controls protected. G5's retained trend beside that observation
+is controls **58 → 61 → 68**, shifted-existing expectations **36 → 12 → 25**,
+combined checker bytes **192,695 → 208,356 → 243,494**, and ratios **62.07% →
+19.67% → 36.76%**. The sequence is non-monotonic and supports no defensible
+linear approach rate. The single reviewer error remains classified and
+explained in this file's header; it is not repeated here as a product finding.
+
+Intentionally unreleased implementation commits:
+
+1. Cycle activation:
+   `bb4257000cd6a752e807af9f48d0fe871e20d216`
+2. Activation audit record:
+   `5e91545da0dcce215a019ea4dea7c1415fd2d6f6`
+3. E0 implementation:
+   `a6fe72fd862d93ca3ae75103d73f759d5130e47d`
+4. E0 audit record:
+   `95d01095589c4f5de9d52cbcea263f873276e581`
+5. REGION-FLOOR implementation:
+   `02d8db86a2432222433cec29a1a51332911fc478`
+6. REGION-FLOOR audit record:
+   `ad3f5d5a697adcf735548a0444278dc9625d7986`
+7. BASIS-BOUND implementation:
+   `9b4f1da6e6723808d3f8a586443e7386a2dab96e`
+8. BASIS-BOUND audit record:
+   `f6545bfaa8f62f4e925c84d3e81596d4a3420406`
+9. BUDGET-DERIVE implementation:
+   `4db8f550b9425e73a50a28e49135d01686e7e7bf`
+10. BUDGET-DERIVE audit record:
+    `e8bf31f225f1cb977dd6a1ee45c6e062e62b96a4`
+11. BUDGET-LEVER implementation:
+    `638dc58b03606f02ecff18d290478bcc35df51fc`
+12. BUDGET-LEVER audit record and authenticated candidate:
+    `1117dc6db6ec0e55e8c8f078ca8059628f9f8262`
+13. RE-MEASURE implementation:
+    `be60e2c44fbb704554c882e5ebea38e67b53eb2a`
+14. RE-MEASURE audit record:
+    `318c026e9e3ca0baaf2fd54ba91d2d7109486c35`
+
+The R-CLOSE implementation tree and its required append-only audit child are
+also intentionally unreleased. A commit cannot truthfully contain its own
+hash; the audit child therefore names the closing implementation commit after
+it exists and records that tree's real export measurement.

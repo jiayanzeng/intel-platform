@@ -1,6 +1,104 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 Step 6 is green; exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` carries authenticated hosted evidence on fresh ref `codex/v0.34-evidence-1117dc6`, while published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Hosted workflow-dispatch run **30726156221**, attempt **1**, passed all seven executable jobs and hosted golden **11/11**; dependency drift took its declared report-only skip. The repository release-grade verifier consumed **7 receipts / 7 Sigstore bundles**, accepted **7**, rejected **0**, and bound every identity to the exact candidate and source ref. Exact-candidate local Python 3.11.4 and 3.12.13 each collected/passed **352**, failed **0**, and skipped **0**; each hosted lane collected **352**, passed **351**, and skipped the same named, reasoned `on_site` test. Both repository comparator runs derived `collected=352`, `equivalent=true`, and `equivalent_passed=352`. The most recent complete local entry point remains Step 5's **20/20** gate with checklist **265 / 3 / 265 / 265**, registered invariants **12 rules / 68 controls**, and zero Rust warnings; exact-candidate checklist with Step 6 still open passed **266 / 3 / 266 / 266**. All **332** pins and both protected databases matched; exact candidate export is **2,527,180 bytes / 151 files / 2 retained cycles**. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. No governed byte boundary, ceiling, production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, or publication ref changed through the candidate; the fresh evidence ref was the sole remote mutation.
+**As of:** 2026-08-02 · **Version:** v0.17.1 (core-shell) · **Status:** **v0.34 is closed on the operator-selected `no-release` disposition; exact candidate `1117dc6db6ec0e55e8c8f078ca8059628f9f8262` remains authenticated on fresh evidence ref `codex/v0.34-evidence-1117dc6`, while published v0.17.1 remains current.** The published release commit is `7a621e39a069a1ef26438e841e7bb1ca2f34165b`. Hosted workflow-dispatch run **30726156221**, attempt **1**, passed all seven executable jobs and hosted golden **11/11**; dependency drift took its declared report-only skip. The repository release-grade verifier consumed **7 receipts / 7 Sigstore bundles**, accepted **7**, rejected **0**, and bound every identity to the exact candidate and source ref. Exact-candidate local Python 3.11.4 and 3.12.13 each collected/passed **352**, failed **0**, and skipped **0**; each hosted lane collected **352**, passed **351**, and skipped the same named, reasoned `on_site` test. Both repository comparator runs derived `collected=352`, `equivalent=true`, and `equivalent_passed=352`. The most recent complete local entry point remains Step 5's **20/20** gate with registered invariants **12 rules / 68 controls** and zero Rust warnings; pre-close checklist passed **267 / 3 / 267 / 267**. All **332** pins and both protected databases matched in final paired checks of **0.10 s / 0.09 s real**; the closing-visible governed candidate export is **2,527,180 bytes / 151 files / 2 retained cycles**. Final remote readback kept the evidence ref exact, `main` and peeled `v0.17.1` at closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, and annotated tag object `14912f134e45277e2b4fd10b7f5bf8b4900ca20d` unchanged. The v0.34 distance is intentionally lifecycle-only: no governed byte boundary, ceiling, production source, workflow, dependency, runtime behavior, publisher request, scheduler, service, model-profile command, protected artifact byte, public response/value-domain state, publication version, or publication ref changed; the fresh evidence ref was the sole remote mutation.
+
+**v0.34 R-CLOSE — operator-selected no-release closure (measured
+2026-08-02).** The operator explicitly selected `no-release`. The measured
+distance from published v0.17.1 contains lifecycle controls, focused lifecycle
+tests, cycle and architecture records, and the two-cycle review-export
+retention configuration selected in Step 5. It contains no production source,
+workflow, dependency, release value, measured runtime-behaviour difference,
+public route, response shape, or serialized `/v1/*` value-domain change. That
+structural distance is the reason for the disposition; “nothing shipped” is
+not substituted for it.
+
+Final direct remote inspection resolved `main` and peeled `v0.17.1` to
+published closing commit `f02379f03ccdfd1b019413234f2ad014d169fb04`, the
+annotated tag ref to object
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d`, and fresh evidence ref
+`codex/v0.34-evidence-1117dc6` to exact candidate
+`1117dc6db6ec0e55e8c8f078ca8059628f9f8262`. `version-check` derives 0.17.1
+from every authority with 22 offline-MSRV and 3 release-version current
+restatements. All eight declared release-authority paths are unchanged from
+activation. No tag, `main`, release ref, version source, or publication
+identity moved during close.
+
+The last governed field visible to the closing tree is the authenticated
+candidate at **2,527,180 bytes / 151 files / 2 retained cycles**, excluding
+both protected byte classes. Its **472,820-byte / 15.76%** remainder is **6.14
+cycles** on the corrected latest-positive-adjacent same-kind governed basis,
+v0.31→v0.32 at **77,014 bytes/cycle**. The full governed series is **2,576,273
+→ 2,629,379 (+53,106) → 2,706,393 (+77,014) → 2,592,441 (−113,952) →
+2,527,180 (−65,261)**. The two negative transitions are not used as fictional
+growth denominators, and the entry point states that its chosen single pair
+has no representativeness guarantee and may predate an undetectable structural
+change. The closing implementation tree's own export is reserved for the
+audit child's non-governing `cycle-ending review-export audit` field.
+
+Immediately before drafting the closing record, State measured **236,944 /
+453,741 bytes**, leaving **216,797 bytes / 6.95 cycles** at the latest positive
+same-kind **31,177-byte/cycle** denominator. The unchanged manifest measured
+**192,042 / 1,048,576 bytes**, leaving **856,534 bytes / 1,323.85 cycles** at
+its **647-byte/cycle** denominator. The governed export at **6.14 cycles** is
+therefore the nearest byte boundary. Manifest schema validation reported **2
+artifacts / 332 pinned files**; two complete checks took **0.10 s / 0.09 s
+real** and matched all pins plus both databases. The forbidden structural
+archive remains **178,125 bytes** at SHA-256
+`b9442f7bedf9024351ef0bafe0e6f7a4d58a0883e9c2f81bbbadebfb476d5886`;
+the forbidden manifest remains at SHA-256
+`a5d990462ba59a252c9228db2c4d4532670debbcb7422c8771ef68fc22a0dd2b`.
+Both are byte-unchanged from activation. Pre-close `checklist-audit` passed
+**267 checked / 3 retracted / 267 matched / 267 commits resolved**.
+
+Over activation commit `bb4257000cd6a752e807af9f48d0fe871e20d216`
+exclusive through the closing worktree, used declared allowances are
+`tools/cycle_check.py`, `tools/invariant_scan.py`,
+`config/invariant-rules.json`, `shell/tests/**`, `AGENTS.md`,
+`ARCHITECTURE.md`, `tools/export_check.py`, and `repomix.config.json`;
+`tools/version_check.py` is the sole unused allowance. Every release authority
+and `forbid` path is unused. Standing status precedence accounts for
+`STATE.md` and the active runbook/progress pair. The exact path diff confirms
+no closed-cycle, protected, production, workflow, dependency, publisher,
+scheduler, observation, or fixture path changed.
+
+The pre-commit closing matrix passed all **19** executable `ci-local` jobs that
+do not require the not-yet-possible R-CLOSE progress mapping: version and
+closed-cycle checks, registered invariants **12 rules / 68 controls** with all
+failure-capable self-tests, deferred-evidence re-derivation, Python floor
+compile, ShellCheck, warning-denied current workspace and net checks/tests,
+clippy, rustfmt, both Rust 1.78 locked lanes, shell, golden, protected
+artifacts, fingerprints, and the existing append-only progress record. The
+Python 3.11.4 and 3.12.13 acceptance lanes each reported **352 collected / 352
+passed / 0 failed / 0 skipped** and the same one accepted warning. Standalone
+golden passed byte-identical **11/11**, delta **0**. The sandboxed net lane and
+Python 3.11 lane were environment non-results: the former had one denied
+loopback bind, and the latter reported **344 passed / 8 failed** solely on
+denied loopback and `ps` access. Their identical permission-complete reruns are
+the passing results. The append-only audit child will add the real closing
+commit mapping and cycle-ending export measurement, then run the complete
+**20/20** entry point.
+
+The first closing-record draft was intentionally submitted to the real
+checker before acceptance. It rejected three record-shape defects: the heading
+did not contain the exact `Intentionally unreleased implementation commits:`
+token, a full annotated-tag-object hash was parsed as a purported no-release
+commit, and the governed row said `exported` rather than carrying exactly one
+visible `export of **N bytes` value. The final draft uses the canonical heading,
+abbreviates the non-commit tag object in the no-release record, and carries the
+required visible/machine values. The unchanged checker then passed with
+`state=closed` and `governed_export=bound`.
+
+Published v0.17.1 reset the divergence count to zero. The v0.34 closing
+distance contains no runtime-behaviour difference and no public-surface
+change, so the count remains zero and no fresh count starts. Across the cycle,
+the invariant registry remains **68 controls** and **27 / 68** existing
+`expected_line` values differ from activation; all were re-derived from real
+emitted output. G5's retained trend is controls **58 → 61 → 68**,
+shifted-existing expectations **36 → 12 → 25**, combined checker bytes
+**192,695 → 208,356 → 243,494**, and ratios **62.07% → 19.67% → 36.76%**.
+The non-monotonic series supports no defensible linear approach rate, and the
+cycle-wide count is 41 below the controls protected. The one reviewer error
+remains at the runbook header where readers encounter it first.
 
 **v0.34 RE-MEASURE — exact candidate authenticated on a fresh evidence ref
 (measured 2026-08-02).** The worktree was clean at exact candidate
