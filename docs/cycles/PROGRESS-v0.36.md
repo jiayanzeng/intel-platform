@@ -82,3 +82,26 @@ Entries are append-only; corrections are new dated entries.
   **11/11**.
 - amendment acceptance: PASS. The operator-supplied untracked amendment remains
   untouched.
+
+### 2026-08-03 · AMENDMENT-A1R2 — autonomy/lifecycle runbook correction
+
+- owner: Codex
+- runbook: `docs/cycles/TASKS-v0.36-EXECUTION.md`
+- commit: 6a3c108dd19378549a503c220c8917c7b34055ea
+- result: PASS. The amendment-only commit changes the active runbook, scope,
+  dependency gates, hypotheses, and amendment disclosures; it changes no
+  implementation, protected byte, closed-cycle document, tag, or remote ref.
+- author-side correction: PASS. Step 0's authority block now names no cycle
+  document; Step 1A owns truthful unpublished-local-close lifecycle semantics;
+  scope allows the exact remaining implementation surfaces without a winning
+  overlapping forbid; E0 now owns H1–H13 and exactly two untracked amendments.
+- disclosure acceptance: PASS. The runbook contains exactly one amendment
+  heading and dated entries for Steps 0, 1, 1A, and 7. Direct `cycle-check`
+  reports no undisclosed-amendment or declared-scope error.
+- interim lifecycle acceptance: EXPECTED PENDING. Direct `cycle-check` reports
+  exactly `publication post-push record required` for unpublished v0.17.2 and
+  no other defect, matching A1r2 §5. Step 1A, not this amendment commit,
+  discharges that truthful failure.
+- golden-E2E delta: **0**. The permission-complete command passed **11/11**.
+- amendment inputs: PASS. Both reviewer-supplied amendment files remain
+  untracked and untouched.

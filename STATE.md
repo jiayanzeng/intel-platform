@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 is active but AUTONOMY is blocked by two measured lifecycle-contract contradictions; every dependent step is stopped.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. After the unaccepted Step 0 experiment was restored, the registered suite passes **12 rules / 73 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 is active; A1r2 corrects the two author-side lifecycle contradictions and reopens AUTONOMY under an explicit interim verification path.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite remains at the last measured **12 rules / 73 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -49,6 +49,23 @@ artifacts / 332 pinned files**, and the post-restore golden pipeline passes
 **11/11** with zero delta. The operator-supplied amendment remains untracked
 and untouched. Because the runbook says everything requires Step 0 complete,
 E0 and Steps 2–7 were not started.
+
+**v0.36 A1r2 author-side correction (measured 2026-08-03).** Amendment
+application commit `6a3c108dd19378549a503c220c8917c7b34055ea` changes only the
+active runbook. It replaces the stale cycle-specific authority text, adds
+Step 1A's truthful unpublished-local-close lifecycle objective, removes the
+forbid-before-allow scope contradictions, records H11–H13, and gates every
+later step on Step 1A. The two amendment inputs remain untracked and untouched.
+
+The real post-amendment `cycle-check` now reports exactly the one expected
+interim defect: the absent v0.17.2 post-push record. It reports no authority
+literal, declared-scope, amendment-disclosure, trigger-freshness, retention, or
+artifact-boundary defect. This is the amendment's deliberate A4 state until
+Step 1A changes the lifecycle predicate; it is not accepted as a clean close.
+The amendment-only golden run passed **11/11** with zero delta. No production
+source, protected byte, dependency, tag, or remote ref changed. Corrected Step
+0 is therefore reopened and runs next; this forward correction does not alter
+the truthful earlier stop-and-report measurement.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).
