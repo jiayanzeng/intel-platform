@@ -254,3 +254,43 @@ Entries are append-only; corrections are new dated entries.
   tag/ref movement, production-source change, dependency change, protected
   byte, v0.35 byte, amendment input, or release authority changed.
 - governed review-export measurement: tree=`eb897a549e314e92d38272c5c237a337413f3957`; bytes=`2795304`
+
+### 2026-08-03 · BOX-COVERAGE — non-vacuous checked-task audit
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: 066c15934e9bb778887724d200da00df51eafe86
+- result: PASS for Step 2's deliberately red acceptance state. Both bold and
+  plain task boxes are recognized, structural Step coverage cannot be empty,
+  and the unmodified v0.35 runbook now fails rather than passing vacuously.
+- C2 decision: PASS. The audit derives **283 Step headings / 287 task boxes**
+  across all **34** tracked execution runbooks. A sole in-section box wins;
+  otherwise heading-derived aliases resolve the centralized checklist.
+  Progress/declaration-backed extras remain visible. No per-cycle list, minimum
+  count, or line-form exclusion exists.
+- C3 decision: PASS. The real `T4` collision between v0.8 and v0.8.1 in their
+  shared progress record makes cross-runbook order dependence measurable. The
+  first structurally derived plain-task-box runbook establishes the
+  forward-only qualification epoch; older immutable records retain their
+  original contract.
+- planted-control acceptance: PASS. Registered R13 catches an all-unbolded
+  valid runbook when plain recognition is removed, an id absent from progress,
+  a derived Step with no task box, and a forward task with no runbook qualifier.
+  All expected findings derive from unique control-site markers.
+- invariant acceptance: PASS **13/13 rules / 79 controls** with zero
+  hand-typed absolute finding-line fields.
+- fixed-v0.35 acceptance: EXPECTED FAIL with exactly **9** missing-qualifier
+  defects. v0.35 reports **8 Steps / 9 task boxes / 9 checked / 0 matched / 0
+  resolved**. The complete pre-declaration population is **281 checked / 272
+  matched / 272 resolved / 0 exemptions / 3 retractions**. Step 3 owns the nine
+  declarations; a pass at this point would violate Step 2.
+- per-runbook output acceptance: PASS. The audit prints a population line for
+  every one of the **34** tracked execution runbooks, including v0.36 at **9
+  Steps / 10 task boxes / 4 checked / 4 matched / 4 resolved** before this
+  implementation entry exists.
+- golden-E2E delta: **0**; the permission-complete standalone run passed
+  **11/11** after a sandbox-denied bind non-result.
+- protected/scope acceptance: PASS. No production source, dependency,
+  protected byte, v0.35 byte, tag/ref, amendment input, or release authority
+  changed.
+- governed review-export measurement: tree=`066c15934e9bb778887724d200da00df51eafe86`; bytes=`2818105`
