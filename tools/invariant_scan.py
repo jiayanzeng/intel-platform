@@ -26,6 +26,7 @@ import re
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import tomllib
 from dataclasses import dataclass
@@ -2243,6 +2244,27 @@ def _load_version_check_for_control(root: Path):
     return module
 
 
+def _load_checklist_audit_for_control(root: Path):
+    path = root / "tools" / "checklist_audit.py"
+    spec = importlib.util.spec_from_file_location(
+        "_invariant_scan_checklist_audit",
+        path,
+    )
+    if spec is None or spec.loader is None:
+        raise ConfigError(f"{path.relative_to(root)}: cannot load checklist audit")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    except (OSError, SyntaxError) as error:
+        raise ConfigError(
+            f"{path.relative_to(root)}: cannot execute checklist audit: {error}"
+        ) from error
+    finally:
+        sys.modules.pop(spec.name, None)
+    return module
+
+
 def r12_findings(root: Path) -> list[str]:
     """Exercise lifecycle, population, and coverage rules against planted failures."""
     cycle_check = _load_cycle_check_for_control(root)
@@ -3522,6 +3544,163 @@ def r12_findings(root: Path) -> list[str]:
     return findings
 
 
+CHECKLIST_CONTROL_MARKERS = {
+    "all-unbolded": (
+        "Invariant R13 control site: bold and plain checked task boxes."
+    ),
+    "unmatched-progress": (
+        "Invariant R13 control site: progress-entry correspondence."
+    ),
+    "missing-step-box": (
+        "Invariant R13 control site: derived step-to-box coverage."
+    ),
+    "unqualified-forward": (
+        "Invariant R13 control site: forward runbook qualification."
+    ),
+}
+
+
+def _r13_fixture_result(
+    checklist_audit,
+    runbook_text: str,
+    progress_text: str,
+) -> tuple[int, str]:
+    with tempfile.TemporaryDirectory(prefix="invariant-scan-R13-") as raw:
+        fixture = Path(raw) / "tree"
+        cycles = fixture / "docs" / "cycles"
+        config = fixture / "config"
+        cycles.mkdir(parents=True)
+        config.mkdir(parents=True)
+        fixture_cycle = "v" + "1.0"
+        fixture_runbook = f"TASKS-{fixture_cycle}-EXECUTION.md"
+        fixture_progress = f"PROGRESS-{fixture_cycle}.md"
+        (cycles / fixture_runbook).write_text(runbook_text)
+        (cycles / fixture_progress).write_text(progress_text)
+        empty_exemptions = {
+            "schema_version": 1,
+            "record_date": "2026-08-03",
+            "accepted_by": "R13 planted control",
+            "exemptions": [],
+        }
+        empty_retractions = {
+            "schema_version": 1,
+            "record_date": "2026-08-03",
+            "accepted_by": "R13 planted control",
+            "retractions": [],
+        }
+        (config / "checklist-exemptions.json").write_text(
+            json.dumps(empty_exemptions)
+        )
+        (config / "checklist-retractions.json").write_text(
+            json.dumps(empty_retractions)
+        )
+        prior_commit_exists = checklist_audit.commit_exists
+        checklist_audit.commit_exists = lambda _root, _commit: True
+        output = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(output), contextlib.redirect_stderr(
+                output
+            ):
+                status = checklist_audit.run(fixture)
+        finally:
+            checklist_audit.commit_exists = prior_commit_exists
+        return status, output.getvalue()
+
+
+def r13_findings(root: Path) -> list[str]:
+    """Prove checklist coverage is non-vacuous on planted runbook shapes."""
+    checklist_audit = _load_checklist_audit_for_control(root)
+    valid_plain_runbook = (
+        "# fixture\n\n"
+        "## Step 1 · PLAIN — fixture\n\n"
+        "## Cycle checklist\n\n"
+        "- [x] PLAIN — unbolded task box\n"
+    )
+    valid_plain_progress = (
+        "# progress\n\n"
+        "### 2026-08-03 · PLAIN — fixture\n\n"
+        f"- runbook: `TASKS-{'v' + '1.0'}-EXECUTION.md`\n"
+        "- commit: aaaaaaa\n"
+    )
+    unmatched_runbook = (
+        "# fixture\n\n"
+        "## Step 1 · MISSING — fixture\n\n"
+        "## Cycle checklist\n\n"
+        "- [x] **MISSING** — task box\n"
+    )
+    unmatched_progress = (
+        "# progress\n\n"
+        "### 2026-08-03 · OTHER — fixture\n\n"
+        "- commit: bbbbbbb\n"
+    )
+    missing_step_runbook = (
+        "# fixture\n\n"
+        "## Step 1 · ONE — fixture\n\n"
+        "## Step 2 · TWO — fixture\n\n"
+        "## Cycle checklist\n\n"
+        "- [x] **ONE** — sole task box\n"
+    )
+    missing_step_progress = (
+        "# progress\n\n"
+        "### 2026-08-03 · ONE — fixture\n\n"
+        "- commit: ccccccc\n"
+    )
+    unqualified_progress = (
+        "# progress\n\n"
+        "### 2026-08-03 · PLAIN — fixture\n\n"
+        "- commit: ddddddd\n"
+    )
+
+    missed: list[str] = []
+    status, _ = _r13_fixture_result(
+        checklist_audit,
+        valid_plain_runbook,
+        valid_plain_progress,
+    )
+    if status != 0:
+        missed.append("all-unbolded")
+
+    status, output = _r13_fixture_result(
+        checklist_audit,
+        unmatched_runbook,
+        unmatched_progress,
+    )
+    if status != 1 or "has no matching entry" not in output:
+        missed.append("unmatched-progress")
+
+    status, output = _r13_fixture_result(
+        checklist_audit,
+        missing_step_runbook,
+        missing_step_progress,
+    )
+    if status != 1 or "has no task box; expected exactly one" not in output:
+        missed.append("missing-step-box")
+
+    status, output = _r13_fixture_result(
+        checklist_audit,
+        valid_plain_runbook,
+        unqualified_progress,
+    )
+    if status != 1 or "requires one runbook-qualified entry" not in output:
+        missed.append("unqualified-forward")
+
+    source_relative = Path("tools/checklist_audit.py")
+    source_text = (root / source_relative).read_text()
+    findings: list[str] = []
+    for name in missed:
+        marker = CHECKLIST_CONTROL_MARKERS[name]
+        if source_text.count(marker) != 1:
+            raise ConfigError(
+                f"{source_relative}: expected exactly one R13 marker {marker!r}"
+            )
+        line = source_text.count("\n", 0, source_text.index(marker)) + 1
+        findings.append(
+            f"{source_relative}:{line}: checklist planted controls were not "
+            f"detected: {name}"
+        )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -3535,6 +3714,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R10": r10_findings,
     "R11": r11_findings,
     "R12": r12_findings,
+    "R13": r13_findings,
 }
 
 

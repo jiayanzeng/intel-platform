@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 1A lifecycle truth is complete; Step 2 box coverage is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **12 rules / 75 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The permission-complete local gate passes **22/22** jobs and the golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 2 box coverage is complete; Step 3 v0.35 declarations are next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **13 rules / 79 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Step 1A's permission-complete local gate passed **22/22** jobs; Step 2 deliberately makes the current checklist gate fail on the nine previously silent v0.35 gaps until Step 3 declares them. The golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -217,6 +217,47 @@ remaining lifecycle/evidence jobs. The earlier sandbox-denied loopback bind
 was an environment non-result; the approved net lane passed all **29** ingest,
 **3** SEC replay, and **30** cored tests. No production source, dependency,
 protected byte, v0.35 byte, tag, remote ref, or amendment input changed.
+
+**v0.36 Step 2 box-coverage decision and result (measured 2026-08-03).**
+C2 selects the runbook's own Step headings as the nonempty structural
+population. Across all **34** tracked execution runbooks the fixed audit
+derives **283 Step headings / 287 task boxes** with no missing or ambiguous
+Step-to-box mapping. A sole box inside a Step section is authoritative;
+otherwise the full heading id or its derived label resolves a centralized
+cycle checklist. Progress/declaration-backed extras account for activation and
+measured corrective tasks. There is no per-cycle task list, minimum count, or
+line-form exclusion list. A Step with no box is now a named error, while an
+unchecked but present future box remains correctly outside checked-task
+resolution.
+
+C3 requires forward qualifiers because the tracked corpus contains a real
+collision: `T4` is a checked task in both `TASKS-v0.8-EXECUTION.md` and
+`TASKS-v0.8.1-EXECUTION.md`, both resolve through `PROGRESS-v0.8.md`, and that
+record also contains multiple older unqualified `T4` entries. Its later
+runbook-qualified corrections are what make the present selection independent
+of cross-runbook file order. The first structurally derived plain-task-box
+runbook establishes the forward-only qualifier epoch; this derives v0.35
+without naming a cycle floor and preserves earlier immutable records under
+their original contract. No real shared-id collision, or a structurally
+one-runbook-per-progress mapping, would have changed the decision.
+
+Before the fix, v0.35 contributed **0/9** task boxes and the whole audit passed
+vacuously. After the fix and before Step 3 declarations, every one of its nine
+plain boxes is visible and the audit fails for the real measured reason:
+`PROGRESS-v0.35.md` has zero runbook-qualified entries. The complete interim
+population is **281 checked / 272 matched / 272 resolved / 0 exemptions / 3
+retractions**; v0.35 reports **8 Steps / 9 task boxes / 9 checked / 0 matched /
+0 resolved** and v0.36 reports **9 Steps / 10 task boxes / 4 checked / 4
+matched / 4 resolved**.
+
+Registered R13 executes four independent fixtures: an all-unbolded valid
+runbook, an id absent from progress, a derived Step with no box, and an
+unqualified forward task. Each corresponding mutation fails at its unique
+control-site marker. The complete suite passes **13/13 rules / 79 controls**
+with zero absolute finding-line fields. The permission-complete standalone
+golden run passes **11/11** with zero delta; the sandboxed bind attempt was an
+environment non-result. No production source, dependency, protected byte,
+v0.35 byte, tag/ref, or amendment input changed.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

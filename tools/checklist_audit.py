@@ -21,7 +21,26 @@ from tools.cycle_identity import execution_runbooks, progress_for_runbook
 ROOT = Path(__file__).resolve().parents[1]
 EXEMPTIONS_FILE = Path("config/checklist-exemptions.json")
 RETRACTIONS_FILE = Path("config/checklist-retractions.json")
-CHECKED_RE = re.compile(r"^- \[x\] \*\*([^*]+)\*\*")
+# Invariant R13 control site: bold and plain checked task boxes.
+CHECKED_RE = re.compile(
+    r"^- \[x\] (?:\*\*([^*]+)\*\*(?: — .*)?|(.+))$"
+)
+UNCHECKED_RE = re.compile(
+    r"^- \[ \] (?:\*\*([^*]+)\*\*(?: — .*)?|(.+))$"
+)
+STEP_HEADING_RE = re.compile(
+    r"^## (?P<full>Step (?P<number>[0-9]+[A-Z]?) · (?P<title>.+))$"
+)
+TRAILING_ROLE_MARKERS_RE = re.compile(
+    r"(?:\s*(?:[🤖🧑✅+]|DONE))+\s*$"
+)
+TRAILING_ANNOTATION_RE = re.compile(r"\s+\([^()]*\)$")
+DRAFT_RUNBOOK_RE = re.compile(
+    r"^Draft `TASKS-(v[0-9]+(?:\.[0-9]+)*)-EXECUTION\.md`$"
+)
+RUNBOOK_VERSION_RE = re.compile(
+    r"^TASKS-v([0-9]+(?:\.[0-9]+)*)-EXECUTION\.md$"
+)
 HEADER_RE = re.compile(
     r"^### ([0-9]{4}-[0-9]{2}-[0-9]{2}) · (.+?) — (.+)$"
 )
@@ -33,6 +52,16 @@ RUNBOOK_FIELD_RE = re.compile(r"^- runbook: `?([^`]+)`?$")
 class Box:
     task_id: str
     line: int
+    checked: bool
+    bold: bool
+
+
+@dataclass(frozen=True)
+class Step:
+    task_id: str
+    aliases: frozenset[str]
+    line: int
+    end_line: int
 
 
 @dataclass(frozen=True)
@@ -66,13 +95,95 @@ def normalize_task_id(raw: str) -> str:
     return raw.split(" — ", 1)[0].strip()
 
 
-def checked_boxes(path: Path) -> list[Box]:
+def runbook_version(path: Path) -> tuple[int, ...]:
+    match = RUNBOOK_VERSION_RE.fullmatch(path.name)
+    if match is None:
+        raise ValueError(f"not an execution runbook: {path.name}")
+    return tuple(int(part) for part in match.group(1).split("."))
+
+
+def _box_from_match(
+    match: re.Match[str], number: int, checked: bool
+) -> Box:
+    bold = match.group(1) is not None
+    raw = match.group(1) if bold else match.group(2)
+    assert raw is not None
+    return Box(normalize_task_id(raw), number, checked, bold)
+
+
+def task_boxes(path: Path) -> list[Box]:
     boxes: list[Box] = []
     for number, line in enumerate(path.read_text().splitlines(), 1):
-        match = CHECKED_RE.match(line)
-        if match is not None:
-            boxes.append(Box(normalize_task_id(match.group(1)), number))
+        if (match := CHECKED_RE.fullmatch(line)) is not None:
+            boxes.append(_box_from_match(match, number, True))
+        elif (match := UNCHECKED_RE.fullmatch(line)) is not None:
+            boxes.append(_box_from_match(match, number, False))
     return boxes
+
+
+def checked_boxes(path: Path) -> list[Box]:
+    return [box for box in task_boxes(path) if box.checked]
+
+
+def derived_steps(path: Path) -> list[Step]:
+    lines = path.read_text().splitlines()
+    level_two = [
+        index + 1 for index, line in enumerate(lines) if line.startswith("## ")
+    ]
+    steps: list[Step] = []
+    for number, line in enumerate(lines, 1):
+        match = STEP_HEADING_RE.fullmatch(line)
+        if match is None:
+            continue
+        raw = TRAILING_ROLE_MARKERS_RE.sub("", match.group("full")).strip()
+        full_task_id = normalize_task_id(raw)
+        label = full_task_id.split(" · ", 1)[1]
+        while TRAILING_ANNOTATION_RE.search(label) is not None:
+            label = TRAILING_ANNOTATION_RE.sub("", label).strip()
+        aliases = {full_task_id, label}
+        if (draft := DRAFT_RUNBOOK_RE.fullmatch(label)) is not None:
+            aliases.add(draft.group(1))
+        end_line = next(
+            (heading for heading in level_two if heading > number),
+            len(lines) + 1,
+        )
+        steps.append(
+            Step(
+                task_id=full_task_id,
+                aliases=frozenset(aliases),
+                line=number,
+                end_line=end_line,
+            )
+        )
+    return steps
+
+
+def derived_task_box_lines(
+    path: Path,
+    boxes: list[Box],
+    steps: list[Step],
+    errors: list[str],
+) -> set[int]:
+    selected: set[int] = set()
+    for step in steps:
+        section = [
+            box
+            for box in boxes
+            if step.line < box.line < step.end_line
+        ]
+        candidates = section or [
+            box for box in boxes if box.task_id in step.aliases
+        ]
+        # Invariant R13 control site: derived step-to-box coverage.
+        if len(candidates) != 1:
+            detail = "no" if not candidates else f"{len(candidates)}"
+            errors.append(
+                f"{path.name}:{step.line}: derived step {step.task_id!r} "
+                f"has {detail} task box; expected exactly one"
+            )
+            continue
+        selected.add(candidates[0].line)
+    return selected
 
 
 def progress_entries(path: Path) -> list[Entry]:
@@ -299,14 +410,22 @@ def matching_commit(
     progress: Path,
     entries: list[Entry],
     box: Box,
+    qualification_required: bool,
 ) -> tuple[str | None, list[str]]:
     same_id = [entry for entry in entries if entry.task_id == box.task_id]
     qualified = [
         entry for entry in same_id if entry.runbook == runbook.name
     ]
+    # Invariant R13 control site: forward runbook qualification.
+    if qualification_required and not qualified:
+        return None, [
+            f"{runbook.name}:{box.line}: checked box {box.task_id!r} requires "
+            f"one runbook-qualified entry in {progress.name}"
+        ]
     candidates = qualified or [
         entry for entry in same_id if entry.runbook is None
     ]
+    # Invariant R13 control site: progress-entry correspondence.
     if not candidates:
         return None, [
             f"{runbook.name}:{box.line}: checked box {box.task_id!r} has no "
@@ -359,16 +478,64 @@ def run(root: Path = ROOT) -> int:
     total_retracted = 0
 
     runbooks = execution_runbooks(root)
+    parsed: dict[Path, tuple[Path | None, list[Entry], list[Box], list[Step]]] = {}
+    plain_task_box_runbooks: list[Path] = []
     for runbook in runbooks:
-        boxes = checked_boxes(runbook)
-        total_checked += len(boxes)
         progress = progress_for_runbook(root, runbook)
+        entries = progress_entries(progress) if progress is not None else []
+        boxes = task_boxes(runbook)
+        steps = derived_steps(runbook)
+        coverage_errors: list[str] = []
+        derived_lines = derived_task_box_lines(
+            runbook,
+            boxes,
+            steps,
+            coverage_errors,
+        )
+        errors.extend(coverage_errors)
+        declared_ids = {
+            task_id
+            for named_runbook, task_id in set(exemption_map) | set(retraction_map)
+            if named_runbook == runbook.name
+        }
+        progress_ids = {entry.task_id for entry in entries}
+        selected = [
+            box
+            for box in boxes
+            if box.line in derived_lines
+            or box.task_id in progress_ids
+            or box.task_id in declared_ids
+        ]
+        if any(not box.bold for box in selected):
+            plain_task_box_runbooks.append(runbook)
+        parsed[runbook] = (progress, entries, selected, steps)
+
+    # The first execution runbook that uses a plain task-box form establishes a
+    # forward-only qualification epoch. The boundary is derived from the corpus,
+    # not a declared cycle list or minimum version. This keeps immutable earlier
+    # records under their original contract while preventing a new unqualified
+    # namespace from silently depending on entry order.
+    qualification_epoch = (
+        min(runbook_version(path) for path in plain_task_box_runbooks)
+        if plain_task_box_runbooks
+        else None
+    )
+
+    for runbook in runbooks:
+        progress, entries, all_selected_boxes, steps = parsed[runbook]
+        boxes = [box for box in all_selected_boxes if box.checked]
+        total_checked += len(boxes)
         if progress is None:
             errors.append(
                 f"{runbook.name}: cannot resolve a progress log from its cycle"
             )
+            print(
+                f"checklist-audit: {runbook.name} steps={len(steps)} "
+                f"task_boxes={len(all_selected_boxes)} checked={len(boxes)} "
+                "entries_matched=0 commits_resolved=0 exemptions=0 "
+                "retractions=0 progress=missing"
+            )
             continue
-        entries = progress_entries(progress)
         matched = 0
         resolved = 0
         exempted = 0
@@ -384,7 +551,13 @@ def run(root: Path = ROOT) -> int:
             seen_ids.add(box.task_id)
             key = (runbook.name, box.task_id)
             commit, failures = matching_commit(
-                root, runbook, progress, entries, box
+                root,
+                runbook,
+                progress,
+                entries,
+                box,
+                qualification_epoch is not None
+                and runbook_version(runbook) >= qualification_epoch,
             )
             exemption = exemption_map.get(key)
             retraction = retraction_map.get(key)
@@ -412,7 +585,8 @@ def run(root: Path = ROOT) -> int:
         total_exempted += exempted
         total_retracted += retracted
         print(
-            f"checklist-audit: {runbook.name} checked={len(boxes)} "
+            f"checklist-audit: {runbook.name} steps={len(steps)} "
+            f"task_boxes={len(all_selected_boxes)} checked={len(boxes)} "
             f"entries_matched={matched} commits_resolved={resolved} "
             f"exemptions={exempted} retractions={retracted} "
             f"progress={progress.name}"

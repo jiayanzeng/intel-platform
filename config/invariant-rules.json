@@ -986,6 +986,56 @@
         }
       ],
       "fail_before_note": "invariant-scan: R12 FAIL: a lifecycle, review-retention, governed-margin, population, or coverage planted failure was not detected"
+    },
+    {
+      "id": "R13",
+      "claim": "Every execution-runbook Step heading derives exactly one task box without a per-cycle task list, both bold and plain checked forms enter the audit, every checked task box corresponds to progress and a real commit or an explicit declaration, and the first plain-task-box epoch requires a runbook-qualified progress entry so cross-runbook task-id collisions cannot select by file order.",
+      "source": "docs/cycles/TASKS-v0.36-EXECUTION.md Step 2 and C2-C3",
+      "scope": "The actual tools/checklist_audit.py run entry point over every Git-tracked execution runbook and its resolved progress record. Step headings derive the coverage population; a sole box inside its Step section wins, otherwise the heading-derived full id or label alias resolves the centralized cycle checklist, with the structurally named draft-runbook alias derived from its heading. Checked task boxes also include progress/declaration-backed extras such as activation and measured corrective tasks. The first runbook containing a derived plain task box establishes the forward-only qualifier epoch without a cycle list or minimum version. Earlier immutable runbooks retain their original contract. Planted fixtures cover an all-unbolded valid runbook, a checked id absent from progress, a derived Step with no box at all, and an unqualified task after the derived epoch.",
+      "fail_before": [
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "CHECKED_RE = re.compile(\n    r\"^- \\[x\\] (?:\\*\\*([^*]+)\\*\\*(?: — .*)?|(.+))$\"\n)\n",
+          "replace_with": [
+            "CHECKED_RE = re.compile(r\"^- \\[x\\] \\*\\*([^*]+)\\*\\*(?: — .*)?$\")\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: all-unbolded",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "# Invariant R13 control site: bold and plain checked task boxes."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "        if len(candidates) != 1:\n            detail = \"no\" if not candidates else f\"{len(candidates)}\"\n            errors.append(\n                f\"{path.name}:{step.line}: derived step {step.task_id!r} \"\n                f\"has {detail} task box; expected exactly one\"\n            )\n            continue\n",
+          "replace_with": [
+            "        if len(candidates) != 1:\n",
+            "            continue\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: missing-step-box",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "        # Invariant R13 control site: derived step-to-box coverage."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "    if qualification_required and not qualified:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: unqualified-forward",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "    # Invariant R13 control site: forward runbook qualification."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "    if not candidates:\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: unmatched-progress",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "    # Invariant R13 control site: progress-entry correspondence."
+        }
+      ],
+      "fail_before_note": "invariant-scan: R13 FAIL: a checklist box-population, structural-coverage, progress-correspondence, or qualification planted failure was not detected"
     }
   ]
 }

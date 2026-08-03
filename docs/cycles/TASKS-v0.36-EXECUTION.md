@@ -685,6 +685,36 @@ anchored by control-site marker, never by a hand-typed line number.
 - `invariant-scan --self-test` passes; new totals stated.
 - Zero hand-typed absolute finding-line fields survive.
 
+### C2/C3 decisions and Step 2 completion — 2026-08-03
+
+C2 derives the task population from Step headings. Across all **34** tracked
+execution runbooks, **283** Step headings resolve to exactly one of **287**
+task boxes; progress/declaration-backed extras account for activation and
+measured corrective tasks. A sole box in the Step section wins, otherwise the
+heading-derived full id or label resolves the centralized checklist. No
+per-cycle task list, minimum box count, or line-form exclusion exists. A
+derived Step with no box is a failure; an unchecked but present future box is
+not falsely treated as completed.
+
+C3 requires runbook qualifiers forward from the first structurally derived
+plain-task-box runbook. The decision is evidence-driven: `T4` is checked in
+both v0.8 and v0.8.1, both share `PROGRESS-v0.8.md`, and multiple older
+unqualified `T4` entries coexist there; the later qualified corrections remove
+the cross-runbook order dependence. The epoch is derived from repository shape,
+not a named cycle or minimum version, preserving immutable earlier records.
+No shared task-id collision, or a structurally one-runbook-per-progress
+mapping, would have changed the choice.
+
+The fixed audit prints one line for every tracked runbook. Before Step 3, the
+unmodified v0.35 runbook now reports **8 Steps / 9 task boxes / 9 checked / 0
+matched / 0 resolved** and fails with exactly nine real missing-qualifier
+defects; a pass would be a regression. The complete interim population is
+**281 checked / 272 matched / 272 resolved / 0 exemptions / 3 retractions**.
+Registered R13's four independent mutations cover all-unbolded boxes,
+unmatched progress, a missing Step box, and a missing forward qualifier. The
+full suite passes **13/13 rules / 79 controls**, with zero absolute finding-line
+fields. Standalone golden passes **11/11**, delta **0**. No v0.35 byte moved.
+
 ---
 
 ## Step 3 · V035-DECLARE — turn a silent gap into a declared one
@@ -841,7 +871,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Postgres / pgvector / multi-host seam | unchanged | v0.36 · 2026-08-03 — Step 0 changed governance controls only and observed no Postgres, pgvector, or multi-host seam; the unchanged trigger did not fire. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.36 · 2026-08-03 — Step 0 introduced neither a third-party shell nor a replacement-shell HC1 claim; the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.36 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — Step 1A adds only a lifecycle-status construction under R12 with before/after and published-missing-record controls. R3/R4 vocabulary is unchanged, the complete self-test passes 12/12 rules / 75 controls, and no spelling outside registered credential or path vocabulary was observed. The trigger did not fire. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — Step 2 adds checklist structure and qualification constructions under R13 with four real planted controls. R3/R4 vocabulary is unchanged, the complete self-test passes 13/13 rules / 79 controls, and no spelling outside registered credential or path vocabulary was observed. The trigger did not fire. | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — E0 again selected and proved cargo/rustc 1.86.0 and passed the net check; 1.85.0 refused the locked ICU edge as expected. E0 neither changes nor is authorized to change evidence topology, so the combined trigger did not fire. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.36 · 2026-08-03 — Step 0 changes no workflow, verifier pin, bundle, or accepted workflow contract; the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.36 · 2026-08-03 — No third-publisher compliance review or admission decision occurred; the trigger did not fire. | none |
@@ -852,7 +882,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — No operator decision displacing the current prose adjudication occurred; C4 remains scheduled before close. The trigger did not fire. | none |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export and `STATE.md` byte measurements remain below their 3,000,000-byte and 453,741-byte boundaries; exact current figures are recorded by the governed Architecture row and `cycle-check`. Neither trigger fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through Step 1A, changes are governance/lifecycle controls, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through Step 2, changes are governance/lifecycle/audit controls, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — v0.35 closed with a delivered export differing from its governed figure and no cycle-ending audit field. The trigger is fired and remains assigned to Step 5, with Step 7 responsible for the v0.36 close. | **Step 5 and Step 7** |
@@ -896,7 +926,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - [x] **ACTIVATE** — declaration at v0.36, progress skeleton, retention derived
 - [x] **E0** — H1–H13 settled with dated verdicts
 - [x] **LIFECYCLE-TRUTH** — unpublished local close passes; published missing-record case still fails
-- [ ] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
+- [x] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
 - [ ] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
 - [ ] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered
 - [ ] **AUDIT-CHILD** — v0.35 Step 7 field discharged
