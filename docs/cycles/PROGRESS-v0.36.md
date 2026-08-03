@@ -184,3 +184,37 @@ Entries are append-only; corrections are new dated entries.
   byte, v0.35 byte, amendment input, tag, or remote ref changed. Disposable
   measurement clones and fixture database were removed after capture.
 - governed review-export measurement: tree=`9937a819dbbb699995e3cb03d1c16d4fce43bc6e`; bytes=`2780874`
+
+### 2026-08-03 · ACTIVATE — runbook-qualifier correction
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: f44681c1dce0c5c2efc0d3fb4a30900fdb4163f5
+- result: FORWARD CORRECTION. The earlier ACTIVATE entry's repository-relative
+  qualifier is not equal to the basename contract used by
+  `matching_commit`. This append-only entry supplies the accepted basename;
+  the earlier measured activation record remains unchanged.
+- golden-E2E delta: **0**; this correction changes audit qualification only.
+
+### 2026-08-03 · AUTONOMY — runbook-qualifier correction
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: b38579ddd0e8080b786701da8436afc05c54a799
+- result: FORWARD CORRECTION. The corrected AUTONOMY implementation already
+  exists and its earlier evidence remains authoritative; this entry supplies
+  only the basename qualifier the current auditor compares.
+- golden-E2E delta: **0**; no implementation or measurement changed.
+
+### 2026-08-03 · E0 — runbook-qualifier correction
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: 9937a819dbbb699995e3cb03d1c16d4fce43bc6e
+- result: FORWARD CORRECTION. The E0 implementation and full H1–H13 record are
+  unchanged; this entry supplies only the basename qualifier required by the
+  existing matching contract.
+- checklist acceptance: PASS for the three currently checked v0.36 boxes.
+  Step 2 still owns recognition of v0.35's plain boxes, derived expected-box
+  coverage, empty-witness failure, and C3's corpus-wide qualifier decision.
+- golden-E2E delta: **0**; no implementation or measurement changed.
