@@ -853,6 +853,26 @@ measured; none copied from a checker's own output where the construction can
 produce it independently; `audit_delta` reported against H8's numbers with any
 discrepancy explained rather than absorbed.
 
+### Step 5 completion — 2026-08-03
+
+An isolated clone at existing v0.35 closing commit
+`9996c6820d720160b64607575d0270d2e5393ef9` measured the exact project-root
+review export as **2,737,957 bytes / 151 files / 2 retained cycles**. Direct
+Git inspection identified its distinct tree object as
+`2fbb5ef5323ef010c2cbacddfcd713375881a4e6`, its release parent as
+`d4258883645a99f9499895bf064e453de9be1281`, and the last governed field
+visible in the closing commit as **2,742,486 bytes**. Independent subtraction
+produced the required **−4,529** audit delta. `STATE.md` carries the exact
+field as a dated v0.36 append because an open active-cycle progress record may
+not carry its own cycle-ending field and DR2 forbids editing v0.35.
+
+H8's exact-tree release-parent figure is **2,725,527 bytes**, making the direct
+parent-to-close movement **+12,430**. The historical governed figure differs
+from that independently reconstructed parent export by **+16,959**, and
+`+16,959 − 4,529 = +12,430`; both comparisons are recorded without silently
+substituting one baseline for the other. No push, tag, remote ref, closed-cycle
+byte, production source, dependency, protected byte, or amendment input moved.
+
 ---
 
 ## Step 6 · RE-MEASURE — hosted, conditional
@@ -946,7 +966,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Step 4 changes reachable runtime behavior for a cross-sector near-duplicate corpus: view now preserves both sector-local identities. The cycle is still open, so no closed-cycle count is added yet and the v0.17.1 publication-epoch count remains 0. A complete before/after measurement over every configured subscription and `/v1/*` route produced the same 15,719-byte payload and SHA-256 `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`; no public-surface trigger fired. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
-| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — v0.35 closed with a delivered export differing from its governed figure and no cycle-ending audit field. The trigger is fired and remains assigned to Step 5, with Step 7 responsible for the v0.36 close. | **Step 5 and Step 7** |
+| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — Step 5 independently measured v0.35 closing commit `9996c6820d720160b64607575d0270d2e5393ef9` at 2,737,957 bytes against its 2,742,486-byte governed field and supplied the missing v0.36 append with audit delta −4,529. That historical trigger is discharged; Step 7 remains responsible for measuring and recording v0.36's own close. | **Step 5 completed 2026-08-03; Step 7** |
 | SEC EDGAR admission | the three v0.25 determinations closed: license enum semantics, terms-level automated-access gate, feed shape | v0.36 · 2026-08-03 — The three historical v0.25 determinations remain closed; Step 0 performs no new admission or wire request and leaves the existing disposition unchanged. | none |
 | License enum semantics | a second publisher requires a license value the current enum cannot express | v0.36 · 2026-08-03 — No second publisher or new license value was proposed; the trigger did not fire. | none |
 | Terms-level automated-access gate | a candidate publisher's terms restrict automated access beyond robots.txt | v0.36 · 2026-08-03 — No candidate publisher or new terms review occurred; the trigger did not fire. | none |
@@ -990,7 +1010,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - [x] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
 - [x] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
 - [x] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered
-- [ ] **AUDIT-CHILD** — v0.35 Step 7 field discharged
+- [x] **AUDIT-CHILD** — v0.35 Step 7 field discharged
 - [ ] **RE-MEASURE** — conditional; run id and identity count, or dated reason
 - [ ] **R-CLOSE** — closing record, audit child, non-zero v0.36 checked count
 

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 4 identity scope is complete; Step 5 audit-child is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 4 local gate passed **22/22** jobs, shell tests pass **368/368** with the accepted warning, and the golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 5 audit-child is complete; conditional hosted RE-MEASURE is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 4 local gate passed **22/22** jobs, shell tests pass **368/368** with the accepted warning, and the golden E2E passes **11/11**. Step 5 independently measured the v0.35 closing commit's review export and supplied its missing non-governing audit field without moving a tag or remote ref. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -342,6 +342,38 @@ workspace and Rust 1.78 checks/tests, net checks/tests with Rust 1.86 success an
 golden **11/11**, all **332** pinned files and both protected databases, and all
 remaining lifecycle/evidence jobs. No protected byte, v0.35 byte, amendment
 input, tag, or remote ref moved.
+
+**v0.36 Step 5 audit-child completion (measured 2026-08-03).** An isolated
+clone checked out the existing v0.35 closing commit
+`9996c6820d720160b64607575d0270d2e5393ef9`; its Git tree object is
+`2fbb5ef5323ef010c2cbacddfcd713375881a4e6` and its immediate parent is release
+commit `d4258883645a99f9499895bf064e453de9be1281`. Project-root
+`./run export-check` at that exact detached checkout independently measured
+**100 derived sources / 7 required paths / 151 exported files / 2,737,957
+bytes / 2 retained cycles**. Direct `git show` of the closing commit's v0.35
+progress record supplies its last governed figure, **2,742,486 bytes**, and
+independent arithmetic gives **2,737,957 − 2,742,486 = −4,529**.
+
+- cycle-ending review-export audit: closing_tree=`9996c6820d720160b64607575d0270d2e5393ef9`; bytes=`2737957`; audit_delta=`-4529`
+
+The field's historical name `closing_tree` denotes the measured closing
+**commit**, as in the v0.33/v0.34 audit records; the distinct Git tree object is
+reported above so the two object types are not conflated. This is a v0.36
+append that discharges v0.35's missed Step 7 criterion. It is deliberately in
+the live State record rather than the open v0.36 progress log: `cycle-check`
+forbids a current cycle-ending audit field while that current cycle is open,
+and DR2 forbids editing the closed v0.35 progress record.
+
+H8's independently reconstructed exact-tree figures remain **2,725,527 bytes
+at the release parent → 2,737,957 bytes at the closing commit**, a **+12,430**
+raw exact-tree increase. The required `audit_delta` instead compares the
+closing export with the last governed field visible in that closing tree. The
+historical governed figure is **16,959 bytes larger** than H8's exact
+release-parent re-export; `+16,959 + (−4,529) = +12,430`. The discrepancy is
+therefore exposed rather than absorbed: H8 refutes the historical field's
+exact-tree characterization, while the immutable field remains the binding
+baseline used by the lifecycle checker. No v0.35 byte, production source,
+dependency, protected byte, tag, remote ref, or amendment input moved.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).
