@@ -1792,6 +1792,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "post-push-record": (
         "Invariant R12 control site: required and fresh post-push record."
     ),
+    "unpublished-local-close": (
+        "Invariant R12 control site: unpublished local-close observation."
+    ),
     "declared-scope": (
         "Invariant R12 control site: declared cycle scope."
     ),
@@ -2366,6 +2369,13 @@ def r12_findings(root: Path) -> list[str]:
         f"- **Post-push closing commit:** `{tag_target}`\n"
         "- **Post-push hosted run:** `123456`\n"
     )
+    valid_unpublished_observation = (
+        "- **Publication observation date:** 2026-08-03\n"
+        f"- **Publication observation release:** `{tag}`\n"
+        "- **Publication observation status:** `unpublished-local-close`\n"
+        "- **Publication observation remote:** `origin`\n"
+        "- **Publication observation tag ref:** `absent`\n"
+    )
     tagged_scenarios = (
         (
             "release-commit-required",
@@ -2655,6 +2665,43 @@ def r12_findings(root: Path) -> list[str]:
             )
             if not any(expected in error for error in errors):
                 missed.setdefault(group, []).append(name)
+
+        state_path.write_text(
+            "# State\n\n"
+            f"**As of:** closed locally and unpublished. Release commit is "
+            f"`{release_commit}`.\n\n{valid_unpublished_observation}"
+        )
+
+        def measured_unpublished_ref(
+            _root: Path,
+            *args: str,
+        ) -> str | None:
+            if args == ("rev-parse", tag):
+                return tag_object
+            if args == ("rev-parse", f"{tag}^{{}}"):
+                return tag_target
+            if args == ("cat-file", "-t", tag_object):
+                return "tag"
+            if args == ("rev-parse", f"{tag_target}^"):
+                return release_commit
+            if args == ("show", f"{tag_target}:{runbook.name}"):
+                return tagged_runbook_text
+            if args == ("rev-parse", "HEAD"):
+                return descendant
+            raise AssertionError(f"unexpected planted git query: {args}")
+
+        cycle_check.git_output = measured_unpublished_ref
+        cycle_check.git_status = lambda _root, *_args: (0, "")
+        errors = []
+        status = cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+        )
+        if errors or status is None or "unpublished-local-close" not in status:
+            missed.setdefault("unpublished-local-close", []).append(
+                "unpublished-local-close"
+            )
 
         legacy_section = (
             "\n- **Cycle closed:** 2026-07-29\n"

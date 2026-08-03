@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 E0 is complete; Step 1A lifecycle truth is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **12 rules / 74 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 1A lifecycle truth is complete; Step 2 box coverage is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **12 rules / 75 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The permission-complete local gate passes **22/22** jobs and the golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -175,6 +175,48 @@ retains only Step 1A's expected missing-post-push defect. `checklist-audit`
 truthfully retains the two v0.36 qualification defects assigned to Step 2. No
 identity was omitted; no dependency, production source, protected byte, v0.35
 byte, tag, or remote ref changed.
+
+**v0.36 Step 1A publication predicate decision (measured 2026-08-03).** No
+non-self-reported offline Git predicate can prove that a tag remains absent
+from a remote: local remote-tracking refs can be stale, and Git has no distinct
+remote-tag namespace after fetch. The least-bad truthful representation is
+therefore an explicit dated observation backed by the exact read-only command
+`git ls-remote origin refs/tags/v0.17.2 'refs/tags/v0.17.2^{}'`. It exited 0
+with empty output on 2026-08-03. This is measurement-backed but not
+self-refreshing; `cycle-check` reports that limitation instead of disguising it
+as an independent offline fact. A future complete post-push record takes
+precedence over this historical absence observation. A durable signed hosted
+publication receipt available offline would have changed the choice.
+
+- **Publication observation date:** 2026-08-03
+- **Publication observation release:** `v0.17.2`
+- **Publication observation status:** `unpublished-local-close`
+- **Publication observation remote:** `origin`
+- **Publication observation tag ref:** `absent`
+
+The implemented lifecycle admits that record only when no post-push record is
+present, exactly one release-matching observation exists, its date is valid,
+and the live header says the release is closed locally and unpublished. Direct
+`./run cycle-check` now passes and reports
+`publication=unpublished-local-close bound=dated origin tag-absence
+observation; offline Git cannot independently refresh remote absence`.
+
+The two-direction control is non-vacuous. Before the new admission branch, the
+planted valid observation failed with `publication post-push record required`;
+afterward it passes. The separately planted published descendant still fails
+without its post-push record, and a complete post-push record takes precedence
+over the older absence observation. Both branches are bound to distinct R12
+control-site markers. The full mutation suite passes **12/12 registered rules /
+75 controls**.
+
+The exact permission-complete `./run ci-local` then passed all **22/22** jobs:
+workspace and Rust 1.78 checks/tests, net checks/tests with Rust 1.86 success and
+1.85 refusal, clippy, rustfmt, shell **366/366** with the one accepted warning,
+golden **11/11**, all **332** pinned files and both protected databases, and the
+remaining lifecycle/evidence jobs. The earlier sandbox-denied loopback bind
+was an environment non-result; the approved net lane passed all **29** ingest,
+**3** SEC replay, and **30** cored tests. No production source, dependency,
+protected byte, v0.35 byte, tag, remote ref, or amendment input changed.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

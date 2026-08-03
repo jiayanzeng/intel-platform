@@ -620,6 +620,44 @@ this cycle.
 **Done when.** Both directions are executed: the truthful unpublished state
 passes, and a published state without its post-push record fails.
 
+### C7 decision and executed directions — 2026-08-03
+
+There is no non-self-reported offline Git predicate for remote-tag absence.
+Remote-tracking refs are stale-capable, fetched tags have no `refs/remotes/*`
+counterpart, and a local annotated tag does not encode how it arrived. C7
+therefore selects the least-bad explicit representation: one dated
+`unpublished-local-close` observation in State, backed by the targeted
+operator-local command `git ls-remote origin refs/tags/v0.17.2
+'refs/tags/v0.17.2^{}'`, which exited 0 with empty output on 2026-08-03. The
+checker reports that this record cannot refresh its own remote-absence fact.
+A durable signed hosted publication receipt available to the offline checker
+would have changed the choice.
+
+The precedence is one-way: a complete post-push record is verified as the
+published state even when the older absence observation remains as truthful
+dated history. With no post-push record, exactly one valid observation for the
+release plus the header's `closed locally and unpublished` statement admits
+the local-close state. A published-shaped descendant with neither record still
+fails `publication post-push record required`.
+
+Before the implementation, the planted unpublished observation produced that
+exact missing-post-push failure. After the implementation it returns
+`publication=unpublished-local-close`. The existing published descendant
+scenario still fails without its post-push record. Both are bound to distinct
+R12 control-site markers; removing the new admission branch makes its planted
+control fail.
+
+### Step 1A completion — 2026-08-03
+
+Direct `cycle-check` passes with the truthful unpublished-local-close status
+and its explicit offline-freshness limitation. The registered scan and every
+planted mutation pass at **12/12 rules / 75 controls**; the published
+missing-record scenario remains a failure. The permission-complete
+`./run ci-local` passes all **22/22** jobs, including shell **366/366** and
+golden **11/11** with zero delta. No fabricated post-push field, publication,
+tag/ref movement, production-source change, dependency change, protected-byte
+change, v0.35 edit, or amendment-input edit occurred.
+
 ---
 
 ## Step 2 · BOX-COVERAGE — make an empty witness fail
@@ -803,7 +841,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Postgres / pgvector / multi-host seam | unchanged | v0.36 · 2026-08-03 — Step 0 changed governance controls only and observed no Postgres, pgvector, or multi-host seam; the unchanged trigger did not fire. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.36 · 2026-08-03 — Step 0 introduced neither a third-party shell nor a replacement-shell HC1 claim; the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.36 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — Corrected Step 0 registers its authority-marker construction under generalized R6 with real mismatch and missing-marker controls. R3/R4 vocabulary is unchanged, the complete self-test passes 12/12 rules / 74 controls, and no spelling outside registered credential or path vocabulary was observed. The trigger did not fire. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — Step 1A adds only a lifecycle-status construction under R12 with before/after and published-missing-record controls. R3/R4 vocabulary is unchanged, the complete self-test passes 12/12 rules / 75 controls, and no spelling outside registered credential or path vocabulary was observed. The trigger did not fire. | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — E0 again selected and proved cargo/rustc 1.86.0 and passed the net check; 1.85.0 refused the locked ICU edge as expected. E0 neither changes nor is authorized to change evidence topology, so the combined trigger did not fire. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.36 · 2026-08-03 — Step 0 changes no workflow, verifier pin, bundle, or accepted workflow contract; the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.36 · 2026-08-03 — No third-publisher compliance review or admission decision occurred; the trigger did not fire. | none |
@@ -814,7 +852,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — No operator decision displacing the current prose adjudication occurred; C4 remains scheduled before close. The trigger did not fire. | none |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export and `STATE.md` byte measurements remain below their 3,000,000-byte and 453,741-byte boundaries; exact current figures are recorded by the governed Architecture row and `cycle-check`. Neither trigger fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through E0, changes are governance controls, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through Step 1A, changes are governance/lifecycle controls, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — v0.35 closed with a delivered export differing from its governed figure and no cycle-ending audit field. The trigger is fired and remains assigned to Step 5, with Step 7 responsible for the v0.36 close. | **Step 5 and Step 7** |
@@ -857,7 +895,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - [x] **AUTONOMY** — authority block installed, mirrored, and mechanically enforced
 - [x] **ACTIVATE** — declaration at v0.36, progress skeleton, retention derived
 - [x] **E0** — H1–H13 settled with dated verdicts
-- [ ] **LIFECYCLE-TRUTH** — unpublished local close passes; published missing-record case still fails
+- [x] **LIFECYCLE-TRUTH** — unpublished local close passes; published missing-record case still fails
 - [ ] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
 - [ ] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
 - [ ] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered

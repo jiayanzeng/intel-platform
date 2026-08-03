@@ -172,6 +172,20 @@ POST_PUSH_RECORD_RE = re.compile(
     r"- \*\*Post-push hosted run:\*\* `([0-9]+)`$",
     re.MULTILINE,
 )
+UNPUBLISHED_LOCAL_CLOSE_RE = re.compile(
+    r"^- \*\*Publication observation date:\*\* "
+    r"([0-9]{4}-[0-9]{2}-[0-9]{2})\n"
+    r"- \*\*Publication observation release:\*\* (`?)([^`\n]+)\2\n"
+    r"- \*\*Publication observation status:\*\* "
+    r"`unpublished-local-close`\n"
+    r"- \*\*Publication observation remote:\*\* `origin`\n"
+    r"- \*\*Publication observation tag ref:\*\* `absent`$",
+    re.MULTILINE,
+)
+UNPUBLISHED_LOCAL_CLOSE_HEADER_RE = re.compile(
+    r"\bclosed locally and unpublished\b",
+    re.IGNORECASE,
+)
 
 
 class ClosedRelease(NamedTuple):
@@ -804,8 +818,11 @@ def check_publication_status(
         )
         return
     # The tagged closing commit is allowed to carry only the already-known
-    # release commit. Once HEAD advances, the dated forward record is mandatory
-    # and pins the values that came into existence after that commit.
+    # release commit. Once HEAD advances, a dated remote-tag absence observation
+    # can represent an unpublished local close. Otherwise the post-push record
+    # is mandatory and pins the values that came into existence after that
+    # commit. The absence observation is necessarily a recorded measurement:
+    # no offline Git fact can prove that a remote tag remains absent later.
     # Invariant R12 control site: required and fresh post-push record.
     if head != measured_target:
         records = [
@@ -813,6 +830,34 @@ def check_publication_status(
             for match in POST_PUSH_RECORD_RE.finditer(state_text)
             if match.group(3) == tag
         ]
+        unpublished_records = [
+            match
+            for match in UNPUBLISHED_LOCAL_CLOSE_RE.finditer(state_text)
+            if match.group(3) == tag
+        ]
+        # Invariant R12 control site: unpublished local-close observation.
+        if not records and len(unpublished_records) == 1:
+            observation = unpublished_records[0]
+            if not valid_iso_date(observation.group(1)):
+                errors.append(
+                    f"{shown(state_path, root)}: invalid publication "
+                    f"observation date {observation.group(1)!r}"
+                )
+                return
+            if UNPUBLISHED_LOCAL_CLOSE_HEADER_RE.search(header) is None:
+                errors.append(
+                    f"{shown(state_path, root)}: unpublished local-close "
+                    "observation requires the status header to say the "
+                    "release is closed locally and unpublished"
+                )
+                return
+            return (
+                "publication-status: local-tag-reconciliation=verified "
+                f"protocol=tagged-closing release={tag} "
+                "publication=unpublished-local-close "
+                "bound=dated origin tag-absence observation; offline Git "
+                "cannot independently refresh remote absence"
+            )
         if len(records) != 1:
             errors.append(
                 f"{shown(state_path, root)}: publication post-push record "
