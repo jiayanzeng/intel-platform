@@ -1,6 +1,70 @@
 {
   "schema_version": 1,
-  "record_date": "2026-07-25",
-  "accepted_by": "none; all checked tasks are resolvable",
-  "exemptions": []
+  "record_date": "2026-08-03",
+  "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3",
+  "exemptions": [
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "ACTIVATE",
+      "date": "2026-08-03",
+      "reason": "The first plain-task-box epoch requires a runbook-qualified progress entry, but PROGRESS-v0.35.md contains zero runbook fields; correcting the closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 1 · E0",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 1 · E0 while the progress id is E0, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 2 · ANCHOR",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 2 · ANCHOR while the progress id is ANCHOR, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 3 · ONE-RETENTION",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 3 · ONE-RETENTION while the progress id is ONE-RETENTION, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 4 · POST-LEVER BASIS",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 4 · POST-LEVER BASIS while the progress id is POST-LEVER BASIS, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 5 · NET-FLOOR",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 5 · NET-FLOOR while the progress id is NET-FLOOR, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 5A · NET-FLOOR-CORRECTION",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 5A · NET-FLOOR-CORRECTION while the progress id is STEP-5A-NET-FLOOR-CORRECTION, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 6 · RE-MEASURE",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 6 · RE-MEASURE while the progress id is RE-MEASURE, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    },
+    {
+      "runbook": "TASKS-v0.35-EXECUTION.md",
+      "task_id": "Step 7 · R-CLOSE",
+      "date": "2026-08-03",
+      "reason": "The checked id is Step 7 · R-CLOSE while the progress id is R-CLOSE, and PROGRESS-v0.35.md has no runbook qualifier; correcting either closed file would rewrite its dated checklist measurement.",
+      "accepted_by": "repository operator through TASKS-v0.36-EXECUTION.md Step 3"
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 2 box coverage is complete; Step 3 v0.35 declarations are next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **13 rules / 79 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Step 1A's permission-complete local gate passed **22/22** jobs; Step 2 deliberately makes the current checklist gate fail on the nine previously silent v0.35 gaps until Step 3 declares them. The golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 3 v0.35 declarations are complete; Step 4 identity scope is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **13 rules / 79 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The checklist audit now declares all **9** immutable v0.35 gaps and passes; Step 1A's permission-complete local gate passed **22/22** jobs and the golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -258,6 +258,33 @@ with zero absolute finding-line fields. The permission-complete standalone
 golden run passes **11/11** with zero delta; the sandboxed bind attempt was an
 environment non-result. No production source, dependency, protected byte,
 v0.35 byte, tag/ref, or amendment input changed.
+
+**v0.36 Step 3 v0.35 declaration (measured 2026-08-03).** The v0.35 closing
+record's **268 checked / 3 retracted / 268 matched / 268 resolved** figures are
+a true historical tool output over the boxes the old bold-only parser could
+see. They do not evidence v0.35's nine plain task boxes: that population was
+exactly zero at close. Creating the missing executable links now would require
+editing the closed runbook or its dated progress record, so DR2 requires a
+forward declaration rather than reconstruction.
+
+`config/checklist-exemptions.json` now carries exactly **9** dated entries,
+one for each v0.35 task box, accepted by the repository operator through the
+active Step 3. `ACTIVATE` names the missing runbook qualifier; each Step box
+also records its measured box-id/progress-id namespace mismatch. The file-level
+date and acceptance statement no longer claim every checked task is
+resolvable. No retraction was added: the historical output is true, v0.35 is
+unpublished, and DR4's twice-verified published-false bar is not met.
+
+With Step 3 still unchecked for its pre-commit acceptance measurement,
+`checklist-audit` passes at **282 checked / 3 retracted / 273 matched / 273
+resolved / 9 exemptions**. v0.35 is explicitly **8 Steps / 9 task boxes / 9
+checked / 0 matched / 0 resolved / 9 exemptions**; v0.36 is **9 Steps / 10
+task boxes / 5 checked / 5 matched / 5 resolved**. The v0.35 runbook and
+progress worktree blobs equal their `HEAD` blobs exactly:
+`1a5424c704ab56bf9a0ce3c261a20e92eabc7bc5` and
+`510d27f22f2687f6dfd48c49eacd7442d60bb77f`; targeted `git diff --exit-code`
+returned 0. No v0.35 byte, production source, dependency, protected byte,
+tag/ref, or amendment input changed.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

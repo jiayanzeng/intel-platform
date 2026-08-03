@@ -736,6 +736,24 @@ nine recorded exemptions whose stated reason matches the measured cause, figure
 stated. No `TASKS-v0.35-EXECUTION.md` or `PROGRESS-v0.35.md` byte moved — verify
 with `git diff --stat` and report it.
 
+### Step 3 completion — 2026-08-03
+
+The v0.35 closing checklist figures remain a true output over prior-cycle bold
+boxes; they examined zero of v0.35's nine plain task boxes. Repairing the links
+in place would edit a closed runbook or its dated progress measurement, so DR2
+selects forward declaration. Exactly **9** exemptions now record the real
+missing-qualifier cause, with the eight Step boxes also naming their measured
+id-namespace mismatch. File-level and per-entry acceptance is
+`repository operator through TASKS-v0.36-EXECUTION.md Step 3`; no retraction is
+added.
+
+Before this box is marked, the audit passes **282 checked / 3 retracted / 273
+matched / 273 resolved / 9 exemptions**. v0.35 reports **8 Steps / 9 task boxes
+/ 9 checked / 0 matched / 0 resolved / 9 exemptions**. The runbook and progress
+worktree/`HEAD` blob pairs are byte-identical at
+`1a5424c704ab56bf9a0ce3c261a20e92eabc7bc5` and
+`510d27f22f2687f6dfd48c49eacd7442d60bb77f`; targeted diff exits 0.
+
 ---
 
 ## Step 4 · IDENTITY-SCOPE — one identity, proved
@@ -882,7 +900,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — No operator decision displacing the current prose adjudication occurred; C4 remains scheduled before close. The trigger did not fire. | none |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export and `STATE.md` byte measurements remain below their 3,000,000-byte and 453,741-byte boundaries; exact current figures are recorded by the governed Architecture row and `cycle-check`. Neither trigger fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through Step 2, changes are governance/lifecycle/audit controls, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through Step 3, changes are governance/lifecycle/audit controls, declarations, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — v0.35 closed with a delivered export differing from its governed figure and no cycle-ending audit field. The trigger is fired and remains assigned to Step 5, with Step 7 responsible for the v0.36 close. | **Step 5 and Step 7** |
@@ -927,7 +945,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - [x] **E0** — H1–H13 settled with dated verdicts
 - [x] **LIFECYCLE-TRUTH** — unpublished local close passes; published missing-record case still fails
 - [x] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
-- [ ] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
+- [x] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
 - [ ] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered
 - [ ] **AUDIT-CHILD** — v0.35 Step 7 field discharged
 - [ ] **RE-MEASURE** — conditional; run id and identity count, or dated reason
