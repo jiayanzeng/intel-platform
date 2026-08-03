@@ -985,3 +985,68 @@ Entries are append-only; corrections are new dated entries.
   R10 classification was relaxed. No production source, dependency, public
   surface, publisher request, scheduler, service, or model-profile command
   changed or ran. Step 7 remains unchecked pending the operator's disposition.
+
+### 2026-08-03 · R-CLOSE — operator-selected v0.17.2 tagged close
+
+- owner: Codex
+- commit: d4258883645a99f9499895bf064e453de9be1281
+- result: PASS. The operator selected patch release v0.17.2 and overrode the
+  declared no-release intent. Exact untagged release parent
+  `d4258883645a99f9499895bf064e453de9be1281`, tree object
+  `c2ab865cf9a6cbb685554568ddf9d94354747784`, carries the release authorities;
+  this separate audit/closing child carries the complete dated record and is
+  the sole local annotated-tag target.
+- classification acceptance: PASS. Published v0.17.1's verifier cannot
+  validate any bundle under pinned `gh` 2.96.0. The corrected verifier,
+  explicit 1.78 / 1.86 / 1.85 floor lanes, and receipt-bound effective
+  toolchains restore third-party verifiability. No route, response-body schema,
+  named-surface shape, or serialized `/v1/*` value-domain movement exists;
+  patch is the operator-selected classification.
+- version acceptance: PASS. `version-check` derives **0.17.2** from all five
+  executable authorities, with **3** offline-MSRV pins at raw `[1.78.0]`,
+  **22** current offline-MSRV restatements at 1.78, and **3** current release
+  restatements at 0.17.2. Cargo changed only the cored lockfile package value.
+- evidence-anchor acceptance: PASS. Candidate `2e5b247e…`, run 30762871542,
+  its 9/9 accepted signed matrix, and asserted 1.78.0 / 1.86.0 / 1.85.0 receipt
+  toolchains anchor the close. The operator-local canonical report rehashes to
+  **41,042 bytes**, SHA-256
+  `dac7de5243968096ef49049ab2b400fdb6d489a8fa17091b0654fd5d3e9858d4`.
+- governed review-export measurement: tree=`d4258883645a99f9499895bf064e453de9be1281`; bytes=`2742486`
+- governed-export acceptance: PASS. The exact release parent produced **100
+  derived / 7 required / 152 exported / 2,742,486 bytes**, retained exactly
+  v0.34–v0.35, and excluded both protected byte classes. v0.34's closed field
+  proves `tree=` is a commit object: `1117dc6…` is type `commit` and has distinct
+  tree `05ef0cce…`. Against v0.34's 2,527,180 bytes the latest adjacent-cycle
+  denominator is **215,306 bytes**; **257,514 bytes / 8.58% / 1.20 cycles**
+  remain beneath the ceiling.
+- artifact-boundary acceptance: PASS. Release-parent State measured **298,251
+  / 453,741 bytes**, leaving **155,490 / 3.70 cycles**; the manifest remained
+  **193,057 / 1,048,576 bytes**, leaving **855,519 / 842.88 cycles**. Export is
+  nearest. Schema validation and two complete checks matched **332 pins**, the
+  State archive, and both protected databases in **0.11 s / 0.10 s**.
+- deferral acceptance: PASS. Every active row has a dated v0.35 close
+  observation. The planted-control line-number subject moved to Deferred
+  completions: activation had 0 anchors, close has **73**, so **73**
+  `expected_anchor` values changed relative to activation; **0** hand-typed
+  absolute finding-line fields survive. The exact release-parent self-test
+  passed **12/12 rules / 73 controls**.
+- divergence acceptance: PASS. The current publication-epoch count remains
+  **0** because the release distance contains no measured runtime-behaviour or
+  public-surface change. Local close publishes nothing; a separately authorized
+  publication will reset and retain the count at zero.
+- scope acceptance: PASS. Used release authorities are `Cargo.lock`,
+  `apps/cored/Cargo.toml`, both shell release literals, `CHANGELOG.md`, and
+  `README.md`; root Cargo, crate manifests, and other app manifests are unused.
+  No other production source, dependency, schema, protected byte, publisher,
+  fixture, observation, closed-cycle document, or historical ref moved.
+- publication acceptance: PASS for the authorized local boundary. The release
+  parent is untagged; the annotated v0.17.2 tag is local-only and targets the
+  closing child. No push or remote ref mutation occurred. The exact
+  closing-tree export audit and dated tag object/target remain owned by the
+  first post-push append and are not fabricated in this tree.
+- checklist acceptance: PASS at the assembled closing worktree: **268 checked /
+  3 retracted / 268 matched / 268 commits resolved**, with no exemption.
+- golden-E2E delta: **0**. The release-parent standalone pipeline passed
+  byte-identical **11/11**. The exact closing-child command cannot be measured
+  before its commit exists and is not claimed inside this tree; it is measured
+  after the local commit/tag construction and reported at handoff.
