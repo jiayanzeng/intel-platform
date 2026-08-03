@@ -949,6 +949,49 @@ Disposition per **DR5**. Apply the rule, record the reasoning, do not ask.
 - Publication of `main` and any tag remains the retained gate (§3) and is not
   performed.
 
+### Step 7 stop-and-report disposition — 2026-08-03
+
+**BLOCKED before release implementation; checkbox remains open.** The
+pre-implementation gate review required by `AGENTS.md` found that the stated
+Step 7 gate did not contain the mandatory audit-before-check acceptance
+criterion. Widening the gate to that criterion exposed an author-side rule with
+no satisfying assignment under the executed lifecycle.
+
+`cycle-check` selects the active state as open when at least one box remains
+unchecked and no closing record exists, and it rejects every parsed
+cycle-ending export-audit field in that state. It selects closed only when zero
+boxes remain unchecked and exactly one closing record exists. An isolated clone
+of exact audit commit `0d2e8b24bcc1ec0758027e52b13ecf91458e0395`
+planted one syntactically valid audit field after the latest governed field
+while R-CLOSE remained unchecked. The real `./run cycle-check` exited **1**
+with exactly one defect: `cycle-ending review-export audit is unavailable while
+the active cycle is open`.
+
+The inverse construction is not truthful: the checked/tagged closing commit's
+own content-addressed id cannot appear in its tree before the commit exists;
+putting a measurement commit between release parent and closing commit violates
+R-CLOSE's immediate-parent identity; putting the audit in the normal append-only
+child occurs after Step 7 is checked and violates this cycle's explicit
+before-check clause. No audit value was predicted, no lifecycle rule or
+criterion was weakened, and no release authority, tag, `main`, or other remote
+ref moved.
+
+**C4 disposition: deferred.** All six `/v1/*` routes lack response models and
+serialize dynamic dictionaries or plain text containing input-, config-, core-,
+and model-derived values. No machine-readable, release-versioned authority
+exhaustively states every field's semantic value domain, and declared scope
+forbids the shell production changes needed to introduce one. A partial schema
+over the fields that happen to be typed or observed would recreate the empty-
+witness defect. A complete response/domain manifest for every success and error
+body, independently baselined across releases, would change the answer. The
+existing G6 deferral row retains that trigger.
+
+DR5 remains measured as patch-eligible: Step 4 added no route or named surface,
+and the complete **15,719-byte** configured `/v1/*` comparison was byte-
+identical with no serialized value-domain movement. If the ordering defect is
+author-corrected without a higher-precedence finding, the next patch is
+`v0.17.3`; no closing disposition or version authority is changed here.
+
 ---
 
 ## Governed artifact byte-boundary authority
@@ -987,7 +1030,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.36 · 2026-08-03 — The historical tags remain unpublished and no hosted full-history removal proof was produced; the trigger did not fire. | none |
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.36 · 2026-08-03 — E0 reverified the unchanged **193,057 / 1,048,576-byte** manifest, all **332** pins, and both protected databases. The latest two duration-bearing clean checks remain 0.12 s and 0.13 s; the E0 invocation did not capture a duration and makes no newer timing claim. Neither trigger fired. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.36 · 2026-08-03 — The declared scope forbids shell source changes and Step 0 changes no `app.py` byte; the trigger did not fire. | none |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — No operator decision displacing the current prose adjudication occurred; C4 remains scheduled before close. The trigger did not fire. | none |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — C4 found no complete control constructible in scope: all six `/v1/*` routes lack response models and expose input-, configuration-, core-, or model-derived values without an exhaustive machine-readable domain authority. A partial observed-field control would be vacuous. No operator decision displaced prose adjudication, so the trigger did not fire. | none |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export and `STATE.md` byte measurements remain below their 3,000,000-byte and 453,741-byte boundaries; exact current figures are recorded by the governed Architecture row and `cycle-check`. Neither trigger fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Step 4 changes reachable runtime behavior for a cross-sector near-duplicate corpus: view now preserves both sector-local identities. The cycle is still open, so no closed-cycle count is added yet and the v0.17.1 publication-epoch count remains 0. A complete before/after measurement over every configured subscription and `/v1/*` route produced the same 15,719-byte payload and SHA-256 `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`; no public-surface trigger fired. | none |
@@ -1001,7 +1044,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.36 · 2026-08-03 — C1 re-measured that store and view already share `intel-extract`; the trigger fired. Step 4 discharged it without adding a crate or manifest edge by moving ordering, sector partitioning, eligibility, distance comparison, and canonical selection into shared `assign_dedup_identity`. R14 proves both consumers and the sector key with three planted controls; R5 retains the synchronized boundary-local radius. | **Step 4 completed 2026-08-03** |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the two restatements diverge | v0.36 · 2026-08-03 — Step 0 leaves both tag-mechanics restatements byte-unchanged and observed no divergence; the trigger did not fire. | none |
 | Review-export capacity | the governed export crosses its declared ceiling | v0.36 · 2026-08-03 — E0 corrected the historical v0.17.2 parent/close measurements to 2,725,527→2,737,957 bytes at 151 files; both and the current governed v0.36 figure remain below 3,000,000 bytes. The trigger did not fire; Step 7 will remeasure the release commit. | **Step 7** |
-| Public value-domain control (G6) | a `/v1/*` field's value domain changes with no control to detect it | v0.36 · 2026-08-03 — Step 4's complete configured-subscription comparison produced byte-identical `/v1/*` payloads and DR5 classification found document selection movement on the synthetic corpus but no added, removed, or redefined serialized field-domain value. C4 remains scheduled to decide the general control before close; this trigger did not fire. | **Step 7 if C4 defers** |
+| Public value-domain control (G6) | a `/v1/*` field's value domain changes with no control to detect it | v0.36 · 2026-08-03 — Step 4's complete configured-subscription comparison produced byte-identical `/v1/*` payloads and DR5 classification found document selection movement on the synthetic corpus but no added, removed, or redefined serialized field-domain value. C4 deferred the general control because no exhaustive machine-readable domain authority exists and a partial observed-field control would be vacuous; a complete release-baselined response/domain manifest would change that decision. This cycle's trigger did not fire. | none |
 
 ---
 

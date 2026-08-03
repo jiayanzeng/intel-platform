@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 6 hosted RE-MEASURE is complete; Step 7 R-CLOSE is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 5 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 7 R-CLOSE is BLOCKED at its pre-implementation gate: the mandatory audit-before-check ordering has no satisfying assignment under the executed lifecycle.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 6 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -423,6 +423,54 @@ object at
 `14912f134e45277e2b4fd10b7f5bf8b4900ca20d`; v0.17.2 still has no remote tag
 entry. No `main` push, tag publication, production/source change, dependency
 change, protected-byte change, publisher request, or retry occurred.
+
+**v0.36 Step 7 pre-implementation gate trip and C4 disposition (measured
+2026-08-03).** The per-task gate review required by `AGENTS.md` found that Step
+7's stated gate covered Step 1A/prior-step completion and publication authority,
+but did not contain its mandatory criterion that the cycle-ending export-audit
+field exist before the Step 7 box is checked. Widening the gate to that criterion
+exposed an author-side rule with no satisfying assignment; the task therefore
+stopped before release implementation.
+
+The executed lifecycle has two exclusive active states. With any unchecked box
+and no closing record it selects `active_state="open"`; in that state
+`check_governed_export_margin` rejects every parsed cycle-ending field. It
+selects `active_state="closed"` only with zero unchecked boxes and exactly one
+closing record. An isolated clone of exact audit commit
+`0d2e8b24bcc1ec0758027e52b13ecf91458e0395` planted one syntactically valid
+audit field after the latest governed field while R-CLOSE remained unchecked.
+The real `./run cycle-check` exited **1** with exactly one defect:
+`cycle-ending review-export audit is unavailable while the active cycle is
+open`.
+
+Reordering cannot supply a truthful construction. Tagged R-CLOSE requires the
+checked closing commit to be the recorded release commit's immediate child and
+to contain the complete closing record. Its own content-addressed commit id
+does not exist until that tree is committed, so that same tree cannot truthfully
+record itself as `closing_tree`. An intervening measurement commit breaks the
+immediate-parent rule; the normal append-only audit child occurs after the box
+is checked and therefore violates this cycle's explicit before-check clause.
+No hash was predicted, no checker or criterion was weakened, and no release
+authority, local tag, `main`, or remote tag moved. The Step 7 box remains open.
+
+C4 is deferred under its own rule, not partially implemented. The six `/v1/*`
+routes declare no response models and return dynamic dictionaries or plain text.
+Their serialized values include subscriber/query input, configuration-derived
+sector/client strings, core-provided nested objects, and model-generated free
+text. The repository has no machine-readable, release-versioned authority that
+exhaustively states every field's semantic value domain, and the declared scope
+forbids the shell production changes needed to introduce one. A generated
+control over only currently typed or observed fields would have an incomplete
+witness and is expressly disallowed. A complete response-model/domain manifest
+covering every success and error body, with an independently versioned baseline,
+would change this determination. The existing deferral row retains the trigger.
+
+DR5's measured classification remains patch: Step 4 added no route or named
+surface, and its complete configured comparison was byte-identical at **15,719
+bytes** with no added, removed, or redefined serialized field-domain value. If
+the ordering defect is author-corrected without a higher-precedence finding,
+the next available patch is **v0.17.3**. That is a conditional classification,
+not a closing disposition or a version-authority change.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).
