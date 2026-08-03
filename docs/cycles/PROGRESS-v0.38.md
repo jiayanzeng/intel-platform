@@ -184,3 +184,72 @@ Grant A and Grant B; neither is generalized beyond those written bounds.
   rerun passed, the box was checked in the implementation commit above, and
   this separate append-only record supplies its commit witness.
 - golden-E2E delta: **0**. The permission-complete full gate passed **11/11**.
+
+### 2026-08-04 · WIRE-ADMISSION — SEC EDGAR live admission
+
+- owner: Codex
+- runbook: `TASKS-v0.38-EXECUTION.md`
+- commit: b73413da17736f2db4db841fbdf564cb913bbcb3
+- grant acceptance: PASS. The initiating request's verbatim `SEC EDGAR wire
+  and admission` grant is recorded before execution and spent only on the
+  three bounded evidence requests, one manual live harvest, and the
+  conditional append-only admission authorized by Grant B.
+- wire/DR12 acceptance: PASS. One sequential no-redirect/no-retry request each
+  returned HTTP 200 for SEC robots, published access terms, and the configured
+  RSS feed. Robots are byte-identical to v0.25; terms preserve every material
+  condition in the affirmative determination; and the changing feed preserves
+  the measured **200-item** parser-facing shape. The comparison and admission
+  reports plus all four raw/metadata files are exact observation-grade pins.
+- harvest acceptance: PASS. Production `./run harvest-sec` consumed the live
+  configured URL, not any observation file, and reported `first_window`,
+  **200 fetched / 200 new / 200 stored**, robots `Body(allow)`, a **0.500 s**
+  effective delay, and deterministic shutdown. Fresh archive
+  `data/live-20260803T195324Z-37051.db` is **253,952 bytes** at SHA-256
+  `fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044`;
+  integrity is `ok`, all **200** rows are exact
+  `finance/sec-edgar-usgaap/PublisherPermitted`, identity nulls and
+  noncanonical rows are zero, and cursors are zero.
+- entitlement/license acceptance: PASS. The actual public shell/core boundary
+  returns **0** documents to science/technology-only `acme-research` and
+  **200** finance documents to `quant-desk`, with zero duplicate collapses.
+  The only entitlement movement is that named finance addition; no public
+  route, field, serialized value domain, subscription, schedule, or source
+  configuration changed.
+- lifecycle acceptance: PASS. A non-retroactive initial `artifacts[]` record
+  binds the fresh archive, exact wire/report hashes, and Grant B citation.
+  Both artifact entry points accept **3 artifacts / 339 pins**; the manifest is
+  **200,440 / 1,048,576 bytes**, and two complete verifications take **0.09 s /
+  0.09 s real**. The prior two admission records and all protected bytes remain
+  unchanged.
+- author-contract corrections: PASS without acceptance weakening. The first
+  full gate exposed `tools/audit_deferred.py` selecting every admitted archive
+  for a historical two-input cosine measurement; it now selects exact
+  `data/core.db` and `data/live-smoke.db`, and a planted third-record regression
+  passes. The first export attempt exposed a one-RSS assumption; the exact
+  Repomix registry and `tools/export_check.py` now require and exclude both
+  pinned raw RSS bodies, and a missing-capture regression fails as intended.
+  Both paths are disclosed in the runbook's exact declared scope.
+- review-boundary acceptance: PASS. Final pre-commit project-root
+  `export-check` reports **104 derived / 7 required / 163 exported / 2,766,436
+  bytes / 2 retained cycles**, leaving **233,564 bytes / 7.79% / 1.63 cycles**
+  below the ceiling at +143,456 bytes/cycle. Sources and evidence records
+  remain included; only the two independently pinned raw RSS bodies and the
+  structural archives are excluded.
+- full-gate acceptance: PASS. The final permission-complete `ci-local` passes
+  **22/22** identities, including Python 3.11 **373/373**, registered scan
+  **15/15 rules / 84 controls**, both Rust floors and warning gates, artifact
+  verification, and golden **11/11**. The independent permission-complete
+  Python 3.12 lane passes the identical **373/373** population with no skips.
+  The earlier 370/371 attempt and inspection-unavailable export attempt remain
+  recorded findings rather than acceptance evidence.
+- deferred-limit acceptance: PASS. This was one manual single-source harvest;
+  recurrence, concurrency, conditional GET/304, repeated fetch, parser retry/
+  redirect behavior, and backfill remain unmeasured and unclaimed.
+- protected-input acceptance: PASS. The three historical untracked amendment
+  inputs remain untouched and outside the implementation commit. No
+  dependency, fixture, historical observation, protected database byte,
+  unauthorized ref, or public response domain moved.
+- stop conditions: none after the two author-contract defects were corrected
+  within the acceptance criteria and disclosed scope; DR12 did not trip.
+- golden-E2E delta: **0**. The final permission-complete full gate passed
+  **11/11**.
