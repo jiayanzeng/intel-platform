@@ -25,6 +25,18 @@ before this repository append, and PUBLISH remained the first active step.
 After activation and the four fresh v0.37 governed-row observations, direct
 `cycle-check` passed on the real published path.
 
+The post-implementation call-chain audit refuted PUBLISH's stronger
+dual-release checker claim. `check_publication_status()` calls
+`newest_closed_release()` once and reconciles only the returned release; its
+real success report names `release=v0.17.3` and does not read the older
+v0.17.2 post-push record. The v0.17.2 record is structurally complete and its
+object/target fields independently equal the fresh `ls-remote` result, but the
+stated `cycle-check`-for-both acceptance is **not measured**. This is an
+author-side acceptance refutation, not a false published record: the exact
+remote facts remain true and immutable. PUBLISH stops only this control claim
+and defers historical multi-release reconciliation; the remaining cycle work
+is unaffected under §2's continue-unaffected-work rule.
+
 The non-force branch push advanced only `origin/main` from `f02379f…` to
 `e068cacc…`; the subsequent non-force tag push created only `v0.17.2` and
 `v0.17.3`. A fresh `ls-remote` then resolved all five direct/peeled ref facts

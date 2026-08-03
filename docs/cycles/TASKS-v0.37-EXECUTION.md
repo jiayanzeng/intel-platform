@@ -314,6 +314,15 @@ Step 1A planted controls pass unmodified; `progress-check` passes.
 **Done when** the published state is the measured state and no record asserts
 anything the remote does not show.
 
+**Measured disposition — 2026-08-03.** The publication and both post-push
+records completed exactly, but the acceptance assertion that `cycle-check`
+binds both releases was refuted at the entry point: it selects only
+`newest_closed_release`, reports v0.17.3, and never reads v0.17.2's older
+record. Fresh `ls-remote` and local object inspection independently match all
+v0.17.2 fields. The affected historical multi-release control claim is
+explicitly deferred; no record is false, no ref is unwound, and unaffected
+steps continue under §2.
+
 ---
 
 ## ACTIVATE
