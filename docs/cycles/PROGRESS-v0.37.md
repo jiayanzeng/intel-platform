@@ -166,3 +166,46 @@ Entries are append-only; corrections are new dated entries.
   green; no corpus, protected-byte, dependency, or scope stop fired.
 - golden-E2E delta: **0**. The final permission-complete worktree passed
   **11/11**.
+
+### 2026-08-03 · STATE-ARCHIVE — structural history through v0.35
+
+- owner: Codex
+- runbook: `TASKS-v0.37-EXECUTION.md`
+- commit: 882c698d607b9a36c253c0f3b0a316772063c90b
+- result: PASS. C10 retains the current v0.37 publication epoch, the
+  immediately prior v0.36 body, and the permanent tail. DR8 moved the older
+  v0.29–v0.35 bodies into the one new structural archive.
+- scope-gate correction: PASS and bounded. The supplied scope forbade the
+  validator that owns the exact structural-archive registry, making DR8's pin
+  acceptance inexpressible. The gate was widened only for registration and a
+  focused control of `STATE-through-v0.35.md`; no prefix admission was added.
+- byte-identity acceptance: PASS. The implementation parent's **258,658-byte**
+  v0.35–v0.29 slice is byte-identical to the archive. The measured
+  **48,303-byte prefix + 258,658-byte archive + 43,964-byte tail** reconstructs
+  the **350,925-byte** pre-cut State at SHA-256
+  `7db0bc5ff34b35da174805914c1725248357b746d7f0783e16d5264ee7cf5cf5`.
+- pin acceptance: PASS. The new structural pin binds **258,658 bytes** at
+  SHA-256 `fb1114f68755cbb8fc5d1fdad9e2ec114bf2604871102fa84d280f2bc90191a7`.
+  Schema validation reports **2 artifacts / 333 pinned files** and the focused
+  validator suite passed **20/20**, including an unregistered sibling refusal.
+- artifact acceptance: PASS. Two complete checks matched both archives, every
+  other pin, and **2/2** protected databases in **0.09 s / 0.10 s real**.
+  Manifest size is **193,830 / 1,048,576 bytes**; neither growth trigger fired.
+- live-State acceptance: PASS. Post-record State is **94,681 / 453,741 bytes**
+  and retains the permanent tail, both post-push records, the publication
+  header, the v0.37/v0.36 bodies, and every lifecycle/version parser field.
+  `cycle-check`, `version-check`, and `progress-check` passed.
+- delivered-export acceptance: PASS. The final project-root worktree export is
+  **2,558,258 bytes / 154 files / 2 retained cycles**, **41,742 bytes** below
+  C10's target and **441,742 bytes / 14.72% / 3.08 cycles** below the ceiling.
+  The exact implementation commit, excluding the three untracked inputs, is
+  **2,514,762 / 151 / 2**, **85,238 bytes** below target and **485,238 bytes /
+  16.17% / 3.38 cycles** below the ceiling.
+- governed review-export measurement: tree=`882c698d607b9a36c253c0f3b0a316772063c90b`; bytes=`2514762`
+- protected-input acceptance: PASS. The three amendment inputs remain
+  untouched and untracked; no protected database, observation-grade byte,
+  dependency, production code, payload, or accepted boundary moved.
+- stop conditions: none. C10's target was met and no hard ceiling, artifact,
+  scope, corpus, or architecture stop fired.
+- golden-E2E delta: **0**. The final permission-complete worktree passed
+  **11/11**.

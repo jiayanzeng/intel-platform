@@ -186,6 +186,12 @@ artifact verification, and the focused validator suite pass; no protected
 database, observation-grade byte, dependency, production path, payload, or
 accepted boundary moved.
 
+The exact implementation commit
+`882c698d607b9a36c253c0f3b0a316772063c90b`, measured without the three
+untracked amendment inputs, exports **2,514,762 bytes / 151 files / 2 retained
+cycles**. That governed baseline is **85,238 bytes** below C10's target and
+leaves **485,238 bytes / 16.17% / 3.38 cycles** at the standing denominator.
+
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
 path while v0.35 remained declared and treated the new runbook as an incomplete
