@@ -209,3 +209,50 @@ Entries are append-only; corrections are new dated entries.
   scope, corpus, or architecture stop fired.
 - golden-E2E delta: **0**. The final permission-complete worktree passed
   **11/11**.
+
+### 2026-08-03 · DOMAIN-MANIFEST — executable public response domains
+
+- owner: Codex
+- runbook: `TASKS-v0.37-EXECUTION.md`
+- commit: 3e593448032085ba664c237a6dfeba4454bf624d
+- result: PASS. C8 selected and completed the byte-identical model-introduction
+  branch for all six public routes; production shell code moved, so Step 5's
+  hosted condition is satisfied.
+- scope-gate correction: PASS and bounded. Multi-line response-model
+  decorators invalidated `audit_deferred.py`'s one-line textual route parser,
+  while the supplied scope omitted that tool. The gate now admits only its
+  AST-based decorator discovery; no receipt, disposition, or audit outcome
+  changed. The three source-rederivation controls passed on Python 3.11 and
+  3.12.
+- derived-manifest acceptance: PASS. `tools/domain_manifest.py` reads the
+  actual FastAPI OpenAPI result, requires exactly six modeled `/v1/*` routes,
+  and recursively records each declared status/media field domain. The
+  **47,135-byte** v0.17.4 baseline contains **6 routes / 31 status-media
+  variants / 112 field occurrences**; a fresh derivation reports **0
+  differences**.
+- registered-control acceptance: PASS. R15 executes the production manifest
+  checker. Its control-site mutants added a `Signal.kind` enum value, removed
+  `SignalsResponse.graph`, and changed `SearchHit.rank` from number to string;
+  each failed before the unmutated tree passed. Full self-test totals are
+  **15/15 rules / 84 controls** with **0** hand-typed absolute finding lines.
+- byte-identity acceptance: PASS. The complete configured-subscription witness
+  exercised **10 successful response records** across all six routes and both
+  configured subscribers where applicable. Its canonical envelope remained
+  exactly **6,869 bytes**, SHA-256
+  `dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`,
+  before and after response-model introduction.
+- shell acceptance: PASS. Permission-complete Python 3.11 and 3.12 each passed
+  the identical **370/370** collected population with no skips and one accepted
+  `StarletteDeprecationWarning`; constraints and dependencies did not move.
+- classification acceptance: PASS. The executable manifest diff is empty and
+  the byte witness proves no `/v1/*` route, response field, value domain,
+  entitlement, or licensing outcome moved. DR9 clause 2 therefore has a
+  measured patch-compatible input rather than a prose assertion.
+- protected-input acceptance: PASS. The three amendment inputs remain
+  untouched and untracked; no protected database, observation-grade byte,
+  dependency declaration, hosted workflow, golden input, or remote ref moved.
+- stop conditions: none. C8 succeeded byte-identically and no §3.4,
+  architecture, scope, dependency, protected-byte, or corpus-integrity stop
+  fired.
+- golden-E2E delta: **0**. The final permission-complete worktree passed
+  **11/11**.
