@@ -218,3 +218,39 @@ Entries are append-only; corrections are new dated entries.
   Step 2 still owns recognition of v0.35's plain boxes, derived expected-box
   coverage, empty-witness failure, and C3's corpus-wide qualifier decision.
 - golden-E2E delta: **0**; no implementation or measurement changed.
+
+### 2026-08-03 · LIFECYCLE-TRUTH — unpublished local close representation
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: eb897a549e314e92d38272c5c237a337413f3957
+- result: PASS. A locally tagged, unpublished v0.17.2 close now passes
+  `cycle-check` through one dated origin tag-absence observation without a
+  fabricated post-push field. The reported status explicitly says offline Git
+  cannot independently refresh remote absence.
+- C7 decision: PASS with limitation recorded. No non-self-reported offline Git
+  fact can prove continuing remote-tag absence; the selected observation is
+  backed by `git ls-remote origin refs/tags/v0.17.2
+  'refs/tags/v0.17.2^{}'`, exit 0 with empty output on 2026-08-03. A durable
+  signed hosted publication receipt available offline would have changed the
+  choice.
+- two-direction lifecycle acceptance: PASS. Before the new branch, the planted
+  valid observation failed with `publication post-push record required`; after
+  the branch it returns `publication=unpublished-local-close`. The distinct
+  published descendant control still fails without its post-push record, and a
+  present complete post-push record takes precedence over the older absence
+  observation.
+- control acceptance: PASS. Both publication directions follow distinct R12
+  control-site markers, the real scan passes **12/12 registered rules**, and
+  `invariant-scan --self-test` passes **12/12 rules / 75 controls** with zero
+  hand-typed absolute finding-line fields.
+- full local acceptance: PASS **22/22** jobs. The permission-complete run covers
+  version/cycle/checklist/invariant/evidence controls, workspace and Rust 1.78
+  check/test, net check/test, Rust 1.86 success and 1.85 refusal, clippy,
+  rustfmt, shell **366/366** with the one accepted warning, protected artifacts,
+  persisted fingerprints, progress, and golden **11/11**.
+- golden-E2E delta: **0**.
+- prohibited movement: PASS. No post-push field was fabricated; no publication,
+  tag/ref movement, production-source change, dependency change, protected
+  byte, v0.35 byte, amendment input, or release authority changed.
+- governed review-export measurement: tree=`eb897a549e314e92d38272c5c237a337413f3957`; bytes=`2795304`
