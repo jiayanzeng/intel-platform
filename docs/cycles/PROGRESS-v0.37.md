@@ -401,3 +401,4 @@ Entries are append-only; corrections are new dated entries.
   State/runbook/progress/Architecture records move. No dependency graph,
   protected byte, fixture, observation, closed-cycle document, publisher
   request, workflow, `main`, or remote release ref moves.
+- cycle-ending review-export audit: closing_tree=`f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; bytes=`2689149`; audit_delta=`+15094`

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.37 is closed locally at the DR9-selected patch release; its immediate closing-export audit child remains required before handoff. v0.17.2 and v0.17.3 are published, while v0.17.4 publication remains unauthorized.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of the v0.17.4 closing record. Remote `main` remains exact published v0.36 audit child `e068cacc76685791c54ab47c84be6abbd592271d`; post-push run `30824053490`, attempt **1**, passed all **9** blocking identities there. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moves no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication reset the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
+**As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is closed locally and unpublished; v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 are published, and no v0.17.4 publication is authorized.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child records the measured closing-tree export. Remote `main` remains exact published v0.36 audit child `e068cacc76685791c54ab47c84be6abbd592271d`; post-push run `30824053490`, attempt **1**, passed all **9** blocking identities there. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moves no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication reset the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
 
 **v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
 (measured 2026-08-03).** Immediately before the one-time grant was spent,
@@ -367,6 +367,16 @@ closing-tree export before handoff.
 - **Publication observation status:** `unpublished-local-close`
 - **Publication observation remote:** `origin`
 - **Publication observation tag ref:** `absent`
+
+**v0.37 closing-export audit child (measured 2026-08-03).** Local annotated
+tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to closing
+commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`, whose immediate parent is
+exact release commit `514bec6c95e47017fafab452775ac4b8824ca6b9`. The project-root
+export of that closing commit passed at **2,689,149 bytes / 158 files / 2
+retained cycles**, a truthful **+15,094-byte** difference from the closing
+tree's 2,674,055-byte governed release-parent field. This append-only child is
+the immediate next commit after the tag target and the final v0.37 commit; it
+does not predict its own content-addressed id or defer the audit to publication.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
