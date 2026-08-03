@@ -111,6 +111,9 @@ DEDUP_ELIGIBILITY_BODY = re.compile(
 DEDUP_ELIGIBILITY_CALL = re.compile(
     r"\b(?P<qualified>intel_extract::)?dedup_eligible\s*\("
 )
+DEDUP_IDENTITY_CALL = re.compile(
+    r"\b(?P<qualified>intel_extract::)?assign_dedup_identity\s*\("
+)
 CANONICAL_IDENTITY_CALLERS = {
     "append_new",
     "update_document",
@@ -1367,8 +1370,7 @@ def r5_findings(root: Path) -> list[str]:
         )
 
     expected_eligibility_sites = {
-        (EXTRACT, "dedup_near", False),
-        (STORE, "assign_canonical_ids_tx", True),
+        (EXTRACT, "assign_dedup_identity", False),
     }
     seen_eligibility_sites: set[tuple[Path, str, bool]] = set()
     for path, text, match, caller in eligibility_calls:
@@ -3701,6 +3703,82 @@ def r13_findings(root: Path) -> list[str]:
     return findings
 
 
+def r14_findings(root: Path) -> list[str]:
+    """Prove store and view consume one sector-partitioned identity rule."""
+    expected_sites = {
+        (EXTRACT, "dedup_near", False),
+        (STORE, "assign_canonical_ids_tx", True),
+    }
+    seen: set[tuple[Path, str, bool]] = set()
+    findings: list[str] = []
+
+    for path in rust_files(root):
+        relative = path.relative_to(root)
+        source = production_text(relative, path.read_text())
+        for match in DEDUP_IDENTITY_CALL.finditer(source):
+            prefix = source[max(0, match.start() - 32) : match.start()]
+            if re.search(r"\bfn\s*$", prefix):
+                continue
+            declaration = _enclosing_function(source, match.start())
+            caller = (
+                declaration.group("name")
+                if declaration is not None
+                else "<module>"
+            )
+            site = (relative, caller, match.group("qualified") is not None)
+            if site not in expected_sites:
+                findings.append(
+                    f"{location(root, path, source, match.start())}: unexpected "
+                    f"assign_dedup_identity call in {caller}"
+                )
+            seen.add(site)
+
+    for relative, caller, qualified in sorted(
+        expected_sites - seen,
+        key=lambda item: (str(item[0]), item[1], item[2]),
+    ):
+        path = root / relative
+        source = production_text(relative, path.read_text())
+        declaration = next(
+            (
+                item
+                for item in RUST_FUNCTION.finditer(source)
+                if item.group("name") == caller
+            ),
+            None,
+        )
+        line = (
+            location(root, path, source, declaration.start())
+            if declaration is not None
+            else f"{relative}:1"
+        )
+        prefix = "intel_extract::" if qualified else ""
+        findings.append(
+            f"{line}: {caller} must call {prefix}assign_dedup_identity"
+        )
+
+    extract_path = root / EXTRACT
+    extract_source = production_text(EXTRACT, extract_path.read_text())
+    declarations = [
+        declaration
+        for declaration in RUST_FUNCTION.finditer(extract_source)
+        if declaration.group("name") == "assign_dedup_identity"
+    ]
+    partition = (
+        "let kept = kept_by_sector.entry(candidate.sector.clone()).or_default();"
+    )
+    if len(declarations) != 1 or extract_source.count(partition) != 1:
+        line = (
+            location(root, extract_path, extract_source, declarations[0].start())
+            if declarations
+            else f"{EXTRACT}:1"
+        )
+        findings.append(
+            f"{line}: assign_dedup_identity must partition candidates by sector"
+        )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -3715,6 +3793,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R11": r11_findings,
     "R12": r12_findings,
     "R13": r13_findings,
+    "R14": r14_findings,
 }
 
 

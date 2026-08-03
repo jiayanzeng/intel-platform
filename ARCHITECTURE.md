@@ -117,8 +117,8 @@ Condensed from `STATE.md §2`.
    behavior; a regression test pins this.
 6. **Harvest pages and cursors are one core-store transaction.**
    `cursors(source_id, cursor, high_water, pending_high_water, updated_at)`:
-   each parsed page's documents, global canonical-id rematerialization, next
-   `resumptionToken`, and pending max datestamp commit atomically. An
+   each parsed page's documents, sector-scoped canonical-id rematerialization,
+   next `resumptionToken`, and pending max datestamp commit atomically. An
    interruption can therefore neither advance past documents still in memory
    nor forget a prior page's newer datestamp. Only a final-page commit clears
    the token/pending value and advances completed `high_water`, which remains
@@ -127,10 +127,14 @@ Condensed from `STATE.md §2`.
    Billing speaks `subscription.created|updated|deleted|key_rotated`; Stripe
    enters through `adapters/stripe.py`. A second provider is a second adapter, not
    a change to the store or entitlement model.
-8. **Dedup identity is a corpus property.** `canonical_id` is re-materialized
-   from the global rule (earliest by `(published_day, id)`) inside the same
-   SQLite transaction on every store write path that adds, changes, or removes
-   rows. The 64-bit `simhash(title + body)` is materialized at ingest or
+8. **Dedup identity is a corpus property within a sector.** `canonical_id` is
+   re-materialized from the global-within-a-sector rule (earliest by
+   `(published_day, id)` inside each sector) inside the same SQLite transaction
+   on every store write path that adds, changes, or removes rows. The sector
+   axis is part of identity because independently configured domains can carry
+   identical wording without denoting one archival object; cross-sector text
+   equality must therefore never collapse entitlement-visible corpus members.
+   The 64-bit `simhash(title + body)` is materialized at ingest or
    migration and refreshed on document updates; `/view` and canonical
    assignment consume that persisted value, and a missing value is an error
    rather than an invitation to hide a failed migration by recomputing.
@@ -138,17 +142,21 @@ Condensed from `STATE.md §2`.
    a property of the question, not the corpus. Only the persisted fingerprint
    is reused there.
 
-   **Threshold-authority limitation — measured 2026-07-30.** Store
-   canonicalization and view collapse retain two boundary-local numeric
-   declarations because neither production crate depends on the other and
-   v0.26 Step 4A's allowed scope contains no common dependency module or
-   manifest edge. Registered R5 makes the pair one synchronized authority: it
-   requires every production store caller to use the private store constant
-   and requires `ViewParams::default` to carry the same numeric value. Its
-   planted failure moves only the view declaration and is rejected. This is
-   static equality, not a shared compiled constant; a coordinated change to
-   both declarations still requires the behavioral evidence and decision that
-   the active cycle assigns separately.
+   **Shared identity seam — selected 2026-08-03.** The earlier
+   threshold-authority limitation's trigger fired when v0.36 re-measured the
+   graph and found that store and view already share `intel-extract`; no new
+   crate, manifest edge, type-boundary dependency, or MSRV movement is needed.
+   `assign_dedup_identity` now owns candidate ordering, sector partitioning,
+   feature eligibility, radius comparison, and canonical selection. Store
+   persistence and view collapse translate their boundary types into that one
+   rule. Registered R14 requires both call sites and the shared sector key, with
+   independent planted failures for removing either consumer and for replacing
+   the sector key. This closes the prior two-implementation scope divergence.
+
+   The numeric radius remains boundary-local: the store's private constant and
+   `ViewParams::default` are still synchronized by registered R5. Static
+   equality is not a shared compiled constant; a coordinated radius change
+   still requires its own behavioral evidence and release decision.
 
    **Feature eligibility — selected 2026-07-30.** Radius 16 applies only when
    both documents have at least 26 three-token SimHash features. Twenty-six is
@@ -156,11 +164,12 @@ Condensed from `STATE.md §2`.
    the measured SEC corpus had at most 10, so the unmeasured 11–25 range is
    deliberately ineligible rather than extrapolated. `intel-extract` owns the
    one compiled `DEDUP_MIN_FEATURES` authority and the shared two-sided guard;
-   store canonicalization and view collapse both invoke it. R5 statically
-   observes the floor, guard body, and both call sites with planted failures.
-   R1 remains the caller-topology control because this policy adds no identity
-   caller. The explicit cost is that sparse documents, including byte-identical
-   ones, remain separate identities until another measured rule is admitted.
+   the one shared identity implementation invokes it for both consumers. R5
+   statically observes the floor, guard body, and call site with planted
+   failures. R1 remains the durability-caller topology control and R14 owns the
+   store/view identity seam. The explicit cost is that sparse documents,
+   including byte-identical ones, remain separate identities until another
+   measured rule is admitted.
 
 ## 4. The robots subsystem (two gates, one direction)
 
@@ -300,7 +309,7 @@ in core SQL; an empty set makes every requested document unavailable.
 | HC9 persistence scope | shell configuration + core store | shell config defaults to atomic JSON; the three recorded SQLite scopes above are explicit |
 | HC12 lock discipline | CI (`--locked`, MSRV job) | the lock *is* the build; its format is part of MSRV |
 | HC13 fixtures ≠ wire | tests + live-run policy | three bugs came from believing otherwise |
-| corpus identity atomicity and eligibility | core store transaction + R1 production-caller allow-list + R5 synchronized distance declarations and shared feature guard | each of the five enumerated production durability paths rematerializes global canonical identity exactly once before its commit; the two boundary-local radius declarations remain synchronized; and both store and view invoke the one two-sided 26-feature eligibility authority, so sparse fingerprints cannot exercise a radius calibrated on denser text |
+| corpus identity atomicity, scope, and eligibility | core store transaction + R1 production-caller allow-list + R5 synchronized distance/feature declarations + R14 shared identity seam | each of the five enumerated production durability paths rematerializes canonical identity exactly once before its commit; store and view both consume one implementation that partitions candidates by sector; the two boundary-local radius declarations remain synchronized; and the one identity implementation invokes the two-sided 26-feature eligibility authority, so sparse fingerprints cannot exercise a radius calibrated on denser text |
 | repository absence claims | registered `invariant-scan` rules in local/hosted CI | each scoped claim has executable source coverage and a captured planted failure; prose-only absence is not accepted |
 | local/hosted check parity | R10 over `run` and `.github/workflows/ci.yml` | the local `ci-local` jobs and non-report-only hosted verification steps are derived from their entry-point commands in both directions; runner setup, release-evidence plumbing, report-only jobs, and operator-local protected database bytes are explicit, counted exemptions |
 | active-runbook measured-value references | `cycle-check` acceptance-criterion heuristic | explicit cross-step references to a recorded, measured, or stored value/count/number/quantity/total are rejected; acceptance must state the invariant relation at the same commit |
@@ -493,8 +502,8 @@ apply. These are explicit bounds, not silent successes.
 | review-export operator-local status (v0.22 G3) | **REFUTED as a missing-contract claim — 2026-07-29** | none | 2026-07-29 — The contributor-facing paragraph above and `AGENTS.md` already state that `./run export-check` is operator-local, why it is absent from local/hosted CI, and what it verifies. No duplicate rule or hosted workaround is added. |
 | review-export size and retention bound (v0.28) | **Accepted at a 3,000,000-byte ceiling and two-cycle retention depth — operator selected 2026-08-02** | the project-root review export exceeds **3,000,000 bytes**, its cycle-document set differs from the active cycle plus the immediately prior execution cycle, the pinned SEC RSS body reappears, or any `docs/state-archive/**` byte reappears | v0.36 · 2026-08-03 — Step 3 measured implementation tree `c9ec9bad85a4ad5ceff0f1654f38a46ea429cfa2` at an export of **2,827,155 bytes / 153 files / 2 retained cycles**, with exactly the v0.35–v0.36 task/progress pairs retained and both protected byte classes excluded. The distinct-cycle progress-backed governed series is **2,742,486 → 2,827,155 (+84,669)**. Its **172,845-byte / 5.76%** remainder is **2.04 cycles** at that latest adjacent-cycle denominator. Review-export margin: kind=`governed→governed`; prior_progress=`docs/cycles/PROGRESS-v0.35.md`; prior_bytes=`2742486`; current_progress=`docs/cycles/PROGRESS-v0.36.md`; current_bytes=`2827155`; evaluated_progress=`docs/cycles/PROGRESS-v0.36.md`; evaluated_bytes=`2827155`; denominator_bytes_per_cycle=`84669`; numerator_bytes=`172845`; cycles=`2.04`. Exact historical E0 remeasurement also corrected the v0.17.2 release-parent/closing pair to **2,725,527 → 2,737,957 bytes at 151 files**, a +12,430-byte delta. Neither byte nor retention trigger fired. Governed review-export bytes: `2827155`. |
 | protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-30** | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real** | v0.36 · 2026-08-03 — E0 measured the unchanged manifest at **193,057 bytes / 332 pins**, leaving **855,519 bytes** to its governed boundary, and matched the State archive plus both protected databases. The latest duration-bearing complete checks remain **0.12 s / 0.13 s real**, leaving **0.88 s / 0.87 s** to the timing trigger; E0 did not capture a newer duration and makes no such claim. No manifest or protected byte changed and neither trigger fired. |
-| shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-30** | the warning becomes an error/failure, or the next authorized constraints refresh changes FastAPI, Starlette, `httpx`, or `httpx2` | v0.36 · 2026-08-03 — E0's permission-complete Python 3.11 population collected **366**, passed **366**, failed **0**, and emitted the existing single warning. No dependency declaration, constraint, FastAPI, Starlette, `httpx`, or `httpx2` value changed; neither warning trigger fired. |
-| published-release divergence | **Accepted under the operator-selected bound; publication-epoch reset defined — 2026-08-01** | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through Step 3, changes are governance/lifecycle/audit controls, declarations, records, and one test-only nonempty witness. No production source, route, response-body schema, named public-surface shape, serialized `/v1/*` value domain, or runtime behaviour changed. Published v0.17.1's epoch count remains **0**; locally closed, unpublished v0.17.2 still carries no measured runtime-behaviour difference. Neither trigger fired. |
+| shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-30** | the warning becomes an error/failure, or the next authorized constraints refresh changes FastAPI, Starlette, `httpx`, or `httpx2` | v0.36 · 2026-08-03 — Step 4's permission-complete Python 3.11 population collected **368**, passed **368**, failed **0**, and emitted the existing single warning. No dependency declaration, constraint, FastAPI, Starlette, `httpx`, or `httpx2` value changed; neither warning trigger fired. |
+| published-release divergence | **Accepted under the operator-selected bound; publication-epoch reset defined — 2026-08-01** | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Step 4 changes reachable runtime behavior for a cross-sector near-duplicate corpus: view now preserves sector-local identities. The cycle remains open, so no closed-cycle count is added yet and published v0.17.1's epoch count remains **0**. Separate Step 3/Step 4 builds produced byte-identical **15,719-byte** canonical public payloads across both configured subscribers and every `/v1/*` route exercised, SHA-256 `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`; no route, response-body schema, named surface, serialized value domain, licensing outcome, or entitlement outcome moved. The public-surface trigger did not fire. |
 | hosted GitHub Actions Node-runtime deprecation annotation (v0.22 G5) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — Run `30456330833` passed **7/7** executable jobs on the migrated actions; all eight check runs had annotation count **0**, and the new **7-receipt / 7-bundle** set verified **7 accepted / 0 rejected**. |
 | hosted action immutability (`dtolnay/rust-toolchain@master`) | **Completed by v0.23 Step 3 — 2026-07-29** | none | 2026-07-29 — All **6/6** workflow uses are pinned to immutable commit `2c7215f132e9ebf062739d9130488b56d53c060c`, dated **2026-07-16T09:35:07-07:00**, and the same hosted evidence run verified. |
 | recorded-trigger freshness discipline | **Completed by v0.23 Step 5 — 2026-07-29** | none | 2026-07-29 — `cycle-check` now requires a valid dated measured observation for each trigger-bearing row in this table and the active v0.23-forward deferral table; registered R12 mutation **15** proves a missing date is rejected. |

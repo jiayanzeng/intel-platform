@@ -317,7 +317,7 @@ fn day_distribution(documents: &[Document]) -> BTreeMap<String, usize> {
 }
 
 #[test]
-fn measures_nonempty_cross_sector_store_view_identity_divergence() {
+fn measures_nonempty_cross_sector_store_view_identity_equivalence() {
     let disposable = DisposableDir::create();
     let body = (0..40)
         .map(|index| format!("identityfeature{index}"))
@@ -335,6 +335,12 @@ fn measures_nonempty_cross_sector_store_view_identity_divergence() {
         "2026-07-02",
         &body,
     );
+    let science_duplicate = cross_sector_document(
+        "science::cross-sector-duplicate",
+        "science",
+        "2026-07-03",
+        &body,
+    );
     assert!(feature_count(&science) >= DEDUP_MIN_FEATURES);
     assert_eq!(feature_count(&science), feature_count(&technology));
 
@@ -342,9 +348,13 @@ fn measures_nonempty_cross_sector_store_view_identity_divergence() {
         .expect("open disposable cross-sector store");
     assert_eq!(
         store
-            .append_new(&[science.clone(), technology.clone()])
+            .append_new(&[
+                science.clone(),
+                technology.clone(),
+                science_duplicate.clone(),
+            ])
             .expect("append cross-sector witness"),
-        2
+        3
     );
     let store_ids = vec![
         (
@@ -360,6 +370,13 @@ fn measures_nonempty_cross_sector_store_view_identity_divergence() {
                 .canonical_id(&technology.id)
                 .expect("technology canonical id")
                 .expect("technology canonical id present"),
+        ),
+        (
+            science_duplicate.id.clone(),
+            store
+                .canonical_id(&science_duplicate.id)
+                .expect("science duplicate canonical id")
+                .expect("science duplicate canonical id present"),
         ),
     ];
     let view = dedup_near(
@@ -384,13 +401,26 @@ fn measures_nonempty_cross_sector_store_view_identity_divergence() {
         vec![
             (science.id.clone(), science.id.clone()),
             (technology.id.clone(), technology.id.clone()),
+            (science_duplicate.id.clone(), science.id.clone()),
         ]
     );
-    assert_eq!(
-        view_drops,
-        vec![(technology.id, science.id, 0)],
-        "the nonempty witness must expose the store/view sector-scope divergence"
+    let mut store_drops = store.duplicates().expect("load witness canonical drops");
+    let mut view_drop_ids: Vec<_> = view
+        .drops
+        .iter()
+        .map(|drop| (drop.dropped_id.clone(), drop.kept_id.clone()))
+        .collect();
+    store_drops.sort();
+    view_drop_ids.sort();
+    assert!(
+        !store_drops.is_empty(),
+        "the identity witness must be nonempty"
     );
+    assert_eq!(
+        store_drops, view_drop_ids,
+        "store and view must apply one sector-partitioned identity rule"
+    );
+    assert_eq!(view_drops, vec![(science_duplicate.id, science.id, 0)]);
 }
 
 #[test]
@@ -446,13 +476,9 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
     store_drops.sort();
     extract_drops.sort();
     println!("identity-equivalence-vectors: store={store_drops:?} extract={extract_drops:?}");
-    assert_eq!(
-        store_drops, extract_drops,
-        "append_new's private assign_canonical_ids_tx result must equal dedup_near"
-    );
-
     assert_eq!((shipped.kept.len(), shipped.drops.len()), (201, 0));
     assert!(store_drops.is_empty());
+    assert!(extract_drops.is_empty());
     println!(
         "identity-guarded-threshold: threshold=16 feature_floor={} input={} \
          kept={} dropped={} cross_issuer=0",

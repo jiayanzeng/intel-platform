@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 3 v0.35 declarations are complete; Step 4 identity scope is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **13 rules / 79 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The checklist audit now declares all **9** immutable v0.35 gaps and passes; Step 1A's permission-complete local gate passed **22/22** jobs and the golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 4 identity scope is complete; Step 5 audit-child is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 4 local gate passed **22/22** jobs, shell tests pass **368/368** with the accepted warning, and the golden E2E passes **11/11**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -285,6 +285,63 @@ progress worktree blobs equal their `HEAD` blobs exactly:
 `510d27f22f2687f6dfd48c49eacd7442d60bb77f`; targeted `git diff --exit-code`
 returned 0. No v0.35 byte, production source, dependency, protected byte,
 tag/ref, or amendment input changed.
+
+**v0.36 Step 4 identity-scope decision and result (measured 2026-08-03).**
+C1 selects the existing shared `intel-extract` dependency as the one compiled
+identity seam. Entering-state inspection refuted the old architectural premise
+that no common module was available: store and view already depended on
+`intel-extract`, so the threshold-authority trigger fired without a new crate,
+manifest edge, type-boundary dependency, lockfile change, or MSRV movement.
+`assign_dedup_identity` now owns the `(published_day, id)` ordering, sector-keyed
+kept sets, feature eligibility, distance comparison, and canonical selection.
+Store persistence and view collapse translate their boundary values into that
+same rule. The radius remains boundary-local and synchronized by R5.
+
+The before witness used two identical **43-feature** documents. Store persisted
+science and technology as self-canonical, while view kept science and dropped
+technology at distance **0**. The after witness adds a later same-sector science
+duplicate so equality cannot pass on empty sets: both layers keep the
+cross-sector documents separate and produce the same nonempty drop
+`science::cross-sector-duplicate → science::cross-sector-witness` at distance
+**0**. The shipped-fixture H7 measurement is unchanged before and after:
+**6 science / 7 technology / 42 cross-sector pairs**, distribution
+`{22:1, 23:1, 25:1, 27:1, 28:1, 29:5, 30:3, 31:3, 32:2, 33:6,
+34:3, 35:7, 36:1, 37:4, 39:2, 41:1}`, and **0** pairs at or below 16.
+
+Registered R14 failed on the entering tree at `dedup_near`,
+`assign_canonical_ids_tx`, and the absent shared sector partition. After the
+change it passes, and all three executable mutations independently catch the
+removed view call, removed store call, and replaced sector key. The full suite
+passes **14/14 rules / 81 controls**. R5 now observes the shared implementation's
+single eligibility call, and R1 remains the five durability-caller topology
+control; its positional source anchor was re-measured as
+`ARCHITECTURE.md:118-124` after the architectural edit.
+
+The observable-output answer is **no configured `/v1/*` response moved**.
+Disposable builds of the Step 3 tree and Step 4 worktree ingested all configured
+sectors, then exercised signals, brief, search, and ask for both configured
+subscriptions plus both billing routes. Their canonical payloads were
+byte-identical at **15,719 bytes**, SHA-256
+`0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`.
+`acme-research`, the two-sector case, remains **12 documents / 1 collapse**;
+`quant-desk` remains **1 / 0**. The unchanged search license fields, withheld
+snippets, ask attestation output, sectors, and response bodies demonstrate that
+no licensing or entitlement outcome moved. Golden independently passes
+**11/11** with zero delta.
+
+For DR5 clause 2, partitioning can change which documents are selected on the
+explicit counterexample corpus, but it does not add, remove, or redefine any
+value in a serialized `/v1/*` field's domain. The configured fixture selects
+the same documents and produces byte-identical public output. This is a runtime
+behavior correction, not a public value-domain change, so it does not require
+a minor version; absent a later higher-precedence finding, DR5 selects patch.
+
+The exact permission-complete `./run ci-local` passed all **22/22** jobs:
+workspace and Rust 1.78 checks/tests, net checks/tests with Rust 1.86 success and
+1.85 refusal, clippy, rustfmt, shell **368/368** with the one accepted warning,
+golden **11/11**, all **332** pinned files and both protected databases, and all
+remaining lifecycle/evidence jobs. No protected byte, v0.35 byte, amendment
+input, tag, or remote ref moved.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

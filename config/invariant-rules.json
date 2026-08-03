@@ -4,7 +4,7 @@
     {
       "id": "R1",
       "claim": "The five enumerated production store callers each invoke assign_canonical_ids_tx exactly once, and no other production canonical-identity helper call exists.",
-      "source": "ARCHITECTURE.md:115-124",
+      "source": "ARCHITECTURE.md:118-124",
       "scope": "Production Rust; the allow-list is crates/store/src/sqlite.rs in append_new, update_document, delete_document, rematerialize_canonical_ids, and commit_harvest_page, each calling assign_canonical_ids_tx exactly once. Test-only Rust is excluded.",
       "fail_before": [
         {
@@ -99,9 +99,9 @@
     },
     {
       "id": "R5",
-      "claim": "Every production store canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant, the ViewParams default carries the same numeric distance, and both store canonicalization and view dedup invoke the shared eligibility guard whose one measured feature floor is 26.",
+      "claim": "Every production store canonical-identity call site binds its distance to the one private DEDUP_MAX_DISTANCE constant, the ViewParams default carries the same numeric distance, and the shared identity implementation invokes the one eligibility guard whose measured feature floor is 26.",
       "source": "docs/cycles/TASKS-v0.26-EXECUTION.md:1042-1087",
-      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; the one private crates/store/src/sqlite.rs DEDUP_MAX_DISTANCE declaration; the one ViewParams default dedup_max_distance in crates/view/src/lib.rs; the one public crates/extract/src/lib.rs DEDUP_MIN_FEATURES declaration fixed at the measured floor 26; the shared dedup_eligible body comparing both feature counts to that floor; and exactly the dedup_near and assign_canonical_ids_tx production calls to that guard. Test-only Rust is excluded. The two radius declarations remain boundary-local and R5 compares their numeric values. The feature floor has one shared compiled authority in intel-extract, which both store and view already consume. R1's caller-topology claim is unchanged: the guard adds no canonical-identity caller.",
+      "scope": "All production Rust calls to assign_canonical_ids, assign_canonical_ids_tx, and rematerialize_canonical_ids_with_distance; the one private crates/store/src/sqlite.rs DEDUP_MAX_DISTANCE declaration; the one ViewParams default dedup_max_distance in crates/view/src/lib.rs; the one public crates/extract/src/lib.rs DEDUP_MIN_FEATURES declaration fixed at the measured floor 26; the shared dedup_eligible body comparing both feature counts to that floor; and exactly the assign_dedup_identity production call to that guard. Test-only Rust is excluded. The two radius declarations remain boundary-local and R5 compares their numeric values. R14 separately proves that both store and view consume the shared identity implementation. R1's caller-topology claim is unchanged: the guard adds no canonical-identity caller.",
       "fail_before": [
         {
           "file": "crates/store/src/sqlite.rs",
@@ -174,25 +174,13 @@
         },
         {
           "file": "crates/extract/src/lib.rs",
-          "find": "            if dedup_eligible(*kept_features, feature_count) && dist <= max_distance {\n",
+          "find": "            (dedup_eligible(kept.feature_count, candidate.feature_count)\n                && distance <= max_distance)\n",
           "replace_with": [
-            "            if dist <= max_distance {\n"
+            "            (distance <= max_distance)\n"
           ],
-          "expected_fail": "dedup_near must call dedup_eligible",
+          "expected_fail": "assign_dedup_identity must call dedup_eligible",
           "expected_file": "crates/extract/src/lib.rs",
-          "expected_anchor": "pub fn dedup_near(mut docs: Vec<(Document, u64)>, max_distance: u32) -> DedupResult {"
-        },
-        {
-          "file": "crates/store/src/sqlite.rs",
-          "find": "        match kept.iter().find(|(kept_fp, kept_features, _)| {\n            intel_extract::dedup_eligible(*kept_features, features)\n                && intel_extract::hamming(*kept_fp, fp) <= max_distance\n        }) {\n",
-          "replace_with": [
-            "        match kept.iter().find(|(kept_fp, _, _)| {\n",
-            "            intel_extract::hamming(*kept_fp, fp) <= max_distance\n",
-            "        }) {\n"
-          ],
-          "expected_fail": "assign_canonical_ids_tx must call intel_extract::dedup_eligible",
-          "expected_file": "crates/store/src/sqlite.rs",
-          "expected_anchor": "fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite::Result<usize> {"
+          "expected_anchor": "pub fn assign_dedup_identity<T>(\n    mut candidates: Vec<DedupIdentityCandidate<T>>,"
         }
       ],
       "fail_before_note": "invariant-scan: R5 FAIL: crates/store/src/sqlite.rs:33: second canonical-distance constant SECOND_DEDUP_MAX_DISTANCE=17"
@@ -1036,6 +1024,45 @@
         }
       ],
       "fail_before_note": "invariant-scan: R13 FAIL: a checklist box-population, structural-coverage, progress-correspondence, or qualification planted failure was not detected"
+    },
+    {
+      "id": "R14",
+      "claim": "Store canonicalization and view collapse both consume the single assign_dedup_identity implementation, whose kept-candidate state is partitioned by sector before applying the shared feature and distance rules.",
+      "source": "ARCHITECTURE.md §8 and docs/cycles/TASKS-v0.36-EXECUTION.md Step 4",
+      "scope": "Production Rust. Exactly two calls to assign_dedup_identity exist: unqualified in intel-extract dedup_near and qualified in the store's assign_canonical_ids_tx. The sole implementation lives in intel-extract and keys its kept-candidate collection by candidate.sector. Planted controls remove each consumer call independently and remove the shared sector key.",
+      "fail_before": [
+        {
+          "file": "crates/extract/src/lib.rs",
+          "find": "    let assignments = assign_dedup_identity(candidates, max_distance);\n",
+          "replace_with": [
+            "    let assignments = Vec::new();\n"
+          ],
+          "expected_fail": "dedup_near must call assign_dedup_identity",
+          "expected_file": "crates/extract/src/lib.rs",
+          "expected_anchor": "pub fn dedup_near(docs: Vec<(Document, u64)>, max_distance: u32) -> DedupResult {"
+        },
+        {
+          "file": "crates/store/src/sqlite.rs",
+          "find": "    let assignments = intel_extract::assign_dedup_identity(candidates, max_distance);\n",
+          "replace_with": [
+            "    let assignments = Vec::new();\n"
+          ],
+          "expected_fail": "assign_canonical_ids_tx must call intel_extract::assign_dedup_identity",
+          "expected_file": "crates/store/src/sqlite.rs",
+          "expected_anchor": "fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite::Result<usize> {"
+        },
+        {
+          "file": "crates/extract/src/lib.rs",
+          "find": "        let kept = kept_by_sector.entry(candidate.sector.clone()).or_default();\n",
+          "replace_with": [
+            "        let kept = kept_by_sector.entry(SectorId(String::new())).or_default();\n"
+          ],
+          "expected_fail": "assign_dedup_identity must partition candidates by sector",
+          "expected_file": "crates/extract/src/lib.rs",
+          "expected_anchor": "pub fn assign_dedup_identity<T>(\n    mut candidates: Vec<DedupIdentityCandidate<T>>,"
+        }
+      ],
+      "fail_before_note": "invariant-scan: R14 FAIL: store or view no longer consumes the shared sector-partitioned identity implementation"
     }
   ]
 }

@@ -840,13 +840,12 @@ impl SqliteStore {
 }
 
 fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite::Result<usize> {
-    // (sector, published_day, id, simhash, feature_count), in the dedup's own
-    // order. Feature count is derived from the same title+body input as the
-    // persisted fingerprint.
-    let rows: Vec<(String, Option<i64>, String, u64, usize)> = {
+    // Feature count is derived from the same title+body input as the persisted
+    // fingerprint. The shared helper owns ordering and sector partitioning.
+    let candidates: Vec<intel_extract::DedupIdentityCandidate<()>> = {
         let mut stmt = tx.prepare(
             "SELECT sector, published_day, id, title, body, simhash FROM documents
-             ORDER BY sector, published_day, id",
+             ORDER BY published_day, id",
         )?;
         let it = stmt.query_map([], |r| {
             let id = r.get::<_, String>(2)?;
@@ -855,43 +854,25 @@ fn assign_canonical_ids_tx(tx: &Transaction<'_>, max_distance: u32) -> rusqlite:
             let fingerprint = r
                 .get::<_, Option<i64>>(5)?
                 .ok_or_else(|| missing_fingerprint_error(5, &id))?;
-            Ok((
-                r.get::<_, String>(0)?,
-                r.get::<_, Option<i64>>(1)?,
+            Ok(intel_extract::DedupIdentityCandidate {
+                sector: SectorId(r.get::<_, String>(0)?),
+                published_day: r.get::<_, Option<i64>>(1)?.map(Day),
                 id,
-                fingerprint as u64,
-                intel_extract::simhash_feature_count(&format!("{title} {body}")),
-            ))
+                fingerprint: fingerprint as u64,
+                feature_count: intel_extract::simhash_feature_count(&format!("{title} {body}")),
+                payload: (),
+            })
         })?;
         it.collect::<rusqlite::Result<Vec<_>>>()?
     };
 
-    let mut assignments: Vec<(String, String)> = Vec::new();
-    let mut sector = String::new();
-    let mut kept: Vec<(u64, usize, String)> = Vec::new();
-    for (sec, _day, id, fp, features) in rows {
-        if sec != sector {
-            sector = sec;
-            kept.clear();
-        }
-        match kept.iter().find(|(kept_fp, kept_features, _)| {
-            intel_extract::dedup_eligible(*kept_features, features)
-                && intel_extract::hamming(*kept_fp, fp) <= max_distance
-        }) {
-            Some((_, _, canonical)) => assignments.push((id, canonical.clone())),
-            None => {
-                kept.push((fp, features, id.clone()));
-                assignments.push((id.clone(), id));
-            }
-        }
-    }
-
+    let assignments = intel_extract::assign_dedup_identity(candidates, max_distance);
     let mut changed = 0usize;
-    for (id, canonical) in &assignments {
+    for assignment in &assignments {
         changed += tx.execute(
             "UPDATE documents SET canonical_id = ?2
              WHERE id = ?1 AND (canonical_id IS NULL OR canonical_id <> ?2)",
-            params![id, canonical],
+            params![assignment.id, assignment.canonical_id],
         )?;
     }
     Ok(changed)

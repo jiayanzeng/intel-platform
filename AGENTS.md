@@ -138,8 +138,9 @@ where it does; here is what you must never do.
   redirects stay disabled; every document redirect is followed manually and the
   full gate is re-run before requesting the next origin.
 - **Dedup identity is a function of the corpus, not arrival order.** `canonical_id`
-  is re-materialized from the global rule (earliest by `(published_day, id)`) on
-  every ingest that adds rows — never assigned first-seen-wins at insert.
+  is re-materialized from the global-within-a-sector rule (earliest by
+  `(published_day, id)` inside each sector) on every ingest that adds rows —
+  never assigned first-seen-wins at insert and never matched across sectors.
   `/retrieve` deliberately does *not* filter by `canonical_id`; it keeps whichever
   of a near-dup pair the query ranked higher. Do not "simplify" either of these.
 

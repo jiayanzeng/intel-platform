@@ -14,7 +14,8 @@
 //! - keep-first policy by (day, id) -> keep-canonical policy (prefer the
 //!   original publisher over the syndicator via source ranking).
 
-use intel_core::Document;
+use intel_core::{Day, Document, SectorId};
+use std::collections::BTreeMap;
 
 /// The radius-16 identity rule is calibrated only for documents with at least
 /// this many SimHash features. Step 3 measured 26 as the smallest feature count
@@ -101,42 +102,102 @@ pub struct DedupResult {
     pub drops: Vec<DedupDrop>,
 }
 
-/// Collapses near-duplicates from fingerprints persisted by the store, keeping
-/// the earliest by (day, id).
-pub fn dedup_near(mut docs: Vec<(Document, u64)>, max_distance: u32) -> DedupResult {
-    docs.sort_by(|(a, _), (b, _)| {
-        a.published_day
-            .cmp(&b.published_day)
-            .then_with(|| a.id.cmp(&b.id))
+/// One corpus member presented to the shared canonical-identity rule.
+pub struct DedupIdentityCandidate<T> {
+    pub sector: SectorId,
+    pub published_day: Option<Day>,
+    pub id: String,
+    pub fingerprint: u64,
+    pub feature_count: usize,
+    pub payload: T,
+}
+
+/// The shared rule's decision for one candidate.
+pub struct DedupIdentityAssignment<T> {
+    pub id: String,
+    pub canonical_id: String,
+    pub distance: Option<u32>,
+    pub payload: T,
+}
+
+struct KeptIdentity {
+    fingerprint: u64,
+    feature_count: usize,
+    id: String,
+}
+
+/// Assign canonical identity by the earliest `(published_day, id)` globally
+/// within each sector. Store persistence and view collapse both consume this
+/// function so the sector boundary is one compiled rule, not parallel logic.
+pub fn assign_dedup_identity<T>(
+    mut candidates: Vec<DedupIdentityCandidate<T>>,
+    max_distance: u32,
+) -> Vec<DedupIdentityAssignment<T>> {
+    candidates.sort_by(|left, right| {
+        left.published_day
+            .cmp(&right.published_day)
+            .then_with(|| left.id.cmp(&right.id))
     });
 
-    let mut kept: Vec<(u64, usize, Document)> = Vec::new();
-    let mut drops = Vec::new();
-
-    for (d, fp) in docs {
-        let feature_count = simhash_feature_count(&format!("{} {}", d.title, d.body));
-        let mut matched: Option<(u32, String)> = None;
-        for (kfp, kept_features, k) in &kept {
-            let dist = hamming(*kfp, fp);
-            if dedup_eligible(*kept_features, feature_count) && dist <= max_distance {
-                matched = Some((dist, k.id.clone()));
-                break;
+    let mut kept_by_sector: BTreeMap<SectorId, Vec<KeptIdentity>> = BTreeMap::new();
+    let mut assignments = Vec::with_capacity(candidates.len());
+    for candidate in candidates {
+        let kept = kept_by_sector.entry(candidate.sector.clone()).or_default();
+        let matched = kept.iter().find_map(|kept| {
+            let distance = hamming(kept.fingerprint, candidate.fingerprint);
+            (dedup_eligible(kept.feature_count, candidate.feature_count)
+                && distance <= max_distance)
+                .then(|| (kept.id.clone(), distance))
+        });
+        let (canonical_id, distance) = match matched {
+            Some((canonical_id, distance)) => (canonical_id, Some(distance)),
+            None => {
+                kept.push(KeptIdentity {
+                    fingerprint: candidate.fingerprint,
+                    feature_count: candidate.feature_count,
+                    id: candidate.id.clone(),
+                });
+                (candidate.id.clone(), None)
             }
-        }
-        match matched {
-            Some((distance, kept_id)) => drops.push(DedupDrop {
-                dropped_id: d.id,
-                kept_id,
+        };
+        assignments.push(DedupIdentityAssignment {
+            id: candidate.id,
+            canonical_id,
+            distance,
+            payload: candidate.payload,
+        });
+    }
+    assignments
+}
+
+/// Collapses near-duplicates from fingerprints persisted by the store, keeping
+/// the earliest by `(day, id)` globally within each sector.
+pub fn dedup_near(docs: Vec<(Document, u64)>, max_distance: u32) -> DedupResult {
+    let candidates = docs
+        .into_iter()
+        .map(|(document, fingerprint)| DedupIdentityCandidate {
+            sector: document.sector.clone(),
+            published_day: document.published_day,
+            id: document.id.clone(),
+            fingerprint,
+            feature_count: simhash_feature_count(&format!("{} {}", document.title, document.body)),
+            payload: document,
+        })
+        .collect();
+    let assignments = assign_dedup_identity(candidates, max_distance);
+    let mut kept = Vec::new();
+    let mut drops = Vec::new();
+    for assignment in assignments {
+        match assignment.distance {
+            Some(distance) => drops.push(DedupDrop {
+                dropped_id: assignment.id,
+                kept_id: assignment.canonical_id,
                 distance,
             }),
-            None => kept.push((fp, feature_count, d)),
+            None => kept.push(assignment.payload),
         }
     }
-
-    DedupResult {
-        kept: kept.into_iter().map(|(_, _, d)| d).collect(),
-        drops,
-    }
+    DedupResult { kept, drops }
 }
 
 #[cfg(test)]
