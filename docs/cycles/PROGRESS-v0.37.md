@@ -256,3 +256,35 @@ Entries are append-only; corrections are new dated entries.
   fired.
 - golden-E2E delta: **0**. The final permission-complete worktree passed
   **11/11**.
+
+### 2026-08-03 · RE-MEASURE-FIX — pre-install invariant topology
+
+- owner: Codex
+- runbook: `TASKS-v0.37-EXECUTION.md`
+- commit: b39965e146973688624a6db0d8a0e28603d5d1ba
+- finding: Hosted run **30832624982**, attempt **1**, on exact candidate
+  `2e5921f0d0d3f4d64bde56b95325216d33caa59b` passed **8/9** blocking
+  identities and failed only Python 3.11's pre-install invariant step. R15's
+  subprocess imported FastAPI/Pydantic before the workflow's unchanged install
+  phase and exited without a domain difference. The run was not retried and
+  immutable ref `codex/v0.37-evidence-2e5921f` was not moved.
+- topology-repair acceptance: PASS. The blocking manifest derivation now uses
+  only Python AST over the actual application decorators and Pydantic type
+  annotations. The installed shell witness independently compares that result
+  with FastAPI's runtime OpenAPI output, including the pinned native 422
+  domain.
+- pre-install acceptance: PASS. Python 3.11 with site packages disabled passed
+  **15/15 rules / 84 controls**. The dependency-free manifest check passed at
+  **6 routes / 112 field occurrences**.
+- runtime acceptance: PASS. The installed derivation/runtime comparison had
+  **0 differences**; the combined payload/runtime witness passed on Python
+  3.11 and 3.12 without changing the **370-test** collected population.
+- remote acceptance: PASS as a recorded failed candidate. The first ref was
+  absent immediately before one non-force creation; remote `main`, v0.17.2,
+  v0.17.3, and every unrelated ref remained unchanged. RE-MEASURE remains open
+  and requires a fresh candidate/ref rather than reuse, force, or retry.
+- stop conditions: none. The failure is a correctable hosted-topology finding,
+  not a dependency addition, protected-byte movement, entitlement/licensing
+  movement, or publisher-wire event.
+- golden-E2E delta: **0**. The post-repair authoritative local pipeline passed
+  **11/11**.
