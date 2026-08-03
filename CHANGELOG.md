@@ -4,6 +4,40 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.5 — 2026-08-04
+
+### Added
+
+- SEC EDGAR is admitted as the second publisher through a fresh, chained
+  evidence record. One bounded production harvest stored a coherent
+  200-document `PublisherPermitted` finance window in a new protected archive,
+  after current robots, access-terms, and RSS evidence matched the reviewed
+  compliance conditions.
+- `./run harvest-sec` provides the bounded manual fresh-path operation used by
+  admission: artifact preflight, monitored contact identity, exact-source
+  selection, first-window validation, corpus-fact reporting, and deterministic
+  shutdown are all executable controls. It does not authorize recurring
+  scheduling, concurrency, conditional requests, retries, or backfill.
+
+### Fixed
+
+- Historical deferred-corpus auditing now selects its two named archives by
+  stable manifest path, so adding a third valid admitted archive cannot
+  vacuously replace or expand that measurement.
+- Review-export validation derives every exact pinned SEC raw-RSS exclusion
+  from the Repomix registry and proves each remains absent, instead of assuming
+  that only one capture exists.
+
+### Compatibility
+
+- This is a patch release. It enables bounded harvesting of an
+  already-configured source and adds the intended 200-document finance result
+  for `quant-desk`, but adds no route, response field, field type, or serialized
+  `/v1/*` field-domain value. The release-baselined domain manifest remains
+  exact at 6 routes, 31 status/media variants, and 112 field occurrences.
+  Dependency resolution, protected historical databases, golden inputs,
+  subscription configuration, and license-enum semantics are unchanged.
+
 ## v0.17.4 — 2026-08-03
 
 ### Fixed

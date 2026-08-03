@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 has spent Grant B, admitted SEC EDGAR as the second publisher, and passed exact hosted re-measurement; v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; the still-open v0.38 distance now carries the measured SEC harvest-enablement behavior difference but no public response-domain movement, so no closed-cycle count has yet accrued.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.38 R-CLOSE is preparing the DR13-selected patch release locally; v0.17.4 remains published exactly and v0.17.5 publication is unauthorized.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the v0.17.4 release authorities and is the immediate parent of closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to that closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 until the local v0.17.5 close, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed-cycle candidate carrying the measured SEC harvest-enablement behavior difference, with no public-surface movement.
 
 **v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the runbook-defined Grant A before
@@ -216,6 +216,27 @@ Final remote readback resolves the evidence ref to the exact candidate, keeps
 v0.17.3, and v0.17.4 annotated objects unchanged. No tag, publication ref,
 workflow byte, dependency, protected byte, publisher wire,
 entitlement/licensing outcome, or public response domain moved.
+
+**v0.38 R-CLOSE release-parent preparation (measured 2026-08-04).** DR13
+selects patch **v0.17.5**. The dependency-free release-baselined domain check
+and the installed FastAPI runtime comparison each pass at **6 routes / 31
+status-media response variants / 112 recursive field occurrences**, with
+**0 differences** from v0.17.4. Admission enables bounded harvesting of the
+already-configured SEC source and adds the intended 200-document finance
+result for `quant-desk`; it adds no route, response field, field type, or
+serialized `/v1/*` field-domain value. No subscription configuration or
+license-enum semantic changes. DR13's minor clause does not fire.
+
+The release parent moves all five executable authorities to **0.17.5**:
+`apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`,
+`shell/intel_shell/app.py`, this State header, and `CHANGELOG.md`. README's
+three current restatements move with them, and Cargo changes only cored's
+lockfile package value. The release parent remains untagged. Its immediate
+child will carry the checked closing record; only that child becomes the local
+annotated-tag target, followed immediately by the required closing-export
+audit child. Direct local and remote checks found no v0.17.5 tag before this
+preparation. Remote `main` remained exact published v0.17.4 audit child
+`a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; DR14 authorizes no publication.
 
 **v0.38 E0 — entering-state reconstruction (measured 2026-08-04).** The seven
 runbook rows were treated as hypotheses and checked at their real entry points.

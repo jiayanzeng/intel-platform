@@ -1,4 +1,4 @@
-# intel-platform (v0.17.4 — core-shell)
+# intel-platform (v0.17.5 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,16 +7,16 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.17.4` is the selected release identity. v0.37 has hosted evidence at the
+`v0.17.5` is the selected release identity. v0.38 has hosted evidence at the
 exact audited candidate. Under the tagged-closing protocol, the untagged
 release commit carries the release edits, its immediate child carries the
-closed cycle record, and the annotated `v0.17.4` tag targets that closing commit
+closed cycle record, and the annotated `v0.17.5` tag targets that closing commit
 rather than its release-commit parent.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The declared pair is
-[`TASKS-v0.37-EXECUTION.md`](docs/cycles/TASKS-v0.37-EXECUTION.md) and
-[`PROGRESS-v0.37.md`](docs/cycles/PROGRESS-v0.37.md).
+[`TASKS-v0.38-EXECUTION.md`](docs/cycles/TASKS-v0.38-EXECUTION.md) and
+[`PROGRESS-v0.38.md`](docs/cycles/PROGRESS-v0.38.md).
 
 **Current source scope is two configured publisher origins.** `arxiv-cs` and
 `sec-edgar-usgaap` are configured network sources; the other three sources are
@@ -25,7 +25,10 @@ evaluated both real origins in one process-scoped robots cache: arXiv's
 source-local missing-policy produced `RfcAllowAll`, while SEC independently
 retained its fetched `Body(allow)` policy. This does not exercise concurrent
 harvesters. SEC has an explicit 600-second source clock; no scheduled SEC run
-has occurred, and publication does not authorize that recurring clock.
+has occurred, and publication does not authorize that recurring clock. A
+separate Grant-B-bounded admission harvest stored one fresh 200-document SEC
+window and proved finance-only public entitlement through the existing
+shell/core path.
 
 **Fixed-window rollover is now visible.** Each successful non-paged source is
 assessed separately before insertion. A first window, an overlapping window,
