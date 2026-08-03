@@ -418,7 +418,7 @@ milestone is completed by its observation, never by a workaround.
 
 ## Cycle checklist
 
-- [ ] PUBLISH-V17-4
+- [x] PUBLISH-V17-4
 - [x] ACTIVATE
 - [ ] E0
 - [ ] REHEARSAL-COMPLETE

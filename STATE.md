@@ -1,6 +1,29 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is closed locally and unpublished; v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 are published, and no v0.17.4 publication is authorized.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child records the measured closing-tree export. Remote `main` remains exact published v0.36 audit child `e068cacc76685791c54ab47c84be6abbd592271d`; post-push run `30824053490`, attempt **1**, passed all **9** blocking identities there. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moves no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication reset the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
+**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 is active under Grant A and Grant B, and v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; activation adds no runtime or public-surface difference.
+
+**v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
+The operator's initiating request issued the runbook-defined Grant A before
+execution. Immediately before the ref movement, `git ls-remote` reported only
+`main` at `e068cacc76685791c54ab47c84be6abbd592271d` and no v0.17.4 tag.
+That commit was an ancestor of exact audit child
+`a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; local annotated object
+`902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peeled to exact closing commit
+`f4f2690a442d7a77f1dabb53fb3a120a2c987e97`. No precondition was refuted.
+
+One non-force branch push advanced only `origin/main` to the audit child; one
+non-force tag push created only `v0.17.4`. Fresh readback resolves the branch,
+annotated object, and peeled target to those three exact values. Push-triggered
+run **30841505130**, attempt **1**, concluded `success`: all **9/9** blocking
+identities passed, and dependency drift was the sole report-only skip. No ref
+was forced, deleted, or moved beyond Grant A. The historical unpublished-local
+observation remains untouched as a true dated pre-publication measurement.
+
+- **Post-push verification date:** 2026-08-04
+- **Post-push release:** `v0.17.4`
+- **Post-push annotated tag object:** `902d30f046c7e9f493fe3a18eefd5275ca5c5afe`
+- **Post-push closing commit:** `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`
+- **Post-push hosted run:** `30841505130`
 
 **v0.38 ACTIVATE — admission cycle declared (measured 2026-08-04).** The
 pre-activation entry point read the untracked v0.38 runbook as an older open
