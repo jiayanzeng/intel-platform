@@ -6,6 +6,7 @@ Step 0 — authority block text corrected to name no cycle document; placement c
 Step 1 — H11–H13 added; interim verification per amendment §5; untracked-set expectation updated — 2026-08-03
 Step 1A — new step: lifecycle truth for an unpublished local tagged close — 2026-08-03
 Step 7 — gate added: requires Step 1A complete — 2026-08-03
+Step 7 — audit-child ordering corrected: box checked in the closing commit, audit field in the immediate append-only child; "before Step 7 is checked" struck as unsatisfiable — 2026-08-03
 
 **Cycle:** v0.36
 **Entering release:** v0.17.2, closed locally at v0.35, **unpublished**
@@ -533,10 +534,11 @@ Additional required measurements:
 - The exact object graph: release parent, its tree, closing commit, its tree,
   tag object, tag target. Confirm the closing commit's immediate parent is the
   release parent and that no remote ref matches any of them.
-- `git status --porcelain`: confirm exactly two untracked entries,
+- `git status --porcelain`: confirm exactly three untracked entries,
   `docs/cycles/AMENDMENT-r4-STEP5A-NET-FLOOR-TOOLCHAIN.md` and
-  `docs/cycles/AMENDMENT-v0.36-A1r2-AUTONOMY-LIFECYCLE.md`. Both remain
-  untouched and untracked.
+  `docs/cycles/AMENDMENT-v0.36-A1r2-AUTONOMY-LIFECYCLE.md`, plus
+  `docs/cycles/AMENDMENT-v0.36-A2-STEP7-AUDIT-ORDER.md`. All three remain
+  untouched and untracked after A2 is supplied.
 - Until Step 1A completes, run `cycle-check` directly and confirm its only
   error is the missing v0.17.2 post-push record. Exercise `version-check`,
   `checklist-audit`, `invariant-scan --self-test`, golden,
@@ -575,6 +577,11 @@ Additional measurements also pass. The exact object graph is release
 the closing parent is the release commit. Read-only `git ls-remote origin`
 found none of those five ids. `git status --porcelain` has exactly the two
 expected untracked amendment paths plus this step's tracked test edit.
+
+A2 was supplied after E0 and adds the third untracked amendment input. That
+forward change does not rewrite E0's truthful two-input measurement; from A2
+application through handoff, the expected untracked population is exactly
+three.
 
 All 22 local identities were exercised individually; none was omitted. Twenty
 pass. Direct `cycle-check` has exactly Step 1A's expected missing-post-push
@@ -937,10 +944,15 @@ Disposition per **DR5**. Apply the rule, record the reasoning, do not ask.
   shows a non-zero checked count.** A v0.36 line reading `checked=0` fails this
   step outright — that is the property Step 2 built, applied to its own cycle.
 - The governed export row bound to the last governed field visible in the
-  closing tree, and the audit child carrying `- cycle-ending review-export
-  audit: closing_tree=…; bytes=…; audit_delta=…`. **Required in this cycle
-  before Step 7 is checked**; it is local, needs no authorisation, and there is
-  no satisfying assignment in which it defers out of the cycle.
+  closing tree. Then, in the tagged-close order — release parent → closing
+  commit carrying the record with Step 7's box checked → annotated tag →
+  **append-only audit child as the immediate next commit** — the audit child
+  carries `- cycle-ending review-export audit: closing_tree=…; bytes=…;
+  audit_delta=…`, measuring the closing tree it follows. The field is required
+  **within this cycle, before handoff**: the audit child is the final commit of
+  v0.36 and is delivered as the next cycle's entering ref, per the v0.33 and
+  v0.34 precedent. Deferring it to a post-push append remains prohibited; that
+  deferral was G3.
 - Both artifact boundaries measured with remaining cycles; nearest named.
 - Every deferral row carries a dated v0.36 observation.
 - `invariant-scan --self-test` passes; totals stated; zero hand-typed absolute
@@ -948,6 +960,12 @@ Disposition per **DR5**. Apply the rule, record the reasoning, do not ask.
 - Golden 11/11 embedded and standalone; delta stated.
 - Publication of `main` and any tag remains the retained gate (§3) and is not
   performed.
+
+Every criterion above except the audit-field criterion is evaluated at the
+assembled closing worktree, following the v0.34 precedent. The audit-field
+criterion alone is evaluated at the immediate audit child. `checklist-audit`
+is evaluated at the closing worktree, where Step 7 is checked and its progress
+entry resolves to the release parent commit.
 
 ### Step 7 stop-and-report disposition — 2026-08-03
 
@@ -991,6 +1009,18 @@ and the complete **15,719-byte** configured `/v1/*` comparison was byte-
 identical with no serialized value-domain movement. If the ordering defect is
 author-corrected without a higher-precedence finding, the next patch is
 `v0.17.3`; no closing disposition or version authority is changed here.
+
+### Step 7 A2 forward correction — 2026-08-03
+
+Reviewer amendment A2 affirms the four-clause impossibility proof as author-
+side E3 and corrects only its ordering clause. The earlier BLOCKED record
+remains the truthful pre-amendment measurement. Step 7 is reopened under the
+satisfiable order: release parent, checked closing commit, local annotated tag,
+then immediate append-only audit child before handoff. All other criteria stay
+at the assembled closing-worktree evaluation point; only the audit field is
+evaluated at the child. The child must also pass Step 1A's truthful second-
+unpublished-release path without weakening its published-release negative
+control.
 
 ---
 
