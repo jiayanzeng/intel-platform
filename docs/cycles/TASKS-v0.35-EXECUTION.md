@@ -190,6 +190,30 @@ mutation, gate/flag relaxation, or Step 7 action occurred. The v0.34 historical
 claim is deliberately limited to the retained qualified certificate SANs: its
 temporary JSON report and original CLI argument are not repository-retained.
 
+**Operator amendment r6 — 2026-08-03 — release disposition selected: patch
+v0.17.2.** This operator-numbered amendment follows runbook r12; it does not
+replace the earlier, unrelated runbook r6. The operator overrides the declared
+`no-release` intent and selects `release` at patch version **v0.17.2**. The
+published v0.17.1 verifier cannot validate any Sigstore bundle under pinned
+`gh` 2.96.0. The corrected verifier, explicit 1.78 / 1.86 / 1.85 floor lanes,
+and receipt-bound effective toolchain restore third-party verifiability. The
+measured distance contains no route, response-body schema, named-surface shape,
+or serialized `/v1/*` value-domain movement; the correction stays within
+existing names and shapes, so patch is the operator-selected classification.
+This amendment authorizes the entirely local R-CLOSE construction only:
+untagged release parent, separate closing child, and local annotated v0.17.2
+tag over that closing child. Publication of `main` or the tag remains a
+separate exact authorization.
+
+**r13 — 2026-08-03 — release-authority table-shape correction.** The first
+real `cycle-check` after changing `disposition_intent` to `release` rejected all
+eight release-authority paths. The prior table placed eight comma-separated
+patterns in one cell, while the declared-scope grammar assigns one pattern to
+each row. The table now expresses the same eight patterns as eight rows. No
+path, precedence rule, forbid, matcher, release classification, or production
+permission changes; this repairs the author contract so the already-declared
+release scope is executable.
+
 ---
 
 ## Reviewer errors, mine, recorded before anything else
@@ -261,7 +285,7 @@ scar is named after.
 | Scope class | Path or value |
 |---|---|
 | `scope_version` | `1` |
-| `disposition_intent` | `no-release` |
+| `disposition_intent` | `release` |
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `config/invariant-rules.json` |
 | `allow` | `tools/cycle_check.py` |
@@ -290,7 +314,14 @@ scar is named after.
 | `forbid` | `observations/**` |
 | `forbid` | `fixtures/**` |
 | `forbid` | `docs/cycles/**` (except this runbook and `PROGRESS-v0.35.md`, by standing precedence) |
-| `release_authority` | `Cargo.toml`, `Cargo.lock`, `crates/*/Cargo.toml`, `apps/*/Cargo.toml`, `shell/intel_shell/__init__.py`, `shell/intel_shell/app.py`, `CHANGELOG.md`, `README.md` |
+| `release_authority` | `Cargo.toml` |
+| `release_authority` | `Cargo.lock` |
+| `release_authority` | `crates/*/Cargo.toml` |
+| `release_authority` | `apps/*/Cargo.toml` |
+| `release_authority` | `shell/intel_shell/__init__.py` |
+| `release_authority` | `shell/intel_shell/app.py` |
+| `release_authority` | `CHANGELOG.md` |
+| `release_authority` | `README.md` |
 
 **Four scope moves relative to v0.34, each with its reason and its cost.**
 

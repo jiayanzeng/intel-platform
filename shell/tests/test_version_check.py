@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -168,9 +169,9 @@ def test_release_version_restatement_rejects_readme_disagreement() -> None:
 
     with pytest.raises(
         ValueError,
-        match=(
-            r"README\.md: project heading states 9\.9\.9, but executable "
-            r"release authorities derive 0\.17\.1"
+        match=re.escape(
+            "README.md: project heading states 9.9.9, but executable "
+            f"release authorities derive {canonical}"
         ),
     ):
         version_check.release_version_restatement_report(

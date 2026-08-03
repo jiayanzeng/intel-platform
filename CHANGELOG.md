@@ -4,6 +4,28 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.2 — 2026-08-03
+
+### Fixed
+
+- Corrected the release-grade Sigstore verifier for pinned `gh` 2.96.0 by
+  supplying its documented owner/repository-qualified workflow identity,
+  canonicalizing each persisted bundle as a single JSON document, pinning the
+  admitted CLI version, and independently matching the expected certificate
+  identity. The v0.17.1 verifier could not validate any bundle with the pinned
+  CLI; the corrected verifier authenticates the complete signed evidence set.
+- Every hosted and local Rust floor lane now selects its effective toolchain
+  above `rust-toolchain.toml`, proves Cargo and rustc releases before compiling,
+  and records the effective `rustc_release` in its signed receipt. Authenticated
+  evidence covers the Rust 1.78 offline success, Rust 1.86 net success, and
+  Rust 1.85 net declared-MSRV refusal.
+
+### Compatibility
+
+- This is a patch release. No route, response-body schema, named-surface shape,
+  or serialized `/v1/*` value domain changes. Dependency resolution, protected
+  databases, golden inputs, entitlements, and licensing outcomes are unchanged.
+
 ## v0.17.1 — 2026-08-01
 
 ### Fixed
