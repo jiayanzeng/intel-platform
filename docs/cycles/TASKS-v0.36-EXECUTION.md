@@ -888,6 +888,33 @@ effective toolchains. Report the run id, attempt number, the ref, the
 If it does not run, record the dated reason and state which claims therefore
 rest on local execution only.
 
+### Step 6 completion — 2026-08-03
+
+Production Rust moved in Step 4, so the conditional step ran. Pinned `gh`
+**2.96.0** first accepted the immutable **7/7** preflight population and
+rejected the wrong-signer control. Immediately before the one DR6 push,
+`git ls-remote` exited **0** with no entry for fresh ref
+`refs/heads/codex/v0.36-evidence-f50db67`; one non-force push created that ref
+at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`.
+
+Workflow-dispatch run **30810557834**, attempt **1**, completed `success` on
+that exact SHA/ref. All **9/9** blocking identities passed and persisted nine
+receipts plus nine bundles; the report-only drift job was the sole skip. The
+pinned release-grade verifier accepted **9**, rejected **0**, and independently
+bound every bundle to the exact repository, qualified workflow, candidate
+digest, evidence ref, and GitHub-hosted runner. Executed assertions proved
+receipt toolchains **1.78.0 / 1.86.0 / 1.85.0**.
+
+Both local shell lanes passed **368/368**. Both hosted lanes collected **368**,
+passed **367**, and skipped only the named, reasoned, `on_site` production-audit
+node; `tools/test_population.py` derived equivalent populations of **368** for
+both comparisons. Hosted and local golden passed **11/11**. The temporary
+**41,096-byte** verifier report has SHA-256
+`ab767a456411029fd4529bb8c1dc97dc135869765c33cf078add510e98ef05f7`
+and stays outside the repository. Final readback kept the evidence ref exact,
+remote `main`/v0.17.1 unchanged, and v0.17.2 absent; no run was retried and no
+other ref moved.
+
 ---
 
 ## Step 7 · R-CLOSE
@@ -953,8 +980,8 @@ trigger state; it does not weaken, restate, or re-scope it.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.36 · 2026-08-03 — Step 0 introduced neither a third-party shell nor a replacement-shell HC1 claim; the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.36 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — Step 4 adds shared-identity vocabulary under R14 with three real planted controls. R3/R4 vocabulary is unchanged, the latest complete self-test passes 14/14 rules / 81 controls, and no spelling outside registered credential or path vocabulary was observed. The trigger did not fire. | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — E0 again selected and proved cargo/rustc 1.86.0 and passed the net check; 1.85.0 refused the locked ICU edge as expected. E0 neither changes nor is authorized to change evidence topology, so the combined trigger did not fire. | none |
-| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.36 · 2026-08-03 — Step 0 changes no workflow, verifier pin, bundle, or accepted workflow contract; the trigger did not fire. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — Step 6 hosted the existing exact 1.86.0 success and 1.85.0 refusal lanes at candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; authenticated receipts assert both effective versions. The cycle remains forbidden from changing workflow/evidence topology, so the combined trigger did not fire. | none |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.36 · 2026-08-03 — Step 6's standing preflight and release-grade audit observed exact pinned `gh` 2.96.0, accepted 7/7 historical and 9/9 candidate bundles under every strict flag, and rejected the wrong-signer control. No version or accepted contract changed; the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.36 · 2026-08-03 — No third-publisher compliance review or admission decision occurred; the trigger did not fire. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.36 · 2026-08-03 — No publication authorization or remote ref mutation occurred; the trigger did not fire. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.36 · 2026-08-03 — The historical tags remain unpublished and no hosted full-history removal proof was produced; the trigger did not fire. | none |
@@ -1011,7 +1038,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - [x] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
 - [x] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered
 - [x] **AUDIT-CHILD** — v0.35 Step 7 field discharged
-- [ ] **RE-MEASURE** — conditional; run id and identity count, or dated reason
+- [x] **RE-MEASURE** — conditional; run id and identity count, or dated reason
 - [ ] **R-CLOSE** — closing record, audit child, non-zero v0.36 checked count
 
 *Box ids match the `PROGRESS-v0.36.md` entry ids exactly. That is the property

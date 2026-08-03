@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 5 audit-child is complete; conditional hosted RE-MEASURE is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 4 local gate passed **22/22** jobs, shell tests pass **368/368** with the accepted warning, and the golden E2E passes **11/11**. Step 5 independently measured the v0.35 closing commit's review export and supplied its missing non-governing audit field without moving a tag or remote ref. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 6 hosted RE-MEASURE is complete; Step 7 R-CLOSE is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 5 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -374,6 +374,55 @@ therefore exposed rather than absorbed: H8 refutes the historical field's
 exact-tree characterization, while the immutable field remains the binding
 baseline used by the lifecycle checker. No v0.35 byte, production source,
 dependency, protected byte, tag, remote ref, or amendment input moved.
+
+**v0.36 Step 6 hosted RE-MEASURE (measured 2026-08-03).** The exact audited
+candidate is `f50db6744df726434db7f5aeffa1a08bbbf521fc`. Pinned `gh` **2.96.0**
+first passed the standing preflight: **7/7** immutable historical bundles were
+accepted with every strict flag, and the deliberately wrong signer was
+rejected. Immediately before the only push, `git ls-remote` exited **0** with
+no entry for fresh ref
+`refs/heads/codex/v0.36-evidence-f50db67`. One non-force push created exactly
+that ref; immediate and final readback resolved it to the candidate. No ref was
+reused, forced, moved, deleted, or repurposed.
+
+Workflow-dispatch run **30810557834**, attempt **1**, targeted that exact SHA
+and ref with evidence signing. All **9/9** blocking identities passed: `core`,
+`golden`, `lint`, `msrv`, `net`, `net-msrv-1-85`, `net-msrv-1-86`, and both
+shell matrices. Dependency drift was the sole declared report-only skip. Every
+receipt emission, attestation, bundle copy, and artifact persistence step
+passed; the run was dispatched exactly once and was not retried. Hosted golden
+passed **11/11**.
+
+The release-grade audit used canonical single-bundle JSON, qualified workflow
+`jiayanzeng/intel-platform/.github/workflows/ci.yml`, exact source/signer
+digest `f50db6744df726434db7f5aeffa1a08bbbf521fc`, exact source ref
+`refs/heads/codex/v0.36-evidence-f50db67`, the GitHub-hosted-runner denial, and
+every strict verifier flag. It accepted **9**, rejected **0**, found the
+complete matrix, and independently matched every bundle's certificate identity
+to
+`https://github.com/jiayanzeng/intel-platform/.github/workflows/ci.yml@refs/heads/codex/v0.36-evidence-f50db67`.
+The operator-local report is **41,096 bytes**, SHA-256
+`ab767a456411029fd4529bb8c1dc97dc135869765c33cf078add510e98ef05f7`,
+and remains under `/private/tmp`, outside the repository and manifest.
+
+Three executed `jq -e` assertions proved `msrv=1.78.0`,
+`net-msrv-1-86=1.86.0`, and `net-msrv-1-85=1.85.0`; all exited **0**. Local
+Python 3.11.4 and 3.12.13 each collected and passed **368/368**. Each hosted
+lane collected **368**, passed **367**, and skipped exactly
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+marked `on_site`, for reason `on-site production audit requires protected
+corpora and built cored`. Both `tools/test_population.py` comparisons derived
+`collected=368`, `equivalent=true`, and `equivalent_passed=368`; no population
+count was accepted by transcription.
+
+The workflow stayed byte-identical at **39,177 bytes**, SHA-256
+`4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+Final direct remote measurement kept `main` and peeled `v0.17.1` at
+`f02379f03ccdfd1b019413234f2ad014d169fb04` and the v0.17.1 annotated tag
+object at
+`14912f134e45277e2b4fd10b7f5bf8b4900ca20d`; v0.17.2 still has no remote tag
+entry. No `main` push, tag publication, production/source change, dependency
+change, protected-byte change, publisher request, or retry occurred.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).
