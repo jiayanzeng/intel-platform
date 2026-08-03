@@ -368,3 +368,38 @@ Entries are append-only; corrections are new dated entries.
 - prohibited movement: PASS. No v0.35 byte, protected byte, amendment input,
   release authority, tag, or remote ref moved.
 - governed review-export measurement: tree=`b945957871ae1fa5d3a3697a4f0c660347bd8311`; bytes=`2844319`
+
+### 2026-08-03 · AUDIT-CHILD — v0.35 closing-export disclosure
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: 9dea180cb872c6fa5c28b09907e2b452a7904952
+- field acceptance: PASS. A dated v0.36 State append carries the exact required
+  non-governing field for v0.35 closing commit
+  `9996c6820d720160b64607575d0270d2e5393ef9`; no v0.35 byte was rewritten and
+  no push was performed.
+- independent measurement: PASS. An isolated detached clone measured the
+  closing commit with project-root `./run export-check` at **2,737,957 bytes /
+  151 files / 2 retained cycles**. Direct Git inspection separately supplied
+  tree object `2fbb5ef5323ef010c2cbacddfcd713375881a4e6`, release parent
+  `d4258883645a99f9499895bf064e453de9be1281`, and the closing commit's last
+  governed field, **2,742,486 bytes**. Independent subtraction produced
+  `audit_delta=-4529`.
+- H8 discrepancy acceptance: PASS. H8's exact release-parent re-export is
+  **2,725,527 bytes**, so its direct closing movement is **+12,430**. The
+  immutable governed baseline is **+16,959** above that exact parent result;
+  `+16,959 − 4,529 = +12,430`. The record exposes both baselines and does not
+  absorb their discrepancy.
+- full local acceptance: PASS **22/22** jobs over the assembled audit state.
+  Shell passed **368/368** with the one accepted warning; all **14/14 rules /
+  81 controls** passed, Rust 1.78 and net 1.86 passed, net 1.85 produced the
+  required locked-ICU refusal, golden passed **11/11**, and all **332** pins
+  plus both protected databases matched. The pre-implementation run had passed
+  release and cycle consistency, then stopped exactly at checked-task evidence
+  because the checked box could not yet name this implementation commit; that
+  measured failure was the prescribed implementation/audit boundary, not a
+  pass.
+- golden-E2E delta: **0**; standalone golden passed **11/11**.
+- prohibited movement: PASS. No production source, dependency, protected byte,
+  v0.35 byte, amendment input, release authority, tag, or remote ref moved.
+- governed review-export measurement: tree=`9dea180cb872c6fa5c28b09907e2b452a7904952`; bytes=`2850622`
