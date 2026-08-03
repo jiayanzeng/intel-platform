@@ -551,6 +551,75 @@ handoff written.
 
 ---
 
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-03
+- **Release disposition:** release (as of 2026-08-03)
+- **Release:** `v0.17.4`
+- **Release commit:** `514bec6c95e47017fafab452775ac4b8824ca6b9`
+- **Evidence candidate:** `99012c86dcdda8ea32f1b1afa016f793118e9087`
+- **Candidate hosted run:** `30834599847` attempt 1
+- **Disposition reason:** explicit response models and the release-baselined
+  manifest expose and validate the already-serialized `/v1/*` contract. The
+  complete configured witness remains byte-identical at **6,869 bytes**, and
+  the manifest reports **0 differences** across **6 routes / 31 status-media
+  variants / 112 field occurrences**. No route, observable named runtime
+  surface, response payload byte, field, or serialized value-domain value
+  moves, so DR9 selects patch **v0.17.4** and neither minor clause fires.
+- **Release identity:** `version-check` derives 0.17.4 from all five executable
+  authorities and reports **3** offline-MSRV pins, **22** current offline-MSRV
+  restatements, and **3** current release restatements. The release parent is
+  untagged and is this closing record's immediate parent. This tree contains no
+  annotated-tag-object field; the local annotated tag targets this closing
+  commit only after it exists.
+- **Anchored evidence:** exact candidate `99012c86…` and run 30834599847 passed
+  **9/9** blocking identities and persisted **9 receipts / 9 Sigstore
+  bundles**. Both local lanes pass **370/370**; both hosted shell populations
+  derive equivalent **370**-test results with one named, reasoned, `on_site`
+  skip; hosted and local golden pass **11/11**.
+- **Governed export:** exact release parent
+  `514bec6c95e47017fafab452775ac4b8824ca6b9` produced **104 derived / 7
+  required / 158 exported / 2,674,055 bytes / 2 retained cycles**, retaining
+  v0.36–v0.37 and excluding both protected byte classes. At the latest
+  +143,456-byte adjacent-cycle denominator, **325,945 bytes / 10.86% / 2.27
+  cycles** remain below the fixed ceiling. Subsequent manifest, evidence, and
+  closing records put this tree **74,055 bytes** above C10's already-met Step 3
+  target; that reduced margin is a v0.38 finding, not a ceiling breach.
+- **Artifact boundaries:** the assembled closing State is
+  **106,707 / 453,741 bytes**. The manifest remains **193,830 /
+  1,048,576 bytes**, leaving **854,746 bytes / 842.11 cycles** at +1,015
+  bytes/cycle. The release-parent local gate matched all **333** pins and both
+  protected databases; neither governed artifact boundary fired.
+- **Deferral disposition:** every active row carries its latest dated v0.37
+  observation. G6 is completed rather than deferred: R15's added-enum,
+  removed-field, and changed-type mutations fail at the serialization
+  authority. The release-parent self-test passes **15/15 rules / 84 controls**
+  with **0** hand-typed absolute finding-line fields.
+- **Divergence disposition:** published v0.17.3 reset the publication-epoch
+  count to **0**. v0.37 introduces no measured runtime-behavior or
+  public-surface difference, so no new count starts and neither trigger fires.
+  An unpublished local close does not reset the epoch.
+- **Scope reconciliation:** release authority changed only `Cargo.lock`,
+  `apps/cored/Cargo.toml`, both shell version literals, `CHANGELOG.md`,
+  `README.md`, and the State version header. Active State/runbook/progress and
+  Architecture records carry the close. No dependency graph, protected byte,
+  fixture, observation, closed-cycle document, publisher request, workflow, or
+  unauthorized remote ref moved.
+- **Publication boundary:** direct pre-close readback found no local or remote
+  `refs/tags/v0.17.4` entry. No push, `main` movement, or tag publication is
+  authorized or performed. The annotated tag is local-only; the immediate
+  next commit records the measured closing-tree export before handoff.
+- **Checklist reconciliation:** the assembled closing worktree passes at
+  **295 checked / 3 retracted / 286 matched / 286 commits resolved / 9
+  exemptions**, with v0.37 itself nonempty at **8 checked / 8 matched / 8
+  resolved**.
+- **Golden reconciliation:** the release-parent full gate and standalone run
+  pass **11/11**, delta **0**. The assembled closing-worktree standalone run
+  also passes **11/11**; the final audit-child full gate re-executes the
+  embedded pipeline.
+
+---
+
 ## Governed artifact byte-boundary authority
 
 - governed artifact byte boundary: path=`STATE.md`; bytes=`453741`
@@ -567,38 +636,38 @@ governed.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.37 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.37 · 2026-08-03 — PUBLISH started no harvester and observed no second concurrent harvester; the trigger did not fire. | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.37 · 2026-08-03 — PUBLISH made no live publisher request, observed no transient robots outage, and received no Decision B authorization; the trigger did not fire. | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.37 · 2026-08-03 — No live publisher request or 304 observation occurred; the combined trigger did not fire. | none |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.37 · 2026-08-03 — Scope permits the ingest source path, but no connector review occurred and no mapping changed; the combined trigger did not fire. | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.37 · 2026-08-03 — PUBLISH ran no publisher runtime, added no origin, and observed no concurrency; the trigger did not fire. | none |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.37 · 2026-08-03 — No bounded scheduled window was authorized or executed; the trigger did not fire. | none |
-| Postgres / pgvector / multi-host seam | unchanged | v0.37 · 2026-08-03 — PUBLISH changed remote release refs and State only; no Postgres, pgvector, or multi-host seam appeared. | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.37 · 2026-08-03 — No third-party shell or replacement-shell HC1 claim appeared; the trigger did not fire. | none |
-| L2 forced-command wrapper | an operator server session | v0.37 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.37 · 2026-08-03 — DOMAIN-MANIFEST's complete registered scan passed **15/15 rules / 84 controls**; R3/R4 found no outside spelling. | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.37 · 2026-08-03 — RE-MEASURE run 30834599847 most recently executed and passed the pinned Rust 1.86 success lane, while workflow/evidence topology remains scope-forbidden; the combined trigger did not fire. | none |
-| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.37 · 2026-08-03 — No verifier pin or accepted bundle/workflow contract changed; the trigger did not fire. | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.37 · 2026-08-03 — No third-publisher review or admission occurred; the trigger did not fire. | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.37 · 2026-08-03 — DR7 moved only main, v0.17.2, and v0.17.3; it did not authorize or move either historical tag. | none |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.37 · 2026-08-03 — PUBLISH did not move either historical tag or remove the hosted flag; the combined trigger did not fire. | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.37 · 2026-08-03 — STATE-ARCHIVE measured **193,830 / 1,048,576 bytes**, **333 pins**, and two complete checks at **0.09 s / 0.10 s real**. Neither trigger fired. | none |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.37 · 2026-08-03 — DOMAIN-MANIFEST moved non-version shell source, so the broad trigger fired. Step 4 rechecked the literal as one of `version-check`'s syntax-derived executable authorities and retained it package-owned; R-CLOSE will move its value with the other authorities. | **Step 4 completed 2026-08-03** |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.37 · 2026-08-03 — DOMAIN-MANIFEST completed the authorized G6 subcase: R15 now derives and diffs every declared `/v1/*` response domain. Other heterogeneous R-CLOSE criteria remain prose adjudications. | **Step 4 completed 2026-08-03** |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.37 · 2026-08-03 — DR8 authorized completion ahead of the unchanged trigger: the post-record live State is **94,681 / 453,741 bytes** and the structural archive is pinned at **258,658 bytes**. Neither boundary trigger had fired. | none |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.37 · 2026-08-03 — The active cycle is v0.37; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Exact publication of v0.17.3 resets the count to zero at its closing commit. DOMAIN-MANIFEST adds validation and native derivation for the already-serialized contract, while the complete ten-response witness remains exact at **6,869 bytes / SHA-256 `dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`**, the manifest diff is empty, and hosted RE-MEASURE golden most recently passed **11/11**. No measured runtime or public `/v1/*` surface difference starts or fires the trigger. | none |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.37 · 2026-08-03 — PUBLISH changed no Rust-floor restatement or registry member, and the registered scan passed. | none |
-| Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.37 · 2026-08-03 — ACTIVATE derives exactly the v0.36–v0.37 retained set and advances only the excluded boundary through v0.35. | none |
-| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.37 · 2026-08-03 — v0.36's immediate audit child already records its closing-tree difference; v0.37 remains open. | none |
-| SEC EDGAR admission | the three v0.25 determinations closed | v0.37 · 2026-08-03 — The determinations remain closed; no admission or live wire request occurred, and admission still awaits the combined grant named in the handoff. | none |
-| License enum semantics | a second publisher requires an inexpressible license value | v0.37 · 2026-08-03 — No second publisher or inexpressible license value appeared; the trigger did not fire. | none |
-| Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.37 · 2026-08-03 — No candidate terms review occurred; the trigger did not fire. | none |
-| Feed shape observation | an uncovered publisher feed shape | v0.37 · 2026-08-03 — No publisher feed was fetched and no uncovered shape was observed; the trigger did not fire. | none |
-| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.37 · 2026-08-03 — v0.36 completed the shared `assign_dedup_identity` seam under R14; PUBLISH changed neither consumer nor manifest edge. | none |
-| ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.37 · 2026-08-03 — PUBLISH left both restatements unchanged and the registered authority checks passed; no divergence was observed. | none |
-| Review-export capacity | the export crosses the declared ceiling | v0.37 · 2026-08-03 — STATE-ARCHIVE's delivered worktree export is **2,558,258 bytes**, leaving **441,742 bytes / 14.72% / 3.08 cycles** at the measured +143,456-byte denominator. The trigger did not fire. | none |
-| Public value-domain control (G6) | a `/v1/*` field's domain changes undetected | v0.37 · 2026-08-03 — DOMAIN-MANIFEST derives **6 routes / 31 status-media variants / 112 field occurrences** into the v0.17.4 baseline. R15's added-enum, removed-field, and changed-type mutations each fail at the serialization control site; the complete scan passes **15/15 rules / 84 controls**. | **Step 4 completed 2026-08-03** |
+| T7 robots single-flight | a second concurrent harvester | v0.37 · 2026-08-03 — R-CLOSE ran no harvester and the cycle observed no second concurrent harvester; the trigger did not fire. | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.37 · 2026-08-03 — R-CLOSE made no live publisher request, observed no transient robots outage, and received no Decision B authorization; the trigger did not fire. | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.37 · 2026-08-03 — No live publisher request or 304 observation occurred through R-CLOSE; the combined trigger did not fire. | none |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.37 · 2026-08-03 — Scope permits the ingest source path, but no connector review occurred and no mapping changed through R-CLOSE; the combined trigger did not fire. | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.37 · 2026-08-03 — R-CLOSE ran no publisher runtime, added no origin, and observed no concurrency; the trigger did not fire. | none |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.37 · 2026-08-03 — No bounded scheduled window was authorized or executed through R-CLOSE; the trigger did not fire. | none |
+| Postgres / pgvector / multi-host seam | unchanged | v0.37 · 2026-08-03 — The release-parent full gate and R-CLOSE introduced no Postgres, pgvector, or multi-host seam; the unchanged trigger did not fire. | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.37 · 2026-08-03 — R-CLOSE observed no third-party shell or replacement-shell HC1 claim; the trigger did not fire. | none |
+| L2 forced-command wrapper | an operator server session | v0.37 · 2026-08-03 — No operator server session occurred through R-CLOSE; the trigger did not fire. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.37 · 2026-08-03 — The release-parent registered scan passed **15/15 rules / 84 controls**; R3/R4 found no outside spelling. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.37 · 2026-08-03 — Hosted run 30834599847 and the release-parent local gate most recently passed the pinned Rust 1.86 success lane, while workflow/evidence topology remained scope-forbidden; the combined trigger did not fire. | none |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.37 · 2026-08-03 — R-CLOSE changed no verifier pin or accepted bundle/workflow contract; the trigger did not fire. | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.37 · 2026-08-03 — No third-publisher review or admission occurred through R-CLOSE; the trigger did not fire. | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.37 · 2026-08-03 — DR7 moved only main, v0.17.2, and v0.17.3; R-CLOSE authorized and moved no historical tag. | none |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.37 · 2026-08-03 — Both historical tags remain unpublished and the hosted flag remains unchanged at R-CLOSE; the combined trigger did not fire. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.37 · 2026-08-03 — R-CLOSE retains the latest complete measurement at **193,830 / 1,048,576 bytes**, **333 pins**, and **0.09 s / 0.10 s real**. The release-parent gate matched every pin and both databases; neither trigger fired. | none |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.37 · 2026-08-03 — The broad trigger fired. R-CLOSE moved the package-owned executable literal from 0.17.3 to **0.17.4** with the other release authorities; `version-check` passed. | **Step 6 completed 2026-08-03** |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.37 · 2026-08-03 — DOMAIN-MANIFEST completed the authorized G6 subcase: R15 derives and diffs every declared `/v1/*` response domain. R-CLOSE adjudicated the remaining heterogeneous criteria in prose; no broader operator decision displaced that boundary. | **Step 4 completed 2026-08-03** |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.37 · 2026-08-03 — DR8 completed the bounded archive. R-CLOSE measures State at **106,707 / 453,741 bytes** and the exact release-parent export at **2,674,055 / 3,000,000 bytes**; neither boundary trigger fired. | none |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.37 · 2026-08-03 — The closing active cycle is v0.37; the version-family trigger did not fire. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Publication of v0.17.3 reset the count to zero. At R-CLOSE, the complete witness remains exact at **6,869 bytes / SHA-256 `dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`**, the manifest diff is empty, and golden passes **11/11**. No measured runtime or public `/v1/*` surface difference starts or fires the trigger. | none |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.37 · 2026-08-03 — R-CLOSE's `version-check` reports **3** pins and **22** current restatements; no current Rust-floor restatement lies outside the registry. | none |
+| Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.37 · 2026-08-03 — Exact release-parent `export-check` derived and retained only v0.36–v0.37; no omitted or non-derived retained set appeared. | none |
+| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.37 · 2026-08-03 — R-CLOSE binds the **2,674,055-byte** release-parent governed field and reserves the required immediate audit child. The closing-tree measurement and audit field are evaluated there, the first point at which the tagged closing tree exists; no post-handoff omission is permitted. | **Step 6 audit child** |
+| SEC EDGAR admission | the three v0.25 determinations closed | v0.37 · 2026-08-03 — The determinations remain closed at R-CLOSE; no admission or live wire request occurred, and admission still awaits the combined grant named in the handoff. | none |
+| License enum semantics | a second publisher requires an inexpressible license value | v0.37 · 2026-08-03 — R-CLOSE observed no second publisher or inexpressible license value; the trigger did not fire. | none |
+| Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.37 · 2026-08-03 — No candidate terms review occurred through R-CLOSE; the trigger did not fire. | none |
+| Feed shape observation | an uncovered publisher feed shape | v0.37 · 2026-08-03 — No publisher feed was fetched and no uncovered shape was observed through R-CLOSE; the trigger did not fire. | none |
+| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.37 · 2026-08-03 — v0.36 completed shared `assign_dedup_identity` under R14; R-CLOSE adds no dependency module or manifest edge and the trigger remains discharged. | none |
+| ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.37 · 2026-08-03 — The release-parent full gate passes with both tag-mechanics restatements unchanged and no observed divergence. | none |
+| Review-export capacity | the export crosses the declared ceiling | v0.37 · 2026-08-03 — Exact release parent `514bec6c95e47017fafab452775ac4b8824ca6b9` exports at **2,674,055 bytes**, leaving **325,945 bytes / 10.86% / 2.27 cycles** at +143,456 bytes/cycle. The fixed ceiling trigger did not fire. | none |
+| Public value-domain control (G6) | a `/v1/*` field's domain changes undetected | v0.37 · 2026-08-03 — R-CLOSE uses the v0.17.4 baseline of **6 routes / 31 status-media variants / 112 field occurrences**. R15's added-enum, removed-field, and changed-type mutations each fail at the serialization control site; the release-parent scan passes **15/15 rules / 84 controls**. | **Step 4 completed 2026-08-03** |
 
 ---
 
@@ -631,7 +700,7 @@ governed.
 - [x] STATE-ARCHIVE
 - [x] DOMAIN-MANIFEST
 - [x] RE-MEASURE
-- [ ] R-CLOSE
+- [x] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.37.md` entry ids exactly; the box-coverage
 rule audits this runbook like any other.*
@@ -640,19 +709,56 @@ rule audits this runbook like any other.*
 
 ## Handoff
 
-One report: each DR executed and whether any measurement refuted its basis;
-each C-determination with reasoning and falsifier; every stop condition
-triggered or an explicit none; the post-archive headroom figures; and the
-v0.38 findings list — findings, not proposed acceptance criteria; the criteria
-come from review.
+**Decision report.** DR7 executed exactly once: remote `main`, v0.17.2, and
+v0.17.3 moved only to their authorized objects, and hosted run 30824053490
+passed 9/9. Its publication basis held, but its claim that `cycle-check` binds
+both releases was refuted at the command entry point: the checker selects only
+the newest closed release, v0.17.3. The older v0.17.2 record remains exact by
+direct object/ref measurement; the missing multi-release executable bound is a
+v0.38 finding. DR8 executed inside its bounds: archived bytes were proven
+byte-identical, the exact new archive path is pinned structural and immutable,
+and the permanent State tail remains live. DR9 executed as patch v0.17.4: the
+complete 6,869-byte witness and the 6/31/112 domain manifest report no runtime
+payload or serialized value-domain movement. DR10 executed unchanged: the
+annotated v0.17.4 tag is local, its remote ref is freshly observed absent, and
+no publication authority was inferred from DR7.
 
-Then the two standing operator questions, stated once each: publication of
-v0.17.4 (DR10 default leaves it local), and SEC EDGAR admission — which now
-needs exactly one combined grant covering the live wire request and the
-admission approval under the
-`append_only_chained_records_with_wire_evidence_and_operator_approval`
-lifecycle, the determinations having been closed since v0.25's observations
-were pinned.
+**Codex-owned determinations.** C8 measured all six routes without response
+models, introduced model authority, and proved exact runtime-OpenAPI agreement
+and byte-identical payloads; its falsifier was any payload movement, and none
+occurred. C9 chose std-only atomic create with retry on `AlreadyExists`; the
+pre-created-path control and repeated parallel suite pass, while production
+code remains untouched. C10 kept the current publication epoch and one prior
+in State, moved older history byte-identically, and retained the permanent
+tail; its Step 3 delivered export met the 2,600,000-byte target at 2,558,258.
+C11 settled the E0 refutations rather than preserving hypotheses: checklist
+counts, commit-exact exports, and pre-record State bytes replaced the review-
+export estimates.
+
+**Stops and headroom.** No §3 stop condition fired. The first hosted candidate
+failed one identity because R15 imported shell dependencies before the
+workflow install phase; it was not retried or moved. The source derivation was
+made dependency-free, and a fresh candidate/ref passed 9/9. The exact release
+parent exports at **2,674,055 / 3,000,000 bytes**, leaving **325,945 bytes /
+10.86% / 2.27 cycles** at +143,456 bytes/cycle. The assembled closing State is
+**106,707 / 453,741 bytes**; the manifest is **193,830 /
+1,048,576 bytes**, leaving **854,746 bytes / 842.11 cycles**. All three remain
+inside their immutable boundaries.
+
+**v0.38 findings.** (1) `cycle-check` validates the newest closed release's
+publication record but does not execute the older reachable v0.17.2 record.
+(2) Later v0.37 records consumed part of STATE-ARCHIVE's recovered margin: the
+release parent is 74,055 bytes above C10's Step 3 target and current headroom is
+2.27 measured cycles, although the 3,000,000-byte ceiling has not fired. The
+pre-install R15 topology failure is closed in v0.37 and is retained as evidence,
+not carried as an open finding.
+
+**Standing operator questions.** First: whether to publish exact local
+v0.17.4 after reviewing this close; DR10 leaves it unpublished by default.
+Second: whether to grant SEC EDGAR admission through exactly one combined
+authorization covering both the bounded live wire request and admission under
+`append_only_chained_records_with_wire_evidence_and_operator_approval`; the
+three v0.25 determinations are already closed.
 
 ---
 

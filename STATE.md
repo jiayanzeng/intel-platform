@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.37 R-CLOSE is preparing the DR9-selected patch release locally; v0.17.2 and v0.17.3 remain published and v0.17.4 publication is unauthorized.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of published closing commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` targets that closing commit, and remote `main` is exact audit child `e068cacc76685791c54ab47c84be6abbd592271d`. Post-push run `30824053490`, attempt **1**, passed all **9** blocking identities at that exact remote head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; the published cross-sector runtime correction moved no route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value domain. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication resets the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
+**As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.37 is closed locally at the DR9-selected patch release; its immediate closing-export audit child remains required before handoff. v0.17.2 and v0.17.3 are published, while v0.17.4 publication remains unauthorized.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of the v0.17.4 closing record. Remote `main` remains exact published v0.36 audit child `e068cacc76685791c54ab47c84be6abbd592271d`; post-push run `30824053490`, attempt **1**, passed all **9** blocking identities there. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moves no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication reset the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
 
 **v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
 (measured 2026-08-03).** Immediately before the one-time grant was spent,
@@ -316,6 +316,57 @@ child will carry the checked closing record; only that child becomes the local
 annotated-tag target, followed immediately by the required closing-export
 audit child. Direct local and remote checks found no v0.17.4 tag before this
 preparation, and DR10 authorizes no publication.
+
+**v0.37 R-CLOSE — v0.17.4 patch release closed locally (measured
+2026-08-03).** Release disposition: release (as of 2026-08-03). Untagged
+release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` is the immediate
+parent of the checked closing record. DR9 selects patch because explicit
+response models and the release-baselined manifest expose and validate the
+already-serialized contract without adding a route or observable named
+runtime surface. The complete configured witness remains byte-identical at
+**6,869 bytes**, SHA-256
+`dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`,
+and the manifest reports **0 differences** across **6 routes / 31 status-media
+variants / 112 field occurrences**. No response payload byte, field, or
+serialized `/v1/*` value-domain value moves, so neither DR9 minor clause fires.
+
+`version-check` derives **0.17.4** from all five executable authorities and
+reports **3** offline-MSRV pins, **22** current offline-MSRV restatements, and
+**3** current release restatements. Exact evidence candidate
+`99012c86dcdda8ea32f1b1afa016f793118e9087` and hosted run `30834599847`,
+attempt 1, passed **9/9** blocking identities with **9 receipts / 9 Sigstore
+bundles**. Both local shell lanes pass **370/370**, both hosted populations
+derive equivalent **370**-test results with one named, reasoned `on_site` skip,
+and hosted and local golden pass **11/11**.
+
+The exact release-parent export is **2,674,055 / 3,000,000 bytes** across 158
+files with two retained cycles. It retains exactly v0.36–v0.37, excludes both
+protected byte classes, and leaves **325,945 bytes / 10.86% / 2.27 cycles** at
+the latest positive +143,456-byte adjacent-cycle denominator. STATE-ARCHIVE's
+delivered baseline met C10 at **2,558,258 bytes**; subsequent manifest,
+evidence, and closing records put the release parent **74,055 bytes** above
+that step target without firing the architectural ceiling. The assembled
+closing State is **106,707 / 453,741 bytes**. The manifest remains
+**193,830 / 1,048,576 bytes**, leaving **854,746 bytes / 842.11 cycles** at
++1,015 bytes/cycle. The release-parent local gate passes all **22/22** jobs,
+including **15/15 rules / 84 controls**, both shell lanes, all **333** pins,
+both protected databases, and embedded golden **11/11**.
+
+This close remains in v0.17.3's publication epoch at divergence count **0**:
+there is no measured runtime-behavior or public-surface difference to start a
+new count, and an unpublished local close does not reset the epoch. Every
+active deferral row carries its latest dated v0.37 observation. Direct local
+and remote pre-close checks found no v0.17.4 tag. No push, remote `main`
+movement, or release-tag publication is authorized or performed. The closing
+record contains no tag-object field; its local annotated tag is created only
+after that commit exists, and the immediate audit child records the measured
+closing-tree export before handoff.
+
+- **Publication observation date:** 2026-08-03
+- **Publication observation release:** `v0.17.4`
+- **Publication observation status:** `unpublished-local-close`
+- **Publication observation remote:** `origin`
+- **Publication observation tag ref:** `absent`
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
