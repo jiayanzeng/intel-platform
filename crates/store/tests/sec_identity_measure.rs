@@ -176,6 +176,26 @@ fn feature_count(document: &Document) -> usize {
     simhash_feature_count(&format!("{} {}", document.title, document.body))
 }
 
+fn cross_sector_document(id: &str, sector: &str, day: &str, body: &str) -> Document {
+    Document {
+        id: id.to_string(),
+        sector: SectorId(sector.to_string()),
+        url: None,
+        title: "Identical cross-sector identity witness".to_string(),
+        body: body.to_string(),
+        published_day: Day::parse_iso(day),
+        published_raw: Some(day.to_string()),
+        authors: Vec::new(),
+        tags: Vec::new(),
+        provenance: Provenance {
+            source_id: format!("{sector}-fixture"),
+            retrieved_from: "fixture".to_string(),
+            kind: SourceKind::Rss,
+            license: License::CcBy,
+        },
+    }
+}
+
 fn count_distribution(values: impl IntoIterator<Item = usize>) -> BTreeMap<usize, usize> {
     let mut distribution = BTreeMap::new();
     for value in values {
@@ -297,6 +317,83 @@ fn day_distribution(documents: &[Document]) -> BTreeMap<String, usize> {
 }
 
 #[test]
+fn measures_nonempty_cross_sector_store_view_identity_divergence() {
+    let disposable = DisposableDir::create();
+    let body = (0..40)
+        .map(|index| format!("identityfeature{index}"))
+        .collect::<Vec<_>>()
+        .join(" ");
+    let science = cross_sector_document(
+        "science::cross-sector-witness",
+        "science",
+        "2026-07-01",
+        &body,
+    );
+    let technology = cross_sector_document(
+        "technology::cross-sector-witness",
+        "technology",
+        "2026-07-02",
+        &body,
+    );
+    assert!(feature_count(&science) >= DEDUP_MIN_FEATURES);
+    assert_eq!(feature_count(&science), feature_count(&technology));
+
+    let store = SqliteStore::open(&disposable.0.join("cross-sector.db"))
+        .expect("open disposable cross-sector store");
+    assert_eq!(
+        store
+            .append_new(&[science.clone(), technology.clone()])
+            .expect("append cross-sector witness"),
+        2
+    );
+    let store_ids = vec![
+        (
+            science.id.clone(),
+            store
+                .canonical_id(&science.id)
+                .expect("science canonical id")
+                .expect("science canonical id present"),
+        ),
+        (
+            technology.id.clone(),
+            store
+                .canonical_id(&technology.id)
+                .expect("technology canonical id")
+                .expect("technology canonical id present"),
+        ),
+    ];
+    let view = dedup_near(
+        store
+            .load_all_with_fingerprints()
+            .expect("load persisted cross-sector fingerprints"),
+        16,
+    );
+    let view_drops: Vec<_> = view
+        .drops
+        .iter()
+        .map(|drop| (drop.dropped_id.clone(), drop.kept_id.clone(), drop.distance))
+        .collect();
+    println!(
+        "cross-sector-identity-witness: features={} store={store_ids:?} \
+         view_kept={} view_drops={view_drops:?}",
+        feature_count(&science),
+        view.kept.len()
+    );
+    assert_eq!(
+        store_ids,
+        vec![
+            (science.id.clone(), science.id.clone()),
+            (technology.id.clone(), technology.id.clone()),
+        ]
+    );
+    assert_eq!(
+        view_drops,
+        vec![(technology.id, science.id, 0)],
+        "the nonempty witness must expose the store/view sector-scope divergence"
+    );
+}
+
+#[test]
 fn measures_shipped_identity_on_parser_produced_sec_documents() {
     let disposable = DisposableDir::create();
     let exported = parser_produced_documents(&disposable);
@@ -348,6 +445,7 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
         .collect();
     store_drops.sort();
     extract_drops.sort();
+    println!("identity-equivalence-vectors: store={store_drops:?} extract={extract_drops:?}");
     assert_eq!(
         store_drops, extract_drops,
         "append_new's private assign_canonical_ids_tx result must equal dedup_near"

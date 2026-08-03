@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 AUTONOMY is complete under A1r2's interim verification lane; E0 is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite now measures **12 rules / 74 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 E0 is complete; Step 1A lifecycle truth is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **12 rules / 74 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -108,6 +108,73 @@ ordering. No identity was omitted. The current project-root export passes its
 real-byte, retained-set, and exclusion controls at **153 files / 2 retained
 cycles**; its exact byte figure is recorded in the governed Architecture row
 after the final Step 0 worktree measurement.
+
+**v0.36 E0 entering-state reconstruction (measured 2026-08-03).** Every H1–H13
+hypothesis was executed. H2–H6 and H10–H13 were confirmed; H1, H8, and H9 were
+refuted in part or whole; H7's previously unknown answer is now measured. The
+complete dated verdict table lives in the active runbook and is summarized
+here without replacing its captured values.
+
+The checklist population at the E0 worktree is **270 checked / 268 matched /
+268 resolved / 3 retracted**, not the hypothesized 268 checked. v0.35 still
+contributes **0/9** checked lines because its nine boxes use the plain form;
+v0.34 contributes **7** audited task boxes among **17** checked lines, with the
+other **10** belonging to closing checklists. The three retractions name one
+v0.11 and two v0.12 boxes, and both runbooks remain tracked while falling
+outside the two-cycle export retention set. The two v0.36 boxes fail for a
+second, separately measured reason: qualified progress entries store the
+repository-relative runbook path while `matching_commit` compares it with a
+basename. Step 2 owns both syntax and qualification repairs.
+After E0's own box was marked, the live pre-audit population became **271
+checked / 268 matched**, with all three v0.36 boxes unmatched for that same
+qualification defect; the entering-state H1 measurement above remains 270/268.
+
+The pre-E0 equivalence witness printed `store=[] extract=[]` immediately before
+its equality assertion and then reported **201 kept / 0 dropped**. E0 adds the
+first real multi-sector canonical-identity witness: two identical 43-feature
+documents in science and technology persist as self-canonical in the store,
+while the unpartitioned view keeps science and drops technology at Hamming
+distance **0**. The entering tree's only other multi-sector store test checks
+SQL query scoping and never asserts canonical identity. A fresh production
+fixture ingest then measured **6 science / 7 technology / 42 cross-sector
+pairs**; the full distance distribution spans **22–41** and contains **zero**
+pairs at or below 16. Thus the shipped fixture does not happen to trigger G1,
+while the configured multi-sector runtime and explicit witness prove the path
+is reachable.
+
+Fresh project-root exports at the exact v0.17.2 release parent and tagged
+closing commit measured **2,725,527 / 151 files** and **2,737,957 / 151 files**.
+The hypothesized sizes and 152-file count were false; the **+12,430-byte** delta
+was correct. The release object graph is: release parent
+`d4258883645a99f9499895bf064e453de9be1281`, tree
+`c2ab865cf9a6cbb685554568ddf9d94354747784`; closing commit
+`9996c6820d720160b64607575d0270d2e5393ef9`, tree
+`2fbb5ef5323ef010c2cbacddfcd713375881a4e6`; annotated tag object
+`16ee7bcb2214859156edbceeb5e314ac1a67f39b`, peeling to the closing commit.
+The closing commit's immediate parent is the release parent. A read-only
+`git ls-remote origin` found none of those five object ids; published `main`
+and v0.17.1 both remain at `f02379f03ccdfd1b019413234f2ad014d169fb04`.
+Contrary to H9, the full closing hash is now tracked in State and the active
+runbook; the full tag-object hash remains absent. The release-parent and its
+tree were already recorded.
+
+The lifecycle source confirms the post-push rule is reached on
+`head != measured_target` without measuring publication. For a valid descendant
+of the tagged close, the hosted-only `--skip-local-tag-verification` early
+return is the sole preceding path that avoids the rule; using it locally would
+also skip published-release verification. `cmd_ci_local` has **22** ordered
+jobs and executes `ci_local_job "$label" "$target" || return $?`, proving the
+job-2 abort behavior. The worktree has exactly the two expected untracked
+amendment inputs; both remain untouched.
+
+All **22/22** local identities were again exercised individually for E0.
+Twenty passed, including workspace and Rust 1.78 tests with the new witness,
+net 1.86 success and 1.85 refusal, **366/366** shell tests with the one accepted
+warning, **332** protected pins, and golden **11/11**. Direct `cycle-check`
+retains only Step 1A's expected missing-post-push defect. `checklist-audit`
+truthfully retains the two v0.36 qualification defects assigned to Step 2. No
+identity was omitted; no dependency, production source, protected byte, v0.35
+byte, tag, or remote ref changed.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

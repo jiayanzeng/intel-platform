@@ -548,6 +548,46 @@ Additional required measurements:
 refuted, or unmeasurable-with-stated-reason. H7's answer is reported whichever
 way it comes out; it does not gate DR1.
 
+### E0 measured verdicts — 2026-08-03
+
+| Hypothesis | Verdict | Executed measurement |
+|---|---|---|
+| H1 | **REFUTED** | The current population is **270 checked / 268 matched / 268 resolved / 3 retracted**, because v0.36 now contributes two checked boxes and both are unmatched by the qualification bug. The v0.35 line is confirmed at `checked=0 entries_matched=0 commits_resolved=0`. |
+| H2 | **CONFIRMED** | Full tracked-set enumeration reports v0.34 at **17** checked lines, **7** audited bold boxes, and **10** other closing-checklist lines. The same enumeration recorded both classes for every execution runbook. |
+| H3 | **CONFIRMED** | The three retractions name `TASKS-v0.11-EXECUTION.md` once and `TASKS-v0.12-EXECUTION.md` twice. Both runbooks are tracked; fresh exports retain only v0.35–v0.36. |
+| H4 | **CONFIRMED** | The real test prints `store=[] extract=[]` immediately before equality and reports **201 kept / 0 dropped** with `store_drops.is_empty()`. |
+| H5 | **CONFIRMED for the entering tree** | `git grep` at the pre-E0 HEAD found one multi-sector store test, `sector_and_id_scoped_queries_bind_and_filter_in_sql`; it checks SQL query binding/filtering and never canonical identity. E0's H6 test is intentionally the first counterexample witness. |
+| H6 | **CONFIRMED** | Two identical **43-feature** documents persist as `(science,self)` and `(technology,self)` in the store; `dedup_near` keeps one and drops technology for science at distance **0**. The witness set is nonempty. |
+| H7 | **CONFIRMED as entering unknown; settled NO pair** | A fresh production fixture ingest produced **6 science / 7 technology / 42 cross-sector pairs**. Full distribution: `{22:1, 23:1, 25:1, 27:1, 28:1, 29:5, 30:3, 31:3, 32:2, 33:6, 34:3, 35:7, 36:1, 37:4, 39:2, 41:1}`; **0** pairs are within 16. |
+| H8 | **REFUTED except delta** | Exact-tree exports measured release parent **2,725,527 bytes / 151 files** and closing commit **2,737,957 / 151**, not the hypothesized sizes/count. The **+12,430-byte** delta is confirmed. |
+| H9 | **REFUTED** | The full closing hash is tracked in State and the active runbook; the full tag-object hash is absent. The release parent and its tree are recorded as hypothesized. |
+| H10 | **CONFIRMED** | Manifest inspection records `run` as `authorization`, **45,409 bytes**, SHA-256 `5ff56fc76a5a33f17b2fbd4b0dfddeb8e6dbef0ad8b63e5f652a5b06b9ad4c55`; `AGENTS.md` has zero pin entries. |
+| H11 | **CONFIRMED** | The exact contract regex reports boundary line **25** and only `(16, TASKS-v0.36-EXECUTION.md)` and `(17, PROGRESS-v0.36.md)`; the corrected authority block contributes no match. |
+| H12 | **CONFIRMED** | The descendant predicate is exactly `if head != measured_target:`. No publication measurement precedes it. Earlier returns cover no release, State/header admission failure, hosted skip, unavailable/mismatched tag facts, tag/identity/ancestry failure, legacy protocol, and unavailable HEAD. For the valid tagged descendant here, only the hosted skip returns before the rule; `head == measured_target` is the tagged closing tree itself. |
+| H13 | **CONFIRMED** | `cmd_ci_local` iterates the **22** declared identities with `ci_local_job "$label" "$target" || return $?`; job 2 is active-cycle consistency, so its failure prevents jobs 3–22. |
+
+Additional measurements also pass. The exact object graph is release
+`d4258883645a99f9499895bf064e453de9be1281` / tree
+`c2ab865cf9a6cbb685554568ddf9d94354747784`, closing
+`9996c6820d720160b64607575d0270d2e5393ef9` / tree
+`2fbb5ef5323ef010c2cbacddfcd713375881a4e6`, and annotated object
+`16ee7bcb2214859156edbceeb5e314ac1a67f39b` peeling to the closing commit;
+the closing parent is the release commit. Read-only `git ls-remote origin`
+found none of those five ids. `git status --porcelain` has exactly the two
+expected untracked amendment paths plus this step's tracked test edit.
+
+All 22 local identities were exercised individually; none was omitted. Twenty
+pass. Direct `cycle-check` has exactly Step 1A's expected missing-post-push
+defect. `checklist-audit` has the two scheduled v0.36 qualification defects,
+with the measured 270/268 population above. Workspace and Rust 1.78 tests pass
+with both identity-measure tests; net 1.86 passes and 1.85 refuses the locked
+ICU edge; shell passes 366/366 with the accepted warning; artifacts match 332
+pins and both databases; golden passes 11/11 with zero delta.
+
+After marking E0 itself, the live pre-audit population is **271 checked / 268
+matched** and the same qualification defect leaves all three v0.36 boxes
+unmatched. This later status does not rewrite H1's entering-state measurement.
+
 ---
 
 ## Step 1A · LIFECYCLE-TRUTH — represent an unpublished local close
@@ -764,17 +804,17 @@ trigger state; it does not weaken, restate, or re-scope it.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.36 · 2026-08-03 — Step 0 introduced neither a third-party shell nor a replacement-shell HC1 claim; the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.36 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — Corrected Step 0 registers its authority-marker construction under generalized R6 with real mismatch and missing-marker controls. R3/R4 vocabulary is unchanged, the complete self-test passes 12/12 rules / 74 controls, and no spelling outside registered credential or path vocabulary was observed. The trigger did not fire. | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — The existing executable lane selected and proved cargo/rustc 1.86.0 and passed the net check; 1.85.0 refused the locked ICU edge as expected. Step 0 neither changes nor is authorized to change evidence topology, so the combined trigger did not fire. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — E0 again selected and proved cargo/rustc 1.86.0 and passed the net check; 1.85.0 refused the locked ICU edge as expected. E0 neither changes nor is authorized to change evidence topology, so the combined trigger did not fire. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.36 · 2026-08-03 — Step 0 changes no workflow, verifier pin, bundle, or accepted workflow contract; the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.36 · 2026-08-03 — No third-publisher compliance review or admission decision occurred; the trigger did not fire. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.36 · 2026-08-03 — No publication authorization or remote ref mutation occurred; the trigger did not fire. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.36 · 2026-08-03 — The historical tags remain unpublished and no hosted full-history removal proof was produced; the trigger did not fire. | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.36 · 2026-08-03 — The unchanged manifest measured 193,057 / 1,048,576 bytes and two clean checks took 0.12 s and 0.13 s real; neither trigger fired. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.36 · 2026-08-03 — E0 reverified the unchanged **193,057 / 1,048,576-byte** manifest, all **332** pins, and both protected databases. The latest two duration-bearing clean checks remain 0.12 s and 0.13 s; the E0 invocation did not capture a duration and makes no newer timing claim. Neither trigger fired. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.36 · 2026-08-03 — The declared scope forbids shell source changes and Step 0 changes no `app.py` byte; the trigger did not fire. | none |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — No operator decision displacing the current prose adjudication occurred; C4 remains scheduled before close. The trigger did not fire. | none |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export and `STATE.md` byte measurements remain below their 3,000,000-byte and 453,741-byte boundaries; exact current figures are recorded by the governed Architecture row and `cycle-check`. Neither trigger fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Activation and Step 0 change lifecycle documentation and governance controls only; no runtime-behaviour or public-surface difference was measured and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Through E0, changes are governance controls, records, and a test-only nonempty witness. No production runtime behaviour or public surface changed and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — v0.35 closed with a delivered export differing from its governed figure and no cycle-ending audit field. The trigger is fired and remains assigned to Step 5, with Step 7 responsible for the v0.36 close. | **Step 5 and Step 7** |
@@ -782,9 +822,9 @@ trigger state; it does not weaken, restate, or re-scope it.
 | License enum semantics | a second publisher requires a license value the current enum cannot express | v0.36 · 2026-08-03 — No second publisher or new license value was proposed; the trigger did not fire. | none |
 | Terms-level automated-access gate | a candidate publisher's terms restrict automated access beyond robots.txt | v0.36 · 2026-08-03 — No candidate publisher or new terms review occurred; the trigger did not fire. | none |
 | Feed shape observation | a publisher feed shape not covered by a captured observation | v0.36 · 2026-08-03 — No publisher feed was fetched and no uncovered shape was observed; the trigger did not fire. | none |
-| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.36 · 2026-08-03 — Step 0 changes no store/view dependency edge; C1 remains scheduled to evaluate the seam before Step 4. The trigger did not fire. | **Step 4** |
+| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.36 · 2026-08-03 — E0's real cross-sector witness confirms the divergent behaviour, but adds no dependency or manifest edge between store and view. C1 remains scheduled to evaluate the seam before Step 4. The trigger did not fire. | **Step 4** |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the two restatements diverge | v0.36 · 2026-08-03 — Step 0 leaves both tag-mechanics restatements byte-unchanged and observed no divergence; the trigger did not fire. | none |
-| Review-export capacity | the governed export crosses its declared ceiling | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export remains below 3,000,000 bytes; the exact current figure and margin are recorded in Architecture's governed row. The trigger did not fire; Step 7 will remeasure the release commit. | **Step 7** |
+| Review-export capacity | the governed export crosses its declared ceiling | v0.36 · 2026-08-03 — E0 corrected the historical v0.17.2 parent/close measurements to 2,725,527→2,737,957 bytes at 151 files; both and the current governed v0.36 figure remain below 3,000,000 bytes. The trigger did not fire; Step 7 will remeasure the release commit. | **Step 7** |
 | Public value-domain control (G6) | a `/v1/*` field's value domain changes with no control to detect it | v0.36 · 2026-08-03 — Step 0 changes no `/v1/*` production source or serialized field value domain. C4 remains scheduled to decide the control before close; the trigger did not fire. | **Step 7 if C4 defers** |
 
 ---
@@ -816,7 +856,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 
 - [x] **AUTONOMY** — authority block installed, mirrored, and mechanically enforced
 - [x] **ACTIVATE** — declaration at v0.36, progress skeleton, retention derived
-- [ ] **E0** — H1–H13 settled with dated verdicts
+- [x] **E0** — H1–H13 settled with dated verdicts
 - [ ] **LIFECYCLE-TRUTH** — unpublished local close passes; published missing-record case still fails
 - [ ] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
 - [ ] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
