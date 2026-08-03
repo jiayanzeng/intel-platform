@@ -480,6 +480,18 @@ must not). Evidence ref per the standing authority: `codex/v0.37-evidence-…`,
 Report run id, attempt, ref, identity count. If it does not run, record the
 dated reason and which claims rest on local execution only.
 
+**First candidate finding (2026-08-03).** Production shell moved, so exact
+audited candidate `2e5921f0d0d3f4d64bde56b95325216d33caa59b` was pushed once
+to fresh immutable ref `codex/v0.37-evidence-2e5921f` after an empty
+`ls-remote` result. Run `30832624982`, attempt 1, passed **8/9** blocking
+identities and failed only the Python 3.11 pre-install invariant step: R15
+imported FastAPI/Pydantic before the workflow's existing install phase. This
+is a topology defect, not a hosted transient, so the run was not retried and
+the ref was not moved. R15 now dependency-freely derives the contract from the
+actual route/type AST and the installed shell population separately proves
+equivalence to runtime OpenAPI. Step 5 remains open; only a new exact candidate
+on a fresh non-force evidence ref can satisfy it.
+
 ---
 
 ## Step 6 · R-CLOSE

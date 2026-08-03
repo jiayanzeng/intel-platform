@@ -14,6 +14,7 @@ from intel_shell.adapters import stripe
 from intel_shell.app import create_app
 from intel_shell.config import Subscription
 from intel_shell.core_client import CoreClient
+from tools.domain_manifest import compare, derive_manifest, derive_openapi_manifest
 
 
 AUTHORIZATIONS = {
@@ -240,3 +241,6 @@ def test_configured_public_payloads_match_release_baseline() -> None:
     payload = configured_payload_bytes()
     assert len(payload) == EXPECTED_PAYLOAD_BYTES
     assert hashlib.sha256(payload).hexdigest() == EXPECTED_PAYLOAD_SHA256
+    assert compare(
+        derive_manifest("v0.17.4"), derive_openapi_manifest("v0.17.4")
+    ) == []

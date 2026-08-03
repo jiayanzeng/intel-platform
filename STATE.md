@@ -198,13 +198,15 @@ found `response_model=None` on all six public routes. The shipped shell now
 uses explicit Pydantic serialization authorities for `/v1/signals`,
 `/v1/search`, `/v1/brief`, `/v1/ask`, `/v1/billing/webhook`, and
 `/v1/billing/stripe`, including their declared error variants. The new
-`tools/domain_manifest.py` reads the actual FastAPI OpenAPI document, requires
-a non-null response model on every member of that exact route set, resolves
-references recursively, and records fields, requiredness, primitive and
-container types, nullability, object openness, and literal values. The
-v0.17.4 baseline is **47,135 bytes**, covers **6 routes / 31 status-media
-variants / 112 field occurrences**, and its fresh derivation has **0
-differences**.
+`tools/domain_manifest.py` dependency-freely reads the actual route-decorator
+and Pydantic-annotation AST, requires a response model and declared errors on
+every member of that exact route set, and recursively records fields,
+requiredness, primitive and container types, nullability, object openness, and
+literal values. The installed shell population separately requires that result
+to equal the actual FastAPI OpenAPI document, including the pinned native 422
+domain. The v0.17.4 baseline is **47,135 bytes**, covers **6 routes / 31
+status-media variants / 112 field occurrences**, and both its fresh source
+derivation and runtime comparison have **0 differences**.
 
 Registered R15 executes that same entry point. Its unmutated scan passed, and
 its three control-site mutations independently proved rejection of an added
@@ -229,6 +231,34 @@ already-serialized field/domain contract explicit, but no `/v1/*` route,
 response byte, field name, field domain, entitlement, licensing outcome,
 dependency, or protected artifact moved. DR9 clause 2 therefore has an
 executed zero-diff input; no §3.4 stop condition fired.
+
+**v0.37 RE-MEASURE first candidate — pre-install invariant dependency found
+(measured 2026-08-03).** The fresh evidence ref
+`refs/heads/codex/v0.37-evidence-2e5921f` was absent immediately before one
+non-force push created it at exact audited candidate
+`2e5921f0d0d3f4d64bde56b95325216d33caa59b`; remote `main`, v0.17.2, and
+v0.17.3 remained exact. Workflow-dispatch run **30832624982**, attempt **1**,
+then passed **8/9** blocking identities and failed only Python 3.11's
+pre-install `registered static repository invariants` step. Its actual entry
+point reached R1–R14, then R15's subprocess exited **1** with no parseable
+manifest difference because importing the FastAPI app before the workflow's
+install step could not load its third-party packages. Python 3.12 intentionally
+does not run the pre-install invariant phase and later passed its installed
+**370-test** population; the other eight blocking identities, including
+golden, Rust floors, net, core, and lint, passed. This is a real topology
+finding, not a retryable hosted transient.
+
+R15 now has two executed phases matching that topology. Its blocking check is
+dependency-free: Python AST derivation reads the actual route decorators and
+Pydantic type annotations, including declared errors and the pinned native 422
+domain. The installed population separately requires that source derivation
+to equal FastAPI's runtime OpenAPI result. A Python 3.11 `-S` run, with site
+packages disabled, passed the full **15/15 rules / 84 controls**; the installed
+runtime comparison passed at **6 routes / 112 field occurrences**, and the
+focused payload/runtime test passed under Python 3.11 and 3.12 without changing
+the **370-test** population. The failed evidence ref remains immutable and no
+run was retried; RE-MEASURE remains open until a fresh candidate/ref completes
+all nine identities.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task

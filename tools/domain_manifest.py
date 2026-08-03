@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import sys
 from dataclasses import dataclass
@@ -14,6 +15,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SHELL = ROOT / "shell"
 BASELINE = SHELL / "intel_shell" / "public_response_domains_v0.17.4.json"
+MODEL_SOURCE = SHELL / "intel_shell" / "api_models.py"
+APP_SOURCE = SHELL / "intel_shell" / "app.py"
 EXPECTED_ROUTES = {
     "GET /v1/ask",
     "GET /v1/brief",
@@ -150,7 +153,7 @@ def _domain(
     return result
 
 
-def derive_manifest(release: str) -> dict[str, Any]:
+def derive_openapi_manifest(release: str) -> dict[str, Any]:
     if not release.startswith("v"):
         raise ManifestError("release must use vX.Y.Z form")
     sys.path.insert(0, str(SHELL))
@@ -202,6 +205,235 @@ def derive_manifest(release: str) -> dict[str, Any]:
                 variants[f"{status} {media_type}"] = _domain(schema, openapi)
         routes[route_key] = {"responses": variants}
     return {"release": release, "routes": routes, "schema_version": 1}
+
+
+def _validation_error_domain() -> dict[str, Any]:
+    """Pinned FastAPI/Pydantic 422 domain, cross-checked after install."""
+    location = {
+        "kind": "array",
+        "items": {
+            "kind": "union",
+            "options": [{"kind": "integer"}, {"kind": "string"}],
+        },
+    }
+    error = {
+        "additional_properties": True,
+        "fields": {
+            "ctx": {
+                "domain": {
+                    "additional_properties": True,
+                    "fields": {},
+                    "kind": "object",
+                },
+                "required": False,
+            },
+            "input": {"domain": {"kind": "any"}, "required": False},
+            "loc": {"domain": location, "required": True},
+            "msg": {"domain": {"kind": "string"}, "required": True},
+            "type": {"domain": {"kind": "string"}, "required": True},
+        },
+        "kind": "object",
+    }
+    return {
+        "additional_properties": True,
+        "fields": {
+            "detail": {
+                "domain": {"items": error, "kind": "array"},
+                "required": False,
+            }
+        },
+        "kind": "object",
+    }
+
+
+def _source_type_tables() -> tuple[
+    dict[str, ast.expr], dict[str, list[ast.AnnAssign]]
+]:
+    tree = ast.parse(MODEL_SOURCE.read_text(), filename=str(MODEL_SOURCE))
+    aliases: dict[str, ast.expr] = {}
+    classes: dict[str, list[ast.AnnAssign]] = {}
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+        ):
+            aliases[node.targets[0].id] = node.value
+        elif isinstance(node, ast.ClassDef) and node.name != "PublicResponseModel":
+            fields = [item for item in node.body if isinstance(item, ast.AnnAssign)]
+            if fields:
+                classes[node.name] = fields
+    return aliases, classes
+
+
+def _source_domain(
+    annotation: ast.expr,
+    aliases: dict[str, ast.expr],
+    classes: dict[str, list[ast.AnnAssign]],
+    resolving: tuple[str, ...] = (),
+) -> dict[str, Any]:
+    primitive_names = {
+        "str": "string",
+        "int": "integer",
+        "float": "number",
+        "bool": "boolean",
+    }
+    if isinstance(annotation, ast.Constant) and annotation.value is None:
+        return {"kind": "null"}
+    if isinstance(annotation, ast.Name):
+        if annotation.id in primitive_names:
+            return {"kind": primitive_names[annotation.id]}
+        if annotation.id in resolving:
+            raise ManifestError(f"recursive source response type {annotation.id!r}")
+        if annotation.id in aliases:
+            return _source_domain(
+                aliases[annotation.id],
+                aliases,
+                classes,
+                (*resolving, annotation.id),
+            )
+        if annotation.id in classes:
+            fields: dict[str, Any] = {}
+            for field in classes[annotation.id]:
+                if not isinstance(field.target, ast.Name):
+                    raise ManifestError(
+                        f"{annotation.id}: response field target must be a name"
+                    )
+                fields[field.target.id] = {
+                    "domain": _source_domain(
+                        field.annotation,
+                        aliases,
+                        classes,
+                        (*resolving, annotation.id),
+                    ),
+                    "required": field.value is None,
+                }
+            return {
+                "additional_properties": False,
+                "fields": {name: fields[name] for name in sorted(fields)},
+                "kind": "object",
+            }
+        raise ManifestError(f"unsupported source response name {annotation.id!r}")
+    if isinstance(annotation, ast.Subscript) and isinstance(
+        annotation.value, ast.Name
+    ):
+        if annotation.value.id == "list":
+            return {
+                "items": _source_domain(
+                    annotation.slice, aliases, classes, resolving
+                ),
+                "kind": "array",
+            }
+        if annotation.value.id == "Literal":
+            members = (
+                annotation.slice.elts
+                if isinstance(annotation.slice, ast.Tuple)
+                else [annotation.slice]
+            )
+            values = [ast.literal_eval(member) for member in members]
+            kinds = {
+                "boolean"
+                if isinstance(value, bool)
+                else "integer"
+                if isinstance(value, int)
+                else "number"
+                if isinstance(value, float)
+                else "string"
+                if isinstance(value, str)
+                else "null"
+                if value is None
+                else "unsupported"
+                for value in values
+            }
+            if len(kinds) != 1 or "unsupported" in kinds:
+                raise ManifestError("Literal response domain must have one value type")
+            return {"kind": kinds.pop(), "values": sorted(values, key=_json_key)}
+    if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+        options: list[dict[str, Any]] = []
+
+        def collect(member: ast.expr) -> None:
+            if isinstance(member, ast.BinOp) and isinstance(member.op, ast.BitOr):
+                collect(member.left)
+                collect(member.right)
+            else:
+                options.append(_source_domain(member, aliases, classes, resolving))
+
+        collect(annotation)
+        return {"kind": "union", "options": sorted(options, key=_json_key)}
+    raise ManifestError(
+        "unsupported source response annotation " + ast.dump(annotation)
+    )
+
+
+def derive_manifest(release: str) -> dict[str, Any]:
+    """Derive the public contract without requiring third-party imports."""
+    if not release.startswith("v"):
+        raise ManifestError("release must use vX.Y.Z form")
+    aliases, classes = _source_type_tables()
+    error_domain = _source_domain(ast.Name(id="ErrorResponse"), aliases, classes)
+    tree = ast.parse(APP_SOURCE.read_text(), filename=str(APP_SOURCE))
+    routes: dict[str, Any] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        for decorator in node.decorator_list:
+            if not (
+                isinstance(decorator, ast.Call)
+                and isinstance(decorator.func, ast.Attribute)
+                and isinstance(decorator.func.value, ast.Name)
+                and decorator.func.value.id == "app"
+                and decorator.func.attr in {"get", "post"}
+                and decorator.args
+                and isinstance(decorator.args[0], ast.Constant)
+                and isinstance(decorator.args[0].value, str)
+                and decorator.args[0].value.startswith("/v1/")
+            ):
+                continue
+            route_key = (
+                f"{decorator.func.attr.upper()} {decorator.args[0].value}"
+            )
+            keywords = {item.arg: item.value for item in decorator.keywords}
+            response_model = keywords.get("response_model")
+            if response_model is None:
+                raise ManifestError(f"{route_key} lacks a response_model")
+            media_type = (
+                "text/plain"
+                if isinstance(keywords.get("response_class"), ast.Name)
+                and keywords["response_class"].id == "PlainTextResponse"
+                else "application/json"
+            )
+            variants = {
+                f"200 {media_type}": _source_domain(
+                    response_model, aliases, classes
+                ),
+                "422 application/json": _validation_error_domain(),
+            }
+            response_call = keywords.get("responses")
+            if not (
+                isinstance(response_call, ast.Call)
+                and isinstance(response_call.func, ast.Name)
+                and response_call.func.id
+                in {"_error_responses", "_json_error_responses"}
+            ):
+                raise ManifestError(f"{route_key} lacks declared error responses")
+            for argument in response_call.args:
+                status = ast.literal_eval(argument)
+                if not isinstance(status, int):
+                    raise ManifestError(f"{route_key} error status is not an integer")
+                variants[f"{status} application/json"] = error_domain
+            routes[route_key] = {
+                "responses": {name: variants[name] for name in sorted(variants)}
+            }
+    if set(routes) != EXPECTED_ROUTES:
+        raise ManifestError(
+            "public route set differs: "
+            f"expected={sorted(EXPECTED_ROUTES)} actual={sorted(routes)}"
+        )
+    return {
+        "release": release,
+        "routes": {name: routes[name] for name in sorted(routes)},
+        "schema_version": 1,
+    }
 
 
 def _difference_kind(path: str, removed: bool = False) -> str:
@@ -288,6 +520,8 @@ def run(argv: list[str] | None = None) -> int:
     write_parser.add_argument("--output", type=Path, default=BASELINE)
     check_parser = subparsers.add_parser("check")
     check_parser.add_argument("--baseline", type=Path, default=BASELINE)
+    runtime_parser = subparsers.add_parser("verify-runtime")
+    runtime_parser.add_argument("--release", required=True)
     args = parser.parse_args(argv)
 
     try:
@@ -298,6 +532,30 @@ def run(argv: list[str] | None = None) -> int:
                 "domain-manifest: WROTE "
                 f"{args.output} (release={args.release}, routes={len(manifest['routes'])}, "
                 f"fields={_field_count(manifest)})"
+            )
+            return 0
+
+        if args.command == "verify-runtime":
+            source = derive_manifest(args.release)
+            runtime = derive_openapi_manifest(args.release)
+            differences = compare(source, runtime)
+            if differences:
+                for difference in differences:
+                    print(
+                        "domain-manifest: RUNTIME ERROR: "
+                        f"{difference.kind} at {difference.path}: "
+                        f"source={_json_key(difference.before)} "
+                        f"runtime={_json_key(difference.after)}"
+                    )
+                print(
+                    "domain-manifest: RUNTIME FAIL "
+                    f"({len(differences)} difference(s))"
+                )
+                return 1
+            print(
+                "domain-manifest: RUNTIME PASS "
+                f"(release={args.release}, routes={len(source['routes'])}, "
+                f"fields={_field_count(source)})"
             )
             return 0
 
