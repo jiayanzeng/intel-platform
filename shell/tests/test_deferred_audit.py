@@ -69,6 +69,41 @@ def test_registry_trigger_text_is_not_an_affirmative_hc1_claim() -> None:
     assert measurement["hc1_invariant_under_shell_replacement_claims"] == []
 
 
+def test_cosine_measurement_selects_named_archives_with_extra_admission(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest = tmp_path / "protected-artifacts.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "artifacts": [
+                    {
+                        "path": "data/live-20260803T195324Z-37051.db",
+                        "expected": {"documents": 200},
+                    },
+                    {
+                        "path": "data/live-smoke.db",
+                        "expected": {"documents": 2600},
+                    },
+                    {
+                        "path": "data/core.db",
+                        "expected": {"documents": 1764},
+                    },
+                ]
+            }
+        )
+        + "\n"
+    )
+    monkeypatch.setattr(audit_deferred, "MANIFEST", manifest)
+
+    selected = audit_deferred.load_manifest_records()
+
+    assert [record["path"] for record in selected] == [
+        "data/core.db",
+        "data/live-smoke.db",
+    ]
+
+
 def _git(repo: Path, *args: str) -> str:
     result = subprocess.run(
         ["git", *args],

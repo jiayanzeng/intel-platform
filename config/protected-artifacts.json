@@ -99,6 +99,49 @@
           }
         ]
       }
+    },
+    {
+      "path": "data/live-20260803T195324Z-37051.db",
+      "sha256": "fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044",
+      "bytes": 253952,
+      "purpose": "Protected first-window SEC EDGAR US GAAP RSS admission archive.",
+      "provenance": "Grant-B-authorized fresh-path production harvest on 2026-08-04 local time fetched and stored 200 current finance documents after the live SEC robots policy allowed the configured RSS path; the one-shot harness shut down cleanly and the archive was admitted only after DR12 compatibility and subscription-isolation measurements passed.",
+      "admission": {
+        "records": [
+          {
+            "task_id": "v0.38/WIRE-ADMISSION",
+            "date": "2026-08-04",
+            "sha256": "fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044",
+            "prior_sha256": null,
+            "wire_evidence": [
+              {
+                "command": "Grant B evidence capture: one no-redirect/no-retry GET each for SEC robots, published access terms, and configured US GAAP RSS feed",
+                "output_ref": "sha256:c8e1cba80252d1fa209ed07cf842696adfe21b514fa45c5982e8caec42c42d54"
+              },
+              {
+                "command": "./run harvest-sec",
+                "output_ref": "sha256:c000a22aab26ce21b5fb100028e79d4be94c50d5395ea141938117a76b961818"
+              },
+              {
+                "command": "shasum -a 256 data/live-20260803T195324Z-37051.db",
+                "output_ref": "sha256:c000a22aab26ce21b5fb100028e79d4be94c50d5395ea141938117a76b961818"
+              }
+            ],
+            "operator_approval": {
+              "approved_by": "repository operator",
+              "approval_ref": "Initiating request recorded verbatim before execution in docs/cycles/PROGRESS-v0.38.md on 2026-08-04: Before the task begins, I will first authorize you to \"publish v0.17.4\" and \"SEC EDGAR wire and admission.\""
+            },
+            "retroactive": false
+          }
+        ]
+      },
+      "expected": {
+        "documents": 200,
+        "integrity_check": "ok",
+        "null_simhash": 0,
+        "null_canonical_id": 0,
+        "cursors": []
+      }
     }
   ],
   "pinned_files": [
@@ -2765,6 +2808,54 @@
       "bytes": 258658,
       "purpose": "Byte-exact v0.37 archive of historical State appends from v0.29 through v0.35.",
       "provenance": "DR8/C10 retained the current v0.37 publication epoch, the immediately prior v0.36 body, and the permanent tail on 2026-08-03. The 350,925-byte pre-cut State at implementation parent 594b780 was reconstructed byte-exact at SHA-256 7db0bc5ff34b35da174805914c1725248357b746d7f0783e16d5264ee7cf5cf5 from this 258,658-byte archive plus the 92,267-byte live complement; the exact structural-archive registry makes SHA-256 and length standing checks."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/.gitattributes",
+      "grade": "observation",
+      "sha256": "7af8b91da22ea95a727a1b9f0cad9e4879037612869541554144152935fc37c9",
+      "bytes": 248,
+      "purpose": "Binary treatment for the three raw v0.38 SEC publisher responses.",
+      "provenance": "Grant B authorized the dated observation capture on 2026-08-04; this local attribute file prevents Git normalization from changing publisher response bytes."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-evidence-comparison.md",
+      "grade": "observation",
+      "sha256": "c8e1cba80252d1fa209ed07cf842696adfe21b514fa45c5982e8caec42c42d54",
+      "bytes": 4463,
+      "purpose": "Dated per-artifact DR12 compatibility comparison for SEC robots, terms, and RSS feed evidence.",
+      "provenance": "One Grant-B-authorized request per publisher URL completed without redirect or retry on 2026-08-04 local time; the report records exact response facts and the offline file-to-file material-compatibility decision before harvest."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-admission-report.md",
+      "grade": "observation",
+      "sha256": "c000a22aab26ce21b5fb100028e79d4be94c50d5395ea141938117a76b961818",
+      "bytes": 5560,
+      "purpose": "Dated Grant B production-harvest, fresh-archive, entitlement, licensing, and admission measurement.",
+      "provenance": "The bounded one-shot production path consumed the live configured SEC feed into a fresh database on 2026-08-04 local time; the report records exact stdout, archive, public-shell isolation, scope limits, and the compatible admission disposition without exposing the monitored contact."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-privacy-information.html",
+      "grade": "observation",
+      "sha256": "2a8baabaab64002140f6707b080afe5d67a108ad84acfb67cd91f8def1c41fd1",
+      "bytes": 90192,
+      "purpose": "Fresh raw SEC published privacy and automated-access terms response for v0.38 admission.",
+      "provenance": "Grant-B-authorized single GET on 2026-08-04 local time used the declared contact-bearing identity, disabled redirects and retries, respected the 0.500-second request floor, and returned HTTP 200 as text/html."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-robots.txt",
+      "grade": "observation",
+      "sha256": "72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f",
+      "bytes": 2622,
+      "purpose": "Fresh raw SEC robots policy for the v0.38 admission decision.",
+      "provenance": "Grant-B-authorized single GET on 2026-08-04 local time used the declared contact-bearing identity, disabled redirects and retries, and returned HTTP 200 as text/plain; the body is byte-identical to v0.25."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-usgaap.rss.xml",
+      "grade": "observation",
+      "sha256": "1139043372f2f4340489a4fc3eaafb08b7ffb741cc9c2c6470137edf9d8b673d",
+      "bytes": 866188,
+      "purpose": "Fresh raw SEC US GAAP RSS response for v0.38 feed-shape compatibility.",
+      "provenance": "Grant-B-authorized single GET on 2026-08-04 local time used the declared contact-bearing identity, disabled redirects and retries, respected the 0.500-second request floor, and returned HTTP 200 as text/xml; offline comparison found 200 items and the v0.25 parser-facing field shape."
     }
   ]
 }

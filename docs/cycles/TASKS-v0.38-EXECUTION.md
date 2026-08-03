@@ -2,6 +2,8 @@
 
 ## Runbook amendments
 
+Step 2A — Grant-B wire, DR12, fresh-archive, entitlement, and admission result appended; exact deferred-auditor and export-checker scopes added after their two-archive/one-RSS assumptions failed on the valid third admission and second RSS pin; acceptance meaning unchanged — 2026-08-04
+
 Step 2 — derived rehearsal checklist and wire-residue record appended; acceptance meaning unchanged — 2026-08-04
 
 Step 1 — dated E0 verdict table and discharged G6 completion appended; acceptance meaning unchanged — 2026-08-04
@@ -191,6 +193,8 @@ The standing always-allowed set remains `STATE.md`, this runbook, and
 | `allow` | `tools/checklist_audit.py` |
 | `allow` | `tools/progress_check.py` |
 | `allow` | `tools/domain_manifest.py` |
+| `allow` | `tools/audit_deferred.py` |
+| `allow` | `tools/export_check.py` |
 | `allow` | `config/invariant-rules.json` |
 | `allow` | `config/checklist-exemptions.json` |
 | `allow` | `config/protected-artifacts.json` |
@@ -387,6 +391,75 @@ disposition-declared; `ci-local` clean — or the not-granted observation.
 **Done when** the second publisher is admitted on evidence, or the cycle
 truthfully records that it awaits the grant.
 
+**WIRE-ADMISSION result (measured 2026-08-04).** Grant B's evidence capture
+ran before the harvest and made one sequential, no-redirect, no-retry request
+each for SEC robots, published access terms, and the configured US GAAP RSS
+feed. All three returned HTTP 200. Fresh robots are byte-identical to v0.25;
+the current terms preserve every material condition in the pinned affirmative
+determination; and the changing current feed preserves the measured 200-item
+parser-facing shape. The per-artifact comparison records DR12 **compatible**.
+
+The separate production `./run harvest-sec` invocation consumed the live
+configured URL through the normal net parser into fresh
+`data/live-20260803T195324Z-37051.db`; no observation file was a harvest input.
+It measured `first_window`, **200 fetched / 200 new / 200 stored**, live robots
+`Body(allow)` for the exact RSS path, a **0.500-second** effective delay, and
+clean shutdown. The **253,952-byte** archive at SHA-256
+`fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044`
+passes integrity with **200** `finance/sec-edgar-usgaap/PublisherPermitted`
+rows, zero null SimHashes or canonical ids, zero noncanonical rows, **200**
+distinct canonical identities, and zero cursors.
+
+The actual public shell/core boundary re-measured both configured
+subscriptions. `acme-research` (`science,technology`) analyzed **0** documents;
+`quant-desk` (`finance`) analyzed **200**, with zero near-duplicate collapses.
+The only intended entitlement movement is therefore the named **200-document
+finance addition for `quant-desk`**; no subscription configuration or public
+response domain changed. The archive is admitted by a non-retroactive initial
+`artifacts[]` record whose wire references and operator-approval citation bind
+Grant B. The five capture files and the dated admission report are exact
+`observation`-grade pins. Both artifact entry points accept **3 artifacts /
+339 pinned files**; the manifest is **200,440 / 1,048,576 bytes**, and two
+complete checks take **0.09 s / 0.09 s real**. A recurring scheduler run,
+concurrency, conditional GET/304, repeated fetch, and backfill remain
+unmeasured and unclaimed.
+
+The first full-gate attempt exposed an author-side scope defect: the on-site
+deferred auditor selected every `artifacts[]` record and asserted that the
+manifest contained exactly the two historical cosine inputs, so the valid
+third admission failed before either named input was measured. Step 2A's
+simultaneous admission-and-clean-`ci-local` criterion necessarily contains the
+exact `tools/audit_deferred.py` correction; the declared scope now says so
+explicitly. The correction selects `data/core.db` and `data/live-smoke.db` by
+their stable manifest paths and leaves additional admitted archives outside
+that historical measurement. A regression test plants the SEC-shaped third
+record and requires the same two-input selection. No evidence disposition,
+committed receipt, protected byte, or acceptance meaning changes.
+
+The first project-root export attempt then exposed the analogous one-capture
+assumption in `tools/export_check.py`: it required exactly one SEC RSS body
+beneath `observations/**`, so the required second pinned capture stopped
+inspection before the export was measured. Step 2A's evidence-pin and bounded
+review-export criteria necessarily contain this second author-contract
+correction, and the exact declared scope now names the checker. The Repomix
+registry names both historical paths explicitly; the checker derives those
+exact configured paths, rejects a wildcard, missing byte, or non-observation
+path, and requires every one to remain absent from the export. A regression
+plants two exact captures and removes one to prove the guard can fail. The
+permission-complete project-root entry point then passes at **2,766,436 bytes /
+163 files / 2 retained cycles**, leaving **233,564 bytes / 7.79% / 1.63
+cycles** at +143,456 bytes/cycle. No source, record, or comparison result is
+excluded; only the two separately pinned raw RSS bodies stay outside the
+bounded review artifact.
+
+The permission-complete corrected full gate passes **22/22** identities,
+including registered scan **15/15 rules / 84 controls**, Python 3.11
+**373/373**, both Rust floors and warning gates, artifact verification, and
+golden **11/11** with zero delta. The separate permission-complete Python 3.12
+lane passes the identical **373/373** population with no skips. The first
+370-pass/1-fail attempt is retained as the finding that caused the scoped
+correction; it is not acceptance evidence.
+
 ---
 
 ## Step 3 · RE-MEASURE — hosted, conditional
@@ -433,12 +506,12 @@ observations with the latest measurements available at close.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.38 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.38 · 2026-08-04 — ACTIVATE observed no second concurrent harvester; Step 2A remains a single bounded SEC harvest and the trigger has not fired. | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.38 · 2026-08-04 — Before W1, no v0.38 publisher request or transient robots outage has occurred and no Decision B authorization was issued; the trigger has not fired. | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.38 · 2026-08-04 — Grant B and scope permit only W1's bounded path, but no v0.38 live 304 has been observed; the combined trigger has not fired. | none |
+| T7 robots single-flight | a second concurrent harvester | v0.38 · 2026-08-04 — W1 ran exactly one bounded SEC harvester and observed no second concurrent process; the trigger has not fired. | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.38 · 2026-08-04 — Fresh SEC robots returned HTTP 200 and the live production cache reported `Body(allow)`; no transient outage or Decision B authorization occurred, so the combined trigger has not fired. | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.38 · 2026-08-04 — W1's fresh feed capture returned HTTP 200 and the production ingest reported `first_window`; no live 304 was observed, so the combined trigger has not fired. | none |
 | `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.38 · 2026-08-04 — The source path is in scope, but ACTIVATE performed no connector mapping review or mapping change; the combined trigger has not fired. | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.38 · 2026-08-04 — ACTIVATE added no origin and observed no concurrency; W1 is bounded to SEC only, so the trigger has not fired. | none |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.38 · 2026-08-04 — Grant B authorizes W1's bounded admission harvest but no recurring scheduled window has executed yet. | **Step 2A** |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.38 · 2026-08-04 — W1 ran only the already-configured SEC source in one process; no further origin or concurrent harvester appeared, so the trigger has not fired. | none |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.38 · 2026-08-04 — Grant B discharged one manual admission harvest only. No bounded recurring-window authorization was issued and no scheduled run executed; the trigger remains deferred. | none |
 | Postgres / pgvector / multi-host seam | unchanged | v0.38 · 2026-08-04 — ACTIVATE introduced no Postgres, pgvector, or multi-host seam; the unchanged trigger has not fired. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.38 · 2026-08-04 — ACTIVATE observed no third-party shell or replacement-shell HC1 claim; the trigger has not fired. | none |
 | L2 forced-command wrapper | an operator server session | v0.38 · 2026-08-04 — No operator server session occurred during ACTIVATE; the trigger has not fired. | none |
@@ -448,28 +521,28 @@ observations with the latest measurements available at close.
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.38 · 2026-08-04 — W1 concerns the already-configured second publisher; no third-publisher review or admission occurred. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.38 · 2026-08-04 — Grant A moved only `main` and v0.17.4; no historical tag was authorized or moved. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.38 · 2026-08-04 — Both historical tags remain outside Grant A and the hosted flag is unchanged; the combined trigger has not fired. | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.38 · 2026-08-04 — Step 2 measures **194,717 / 1,048,576 bytes** after updating the changed `run` pin; two consecutive complete verifications match **2 artifacts / 333 pinned files** at **0.09 s / 0.09 s real**, so neither trigger clause fires. W1 owns the fresh-pin and closing timing measurements. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.38 · 2026-08-04 — W1 measures **200,440 / 1,048,576 bytes** after the fresh archive and six observation pins; two consecutive complete verifications match **3 artifacts / 339 pinned files** at **0.09 s / 0.09 s real**, so neither trigger clause fires. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.38 · 2026-08-04 — The broad trigger fires because shell source is in declared scope; any release-authority movement is confined to R-CLOSE. | **Step 4** |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.38 · 2026-08-04 — R15 remains the executable public-domain subcase; R-CLOSE owns the remaining heterogeneous classification adjudication. | **Step 4** |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.38 · 2026-08-04 — Step 2 measures pre-record State at **117,986 / 453,741 bytes** and its pre-record review export at **2,638,292 / 3,000,000 bytes**; neither boundary trigger fires. | none |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.38 · 2026-08-04 — Before the export-control correction record, State is **122,480 / 453,741 bytes** and the latest project-root review export is **2,766,436 / 3,000,000 bytes**; neither boundary trigger fires. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.38 · 2026-08-04 — The active cycle remains in the `v0.<n>` family; the trigger has not fired. | none |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.38 · 2026-08-04 — Grant A published exact v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`, resetting the new publication epoch count to 0 there. W1 and R-CLOSE own the later runtime/public-surface classification. | **Step 4** |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.38 · 2026-08-04 — E0 `version-check` derives **3** executable offline pins at 1.78, **22** offline-floor current restatements, and **3** release-version restatements at 0.17.4; all **579** tracked files remain classified. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.38 · 2026-08-04 — ACTIVATE derives exactly the v0.37–v0.38 retained set and supplies it explicitly; no omitted or non-derived set appeared. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.38 · 2026-08-04 — The cycle remains open; R-CLOSE reserves its immediate audit child as the first point where the tagged closing tree can be measured. | **Step 4 audit child** |
-| SEC EDGAR admission | the three v0.25 determinations closed | v0.38 · 2026-08-04 — Step 2 derives and closes every fixture-side admission clause; Grant B is issued, and admission remains conditional only on W1's named current-wire residue and DR12 compatibility. | **Step 2A** |
-| License enum semantics | a second publisher requires an inexpressible license value | v0.38 · 2026-08-04 — Captured-corpus persistence/retrieval now executes `PublisherPermitted` positively while the independent unknown-license negative still maps to `IndexOnly`; no inexpressible value appeared. W1 re-measures the admitted database. | **Step 2A** |
-| Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.38 · 2026-08-04 — Step 2 exact-byte checks and semantically consumes the pinned affirmative determination with a failing `Undetermined` mutation. Grant B still requires the fresh terms capture and DR12 comparison before admission. | **Step 2A** |
-| Feed shape observation | an uncovered publisher feed shape | v0.38 · 2026-08-04 — Step 2 replays the exact 892,641-byte v0.25 body through the shipped parser and closes parser/identity/license fixture coverage. Grant B still requires fresh feed capture and shape comparison. | **Step 2A** |
+| License enum semantics | a second publisher requires an inexpressible license value | v0.38 · 2026-08-04 — The admitted live archive stores all **200/200** rows as existing `PublisherPermitted`; finance-only public-shell isolation is unchanged and no inexpressible value appeared, so the trigger has not fired. | none |
+| Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.38 · 2026-08-04 — The fresh terms page preserves the pinned determination's user-agent/contact, rate, responsibility, and public-information reuse conditions; DR12 passed without re-determination and no uncovered restriction appeared. | none |
+| Feed shape observation | an uncovered publisher feed shape | v0.38 · 2026-08-04 — Fresh RSS differs in current filing contents but retains the covered 200-item field shape; production parsed and stored **200/200** rows, so no uncovered shape appeared. | none |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.38 · 2026-08-04 — The shared `assign_dedup_identity` seam remains completed under R14; ACTIVATE added no dependency module or manifest edge. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.38 · 2026-08-04 — ACTIVATE leaves both tag-mechanics restatements unchanged; no divergence is observed. | none |
-| Review-export capacity | the export crosses the declared ceiling | v0.38 · 2026-08-04 — Exact pre-record Step 2 worktree export **2,638,292 bytes / 158 files / 2 retained cycles** leaves **361,708 bytes / 12.06% / 2.52 cycles** at +143,456 bytes/cycle; the ceiling trigger has not fired. | none |
+| Review-export capacity | the export crosses the declared ceiling | v0.38 · 2026-08-04 — Exact pre-commit Step 2A worktree export **2,766,436 bytes / 163 files / 2 retained cycles** leaves **233,564 bytes / 7.79% / 1.63 cycles** at +143,456 bytes/cycle; both exact pinned SEC RSS bodies and the structural archives remain excluded, and the ceiling trigger has not fired. | none |
 
 ## Deferred completions
 
 | Deferred item | Completion |
 |---|---|
 | **Public value-domain control (G6)** | 2026-08-04 — completed in v0.38 Step 1. R15 checks the exact v0.17.4 baseline at **6 routes / 31 status-media response variants / 112 recursive field occurrences**; its planted added-enum, removed-field, and changed-type mutations each fail at the executing serialization control, and the fresh full scan passes **15/15 rules / 84 controls**. |
+| **SEC EDGAR admission** | 2026-08-04 — completed in v0.38 Step 2A under Grant B. Fresh robots/terms/feed evidence passed DR12, the production live path stored a coherent **200-document** first window in a fresh archive, public entitlement remained finance-only, and the non-retroactive admission chain plus **6** observation pins pass both artifact entry points. |
 
 ---
 
@@ -488,7 +561,7 @@ milestone is completed by its observation, never by a workaround.
 - [x] ACTIVATE
 - [x] E0
 - [x] REHEARSAL-COMPLETE
-- [ ] WIRE-ADMISSION
+- [x] WIRE-ADMISSION
 - [ ] RE-MEASURE
 - [ ] R-CLOSE
 

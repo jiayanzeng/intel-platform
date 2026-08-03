@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 is active under Grant A and Grant B, and v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **371/371**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; activation adds no runtime or public-surface difference.
+**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 has spent Grant B and admitted SEC EDGAR as the second publisher, and v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; the still-open v0.38 distance now carries the measured SEC harvest-enablement behavior difference but no public response-domain movement, so no closed-cycle count has yet accrued.
 
 **v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the runbook-defined Grant A before
@@ -102,6 +102,86 @@ zero delta. A separate permission-complete Python 3.12 lane passes the identical
 non-result: all eight failures were explicit loopback-bind or process-inspection
 permission denials. The registered scan remains **15/15 rules / 84 controls**.
 No live SEC wire or fresh observation byte has yet been touched.
+
+**v0.38 WIRE-ADMISSION — SEC EDGAR admitted under Grant B (measured
+2026-08-04).** The operator's initiating Grant B authorized exactly the SEC
+robots, published-terms, and configured RSS wire; dated observation-grade
+writes; and admission conditional on compatibility. Evidence ran before the
+harvest. One sequential request per URL used the declared contact-bearing
+`intel-platform/0.17.4` identity, disabled redirect following and retries, and
+respected the 0.500-second floor. Robots, terms, and RSS all returned HTTP 200
+with no `Location`. Fresh robots are byte-identical to v0.25. The current terms
+preserve the pinned determination's user-agent/contact, rate, responsibility,
+and public-information reuse conditions. The current RSS body changes with
+filings but preserves the measured **200-item** shape: title, GUID, date, link,
+and description are nonempty **200/200**; author is absent **200/200**; all
+GUIDs are unique and all links remain on `www.sec.gov`. DR12 passed per
+artifact; no re-determination or compatibility patch occurred.
+
+The separate production `./run harvest-sec` path consumed the live configured
+feed—not an observation file—into fresh
+`data/live-20260803T195324Z-37051.db`. It measured `first_window`, **200
+fetched / 200 new / 200 stored**, production robots `Body(allow)` for
+`/Archives/edgar/usgaap.rss.xml`, a **0.500-second** effective delay, and clean
+shutdown. The archive is **253,952 bytes** at SHA-256
+`fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044`.
+SQLite integrity is `ok`; all **200** rows are exact
+`finance/sec-edgar-usgaap/PublisherPermitted`; null SimHashes and canonical ids
+are **0**; noncanonical rows are **0**; distinct canonical identities are
+**200**; and cursors, embeddings, and signal-history rows are all **0**.
+
+The actual public shell/core boundary re-measured both committed subscriptions
+against that archive. `acme-research`, entitled only to science and technology,
+analyzed **0** documents. `quant-desk`, entitled to finance, analyzed **200**;
+both responses named the correct client/sectors and reported zero
+near-duplicate collapses. The sole intended entitlement movement is the named
+**200-document finance addition for `quant-desk`**. No subscription, schedule,
+source configuration, dependency resolution, public route/field/value domain,
+or golden input changed.
+
+The protected manifest now carries a non-retroactive initial admission record
+whose exact wire hashes and operator-approval citation bind Grant B. The five
+capture files plus the admission report are six new observation pins; both
+artifact entry points accept **3 artifacts / 339 pinned files**. The manifest
+is **200,440 / 1,048,576 bytes**, and consecutive complete checks take **0.09
+s / 0.09 s real**, so neither retention trigger clause fired. This was one
+manual single-source admission harvest. Recurrence, concurrency, conditional
+GET/304, repeated fetch, retry/redirect behavior of the parser request, and
+historical backfill remain unmeasured and unclaimed.
+
+The first full-gate attempt truthfully failed only the on-site deferred audit:
+its historical cosine measurement sorted every `artifacts[]` record and
+asserted the manifest contained exactly the prior **1,764 / 2,600** document
+pair, so the valid new 200-document admission produced `[200, 1764, 2600]` and
+aborted before measurement. The runbook's clean-`ci-local` criterion and new
+archive admission could not both fit its original scope; Step 2A therefore
+records the exact author-contract correction and allows
+`tools/audit_deferred.py`. The auditor now selects its two immutable historical
+inputs by exact path, and a new test plants the third SEC-shaped record and
+requires the same two-input selection. No receipt, disposition, protected
+byte, or historical measurement changed.
+
+The first project-root export attempt then failed before inspection because
+its checker assumed exactly one SEC RSS body under `observations/**`; the new
+required pin made two. The simultaneous fresh-evidence and bounded-export
+criteria could not fit that original assumption, so the runbook records a
+second exact author-contract correction and adds `tools/export_check.py` to
+Step 2A's scope. `repomix.config.json` now registers both raw RSS bodies by
+exact path. The checker derives and verifies those configured paths, rejects
+wildcards, missing bytes, and non-observation targets, and a regression proves
+that removing either planted capture fails. The permission-complete project-
+root entry point passes at **2,766,436 bytes / 163 files / 2 retained cycles**,
+leaving **233,564 bytes / 7.79% / 1.63 cycles** at the +143,456-byte
+denominator. Both raw feeds remain independently pinned and outside the review
+artifact; every source and evidence record stays review-visible.
+
+The permission-complete corrected `ci-local` passes all **22/22** identities:
+registered scan **15/15 rules / 84 controls**, Python 3.11 **373/373**, Rust
+1.78 offline, Rust 1.86 net success, Rust 1.85 declared-floor refusal, all
+warning/lint/format gates, **3/3** artifacts, and golden **11/11** with zero
+delta. A separate permission-complete Python 3.12 run passes the identical
+**373/373** population with no skips. The prior 370/371 shell run remains a
+recorded failed attempt, not acceptance evidence.
 
 **v0.38 E0 — entering-state reconstruction (measured 2026-08-04).** The seven
 runbook rows were treated as hypotheses and checked at their real entry points.

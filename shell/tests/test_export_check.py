@@ -1,3 +1,4 @@
+import json
 import subprocess
 from pathlib import Path
 
@@ -45,14 +46,17 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
     older_runbook.write_text("# Older cycle\n")
     older_progress = root / f"docs/cycles/PROGRESS-{older_cycle}.md"
     older_progress.write_text("# Older progress\n")
-    excluded_capture = (
-        root
-        / "observations"
-        / "capture"
-        / export_check.EXCLUDED_EXPORT_FILENAMES[0]
+    excluded_paths = (
+        "observations/capture-a/sec-edgar-usgaap.rss.xml",
+        "observations/capture-b/sec-edgar-usgaap.rss.xml",
     )
-    excluded_capture.parent.mkdir(parents=True)
-    excluded_capture.write_text("excluded wire body\n")
+    (root / "repomix.config.json").write_text(
+        json.dumps({"ignore": {"customPatterns": list(excluded_paths)}})
+    )
+    for raw_path in excluded_paths:
+        excluded_capture = root / raw_path
+        excluded_capture.parent.mkdir(parents=True, exist_ok=True)
+        excluded_capture.write_text("excluded wire body\n")
     subprocess.run(["git", "init", "-q"], cwd=root, check=True)
     subprocess.run(["git", "add", "."], cwd=root, check=True)
     return root, paths
@@ -183,6 +187,24 @@ def test_excluded_wire_capture_present_is_a_named_failure(
     _, _, errors = export_check.check_export(root, export)
 
     assert f"excluded export path is present: {excluded}" in errors
+
+
+def test_every_exact_excluded_wire_capture_is_required(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+    configured = sorted(export_check.excluded_export_paths(root))
+    missing = root / configured[-1]
+    missing.unlink()
+
+    try:
+        export_check.excluded_export_paths(root)
+    except export_check.ExportCheckError as error:
+        assert str(error) == (
+            f"invalid exact Repomix observation exclusion: {configured[-1]}"
+        )
+    else:
+        raise AssertionError("missing exact exclusion was accepted")
 
 
 def test_excluded_state_archive_present_is_a_named_failure(

@@ -1,0 +1,5 @@
+# Preserve every captured publisher response byte-for-byte. These raw wire
+# artifacts must not undergo text normalization or whitespace cleanup.
+sec-edgar-robots.txt binary
+sec-edgar-privacy-information.html binary
+sec-edgar-usgaap.rss.xml binary

@@ -60,6 +60,10 @@ V2_VIEW_DESIGN = ROOT / "docs" / "V2-VIEW-DESIGN.md"
 RETRIEVE_ANCHOR_MS = 16.264
 EMBEDDING_DIMENSION = 768
 COSINE_SAMPLES = 30
+COSINE_ARCHIVES = (
+    ("data/core.db", 1764),
+    ("data/live-smoke.db", 2600),
+)
 SCHEMA_VERSION = 2
 EVIDENCE_GRADES = ("structural", "release")
 LEGACY_RUNNER_JOB_COUNTS = {
@@ -680,10 +684,29 @@ def load_manifest_records() -> list[dict[str, Any]]:
     records = manifest.get("artifacts")
     if not isinstance(records, list):
         raise AuditFailure(f"{MANIFEST}: artifacts must be a list")
-    selected = sorted(records, key=lambda item: item["expected"]["documents"])
-    counts = [item["expected"]["documents"] for item in selected]
-    if counts != [1764, 2600]:
-        raise AuditFailure(f"expected archive counts [1764, 2600], got {counts}")
+    selected: list[dict[str, Any]] = []
+    for expected_path, expected_documents in COSINE_ARCHIVES:
+        matches = [
+            item
+            for item in records
+            if isinstance(item, dict) and item.get("path") == expected_path
+        ]
+        if len(matches) != 1:
+            raise AuditFailure(
+                f"{MANIFEST}: expected exactly one {expected_path!r} artifact; "
+                f"found {len(matches)}"
+            )
+        record = matches[0]
+        expected = record.get("expected")
+        actual_documents = (
+            expected.get("documents") if isinstance(expected, dict) else None
+        )
+        if actual_documents != expected_documents:
+            raise AuditFailure(
+                f"{expected_path}: expected {expected_documents} documents, "
+                f"got {actual_documents!r}"
+            )
+        selected.append(record)
     return selected
 
 

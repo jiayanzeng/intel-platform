@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -158,16 +159,41 @@ def expected_retained_cycle_paths(root: Path) -> set[str]:
 
 
 def excluded_export_paths(root: Path) -> set[str]:
+    root = root.resolve()
+    config_path = root / "repomix.config.json"
+    try:
+        config = json.loads(config_path.read_text())
+        patterns = config["ignore"]["customPatterns"]
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as error:
+        raise ExportCheckError(
+            f"cannot read Repomix exclusions from {config_path}: {error}"
+        ) from error
+    if not isinstance(patterns, list) or not all(
+        isinstance(pattern, str) for pattern in patterns
+    ):
+        raise ExportCheckError("Repomix customPatterns must be a string list")
+
     excluded: set[str] = set()
-    observations = root.resolve() / "observations"
     for filename in EXCLUDED_EXPORT_FILENAMES:
-        matches = sorted(observations.glob(f"**/{filename}"))
-        if len(matches) != 1:
+        matches = sorted(
+            pattern
+            for pattern in patterns
+            if pattern.rsplit("/", 1)[-1] == filename
+        )
+        if not matches:
             raise ExportCheckError(
-                f"expected exactly one observations/**/{filename}, "
-                f"found {len(matches)}"
+                f"no exact Repomix observation exclusion for {filename}"
             )
-        excluded.add(matches[0].relative_to(root.resolve()).as_posix())
+        for raw_path in matches:
+            if (
+                not raw_path.startswith("observations/")
+                or any(character in raw_path for character in "*?[]{}")
+                or not (root / raw_path).is_file()
+            ):
+                raise ExportCheckError(
+                    f"invalid exact Repomix observation exclusion: {raw_path}"
+                )
+            excluded.add(raw_path)
     return excluded
 
 
