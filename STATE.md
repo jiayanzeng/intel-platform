@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.38 is closed locally and unpublished at the DR13-selected patch release; its immediate closing-export audit child remains required before handoff. v0.17.4 remains published exactly, while v0.17.5 publication is unauthorized.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of the v0.17.5 closing record. Remote `main` remains exact published v0.17.4 audit child `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities there. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed cycle carrying the measured SEC harvest-enablement behavior difference, so the consecutive count is **1**, with no public-surface movement.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is closed locally and unpublished; v0.38's closing-export audit is complete. v0.17.4 remains published exactly, and no v0.17.5 publication is authorized.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child records the measured closing-tree export. Local annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Remote `main` remains exact published v0.17.4 audit child `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities there. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed cycle carrying the measured SEC harvest-enablement behavior difference, so the consecutive count is **1**, with no public-surface movement.
 
 **v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the runbook-defined Grant A before
@@ -286,6 +286,17 @@ records the measured closing-tree export before handoff.
 - **Publication observation status:** `unpublished-local-close`
 - **Publication observation remote:** `origin`
 - **Publication observation tag ref:** `absent`
+
+**v0.38 closing-export audit child (measured 2026-08-04).** Local annotated
+tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to closing
+commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`, whose immediate parent is
+exact release commit `37f552c0c326098bdcf8f19de7eac19670d74680`. The project-root
+export of that closing commit passed at **2,798,114 bytes / 163 files / 2
+retained cycles**, a truthful **+16,833-byte** difference from the closing
+tree's 2,781,281-byte governed release-parent field. This append-only child is
+the immediate next commit after the tag target and the final v0.38 commit; it
+does not predict its own content-addressed id, move any remote ref, or defer the
+audit to publication.
 
 **v0.38 E0 — entering-state reconstruction (measured 2026-08-04).** The seven
 runbook rows were treated as hypotheses and checked at their real entry points.

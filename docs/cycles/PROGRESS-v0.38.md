@@ -364,3 +364,4 @@ Grant A and Grant B; neither is generalized beyond those written bounds.
   State/runbook/progress/Architecture records move. No dependency graph,
   protected byte, fixture, historical observation, closed-cycle document,
   publisher request, workflow, `main`, or remote release ref moves.
+- cycle-ending review-export audit: closing_tree=`55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; bytes=`2798114`; audit_delta=`+16833`
