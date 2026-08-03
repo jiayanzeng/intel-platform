@@ -48,3 +48,40 @@ Grant A and Grant B; neither is generalized beyond those written bounds.
   byte, observation, fixture, or unauthorized ref moved during activation.
 - golden-E2E delta: **0**. The first loopback-bind attempt was a sandbox-denied
   non-result; the permission-complete identical command passed **11/11**.
+
+### 2026-08-04 · PUBLISH-V17-4 — exact Grant A publication
+
+- owner: Codex
+- runbook: `TASKS-v0.38-EXECUTION.md`
+- commit: 36f94c77a2d6e47130f342f7ffa2476bc280ab62
+- grant: PASS. The initiating request's verbatim grant is recorded above
+  before the gated action; its `publish v0.17.4` label activates only the exact
+  Grant A scope stated in the runbook.
+- precondition acceptance: PASS immediately before push. Remote `main` was
+  exact `e068cacc76685791c54ab47c84be6abbd592271d`; v0.17.4 was absent; the
+  ancestor check exited 0; and local annotated object
+  `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peeled to exact closing commit
+  `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`.
+- publication acceptance: PASS. One non-force branch push advanced only
+  `origin/main` to `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; one non-force
+  tag push created only v0.17.4. Fresh readback matched the branch, annotated
+  object, and peeled target exactly. No ref was forced, deleted, or moved
+  beyond Grant A.
+- hosted acceptance: PASS. Push-triggered run **30841505130**, attempt **1**,
+  concluded `success` on the exact published head; all **9/9** blocking job
+  identities passed and dependency drift was the sole report-only skip.
+- lifecycle acceptance: PASS. The current header says published, the exact
+  five-field post-push record is at column zero, and the historical absence
+  observation remains untouched. Direct `cycle-check` passes on the published
+  path and reports exact v0.17.4 local-tag reconciliation.
+- planted-control acceptance: PASS unmodified at **15/15 rules / 84
+  controls**, including required/fresh post-push fields, unpublished-observation
+  precedence, and published-descendant missing-record refusal.
+- divergence acceptance: PASS. Publication resets the publication-epoch count
+  to **0** at closing commit `f4f2690a…`; activation adds no runtime or public
+  surface difference.
+- stop conditions: none. No grant precondition, hosted identity, record truth,
+  entitlement/licensing outcome, protected byte, dependency, payload, or
+  accepted boundary condition failed.
+- golden-E2E delta: **0**. The permission-complete P1 worktree passed
+  **11/11**.
