@@ -541,7 +541,7 @@ governed.
 ## Cycle checklist
 
 - [ ] PUBLISH
-- [ ] ACTIVATE
+- [x] ACTIVATE
 - [ ] E0
 - [ ] TEST-ISOLATION
 - [ ] STATE-ARCHIVE
