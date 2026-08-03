@@ -327,3 +327,44 @@ Entries are append-only; corrections are new dated entries.
 - prohibited movement: PASS. No v0.35 byte, production source, dependency,
   protected byte, tag/ref, amendment input, or release authority changed.
 - governed review-export measurement: tree=`c9ec9bad85a4ad5ceff0f1654f38a46ea429cfa2`; bytes=`2827155`
+
+### 2026-08-03 · IDENTITY-SCOPE — one sector-partitioned identity rule
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: b945957871ae1fa5d3a3697a4f0c660347bd8311
+- result: PASS. Store canonicalization and view collapse now translate their
+  boundary types into shared `intel_extract::assign_dedup_identity`, which owns
+  ordering, sector partitioning, eligibility, distance comparison, and
+  canonical selection. No crate, manifest edge, lockfile, or MSRV moved.
+- C1/architecture acceptance: PASS. The entering graph already contained the
+  shared `intel-extract` dependency, firing the threshold-authority trigger.
+  Architecture records why identity is global within a sector; R1's positional
+  source was re-measured at `ARCHITECTURE.md:118-124`. R5 retains the
+  boundary-local radius control.
+- H6/H7 acceptance: PASS. The before **43-feature** pair was store self/self but
+  view science/technology collapse at distance **0**. The after three-document
+  witness produces the same nonempty science duplicate drop from both layers
+  while preserving the cross-sector pair. The shipped **6×7 / 42-pair**
+  distribution remains 22–41 with **0** distances at or below 16.
+- rule acceptance: PASS. R14 failed before on both absent consumer calls and the
+  absent shared sector partition. It passes after with three planted controls
+  that independently remove view consumption, remove store consumption, and
+  replace the shared sector key. Full self-test: **14/14 rules / 81 controls**.
+- public-output/DR5 acceptance: PASS. Separate Step 3 and Step 4 builds exercised
+  signals, brief, search, and ask for both configured subscriptions plus both
+  billing routes. Canonical `/v1/*` payloads are byte-identical at **15,719
+  bytes**, SHA-256
+  `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`;
+  acme remains **12 documents / 1 collapse**, quant remains **1 / 0**, and no
+  licensing or entitlement outcome moves. The reachable counterexample changes
+  document selection but not any serialized field's value domain, so DR5 clause
+  2 does not require minor.
+- full local acceptance: PASS **22/22** jobs. Shell passed **368/368** with the
+  accepted warning; Rust 1.78 and net 1.86 passed, net 1.85 refused the locked
+  ICU edge, lint was clean, artifacts matched **332** pins plus both protected
+  databases, and no job identity was omitted.
+- golden-E2E delta: **0**; embedded golden passed **11/11**.
+- prohibited movement: PASS. No v0.35 byte, protected byte, amendment input,
+  release authority, tag, or remote ref moved.
+- governed review-export measurement: tree=`b945957871ae1fa5d3a3697a4f0c660347bd8311`; bytes=`2844319`
