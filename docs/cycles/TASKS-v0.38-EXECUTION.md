@@ -2,6 +2,8 @@
 
 ## Runbook amendments
 
+Step 3 — exact hosted candidate, ref, signed-receipt, identity, population-equivalence, and remote readback result appended; acceptance meaning unchanged — 2026-08-04
+
 Step 2A — Grant-B wire, DR12, fresh-archive, entitlement, and admission result appended; exact deferred-auditor and export-checker scopes added after their two-archive/one-RSS assumptions failed on the valid third admission and second RSS pin; acceptance meaning unchanged — 2026-08-04
 
 Step 2 — derived rehearsal checklist and wire-residue record appended; acceptance meaning unchanged — 2026-08-04
@@ -468,6 +470,40 @@ If production code moved: evidence ref under the standing authority,
 `ls-remote` pre-check recorded, run id / attempt / identities reported.
 Otherwise the dated reason and the local-only claim list.
 
+**RE-MEASURE result (measured 2026-08-04).** The operational `run` path and
+executable controls moved, so hosted verification ran. Exact audited candidate
+`816a0648c0dd9f4be1caad01ed3395997671cf25` first passed the complete
+permission-capable local matrix at **22/22** jobs, including Python 3.11
+**373/373**, registered scan **15/15 rules / 84 controls**, both Rust floors,
+artifact verification, and golden **11/11**. The separate local Python 3.12
+lane passed the identical **373/373** population.
+
+Immediately before ref creation, `git ls-remote --exit-code` returned **2**
+with no output for fresh
+`refs/heads/codex/v0.38-evidence-816a064`. An initial push command supplied an
+incorrect guessed full SHA behind that correct short id; local and remote
+reported `bad object` / `remote unpack failed`, no ref was created, and a fresh
+`ls-remote` again returned **2** with no output. After resolving the candidate
+with `git rev-parse`, one non-force push created exactly the named ref at the
+exact candidate. This rejected bad-object attempt is a remote non-result, not a
+second ref creation or force/retry of an existing ref.
+
+Workflow-dispatch run **30852480662**, attempt **1**, completed `success` on
+that exact SHA/ref. All **9/9** blocking identities passed and persisted **9
+receipts / 9 Sigstore bundles**; dependency drift was the sole report-only
+skip. The run was dispatched once and not retried. Both hosted shell lanes
+collected **373**, passed **372**, and skipped only named
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+with its `on_site` marker and declared protected-corpora/built-core reason.
+Both direct `tools/test_population.py` comparisons derived
+`equivalent=true`, `equivalent_passed=373`, and one allowed hosted skip. Hosted
+golden passed **11/11**.
+
+Final readback kept the evidence ref exact, remote `main` at `a7d6c80e…`, and
+v0.17.2/v0.17.3/v0.17.4 annotated objects at their unchanged values. No tag,
+publication ref, dependency, workflow byte, protected byte, publisher wire,
+entitlement/license outcome, or public response domain moved.
+
 ---
 
 ## Step 4 · R-CLOSE
@@ -562,7 +598,7 @@ milestone is completed by its observation, never by a workaround.
 - [x] E0
 - [x] REHEARSAL-COMPLETE
 - [x] WIRE-ADMISSION
-- [ ] RE-MEASURE
+- [x] RE-MEASURE
 - [ ] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.38.md` entry ids exactly.*

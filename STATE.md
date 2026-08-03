@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 has spent Grant B and admitted SEC EDGAR as the second publisher, and v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; the still-open v0.38 distance now carries the measured SEC harvest-enablement behavior difference but no public response-domain movement, so no closed-cycle count has yet accrued.
+**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 has spent Grant B, admitted SEC EDGAR as the second publisher, and passed exact hosted re-measurement; v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; the still-open v0.38 distance now carries the measured SEC harvest-enablement behavior difference but no public response-domain movement, so no closed-cycle count has yet accrued.
 
 **v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the runbook-defined Grant A before
@@ -182,6 +182,40 @@ warning/lint/format gates, **3/3** artifacts, and golden **11/11** with zero
 delta. A separate permission-complete Python 3.12 run passes the identical
 **373/373** population with no skips. The prior 370/371 shell run remains a
 recorded failed attempt, not acceptance evidence.
+
+**v0.38 RE-MEASURE — exact hosted candidate passed (measured 2026-08-04).**
+The operational `run` path and executable controls moved, so Step 3 selected
+hosted verification. Exact candidate
+`816a0648c0dd9f4be1caad01ed3395997671cf25` first passed the complete
+permission-capable local matrix at **22/22** identities, including Python 3.11
+**373/373**, scan **15/15 rules / 84 controls**, both Rust floor pairs,
+artifact verification, and golden **11/11**. Its separate local Python 3.12
+population passed the identical **373/373** with no skips.
+
+The required immediate `ls-remote --exit-code` returned **2** with no output
+for fresh `refs/heads/codex/v0.38-evidence-816a064`. An initial push command
+used an incorrect guessed full SHA behind that correct short id; both ends
+reported `bad object` / `remote unpack failed`, no ref was created, and a
+fresh absence check again returned **2** with no output. `git rev-parse` then
+resolved the exact candidate, and one non-force push created exactly the named
+ref. The rejected bad-object attempt is a non-result: no pre-existing ref was
+retried, moved, or forced.
+
+Workflow-dispatch run **30852480662**, attempt **1**, completed `success` at
+the exact SHA/ref. All **9/9** blocking identities passed and persisted **9
+receipts / 9 Sigstore bundles**; dependency drift was the sole report-only
+skip. Both hosted shell lanes collected **373**, passed **372**, and skipped
+only the named, reasoned, `on_site`
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+node. Direct `tools/test_population.py` comparisons for Python 3.11 and 3.12
+each derived `equivalent=true`, `equivalent_passed=373`, with one allowed
+hosted skip. Hosted golden passed **11/11**.
+
+Final remote readback resolves the evidence ref to the exact candidate, keeps
+`main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`, and keeps the v0.17.2,
+v0.17.3, and v0.17.4 annotated objects unchanged. No tag, publication ref,
+workflow byte, dependency, protected byte, publisher wire,
+entitlement/licensing outcome, or public response domain moved.
 
 **v0.38 E0 — entering-state reconstruction (measured 2026-08-04).** The seven
 runbook rows were treated as hypotheses and checked at their real entry points.
