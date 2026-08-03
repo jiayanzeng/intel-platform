@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 Step 7 R-CLOSE is BLOCKED at its pre-implementation gate: the mandatory audit-before-check ordering has no satisfying assignment under the executed lifecycle.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 6 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **Reviewer amendment A2 corrects Step 7's audit ordering and reopens v0.36 R-CLOSE.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 6 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -471,6 +471,24 @@ bytes** with no added, removed, or redefined serialized field-domain value. If
 the ordering defect is author-corrected without a higher-precedence finding,
 the next available patch is **v0.17.3**. That is a conditional classification,
 not a closing disposition or a version-authority change.
+
+**v0.36 A2 Step 7 ordering correction (measured 2026-08-03).** Reviewer A2
+affirms E3 as the sixth author-side unsatisfiable rule in its declared family
+and preserves the four-clause impossibility proof above. Application commit
+`c9ecfa404ebe0f93049765ac073c7a70865084e3` changes only the active runbook:
+the closing commit now checks Step 7, the local annotated tag targets that
+commit, and the immediate next commit carries the measured closing-export
+audit before handoff. Every other Step 7 criterion remains evaluated at the
+assembled closing worktree.
+
+Direct `cycle-check` passes with v0.36 still truthfully open and names no
+further undisclosed interaction. `version-check` remains at **0.17.2** with
+**3** executable offline-MSRV pins, **22** current offline-MSRV restatements,
+and **3** current release restatements. `checklist-audit` remains internally
+consistent at **286 checked / 3 retracted / 277 matched / 277 resolved / 9
+exemptions**. The amendment-only golden run passes **11/11** with zero delta.
+The reviewer text is now the third untracked amendment input; all three remain
+untracked and are excluded from the implementation commit.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

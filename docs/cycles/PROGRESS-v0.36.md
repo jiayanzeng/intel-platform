@@ -510,3 +510,30 @@ Entries are append-only; corrections are new dated entries.
 - prohibited movement: PASS. No release authority, production source,
   dependency, protected byte, v0.35 byte, amendment input, local tag, `main`,
   release tag, or remote ref moved.
+
+### 2026-08-03 · AMENDMENT-A2 — Step 7 audit ordering corrected
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: c9ecfa404ebe0f93049765ac073c7a70865084e3
+- result: PASS. Reviewer A2 affirms the earlier E3 impossibility proof and
+  replaces only the unsatisfiable audit-before-check clause. The satisfiable
+  order is release parent → checked closing commit → local annotated tag →
+  immediate append-only audit child before handoff.
+- evaluation-point acceptance: PASS. Every non-audit Step 7 criterion remains
+  owned by the assembled closing worktree. The audit field alone is evaluated
+  at the immediate child, and the child must pass Step 1A's second-unpublished-
+  release lifecycle without weakening the published-release negative control.
+- checker acceptance: PASS. Direct `cycle-check` reports v0.36 truthfully open
+  and names no further undisclosed interaction. `version-check` passes at
+  **0.17.2** with **3 / 22 / 3** executable-floor pins, current floor
+  restatements, and current release restatements.
+- checklist acceptance: PASS at **286 checked / 3 retracted / 277 matched /
+  277 resolved / 9 exemptions**; v0.36 remains **9/9/9** while Step 7 is open.
+- golden-E2E delta: **0**; the permission-complete amendment-only run passed
+  **11/11**.
+- input acceptance: PASS. A2 is materialized verbatim as the third untracked
+  reviewer input; all three amendment files remain untracked and were excluded
+  from the implementation commit.
+- scope acceptance: PASS. No production source, dependency, release authority,
+  protected byte, v0.35 byte, tag, `main`, or remote ref moved.
