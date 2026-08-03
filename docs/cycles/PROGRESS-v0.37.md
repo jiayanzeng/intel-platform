@@ -100,3 +100,44 @@ Entries are append-only; corrections are new dated entries.
   licensing, protected byte, dependency, payload, or boundary stop fired.
 - golden-E2E delta: **0**. The permission-complete final PUBLISH worktree
   passed **11/11**; the initial sandbox-denied bind was a non-result.
+
+### 2026-08-03 · E0 — entering-state reconstruction
+
+- owner: Codex
+- runbook: `TASKS-v0.37-EXECUTION.md`
+- commit: 8ccabcac7823af18197ac09c80dfbe75904b6b2d
+- result: PASS with measured refutations preserved. H1, H3, H7, H8, and H9
+  were confirmed; H4 and H6 were refuted; H2 was confirmed at the entering DR7
+  boundary and superseded by publication; H5 was partly confirmed and otherwise
+  refuted by commit-exact export measurements. The complete dated table is in
+  the runbook and its measured evidence is summarized in State.
+- H3 acceptance: PASS. A test-only nonce seam pre-created the exact candidate
+  directory and deterministically reproduced the entering
+  PID-plus-nanoseconds constructor's caught `AlreadyExists` panic, **1/1**. No
+  production code moved.
+- H4 acceptance: PASS as a refutation. The live figures are **14 rules / 81
+  controls**, **9 exemptions**, **3 retractions**, and pre-E0 checklist **289
+  checked / 3 retracted / 280 matched / 280 resolved / 9 exemptions**, not the
+  hypothesis's 287/3/278+9.
+- H5/H6 acceptance: PASS as measured corrections. The v0.35 retained pair is
+  **148,051 bytes**. Exact exports are **2,858,294 / 151 / 2** at entering
+  `e068cacc…` and **2,746,484 / 151 / 2** at activation `5884ef77…`; the
+  source-review 2,901,790/154 was a worktree containing three untracked inputs.
+  Pre-record State is **345,139 bytes**, with one permanent-tail marker, two
+  absence observations, and two later post-push records.
+- H7/C8 acceptance: PASS. Runtime introspection enumerated exactly six public
+  routes, all with `response_model=None`; five handlers return dictionaries and
+  `/v1/brief` returns `PlainTextResponse`. C8 therefore selects response-model
+  introduction.
+- standing-gate acceptance: PASS. Permission-complete `ci-local` passed all
+  **22/22** identities; invariant self-test passed **14/14 rules / 81
+  controls**; Python 3.11 and 3.12 each passed **368/368** with identical
+  population summaries; artifacts matched **2 databases / 332 pinned files**.
+  The first 3.12 attempt was a sandbox-denied non-result and is not counted.
+- protected-input acceptance: PASS. The three amendment inputs remain
+  untouched and untracked. No dependency, production source, protected byte,
+  public payload, version authority, or remote ref moved in E0.
+- stop conditions: none. The measured hypothesis refutations are findings, not
+  stop conditions; no architecture, gate, or corpus-integrity condition fired.
+- golden-E2E delta: **0**. The final permission-complete worktree passed
+  **11/11**; the preceding sandbox-denied bind was a non-result.
