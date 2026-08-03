@@ -573,7 +573,7 @@ governed.
 - [x] PUBLISH
 - [x] ACTIVATE
 - [x] E0
-- [ ] TEST-ISOLATION
+- [x] TEST-ISOLATION
 - [ ] STATE-ARCHIVE
 - [ ] DOMAIN-MANIFEST
 - [ ] RE-MEASURE

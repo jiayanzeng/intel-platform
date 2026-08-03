@@ -29,17 +29,27 @@ impl DisposableDir {
         Self::create_with_nonce(nonce)
     }
 
-    fn path_for_nonce(nonce: u128) -> PathBuf {
+    fn candidate_path(nonce: u128, attempt: u64) -> PathBuf {
         std::env::temp_dir().join(format!(
-            "intel-platform-sec-identity-{}-{nonce}",
+            "intel-platform-sec-identity-{}-{nonce}-{attempt}",
             std::process::id()
         ))
     }
 
     fn create_with_nonce(nonce: u128) -> Self {
-        let path = Self::path_for_nonce(nonce);
-        std::fs::create_dir(&path).expect("create identity-measure directory");
-        Self(path)
+        let mut attempt = 0_u64;
+        loop {
+            let path = Self::candidate_path(nonce, attempt);
+            match std::fs::create_dir(&path) {
+                Ok(()) => return Self(path),
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+                    attempt = attempt
+                        .checked_add(1)
+                        .expect("exhausted identity-measure directory candidates");
+                }
+                Err(error) => panic!("create identity-measure directory {path:?}: {error}"),
+            }
+        }
     }
 }
 
@@ -50,16 +60,21 @@ impl Drop for DisposableDir {
 }
 
 #[test]
-fn reproduces_disposable_directory_collision_deterministically() {
+fn retries_disposable_directory_collision_deterministically() {
     let nonce = u128::MAX;
-    let path = DisposableDir::path_for_nonce(nonce);
-    std::fs::create_dir(&path).expect("pre-create forced-collision directory");
-    let collision = std::panic::catch_unwind(|| DisposableDir::create_with_nonce(nonce));
-    std::fs::remove_dir(&path).expect("remove forced-collision directory");
-    assert!(
-        collision.is_err(),
-        "the entering PID-plus-clock constructor must fail on an existing candidate"
+    let occupied = DisposableDir::candidate_path(nonce, 0);
+    std::fs::create_dir(&occupied).expect("pre-create forced-collision directory");
+
+    let created = DisposableDir::create_with_nonce(nonce);
+    assert_eq!(
+        created.0,
+        DisposableDir::candidate_path(nonce, 1),
+        "creation must advance past the occupied candidate"
     );
+    assert!(created.0.is_dir(), "the retry must create its candidate");
+
+    drop(created);
+    std::fs::remove_dir(&occupied).expect("remove forced-collision directory");
 }
 
 fn root() -> PathBuf {

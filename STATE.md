@@ -131,6 +131,23 @@ populations. The first Python 3.12 attempt was a sandbox-denied non-result
 pass. No E0 gate, architecture, dependency, protected-byte, or golden stop
 condition fired.
 
+**v0.37 TEST-ISOLATION — identity scratch directories are collision-proof by
+construction (measured 2026-08-03).** The test-only `DisposableDir` still uses
+the process id and clock-derived nonce as its candidate prefix, but atomic
+`create_dir` now appends a monotonically increasing attempt component and
+retries only `AlreadyExists`. Every other filesystem error remains an immediate
+failure. The executable witness pre-creates attempt zero for a fixed nonce and
+proves the same constructor succeeds at attempt one; the focused control passed
+**1/1**.
+
+The complete `intel-store` test suite ran under default parallelism **10
+consecutive times**. Every repetition passed **24 unit tests + 1 license test +
+3 identity-measure tests + 0 doctests**, including the parser-produced SEC
+measurement, with **0** `AlreadyExists` failures. The mechanism is std-only,
+adds no dependency, and changes no production source: the entire implementation
+remains in `crates/store/tests/sec_identity_measure.rs`. The final golden
+pipeline passed **11/11** with zero delta; no task gate or stop condition fired.
+
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
 path while v0.35 remained declared and treated the new runbook as an incomplete
