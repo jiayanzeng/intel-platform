@@ -397,6 +397,11 @@ written claim and explicitly does **not** create or measure an export.
 Operator-local `./run export-check` remains the real-byte, retained-set, and
 excluded-content control.
 
+**"Operator-local" names the execution environment, not the executing party.**
+It means a command that runs on the local machine rather than a hosted runner.
+Codex running it discharges the requirement in full; no criterion is deferred
+on the grounds that a command is operator-local.
+
 Beginning with v0.28, both governed tables must contain at least one
 trigger-bearing row. Every trigger-bearing subject in the immediately prior
 execution runbook must remain in the active deferral table or appear in an
@@ -619,3 +624,45 @@ any additional model profile is admitted: an `authorized_keys`
 forced-command wrapper will make the server reject commands outside the same
 lifecycle set.
 <!-- MODEL_PROFILE_AUTHORITY:END -->
+
+## 9. Cycle execution — standing operator authorization
+
+The marker-delimited policy below is byte-identically mirrored in
+`docs/intel-platform-OPERATIONS.md` and enforced by invariant R6.
+
+<!-- CYCLE_AUTONOMY_AUTHORITY:START -->
+**Cycle execution authority — standing, granted 2026-08-03.** Within a declared
+cycle, Codex decides and records rather than asking. This covers: selecting
+among design options the active cycle's execution runbook presents or leaves
+open; choosing implementation seams; setting `accepted_by` on exemption,
+deferral, and disposition records to the authorizing runbook named in the
+declaration above; selecting a release disposition and version by the runbook's
+stated rule; selecting a value inside an already-accepted boundary or ceiling;
+registering new invariant rules and planted controls; editing any tracked file
+the cycle's declared scope reaches, with the justification the relevant document
+requires; and re-pinning `authorization`-grade bytes in
+`config/protected-artifacts.json` after a legitimate edit to the file they pin.
+
+A recorded decision naming its basis and what would have changed it is complete
+work. A question routed to the operator inside this scope is not.
+
+Evidence-ref pushes are covered when all of these hold: the ref is under
+`refs/heads/codex/` and names the active cycle and a short commit id; `git
+ls-remote` confirms immediately beforehand that it does not exist, and the
+result is recorded; the push is non-force and creates exactly that one ref; and
+`main` and every tag are untouched. A pre-existing ref is a finding, not a
+detail.
+
+**Ask first — this list is exhaustive and is not widened by convenience:**
+publishing `main` or any release tag; admitting a publisher under the
+`append_only_chained_records_with_wire_evidence_and_operator_approval`
+lifecycle; writing, replacing, or re-pinning any protected database,
+`observation`-grade byte, or structural-archive byte; moving an accepted
+boundary or ceiling rather than selecting inside it; adding a retraction; any
+change that moves an entitlement or licensing outcome for a configured
+subscription; and any live publisher request against a real wire.
+
+Decision gates are unchanged. A tripped gate still stops its task and is
+recorded; this authority never converts a gate into a workaround. Autonomy is
+permission to decide, never permission to proceed past a measurement.
+<!-- CYCLE_AUTONOMY_AUTHORITY:END -->

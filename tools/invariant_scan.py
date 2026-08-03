@@ -44,8 +44,10 @@ AUTHORITY_FILES = (
     Path("AGENTS.md"),
     Path("docs/intel-platform-OPERATIONS.md"),
 )
-AUTHORITY_START = "<!-- MODEL_PROFILE_AUTHORITY:START -->"
-AUTHORITY_END = "<!-- MODEL_PROFILE_AUTHORITY:END -->"
+AUTHORITY_MARKER = re.compile(
+    r"(?m)^<!-- (?P<name>[A-Z][A-Z0-9_]*_AUTHORITY):"
+    r"(?P<edge>START|END) -->$"
+)
 TEST_MODULE = re.compile(r"(?m)^#\[cfg\(test\)\]\s*\nmod\s+tests\s*\{")
 TCP_BIND = re.compile(r"\b(?:tokio::net::)?TcpListener::bind\s*\(")
 CRAWLER_IDENTITY_CONSTRUCTION = re.compile(r"\bbuild_robots_cache\s*\(")
@@ -1406,34 +1408,84 @@ def r5_findings(root: Path) -> list[str]:
     return findings
 
 
-def _authority_block(root: Path, relative: Path) -> tuple[str | None, list[str]]:
-    path = root / relative
-    try:
-        text = path.read_text()
-    except OSError as error:
-        return None, [f"{relative}: cannot read authorization block: {error}"]
-    if text.count(AUTHORITY_START) != 1 or text.count(AUTHORITY_END) != 1:
-        return None, [
-            f"{relative}: expected exactly one model-profile authorization block"
-        ]
-    start = text.index(AUTHORITY_START)
-    end = text.index(AUTHORITY_END, start) + len(AUTHORITY_END)
-    return text[start:end], []
+def _authority_blocks(
+    relative: Path, text: str, names: set[str]
+) -> tuple[dict[str, str], list[str]]:
+    blocks: dict[str, str] = {}
+    findings: list[str] = []
+    for name in sorted(names):
+        start_marker = f"<!-- {name}:START -->"
+        end_marker = f"<!-- {name}:END -->"
+        start_count = text.count(start_marker)
+        end_count = text.count(end_marker)
+        if start_count != 1 or end_count != 1:
+            marker_position = (
+                text.find(start_marker)
+                if start_count > 0
+                else text.find(end_marker)
+            )
+            marker_line = (
+                text.count("\n", 0, marker_position) + 1
+                if marker_position >= 0
+                else 1
+            )
+            findings.append(
+                f"{relative}:{marker_line}: authority block {name} expected "
+                f"exactly one START and END; found START={start_count} "
+                f"END={end_count}"
+            )
+            continue
+        start = text.index(start_marker)
+        end_start = text.index(end_marker)
+        if end_start <= start:
+            findings.append(
+                f"{relative}: authority block {name} END must follow START"
+            )
+            continue
+        blocks[name] = text[start : end_start + len(end_marker)]
+    return blocks, findings
 
 
 def r6_findings(root: Path) -> list[str]:
     findings: list[str] = []
-    blocks: dict[Path, str] = {}
+    texts: dict[Path, str] = {}
     for relative in AUTHORITY_FILES:
-        block, errors = _authority_block(root, relative)
+        try:
+            texts[relative] = (root / relative).read_text()
+        except OSError as error:
+            findings.append(
+                f"{relative}: cannot read marker-delimited authority blocks: "
+                f"{error}"
+            )
+    if len(texts) != len(AUTHORITY_FILES):
+        return findings
+
+    names = {
+        match.group("name")
+        for text in texts.values()
+        for match in AUTHORITY_MARKER.finditer(text)
+    }
+    if not names:
+        return [
+            "AGENTS.md and docs/intel-platform-OPERATIONS.md: expected at least "
+            "one marker-delimited authority block"
+        ]
+
+    blocks_by_file: dict[Path, dict[str, str]] = {}
+    for relative in AUTHORITY_FILES:
+        blocks, errors = _authority_blocks(relative, texts[relative], names)
+        blocks_by_file[relative] = blocks
         findings.extend(errors)
-        if block is not None:
-            blocks[relative] = block
-    if len(blocks) == len(AUTHORITY_FILES):
-        reference = blocks[AUTHORITY_FILES[0]]
+
+    reference_file = AUTHORITY_FILES[0]
+    reference_blocks = blocks_by_file[reference_file]
+    for name in sorted(names):
+        if name not in reference_blocks:
+            continue
+        reference = reference_blocks[name]
         for relative in AUTHORITY_FILES[1:]:
-            if blocks[relative] != reference:
-                candidate = blocks[relative]
+            candidate = blocks_by_file[relative].get(name)
+            if candidate is not None and candidate != reference:
                 reference_lines = reference.splitlines()
                 candidate_lines = candidate.splitlines()
                 difference = next(
@@ -1450,13 +1502,12 @@ def r6_findings(root: Path) -> list[str]:
                     ),
                     0,
                 )
-                text = (root / relative).read_text()
-                block_line = text.count(
-                    "\n", 0, text.index(AUTHORITY_START)
-                ) + 1
+                start_marker = f"<!-- {name}:START -->"
+                text = texts[relative]
+                block_line = text.count("\n", 0, text.index(start_marker)) + 1
                 findings.append(
-                    f"{relative}:{block_line + difference}: model-profile "
-                    f"authorization block differs from {AUTHORITY_FILES[0]}"
+                    f"{relative}:{block_line + difference}: authority block "
+                    f"{name} differs from {reference_file}"
                 )
     return findings
 

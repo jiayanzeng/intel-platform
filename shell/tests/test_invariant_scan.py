@@ -38,7 +38,7 @@ LEGACY_FAIL_BEFORE_NOTES = {
     ),
     "R6": (
         "invariant-scan: R6 FAIL: docs/intel-platform-OPERATIONS.md: "
-        "model-profile authorization block differs from AGENTS.md"
+        "authority block MODEL_PROFILE_AUTHORITY differs from AGENTS.md"
     ),
 }
 

@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 is active; A1r2 corrects the two author-side lifecycle contradictions and reopens AUTONOMY under an explicit interim verification path.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite remains at the last measured **12 rules / 73 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 AUTONOMY is complete under A1r2's interim verification lane; E0 is next.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite now measures **12 rules / 74 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -66,6 +66,48 @@ The amendment-only golden run passed **11/11** with zero delta. No production
 source, protected byte, dependency, tag, or remote ref changed. Corrected Step
 0 is therefore reopened and runs next; this forward correction does not alter
 the truthful earlier stop-and-report measurement.
+
+**v0.36 corrected AUTONOMY completion (measured 2026-08-03).** The corrected,
+cycle-neutral authority block is present exactly once in `AGENTS.md` and once
+in `docs/intel-platform-OPERATIONS.md`. Generalized R6 derives both authority
+names from the documents, requires one ordered START/END pair in each, and
+compares corresponding inclusive blocks byte-for-byte. Its real missing-START
+mutation and existing mismatch mutation both fail; the full registered scan
+passes **12/12 rules / 74 controls**. The adjacent operator-local clarification
+states that the term names the execution environment rather than the executing
+party. `run` did not change and remains **45,409 bytes** at its existing
+authorization-grade pin.
+
+The contract-path regex found exactly two task-runbook literals, at AGENTS
+lines **16–17**, both above the `## 0.` boundary at line **25**; the authority
+block contributed zero matches. Direct `cycle-check` reported exactly one
+defect, the deliberately pending absent v0.17.2 post-push record, and no
+authority, scope, amendment, trigger, retention, or artifact-boundary defect.
+This is A1r2's explicit interim state until Step 1A; no publication field was
+fabricated and no tag or remote ref moved.
+
+All **22/22** `ci-local` identities were exercised individually. Version
+consistency, invariant self-test, deferred evidence, Python byte-compile,
+ShellCheck, workspace check/test, net check/test, net 1.86 floor success, net
+1.85 refusal, clippy, rustfmt, Rust 1.78 check/test, shell pytest, golden,
+protected artifacts, persisted fingerprints, and progress-check passed. The
+permission-complete Python 3.11 lane passed **366/366** with the one accepted
+`StarletteDeprecationWarning`; the golden pipeline passed **11/11**. The first
+net-test attempt was an environment-denied loopback-bind non-result; the same
+lane with loopback permission passed **29** ingest tests, **3** SEC replay
+tests, and **30** cored tests. Artifact verification matched **332** pinned
+files and both protected databases.
+
+Two identities did not pass, and neither was hidden. Direct `cycle-check` has
+the one expected Step 1A lifecycle defect above. `checklist-audit` reported the
+ACTIVATE box unmatched even though its progress entry exists: the entry's
+qualified `runbook` value is the repository-relative path, while the auditor
+compares that value with the runbook basename. This is a measured G2/G4/G5
+instance owned by Step 2; repairing it during AUTONOMY would violate task
+ordering. No identity was omitted. The current project-root export passes its
+real-byte, retained-set, and exclusion controls at **153 files / 2 retained
+cycles**; its exact byte figure is recorded in the governed Architecture row
+after the final Step 0 worktree measurement.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

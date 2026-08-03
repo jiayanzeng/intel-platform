@@ -199,9 +199,9 @@
     },
     {
       "id": "R6",
-      "claim": "AGENTS.md and docs/intel-platform-OPERATIONS.md contain byte-identical model-profile authorization blocks.",
-      "source": "docs/cycles/TASKS-v0.12-EXECUTION.md:522-525",
-      "scope": "Exact allow-list of AGENTS.md and docs/intel-platform-OPERATIONS.md: each must contain exactly one MODEL_PROFILE_AUTHORITY marker-delimited block, and the two blocks must be byte-identical.",
+      "claim": "Every marker-delimited authority block in AGENTS.md or docs/intel-platform-OPERATIONS.md appears exactly once in both documents, and each corresponding pair is byte-identical.",
+      "source": "docs/cycles/TASKS-v0.36-EXECUTION.md:105-140",
+      "scope": "Exact allow-list of AGENTS.md and docs/intel-platform-OPERATIONS.md; the authority-marker name set is derived from both documents, must be nonempty, and every derived *_AUTHORITY name must have exactly one ordered START/END pair in each document with byte-identical inclusive block contents.",
       "fail_before": [
         {
           "file": "docs/intel-platform-OPERATIONS.md",
@@ -209,12 +209,22 @@
           "replace_with": [
             "**Server model-profile authority — L1 now, L2 deferred.**"
           ],
-          "expected_fail": "model-profile authorization block differs from AGENTS.md",
+          "expected_fail": "authority block MODEL_PROFILE_AUTHORITY differs from AGENTS.md",
           "expected_file": "docs/intel-platform-OPERATIONS.md",
           "expected_anchor": "**Server model-profile authority — L1 now, L2 deferred.** The operator selected"
+        },
+        {
+          "file": "docs/intel-platform-OPERATIONS.md",
+          "find": "<!-- CYCLE_AUTONOMY_AUTHORITY:START -->",
+          "replace_with": [
+            "<!-- CYCLE_AUTONOMY_AUTHORITY start deliberately removed -->"
+          ],
+          "expected_fail": "authority block CYCLE_AUTONOMY_AUTHORITY expected exactly one START and END; found START=0 END=1",
+          "expected_file": "docs/intel-platform-OPERATIONS.md",
+          "expected_anchor": "<!-- CYCLE_AUTONOMY_AUTHORITY:END -->"
         }
       ],
-      "fail_before_note": "invariant-scan: R6 FAIL: docs/intel-platform-OPERATIONS.md: model-profile authorization block differs from AGENTS.md"
+      "fail_before_note": "invariant-scan: R6 FAIL: docs/intel-platform-OPERATIONS.md: authority block MODEL_PROFILE_AUTHORITY differs from AGENTS.md"
     },
     {
       "id": "R7",
