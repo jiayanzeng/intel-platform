@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.36 is closed locally at the DR5-selected patch release and remains unpublished.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of the checked closing record; the local annotated v0.17.3 tag targets that closing record only after it exists. Authenticated run `30810557834` passed all **9** blocking identities at exact production candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact release-parent local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and golden passes **11/11** locally and hosted. The v0.17.1 publication epoch now carries **1** consecutive closed cycle with the measured runtime-behavior difference and no public-surface change. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main`, v0.17.1, v0.17.2, and v0.17.3 remain unchanged unless the operator separately authorizes exact publication.
+**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.36 is closed locally and unpublished at the DR5-selected patch release.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of the checked closing record; the local annotated v0.17.3 tag targets that closing record only after it exists. Authenticated run `30810557834` passed all **9** blocking identities at exact production candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact release-parent local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and golden passes **11/11** locally and hosted. The v0.17.1 publication epoch now carries **1** consecutive closed cycle with the measured runtime-behavior difference and no public-surface change. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main`, v0.17.1, v0.17.2, and v0.17.3 remain unchanged unless the operator separately authorizes exact publication.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -556,6 +556,43 @@ movement, or release-tag publication is authorized. The closing commit contains
 no tag-object field; the annotated tag is created locally only after that
 commit exists. Per A2, its immediate append-only child measures the closing
 tree and carries the cycle-ending export-audit field before handoff.
+
+**v0.36 closing-export audit child (measured 2026-08-03).** The local
+annotated `v0.17.3` tag object is
+`0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` and peels to closing commit
+`a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`, whose immediate parent is exact
+release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959`. The project-root export of
+that closing commit passed at **2,898,371 bytes / 154 files / 2 retained
+cycles**, a truthful **+12,429-byte** difference from the closing tree's
+2,885,942-byte governed release-parent field. This append-only child is the
+immediate next commit after the tag target and is the final v0.36 commit; it
+does not predict its own content-addressed id or defer the audit to post-push.
+
+The first full-gate attempt on the audit child passed the first **16** jobs,
+including all **14/14 rules / 81 controls**, then the Rust 1.78 workspace-test
+lane failed in `sec_identity_measure`: one of its two parallel tests found the
+other test's process-scoped temporary directory already present and
+`create_dir` returned `AlreadyExists`. Both tests call the same
+`DisposableDir::create()`, whose name is only process id plus one clock sample
+and has no collision retry. The cross-sector test itself passed in the failed
+run, and an exact isolated Rust 1.78 rerun passed **2/2**. This is a v0.37 test-
+harness finding, not a production or identity-result regression; v0.36 does
+not change the already-tagged closing tree to repair a newly discovered test
+flakiness. The complete final-head gate is rerun from the start and only that
+rerun may support a 22/22 handoff claim.
+
+After the local tag was created, direct `git ls-remote origin
+refs/tags/v0.17.3 'refs/tags/v0.17.3^{}'` again exited 0 with empty output.
+This dated per-release observation is the C7 input for the second unpublished
+local close. It is intentionally weaker than a signed publication receipt and
+does not widen the separately planted rule that a published descendant must
+carry its complete post-push record.
+
+- **Publication observation date:** 2026-08-03
+- **Publication observation release:** `v0.17.3`
+- **Publication observation status:** `unpublished-local-close`
+- **Publication observation remote:** `origin`
+- **Publication observation tag ref:** `absent`
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

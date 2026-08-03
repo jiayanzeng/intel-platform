@@ -608,3 +608,19 @@ Entries are append-only; corrections are new dated entries.
   State/runbook/progress/Architecture records moved. No dependency graph,
   protected byte, fixture, observation, closed-cycle document, publisher
   request, workflow, `main`, or remote release ref moved.
+- audit-order acceptance: PASS at the immediate child. Closing commit
+  `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f` is the release parent's immediate
+  child and local tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4`
+  peels to it. The exact closing export passed at **2,898,371 bytes / 154 files
+  / 2 retained cycles**, a **+12,429-byte** difference from the governed
+  release-parent field. This audit child is the immediate next commit and the
+  final v0.36 commit; no post-push deferral remains.
+- final-gate finding: the first audit-child `ci-local` attempt passed **16**
+  jobs and all **81** planted controls, then the Rust 1.78 workspace test hit
+  an `AlreadyExists` collision between the two parallel
+  `sec_identity_measure` temporary-directory constructors. The cross-sector
+  test passed in that run, and the exact isolated Rust 1.78 test binary passed
+  **2/2** on rerun. The PID-plus-clock directory name has no collision retry;
+  this is recorded for v0.37 and the complete final-head gate is rerun before
+  handoff.
+- cycle-ending review-export audit: closing_tree=`a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; bytes=`2898371`; audit_delta=`+12429`
