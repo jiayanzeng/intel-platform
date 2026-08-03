@@ -141,3 +141,28 @@ Entries are append-only; corrections are new dated entries.
   stop conditions; no architecture, gate, or corpus-integrity condition fired.
 - golden-E2E delta: **0**. The final permission-complete worktree passed
   **11/11**; the preceding sandbox-denied bind was a non-result.
+
+### 2026-08-03 · TEST-ISOLATION — collision-proof identity scratch directory
+
+- owner: Codex
+- runbook: `TASKS-v0.37-EXECUTION.md`
+- commit: f5c9c235b546012a2d99d131a79c873f56ee465e
+- result: PASS. Atomic `create_dir` now retries only `AlreadyExists` while
+  incrementing an attempt component; every other filesystem error remains an
+  immediate failure. This is the std-only C9 construction and adds no
+  dependency.
+- forced-collision acceptance: PASS. The executable witness pre-created
+  attempt zero for a fixed nonce, called the same constructor, and proved it
+  created attempt one. The focused test passed **1/1**.
+- repeated-suite acceptance: PASS. The complete `intel-store` suite ran under
+  default parallelism **10 consecutive times**. Each run passed **24 unit + 1
+  license + 3 identity-measure + 0 doctests**, including the parser-produced
+  SEC measurement, with **0** `AlreadyExists` failures.
+- placement acceptance: PASS. No production code moved; the implementation and
+  control are confined to `crates/store/tests/sec_identity_measure.rs`.
+- architecture/dependency acceptance: PASS. The change is std-only, affects no
+  runtime path or type boundary, and preserves every architecture invariant.
+- stop conditions: none. The forced witness and every repeated suite run were
+  green; no corpus, protected-byte, dependency, or scope stop fired.
+- golden-E2E delta: **0**. The final permission-complete worktree passed
+  **11/11**.
