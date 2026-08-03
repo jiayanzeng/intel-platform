@@ -143,3 +143,44 @@ Entries are append-only; corrections are new dated entries.
   existing authorization-grade pin. No dependency, production source,
   protected byte, v0.35 byte, amendment input, tag, or remote ref changed.
 - governed review-export measurement: tree=`b38579ddd0e8080b786701da8436afc05c54a799`; bytes=`2766495`
+
+### 2026-08-03 · E0 — entering-state reconstruction
+
+- owner: Codex
+- runbook: `docs/cycles/TASKS-v0.36-EXECUTION.md`
+- commit: 9937a819dbbb699995e3cb03d1c16d4fce43bc6e
+- result: PASS. Every H1–H13 hypothesis has a dated confirmed/refuted verdict
+  in the active runbook; no hypothesis was left unmeasured.
+- checklist measurements: H1 REFUTED at **270 checked / 268 matched / 268
+  resolved / 3 retracted** before E0's own box was marked. v0.35 remains 0/9
+  under the bold-only regex; v0.34 is 7 audited boxes among 17 checked lines.
+  After marking E0, the live pre-audit population is **271/268**. The three
+  v0.36 misses share the repository-relative-path versus basename bug assigned
+  to Step 2.
+- identity measurements: H4 prints the empty `store=[] extract=[]` vectors and
+  201/0 kept/dropped result. H6's new nonempty 43-feature cross-sector witness
+  persists both store canonical ids as self while the view drops technology
+  for science at distance 0. The production fixture has 6 science and 7
+  technology documents, 42 cross-sector pairs, and **0** distances at or below
+  16 (range 22–41).
+- export/object measurements: exact release-parent and closing exports are
+  **2,725,527 / 151** and **2,737,957 / 151**, confirming only the hypothesized
+  +12,430 delta. The release/tree, closing/tree, annotated tag object, peeled
+  target, and immediate parent all resolve as recorded. Read-only
+  `git ls-remote origin` found none of those five object ids.
+- lifecycle measurements: H11 finds only the two active declaration literals
+  above AGENTS §0. H12 confirms the post-push rule uses
+  `head != measured_target` with no publication fact. H13 confirms 22 ordered
+  jobs and first-failure return. Exactly the two expected amendment inputs are
+  untracked and untouched.
+- acceptance identities: EXERCISED **22/22**, omitted **0**. Twenty pass,
+  including workspace and Rust 1.78 tests with both identity witnesses, net
+  1.86 success / 1.85 refusal, invariant **12/12 rules / 74 controls**, shell
+  **366/366**, artifacts **332** pins plus both databases, and golden **11/11**.
+  Direct `cycle-check` retains only the expected Step 1A defect;
+  `checklist-audit` retains the scheduled Step 2 qualification findings.
+- golden-E2E delta: **0**.
+- prohibited movement: PASS. No dependency, production source, protected
+  byte, v0.35 byte, amendment input, tag, or remote ref changed. Disposable
+  measurement clones and fixture database were removed after capture.
+- governed review-export measurement: tree=`9937a819dbbb699995e3cb03d1c16d4fce43bc6e`; bytes=`2780874`
