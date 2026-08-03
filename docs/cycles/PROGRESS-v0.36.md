@@ -294,3 +294,36 @@ Entries are append-only; corrections are new dated entries.
   protected byte, v0.35 byte, tag/ref, amendment input, or release authority
   changed.
 - governed review-export measurement: tree=`066c15934e9bb778887724d200da00df51eafe86`; bytes=`2818105`
+
+### 2026-08-03 · V035-DECLARE — forward correction for nine silent gaps
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: c9ec9bad85a4ad5ceff0f1654f38a46ea429cfa2
+- dated correction: The v0.35 closing record's **268 checked / 3 retracted /
+  268 matched / 268 resolved** figures are a true tool output over prior-cycle
+  bold boxes. The old audit examined **zero** of v0.35's nine plain task boxes,
+  so those figures do not establish an executable v0.35 task/progress/commit
+  link.
+- DR2/DR3 disposition: PASS. Reconstructing the link would edit a closed
+  runbook or its dated progress measurement. Exactly **9** forward exemptions,
+  one per v0.35 box, record the missing qualifier; all eight Step boxes also
+  name their box-id/progress-id mismatch. Acceptance is the repository operator
+  through the active Step 3.
+- DR4 disposition: PASS with no retraction. The recorded tool output is true,
+  v0.35 is unpublished, and the twice-verified published-false bar is not met.
+- checklist acceptance: PASS before this audit entry at **282 checked / 3
+  retracted / 273 matched / 273 resolved / 9 exemptions**. v0.35 reports **8
+  Steps / 9 task boxes / 9 checked / 0 matched / 0 resolved / 9 exemptions**;
+  no gap is undeclared.
+- assembled audit population: PASS at **283 checked / 3 retracted / 274
+  matched / 274 resolved / 9 exemptions**. The active v0.36 line is **9 Steps
+  / 10 task boxes / 6 checked / 6 matched / 6 resolved**.
+- immutable-byte acceptance: PASS. `TASKS-v0.35-EXECUTION.md` worktree and
+  `HEAD` both resolve to blob `1a5424c704ab56bf9a0ce3c261a20e92eabc7bc5`;
+  `PROGRESS-v0.35.md` both resolve to
+  `510d27f22f2687f6dfd48c49eacd7442d60bb77f`. Targeted diff exited 0.
+- golden-E2E delta: **0**; standalone golden passed **11/11**.
+- prohibited movement: PASS. No v0.35 byte, production source, dependency,
+  protected byte, tag/ref, amendment input, or release authority changed.
+- governed review-export measurement: tree=`c9ec9bad85a4ad5ceff0f1654f38a46ea429cfa2`; bytes=`2827155`
