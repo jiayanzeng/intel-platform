@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.17.2 and v0.17.3 are published; remote `main` is the v0.36 audit child.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of closing commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` targets that closing commit, and remote `main` is exact audit child `e068cacc76685791c54ab47c84be6abbd592271d`. Post-push run `30824053490`, attempt **1**, passed all **9** blocking identities at that exact remote head. Store and view consume one sector-partitioned identity implementation; the published cross-sector runtime correction moved no route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value domain. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication resets the published-release-divergence count to **0** at its closing commit; later unpublished runtime movement, if any, starts a fresh publication epoch.
+**As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.37 R-CLOSE is preparing the DR9-selected patch release locally; v0.17.2 and v0.17.3 remain published and v0.17.4 publication is unauthorized.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of published closing commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` targets that closing commit, and remote `main` is exact audit child `e068cacc76685791c54ab47c84be6abbd592271d`. Post-push run `30824053490`, attempt **1**, passed all **9** blocking identities at that exact remote head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; the published cross-sector runtime correction moved no route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value domain. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication resets the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
 
 **v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
 (measured 2026-08-03).** Immediately before the one-time grant was spent,
@@ -296,6 +296,26 @@ comparisons reported `equivalent=true` and `equivalent_passed=370`. Hosted and
 local golden remained **11/11**. No workflow, dependency, protected byte,
 publisher wire, entitlement/licensing outcome, public value domain, release
 ref, or publication authority moved; Step 5's condition is fully discharged.
+
+**v0.37 R-CLOSE release-parent preparation (measured 2026-08-03).** DR9
+selects patch **v0.17.4**. DOMAIN-MANIFEST's complete configured witness is
+byte-identical at **6,869 bytes**, SHA-256
+`dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`,
+and the release-baselined manifest has **0 differences** across **6 routes / 31
+status-media variants / 112 field occurrences**. Explicit response models make
+the already-serialized contract visible in native OpenAPI, but no `/v1/*`
+route, named runtime surface, response payload byte, field, field-domain value,
+entitlement, or licensing outcome moves. Neither DR9 minor clause fires.
+
+The release parent moves all five executable authorities to **0.17.4**:
+`apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`,
+`shell/intel_shell/app.py`, this State header, and `CHANGELOG.md`. README's
+three current restatements move with them, and Cargo changes only cored's
+lockfile package value. The release parent remains untagged. Its immediate
+child will carry the checked closing record; only that child becomes the local
+annotated-tag target, followed immediately by the required closing-export
+audit child. Direct local and remote checks found no v0.17.4 tag before this
+preparation, and DR10 authorizes no publication.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task

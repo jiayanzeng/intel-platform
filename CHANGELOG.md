@@ -4,6 +4,35 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.4 — 2026-08-03
+
+### Fixed
+
+- All six public `/v1/*` routes now declare explicit success and error
+  response models. A release-baselined manifest derives every status/media
+  field domain from the route and serialization-type authorities before shell
+  dependencies are installed, while the installed shell independently proves
+  exact agreement with FastAPI's runtime OpenAPI document.
+- Registered invariant R15 rejects an added enum value, a removed response
+  field, and a changed field type at the actual serialization control site.
+  The complete manifest covers 6 routes, 31 status/media variants, and 112
+  field occurrences without relying on an observed-value sample.
+- Parallel store identity tests now create collision-proof disposable
+  directories through an atomic retry on `AlreadyExists`; production identity
+  and storage paths are unchanged.
+- State history through v0.35 is preserved byte-for-byte in a new exact-path
+  structural archive, keeping the executable handoff within its governed
+  boundary and the review export within its two-cycle retention bound.
+
+### Compatibility
+
+- This is a patch release. The existing OpenAPI description now exposes the
+  already-serialized response contract, but no `/v1/*` route, named runtime
+  surface, response payload byte, field, or field-domain value changes. The
+  complete configured witness is byte-identical at 6,869 bytes; dependency
+  resolution, protected databases, golden inputs, entitlements, licensing
+  outcomes, and publisher-wire behavior are unchanged.
+
 ## v0.17.3 — 2026-08-03
 
 ### Fixed
