@@ -2,6 +2,34 @@
 
 **As of:** 2026-08-03 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is closed locally and unpublished; v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 are published, and no v0.17.4 publication is authorized.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child records the measured closing-tree export. Remote `main` remains exact published v0.36 audit child `e068cacc76685791c54ab47c84be6abbd592271d`; post-push run `30824053490`, attempt **1**, passed all **9** blocking identities there. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moves no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication reset the published-release-divergence count to **0** at its closing commit; v0.37 adds validation and explicit schema authority without a measured runtime or public-surface difference, so the count remains **0**.
 
+**v0.38 ACTIVATE — admission cycle declared (measured 2026-08-04).** The
+pre-activation entry point read the untracked v0.38 runbook as an older open
+cycle and failed with exactly **7 unchecked boxes** plus **1 missing closing
+record**. The explicit activation fallback therefore committed the declaration,
+runbook, progress skeleton, and derived review-retention boundary before P1's
+repository record, while Grant A's exact remote actions remained the first
+milestone execution.
+
+The supplied short deferral table omitted trigger-bearing subjects from the
+immediately prior runbook, lacked both governed artifact byte authorities, and
+assigned its non-none actions to a nonnumeric `Step W1` heading that the real
+lifecycle entry point does not recognize as a discharging Step N. ACTIVATE
+restores the full derived carry-forward population, both byte-identical
+authorities, and the structurally equivalent `Step 2A` heading before any
+semantic acceptance. Direct `cycle-check` then passed with active cycle v0.38
+and open governed-export state.
+
+Exact activation commit `e6d68c89aa1cf018c10ad289a42674350e3d7d1e`
+exports at **2,596,652 bytes / 158 files / 2 retained cycles**. It retains
+exactly the v0.37–v0.38 task/progress pairs, excludes both protected byte
+classes, and leaves **403,348 bytes / 13.44% / 2.81 cycles** below the ceiling
+at the +143,456-byte denominator. Two complete artifact checks matched both
+databases and all **333** pins in **0.11 s / 0.11 s real**. The
+permission-complete golden pipeline passed **11/11** with zero delta after the
+sandbox-denied loopback bind was classified as a non-result. No dependency,
+production source, protected byte, observation, fixture, or unauthorized ref
+moved during activation.
+
 **v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
 (measured 2026-08-03).** Immediately before the one-time grant was spent,
 `git ls-remote origin refs/heads/main refs/tags/v0.17.2
