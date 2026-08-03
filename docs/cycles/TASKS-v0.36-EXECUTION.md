@@ -1,5 +1,12 @@
 # TASKS-v0.36-EXECUTION.md — empty-witness acceptances
 
+## Runbook amendments
+
+Step 0 — authority block text corrected to name no cycle document; placement check and R6 contingency added; interim verification per amendment §5 — 2026-08-03
+Step 1 — H11–H13 added; interim verification per amendment §5; untracked-set expectation updated — 2026-08-03
+Step 1A — new step: lifecycle truth for an unpublished local tagged close — 2026-08-03
+Step 7 — gate added: requires Step 1A complete — 2026-08-03
+
 **Cycle:** v0.36
 **Entering release:** v0.17.2, closed locally at v0.35, **unpublished**
 **Entering ref (hypothesis):** closing commit `9996c6820d720160b64607575d0270d2e5393ef9`
@@ -96,27 +103,27 @@ authority, not a summary of one:
 
 ```
 <!-- CYCLE_AUTONOMY_AUTHORITY:START -->
-**Cycle execution authority — standing, granted 2026-08-03 through
-TASKS-v0.36-EXECUTION.md Step 0.** Within a declared cycle, Codex decides and
-records rather than asking. This covers: selecting among design options a
-runbook presents or leaves open; choosing implementation seams; setting
-`accepted_by` on exemption, deferral, and disposition records to the authorizing
-runbook by name; selecting a release disposition and version by the runbook's
+**Cycle execution authority — standing, granted 2026-08-03.** Within a declared
+cycle, Codex decides and records rather than asking. This covers: selecting
+among design options the active cycle's execution runbook presents or leaves
+open; choosing implementation seams; setting `accepted_by` on exemption,
+deferral, and disposition records to the authorizing runbook named in the
+declaration above; selecting a release disposition and version by the runbook's
 stated rule; selecting a value inside an already-accepted boundary or ceiling;
 registering new invariant rules and planted controls; editing any tracked file
-the cycle's scope reaches, including `run`, `AGENTS.md`, and `ARCHITECTURE.md`,
-with the justification the relevant document requires; and re-pinning
-`authorization`-grade bytes in `config/protected-artifacts.json` after a
-legitimate edit to the file they pin.
+the cycle's declared scope reaches, with the justification the relevant document
+requires; and re-pinning `authorization`-grade bytes in
+`config/protected-artifacts.json` after a legitimate edit to the file they pin.
 
 A recorded decision naming its basis and what would have changed it is complete
 work. A question routed to the operator inside this scope is not.
 
-Evidence-ref pushes are covered when all of these hold: the ref matches
-`refs/heads/codex/v<cycle>-evidence-<short-sha>`; `git ls-remote` confirms
-immediately beforehand that it does not exist, and the result is recorded; the
-push is non-force and creates exactly that one ref; and `main` and every tag are
-untouched. A pre-existing ref is a finding, not a detail.
+Evidence-ref pushes are covered when all of these hold: the ref is under
+`refs/heads/codex/` and names the active cycle and a short commit id; `git
+ls-remote` confirms immediately beforehand that it does not exist, and the
+result is recorded; the push is non-force and creates exactly that one ref; and
+`main` and every tag are untouched. A pre-existing ref is a finding, not a
+detail.
 
 **Ask first — this list is exhaustive and is not widened by convenience:**
 publishing `main` or any release tag; admitting a publisher under the
@@ -127,17 +134,24 @@ boundary or ceiling rather than selecting inside it; adding a retraction; any
 change that moves an entitlement or licensing outcome for a configured
 subscription; and any live publisher request against a real wire.
 
-Decision gates under §1 are unchanged. A tripped gate still stops its task and
-is recorded; this authority never converts a gate into a workaround. Autonomy is
+Decision gates are unchanged. A tripped gate still stops its task and is
+recorded; this authority never converts a gate into a workaround. Autonomy is
 permission to decide, never permission to proceed past a measurement.
 <!-- CYCLE_AUTONOMY_AUTHORITY:END -->
 ```
+
+Before committing, apply `CONTRACT_CYCLE_PATH_RE` to the edited `AGENTS.md`.
+The only matches must be the two active-declaration lines above its `## 0.`
+boundary. A match inside the authority block is a stop-and-report finding.
 
 ### 0c — mirror it
 
 Copy the block byte-identically into `docs/intel-platform-OPERATIONS.md`,
 following the `MODEL_PROFILE_AUTHORITY` precedent. Mirror enforcement per
-**C5**.
+**C5**. Run `invariant-scan --self-test` before committing. If R6 objects to a
+second marker-delimited block pair, generalise it in this same commit per C5:
+derive the marker set, require every authority block exactly once in each
+document, and compare each corresponding inclusive block byte-identically.
 
 ### 0d — re-pin what moved
 
@@ -159,8 +173,11 @@ report it and proceed by activating first, then applying 0a–0d.
   the two are byte-identical — proved by the C5 rule, not by inspection.
 - The mirror rule fails before the block is added to the second document and
   passes after. If it cannot be made to fail, it is not a control.
-- `ci-local` clean; `verify-artifacts` matches every pin including any re-pinned
-  `run`.
+- Until Step 1A completes, direct `cycle-check` reports exactly the missing
+  v0.17.2 post-push record and no other defect. Run `version-check`,
+  `checklist-audit`, `invariant-scan --self-test`, golden, `verify-artifacts`,
+  `progress-check`, and the workspace/net/MSRV lanes individually; record every
+  exercised identity and any identity not exercised with its reason.
 - The `operator-local` disambiguation is present and adjacent to the existing
   definition, not in a footnote.
 
@@ -189,6 +206,10 @@ post-restore golden pipeline passes 11/11 with zero delta. This is §3
 stop-and-report condition 3: Step 0 cannot satisfy its clean-`ci-local`
 acceptance under the runbook's simultaneous instructions. By §5, every later
 step remains dependency-blocked.
+
+This disposition remains a truthful record of the original author-side
+conflict. The dated runbook amendments above correct both blockers and reopen
+Step 0 prospectively; they do not rewrite the measured failure.
 
 ---
 
@@ -370,14 +391,18 @@ nothing executes.
 
 ## 5. Dependency gates
 
-- Everything requires **Step 0 complete**.
-- Step 2 requires **E0 complete**.
-- Step 3 requires **Step 2 complete**.
-- Step 4 requires **E0 complete** and **C1 recorded**.
-- Step 5 requires **Step 3 complete**.
-- Step 6 runs **only if** Step 4 moved production Rust, under DR6.
-- Step 7 requires every prior step complete or explicitly deferred with a dated
-  observation.
+- Applying the A1r2 amendment comes first and is committed by itself.
+- Corrected **Step 0** runs next, under the interim verification allowance.
+- **Step 1 E0** follows Step 0, under the same interim allowance.
+- **Step 1A** requires E0 and restores full `ci-local` as the universal gate.
+- Step 2 requires E0 and Step 1A complete.
+- Step 3 requires Step 2 and Step 1A complete.
+- Step 4 requires E0, Step 1A, and C1 recorded.
+- Step 5 requires Step 3 and Step 1A complete.
+- Step 6 requires Step 1A and runs **only if** Step 4 moved production Rust,
+  under DR6.
+- Step 7 requires Step 1A and every prior step complete or explicitly deferred
+  with a dated observation.
 
 ---
 
@@ -394,31 +419,26 @@ precedence applies only at R-CLOSE.
 | `allow` | `AGENTS.md` |
 | `allow` | `ARCHITECTURE.md` |
 | `allow` | `docs/intel-platform-OPERATIONS.md` |
+| `allow` | `tools/cycle_check.py` |
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `tools/checklist_audit.py` |
+| `allow` | `tools/progress_check.py` |
 | `allow` | `config/invariant-rules.json` |
 | `allow` | `config/checklist-exemptions.json` |
 | `allow` | `shell/tests/**` |
+| `allow` | `crates/**/src/**` |
+| `allow` | `crates/**/tests/**` |
+| `allow` | `apps/**/src/**` |
 | `allow` | `crates/view/src/lib.rs` |
 | `allow` | `crates/store/tests/sec_identity_measure.rs` |
 | `allow` | `repomix.config.json` |
 | `allow` | `config/protected-artifacts.json` |
+| `allow` | `run` |
 | `forbid` | `docs/state-archive/**` |
 | `forbid` | `tools/model_profiles.py` |
 | `forbid` | `tools/evidence_artifacts.py` |
-| `forbid` | `apps/**/src/**` |
-| `forbid` | `crates/store/src/**` |
-| `forbid` | `crates/extract/src/**` |
-| `forbid` | `crates/ingest/src/**` |
-| `forbid` | `crates/core/src/**` |
-| `forbid` | `crates/analyze/src/**` |
-| `forbid` | `crates/compliance/src/**` |
-| `forbid` | `crates/enrich/src/**` |
-| `forbid` | `crates/registry/src/**` |
-| `forbid` | `crates/retrieve/src/**` |
 | `forbid` | `shell/intel_shell/**` |
 | `forbid` | `.github/workflows/**` |
-| `forbid` | `run` |
 | `forbid` | `config/core.json` |
 | `forbid` | `config/schedule.json` |
 | `forbid` | `config/entities.json` |
@@ -438,10 +458,11 @@ precedence applies only at R-CLOSE.
 This table was absent from the supplied runbook and was added at activation
 because the v0.23-forward static scope sub-rule cannot admit an active cycle
 without it. The allowed implementation paths are the minimum set implied by
-Steps 0, 2, 3, 4, and activation; protected databases, observation-grade bytes,
-the structural archive, live publisher paths, the workflow, and the launcher
-remain forbidden. The exact `crates/view/src/lib.rs` allowance admits DR1's
-sector partition while every other production Rust family remains forbidden.
+Steps 0–7, Step 1A, and activation. Protected databases, observation-grade
+bytes, the structural archive, publisher/scheduler configuration, shell
+production source, and workflows remain forbidden. The broader Rust source and
+test globs are required for the lifecycle/checklist controls and DR1; forbid
+precedence no longer makes those allow rows dead text.
 
 ---
 
@@ -482,20 +503,61 @@ around.
 | H8 | The delivered review export measures **2,754,916 bytes / 152 files** against the recorded release-parent **2,742,486 / 152** — a delta of **+12,430 bytes at zero file-count movement** | measure the export at the release parent and at the closing commit; report both and the delta |
 | H9 | Neither `9996c682…` nor `16ee7bcb…` appears in any tracked file; only `d425888…` and tree `c2ab865…` are recorded | grep the tracked corpus for all four |
 | H10 | `run` is pinned at grade `authorization`, **45,409 bytes**, and `AGENTS.md` is not pinned at all | read `config/protected-artifacts.json`; confirm before Step 0d assumes it |
+| H11 | `check_contract_cycle_paths` rejects any `TASKS-v*-EXECUTION.md` literal below the `## 0.` boundary, and the corrected block introduces none | run the regex over the edited `AGENTS.md`; report the complete match set and line numbers |
+| H12 | `check_publication_status` requires the post-push record on `head != measured_target`, with no publication measurement on that path; the `--skip-local-tag-verification` early return is the only avoiding branch | read the function at its entry point; quote the predicate and enumerate every preceding return branch |
+| H13 | `ci-local` aborts at the first failing job, so no cross-job error-set comparison is possible while job 2 fails | read `cmd_ci_local` and capture the `ci_local_job … || return` construction and ordered job identities |
 
 Additional required measurements:
 
 - The exact object graph: release parent, its tree, closing commit, its tree,
   tag object, tag target. Confirm the closing commit's immediate parent is the
   release parent and that no remote ref matches any of them.
-- `git status --porcelain`: confirm the only untracked entry is
-  `docs/cycles/AMENDMENT-r4-STEP5A-NET-FLOOR-TOOLCHAIN.md`.
-- Full `./run ci-local`, `invariant-scan --self-test`, shell tests, golden.
-  Report counts, not adjectives.
+- `git status --porcelain`: confirm exactly two untracked entries,
+  `docs/cycles/AMENDMENT-r4-STEP5A-NET-FLOOR-TOOLCHAIN.md` and
+  `docs/cycles/AMENDMENT-v0.36-A1r2-AUTONOMY-LIFECYCLE.md`. Both remain
+  untouched and untracked.
+- Until Step 1A completes, run `cycle-check` directly and confirm its only
+  error is the missing v0.17.2 post-push record. Exercise `version-check`,
+  `checklist-audit`, `invariant-scan --self-test`, golden,
+  `verify-artifacts`, `progress-check`, shell tests, and the workspace/net/MSRV
+  cargo lanes individually. Report counts and every exercised job identity;
+  state any omitted identity and reason.
 
-**Acceptance.** Every hypothesis H1–H10 carries a dated verdict: confirmed,
+**Acceptance.** Every hypothesis H1–H13 carries a dated verdict: confirmed,
 refuted, or unmeasurable-with-stated-reason. H7's answer is reported whichever
 way it comes out; it does not gate DR1.
+
+---
+
+## Step 1A · LIFECYCLE-TRUTH — represent an unpublished local close
+
+**Objective.** Make an unpublished local tagged close a state the lifecycle can
+represent truthfully, so activation on top of one neither fabricates a
+publication record nor forces an unauthorized publication.
+
+Publication is measured, not inferred from HEAD advancement. The existing
+`--skip-local-tag-verification` early-return shape may inform the design, but
+the skip flag itself is not the fix because it also skips verification for
+published releases.
+
+**C7 — publication predicate.** Prefer an offline Git fact over a State
+self-report. Record the selected predicate, its limitation, and what would have
+changed the choice. Local remote-tracking refs are stale-capable and must not be
+treated as fresh remote truth. If no non-self-reported offline predicate can
+exist without network, state that explicitly and choose the least-bad truthful
+representation rather than hiding the limitation.
+
+**Acceptance criteria.** The unpublished-local-close state passes
+`cycle-check` with no fabricated field. A published release still requires its
+post-push record, proved by a planted control that fails when the requirement is
+removed. A second planted control fails before the unpublished-state fix and
+passes after, anchored by a control-site marker. Every R12 control-site comment
+must follow the logic it controls. `invariant-scan --self-test` passes with
+totals stated. Full `./run ci-local` passes all 22/22 jobs for the first time in
+this cycle.
+
+**Done when.** Both directions are executed: the truthful unpublished state
+passes, and a published state without its post-push record fails.
 
 ---
 
@@ -624,6 +686,9 @@ Two-commit tagged close: untagged release parent → separate closing commit
 carrying the record → annotated tag over the closing commit → append-only audit
 child.
 
+Requires Step 1A complete; this cycle cannot close through a lifecycle checker
+that cannot represent its entering unpublished local close.
+
 Disposition per **DR5**. Apply the rule, record the reasoning, do not ask.
 
 **Acceptance criteria.**
@@ -722,7 +787,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - No retraction added (DR4).
 - The Step 0b ask-first list is not widened by convenience, and the autonomy
   block is never read as permission to proceed past a tripped gate.
-- The untracked amendment file stays untouched.
+- Both untracked amendment files stay untouched.
 
 ---
 
@@ -730,7 +795,8 @@ trigger state; it does not weaken, restate, or re-scope it.
 
 - [ ] **AUTONOMY** — authority block installed, mirrored, and mechanically enforced
 - [x] **ACTIVATE** — declaration at v0.36, progress skeleton, retention derived
-- [ ] **E0** — H1–H10 settled with dated verdicts
+- [ ] **E0** — H1–H13 settled with dated verdicts
+- [ ] **LIFECYCLE-TRUTH** — unpublished local close passes; published missing-record case still fails
 - [ ] **BOX-COVERAGE** — both halves; the unfixed v0.35 runbook now fails
 - [ ] **V035-DECLARE** — nine exemptions with measured causes; zero v0.35 bytes moved
 - [ ] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered
