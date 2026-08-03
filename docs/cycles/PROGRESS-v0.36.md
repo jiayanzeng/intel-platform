@@ -461,3 +461,52 @@ Entries are append-only; corrections are new dated entries.
   protected byte, publisher request, main/tag publication, or retry occurred;
   the one DR6-authorized evidence ref was the only remote mutation.
 - governed review-export measurement: tree=`3186cf403655843418246f5f4f2e8515215d1f2d`; bytes=`2857952`
+
+### 2026-08-03 · R-CLOSE-BLOCKED — audit-before-check is unsatisfiable
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: 394a1400476263a95376ae6c7c2d6d851259b98d
+- result: **BLOCKED before release implementation**. The required per-task gate
+  review found that Step 7's stated gate was narrower than its mandatory
+  audit-before-check criterion. Widening the gate exposed an author-side rule
+  with no satisfying assignment; the R-CLOSE box remains unchecked.
+- executed-construction acceptance: PASS as a negative result. In an isolated
+  clone of audit commit `0d2e8b24bcc1ec0758027e52b13ecf91458e0395`,
+  one syntactically valid cycle-ending field was planted after the latest
+  governed field while R-CLOSE remained open. The real `./run cycle-check`
+  exited **1** with exactly one defect: `cycle-ending review-export audit is
+  unavailable while the active cycle is open`.
+- lifecycle proof: the checker selects open with any unchecked box and rejects
+  an audit in that state; it selects closed only with zero unchecked boxes and
+  one closing record. A closing tree cannot contain its own not-yet-existing
+  commit id, an intervening audit commit breaks tagged R-CLOSE's immediate-
+  parent rule, and the normal append-only audit child occurs after the box is
+  checked. No order meets every governing clause truthfully.
+- C4 disposition: DEFERRED. All six `/v1/*` routes lack response models and
+  emit dynamic input-, configuration-, core-, or model-derived values. No
+  exhaustive machine-readable release baseline exists; a partial observed-
+  field control would be vacuous, and declared scope forbids the shell
+  production work needed to establish the complete authority. The existing G6
+  deferral retains its trigger and names the complete manifest that would
+  change this answer.
+- DR5 disposition: patch-eligible only, not closed. Step 4's complete configured
+  comparison remained byte-identical at **15,719 bytes** with no new route,
+  named surface, or serialized value-domain movement. If the author-side
+  ordering defect is corrected without a higher-precedence finding, the next
+  available patch is **v0.17.3**; no version authority moved.
+- validation acceptance: `version-check` passed at **0.17.2** with **3**
+  executable offline-MSRV pins, **22** current offline-MSRV restatements, and
+  **3** current release-version restatements. `cycle-check` passed with v0.36
+  truthfully open; `checklist-audit` passed at **286 checked / 3 retracted / 277
+  matched / 277 resolved / 9 exemptions**, with v0.36 at **9/9/9**. The full
+  mutation suite passed **14/14 rules / 81 controls**.
+- golden-E2E delta: **0**. The first sandboxed attempt was a loopback-bind
+  permission non-result; the permission-complete rerun passed **11/11**.
+- artifact observation: State is **334,622 / 453,741 bytes**, leaving
+  **119,119 bytes**; the unchanged manifest is **193,057 / 1,048,576 bytes**,
+  leaving **855,519 bytes**. These are gate-state observations, not the missing
+  Step 7 closing-basis acceptance.
+- prohibited movement: PASS. No release authority, production source,
+  dependency, protected byte, v0.35 byte, amendment input, local tag, `main`,
+  release tag, or remote ref moved.
