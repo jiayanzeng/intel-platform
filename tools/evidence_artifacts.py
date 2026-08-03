@@ -33,6 +33,7 @@ AUTHORIZATION_PIN_PATHS = {
 }
 STRUCTURAL_ARCHIVE_PIN_PATHS = {
     "docs/state-archive/STATE-through-v0.28.md",
+    "docs/state-archive/STATE-through-v0.35.md",
 }
 
 

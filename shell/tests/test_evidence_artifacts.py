@@ -351,7 +351,7 @@ def test_documented_manifest_container_capabilities_execute(
         tmp_path
         / "docs"
         / "state-archive"
-        / "STATE-through-v0.28.md"
+        / "STATE-through-v0.35.md"
     )
     authorization = tmp_path / "run"
     for path, content in (
@@ -555,13 +555,13 @@ def test_only_registered_structural_archive_pin_is_accepted(
         tmp_path
         / "docs"
         / "state-archive"
-        / "STATE-through-v0.28.md"
+        / "STATE-through-v0.35.md"
     )
     archive.parent.mkdir(parents=True)
     archive.write_text("archived State bytes\n")
     manifest["pinned_files"].append(
         {
-            "path": "docs/state-archive/STATE-through-v0.28.md",
+            "path": "docs/state-archive/STATE-through-v0.35.md",
             "grade": "structural",
             "sha256": _sha256(archive),
             "bytes": archive.stat().st_size,
@@ -575,7 +575,7 @@ def test_only_registered_structural_archive_pin_is_accepted(
     assert allowed.returncode == 0, allowed.stderr
 
     manifest["pinned_files"][0]["path"] = (
-        "docs/state-archive/STATE-through-v0.27.md"
+        "docs/state-archive/STATE-through-v0.34.md"
     )
     _write_manifest(manifest_path, manifest)
     unregistered = _run(tmp_path, manifest_path, "validate")
@@ -583,7 +583,7 @@ def test_only_registered_structural_archive_pin_is_accepted(
     assert "exact registered structural archive" in unregistered.stderr
 
     manifest["pinned_files"][0]["path"] = (
-        "docs/state-archive/STATE-through-v0.28.md"
+        "docs/state-archive/STATE-through-v0.35.md"
     )
     manifest["pinned_files"][0]["grade"] = "supporting"
     _write_manifest(manifest_path, manifest)

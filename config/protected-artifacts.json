@@ -2757,6 +2757,14 @@
       "bytes": 178125,
       "purpose": "Byte-exact v0.33 Cut B archive of historical State appends through v0.28.",
       "provenance": "Repository operator selected Cut B and Fidelity B on 2026-08-01. The pre-cut 372,667-byte State at HEAD 1121e90055f2fb189bb71404e8bd93f5b55e0a8b was reconstructed byte-exact from this 178,125-byte archive and the 194,542-byte live complement; the exact structural-archive registry makes SHA-256 and length standing checks."
+    },
+    {
+      "path": "docs/state-archive/STATE-through-v0.35.md",
+      "grade": "structural",
+      "sha256": "fb1114f68755cbb8fc5d1fdad9e2ec114bf2604871102fa84d280f2bc90191a7",
+      "bytes": 258658,
+      "purpose": "Byte-exact v0.37 archive of historical State appends from v0.29 through v0.35.",
+      "provenance": "DR8/C10 retained the current v0.37 publication epoch, the immediately prior v0.36 body, and the permanent tail on 2026-08-03. The 350,925-byte pre-cut State at implementation parent 594b780 was reconstructed byte-exact at SHA-256 7db0bc5ff34b35da174805914c1725248357b746d7f0783e16d5264ee7cf5cf5 from this 258,658-byte archive plus the 92,267-byte live complement; the exact structural-archive registry makes SHA-256 and length standing checks."
     }
   ]
 }

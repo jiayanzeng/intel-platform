@@ -238,6 +238,7 @@ release-authority precedence applies only at R-CLOSE.
 | `allow` | `tools/checklist_audit.py` |
 | `allow` | `tools/progress_check.py` |
 | `allow` | `tools/domain_manifest.py` |
+| `allow` | `tools/evidence_artifacts.py` |
 | `allow` | `config/invariant-rules.json` |
 | `allow` | `config/checklist-exemptions.json` |
 | `allow` | `config/protected-artifacts.json` |
@@ -249,7 +250,6 @@ release-authority precedence applies only at R-CLOSE.
 | `allow` | `repomix.config.json` |
 | `allow` | `run` |
 | `forbid` | `tools/model_profiles.py` |
-| `forbid` | `tools/evidence_artifacts.py` |
 | `forbid` | `.github/workflows/**` |
 | `forbid` | `config/core.json` |
 | `forbid` | `config/schedule.json` |
@@ -270,6 +270,15 @@ release-authority precedence applies only at R-CLOSE.
 `docs/state-archive/**` moves from forbid to allow under DR8's bounds and only
 for Step 3's one new file plus its pin. `shell/intel_shell/**` moves to allow
 under C8's byte-identity constraint. Everything else matches the v0.36 table.
+
+**Step 3 scope correction (2026-08-03).** The supplied table forbade
+`tools/evidence_artifacts.py` even though DR8 requires a new exact structural
+archive pin and that tool's `STRUCTURAL_ARCHIVE_PIN_PATHS` is the executable
+admission registry. The pre-implementation validator inspection proved a new
+path cannot pass the stated acceptance without changing that registry. Per the
+operating contract's gate-versus-criteria rule, the gate is widened for the one
+new exact archive path and its focused schema control; no general archive
+prefix is admitted.
 The prior cycle's documents are protected by the `docs/cycles/**` forbid.
 
 ---
@@ -528,10 +537,10 @@ governed.
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.37 · 2026-08-03 — No third-publisher review or admission occurred; the trigger did not fire. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.37 · 2026-08-03 — DR7 moved only main, v0.17.2, and v0.17.3; it did not authorize or move either historical tag. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.37 · 2026-08-03 — PUBLISH did not move either historical tag or remove the hosted flag; the combined trigger did not fire. | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.37 · 2026-08-03 — PUBLISH did not edit the 193,057-byte manifest; Step 3 owns the fresh complete remeasurement. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.37 · 2026-08-03 — STATE-ARCHIVE measured **193,830 / 1,048,576 bytes**, **333 pins**, and two complete checks at **0.09 s / 0.10 s real**. Neither trigger fired. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.37 · 2026-08-03 — Scope permits shell source work for C8, but PUBLISH moved no shell byte; the trigger has not fired. | none |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.37 · 2026-08-03 — Step 4 is the authorized response-domain control work; PUBLISH itself changed no classification control. | none |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.37 · 2026-08-03 — The PUBLISH worktree measured State at 343,679 / 453,741 bytes; Step 3 owns the export and archival remeasurement. | none |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.37 · 2026-08-03 — DR8 authorized completion ahead of the unchanged trigger: the post-record live State is **94,681 / 453,741 bytes** and the structural archive is pinned at **258,658 bytes**. Neither boundary trigger had fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.37 · 2026-08-03 — The active cycle is v0.37; the version-family trigger did not fire. | none |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Exact publication of v0.17.3 resets the count to zero at its closing commit; no later production or public-surface change exists at PUBLISH. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.37 · 2026-08-03 — PUBLISH changed no Rust-floor restatement or registry member, and the registered scan passed. | none |
@@ -543,7 +552,7 @@ governed.
 | Feed shape observation | an uncovered publisher feed shape | v0.37 · 2026-08-03 — No publisher feed was fetched and no uncovered shape was observed; the trigger did not fire. | none |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.37 · 2026-08-03 — v0.36 completed the shared `assign_dedup_identity` seam under R14; PUBLISH changed neither consumer nor manifest edge. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.37 · 2026-08-03 — PUBLISH left both restatements unchanged and the registered authority checks passed; no divergence was observed. | none |
-| Review-export capacity | the export crosses the declared ceiling | v0.37 · 2026-08-03 — The entering delivered measurement remains below the ceiling; Step 3 owns the post-archive bytes, percentage, and cycle headroom. | none |
+| Review-export capacity | the export crosses the declared ceiling | v0.37 · 2026-08-03 — STATE-ARCHIVE's delivered worktree export is **2,558,258 bytes**, leaving **441,742 bytes / 14.72% / 3.08 cycles** at the measured +143,456-byte denominator. The trigger did not fire. | none |
 | Public value-domain control (G6) | a `/v1/*` field's domain changes undetected | v0.37 · 2026-08-03 — Step 4 owns discharge through a release-baselined derived manifest; PUBLISH moved no `/v1/*` payload or domain. | **Step 4** |
 
 ---
@@ -574,7 +583,7 @@ governed.
 - [x] ACTIVATE
 - [x] E0
 - [x] TEST-ISOLATION
-- [ ] STATE-ARCHIVE
+- [x] STATE-ARCHIVE
 - [ ] DOMAIN-MANIFEST
 - [ ] RE-MEASURE
 - [ ] R-CLOSE
