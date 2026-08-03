@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.17.2 and v0.17.3 are published; remote `main` is the v0.36 audit child.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of closing commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` targets that closing commit, and remote `main` is exact audit child `e068cacc76685791c54ab47c84be6abbd592271d`. Post-push run `30824053490`, attempt **1**, passed all **9** blocking identities at that exact remote head. Store and view consume one sector-partitioned identity implementation; the published cross-sector runtime correction moved no route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value domain. The unchanged local registered suite passes **14/14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; golden passes **11/11**, both hosted shell jobs passed, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication resets the published-release-divergence count to **0** at its closing commit; later unpublished runtime movement, if any, starts a fresh publication epoch.
+**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.17.2 and v0.17.3 are published; remote `main` is the v0.36 audit child.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of closing commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` targets that closing commit, and remote `main` is exact audit child `e068cacc76685791c54ab47c84be6abbd592271d`. Post-push run `30824053490`, attempt **1**, passed all **9** blocking identities at that exact remote head. Store and view consume one sector-partitioned identity implementation; the published cross-sector runtime correction moved no route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value domain. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication resets the published-release-divergence count to **0** at its closing commit; later unpublished runtime movement, if any, starts a fresh publication epoch.
 
 **v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
 (measured 2026-08-03).** Immediately before the one-time grant was spent,
@@ -191,6 +191,44 @@ The exact implementation commit
 untracked amendment inputs, exports **2,514,762 bytes / 151 files / 2 retained
 cycles**. That governed baseline is **85,238 bytes** below C10's target and
 leaves **485,238 bytes / 16.17% / 3.38 cycles** at the standing denominator.
+
+**v0.37 DOMAIN-MANIFEST — public response domains are derived and guarded
+(measured 2026-08-03).** C8 selected the model-introduction branch after E0
+found `response_model=None` on all six public routes. The shipped shell now
+uses explicit Pydantic serialization authorities for `/v1/signals`,
+`/v1/search`, `/v1/brief`, `/v1/ask`, `/v1/billing/webhook`, and
+`/v1/billing/stripe`, including their declared error variants. The new
+`tools/domain_manifest.py` reads the actual FastAPI OpenAPI document, requires
+a non-null response model on every member of that exact route set, resolves
+references recursively, and records fields, requiredness, primitive and
+container types, nullability, object openness, and literal values. The
+v0.17.4 baseline is **47,135 bytes**, covers **6 routes / 31 status-media
+variants / 112 field occurrences**, and its fresh derivation has **0
+differences**.
+
+Registered R15 executes that same entry point. Its unmutated scan passed, and
+its three control-site mutations independently proved rejection of an added
+`Signal.kind` enum value, removal of `SignalsResponse.graph`, and conversion
+of `SearchHit.rank` from number to string. The complete scan passed **15/15
+rules / 84 controls**. The response-model syntax also exposed a stale
+single-line-decorator assumption in the source-deterministic deferred audit;
+that tool now locates the real FastAPI decorators through the Python AST, and
+the three affected receipt-rederivation tests pass under both supported Python
+versions.
+
+The complete configured-subscription witness exercised all six routes as both
+configured subscribers where applicable, producing **10 successful response
+records**. Its canonical envelope is byte-identical before and after model
+introduction at **6,869 bytes**, SHA-256
+`dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`.
+Permission-complete Python 3.11 and 3.12 each passed the identical **370/370**
+collected population with no skips and the one accepted
+`StarletteDeprecationWarning`. The authoritative golden pipeline passed
+**11/11** with zero delta. The native OpenAPI description now makes the
+already-serialized field/domain contract explicit, but no `/v1/*` route,
+response byte, field name, field domain, entitlement, licensing outcome,
+dependency, or protected artifact moved. DR9 clause 2 therefore has an
+executed zero-diff input; no §3.4 stop condition fired.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task

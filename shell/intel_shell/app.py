@@ -17,11 +17,30 @@ from fastapi.responses import PlainTextResponse
 
 from . import billing, config, prompts, security
 from .adapters import stripe as stripe_adapter
+from .api_models import (
+    AskResponse,
+    BillingResponse,
+    ErrorResponse,
+    SearchResponse,
+    SignalsResponse,
+)
 from .auth import resolve
 from .briefing import render_brief
 from .config import BaseSubscriptionStore, SubscriptionStore
 from .core_client import CoreClient, CoreError
 from .llm import ChatClient, EmbedClient, chat_from_env, embed_from_env
+
+
+def _error_responses(*statuses: int) -> dict[int, dict[str, object]]:
+    return {status: {"model": ErrorResponse} for status in statuses}
+
+
+def _json_error_responses(*statuses: int) -> dict[int, dict[str, object]]:
+    schema = ErrorResponse.model_json_schema()
+    return {
+        status: {"content": {"application/json": {"schema": schema}}}
+        for status in statuses
+    }
 
 
 def create_app(
@@ -62,7 +81,11 @@ def create_app(
 
     # -- /v1/signals -------------------------------------------------------------
 
-    @app.get("/v1/signals")
+    @app.get(
+        "/v1/signals",
+        response_model=SignalsResponse,
+        responses=_error_responses(401, 500, 502),
+    )
     def signals(authorization: str | None = Header(default=None)):
         sub = resolve(store.all(), authorization)
         view = _core_guard(core.view, list(sub.sectors))
@@ -78,7 +101,11 @@ def create_app(
 
     # -- /v1/search ---------------------------------------------------------------
 
-    @app.get("/v1/search")
+    @app.get(
+        "/v1/search",
+        response_model=SearchResponse,
+        responses=_error_responses(400, 401, 502),
+    )
     def search(
         q: str,
         limit: int = Query(default=10, le=50),
@@ -95,7 +122,12 @@ def create_app(
 
     # -- /v1/brief -----------------------------------------------------------------
 
-    @app.get("/v1/brief")
+    @app.get(
+        "/v1/brief",
+        response_model=str,
+        response_class=PlainTextResponse,
+        responses=_json_error_responses(401, 500, 502),
+    )
     def brief(authorization: str | None = Header(default=None)):
         sub = resolve(store.all(), authorization)
         view = _core_guard(core.view, list(sub.sectors))
@@ -108,7 +140,11 @@ def create_app(
     # hybrid retrieval + near-dup suppression (math), the SHELL builds the
     # prompt and calls the chat model (LLM business again).
 
-    @app.get("/v1/ask")
+    @app.get(
+        "/v1/ask",
+        response_model=AskResponse,
+        responses=_error_responses(401, 500, 502, 503),
+    )
     def ask(
         q: str,
         k: int = Query(default=5, le=8),
@@ -178,7 +214,12 @@ def create_app(
     # core is never touched, so even a forged event can at most misgrant
     # sectors that the core would still filter against its own config.
 
-    @app.post("/v1/billing/webhook")
+    @app.post(
+        "/v1/billing/webhook",
+        response_model=BillingResponse,
+        response_model_exclude_none=True,
+        responses=_error_responses(400, 401, 503),
+    )
     async def billing_webhook(
         request: Request,
         x_signature: str | None = Header(default=None),
@@ -224,7 +265,12 @@ def create_app(
     # are acknowledged and ignored: a 500 on an uninteresting event is how you
     # get your endpoint disabled by the provider's retry logic.
 
-    @app.post("/v1/billing/stripe")
+    @app.post(
+        "/v1/billing/stripe",
+        response_model=BillingResponse,
+        response_model_exclude_none=True,
+        responses=_error_responses(400, 401, 503),
+    )
     async def billing_stripe(
         request: Request,
         stripe_signature: str | None = Header(default=None),

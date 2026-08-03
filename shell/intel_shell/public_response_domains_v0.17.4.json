@@ -1,0 +1,1521 @@
+{
+  "release": "v0.17.4",
+  "routes": {
+    "GET /v1/ask": {
+      "responses": {
+        "200 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "answer": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            },
+            "citations": {
+              "domain": {
+                "items": {
+                  "additional_properties": false,
+                  "fields": {
+                    "doc_id": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "license": {
+                      "domain": {
+                        "kind": "string",
+                        "values": [
+                          "CcBy",
+                          "ClientOwned",
+                          "IndexOnly",
+                          "PublicDomain",
+                          "PublisherPermitted"
+                        ]
+                      },
+                      "required": true
+                    },
+                    "ref": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "source_id": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "title": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "url": {
+                      "domain": {
+                        "kind": "union",
+                        "options": [
+                          {
+                            "kind": "null"
+                          },
+                          {
+                            "kind": "string"
+                          }
+                        ]
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": true
+            },
+            "client": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            },
+            "context_suppressed": {
+              "domain": {
+                "items": {
+                  "kind": "string"
+                },
+                "kind": "array"
+              },
+              "required": true
+            },
+            "query": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            },
+            "retrieval": {
+              "domain": {
+                "additional_properties": false,
+                "fields": {
+                  "bm25": {
+                    "domain": {
+                      "items": {
+                        "kind": "string"
+                      },
+                      "kind": "array"
+                    },
+                    "required": true
+                  },
+                  "fused": {
+                    "domain": {
+                      "items": {
+                        "kind": "string"
+                      },
+                      "kind": "array"
+                    },
+                    "required": true
+                  },
+                  "notes": {
+                    "domain": {
+                      "items": {
+                        "kind": "string"
+                      },
+                      "kind": "array"
+                    },
+                    "required": true
+                  },
+                  "vector": {
+                    "domain": {
+                      "items": {
+                        "kind": "string"
+                      },
+                      "kind": "array"
+                    },
+                    "required": true
+                  }
+                },
+                "kind": "object"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "401 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "422 application/json": {
+          "additional_properties": true,
+          "fields": {
+            "detail": {
+              "domain": {
+                "items": {
+                  "additional_properties": true,
+                  "fields": {
+                    "ctx": {
+                      "domain": {
+                        "additional_properties": true,
+                        "fields": {},
+                        "kind": "object"
+                      },
+                      "required": false
+                    },
+                    "input": {
+                      "domain": {
+                        "kind": "any"
+                      },
+                      "required": false
+                    },
+                    "loc": {
+                      "domain": {
+                        "items": {
+                          "kind": "union",
+                          "options": [
+                            {
+                              "kind": "integer"
+                            },
+                            {
+                              "kind": "string"
+                            }
+                          ]
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "msg": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "type": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": false
+            }
+          },
+          "kind": "object"
+        },
+        "500 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "502 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "503 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        }
+      }
+    },
+    "GET /v1/brief": {
+      "responses": {
+        "200 text/plain": {
+          "kind": "string"
+        },
+        "401 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "422 application/json": {
+          "additional_properties": true,
+          "fields": {
+            "detail": {
+              "domain": {
+                "items": {
+                  "additional_properties": true,
+                  "fields": {
+                    "ctx": {
+                      "domain": {
+                        "additional_properties": true,
+                        "fields": {},
+                        "kind": "object"
+                      },
+                      "required": false
+                    },
+                    "input": {
+                      "domain": {
+                        "kind": "any"
+                      },
+                      "required": false
+                    },
+                    "loc": {
+                      "domain": {
+                        "items": {
+                          "kind": "union",
+                          "options": [
+                            {
+                              "kind": "integer"
+                            },
+                            {
+                              "kind": "string"
+                            }
+                          ]
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "msg": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "type": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": false
+            }
+          },
+          "kind": "object"
+        },
+        "500 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "502 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        }
+      }
+    },
+    "GET /v1/search": {
+      "responses": {
+        "200 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "client": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            },
+            "hits": {
+              "domain": {
+                "items": {
+                  "additional_properties": false,
+                  "fields": {
+                    "doc_id": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "license": {
+                      "domain": {
+                        "kind": "string",
+                        "values": [
+                          "CcBy",
+                          "ClientOwned",
+                          "IndexOnly",
+                          "PublicDomain",
+                          "PublisherPermitted"
+                        ]
+                      },
+                      "required": true
+                    },
+                    "rank": {
+                      "domain": {
+                        "kind": "number"
+                      },
+                      "required": true
+                    },
+                    "sector": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "snippet": {
+                      "domain": {
+                        "kind": "union",
+                        "options": [
+                          {
+                            "kind": "null"
+                          },
+                          {
+                            "kind": "string"
+                          }
+                        ]
+                      },
+                      "required": true
+                    },
+                    "source_id": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "title": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "url": {
+                      "domain": {
+                        "kind": "union",
+                        "options": [
+                          {
+                            "kind": "null"
+                          },
+                          {
+                            "kind": "string"
+                          }
+                        ]
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": true
+            },
+            "query": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "400 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "401 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "422 application/json": {
+          "additional_properties": true,
+          "fields": {
+            "detail": {
+              "domain": {
+                "items": {
+                  "additional_properties": true,
+                  "fields": {
+                    "ctx": {
+                      "domain": {
+                        "additional_properties": true,
+                        "fields": {},
+                        "kind": "object"
+                      },
+                      "required": false
+                    },
+                    "input": {
+                      "domain": {
+                        "kind": "any"
+                      },
+                      "required": false
+                    },
+                    "loc": {
+                      "domain": {
+                        "items": {
+                          "kind": "union",
+                          "options": [
+                            {
+                              "kind": "integer"
+                            },
+                            {
+                              "kind": "string"
+                            }
+                          ]
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "msg": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "type": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": false
+            }
+          },
+          "kind": "object"
+        },
+        "502 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        }
+      }
+    },
+    "GET /v1/signals": {
+      "responses": {
+        "200 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "client": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            },
+            "documents_analyzed": {
+              "domain": {
+                "kind": "integer"
+              },
+              "required": true
+            },
+            "graph": {
+              "domain": {
+                "items": {
+                  "additional_properties": false,
+                  "fields": {
+                    "a": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "a_name": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "b": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "b_name": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "pmi": {
+                      "domain": {
+                        "kind": "number"
+                      },
+                      "required": true
+                    },
+                    "weight": {
+                      "domain": {
+                        "kind": "integer"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": true
+            },
+            "near_duplicates_collapsed": {
+              "domain": {
+                "kind": "integer"
+              },
+              "required": true
+            },
+            "sectors": {
+              "domain": {
+                "items": {
+                  "kind": "string"
+                },
+                "kind": "array"
+              },
+              "required": true
+            },
+            "signals": {
+              "domain": {
+                "items": {
+                  "additional_properties": false,
+                  "fields": {
+                    "detail": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "entity_ids": {
+                      "domain": {
+                        "items": {
+                          "kind": "string"
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "evidence": {
+                      "domain": {
+                        "items": {
+                          "additional_properties": false,
+                          "fields": {
+                            "day": {
+                              "domain": {
+                                "kind": "union",
+                                "options": [
+                                  {
+                                    "kind": "null"
+                                  },
+                                  {
+                                    "kind": "string"
+                                  }
+                                ]
+                              },
+                              "required": true
+                            },
+                            "doc_id": {
+                              "domain": {
+                                "kind": "string"
+                              },
+                              "required": true
+                            },
+                            "excerpt": {
+                              "domain": {
+                                "kind": "union",
+                                "options": [
+                                  {
+                                    "kind": "null"
+                                  },
+                                  {
+                                    "kind": "string"
+                                  }
+                                ]
+                              },
+                              "required": true
+                            },
+                            "license": {
+                              "domain": {
+                                "kind": "string",
+                                "values": [
+                                  "CcBy",
+                                  "ClientOwned",
+                                  "IndexOnly",
+                                  "PublicDomain",
+                                  "PublisherPermitted"
+                                ]
+                              },
+                              "required": true
+                            },
+                            "source_id": {
+                              "domain": {
+                                "kind": "string"
+                              },
+                              "required": true
+                            },
+                            "title": {
+                              "domain": {
+                                "kind": "string"
+                              },
+                              "required": true
+                            },
+                            "url": {
+                              "domain": {
+                                "kind": "union",
+                                "options": [
+                                  {
+                                    "kind": "null"
+                                  },
+                                  {
+                                    "kind": "string"
+                                  }
+                                ]
+                              },
+                              "required": true
+                            }
+                          },
+                          "kind": "object"
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "headline": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "kind": {
+                      "domain": {
+                        "kind": "string",
+                        "values": [
+                          "Corroborated",
+                          "EmergingEntity",
+                          "RisingEntity"
+                        ]
+                      },
+                      "required": true
+                    },
+                    "score": {
+                      "domain": {
+                        "kind": "number"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": true
+            },
+            "window_end": {
+              "domain": {
+                "kind": "union",
+                "options": [
+                  {
+                    "kind": "null"
+                  },
+                  {
+                    "kind": "string"
+                  }
+                ]
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "401 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "422 application/json": {
+          "additional_properties": true,
+          "fields": {
+            "detail": {
+              "domain": {
+                "items": {
+                  "additional_properties": true,
+                  "fields": {
+                    "ctx": {
+                      "domain": {
+                        "additional_properties": true,
+                        "fields": {},
+                        "kind": "object"
+                      },
+                      "required": false
+                    },
+                    "input": {
+                      "domain": {
+                        "kind": "any"
+                      },
+                      "required": false
+                    },
+                    "loc": {
+                      "domain": {
+                        "items": {
+                          "kind": "union",
+                          "options": [
+                            {
+                              "kind": "integer"
+                            },
+                            {
+                              "kind": "string"
+                            }
+                          ]
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "msg": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "type": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": false
+            }
+          },
+          "kind": "object"
+        },
+        "500 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "502 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        }
+      }
+    },
+    "POST /v1/billing/stripe": {
+      "responses": {
+        "200 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "received": {
+              "domain": {
+                "kind": "integer"
+              },
+              "required": true
+            },
+            "results": {
+              "domain": {
+                "items": {
+                  "kind": "union",
+                  "options": [
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "created",
+                              "updated"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "notes": {
+                          "domain": {
+                            "items": {
+                              "kind": "string"
+                            },
+                            "kind": "array"
+                          },
+                          "required": true
+                        },
+                        "sectors": {
+                          "domain": {
+                            "items": {
+                              "kind": "string"
+                            },
+                            "kind": "array"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "created",
+                              "updated"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "sectors": {
+                          "domain": {
+                            "items": {
+                              "kind": "string"
+                            },
+                            "kind": "array"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "ignored"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "reason": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "key_rotated"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "grace": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "noop"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "reason": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "noop"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "removed"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    }
+                  ]
+                },
+                "kind": "array"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "400 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "401 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "422 application/json": {
+          "additional_properties": true,
+          "fields": {
+            "detail": {
+              "domain": {
+                "items": {
+                  "additional_properties": true,
+                  "fields": {
+                    "ctx": {
+                      "domain": {
+                        "additional_properties": true,
+                        "fields": {},
+                        "kind": "object"
+                      },
+                      "required": false
+                    },
+                    "input": {
+                      "domain": {
+                        "kind": "any"
+                      },
+                      "required": false
+                    },
+                    "loc": {
+                      "domain": {
+                        "items": {
+                          "kind": "union",
+                          "options": [
+                            {
+                              "kind": "integer"
+                            },
+                            {
+                              "kind": "string"
+                            }
+                          ]
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "msg": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "type": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": false
+            }
+          },
+          "kind": "object"
+        },
+        "503 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        }
+      }
+    },
+    "POST /v1/billing/webhook": {
+      "responses": {
+        "200 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "received": {
+              "domain": {
+                "kind": "integer"
+              },
+              "required": true
+            },
+            "results": {
+              "domain": {
+                "items": {
+                  "kind": "union",
+                  "options": [
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "created",
+                              "updated"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "notes": {
+                          "domain": {
+                            "items": {
+                              "kind": "string"
+                            },
+                            "kind": "array"
+                          },
+                          "required": true
+                        },
+                        "sectors": {
+                          "domain": {
+                            "items": {
+                              "kind": "string"
+                            },
+                            "kind": "array"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "created",
+                              "updated"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "sectors": {
+                          "domain": {
+                            "items": {
+                              "kind": "string"
+                            },
+                            "kind": "array"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "ignored"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "reason": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "key_rotated"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "grace": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "noop"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        },
+                        "reason": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "noop"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    },
+                    {
+                      "additional_properties": false,
+                      "fields": {
+                        "action": {
+                          "domain": {
+                            "kind": "string",
+                            "values": [
+                              "removed"
+                            ]
+                          },
+                          "required": true
+                        },
+                        "client": {
+                          "domain": {
+                            "kind": "string"
+                          },
+                          "required": true
+                        }
+                      },
+                      "kind": "object"
+                    }
+                  ]
+                },
+                "kind": "array"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "400 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "401 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        },
+        "422 application/json": {
+          "additional_properties": true,
+          "fields": {
+            "detail": {
+              "domain": {
+                "items": {
+                  "additional_properties": true,
+                  "fields": {
+                    "ctx": {
+                      "domain": {
+                        "additional_properties": true,
+                        "fields": {},
+                        "kind": "object"
+                      },
+                      "required": false
+                    },
+                    "input": {
+                      "domain": {
+                        "kind": "any"
+                      },
+                      "required": false
+                    },
+                    "loc": {
+                      "domain": {
+                        "items": {
+                          "kind": "union",
+                          "options": [
+                            {
+                              "kind": "integer"
+                            },
+                            {
+                              "kind": "string"
+                            }
+                          ]
+                        },
+                        "kind": "array"
+                      },
+                      "required": true
+                    },
+                    "msg": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    },
+                    "type": {
+                      "domain": {
+                        "kind": "string"
+                      },
+                      "required": true
+                    }
+                  },
+                  "kind": "object"
+                },
+                "kind": "array"
+              },
+              "required": false
+            }
+          },
+          "kind": "object"
+        },
+        "503 application/json": {
+          "additional_properties": false,
+          "fields": {
+            "detail": {
+              "domain": {
+                "kind": "string"
+              },
+              "required": true
+            }
+          },
+          "kind": "object"
+        }
+      }
+    }
+  },
+  "schema_version": 1
+}

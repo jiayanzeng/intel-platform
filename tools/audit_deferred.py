@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
@@ -789,22 +790,39 @@ def attestation_boundary_measurement() -> dict[str, Any]:
     text = require_text(
         PUBLIC_APP,
         [
-            '@app.get("/v1/ask")',
             "core.attest,",
             'answer = attestation["clean_answer"]',
         ],
     )
     lines = text.splitlines()
-    ask_start = next(
-        index
-        for index, line in enumerate(lines)
-        if '@app.get("/v1/ask")' in line
-    )
-    ask_end = next(
-        index
-        for index, line in enumerate(lines[ask_start + 1 :], ask_start + 1)
-        if '@app.post("/v1/billing/webhook")' in line
-    )
+    route_lines: dict[tuple[str, str], int] = {}
+    for node in ast.walk(ast.parse(text)):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        for decorator in node.decorator_list:
+            if not (
+                isinstance(decorator, ast.Call)
+                and isinstance(decorator.func, ast.Attribute)
+                and isinstance(decorator.func.value, ast.Name)
+                and decorator.func.value.id == "app"
+                and decorator.func.attr in {"get", "post"}
+                and decorator.args
+                and isinstance(decorator.args[0], ast.Constant)
+                and isinstance(decorator.args[0].value, str)
+            ):
+                continue
+            route_lines[(decorator.func.attr, decorator.args[0].value)] = (
+                decorator.lineno - 1
+            )
+    try:
+        ask_start = route_lines[("get", "/v1/ask")]
+        ask_end = route_lines[("post", "/v1/billing/webhook")]
+    except KeyError as error:
+        raise AuditFailure(
+            f"{PUBLIC_APP}: required public route decorator missing: {error.args[0]}"
+        ) from error
+    if ask_end <= ask_start:
+        raise AuditFailure(f"{PUBLIC_APP}: /v1/ask route boundary is out of order")
     ask_lines = lines[ask_start:ask_end]
     shell_egress = [
         f"{PUBLIC_APP.relative_to(ROOT)}:{ask_start + offset + 1}"

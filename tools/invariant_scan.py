@@ -3779,6 +3779,104 @@ def r14_findings(root: Path) -> list[str]:
     return findings
 
 
+DOMAIN_MANIFEST_ERROR_RE = re.compile(
+    r"^domain-manifest: ERROR: (?P<kind>[^ ]+) at (?P<path>.+): before=",
+    re.MULTILINE,
+)
+DOMAIN_MODEL_PATH = Path("shell/intel_shell/api_models.py")
+DOMAIN_CONTROL_MARKERS = {
+    "enum-variant-added": (
+        "# Invariant R15 control site: signal-kind value domain.",
+        "public response-domain manifest must reject an added enum variant",
+    ),
+    "field-removed": (
+        "# Invariant R15 control site: signals graph field domain.",
+        "public response-domain manifest must reject a removed field",
+    ),
+    "field-type-changed": (
+        "# Invariant R15 control site: search rank type domain.",
+        "public response-domain manifest must reject a changed field type",
+    ),
+}
+
+
+def r15_findings(root: Path) -> list[str]:
+    """Bind every declared public response field/domain to its release baseline."""
+    environment = os.environ.copy()
+    python_path = str(root / "shell")
+    if environment.get("PYTHONPATH"):
+        python_path += os.pathsep + environment["PYTHONPATH"]
+    environment["PYTHONPATH"] = python_path
+    result = subprocess.run(
+        [sys.executable, "tools/domain_manifest.py", "check"],
+        cwd=root,
+        env=environment,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode == 0:
+        return []
+    if result.returncode != 1:
+        detail = (result.stdout + result.stderr).strip()
+        raise ConfigError(
+            "public response-domain manifest check could not execute: "
+            f"status={result.returncode} output={detail!r}"
+        )
+
+    differences = [match.groupdict() for match in DOMAIN_MANIFEST_ERROR_RE.finditer(result.stdout)]
+    if not differences:
+        raise ConfigError(
+            "public response-domain manifest failed without a parseable difference: "
+            f"{result.stdout.strip()!r}"
+        )
+
+    controls: set[str] = set()
+    generic: list[dict[str, str]] = []
+    for difference in differences:
+        kind = difference["kind"]
+        path = difference["path"]
+        if kind == "value-added" and path.endswith(
+            ".fields.kind.domain.values"
+        ):
+            controls.add("enum-variant-added")
+        elif kind == "field-removed" and path.endswith(".fields.graph"):
+            controls.add("field-removed")
+        elif kind == "type-changed" and path.endswith(
+            ".fields.rank.domain.kind"
+        ):
+            controls.add("field-type-changed")
+        else:
+            generic.append(difference)
+
+    source = (root / DOMAIN_MODEL_PATH).read_text()
+    findings: list[str] = []
+    for control in sorted(controls):
+        marker, message = DOMAIN_CONTROL_MARKERS[control]
+        if source.count(marker) != 1:
+            raise ConfigError(
+                f"{DOMAIN_MODEL_PATH}: expected exactly one R15 marker {marker!r}"
+            )
+        line = source.count("\n", 0, source.index(marker)) + 1
+        findings.append(f"{DOMAIN_MODEL_PATH}:{line}: {message}")
+
+    if generic:
+        marker = "class Difference:"
+        tool_path = Path("tools/domain_manifest.py")
+        tool_source = (root / tool_path).read_text()
+        if tool_source.count(marker) != 1:
+            raise ConfigError(
+                f"{tool_path}: expected exactly one generic difference anchor"
+            )
+        line = tool_source.count("\n", 0, tool_source.index(marker)) + 1
+        for difference in generic:
+            findings.append(
+                f"{tool_path}:{line}: public response-domain manifest differs: "
+                f"{difference['kind']} at {difference['path']}"
+            )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -3794,6 +3892,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R12": r12_findings,
     "R13": r13_findings,
     "R14": r14_findings,
+    "R15": r15_findings,
 }
 
 

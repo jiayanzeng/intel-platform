@@ -238,6 +238,7 @@ release-authority precedence applies only at R-CLOSE.
 | `allow` | `tools/checklist_audit.py` |
 | `allow` | `tools/progress_check.py` |
 | `allow` | `tools/domain_manifest.py` |
+| `allow` | `tools/audit_deferred.py` |
 | `allow` | `tools/evidence_artifacts.py` |
 | `allow` | `config/invariant-rules.json` |
 | `allow` | `config/checklist-exemptions.json` |
@@ -279,6 +280,17 @@ path cannot pass the stated acceptance without changing that registry. Per the
 operating contract's gate-versus-criteria rule, the gate is widened for the one
 new exact archive path and its focused schema control; no general archive
 prefix is admitted.
+
+**Step 4 scope correction (2026-08-03).** C8's required response-model
+decorators make the existing `/v1/ask` and billing decorators multi-line. The
+source-deterministic deferred audit assumed their exact prior one-line syntax,
+so the complete shell population failed before it could rederive the committed
+receipt. The supplied table omitted `tools/audit_deferred.py`, making the
+acceptance population and scope mutually unsatisfiable. The table now permits
+only that bounded parser compatibility change: route boundaries are discovered
+from actual Python AST decorators instead of textual one-line spellings. No
+deferred disposition, receipt byte, or audit outcome changes.
+
 The prior cycle's documents are protected by the `docs/cycles/**` forbid.
 
 ---
@@ -531,18 +543,18 @@ governed.
 | Postgres / pgvector / multi-host seam | unchanged | v0.37 · 2026-08-03 — PUBLISH changed remote release refs and State only; no Postgres, pgvector, or multi-host seam appeared. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.37 · 2026-08-03 — No third-party shell or replacement-shell HC1 claim appeared; the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.37 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.37 · 2026-08-03 — The unchanged registered scan passed 14/14 rules and 81 controls; no outside spelling was observed. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.37 · 2026-08-03 — DOMAIN-MANIFEST's complete registered scan passed **15/15 rules / 84 controls**; R3/R4 found no outside spelling. | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.37 · 2026-08-03 — Hosted PUBLISH run 30824053490 executed the pinned Rust 1.86 success lane, while workflow/evidence topology remains scope-forbidden; the combined trigger did not fire. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.37 · 2026-08-03 — No verifier pin or accepted bundle/workflow contract changed; the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.37 · 2026-08-03 — No third-publisher review or admission occurred; the trigger did not fire. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.37 · 2026-08-03 — DR7 moved only main, v0.17.2, and v0.17.3; it did not authorize or move either historical tag. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.37 · 2026-08-03 — PUBLISH did not move either historical tag or remove the hosted flag; the combined trigger did not fire. | none |
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.37 · 2026-08-03 — STATE-ARCHIVE measured **193,830 / 1,048,576 bytes**, **333 pins**, and two complete checks at **0.09 s / 0.10 s real**. Neither trigger fired. | none |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.37 · 2026-08-03 — Scope permits shell source work for C8, but PUBLISH moved no shell byte; the trigger has not fired. | none |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.37 · 2026-08-03 — Step 4 is the authorized response-domain control work; PUBLISH itself changed no classification control. | none |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.37 · 2026-08-03 — DOMAIN-MANIFEST moved non-version shell source, so the broad trigger fired. Step 4 rechecked the literal as one of `version-check`'s syntax-derived executable authorities and retained it package-owned; R-CLOSE will move its value with the other authorities. | **Step 4 completed 2026-08-03** |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.37 · 2026-08-03 — DOMAIN-MANIFEST completed the authorized G6 subcase: R15 now derives and diffs every declared `/v1/*` response domain. Other heterogeneous R-CLOSE criteria remain prose adjudications. | **Step 4 completed 2026-08-03** |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.37 · 2026-08-03 — DR8 authorized completion ahead of the unchanged trigger: the post-record live State is **94,681 / 453,741 bytes** and the structural archive is pinned at **258,658 bytes**. Neither boundary trigger had fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.37 · 2026-08-03 — The active cycle is v0.37; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Exact publication of v0.17.3 resets the count to zero at its closing commit; no later production or public-surface change exists at PUBLISH. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Exact publication of v0.17.3 resets the count to zero at its closing commit. DOMAIN-MANIFEST adds validation and native derivation for the already-serialized contract, while the complete ten-response witness remains exact at **6,869 bytes / SHA-256 `dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`**, the manifest diff is empty, and golden is **11/11**. No measured runtime or public `/v1/*` surface difference starts or fires the trigger. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.37 · 2026-08-03 — PUBLISH changed no Rust-floor restatement or registry member, and the registered scan passed. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.37 · 2026-08-03 — ACTIVATE derives exactly the v0.36–v0.37 retained set and advances only the excluded boundary through v0.35. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.37 · 2026-08-03 — v0.36's immediate audit child already records its closing-tree difference; v0.37 remains open. | none |
@@ -553,7 +565,7 @@ governed.
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.37 · 2026-08-03 — v0.36 completed the shared `assign_dedup_identity` seam under R14; PUBLISH changed neither consumer nor manifest edge. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.37 · 2026-08-03 — PUBLISH left both restatements unchanged and the registered authority checks passed; no divergence was observed. | none |
 | Review-export capacity | the export crosses the declared ceiling | v0.37 · 2026-08-03 — STATE-ARCHIVE's delivered worktree export is **2,558,258 bytes**, leaving **441,742 bytes / 14.72% / 3.08 cycles** at the measured +143,456-byte denominator. The trigger did not fire. | none |
-| Public value-domain control (G6) | a `/v1/*` field's domain changes undetected | v0.37 · 2026-08-03 — Step 4 owns discharge through a release-baselined derived manifest; PUBLISH moved no `/v1/*` payload or domain. | **Step 4** |
+| Public value-domain control (G6) | a `/v1/*` field's domain changes undetected | v0.37 · 2026-08-03 — DOMAIN-MANIFEST derives **6 routes / 31 status-media variants / 112 field occurrences** into the v0.17.4 baseline. R15's added-enum, removed-field, and changed-type mutations each fail at the serialization control site; the complete scan passes **15/15 rules / 84 controls**. | **Step 4 completed 2026-08-03** |
 
 ---
 
@@ -584,7 +596,7 @@ governed.
 - [x] E0
 - [x] TEST-ISOLATION
 - [x] STATE-ARCHIVE
-- [ ] DOMAIN-MANIFEST
+- [x] DOMAIN-MANIFEST
 - [ ] RE-MEASURE
 - [ ] R-CLOSE
 

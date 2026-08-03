@@ -1063,6 +1063,45 @@
         }
       ],
       "fail_before_note": "invariant-scan: R14 FAIL: store or view no longer consumes the shared sector-partitioned identity implementation"
+    },
+    {
+      "id": "R15",
+      "claim": "Every declared success and error response field and value domain on the six public /v1/* routes agrees with the v0.17.4 release-baselined manifest derived from the FastAPI/Pydantic serialization types.",
+      "source": "docs/cycles/TASKS-v0.37-EXECUTION.md Step 4 and C8",
+      "scope": "The actual tools/domain_manifest.py check entry point derives exactly the six GET/POST /v1/* operations from FastAPI OpenAPI output, requires a non-null response model on each route, recursively resolves every declared status/media schema into fields, requiredness, primitive/collection/object types, nullability, closed/open object state, and literal value sets, and diffs that result against shell/intel_shell/public_response_domains_v0.17.4.json. Declared success and error variants are both included. Planted controls add a SignalKind enum value, remove the signals graph field, and change search rank from number to string; each executes the production checker and anchors its finding at the mutated serialization authority.",
+      "fail_before": [
+        {
+          "file": "shell/intel_shell/api_models.py",
+          "find": "SignalKindValue = Literal[\"RisingEntity\", \"Corroborated\", \"EmergingEntity\"]\n",
+          "replace_with": [
+            "SignalKindValue = Literal[\"RisingEntity\", \"Corroborated\", \"EmergingEntity\", \"ContractExpanded\"]\n"
+          ],
+          "expected_fail": "public response-domain manifest must reject an added enum variant",
+          "expected_file": "shell/intel_shell/api_models.py",
+          "expected_anchor": "# Invariant R15 control site: signal-kind value domain."
+        },
+        {
+          "file": "shell/intel_shell/api_models.py",
+          "find": "    graph: list[Edge]\n",
+          "replace_with": [
+            ""
+          ],
+          "expected_fail": "public response-domain manifest must reject a removed field",
+          "expected_file": "shell/intel_shell/api_models.py",
+          "expected_anchor": "    # Invariant R15 control site: signals graph field domain."
+        },
+        {
+          "file": "shell/intel_shell/api_models.py",
+          "find": "    rank: float\n",
+          "replace_with": [
+            "    rank: str\n"
+          ],
+          "expected_fail": "public response-domain manifest must reject a changed field type",
+          "expected_file": "shell/intel_shell/api_models.py",
+          "expected_anchor": "    # Invariant R15 control site: search rank type domain."
+        }
+      ],
+      "fail_before_note": "invariant-scan: R15 FAIL: the derived public response-domain manifest differs from the v0.17.4 release baseline"
     }
   ]
 }
