@@ -58,6 +58,79 @@ ref was forced, deleted, or moved beyond DR7's exact three-ref grant.
 - **Post-push closing commit:** `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`
 - **Post-push hosted run:** `30824053490`
 
+**v0.37 E0 — entering-state reconstruction (measured 2026-08-03).** The
+runbook's nine source-review figures were treated as hypotheses and checked
+against the repository and remote, not copied forward. H1, H3, H7, H8, and H9
+were confirmed; H4 and H6 were refuted; H2 was confirmed for its entering DR7
+measurement and then superseded by the exact publication result; H5 was partly
+confirmed and otherwise refuted by commit-exact exports.
+
+The object graph is exact: release parent
+`9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of closing
+commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object
+`0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` peels to that closing commit; and
+audit child `e068cacc76685791c54ab47c84be6abbd592271d` has the closing commit as
+its immediate parent. Immediately before PUBLISH, `main` was exact
+`f02379f03ccdfd1b019413234f2ad014d169fb04`, that commit was an ancestor of
+the audit child, and both tags were absent. E0's fresh post-publication
+measurement instead finds `main` at the audit child and both annotated tag
+objects and peeled targets exact; it does not preserve the stale "tags absent"
+half of H2 as current state.
+
+The entering `DisposableDir::create` combined process id with nanoseconds and
+called `create_dir(...).expect(...)`. A test-only forced seam pre-created the
+exact candidate for nonce `u128::MAX`; the constructor then produced the
+caught `AlreadyExists` panic deterministically and the focused test passed
+**1/1**. This confirms H3 without changing production code and supplies the
+fail-before witness for TEST-ISOLATION.
+
+The live invariant registry is **14 rules / 81 controls**, with **9** active
+checklist exemptions and **3** historical retractions. The pre-E0 checklist is
+**289 checked / 3 retracted / 280 matched / 280 resolved / 9 exemptions**, not
+H4's **287 / 3 / 278+9**. The v0.35 task/progress pair is exactly
+**78,419 + 69,632 = 148,051 bytes**, but commit-exact export measurements are
+**2,858,294 bytes / 151 files / 2 retained cycles** at entering audit child
+`e068cacc…` and **2,746,484 / 151 / 2** at activation commit `5884ef77…`.
+The earlier **2,901,790 / 154** source-review figure described a worktree that
+also contained the three untracked amendment inputs, not a delivered commit.
+The arithmetic estimate **2,753,739** is therefore **7,255 bytes** above the
+exact activation result; H5 is only partly confirmed.
+
+Before this E0 record was added, `STATE.md` measured **345,139 bytes**, not
+H6's **342,163**. The literal
+`STATE_ARCHIVE_PERMANENT_TAIL:START` occurs exactly once and the two historical
+publication-absence observations remain, but PUBLISH has also added two exact
+post-push records. The six public route decorators — `/v1/signals`,
+`/v1/search`, `/v1/brief`, `/v1/ask`, `/v1/billing/webhook`, and
+`/v1/billing/stripe` — are all in `shell/intel_shell/app.py`. Runtime FastAPI
+introspection finds exactly **6** such routes and every route has
+`response_model=None`; five handlers return raw dictionaries and `brief`
+returns `PlainTextResponse`. C8 therefore selects the response-model
+introduction path. `.github/workflows/ci.yml` lines 19–21 still trigger on a
+push to `main`, confirming H8 without a workflow edit.
+
+H9's arithmetic is confirmed. Using the measured v0.36 governed-field growth
+of **143,456 bytes**, a **2,600,000-byte** post-archive export leaves
+**400,000 bytes**, or **2.79 cycles**, under the **3,000,000-byte** ceiling.
+The minimum **2.5-cycle** reserve is **358,640 bytes**, so any export at or
+below **2,641,360 bytes** satisfies C10.
+
+The standing entering gate also passed. `git status --porcelain` named exactly
+the three untracked amendment inputs before the test-only reproduction was
+written; those inputs remain untouched. Permission-complete `./run ci-local`
+passed all **22/22** identities: the registered scan passed **14/14 rules / 81
+controls**, the default and Rust 1.78 store identity lanes each passed **3/3**
+including the reproduction, net tests passed **29 ingest / 3 replay / 30
+cored**, the Rust 1.86 success and Rust 1.85 declared-MSRV refusal lanes both
+held, clippy and rustfmt were clean, artifact verification matched **2
+databases / 332 pinned files**, and golden passed **11/11** with zero delta.
+The permission-complete Python 3.11 and 3.12 lanes each passed **368/368** with
+the one accepted `StarletteDeprecationWarning` and identical machine-readable
+populations. The first Python 3.12 attempt was a sandbox-denied non-result
+(two loopback binds and `ps`); the identical authorized rerun is the recorded
+pass. No E0 gate, architecture, dependency, protected-byte, or golden stop
+condition fired.
+
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
 path while v0.35 remained declared and treated the new runbook as an incomplete

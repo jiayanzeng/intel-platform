@@ -364,6 +364,27 @@ untracked set: the three amendment inputs, exactly), full `./run ci-local`,
 **Acceptance criteria.** Every hypothesis carries a dated verdict: confirmed,
 refuted, or unmeasurable-with-stated-reason.
 
+**E0 verdicts (measured 2026-08-03).**
+
+| # | Verdict | Measured result |
+|---|---|---|
+| H1 | **confirmed** | `9946ceda…` is the release parent and immediate parent of `a5afab9e…`; tag object `0fe42d7a…` peels to `a5afab9e…`; `e068cacc…` is its immediate audit child. |
+| H2 | **confirmed for the entering DR7 measurement; superseded after publication** | Immediately before PUBLISH, `main=f02379f…`, both tags were absent, and the ancestor check passed. The fresh E0 remote measurement has `main=e068cacc…` and both exact tags present, as DR7 required. |
+| H3 | **confirmed** | The entering PID-plus-nanoseconds constructor panics on `AlreadyExists`; a test-only nonce seam pre-created the exact path and reproduced the caught panic deterministically, **1/1**. |
+| H4 | **refuted** | Registry **14/81**, exemptions **9**, and retractions **3** are correct; the pre-E0 checklist is **289 checked / 3 retracted / 280 matched / 280 resolved / 9 exemptions**, not 287/3/278+9. |
+| H5 | **partly confirmed, otherwise refuted** | The v0.35 pair is exactly **148,051 bytes**. Commit-exact exports are **2,858,294 / 151 / 2** at `e068cacc…` and **2,746,484 / 151 / 2** at activation `5884ef77…`; 2,901,790/154 included three untracked inputs, and the 2,753,739 estimate is 7,255 bytes high. |
+| H6 | **refuted** | Pre-record State is **345,139 bytes**, with one permanent-tail marker and two absence observations; PUBLISH has additionally added two exact post-push records. |
+| H7 | **confirmed and C8 selected** | Exactly six `/v1/*` routes are in `app.py`; runtime introspection reports `response_model=None` for all six. Five return raw dictionaries and one returns `PlainTextResponse`, so C8 takes the response-model introduction path. |
+| H8 | **confirmed** | `.github/workflows/ci.yml` lines 19–21 trigger on pushes to `main`; no workflow byte moved. |
+| H9 | **confirmed** | At +143,456 bytes/cycle, a 2,600,000-byte export leaves 400,000 bytes = 2.79 cycles; the 2.5-cycle threshold permits at most 2,641,360 bytes. |
+
+Standing measurements also passed: the entering status named exactly the three
+untracked amendment inputs; `ci-local` passed **22/22**; the registered scan
+passed **14/14 rules / 81 controls**; permission-complete Python 3.11 and 3.12
+each passed **368/368** with identical populations; and golden passed
+**11/11**. The test-only collision reproduction moved no production code. No
+E0 stop condition fired.
+
 **Done when** dependent steps start from measurements, not from this document.
 
 ---
@@ -551,7 +572,7 @@ governed.
 
 - [x] PUBLISH
 - [x] ACTIVATE
-- [ ] E0
+- [x] E0
 - [ ] TEST-ISOLATION
 - [ ] STATE-ARCHIVE
 - [ ] DOMAIN-MANIFEST

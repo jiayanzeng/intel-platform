@@ -26,10 +26,18 @@ impl DisposableDir {
             .duration_since(UNIX_EPOCH)
             .expect("system clock must be after the Unix epoch")
             .as_nanos();
-        let path = std::env::temp_dir().join(format!(
+        Self::create_with_nonce(nonce)
+    }
+
+    fn path_for_nonce(nonce: u128) -> PathBuf {
+        std::env::temp_dir().join(format!(
             "intel-platform-sec-identity-{}-{nonce}",
             std::process::id()
-        ));
+        ))
+    }
+
+    fn create_with_nonce(nonce: u128) -> Self {
+        let path = Self::path_for_nonce(nonce);
         std::fs::create_dir(&path).expect("create identity-measure directory");
         Self(path)
     }
@@ -39,6 +47,19 @@ impl Drop for DisposableDir {
     fn drop(&mut self) {
         std::fs::remove_dir_all(&self.0).expect("remove identity-measure directory");
     }
+}
+
+#[test]
+fn reproduces_disposable_directory_collision_deterministically() {
+    let nonce = u128::MAX;
+    let path = DisposableDir::path_for_nonce(nonce);
+    std::fs::create_dir(&path).expect("pre-create forced-collision directory");
+    let collision = std::panic::catch_unwind(|| DisposableDir::create_with_nonce(nonce));
+    std::fs::remove_dir(&path).expect("remove forced-collision directory");
+    assert!(
+        collision.is_err(),
+        "the entering PID-plus-clock constructor must fail on an existing candidate"
+    );
 }
 
 fn root() -> PathBuf {
