@@ -288,3 +288,45 @@ Entries are append-only; corrections are new dated entries.
   movement, or publisher-wire event.
 - golden-E2E delta: **0**. The post-repair authoritative local pipeline passed
   **11/11**.
+
+### 2026-08-03 · RE-MEASURE — exact candidate passed 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.37-EXECUTION.md`
+- commit: 128475f05912c6bf3b76f31e28b9296d8dded6d3
+- condition/result: PASS. Step 4 moved production shell code, so hosted
+  verification ran. Exact audited candidate
+  `99012c86dcdda8ea32f1b1afa016f793118e9087` has complete hosted evidence on
+  a fresh immutable ref after the first-candidate topology finding was fixed.
+- local acceptance: PASS. The exact candidate passed the permission-capable
+  `ci-local` matrix at **22/22** jobs, including **15/15 rules / 84 controls**,
+  Python 3.11 at **370/370**, both Rust floor pairs, all protected artifacts,
+  and golden **11/11**. The preceding sandbox-denied loopback bind is recorded
+  as a non-result, not selected as the gate outcome.
+- candidate/ref acceptance: PASS. Immediately before the only push for this
+  candidate, `git ls-remote` exited **0** with no entry for fresh ref
+  `refs/heads/codex/v0.37-evidence-99012c8`. One non-force push created exactly
+  that ref at the candidate. The failed first-candidate ref stayed exact and
+  was never moved or retried.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30834599847**, attempt
+  **1**, targeted the declared SHA/ref and completed `success`. All **9/9**
+  blocking identities passed and persisted **9 receipts / 9 Sigstore
+  bundles**; dependency drift was the sole declared report-only skip. The run
+  was dispatched once and not retried.
+- population acceptance: PASS. Local Python 3.11 and 3.12 each passed
+  **370/370**. Each hosted lane collected **370**, passed **369**, and skipped
+  only the named, reasoned, `on_site` production-audit node. Both direct
+  `tools/test_population.py` comparisons derived `equivalent=true` and
+  `equivalent_passed=370`.
+- remote acceptance: PASS. Final direct readback kept the two evidence refs at
+  their respective exact candidates, remote `main` at `e068cacc…`, and the
+  v0.17.2/v0.17.3 annotated objects and peeled targets unchanged. No unrelated
+  ref moved.
+- protected-input acceptance: PASS. The three amendment inputs remain
+  untouched and untracked; no workflow, dependency, protected byte,
+  publisher-wire path, entitlement/licensing outcome, serialized value
+  domain, release tag, or publication authority moved.
+- stop conditions: none. The fresh candidate satisfied Step 5 and did not
+  consume or broaden DR7.
+- golden-E2E delta: **0**. Hosted and final permission-complete local golden
+  passed **11/11**.
