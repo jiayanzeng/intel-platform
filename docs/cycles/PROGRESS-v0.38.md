@@ -123,3 +123,64 @@ Grant A and Grant B; neither is generalized beyond those written bounds.
 - stop conditions: none.
 - golden-E2E delta: **0**. The final permission-complete E0 worktree passed
   **11/11**.
+
+### 2026-08-04 · REHEARSAL-COMPLETE — lifecycle checklist and wire partition
+
+- owner: Codex
+- runbook: `TASKS-v0.38-EXECUTION.md`
+- commit: 65b9a3af9d50ee33594bf44264cc1445b23e47f6
+- checklist acceptance: PASS. The active runbook derives the admission clauses
+  from the protected-artifact lifecycle, configured source/cadence, HC1/HC2/
+  HC8/HC13, and the robots/redirect/dedup invariants. Every clause names either
+  an executing fixture witness or an irreducible current-wire fact; W1 is now
+  exactly that residue.
+- fixture-gap acceptance: PASS. Exact pinned robots bytes run through production
+  `RobotsGate` with publisher allow, publisher denial, operator composition,
+  missing-policy denial, and a planted target-path denial. Exact pinned terms
+  bytes require the affirmative determination, three reviewed pages,
+  monitored-contact condition, and operator responsibility; a planted
+  `Undetermined` mutation fails. Focused replay passes **4/4** and compliance
+  passes **40/40**.
+- persistence/license acceptance: PASS. The parser-produced SEC corpus measures
+  **201 input / 201 kept / 0 dropped**. Finance retrieval returns a
+  `PublisherPermitted` SEC hit with a snippet, a disjoint sector is empty, and
+  the independent unknown-license negative remains `IndexOnly`; focused store
+  identity passes **3/3**.
+- operational-path acceptance: PASS. The new bounded `./run harvest-sec`
+  performs artifact preflight before startup, selects and protects a fresh
+  archive, requires the declared monitored contact, posts only
+  `finance/sec-edgar-usgaap`, requires a nonempty `first_window`, derives
+  license/integrity/fingerprint facts, consumes no fixture or observation file,
+  and owns deterministic cleanup. Its structural control carries failing
+  missing-preflight and wrong-source mutations; the shell harvest/config/
+  scheduler group passes **14/14**, `bash -n` and `shellcheck` pass, and net
+  ingest passes **29/29**.
+- artifact acceptance: PASS. The changed `run` entry point is pinned at
+  **50,378 bytes** and SHA-256
+  `e436d59b05f060a8ce78dd3fb23282ad99fbc8bd263abd73224978c74afeeadb`.
+  Artifact fixtures pass **21/21**; schema validation and two consecutive
+  complete checks match **2 artifacts / 333 pinned files** at **0.09 s / 0.09
+  s real**. The manifest is **194,717 / 1,048,576 bytes**.
+- wire-residue acceptance: PASS. Only current robots/terms/RSS responses,
+  outbound identity/request behavior, live parser consumption, fresh database
+  and entitlement/license facts, and their Grant-B-bound admission remain.
+  Recurrence, concurrency, 304, backfill, and a second fetch remain deferred.
+  No publisher request or new observation byte occurred in this step.
+- full-gate acceptance: PASS. Permission-complete `ci-local` passes **22/22**
+  identities with Python 3.11 **371/371**, both Rust floors, zero rustc/clippy/
+  format findings, registered scan **15/15 rules / 84 controls**, and protected
+  artifacts. Permission-complete Python 3.12 passes the identical **371/371**
+  population with no skips. The earlier sandboxed 3.12 attempt is a non-result:
+  all eight failures were explicit loopback-bind or `ps` permission denials.
+- review-boundary acceptance: PASS. Exact pre-record project-root export is
+  **2,638,292 bytes / 158 files / 2 retained cycles**, leaving **361,708 bytes /
+  12.06% / 2.52 cycles** below the ceiling at +143,456 bytes/cycle.
+- protected-input acceptance: PASS. The three historical untracked amendment
+  inputs remain untouched. No dependency, production publisher configuration,
+  protected database, prior observation, schedule, unauthorized ref, or public
+  response domain moved.
+- stop conditions: none. The initial full-gate attempt stopped only at the
+  intended pre-progress checked-box control; the workflow-valid pre-implementation
+  rerun passed, the box was checked in the implementation commit above, and
+  this separate append-only record supplies its commit witness.
+- golden-E2E delta: **0**. The permission-complete full gate passed **11/11**.
