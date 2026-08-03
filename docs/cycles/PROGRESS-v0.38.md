@@ -85,3 +85,41 @@ Grant A and Grant B; neither is generalized beyond those written bounds.
   accepted boundary condition failed.
 - golden-E2E delta: **0**. The permission-complete P1 worktree passed
   **11/11**.
+
+### 2026-08-04 · E0 — entering-state reconstruction
+
+- owner: Codex
+- runbook: `TASKS-v0.38-EXECUTION.md`
+- commit: 2be2b36fb4d2fcc0ec3729772b95e4c47db0b747
+- hypothesis acceptance: PASS. Every H1–H7 row carries a dated confirmed,
+  refuted, partly confirmed, or deliberately-unmeasured verdict backed by its
+  named entry point. H1's local graph and H4's configuration/replay claims are
+  confirmed; publication superseded H1's remote state; H2/H3 counts and units,
+  H6 scheduling, and H7 export/retention were corrected from measurements; H5
+  remains owned exclusively by Step 2 as required.
+- entering-gate acceptance: PASS. Initial porcelain named exactly the three
+  historical untracked amendment inputs. Permission-complete `ci-local` passed
+  **22/22** identities, including Python 3.11 **370/370**, Rust 1.78 offline,
+  Rust 1.86 net success, Rust 1.85 refusal, focused SEC replay **3/3**, artifact
+  verification, and golden **11/11**. A separate Python 3.12 run passed the
+  identical **370/370** population with no skips.
+- control acceptance: PASS. Fresh direct `invariant-scan --self-test` passes
+  **15/15 rules / 84 planted controls**. R15's added-enum, removed-field, and
+  changed-type mutations fail at the executing serialization control, so the
+  G6 row is truthfully moved to the dated Deferred completions table. Direct
+  `cycle-check` passes the disclosed Step 1 record amendment.
+- domain/version acceptance: PASS. The exact **47,135-byte** v0.17.4 baseline
+  covers **6 routes / 31 status-media response variants / 112 recursive field
+  occurrences**. Version derivation reports **3** offline pins, **22**
+  offline-floor current restatements, **3** release-version restatements, and
+  all **579** tracked files classified.
+- boundary acceptance: PASS. Pre-record State is **110,556 / 453,741** bytes;
+  the manifest is **193,830 / 1,048,576**; and exact activation export
+  **2,596,652 / 3,000,000** leaves **403,348 bytes / 13.44% / 2.81 cycles**.
+  Neither trigger fired.
+- protected-input acceptance: PASS. No dependency, production source,
+  protected byte, fixture, observation, entitlement/licensing outcome, or
+  unauthorized ref moved. The three amendment inputs remain untouched.
+- stop conditions: none.
+- golden-E2E delta: **0**. The final permission-complete E0 worktree passed
+  **11/11**.
