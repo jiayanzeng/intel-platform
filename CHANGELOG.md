@@ -4,6 +4,33 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.3 — 2026-08-03
+
+### Fixed
+
+- Canonical near-duplicate identity is now sector-scoped in both persistence
+  and view analysis through one shared `intel-extract` implementation. A
+  cross-sector pair no longer causes one sector's document to replace the
+  other's representative, while same-sector ordering, eligibility, radius,
+  and earliest-document selection remain unchanged.
+- Checklist coverage now derives the complete nonempty task-box population
+  from execution-runbook structure, accepts both historical box forms, binds
+  forward entries to their runbook, and records the nine immutable v0.35
+  linkage gaps explicitly instead of passing over an empty witness.
+- The lifecycle now represents an unpublished local tagged close with a dated
+  remote-tag absence observation while retaining the planted requirement that
+  a published descendant carry its complete post-push record. The missing
+  v0.35 closing-export audit was also supplied by forward append.
+
+### Compatibility
+
+- This is a patch release. The reachable cross-sector correction can change
+  document selection for a constructed near-duplicate corpus, but it adds no
+  route or named surface and adds, removes, or redefines no serialized `/v1/*`
+  field-domain value. The complete configured comparison is byte-identical;
+  dependency resolution, protected databases, golden inputs, entitlements,
+  and licensing outcomes are unchanged.
+
 ## v0.17.2 — 2026-08-03
 
 ### Fixed

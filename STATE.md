@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **Reviewer amendment A2 corrects Step 7's audit ordering and reopens v0.36 R-CLOSE.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view now consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 6 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.36 R-CLOSE is preparing the DR5-selected patch release locally; publication remains unauthorized.** v0.17.2 remains closed locally and unpublished while the v0.17.3 release parent is assembled; release commit `d4258883645a99f9499895bf064e453de9be1281` remains the immediate parent of the locally tagged v0.17.2 closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact production candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 6 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main`, v0.17.1, and every release tag remain unchanged unless the operator separately authorizes exact publication.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -489,6 +489,27 @@ consistent at **286 checked / 3 retracted / 277 matched / 277 resolved / 9
 exemptions**. The amendment-only golden run passes **11/11** with zero delta.
 The reviewer text is now the third untracked amendment input; all three remain
 untracked and are excluded from the implementation commit.
+
+**v0.36 R-CLOSE release-parent preparation (measured 2026-08-03).** DR5
+selects patch **v0.17.3**. Step 4's explicit cross-sector witness proves a real
+runtime document-selection correction: both sectors now retain their own
+representative, while a later same-sector duplicate still collapses under the
+shared rule. The complete configured-subscription comparison across signals,
+brief, search, ask, and both billing routes remains byte-identical at **15,719
+bytes**, SHA-256
+`0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`.
+No route, named surface, response-body schema, field type, serialized field-
+domain value, entitlement, or licensing outcome moves, so neither DR5 minor
+clause fires. The patch reason names the runtime movement rather than implying
+that no behavior changed.
+
+The release parent moves all five executable authorities to **0.17.3**:
+`apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`,
+`shell/intel_shell/app.py`, this State header, and `CHANGELOG.md`. README's
+three current restatements move with them, and Cargo regenerates only cored's
+lockfile package value. The release parent remains untagged. Its immediate
+child will carry the checked closing record; only that child becomes the local
+annotated-tag target, followed immediately by A2's audit child.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).
