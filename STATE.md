@@ -1,6 +1,54 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.35 is closed locally on the operator-selected patch release; no remote publication is authorized.** Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite passes **12 rules / 73 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+**As of:** 2026-08-03 · **Version:** v0.17.2 (core-shell) · **Status:** **v0.36 is active but AUTONOMY is blocked by two measured lifecycle-contract contradictions; every dependent step is stopped.** v0.17.2 remains closed locally and unpublished; no remote publication is authorized. Release commit `d4258883645a99f9499895bf064e453de9be1281` is the immediate parent of the locally tagged closing record. Authenticated run `30762871542` passed all **9** blocking identities; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. The patch restores third-party verifiability without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. After the unaccepted Step 0 experiment was restored, the registered suite passes **12 rules / 73 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. Published remote `main` and v0.17.1 remain unchanged unless the operator separately authorizes the exact closing commit and annotated tag.
+
+**v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
+pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
+path while v0.35 remained declared and treated the new runbook as an incomplete
+older cycle, so the explicit Step 0e exception was taken. Activation landed as
+implementation `f44681c1dce0c5c2efc0d3fb4a30900fdb4163f5` with audit record
+`8c798cd`. The declared retention set is exactly v0.35–v0.36, and the
+permission-complete activation golden run passed **11/11**.
+
+The Step 0 experiment then generalized R6 from its one hard-coded authority
+name to the derived union of marker names. Before the Operations mirror was
+added, the real scan failed on missing `CYCLE_AUTONOMY_AUTHORITY` START/END
+markers. With the exact mirror present, the focused test and full self-test
+passed **12/12 rules / 74 controls**, including a planted missing-START control.
+Two consecutive artifact checks matched all **332** pins and both protected
+databases in **0.12 s / 0.13 s real**; `run` remained exactly **45,409 bytes**
+at its authorization-grade hash. Project-root `export-check` passed at
+**100 derived / 7 required / 152 exported / 2,724,915 bytes / 2 retained
+cycles**, exactly v0.35–v0.36, with both protected byte classes excluded.
+
+The exact acceptance entry point `./run ci-local`, run with normal loopback and
+process-inspection permissions, passed release-version consistency and then
+stopped at active-cycle consistency with exactly two defects:
+
+1. `AGENTS.md:635: stale/cycle-specific task path
+   'TASKS-v0.36-EXECUTION.md' appears outside the active declaration`. The
+   runbook simultaneously requires the marker block verbatim, including that
+   literal, while the existing `check_contract_cycle_paths` rule rejects every
+   cycle-specific task path below AGENTS §0.
+2. `STATE.md: publication post-push record required: expected exactly one
+   complete record for v0.17.2; found 0`. Local annotated tag `v0.17.2` points
+   at closing commit `9996c6820d720160b64607575d0270d2e5393ef9`; activation makes
+   HEAD its descendant, so the current R-CLOSE checker requires the record that
+   the contract defines as post-publication. The tag is explicitly unpublished,
+   no hosted publication run exists, and publication is the runbook's retained
+   ask-first gate.
+
+This is the runbook's stop-and-report condition for an instruction that cannot
+be executed without violating another instruction. No post-push record was
+fabricated, the local release tag was not deleted, publication was not
+performed, the verbatim block was not weakened, and the scope-forbidden
+`tools/cycle_check.py` was not changed. The unaccepted Step 0 implementation
+was restored; its checkbox remains open. The restored standing self-test passes
+**12/12 rules / 73 controls**, manifest schema validation passes for **2
+artifacts / 332 pinned files**, and the post-restore golden pipeline passes
+**11/11** with zero delta. The operator-supplied amendment remains untracked
+and untouched. Because the runbook says everything requires Step 0 complete,
+E0 and Steps 2–7 were not started.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

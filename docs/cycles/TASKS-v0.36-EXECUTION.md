@@ -164,6 +164,32 @@ report it and proceed by activating first, then applying 0a–0d.
 - The `operator-local` disambiguation is present and adjacent to the existing
   definition, not in a footnote.
 
+### Step 0 stop-and-report disposition — 2026-08-03
+
+**BLOCKED; checkbox remains open.** The pre-activation attempt produced the
+Step 0e lifecycle objection and activation therefore ran first. After the exact
+authority block, mirror, generalized R6, and two planted R6 controls were
+assembled, the real full self-test passed 12/12 rules / 74 controls and
+artifact verification matched all 332 pins. The exact acceptance entry point
+`./run ci-local` then passed release-version consistency and failed
+active-cycle consistency with two defects:
+
+1. the verbatim authority block's `TASKS-v0.36-EXECUTION.md` literal is below
+   AGENTS §0, where the existing checker forbids every cycle-specific task path;
+2. because activation is a descendant of the local annotated v0.17.2 closing
+   tag, the checker requires the R-CLOSE post-push record, but the tag is
+   explicitly unpublished, no hosted publication run exists, and publication
+   is the retained ask-first gate.
+
+The experiment was restored after measurement. No post-push record was
+fabricated, no local tag was deleted, no publication occurred, the required
+verbatim text was not rewritten, and the scope-forbidden lifecycle checker was
+not changed. The restored suite passes 12/12 rules / 73 controls and the
+post-restore golden pipeline passes 11/11 with zero delta. This is §3
+stop-and-report condition 3: Step 0 cannot satisfy its clean-`ci-local`
+acceptance under the runbook's simultaneous instructions. By §5, every later
+step remains dependency-blocked.
+
 ---
 
 ## 2. Decisions taken — do not re-litigate
@@ -637,43 +663,43 @@ governed.
 
 ## Deferred means deferred
 
-Each row keeps its original trigger. A v0.36 observation records that the
-trigger has **not** fired; it does not weaken, restate, or re-scope it.
+Each row keeps its original trigger. A v0.36 observation records the measured
+trigger state; it does not weaken, restate, or re-scope it.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.36 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | *record dated observation* | none |
-| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | *record dated observation* | none |
-| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | *record dated observation* | none |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | *record dated observation* | none |
-| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | *record dated observation* | none |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | *record dated observation* | none |
-| Postgres / pgvector / multi-host seam | unchanged | *record dated observation* | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | *record dated observation* | none |
-| L2 forced-command wrapper | an operator server session | *record dated observation* | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | *record dated observation* | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | *record dated observation* | none |
-| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | *record dated observation* | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | *record dated observation* | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | *record dated observation* | none |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | *record dated observation* | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | *record dated observation* | none |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | *record dated observation* | none |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | *record dated observation* | none |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | *record dated observation* | none |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | *record dated observation* | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | *record dated observation* | none |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | *record dated observation* | none |
-| Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | *record dated observation* | none |
-| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | *record dated observation* | **Step 5 and Step 7** |
-| SEC EDGAR admission | the three v0.25 determinations closed: license enum semantics, terms-level automated-access gate, feed shape | *record dated observation* | none |
-| License enum semantics | a second publisher requires a license value the current enum cannot express | *record dated observation* | none |
-| Terms-level automated-access gate | a candidate publisher's terms restrict automated access beyond robots.txt | *record dated observation* | none |
-| Feed shape observation | a publisher feed shape not covered by a captured observation | *record dated observation* | none |
-| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | *C1's seam may fire this — record a dated observation* | **Step 4** |
-| ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the two restatements diverge | *record dated observation* | none |
-| Review-export capacity | the governed export crosses its declared ceiling | *record dated headroom in bytes, %, and cycles* | **Step 7** |
-| Public value-domain control (G6) | a `/v1/*` field's value domain changes with no control to detect it | *record C4's dated decision and its basis* | **Step 7 if C4 defers** |
+| T7 robots single-flight | a second concurrent harvester | v0.36 · 2026-08-03 — Step 0 started no harvester and observed no second concurrent harvester; the trigger did not fire. | none |
+| NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.36 · 2026-08-03 — Step 0 made no live publisher request, observed no transient robots outage, and received no separate operator authorization; the trigger did not fire. | none |
+| Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.36 · 2026-08-03 — Step 0's declared scope forbids the net request path and no live 304 was observed; the trigger did not fire. | none |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.36 · 2026-08-03 — Step 0's scope forbids `crates/ingest/src/**` and no connector review occurred; the trigger did not fire. | none |
+| Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.36 · 2026-08-03 — Step 0 ran no live publisher runtime, added no origin, and observed no concurrency; the trigger did not fire. | none |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.36 · 2026-08-03 — No separately authorized scheduled window or recurring SEC run occurred; the trigger did not fire. | none |
+| Postgres / pgvector / multi-host seam | unchanged | v0.36 · 2026-08-03 — Step 0 changed governance controls only and observed no Postgres, pgvector, or multi-host seam; the unchanged trigger did not fire. | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.36 · 2026-08-03 — Step 0 introduced neither a third-party shell nor a replacement-shell HC1 claim; the trigger did not fire. | none |
+| L2 forced-command wrapper | an operator server session | v0.36 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.36 · 2026-08-03 — The unaccepted Step 0 experiment registered the new authority-marker vocabulary and proved missing-marker and mismatch controls, then was restored after the lifecycle gate tripped. The standing R3/R4 vocabulary remains unchanged, its restored self-test passes, and no unregistered credential or path spelling was observed. The trigger did not fire. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.36 · 2026-08-03 — Step 0 neither authorizes evidence-topology changes nor changes the existing net-floor lane; the trigger did not fire. | none |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.36 · 2026-08-03 — Step 0 changes no workflow, verifier pin, bundle, or accepted workflow contract; the trigger did not fire. | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.36 · 2026-08-03 — No third-publisher compliance review or admission decision occurred; the trigger did not fire. | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.36 · 2026-08-03 — No publication authorization or remote ref mutation occurred; the trigger did not fire. | none |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.36 · 2026-08-03 — The historical tags remain unpublished and no hosted full-history removal proof was produced; the trigger did not fire. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.36 · 2026-08-03 — The unchanged manifest measured 193,057 / 1,048,576 bytes and two clean checks took 0.12 s and 0.13 s real; neither trigger fired. | none |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.36 · 2026-08-03 — The declared scope forbids shell source changes and Step 0 changes no `app.py` byte; the trigger did not fire. | none |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — No operator decision displacing the current prose adjudication occurred; C4 remains scheduled before close. The trigger did not fire. | none |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — The Step 0 export measured 2,724,915 / 3,000,000 bytes and pre-Step-0 `STATE.md` measured below its 453,741-byte boundary; neither trigger fired. | none |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Activation and Step 0 change lifecycle documentation and governance controls only; no runtime-behaviour or public-surface difference was measured and the v0.17.1 publication-epoch count remains 0. Neither trigger fired. | none |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
+| Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
+| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — v0.35 closed with a delivered export differing from its governed figure and no cycle-ending audit field. The trigger is fired and remains assigned to Step 5, with Step 7 responsible for the v0.36 close. | **Step 5 and Step 7** |
+| SEC EDGAR admission | the three v0.25 determinations closed: license enum semantics, terms-level automated-access gate, feed shape | v0.36 · 2026-08-03 — The three historical v0.25 determinations remain closed; Step 0 performs no new admission or wire request and leaves the existing disposition unchanged. | none |
+| License enum semantics | a second publisher requires a license value the current enum cannot express | v0.36 · 2026-08-03 — No second publisher or new license value was proposed; the trigger did not fire. | none |
+| Terms-level automated-access gate | a candidate publisher's terms restrict automated access beyond robots.txt | v0.36 · 2026-08-03 — No candidate publisher or new terms review occurred; the trigger did not fire. | none |
+| Feed shape observation | a publisher feed shape not covered by a captured observation | v0.36 · 2026-08-03 — No publisher feed was fetched and no uncovered shape was observed; the trigger did not fire. | none |
+| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.36 · 2026-08-03 — Step 0 changes no store/view dependency edge; C1 remains scheduled to evaluate the seam before Step 4. The trigger did not fire. | **Step 4** |
+| ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the two restatements diverge | v0.36 · 2026-08-03 — Step 0 leaves both tag-mechanics restatements byte-unchanged and observed no divergence; the trigger did not fire. | none |
+| Review-export capacity | the governed export crosses its declared ceiling | v0.36 · 2026-08-03 — The current worktree export measured 2,724,915 bytes, leaving 275,085 bytes / 9.17% or 1.28 cycles at the latest 215,306-byte adjacent-cycle denominator. The trigger did not fire; Step 7 will remeasure the release commit. | **Step 7** |
+| Public value-domain control (G6) | a `/v1/*` field's value domain changes with no control to detect it | v0.36 · 2026-08-03 — Step 0 changes no `/v1/*` production source or serialized field value domain. C4 remains scheduled to decide the control before close; the trigger did not fire. | **Step 7 if C4 defers** |
 
 ---
 
