@@ -105,3 +105,41 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0**. The permission-complete command passed **11/11**.
 - amendment inputs: PASS. Both reviewer-supplied amendment files remain
   untracked and untouched.
+
+### 2026-08-03 · AUTONOMY — corrected authority installation
+
+- owner: Codex
+- runbook: `docs/cycles/TASKS-v0.36-EXECUTION.md`
+- commit: b38579ddd0e8080b786701da8436afc05c54a799
+- result: PASS under A1r2's explicit interim verification lane. The
+  cycle-neutral authority block is present exactly once in each governing
+  document, the two copies are byte-identical, and the adjacent
+  `operator-local` clarification makes execution responsibility explicit.
+- mirror/control acceptance: PASS. Generalized R6 derives both authority
+  marker names and requires one ordered pair per document. Its real
+  missing-START and mismatch mutations fail; the complete registered scan
+  passes **12/12 rules / 74 controls**.
+- placement acceptance: PASS. `CONTRACT_CYCLE_PATH_RE` finds only
+  `TASKS-v0.36-EXECUTION.md` and `PROGRESS-v0.36.md` at AGENTS lines 16–17,
+  both above the line-25 §0 boundary; the new block contributes no match.
+- interim lifecycle acceptance: EXPECTED PENDING. Direct `cycle-check` reports
+  exactly the missing v0.17.2 post-push record and no other defect. Step 1A
+  owns that truthful lifecycle state; no record was fabricated and no tag or
+  remote ref moved.
+- individual job identities: EXERCISED **22/22**, omitted **0**. Twenty passed:
+  version consistency, invariant self-test, deferred evidence, Python
+  byte-compile, ShellCheck, workspace check/test, net check/test, net 1.86
+  success, net 1.85 refusal, clippy, rustfmt, Rust 1.78 check/test, shell pytest,
+  golden, artifacts, persisted fingerprints, and progress-check. The shell
+  lane passed **366/366** with the one accepted warning; artifacts matched all
+  **332** pins and both protected databases.
+- checklist identity: FINDING, not hidden. `checklist-audit` compares the
+  progress entry's qualified repository-relative runbook path with a basename,
+  so ACTIVATE remains unmatched. This is the scheduled G2/G4/G5 instance owned
+  by Step 2; repairing it here would violate task order.
+- golden-E2E delta: **0**. The final permission-complete command passed
+  **11/11**.
+- protected/scope acceptance: PASS. `run` remains **45,409 bytes** at its
+  existing authorization-grade pin. No dependency, production source,
+  protected byte, v0.35 byte, amendment input, tag, or remote ref changed.
+- governed review-export measurement: tree=`b38579ddd0e8080b786701da8436afc05c54a799`; bytes=`2766495`
