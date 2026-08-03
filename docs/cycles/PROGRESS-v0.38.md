@@ -253,3 +253,46 @@ Grant A and Grant B; neither is generalized beyond those written bounds.
   within the acceptance criteria and disclosed scope; DR12 did not trip.
 - golden-E2E delta: **0**. The final permission-complete full gate passed
   **11/11**.
+
+### 2026-08-04 · RE-MEASURE — exact candidate passed 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.38-EXECUTION.md`
+- commit: 2687d6c3b332d77fe0f3e1e35d3130b8111d4dc3
+- condition/result: PASS. The operational `run` path and executable controls
+  moved, so hosted verification ran on exact audited candidate
+  `816a0648c0dd9f4be1caad01ed3395997671cf25`.
+- local acceptance: PASS. The exact candidate passed permission-capable
+  `ci-local` at **22/22** identities, including Python 3.11 **373/373**, scan
+  **15/15 rules / 84 controls**, both Rust floor pairs, all protected
+  artifacts, and golden **11/11**. Its independent local Python 3.12 lane
+  passed the identical **373/373** population with no skips.
+- candidate/ref acceptance: PASS. Immediately before ref creation,
+  `git ls-remote --exit-code` returned **2** with no output for fresh
+  `refs/heads/codex/v0.38-evidence-816a064`. A first command used an incorrect
+  guessed full SHA, was rejected `bad object` / `remote unpack failed`, and
+  created no ref; a fresh absence check again returned **2** with no output.
+  After `git rev-parse` resolved the full candidate, one non-force push created
+  exactly the named ref. No existing ref was retried, forced, or moved.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30852480662**, attempt
+  **1**, targeted the exact SHA/ref and completed `success`. All **9/9**
+  blocking identities passed and persisted **9 receipts / 9 Sigstore
+  bundles**; dependency drift was the sole report-only skip. The workflow was
+  dispatched once and not retried.
+- population acceptance: PASS. Each hosted shell lane collected **373**,
+  passed **372**, and skipped only named
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  with its declared protected-corpora/built-core reason and `on_site` marker.
+  Both direct `tools/test_population.py` comparisons derived
+  `equivalent=true`, `equivalent_passed=373`, and one allowed hosted skip.
+- remote acceptance: PASS. Final `ls-remote` resolves the evidence ref to the
+  exact candidate, keeps `main` at `a7d6c80e…`, and keeps the v0.17.2,
+  v0.17.3, and v0.17.4 annotated objects unchanged. No unrelated ref moved.
+- protected-input acceptance: PASS. The three amendment inputs remain
+  untouched and untracked. No workflow, dependency, protected byte,
+  publisher-wire path, entitlement/licensing outcome, serialized value
+  domain, release tag, or publication authority moved.
+- stop conditions: none. The rejected bad-object push was a remote non-result
+  and the fresh-ref precondition remained true before the successful push.
+- golden-E2E delta: **0**. Hosted and exact-candidate local golden each passed
+  **11/11**.
