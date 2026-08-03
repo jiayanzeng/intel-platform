@@ -39,3 +39,46 @@ Entries are append-only; corrections are new dated entries.
   protected byte, production source, dependency, publisher/scheduler
   configuration, version authority, tag, or remote ref. The operator-supplied
   amendment remains untracked and untouched.
+
+### 2026-08-03 · AUTONOMY — stopped at lifecycle-contract conflict
+
+- owner: Codex
+- runbook: `docs/cycles/TASKS-v0.36-EXECUTION.md`
+- commit: 1c67a81a6fa0bca48e03a8127550499efd0a5520
+- result: **BLOCKED** under §3 stop-and-report condition 3. Step 0 cannot
+  satisfy its clean-`ci-local` acceptance under the runbook's simultaneous
+  instructions, so its checkbox remains open and every later step remains
+  dependency-blocked.
+- ordering measurement: FAIL before activation in the way Step 0e anticipated.
+  With v0.35 still declared, `ci-local` rejected the v0.36 task path and
+  treated the new runbook as an incomplete older cycle. The documented
+  exception activated v0.36 first.
+- mirror/control experiment: PASS before the gate. The unmirrored real scan
+  failed on missing Operations START/END markers. After the exact mirror and
+  generalized R6 were assembled, the focused test and full self-test passed
+  **12/12 rules / 74 controls**, including the planted missing-START and
+  mismatch cases. This unaccepted implementation was restored after the gate;
+  the restored standing suite passes **12/12 rules / 73 controls**.
+- exact acceptance entry point: FAIL. The permission-complete `./run ci-local`
+  passed release-version consistency, then stopped at active-cycle consistency
+  with exactly two defects: the verbatim authority block's
+  `TASKS-v0.36-EXECUTION.md` literal is forbidden below AGENTS §0, and the
+  v0.17.2 local-tag descendant requires a post-push record that cannot
+  truthfully exist while the release is unpublished and has no hosted
+  publication run.
+- artifact/export acceptance: PASS. Two complete artifact checks matched all
+  **332** pins and both databases in **0.12 s / 0.13 s real**; `run` remained
+  **45,409 bytes** at its pinned hash. Project-root export-check passed at
+  **100 derived / 7 required / 152 exported / 2,724,915 bytes / 2 retained
+  cycles**, exactly v0.35-v0.36, with both protected byte classes excluded.
+- operator-local acceptance: NOT LANDED. The requested adjacent clarification
+  was assembled and measured, then restored with the rest of the unaccepted
+  Step 0 implementation; retaining it while the task is blocked would present
+  partial implementation as accepted work.
+- prohibited alternatives: NOT TAKEN. No post-push record was fabricated, no
+  local tag was deleted, no release was published, the required verbatim block
+  was not weakened, and scope-forbidden `tools/cycle_check.py` was not changed.
+- golden-E2E delta: **0**. The post-restore permission-complete command passed
+  **11/11**.
+- amendment acceptance: PASS. The operator-supplied untracked amendment remains
+  untouched.
