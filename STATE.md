@@ -53,6 +53,69 @@ sandbox-denied loopback bind was classified as a non-result. No dependency,
 production source, protected byte, observation, fixture, or unauthorized ref
 moved during activation.
 
+**v0.38 E0 — entering-state reconstruction (measured 2026-08-04).** The seven
+runbook rows were treated as hypotheses and checked at their real entry points.
+H1's local graph is confirmed: release parent
+`514bec6c95e47017fafab452775ac4b8824ca6b9` has parent
+`11cad3c22f1eebb8bb838389d8f7e75abfd9426d`; closing commit
+`f4f2690a442d7a77f1dabb53fb3a120a2c987e97` has the release parent as its
+immediate parent; and audit child
+`a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0` has the closing commit as its
+immediate parent. Annotated object
+`902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to that closing commit,
+and `e068cacc76685791c54ab47c84be6abbd592271d` is an ancestor of the audit
+child. Grant A truthfully superseded H1's remote half: immediately before P1,
+remote `main` was `e068cacc…` and v0.17.4 was absent; fresh E0 readback is
+`main=a7d6c80e…`, tag object `902d30f0…`, and peeled target `f4f2690a…`.
+
+H2 is partly refuted after publication. Before this E0 record, `STATE.md` is
+**110,556 / 453,741 bytes**, not 107,454. Structural archive
+`docs/state-archive/STATE-through-v0.35.md` is confirmed at **258,658 bytes**
+and SHA-256
+`fb1114f68755cbb8fc5d1fdad9e2ec114bf2604871102fa84d280f2bc90191a7`,
+matching its manifest pin. State now contains **3** complete post-push records,
+not 2, plus the same **3** truthful historical unpublished-local observations;
+the v0.17.4 post-push record now takes precedence over its historical absence
+observation. The manifest is **193,830 / 1,048,576 bytes**, and complete
+verification matches **2 artifacts / 333 pinned files**.
+
+H3 is corrected at the measured units. The live registry passes **15 rules /
+84 planted controls**, with **9** checklist exemptions and **3** historical
+retractions. Before E0's box was checked, the checklist population was **297
+checked / 288 matched / 288 resolved / 9 exemptions**, not 295/286+9. The
+v0.17.4 response-domain baseline is exact **47,135 bytes** over **6 routes /
+31 status-media response variants / 112 recursive field occurrences**;
+`domain_manifest.py check` passes. H4 is confirmed: `config/core.json` names
+`sec-edgar-usgaap`, exact real RSS URL
+`https://www.sec.gov/Archives/edgar/usgaap.rss.xml`, license
+`PublisherPermitted`, and `robots_on_missing=deny`. All four substantive v0.25
+observation pins plus their directory `.gitattributes` match, and the focused
+shipped-parser replay passes **3/3** over the pinned RSS body.
+
+H5 remains deliberately unmeasured until Step 2 derives the admission clauses;
+E0 does not convert fixture evidence into wire evidence or predeclare that
+partition. H6 is refuted: `config/schedule.json` already schedules both
+`filings-digest=7200` and `sec-edgar-usgaap=600` for `quant-desk`. Step 2A
+therefore must not edit the schedule merely to enable SEC; it must exercise the
+already-scheduled source through the normal fresh path and append the required
+admission record. H7 is refuted by the exact activation-tree export:
+**2,596,652 bytes / 158 files / 2 retained cycles**, leaving **403,348 bytes /
+13.44% / 2.81 cycles** at +143,456 bytes/cycle. The derived retention boundary
+excludes through v0.36 and retains exactly v0.37–v0.38, not through v0.35.
+
+The standing entering gate passed with no stop. Initial porcelain named exactly
+the three historical untracked amendment inputs, all still untouched. Full
+permission-complete `./run ci-local` passed **22/22** identities. It executed
+the registered self-test at **15/15 rules / 84 controls**, the Rust 1.78
+offline lanes, the Rust 1.86 net success and Rust 1.85 declared-MSRV refusal,
+Python 3.11 at **370/370**, SEC replay at **3/3**, artifact verification, and
+golden at **11/11**. A separate Python 3.12 run collected the identical
+**370/370** population with no skips. `version-check` derives **3** executable
+offline pins at 1.78, **22** offline-floor current restatements, and **3**
+release-version restatements at 0.17.4 across the classified **579** tracked
+files. No dependency, protected byte, golden input, entitlement/licensing
+outcome, production source, fixture, observation, or unauthorized ref moved.
+
 **v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
 (measured 2026-08-03).** Immediately before the one-time grant was spent,
 `git ls-remote origin refs/heads/main refs/tags/v0.17.2
