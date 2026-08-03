@@ -226,7 +226,9 @@ introduction at **6,869 bytes**, SHA-256
 Permission-complete Python 3.11 and 3.12 each passed the identical **370/370**
 collected population with no skips and the one accepted
 `StarletteDeprecationWarning`. The authoritative golden pipeline passed
-**11/11** with zero delta. The native OpenAPI description now makes the
+**11/11** with zero delta. Exact hosted evidence run **30834599847**, attempt
+**1**, subsequently passed all **9/9** blocking identities on the audited
+v0.37 candidate. The native OpenAPI description now makes the
 already-serialized field/domain contract explicit, but no `/v1/*` route,
 response byte, field name, field domain, entitlement, licensing outcome,
 dependency, or protected artifact moved. DR9 clause 2 therefore has an
@@ -259,6 +261,41 @@ focused payload/runtime test passed under Python 3.11 and 3.12 without changing
 the **370-test** population. The failed evidence ref remains immutable and no
 run was retried; RE-MEASURE remains open until a fresh candidate/ref completes
 all nine identities.
+
+**v0.37 RE-MEASURE — fresh audited candidate passed 9/9 (measured
+2026-08-03).** After the topology repair and its separate audit record, exact
+candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed the complete
+permission-capable local matrix at **22/22** jobs. The first sandboxed matrix
+attempt was a measured non-result only at the live-client loopback-bind test;
+the identical permission-complete run passed the net suite, Rust 1.78 and net
+1.86 lanes, the expected locked-graph Rust 1.85 refusal, all **15/15 rules / 84
+controls**, Python 3.11 at **370/370**, golden at **11/11**, every protected
+artifact, and the append-only progress check.
+
+Fresh ref `refs/heads/codex/v0.37-evidence-99012c8` was absent immediately
+before one non-force push created it at that exact candidate. The pre-push and
+final readbacks kept remote `main` exact at
+`e068cacc76685791c54ab47c84be6abbd592271d`, v0.17.2 tag object/target exact at
+`16ee7bcb2214859156edbceeb5e314ac1a67f39b` /
+`9996c6820d720160b64607575d0270d2e5393ef9`, and v0.17.3 exact at
+`0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` /
+`a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`. The failed first-candidate ref
+also remained exact at `2e5921f0d0d3f4d64bde56b95325216d33caa59b`; no ref was
+reused, forced, deleted, or repurposed.
+
+Workflow-dispatch run **30834599847**, attempt **1**, completed `success` at
+the declared SHA/ref. All **9/9** blocking identities passed and persisted
+**9 receipts / 9 Sigstore bundles**; dependency drift was the only declared
+report-only skip. The run was dispatched once and not retried. The repository
+comparator independently derived both supported Python populations: local
+3.11 and 3.12 each passed **370/370**; each hosted lane collected **370**,
+passed **369**, and skipped only
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`,
+with its explicit `on_site` marker and protected-corpus reason. Both
+comparisons reported `equivalent=true` and `equivalent_passed=370`. Hosted and
+local golden remained **11/11**. No workflow, dependency, protected byte,
+publisher wire, entitlement/licensing outcome, public value domain, release
+ref, or publication authority moved; Step 5's condition is fully discharged.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task

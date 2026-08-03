@@ -492,6 +492,27 @@ actual route/type AST and the installed shell population separately proves
 equivalence to runtime OpenAPI. Step 5 remains open; only a new exact candidate
 on a fresh non-force evidence ref can satisfy it.
 
+### Step 5 completion — 2026-08-03
+
+Exact topology-repaired audit candidate
+`99012c86dcdda8ea32f1b1afa016f793118e9087` first passed the complete
+permission-capable local matrix at **22/22** jobs. Immediately before the only
+push for this candidate, `git ls-remote` exited **0** with no entry for fresh
+ref `refs/heads/codex/v0.37-evidence-99012c8`; one non-force push created that
+one ref at the exact candidate. Remote `main`, v0.17.2, and v0.17.3 remained
+exact, and the failed first-candidate ref remained immutable.
+
+Workflow-dispatch run **30834599847**, attempt **1**, completed `success` on
+that exact SHA/ref. All **9/9** blocking identities passed and persisted
+**9 receipts / 9 Sigstore bundles**; report-only dependency drift was the sole
+skip. The run was dispatched once and not retried. Both local shell lanes
+passed **370/370**. Both hosted lanes collected **370**, passed **369**, and
+skipped only the named, reasoned, `on_site` production-audit node;
+`tools/test_population.py` independently derived `equivalent=true` and
+`equivalent_passed=370` for Python 3.11 and 3.12. Hosted and local golden
+passed **11/11**. Final readback kept both evidence refs exact and remote
+`main`/published tags unchanged; no other ref moved.
+
 ---
 
 ## Step 6 · R-CLOSE
@@ -556,7 +577,7 @@ governed.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.37 · 2026-08-03 — No third-party shell or replacement-shell HC1 claim appeared; the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.37 · 2026-08-03 — No operator server session occurred; the trigger did not fire. | none |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.37 · 2026-08-03 — DOMAIN-MANIFEST's complete registered scan passed **15/15 rules / 84 controls**; R3/R4 found no outside spelling. | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.37 · 2026-08-03 — Hosted PUBLISH run 30824053490 executed the pinned Rust 1.86 success lane, while workflow/evidence topology remains scope-forbidden; the combined trigger did not fire. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.37 · 2026-08-03 — RE-MEASURE run 30834599847 most recently executed and passed the pinned Rust 1.86 success lane, while workflow/evidence topology remains scope-forbidden; the combined trigger did not fire. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.37 · 2026-08-03 — No verifier pin or accepted bundle/workflow contract changed; the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.37 · 2026-08-03 — No third-publisher review or admission occurred; the trigger did not fire. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.37 · 2026-08-03 — DR7 moved only main, v0.17.2, and v0.17.3; it did not authorize or move either historical tag. | none |
@@ -566,7 +587,7 @@ governed.
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.37 · 2026-08-03 — DOMAIN-MANIFEST completed the authorized G6 subcase: R15 now derives and diffs every declared `/v1/*` response domain. Other heterogeneous R-CLOSE criteria remain prose adjudications. | **Step 4 completed 2026-08-03** |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.37 · 2026-08-03 — DR8 authorized completion ahead of the unchanged trigger: the post-record live State is **94,681 / 453,741 bytes** and the structural archive is pinned at **258,658 bytes**. Neither boundary trigger had fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.37 · 2026-08-03 — The active cycle is v0.37; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Exact publication of v0.17.3 resets the count to zero at its closing commit. DOMAIN-MANIFEST adds validation and native derivation for the already-serialized contract, while the complete ten-response witness remains exact at **6,869 bytes / SHA-256 `dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`**, the manifest diff is empty, and golden is **11/11**. No measured runtime or public `/v1/*` surface difference starts or fires the trigger. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.37 · 2026-08-03 — Exact publication of v0.17.3 resets the count to zero at its closing commit. DOMAIN-MANIFEST adds validation and native derivation for the already-serialized contract, while the complete ten-response witness remains exact at **6,869 bytes / SHA-256 `dfec8ff81d68526dd5468ce22660be9d7678c6a8fdd8e52d6ac921c83371cef3`**, the manifest diff is empty, and hosted RE-MEASURE golden most recently passed **11/11**. No measured runtime or public `/v1/*` surface difference starts or fires the trigger. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.37 · 2026-08-03 — PUBLISH changed no Rust-floor restatement or registry member, and the registered scan passed. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.37 · 2026-08-03 — ACTIVATE derives exactly the v0.36–v0.37 retained set and advances only the excluded boundary through v0.35. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.37 · 2026-08-03 — v0.36's immediate audit child already records its closing-tree difference; v0.37 remains open. | none |
@@ -609,7 +630,7 @@ governed.
 - [x] TEST-ISOLATION
 - [x] STATE-ARCHIVE
 - [x] DOMAIN-MANIFEST
-- [ ] RE-MEASURE
+- [x] RE-MEASURE
 - [ ] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.37.md` entry ids exactly; the box-coverage
