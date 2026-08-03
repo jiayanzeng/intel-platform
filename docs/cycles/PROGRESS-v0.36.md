@@ -537,3 +537,74 @@ Entries are append-only; corrections are new dated entries.
   from the implementation commit.
 - scope acceptance: PASS. No production source, dependency, release authority,
   protected byte, v0.35 byte, tag, `main`, or remote ref moved.
+
+### 2026-08-03 · R-CLOSE — v0.17.3 tagged close
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: 9946cedae75d99c53d17a6f8b5507d10cb9bd959
+- result: PASS. DR5 selects patch **v0.17.3** because DR1 corrects reachable
+  cross-sector runtime document selection without adding a route, named
+  surface, response-body shape, field type, or serialized `/v1/*` value-domain
+  value. The untagged release parent is this checked closing commit's immediate
+  parent; the annotated tag is created locally only after this tree exists.
+- DR5 clause-2 acceptance: PASS. The complete configured-subscription
+  comparison across signals, brief, search, ask, and both billing routes is
+  byte-identical at **15,719 bytes**, SHA-256
+  `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`.
+  The synthetic cross-sector witness moves document selection, so the patch
+  reason expressly names that runtime correction.
+- version acceptance: PASS. `version-check` derives **0.17.3** from all five
+  executable authorities, with **3** offline-MSRV pins at raw 1.78.0, **22**
+  current offline-MSRV restatements at 1.78, and **3** current release
+  restatements at 0.17.3. Cargo changes only cored's lockfile package value.
+- evidence-anchor acceptance: PASS. Candidate `f50db674…`, run 30810557834,
+  its **9/9** accepted signed matrix, and asserted **1.78.0 / 1.86.0 / 1.85.0**
+  receipt toolchains anchor the close. Both hosted shell comparisons derive
+  equivalent populations of **368**, and hosted golden passes **11/11**.
+- governed review-export measurement: tree=`9946cedae75d99c53d17a6f8b5507d10cb9bd959`; bytes=`2885942`
+- governed-export acceptance: PASS. The exact release parent produced **100
+  derived / 7 required / 154 exported / 2,885,942 bytes**, retained exactly
+  v0.35–v0.36, and excluded both protected byte classes. Against v0.35's
+  2,742,486-byte governed field, the latest adjacent-cycle denominator is
+  **143,456 bytes**; **114,058 bytes / 3.80% / 0.80 cycles** remain.
+- artifact-boundary acceptance: PASS. Assembled closing State measures
+  **339,913 / 453,741 bytes**, leaving **113,828 bytes /
+  2.73 cycles** at the adjacent v0.35 release-parent basis. The
+  manifest remains **193,057 / 1,048,576 bytes**, leaving **855,519 bytes /
+  842.88 cycles**. Export is nearest. The release-parent gate matched all
+  **332** pins and both protected databases; latest duration-bearing checks
+  remain 0.12 s / 0.13 s.
+- deferral acceptance: PASS. Every active row carries a dated v0.36
+  observation. C4 remains deferred because all six `/v1/*` routes lack an
+  exhaustive machine-readable response/domain authority; a partial control
+  would recreate the empty-witness defect.
+- invariant acceptance: PASS. The exact release-parent full gate passed
+  **14/14 rules / 81 controls** with **0** hand-typed absolute finding-line
+  fields. The unchanged planted lifecycle controls retain the published-
+  release post-push requirement.
+- divergence acceptance: PASS. This is the first consecutive closed cycle in
+  published v0.17.1's current epoch whose unpublished distance carries the
+  measured runtime-behavior correction, so the count is **1**. No public
+  surface moves, and local close does not reset the epoch.
+- publication acceptance: PASS at the authorized boundary. Direct readback
+  found no remote v0.17.3 tag. No push, `main` movement, or release-tag
+  publication occurred. The local annotated tag targets only the closing
+  commit after it exists; the immediate audit child owns the exact closing-
+  tree export field before handoff.
+- checklist acceptance: PASS at the assembled closing worktree: **287 checked
+  / 3 retracted / 278 matched / 278 commits resolved / 9 exemptions**; v0.36
+  is nonempty at **10/10/10**.
+- full local acceptance: PASS **22/22** jobs at the exact release parent. Both
+  shell lanes pass **368/368** with the accepted warning, Rust 1.78 and net
+  1.86 pass, net 1.85 produces the required locked-ICU refusal, and every
+  protected artifact matches. The immediate audit child re-executes the full
+  gate over the delivered head.
+- golden-E2E delta: **0**. The release-parent embedded and standalone pipeline
+  passes **11/11**, and the assembled closing-worktree standalone run also
+  passes **11/11**. The final audit-child embedded run is reported after its
+  executable point exists.
+- scope acceptance: PASS. Only declared release authorities and the active
+  State/runbook/progress/Architecture records moved. No dependency graph,
+  protected byte, fixture, observation, closed-cycle document, publisher
+  request, workflow, `main`, or remote release ref moved.

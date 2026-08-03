@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.36 R-CLOSE is preparing the DR5-selected patch release locally; publication remains unauthorized.** v0.17.2 remains closed locally and unpublished while the v0.17.3 release parent is assembled; release commit `d4258883645a99f9499895bf064e453de9be1281` remains the immediate parent of the locally tagged v0.17.2 closing record. Authenticated run `30810557834` passed all **9** blocking identities at exact production candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact Step 6 assembled local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and the golden E2E passes **11/11** locally and hosted. Step 5 independently supplied v0.35's missing non-governing export-audit field. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main`, v0.17.1, and every release tag remain unchanged unless the operator separately authorizes exact publication.
+**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.36 is closed locally at the DR5-selected patch release and remains unpublished.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of the checked closing record; the local annotated v0.17.3 tag targets that closing record only after it exists. Authenticated run `30810557834` passed all **9** blocking identities at exact production candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact release-parent local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and golden passes **11/11** locally and hosted. The v0.17.1 publication epoch now carries **1** consecutive closed cycle with the measured runtime-behavior difference and no public-surface change. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main`, v0.17.1, v0.17.2, and v0.17.3 remain unchanged unless the operator separately authorizes exact publication.
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task
@@ -510,6 +510,52 @@ three current restatements move with them, and Cargo regenerates only cored's
 lockfile package value. The release parent remains untagged. Its immediate
 child will carry the checked closing record; only that child becomes the local
 annotated-tag target, followed immediately by A2's audit child.
+
+**v0.36 R-CLOSE — v0.17.3 patch release closed locally (measured
+2026-08-03).** Release disposition: release (as of 2026-08-03). Release commit
+`9946cedae75d99c53d17a6f8b5507d10cb9bd959` is untagged and is the immediate
+parent of the checked closing record. DR5 selects patch because DR1 corrects
+reachable cross-sector runtime document selection while the complete
+configured-subscription comparison remains byte-identical at **15,719 bytes**,
+SHA-256
+`0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`.
+No route, named surface, response-body shape, field type, serialized `/v1/*`
+value-domain value, entitlement, or licensing outcome moves; the disposition
+reason expressly names the runtime correction.
+
+`version-check` derives **0.17.3** from all five executable authorities and
+reports **3** offline-MSRV pins, **22** current offline-MSRV restatements, and
+**3** current release restatements. Exact candidate `f50db674…` and hosted run
+30810557834 passed **9/9** blocking identities; the pinned verifier accepted
+all nine bundles and the shell comparator derived equivalent **368**-test
+populations. The release-parent full local gate passed **22/22**, including
+**14/14 rules / 81 controls**, both **368/368** shell lanes, the Rust 1.78 and
+net 1.86 success lanes, the required net 1.85 locked-ICU refusal, all **332**
+pins plus both protected databases, and embedded golden **11/11**.
+
+The exact release-parent export is **2,885,942 / 3,000,000 bytes** across 154
+files with two retained cycles. Against v0.35's **2,742,486-byte** governed
+field, its +143,456-byte adjacent-cycle denominator leaves **114,058 bytes /
+3.80% / 0.80 cycles**. The assembled closing State is **339,913 / 453,741
+bytes**, leaving **113,828 bytes / 2.73 cycles** against the
+v0.35 release-parent State basis of 298,251 bytes. The manifest remains
+**193,057 / 1,048,576 bytes**, leaving **855,519 bytes / 842.88 cycles**.
+Export is nearest.
+
+This close is the first consecutive cycle in published v0.17.1's current epoch
+whose unpublished distance carries the measured cross-sector runtime-behavior
+difference, so the count is **1**. No public surface moved and local close does
+not reset the epoch. C4 remains deferred: all six `/v1/*` routes lack an
+exhaustive machine-readable response/domain authority, and a partial observed-
+field control would be vacuous. Every active deferral row carries a dated
+v0.36 observation.
+
+Direct pre-close `git ls-remote` exited 0 with no remote
+`refs/tags/v0.17.3` entry, and no local tag existed. No push, remote `main`
+movement, or release-tag publication is authorized. The closing commit contains
+no tag-object field; the annotated tag is created locally only after that
+commit exists. Per A2, its immediate append-only child measures the closing
+tree and carries the cycle-ending export-audit field before handoff.
 
 **v0.35 R-CLOSE — operator-selected v0.17.2 patch release closed locally
 (measured 2026-08-03).** Release disposition: release (as of 2026-08-03).

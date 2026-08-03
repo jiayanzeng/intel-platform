@@ -1024,6 +1024,80 @@ control.
 
 ---
 
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-03
+- **Release disposition:** release (as of 2026-08-03)
+- **Release:** `v0.17.3`
+- **Release commit:** `9946cedae75d99c53d17a6f8b5507d10cb9bd959`
+- **Evidence candidate:** `f50db6744df726434db7f5aeffa1a08bbbf521fc`
+- **Candidate hosted run:** `30810557834` attempt 1
+- **Disposition reason:** DR1 changes reachable runtime document selection for
+  a cross-sector near-duplicate corpus: sector-scoped identity now preserves
+  each sector's representative while same-sector duplicates still collapse.
+  The complete configured comparison remains byte-identical at **15,719
+  bytes**, and no route, response-body schema, named surface, field type, or
+  serialized `/v1/*` value-domain value moves. DR5 therefore selects patch
+  **v0.17.3** and names the runtime correction instead of implying that no
+  behavior changed.
+- **Release identity:** `version-check` derives 0.17.3 from all five executable
+  authorities and reports **3** offline-MSRV pins, **22** current offline-MSRV
+  restatements, and **3** current release restatements. The release parent is
+  untagged and is this closing record's immediate parent. This tree contains no
+  annotated-tag-object field; the local annotated tag targets this closing
+  commit only after it exists.
+- **Anchored evidence:** exact candidate `f50db67…` and run 30810557834 passed
+  **9/9** blocking identities and yielded nine receipts plus nine Sigstore
+  bundles. The strict pinned verifier accepted **9**, rejected **0**, and bound
+  each bundle to the exact repository, workflow, candidate, evidence ref, and
+  hosted runner. Asserted floor receipts are **1.78.0 / 1.86.0 / 1.85.0**.
+- **Governed export:** exact release parent
+  `9946cedae75d99c53d17a6f8b5507d10cb9bd959` produced **100 derived / 7
+  required / 154 exported / 2,885,942 bytes / 2 retained cycles**, retaining
+  v0.35–v0.36 and excluding both protected byte classes. Against v0.35's
+  **2,742,486-byte** governed field, the adjacent-cycle denominator is
+  **143,456 bytes**; **114,058 bytes / 3.80% / 0.80 cycles** remain.
+- **Artifact boundaries:** the assembled closing State is **339,913 /
+  453,741 bytes**, leaving **113,828 bytes / 2.73 cycles** at
+  the adjacent v0.35 release-parent basis of 298,251 bytes. The unchanged
+  manifest is **193,057 / 1,048,576 bytes**, leaving **855,519 bytes / 842.88
+  cycles** at +1,015 bytes/cycle. Export is nearest. The release-parent local
+  gate matched all **332** pins and both protected databases; the latest two
+  duration-bearing complete checks remain **0.12 s / 0.13 s**, so neither
+  manifest trigger fired.
+- **Deferral disposition:** every active row carries a dated v0.36 observation.
+  C4 remains deferred under its own no-complete-authority branch: all six
+  `/v1/*` routes lack exhaustive response-domain models, and a partial
+  observed-field control would be vacuous. The release-parent self-test passed
+  **14/14 rules / 81 controls** with **0** hand-typed absolute finding-line
+  fields.
+- **Divergence disposition:** v0.36 is the first consecutive closed cycle in
+  published v0.17.1's current publication epoch whose unpublished distance
+  carries the measured cross-sector runtime-behavior correction. The count is
+  therefore **1**. The configured **15,719-byte** payload comparison is
+  byte-identical and no public surface moves, so the immediate public-surface
+  trigger did not fire. A local close does not reset the publication epoch.
+- **Scope reconciliation:** release authority changed only `Cargo.lock`,
+  `apps/cored/Cargo.toml`, both shell version literals, `CHANGELOG.md`,
+  `README.md`, and the State version header. The `app.py` change is solely its
+  declared release literal. No dependency graph, protected byte, fixture,
+  observation, closed-cycle document, publisher request, or workflow moved.
+- **Publication boundary:** direct pre-close readback found no remote
+  `refs/tags/v0.17.3` entry. No push, `main` movement, or tag publication is
+  authorized or performed. The annotated tag is local-only; A2 requires the
+  immediate next commit to record the measured closing-tree export before
+  handoff.
+- **Checklist reconciliation:** the assembled closing worktree passes at
+  **287 checked / 3 retracted / 278 matched / 278 commits resolved / 9
+  exemptions**, with v0.36 itself nonempty at **10 checked / 10 matched / 10
+  resolved**.
+- **Golden reconciliation:** the release-parent full gate and standalone run
+  pass **11/11**, delta **0**. The assembled closing-worktree standalone run
+  also passes **11/11**; the final audit-child full gate re-executes the
+  embedded pipeline.
+
+---
+
 ## Governed artifact byte-boundary authority
 
 - governed artifact byte boundary: path=`STATE.md`; bytes=`453741`
@@ -1059,21 +1133,21 @@ trigger state; it does not weaken, restate, or re-scope it.
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.36 · 2026-08-03 — No publication authorization or remote ref mutation occurred; the trigger did not fire. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.36 · 2026-08-03 — The historical tags remain unpublished and no hosted full-history removal proof was produced; the trigger did not fire. | none |
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.36 · 2026-08-03 — E0 reverified the unchanged **193,057 / 1,048,576-byte** manifest, all **332** pins, and both protected databases. The latest two duration-bearing clean checks remain 0.12 s and 0.13 s; the E0 invocation did not capture a duration and makes no newer timing claim. Neither trigger fired. | none |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.36 · 2026-08-03 — The declared scope forbids shell source changes and Step 0 changes no `app.py` byte; the trigger did not fire. | none |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.36 · 2026-08-03 — R-CLOSE's declared release-authority precedence permits the exact `shell/intel_shell/app.py` version literal and changes it from 0.17.2 to 0.17.3. No non-version shell byte moved; the trigger fired only for the release literal and is discharged by Step 7's version and scope reconciliation. | **Step 7 completed 2026-08-03** |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.36 · 2026-08-03 — C4 found no complete control constructible in scope: all six `/v1/*` routes lack response models and expose input-, configuration-, core-, or model-derived values without an exhaustive machine-readable domain authority. A partial observed-field control would be vacuous. No operator decision displaced prose adjudication, so the trigger did not fire. | none |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — Corrected Step 0's final project-root export and `STATE.md` byte measurements remain below their 3,000,000-byte and 453,741-byte boundaries; exact current figures are recorded by the governed Architecture row and `cycle-check`. Neither trigger fired. | none |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.36 · 2026-08-03 — R-CLOSE measured the release parent export at **2,885,942 / 3,000,000 bytes** and the assembled closing State at **339,913 / 453,741 bytes**. Both remain below their boundaries; export is nearest and neither archival trigger fired. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.36 · 2026-08-03 — The active cycle is `v0.36`; the version-family trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Step 4 changes reachable runtime behavior for a cross-sector near-duplicate corpus: view now preserves both sector-local identities. The cycle is still open, so no closed-cycle count is added yet and the v0.17.1 publication-epoch count remains 0. A complete before/after measurement over every configured subscription and `/v1/*` route produced the same 15,719-byte payload and SHA-256 `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`; no public-surface trigger fired. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.36 · 2026-08-03 — Step 4's reachable cross-sector runtime correction now closes as the first consecutive cycle in published v0.17.1's current publication epoch with a measured runtime-behavior difference, so the count is **1**. The complete configured comparison remains byte-identical at **15,719 bytes**, SHA-256 `0c2ec212b9e398eddd38053c7157b8dd283f35f3908ad1b8c2f6481a912f09ea`, with no public-surface movement. Neither the three-cycle nor immediate public-surface trigger fired. | none |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.36 · 2026-08-03 — Step 0 changes no Rust-floor restatement or membership registry; no unregistered current restatement was observed and the trigger did not fire. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.36 · 2026-08-03 — Project-root export-check derived exactly v0.35–v0.36 and no omitted or non-derived retained set was observed; the trigger did not fire. | none |
-| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — Step 5 independently measured v0.35 closing commit `9996c6820d720160b64607575d0270d2e5393ef9` at 2,737,957 bytes against its 2,742,486-byte governed field and supplied the missing v0.36 append with audit delta −4,529. That historical trigger is discharged; Step 7 remains responsible for measuring and recording v0.36's own close. | **Step 5 completed 2026-08-03; Step 7** |
+| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.36 · 2026-08-03 — Step 5 supplied v0.35's missing forward audit. A2 now binds v0.36's **2,885,942-byte** governed release-parent field in the closing tree and requires the exact closing-tree measurement in the immediate append-only audit child before handoff; that child, not a post-push append, discharges the current-cycle interaction. | **Step 5 completed 2026-08-03; Step 7 audit child** |
 | SEC EDGAR admission | the three v0.25 determinations closed: license enum semantics, terms-level automated-access gate, feed shape | v0.36 · 2026-08-03 — The three historical v0.25 determinations remain closed; Step 0 performs no new admission or wire request and leaves the existing disposition unchanged. | none |
 | License enum semantics | a second publisher requires a license value the current enum cannot express | v0.36 · 2026-08-03 — No second publisher or new license value was proposed; the trigger did not fire. | none |
 | Terms-level automated-access gate | a candidate publisher's terms restrict automated access beyond robots.txt | v0.36 · 2026-08-03 — No candidate publisher or new terms review occurred; the trigger did not fire. | none |
 | Feed shape observation | a publisher feed shape not covered by a captured observation | v0.36 · 2026-08-03 — No publisher feed was fetched and no uncovered shape was observed; the trigger did not fire. | none |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.36 · 2026-08-03 — C1 re-measured that store and view already share `intel-extract`; the trigger fired. Step 4 discharged it without adding a crate or manifest edge by moving ordering, sector partitioning, eligibility, distance comparison, and canonical selection into shared `assign_dedup_identity`. R14 proves both consumers and the sector key with three planted controls; R5 retains the synchronized boundary-local radius. | **Step 4 completed 2026-08-03** |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the two restatements diverge | v0.36 · 2026-08-03 — Step 0 leaves both tag-mechanics restatements byte-unchanged and observed no divergence; the trigger did not fire. | none |
-| Review-export capacity | the governed export crosses its declared ceiling | v0.36 · 2026-08-03 — E0 corrected the historical v0.17.2 parent/close measurements to 2,725,527→2,737,957 bytes at 151 files; both and the current governed v0.36 figure remain below 3,000,000 bytes. The trigger did not fire; Step 7 will remeasure the release commit. | **Step 7** |
+| Review-export capacity | the governed export crosses its declared ceiling | v0.36 · 2026-08-03 — Step 7 measured exact release parent `9946cedae75d99c53d17a6f8b5507d10cb9bd959` at **2,885,942 bytes / 154 files / 2 retained cycles**. Against v0.35's 2,742,486-byte governed field, **114,058 bytes / 0.80 cycles** remain below the 3,000,000-byte ceiling. The trigger did not fire. | **Step 7 completed 2026-08-03** |
 | Public value-domain control (G6) | a `/v1/*` field's value domain changes with no control to detect it | v0.36 · 2026-08-03 — Step 4's complete configured-subscription comparison produced byte-identical `/v1/*` payloads and DR5 classification found document selection movement on the synthetic corpus but no added, removed, or redefined serialized field-domain value. C4 deferred the general control because no exhaustive machine-readable domain authority exists and a partial observed-field control would be vacuous; a complete release-baselined response/domain manifest would change that decision. This cycle's trigger did not fire. | none |
 
 ---
@@ -1097,7 +1171,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - No retraction added (DR4).
 - The Step 0b ask-first list is not widened by convenience, and the autonomy
   block is never read as permission to proceed past a tripped gate.
-- Both untracked amendment files stay untouched.
+- All three untracked amendment files stay untouched.
 
 ---
 
@@ -1112,7 +1186,7 @@ trigger state; it does not weaken, restate, or re-scope it.
 - [x] **IDENTITY-SCOPE** — divergence measured, both layers partitioned, rule registered
 - [x] **AUDIT-CHILD** — v0.35 Step 7 field discharged
 - [x] **RE-MEASURE** — conditional; run id and identity count, or dated reason
-- [ ] **R-CLOSE** — closing record, audit child, non-zero v0.36 checked count
+- [x] **R-CLOSE** — closing record, audit child, non-zero v0.36 checked count
 
 *Box ids match the `PROGRESS-v0.36.md` entry ids exactly. That is the property
 Step 2 makes executable; this runbook is its first subject.*
@@ -1134,8 +1208,8 @@ grades itself against them has no independent witness, which is the exact defect
 family this cycle exists to close. Report what you found; the criteria come from
 review.
 
-Then: the standing publication request for v0.17.2 and v0.36's release, which
-remains the operator's to grant.
+Then: the standing publication request for `main`, v0.17.2, and v0.17.3,
+which remains the operator's to grant.
 
 ---
 
