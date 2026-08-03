@@ -98,6 +98,12 @@ def _assert_entry_point_order(events: list[str]) -> None:
 
 def _harvest_function(text: str) -> str:
     start = text.index("cmd_harvest_arxiv() {")
+    end = text.index("\n}\n\n# The bounded SEC admission harvest", start)
+    return text[start:end]
+
+
+def _sec_harvest_function(text: str) -> str:
+    start = text.index("cmd_harvest_sec() {")
     end = text.index("\n}\n\n# Print resolved", start)
     return text[start:end]
 
@@ -113,7 +119,7 @@ def test_cmd_harvest_arxiv_enforces_artifact_preflight_before_network(
     tmp_path: Path,
 ) -> None:
     text = RUN.read_text()
-    assert text.count(PREFLIGHT) == 1, (
+    assert _harvest_function(text).count(PREFLIGHT) == 1, (
         "cmd_harvest_arxiv must invoke its named artifact-integrity preflight"
     )
     assert "REFUSED: live harvest target" in text
@@ -154,3 +160,50 @@ def test_cmd_harvest_arxiv_has_a_deterministic_post_run_lifecycle() -> None:
     )
     with pytest.raises(AssertionError, match="must stop its managed core"):
         _assert_success_path_stops_managed_core(without_shutdown)
+
+
+def _assert_sec_harvest_contract(function: str) -> None:
+    assert function.count(PREFLIGHT) == 1
+    ordered = [
+        "cmd_verify_artifacts",
+        'HARVEST_DB="$(harvest_db_path)"',
+        'refuse_protected_harvest "$HARVEST_DB" "harvest-sec"',
+        "cargo build -p cored --features net --locked",
+        'CORE_DB="$HARVEST_DB" _start_cored "config/core.json"',
+        "curl -sS",
+        '"sources":["sec-edgar-usgaap"]',
+        "WHERE source_id = ?",
+        'facts["licenses"] != ["PublisherPermitted"]',
+        'blue "SEC_HARVEST_DB=$HARVEST_DB"',
+    ]
+    for fragment in ordered:
+        assert fragment in function, f"missing SEC harvest contract fragment: {fragment}"
+    positions = [function.index(fragment) for fragment in ordered]
+    assert positions == sorted(positions), (
+        "cmd_harvest_sec must verify evidence, select and protect a fresh path, "
+        "then run exactly the configured SEC source and derive archive facts"
+    )
+    assert "observations/" not in function
+    assert "fixtures/" not in function
+    assert "arxiv-cs" not in function
+    assert " -L " not in function and "--location" not in function
+    assert '"coverage": "first_window"' in function
+    assert "fetched <= 0 or new != fetched" in function
+    assert "null_simhash" in function and "null_canonical_id" in function
+    assert "trap 'cmd_down' EXIT" in function and "trap - EXIT" in function
+    assert function.rfind("cmd_down") > function.index('blue "SEC_HARVEST_DB=$HARVEST_DB"')
+
+
+def test_cmd_harvest_sec_is_fresh_bounded_and_consumes_no_observation_file() -> None:
+    text = RUN.read_text()
+    function = _sec_harvest_function(text)
+    _assert_sec_harvest_contract(function)
+    assert "harvest-sec)   cmd_harvest_sec" in text
+
+    without_preflight = function.replace(PREFLIGHT, "", 1)
+    with pytest.raises(AssertionError):
+        _assert_sec_harvest_contract(without_preflight)
+
+    wrong_source = function.replace("sec-edgar-usgaap", "arxiv-cs")
+    with pytest.raises((AssertionError, ValueError)):
+        _assert_sec_harvest_contract(wrong_source)

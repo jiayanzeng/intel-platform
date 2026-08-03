@@ -487,6 +487,11 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
             .count(),
         200
     );
+    assert!(finance
+        .iter()
+        .filter(|document| document.provenance.source_id == SEC_SOURCE_ID)
+        .all(|document| document.provenance.license == License::PublisherPermitted));
+    assert!(License::PublisherPermitted.redistributable());
 
     let store = SqliteStore::open(&disposable.0.join("identity.db"))
         .expect("open disposable shipped store");
@@ -501,6 +506,32 @@ fn measures_shipped_identity_on_parser_produced_sec_documents() {
     assert!(stored.iter().all(|(document, fingerprint)| {
         *fingerprint == simhash(&format!("{} {}", document.title, document.body))
     }));
+
+    let finance_sectors = ["finance".to_string()];
+    let broadstone_hits = store
+        .search("Broadstone", &finance_sectors, 10)
+        .expect("search captured SEC corpus");
+    let broadstone = broadstone_hits
+        .iter()
+        .find(|hit| hit.source_id == SEC_SOURCE_ID)
+        .expect("captured SEC result must pass the finance sector filter");
+    assert_eq!(broadstone.license, License::PublisherPermitted);
+    assert!(
+        broadstone.snippet.is_some(),
+        "PublisherPermitted captured text must pass the core search licence gate"
+    );
+    assert!(store
+        .search("Broadstone", &["science".to_string()], 10)
+        .expect("search disjoint sector")
+        .is_empty());
+    println!(
+        "captured-sec-license-gate: query=Broadstone source={} license={} \
+         snippet={} finance_hits={} disjoint_hits=0",
+        broadstone.source_id,
+        broadstone.license.as_str(),
+        broadstone.snippet.is_some(),
+        broadstone_hits.len()
+    );
 
     let shipped = dedup_near(stored.clone(), 16);
     let mut store_drops = store.duplicates().expect("load store canonical drops");

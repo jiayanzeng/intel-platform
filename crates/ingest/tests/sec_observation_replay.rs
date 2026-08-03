@@ -14,9 +14,21 @@ const OBSERVATION_RELATIVE_PATH: &str =
     "../../observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml";
 const EXPECTED_SHA256: &str = "154556cd81bda4fc2372386bf43aa7b4414335560dd1371c45bae09f1a8d9de3";
 const EXPECTED_BYTES: usize = 892_641;
+const ROBOTS_RECORD: &str = "observations/v0.25/feed-shape/sec-edgar-robots.txt";
+const ROBOTS_RELATIVE_PATH: &str = "../../observations/v0.25/feed-shape/sec-edgar-robots.txt";
+const ROBOTS_SHA256: &str = "72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f";
+const ROBOTS_BYTES: usize = 2_622;
+const TERMS_RECORD: &str = "observations/v0.25/terms-gate/sec-edgar-terms-determination.md";
+const TERMS_RELATIVE_PATH: &str =
+    "../../observations/v0.25/terms-gate/sec-edgar-terms-determination.md";
+const TERMS_SHA256: &str = "103d29edd3a9ab005981a8ccd22eb8118040d992474e6a33491a51bde9ddbb2c";
+const TERMS_BYTES: usize = 3_549;
 const EDGAR_NAMESPACE: &str = "https://www.sec.gov/Archives/edgar";
 const SOURCE_ID: &str = "sec-edgar-usgaap";
 const FEED_URL: &str = "https://www.sec.gov/Archives/edgar/usgaap.rss.xml";
+const FEED_TARGET: &str = "/Archives/edgar/usgaap.rss.xml";
+const REHEARSAL_USER_AGENT: &str =
+    "intel-platform/rehearsal (research prototype; contact: monitored@example.invalid)";
 
 struct DisposableDir(PathBuf);
 
@@ -43,6 +55,10 @@ impl Drop for DisposableDir {
 
 fn observation_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join(OBSERVATION_RELATIVE_PATH)
+}
+
+fn pinned_path(relative: &str) -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join(relative)
 }
 
 fn sha256_hex(bytes: &[u8]) -> String {
@@ -145,20 +161,47 @@ fn sha256_hex(bytes: &[u8]) -> String {
     digest
 }
 
-fn assert_observation_bytes(bytes: &[u8]) -> Result<(), String> {
-    if bytes.len() != EXPECTED_BYTES {
+fn assert_pinned_bytes(
+    record: &str,
+    bytes: &[u8],
+    expected_bytes: usize,
+    expected_sha256: &str,
+) -> Result<(), String> {
+    if bytes.len() != expected_bytes {
         return Err(format!(
-            "byte-length mismatch for {OBSERVATION_RECORD}: expected \
-             {EXPECTED_BYTES}, observed {}",
+            "byte-length mismatch for {record}: expected \
+             {expected_bytes}, observed {}",
             bytes.len()
         ));
     }
     let observed_sha256 = sha256_hex(bytes);
-    if observed_sha256 != EXPECTED_SHA256 {
+    if observed_sha256 != expected_sha256 {
         return Err(format!(
-            "SHA-256 mismatch for {OBSERVATION_RECORD}: expected \
-             {EXPECTED_SHA256}, observed {observed_sha256}"
+            "SHA-256 mismatch for {record}: expected \
+             {expected_sha256}, observed {observed_sha256}"
         ));
+    }
+    Ok(())
+}
+
+fn assert_observation_bytes(bytes: &[u8]) -> Result<(), String> {
+    assert_pinned_bytes(OBSERVATION_RECORD, bytes, EXPECTED_BYTES, EXPECTED_SHA256)
+}
+
+fn assert_terms_semantics(text: &str) -> Result<(), String> {
+    let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    for required in [
+        "**Affirmative.**",
+        "`/Archives/edgar/usgaap.rss.xml`",
+        "> A monitored contact is present in the crawler identity.",
+        "**dated operator responsibility outside the executable model**",
+        "https://www.sec.gov/about/privacy-information",
+        "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+        "https://www.sec.gov/about/developer-resources",
+    ] {
+        if !normalized.contains(required) {
+            return Err(format!("terms determination lacks {required:?}"));
+        }
     }
     Ok(())
 }
@@ -307,6 +350,56 @@ fn write_document_export(path: &Path, documents: &[Document]) {
         write_string(&mut writer, document.provenance.kind.as_str());
         write_string(&mut writer, document.provenance.license.as_str());
     }
+}
+
+#[test]
+fn replays_sec_robots_and_terms_admission_inputs_without_wire() {
+    let robots_path = pinned_path(ROBOTS_RELATIVE_PATH);
+    let robots_bytes = std::fs::read(&robots_path).expect("read pinned SEC robots policy");
+    assert_pinned_bytes(ROBOTS_RECORD, &robots_bytes, ROBOTS_BYTES, ROBOTS_SHA256)
+        .unwrap_or_else(|error| panic!("{error}"));
+    let robots_text = std::str::from_utf8(&robots_bytes).expect("SEC robots policy is UTF-8");
+    let publisher_gate = RobotsGate::parse(robots_text, REHEARSAL_USER_AGENT);
+    let operator_gate = RobotsGate::new(&["/private", "/admin"]);
+    assert!(publisher_gate.allowed(FEED_TARGET));
+    assert!(operator_gate.allowed(FEED_TARGET));
+    assert!(!publisher_gate.allowed("/Archives/bin"));
+    assert_eq!(publisher_gate.crawl_delay(), None);
+    assert_eq!(MissingPolicy::from_config_str("deny"), MissingPolicy::Deny);
+    assert_eq!(
+        MissingPolicy::from_config_str("misspelled-permission"),
+        MissingPolicy::Deny
+    );
+
+    let planted_denial = format!("{robots_text}\nUser-agent: *\nDisallow: /Archives/edgar/\n");
+    assert!(
+        !RobotsGate::parse(&planted_denial, REHEARSAL_USER_AGENT).allowed(FEED_TARGET),
+        "the pinned-path witness must reject a publisher denial"
+    );
+
+    let terms_path = pinned_path(TERMS_RELATIVE_PATH);
+    let terms_bytes = std::fs::read(&terms_path).expect("read pinned SEC terms determination");
+    assert_pinned_bytes(TERMS_RECORD, &terms_bytes, TERMS_BYTES, TERMS_SHA256)
+        .unwrap_or_else(|error| panic!("{error}"));
+    let terms_text = std::str::from_utf8(&terms_bytes).expect("terms determination is UTF-8");
+    assert_terms_semantics(terms_text).unwrap_or_else(|error| panic!("{error}"));
+    let planted_undetermined = terms_text.replace("**Affirmative.**", "**Undetermined.**");
+    let rejection = assert_terms_semantics(&planted_undetermined)
+        .expect_err("a non-affirmative terms determination must fail rehearsal");
+    assert!(rejection.contains("**Affirmative.**"));
+
+    println!(
+        "sec-admission-rehearsal: robots_path={} robots_bytes={} robots_sha256={} \
+         publisher=allow operator=allow planted_publisher=deny missing_policy=deny \
+         terms_path={} terms_bytes={} terms_sha256={} terms=affirmative \
+         planted_terms=reject user_agent={REHEARSAL_USER_AGENT}",
+        robots_path.display(),
+        robots_bytes.len(),
+        sha256_hex(&robots_bytes),
+        terms_path.display(),
+        terms_bytes.len(),
+        sha256_hex(&terms_bytes),
+    );
 }
 
 #[test]

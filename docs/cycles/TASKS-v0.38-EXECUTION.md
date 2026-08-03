@@ -2,6 +2,8 @@
 
 ## Runbook amendments
 
+Step 2 — derived rehearsal checklist and wire-residue record appended; acceptance meaning unchanged — 2026-08-04
+
 Step 1 — dated E0 verdict table and discharged G6 completion appended; acceptance meaning unchanged — 2026-08-04
 
 **Cycle:** v0.38
@@ -321,6 +323,42 @@ the planted-control discipline where a rule is registered;
 
 **Done when** W1's job is exactly the residue and nothing else.
 
+**REHEARSAL-COMPLETE result (measured 2026-08-04).** The checklist below is
+derived from the protected-artifact lifecycle, the configured source and
+schedule, HC1/HC2/HC8/HC13, and the robots/redirect/dedup invariants. It is not
+an inference from a green replay alone. Every fixture-side clause now has an
+executing witness; the two new semantic guards also carry mutations that make
+the target construction fail.
+
+| Derived lifecycle clause | Executing fixture witness | Residue reserved to W1 |
+|---|---|---|
+| Evidence lifecycle and fresh target | `test_cmd_harvest_sec_is_fresh_bounded_and_consumes_no_observation_file` proves artifact preflight precedes startup, the default path is fresh, protected targets are refused, only `finance/sec-edgar-usgaap` is posted, cleanup is deterministic, and no observation file can feed the harvest. Its planted missing-preflight and wrong-source mutations fail. | Execute that path against one newly named database and record its actual lifecycle and database facts. |
+| Source, license, missing-policy, and cadence configuration | Config validation plus `test_admitted_sec_source_has_an_explicit_resolvable_cadence` and its architecture-mismatch test bind the real SEC RSS URL, `PublisherPermitted`, `robots_on_missing=deny`, and the existing 600-second schedule. | Report the source selected by the live request. No schedule edit or recurring scheduler run is authorized. |
+| Declared identity and terms gate | Cored's contact-before-bind validation and both live clients' exact/mismatched User-Agent tests cover construction. The pinned terms determination is now exact-byte checked and semantically consumed; affirmative compatibility, all three reviewed SEC pages, monitored contact, and operator responsibility are required, and a planted `Undetermined` mutation fails. | Re-fetch the published access terms and use the actual monitored-contact identity on the outbound request; fixtures cannot prove either current page content or the wire-visible header. |
+| Publisher robots plus operator deny-list | The pinned robots body is exact-byte replayed through production `RobotsGate`: the configured RSS path is allowed, `/Archives/bin` is denied, the operator gate composes, missing/typo policy denies, and a planted target-path `Disallow` mutation fails. The compliance suite exercises precedence, normalization, missing-policy, redirect re-gating, cache, and limiter controls. | Capture the current robots response and record the production live verdict and effective delay. |
+| Redirect, query, and rate behavior | Net ingest tests exercise disabled automatic redirects, full re-gating, hop bounds, same-origin/allow-list handling, and limiter timing; cored tests bind the target request to the configured source. | Record actual status/`Location` behavior, request count, ordering, timing, and absence of retry/automatic redirect on this bounded run. |
+| Feed shape and production parser | The 892,641-byte v0.25 RSS pin is exact; `sec_observation_replay` runs it through the shipped parser as 200 SEC documents with the configured source/license and measured content/timestamp premises. | Capture the current RSS response, compare its shape under DR12, and have the harvest consume that live response rather than any evidence file. |
+| Non-paged latest-window coverage | Replay proves GUID uniqueness, ordering/timestamp ties, and overlap premises; cored harvest tests cover first-window, overlap, boundary, and gap outcomes. | Measure the current archive result as `first_window`; no repeated fetch or historical backfill is authorized. |
+| Persistence, global-within-sector dedup, and retrieval license | `measures_shipped_identity_on_parser_produced_sec_documents` persists the parser-produced corpus, measures 201 input / 201 kept / 0 dropped, proves identity equivalence, and now retrieves the SEC hit in finance with `PublisherPermitted` and a snippet while a disjoint sector is empty. The license-compatibility negative test still maps unknown licenses to `IndexOnly`. | Measure the fresh database's document counts, integrity, null simhash/canonical counts, dedup outcome, and stored license. |
+| Entitlement and core SQL isolation | Cored source/sector filters and shell subscription tests prove shell entitlement plus core SQL filtering; the bounded harness cannot post any non-SEC sector/source. | Re-measure every configured subscription and name only the intended finance additions, if any. |
+| Observation pins and DR12 comparison | Artifact validation proves exact hashes/bytes, rejects one-byte changes, and keeps `pinned_files[]` disjoint from admission chains. | Pin each newly captured dated observation and record the per-artifact v0.25 comparison; material drift stops admission. |
+| Append-only database admission | The artifact suite rejects changed hashes without a new admission, missing wire/approval fields, bad `prior_sha256`, incomplete chains, and `admission` under `pinned_files[]`; its complete chained fixture verifies. | If and only if DR12 passes, append the fresh database's exact hash/bytes/corpus facts with wire references and Grant B approval, then run both artifact entry points. |
+| Recurrence and concurrency bounds | Scheduler fixtures prove the configured cadence, while the new harness is deliberately single-source and one-shot. | None: a recurring scheduled run, a second concurrent harvester, conditional GET/304, and repeated fetch behavior remain deferred and are not claims of W1. |
+
+The irreducible wire residue is therefore exact and narrow: current SEC robots,
+terms, and RSS bytes/status/shape; the real outbound declared identity; actual
+request ordering, redirect behavior, counts, and rate timing; the production
+parser consuming the live RSS response; the fresh database's harvest,
+integrity, identity, license, and entitlement facts; and the append-only
+admission record bound to those bytes and Grant B. A fixture cannot establish
+any of those current external facts. Conversely, W1 is not evidence for a
+recurring scheduler run, concurrency, a 304 path, historical backfill, or a
+second fetch. No publisher request was made during this step. Fresh focused
+measurements pass SEC replay **4/4**, SEC store identity **3/3**, compliance
+**40/40**, shell harvest/config/scheduler **14/14**, artifact fixtures **21/21**,
+and net ingest **29/29**; the registered invariant scan remains **15/15 rules /
+84 controls**.
+
 ---
 
 ## Step 2A · WIRE-ADMISSION — dormant, Grant B
@@ -410,22 +448,22 @@ observations with the latest measurements available at close.
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.38 · 2026-08-04 — W1 concerns the already-configured second publisher; no third-publisher review or admission occurred. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.38 · 2026-08-04 — Grant A moved only `main` and v0.17.4; no historical tag was authorized or moved. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.38 · 2026-08-04 — Both historical tags remain outside Grant A and the hosted flag is unchanged; the combined trigger has not fired. | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.38 · 2026-08-04 — ACTIVATE leaves the manifest at the entering 193,830 / 1,048,576-byte measurement; W1 owns fresh pin and timing measurements. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.38 · 2026-08-04 — Step 2 measures **194,717 / 1,048,576 bytes** after updating the changed `run` pin; two consecutive complete verifications match **2 artifacts / 333 pinned files** at **0.09 s / 0.09 s real**, so neither trigger clause fires. W1 owns the fresh-pin and closing timing measurements. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.38 · 2026-08-04 — The broad trigger fires because shell source is in declared scope; any release-authority movement is confined to R-CLOSE. | **Step 4** |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.38 · 2026-08-04 — R15 remains the executable public-domain subcase; R-CLOSE owns the remaining heterogeneous classification adjudication. | **Step 4** |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.38 · 2026-08-04 — Pre-E0-record State is **110,556 / 453,741** bytes and the exact activation export is **2,596,652 / 3,000,000** bytes; neither boundary trigger fired. | none |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.38 · 2026-08-04 — Step 2 measures pre-record State at **117,986 / 453,741 bytes** and its pre-record review export at **2,638,292 / 3,000,000 bytes**; neither boundary trigger fires. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.38 · 2026-08-04 — The active cycle remains in the `v0.<n>` family; the trigger has not fired. | none |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.38 · 2026-08-04 — Grant A published exact v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`, resetting the new publication epoch count to 0 there. W1 and R-CLOSE own the later runtime/public-surface classification. | **Step 4** |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.38 · 2026-08-04 — E0 `version-check` derives **3** executable offline pins at 1.78, **22** offline-floor current restatements, and **3** release-version restatements at 0.17.4; all **579** tracked files remain classified. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.38 · 2026-08-04 — ACTIVATE derives exactly the v0.37–v0.38 retained set and supplies it explicitly; no omitted or non-derived set appeared. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.38 · 2026-08-04 — The cycle remains open; R-CLOSE reserves its immediate audit child as the first point where the tagged closing tree can be measured. | **Step 4 audit child** |
-| SEC EDGAR admission | the three v0.25 determinations closed | v0.38 · 2026-08-04 — The trigger is satisfied and Grant B is issued; admission remains conditional on W1's fresh compatible wire evidence. | **Step 2A** |
-| License enum semantics | a second publisher requires an inexpressible license value | v0.38 · 2026-08-04 — `PublisherPermitted` already expresses SEC's configured case; W1 re-measures the actual admitted outcome. | **Step 2A** |
-| Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.38 · 2026-08-04 — Grant B requires a fresh terms capture and compatibility comparison before admission; no v0.38 terms byte has yet been fetched. | **Step 2A** |
-| Feed shape observation | an uncovered publisher feed shape | v0.38 · 2026-08-04 — Grant B requires a fresh feed capture and comparison before admission; no v0.38 feed byte has yet been fetched. | **Step 2A** |
+| SEC EDGAR admission | the three v0.25 determinations closed | v0.38 · 2026-08-04 — Step 2 derives and closes every fixture-side admission clause; Grant B is issued, and admission remains conditional only on W1's named current-wire residue and DR12 compatibility. | **Step 2A** |
+| License enum semantics | a second publisher requires an inexpressible license value | v0.38 · 2026-08-04 — Captured-corpus persistence/retrieval now executes `PublisherPermitted` positively while the independent unknown-license negative still maps to `IndexOnly`; no inexpressible value appeared. W1 re-measures the admitted database. | **Step 2A** |
+| Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.38 · 2026-08-04 — Step 2 exact-byte checks and semantically consumes the pinned affirmative determination with a failing `Undetermined` mutation. Grant B still requires the fresh terms capture and DR12 comparison before admission. | **Step 2A** |
+| Feed shape observation | an uncovered publisher feed shape | v0.38 · 2026-08-04 — Step 2 replays the exact 892,641-byte v0.25 body through the shipped parser and closes parser/identity/license fixture coverage. Grant B still requires fresh feed capture and shape comparison. | **Step 2A** |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.38 · 2026-08-04 — The shared `assign_dedup_identity` seam remains completed under R14; ACTIVATE added no dependency module or manifest edge. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.38 · 2026-08-04 — ACTIVATE leaves both tag-mechanics restatements unchanged; no divergence is observed. | none |
-| Review-export capacity | the export crosses the declared ceiling | v0.38 · 2026-08-04 — Exact activation export **2,596,652** bytes leaves **403,348 bytes / 13.44% / 2.81 cycles** at +143,456 bytes/cycle; the ceiling trigger has not fired. | none |
+| Review-export capacity | the export crosses the declared ceiling | v0.38 · 2026-08-04 — Exact pre-record Step 2 worktree export **2,638,292 bytes / 158 files / 2 retained cycles** leaves **361,708 bytes / 12.06% / 2.52 cycles** at +143,456 bytes/cycle; the ceiling trigger has not fired. | none |
 
 ## Deferred completions
 
@@ -449,7 +487,7 @@ milestone is completed by its observation, never by a workaround.
 - [x] PUBLISH-V17-4
 - [x] ACTIVATE
 - [x] E0
-- [ ] REHEARSAL-COMPLETE
+- [x] REHEARSAL-COMPLETE
 - [ ] WIRE-ADMISSION
 - [ ] RE-MEASURE
 - [ ] R-CLOSE

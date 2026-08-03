@@ -10,8 +10,8 @@
 #   ./run test            all tests (Rust + shell)
 #   ./run demo            print the full offline pipeline, start to finish
 #   ./run golden          assert the complete golden E2E, start to finish
-#   ./run harvest-arxiv   the LIVE arXiv harvest — the one test only a box
-#                         with real network egress can do
+#   ./run harvest-arxiv   a LIVE arXiv harvest through a fresh protected path
+#   ./run harvest-sec     a LIVE SEC RSS harvest through that same lifecycle
 #   ./run probe-providers bounded identity/capability probe for both model roles
 #   ./run verify-llm      point the shell at a real LLM endpoint and check it
 #   ./run invariant-scan  execute registered static repository invariants
@@ -92,6 +92,7 @@ harvest_db_path() {
 
 refuse_protected_harvest() {
   local target="$1"
+  local command_name="${2:-harvest-arxiv}"
   local match status expected path suggestion
   if match=$(python3 tools/evidence_artifacts.py \
       --manifest "$EVIDENCE_MANIFEST" --root . protected "$target"); then
@@ -102,7 +103,7 @@ refuse_protected_harvest() {
     red "Recorded SHA-256: $expected"
     red "Protection record: $EVIDENCE_MANIFEST ($path)"
     red "Choose a fresh destination with exactly:"
-    red "  CORE_DB=$suggestion ./run harvest-arxiv"
+    red "  CORE_DB=$suggestion ./run $command_name"
     return 1
   else
     status=$?
@@ -939,6 +940,121 @@ print(str(int(d.get("fetched",0))) + "\t" + ("1" if r.get("ok") else "0"))
   cmd_down
 }
 
+# The bounded SEC admission harvest. Evidence capture is deliberately a
+# separate, earlier lifecycle step: this command consumes the publisher's live
+# feed through the normal configured source and writes only to a fresh archive.
+# It makes no reachability probe, retry, or observation-file read that could be
+# mistaken for the harvest itself.
+cmd_harvest_sec() {
+  step "artifact-integrity preflight — verify protected evidence bytes"
+  cmd_verify_artifacts
+  need_cargo; ensure_venv
+  CORED_BIN="$(cored_debug_bin)"
+
+  local HARVEST_DB
+  HARVEST_DB="$(harvest_db_path)"
+  blue "LIVE harvest database: $HARVEST_DB"
+  if ! refuse_protected_harvest "$HARVEST_DB" "harvest-sec"; then
+    return 2
+  fi
+  if [ -z "${INTEL_CRAWLER_CONTACT:-}" ]; then
+    red "INTEL_CRAWLER_CONTACT is required for the SEC live harvest."
+    red "Set it to the operator-monitored contact; placeholders are refused by cored."
+    return 2
+  fi
+
+  step "1/4  building cored with --features net"
+  cargo build -p cored --features net --locked
+
+  step "2/4  starting the committed source configuration on the fresh archive"
+  trap 'cmd_down' EXIT
+  CORE_DB="$HARVEST_DB" _start_cored "config/core.json"
+  green "  cored (net) on $CORE_URL, db=$HARVEST_DB"
+
+  step "3/4  ingesting only sec-edgar-usgaap through the normal live path"
+  local ingest_json summary http_timeout
+  http_timeout="${HARVEST_HTTP_TIMEOUT:-180}"
+  if ! ingest_json=$(curl -sS -m "$http_timeout" -X POST "$CORE_URL/ingest" \
+      -H 'content-type: application/json' \
+      -d '{"sectors":["finance"],"sources":["sec-edgar-usgaap"]}'); then
+    red "SEC ingest request failed or timed out after ${http_timeout}s."
+    red "cored.log tail:"; tail -n 30 "$RUNDIR/cored.log" >&2 || true
+    return 1
+  fi
+  if ! summary=$(printf '%s' "$ingest_json" | py -c '
+import json, sys
+d = json.load(sys.stdin)
+rows = d.get("results") or []
+if len(rows) != 1:
+    raise SystemExit("expected exactly one SEC source result")
+r = rows[0]
+fetched = int(d.get("fetched", 0)); new = int(d.get("new", 0))
+expected = {
+    "sector": "finance",
+    "source_id": "sec-edgar-usgaap",
+    "ok": True,
+    "coverage": "first_window",
+    "coverage_boundary": None,
+    "error": None,
+}
+for key, value in expected.items():
+    if r.get(key) != value:
+        raise SystemExit(f"unexpected SEC result {key}={r.get(key)!r}; expected {value!r}")
+if fetched <= 0 or new != fetched or int(r.get("documents", -1)) != fetched:
+    raise SystemExit(
+        f"SEC wire result is not a nonempty fresh ingest: fetched={fetched} "
+        f"new={new} documents={r.get('"'"'documents'"'"')}"
+    )
+print(json.dumps({
+    "source_id": r["source_id"], "fetched": fetched, "new": new,
+    "coverage": r["coverage"], "documents": r["documents"],
+}, sort_keys=True, separators=(",", ":")))
+'); then
+    red "SEC ingest response did not prove a nonempty fresh-path harvest."
+    printf '%s\n' "$ingest_json" >&2
+    return 1
+  fi
+  green "  SEC wire ingest: $summary"
+
+  step "4/4  deriving durable archive and licence facts"
+  HARVEST_DB_PATH="$HARVEST_DB" py -c '
+import json, os, sqlite3
+path = os.environ["HARVEST_DB_PATH"]
+db = sqlite3.connect(path)
+integrity = db.execute("PRAGMA integrity_check").fetchone()[0]
+facts = {
+    "database": path,
+    "documents": db.execute("SELECT count(*) FROM documents").fetchone()[0],
+    "sec_documents": db.execute(
+        "SELECT count(*) FROM documents WHERE source_id = ?", ("sec-edgar-usgaap",)
+    ).fetchone()[0],
+    "licenses": [row[0] for row in db.execute(
+        "SELECT DISTINCT license FROM documents ORDER BY license"
+    )],
+    "null_simhash": db.execute(
+        "SELECT count(*) FROM documents WHERE simhash IS NULL"
+    ).fetchone()[0],
+    "null_canonical_id": db.execute(
+        "SELECT count(*) FROM documents WHERE canonical_id IS NULL"
+    ).fetchone()[0],
+    "integrity_check": integrity,
+}
+if facts["documents"] <= 0 or facts["documents"] != facts["sec_documents"]:
+    raise SystemExit(f"fresh archive contains an unexpected document population: {facts}")
+if facts["licenses"] != ["PublisherPermitted"]:
+    raise SystemExit(f"fresh archive has unexpected licence values: {facts}")
+if integrity != "ok" or facts["null_simhash"] or facts["null_canonical_id"]:
+    raise SystemExit(f"fresh archive failed durable-state checks: {facts}")
+print("  ARCHIVE:", json.dumps(facts, sort_keys=True, separators=(",", ":")))
+'
+  grep -iE "robots: https://www.sec.gov|ingest coverage: source_id=sec-edgar-usgaap" \
+    "$RUNDIR/cored.log" | sed 's/^/  WIRE: /'
+  blue "SEC_HARVEST_DB=$HARVEST_DB"
+  blue "SEC_HARVEST_LOG=$RUNDIR/cored.log"
+  cmd_down
+  trap - EXIT
+}
+
 # Print resolved, non-secret configuration without making a network request.
 cmd_config() {
   ensure_venv
@@ -1121,6 +1237,8 @@ intel-platform — ./run <command>
   Live (needs real network egress):
     harvest-arxiv  do a REAL arXiv harvest — the test a fixture cannot stand in
                    for. Refuses to run (exit 2) if arXiv is unreachable.
+    harvest-sec    ingest only the configured SEC US GAAP RSS source into a
+                   fresh archive after the protected-artifact preflight.
     probe-providers
                    bounded health/models/capability probe for the resolved
                    chat and embedding roles; never prints keys
@@ -1147,6 +1265,7 @@ intel-platform — ./run <command>
     ./run models stop
     ./run harvest-arxiv                    # fresh data/live-<timestamp>-<pid>.db
     CORE_DB=data/named-smoke.db ./run harvest-arxiv
+    ./run harvest-sec                      # same fresh-path default; no probe
     LLM_EMBED_EXPECTED_DIMENSION=768 ./run probe-providers
     ./run benchmark-view --help
     ./run audit-deferred --output evidence/<cycle>/deferred-audit/report.json
@@ -1188,6 +1307,7 @@ case "$cmd" in
                  green "cored on $CORE_URL, mock LLM on $MOCK_LLM_URL. Stop with ./run down." ;;
   down)          cmd_down ;;
   harvest-arxiv) cmd_harvest_arxiv "$@" ;;
+  harvest-sec)   cmd_harvest_sec "$@" ;;
   probe-providers) cmd_probe_providers "$@" ;;
   verify-llm)    cmd_verify_llm "$@" ;;
   models)        cmd_models "$@" ;;

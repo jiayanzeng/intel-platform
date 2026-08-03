@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 is active under Grant A and Grant B, and v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **370/370**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; activation adds no runtime or public-surface difference.
+**As of:** 2026-08-04 · **Version:** v0.17.4 (core-shell) · **Status:** **v0.17.4 is published exactly; v0.38 is active under Grant A and Grant B, and v0.37's closing-export audit is complete. v0.17.2 and v0.17.3 remain published.** Untagged release commit `514bec6c95e47017fafab452775ac4b8824ca6b9` carries the release authorities and is the immediate parent of v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`; its immediate audit child is exact published `main` at `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. Annotated tag object `902d30f046c7e9f493fe3a18eefd5275ca5c5afe` peels to the closing commit. Push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities at that exact head. Exact v0.37 evidence candidate `99012c86dcdda8ea32f1b1afa016f793118e9087` passed hosted run `30834599847`, attempt **1**, at **9/9** blocking identities. Store and view consume one sector-partitioned identity implementation; v0.37 moved no route, named runtime surface, response payload byte, field, serialized `/v1/*` value domain, dependency resolution, protected database, golden input, entitlement/licensing outcome, or publisher-wire behavior. The entering local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **371/371**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; activation adds no runtime or public-surface difference.
 
 **v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the runbook-defined Grant A before
@@ -52,6 +52,56 @@ permission-complete golden pipeline passed **11/11** with zero delta after the
 sandbox-denied loopback bind was classified as a non-result. No dependency,
 production source, protected byte, observation, fixture, or unauthorized ref
 moved during activation.
+
+**v0.38 REHEARSAL-COMPLETE — lifecycle clauses partitioned before wire
+(measured 2026-08-04).** The admission checklist is now derived from the
+protected-artifact lifecycle, configured SEC source and cadence, the hard
+licensing/entitlement/robots invariants, and HC13. It is recorded clause by
+clause in the active runbook with an executing fixture witness or a named
+wire-only residue. The only current external facts left for Step 2A are the
+live robots/terms/RSS responses, actual outbound identity and request timing,
+the live feed's production-parser path, fresh database facts, current
+entitlement/license results, and the admission record binding those facts to
+Grant B. Recurrence, concurrency, conditional GET/304, backfill, and a second
+fetch remain deferred; the rehearsal claims none of them and made no publisher
+request.
+
+The replay now exact-byte checks both v0.25 robots and terms pins. Production
+robots parsing allows the configured RSS target, preserves a real publisher
+denial, composes the operator deny-list, denies missing/typo policy, and rejects
+a planted target-path denial. Terms consumption requires the affirmative
+determination, all three reviewed pages, the monitored-contact condition, and
+operator responsibility; a planted `Undetermined` value fails. The
+parser-produced SEC corpus persists at **201 input / 201 kept / 0 dropped**;
+finance retrieval returns a `PublisherPermitted` SEC hit with a snippet, while
+a disjoint sector is empty and the unknown-license negative remains
+`IndexOnly`.
+
+A new bounded `./run harvest-sec` entry point supplies the exact Step 2A path:
+artifact preflight first, fresh-only target, protected-target refusal, declared
+contact required before bind, one `finance/sec-edgar-usgaap` request, strict
+first-window/result checks, SQLite integrity and license facts, and
+deterministic cleanup. Its structure test includes failing missing-preflight and
+wrong-source mutations and proves it cannot consume an observation file. The
+changed script is re-pinned at **50,378 bytes** and SHA-256
+`e436d59b05f060a8ce78dd3fb23282ad99fbc8bd263abd73224978c74afeeadb`;
+artifact validation and complete verification match **2 artifacts / 333 pinned
+files**, with the manifest at **194,717 / 1,048,576 bytes**. Two consecutive
+complete checks take **0.09 s / 0.09 s real**. The exact pre-record
+project-root review export is **2,638,292 bytes / 158 files / 2 retained cycles**, leaving
+**361,708 bytes / 12.06% / 2.52 cycles** at +143,456 bytes/cycle.
+
+Focused, no-wire measurements pass SEC replay **4/4**, SEC store identity
+**3/3**, compliance **40/40**, live-feature ingest **29/29**, shell
+harvest/config/scheduler **14/14**, artifact fixtures **21/21**, `bash -n`,
+`shellcheck`, and Rust formatting. The full permission-complete `ci-local`
+passes **22/22** identities, including Python 3.11 at **371/371**, both Rust
+floors, all warning gates, artifact verification, and golden **11/11** with
+zero delta. A separate permission-complete Python 3.12 lane passes the identical
+**371/371** population with no skips. Its earlier sandboxed attempt was a
+non-result: all eight failures were explicit loopback-bind or process-inspection
+permission denials. The registered scan remains **15/15 rules / 84 controls**.
+No live SEC wire or fresh observation byte has yet been touched.
 
 **v0.38 E0 — entering-state reconstruction (measured 2026-08-04).** The seven
 runbook rows were treated as hypotheses and checked at their real entry points.
