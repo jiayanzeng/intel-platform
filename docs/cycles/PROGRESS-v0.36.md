@@ -403,3 +403,61 @@ Entries are append-only; corrections are new dated entries.
 - prohibited movement: PASS. No production source, dependency, protected byte,
   v0.35 byte, amendment input, release authority, tag, or remote ref moved.
 - governed review-export measurement: tree=`9dea180cb872c6fa5c28b09907e2b452a7904952`; bytes=`2850622`
+
+### 2026-08-03 · RE-MEASURE — exact candidate authenticated 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.36-EXECUTION.md`
+- commit: 3186cf403655843418246f5f4f2e8515215d1f2d
+- condition/result: PASS. Step 4 moved production Rust, so the conditional
+  hosted step ran. Exact candidate
+  `f50db6744df726434db7f5aeffa1a08bbbf521fc` now has complete
+  release-grade evidence on one fresh immutable evidence ref.
+- preflight acceptance: PASS. Exact pinned `gh` **2.96.0** accepted the
+  immutable **7/7** historical control population under every strict flag and
+  rejected the deliberately wrong signer.
+- candidate/ref acceptance: PASS. Immediately before the only push,
+  `git ls-remote` exited **0** with no entry for fresh ref
+  `refs/heads/codex/v0.36-evidence-f50db67`. One non-force push created exactly
+  that ref; immediate and final readback resolved it to the candidate. No ref
+  was reused, forced, moved, deleted, or repurposed.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30810557834**, attempt
+  **1**, targeted the exact SHA/ref and completed `success`. All **9/9**
+  blocking identities passed and persisted **9 receipts / 9 Sigstore
+  bundles**; dependency drift was the sole declared report-only skip. The run
+  was dispatched exactly once and not retried.
+- toolchain acceptance: PASS. Three executed `jq -e` assertions proved
+  `msrv=1.78.0`, `net-msrv-1-86=1.86.0`, and
+  `net-msrv-1-85=1.85.0`; all exited **0**.
+- release-grade verifier acceptance: PASS. Canonical single-bundle input and
+  every strict flag accepted **9**, rejected **0**, and found the complete
+  identity matrix. Every independently constructed certificate identity,
+  repository, qualified workflow, source/signer digest, evidence ref, and
+  hosted-runner claim matched. The temporary report is **41,096 bytes**,
+  SHA-256
+  `ab767a456411029fd4529bb8c1dc97dc135869765c33cf078add510e98ef05f7`,
+  and remains outside the repository and manifest.
+- population acceptance: PASS. Local Python 3.11.4 and 3.12.13 each passed
+  **368/368**. Each hosted lane collected **368**, passed **367**, and skipped
+  only the named, reasoned, `on_site` production-audit node. Both
+  `tools/test_population.py` comparisons derived `collected=368`,
+  `equivalent=true`, and `equivalent_passed=368`.
+- workflow/remote acceptance: PASS. The workflow remains **39,177 bytes** /
+  SHA-256
+  `4ebf2c2193fe3fb11e7710b20c1c000fd073103656dc0b155bce945b57bff871`.
+  Final direct readback kept remote `main`, v0.17.1, and its tag object
+  unchanged, left v0.17.2 absent, and kept the evidence ref exact.
+- full local acceptance: PASS **22/22** jobs over the assembled audit state.
+  Shell passed **368/368** with the one accepted warning; all **14/14 rules /
+  81 controls** passed, Rust 1.78 and net 1.86 passed, net 1.85 produced the
+  required locked-ICU refusal, golden passed **11/11**, and all **332** pins
+  plus both protected databases matched. The pre-implementation run had passed
+  release and cycle consistency, then stopped exactly at checked-task evidence
+  because the checked box could not yet name this implementation commit; that
+  measured failure was the prescribed implementation/audit boundary, not a
+  pass.
+- golden-E2E delta: **0**; hosted and standalone local golden passed **11/11**.
+- scope acceptance: PASS. No workflow, production source, dependency,
+  protected byte, publisher request, main/tag publication, or retry occurred;
+  the one DR6-authorized evidence ref was the only remote mutation.
+- governed review-export measurement: tree=`3186cf403655843418246f5f4f2e8515215d1f2d`; bytes=`2857952`
