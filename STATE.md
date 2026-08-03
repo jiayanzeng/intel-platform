@@ -1,6 +1,50 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.36 is closed locally and unpublished at the DR5-selected patch release.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of the checked closing record; the local annotated v0.17.3 tag targets that closing record only after it exists. Authenticated run `30810557834` passed all **9** blocking identities at exact production candidate `f50db6744df726434db7f5aeffa1a08bbbf521fc`; the pinned release-grade verifier accepted **9/9** signed bundles and asserted receipts bind Rust **1.78.0 / 1.86.0 / 1.85.0**. Store and view consume one sector-partitioned identity implementation; the reachable cross-sector runtime behavior is corrected without route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value-domain movement. The registered suite measures **14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; the retraction count remains **3**. The exact release-parent local gate passed **22/22** jobs, both local shell populations pass **368/368** with the accepted warning, and golden passes **11/11** locally and hosted. The v0.17.1 publication epoch now carries **1** consecutive closed cycle with the measured runtime-behavior difference and no public-surface change. DR6 created only fresh immutable evidence ref `codex/v0.36-evidence-f50db67`; published remote `main`, v0.17.1, v0.17.2, and v0.17.3 remain unchanged unless the operator separately authorizes exact publication.
+**As of:** 2026-08-03 · **Version:** v0.17.3 (core-shell) · **Status:** **v0.17.2 and v0.17.3 are published; remote `main` is the v0.36 audit child.** Release commit `9946cedae75d99c53d17a6f8b5507d10cb9bd959` is the immediate parent of closing commit `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`; annotated tag object `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4` targets that closing commit, and remote `main` is exact audit child `e068cacc76685791c54ab47c84be6abbd592271d`. Post-push run `30824053490`, attempt **1**, passed all **9** blocking identities at that exact remote head. Store and view consume one sector-partitioned identity implementation; the published cross-sector runtime correction moved no route, response-body schema, named-surface shape, dependency resolution, protected database, golden input, entitlement/licensing outcome, or serialized `/v1/*` value domain. The unchanged local registered suite passes **14/14 rules / 81 controls** with **0** hand-typed absolute finding-line fields; golden passes **11/11**, both hosted shell jobs passed, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. The v0.17.3 publication resets the published-release-divergence count to **0** at its closing commit; later unpublished runtime movement, if any, starts a fresh publication epoch.
+
+**v0.37 PUBLISH — v0.17.2 and v0.17.3 published exactly under DR7
+(measured 2026-08-03).** Immediately before the one-time grant was spent,
+`git ls-remote origin refs/heads/main refs/tags/v0.17.2
+'refs/tags/v0.17.2^{}' refs/tags/v0.17.3 'refs/tags/v0.17.3^{}'`
+reported only `main` at
+`f02379f03ccdfd1b019413234f2ad014d169fb04`; both tag refs were absent.
+`git merge-base --is-ancestor f02379f03ccdfd1b019413234f2ad014d169fb04
+e068cacc76685791c54ab47c84be6abbd592271d` exited **0**. Local object
+inspection matched annotated objects
+`16ee7bcb2214859156edbceeb5e314ac1a67f39b` and
+`0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4`, peeling respectively to
+`9996c6820d720160b64607575d0270d2e5393ef9` and
+`a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`. No DR7 precondition was
+refuted.
+
+The repository-order measurement took the declared fallback. Before activation,
+direct `cycle-check` read the untracked v0.37 runbook as an older open cycle and
+failed with exactly **8 unchecked boxes** plus **1 missing closing record**.
+Activation commit `5884ef7754431ffe5017dc1f2fde5902aef2ed52` therefore landed
+before this repository append, and PUBLISH remained the first active step.
+After activation and the four fresh v0.37 governed-row observations, direct
+`cycle-check` passed on the real published path.
+
+The non-force branch push advanced only `origin/main` from `f02379f…` to
+`e068cacc…`; the subsequent non-force tag push created only `v0.17.2` and
+`v0.17.3`. A fresh `ls-remote` then resolved all five direct/peeled ref facts
+to the granted objects. Push-triggered hosted run **30824053490**, attempt
+**1**, on exact `e068cacc76685791c54ab47c84be6abbd592271d` completed with
+conclusion **success** and passed all **9** blocking job identities. This
+publication makes the v0.35 and v0.36 closing records published history; no
+ref was forced, deleted, or moved beyond DR7's exact three-ref grant.
+
+- **Post-push verification date:** 2026-08-03
+- **Post-push release:** `v0.17.2`
+- **Post-push annotated tag object:** `16ee7bcb2214859156edbceeb5e314ac1a67f39b`
+- **Post-push closing commit:** `9996c6820d720160b64607575d0270d2e5393ef9`
+- **Post-push hosted run:** `30824053490`
+
+- **Post-push verification date:** 2026-08-03
+- **Post-push release:** `v0.17.3`
+- **Post-push annotated tag object:** `0fe42d7a6a86e94bb95a93a86b7a4b09917b97f4`
+- **Post-push closing commit:** `a5afab9e6842a1b6c00a7d17fdeaa3e254edf80f`
+- **Post-push hosted run:** `30824053490`
 
 **v0.36 AUTONOMY stop-and-report (measured 2026-08-03).** The runbook's
 pre-activation ordering was attempted first. `ci-local` rejected a v0.36 task

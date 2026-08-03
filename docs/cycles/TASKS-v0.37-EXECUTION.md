@@ -540,7 +540,7 @@ governed.
 
 ## Cycle checklist
 
-- [ ] PUBLISH
+- [x] PUBLISH
 - [x] ACTIVATE
 - [ ] E0
 - [ ] TEST-ISOLATION
