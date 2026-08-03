@@ -518,6 +518,106 @@ unmodified. All standing criteria: version-check counts, non-zero v0.38
 checklist line, governed export row, dated deferral rows, self-test totals,
 golden, zero hand-typed finding lines, no publication beyond Grant A.
 
+**R-CLOSE result (measured 2026-08-04).** DR13 selects patch **v0.17.5**.
+SEC admission enables bounded harvesting of an already-configured source and
+adds the intended 200-document finance result for `quant-desk`; the exact
+release-baselined source derivation and installed runtime comparison each pass
+with **0 differences** across **6 routes / 31 status-media response variants /
+112 recursive field occurrences**. No route, response field, field type,
+serialized `/v1/*` field-domain value, subscription configuration, or license
+enum moves, so the minor clause does not fire.
+
+Untagged release parent `37f552c0c326098bdcf8f19de7eac19670d74680`
+moves only the five executable 0.17.5 authorities, README's three current
+restatements, cored's lockfile package value, and release-preparation records.
+Its complete local gate passes **22/22** jobs: Python 3.11 and 3.12 each pass
+**373/373**, registered scan passes **15/15 rules / 84 controls**, both Rust
+floors and warning gates pass, all **3 artifacts / 339 pins** match, and golden
+passes **11/11**. Exact hosted candidate
+`816a0648c0dd9f4be1caad01ed3395997671cf25` and run **30852480662**,
+attempt 1, already passed **9/9** blocking identities with **9 receipts / 9
+Sigstore bundles**.
+
+The exact release-parent export passes at **2,781,281 bytes / 163 files / 2
+retained cycles**, retaining v0.37–v0.38 and excluding both protected raw RSS
+bodies and all structural archives. It leaves **218,719 bytes / 7.29% / 2.04
+cycles** at the latest positive +107,226-byte adjacent-cycle denominator. The
+manifest remains **200,440 / 1,048,576 bytes**. DR14 remains local-only:
+direct pre-close checks found no local or remote v0.17.5 tag, and remote `main`
+remained exact published v0.17.4 audit child `a7d6c80e…`. No push or remote ref
+movement beyond spent Grant A occurred.
+
+The immediate child of that release parent carries this checked closing
+record and becomes the target of a local annotated v0.17.5 tag only after it
+exists. Its immediate audit child measures the closing-tree export, appends the
+required non-governing audit field, re-runs the full local gate on the delivered
+head, and is the final v0.38 commit.
+
+---
+
+## Cycle closing record
+
+- **Cycle closed:** 2026-08-04
+- **Release disposition:** release (as of 2026-08-04)
+- **Release:** `v0.17.5`
+- **Release commit:** `37f552c0c326098bdcf8f19de7eac19670d74680`
+- **Evidence candidate:** `816a0648c0dd9f4be1caad01ed3395997671cf25`
+- **Candidate hosted run:** `30852480662` attempt 1
+- **Disposition reason:** SEC admission enables bounded harvesting of an
+  already-configured source and adds the intended finance corpus. The public
+  domain manifest reports **0 differences** across **6 routes / 31
+  status-media variants / 112 field occurrences**. No route, response field,
+  field type, or serialized `/v1/*` value-domain value moves, so DR13 selects
+  patch **v0.17.5** while naming the operational behavior movement.
+- **Release identity:** `version-check` derives 0.17.5 from all five executable
+  authorities and reports **3** offline-MSRV pins, **22** current offline-MSRV
+  restatements, and **3** current release restatements. The release parent is
+  untagged and is this closing record's immediate parent. This tree contains no
+  annotated-tag-object field; the local annotated tag targets this closing
+  commit only after it exists.
+- **Anchored evidence:** exact candidate `816a0648…` and run 30852480662
+  passed **9/9** blocking identities and persisted **9 receipts / 9 Sigstore
+  bundles**. Both local release-parent lanes pass **373/373**; both hosted
+  populations derive equivalent **373**-test results with one named, reasoned,
+  `on_site` skip; hosted and local golden pass **11/11**.
+- **Governed export:** exact release parent
+  `37f552c0c326098bdcf8f19de7eac19670d74680` produced **104 derived / 7
+  required / 163 exported / 2,781,281 bytes / 2 retained cycles**, retaining
+  v0.37–v0.38 and excluding both protected raw RSS bodies and all structural
+  archives. At +107,226 bytes/cycle, **218,719 bytes / 7.29% / 2.04 cycles**
+  remain below the fixed ceiling.
+- **Artifact boundaries:** the assembled closing State is **129,970 / 453,741
+  bytes**. The manifest is **200,440 / 1,048,576 bytes** and both complete
+  verification runs remain below the 1.00-second trigger. Neither boundary
+  trigger fires.
+- **Deferral disposition:** every active row carries its latest dated v0.38
+  observation. G6 and SEC admission are completed rather than deferred. The
+  release-parent self-test passes **15/15 rules / 84 controls** with **0**
+  hand-typed absolute finding-line fields.
+- **Divergence disposition:** publication of v0.17.4 reset the epoch count to
+  **0**. v0.38 is the first subsequent closed cycle with a measured runtime-
+  behavior difference, so the consecutive count becomes **1**. No public-
+  surface change occurs; neither the three-cycle nor immediate trigger fires.
+  An unpublished local close does not reset the epoch.
+- **Scope reconciliation:** release authority changed only `Cargo.lock`,
+  `apps/cored/Cargo.toml`, both shell version literals, `CHANGELOG.md`,
+  `README.md`, and the State version header. Active State/runbook/progress and
+  Architecture records carry the close. No dependency graph, protected byte,
+  fixture, observation, closed-cycle document, publisher request, workflow, or
+  unauthorized remote ref moved during R-CLOSE.
+- **Publication boundary:** direct pre-close readback found no local or remote
+  `refs/tags/v0.17.5` entry, while remote `main` remained exact
+  `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`. No push, `main` movement, or
+  tag publication is authorized or performed. The annotated tag is local-only;
+  the immediate next commit records the measured closing-tree export.
+- **Checklist reconciliation:** the assembled closing worktree passes at
+  **302 checked / 3 retracted / 293 matched / 293 commits resolved / 9
+  exemptions**, with v0.38 itself nonempty at **7 checked / 7 matched / 7
+  resolved**.
+- **Golden reconciliation:** the release-parent full gate and standalone run
+  pass **11/11**, delta **0**. The assembled closing-worktree standalone run
+  and final audit-child full gate re-execute the same anchor.
+
 ---
 
 ## Governed artifact byte-boundary authority
@@ -542,36 +642,36 @@ observations with the latest measurements available at close.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.38 action |
 |---|---|---|---|
-| T7 robots single-flight | a second concurrent harvester | v0.38 · 2026-08-04 — W1 ran exactly one bounded SEC harvester and observed no second concurrent process; the trigger has not fired. | none |
+| T7 robots single-flight | a second concurrent harvester | v0.38 · 2026-08-04 — W1 ran exactly one bounded SEC harvester; R-CLOSE ran no harvester and observed no second concurrent process through cycle end, so the trigger did not fire. | none |
 | NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.38 · 2026-08-04 — Fresh SEC robots returned HTTP 200 and the live production cache reported `Body(allow)`; no transient outage or Decision B authorization occurred, so the combined trigger has not fired. | none |
 | Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.38 · 2026-08-04 — W1's fresh feed capture returned HTTP 200 and the production ingest reported `first_window`; no live 304 was observed, so the combined trigger has not fired. | none |
-| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.38 · 2026-08-04 — The source path is in scope, but ACTIVATE performed no connector mapping review or mapping change; the combined trigger has not fired. | none |
+| `edgar:*` extension field mapping | an operator-authorized cycle permitting `crates/ingest/src/**` for mapping, with a connector review | v0.38 · 2026-08-04 — The source path was in scope, but no connector mapping review or mapping change occurred through R-CLOSE; the combined trigger did not fire. | none |
 | Live multi-publisher behaviour in one runtime | further origins beyond the two configured, or concurrency | v0.38 · 2026-08-04 — W1 ran only the already-configured SEC source in one process; no further origin or concurrent harvester appeared, so the trigger has not fired. | none |
-| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.38 · 2026-08-04 — Grant B discharged one manual admission harvest only. No bounded recurring-window authorization was issued and no scheduled run executed; the trigger remains deferred. | none |
-| Postgres / pgvector / multi-host seam | unchanged | v0.38 · 2026-08-04 — ACTIVATE introduced no Postgres, pgvector, or multi-host seam; the unchanged trigger has not fired. | none |
-| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.38 · 2026-08-04 — ACTIVATE observed no third-party shell or replacement-shell HC1 claim; the trigger has not fired. | none |
-| L2 forced-command wrapper | an operator server session | v0.38 · 2026-08-04 — No operator server session occurred during ACTIVATE; the trigger has not fired. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.38 · 2026-08-04 — E0's fresh registered scan and all planted mutations pass **15/15 rules / 84 controls**; no outside vocabulary spelling was found. | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.38 · 2026-08-04 — P1 hosted run 30841505130 passed the existing Rust 1.86 lane; workflow/evidence topology remains scope-forbidden, so the combined trigger has not fired. | none |
-| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.38 · 2026-08-04 — ACTIVATE changed no verifier pin or accepted bundle/workflow contract; the trigger has not fired. | none |
-| Third configured publisher | a completed compliance review, then a separate admission decision | v0.38 · 2026-08-04 — W1 concerns the already-configured second publisher; no third-publisher review or admission occurred. | none |
-| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.38 · 2026-08-04 — Grant A moved only `main` and v0.17.4; no historical tag was authorized or moved. | none |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.38 · 2026-08-04 — Both historical tags remain outside Grant A and the hosted flag is unchanged; the combined trigger has not fired. | none |
-| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.38 · 2026-08-04 — W1 measures **200,440 / 1,048,576 bytes** after the fresh archive and six observation pins; two consecutive complete verifications match **3 artifacts / 339 pinned files** at **0.09 s / 0.09 s real**, so neither trigger clause fires. | none |
-| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.38 · 2026-08-04 — The broad trigger fires because shell source is in declared scope; any release-authority movement is confined to R-CLOSE. | **Step 4** |
-| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.38 · 2026-08-04 — R15 remains the executable public-domain subcase; R-CLOSE owns the remaining heterogeneous classification adjudication. | **Step 4** |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.38 · 2026-08-04 — Before the export-control correction record, State is **122,480 / 453,741 bytes** and the latest project-root review export is **2,766,436 / 3,000,000 bytes**; neither boundary trigger fires. | none |
-| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.38 · 2026-08-04 — The active cycle remains in the `v0.<n>` family; the trigger has not fired. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.38 · 2026-08-04 — Grant A published exact v0.17.4 closing commit `f4f2690a442d7a77f1dabb53fb3a120a2c987e97`, resetting the new publication epoch count to 0 there. W1 and R-CLOSE own the later runtime/public-surface classification. | **Step 4** |
-| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.38 · 2026-08-04 — E0 `version-check` derives **3** executable offline pins at 1.78, **22** offline-floor current restatements, and **3** release-version restatements at 0.17.4; all **579** tracked files remain classified. | none |
-| Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.38 · 2026-08-04 — ACTIVATE derives exactly the v0.37–v0.38 retained set and supplies it explicitly; no omitted or non-derived set appeared. | none |
-| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.38 · 2026-08-04 — The cycle remains open; R-CLOSE reserves its immediate audit child as the first point where the tagged closing tree can be measured. | **Step 4 audit child** |
+| First recurring scheduled SEC run | explicit operator authorization of a bounded scheduled window, separate from any cycle scope | v0.38 · 2026-08-04 — Grant B discharged one manual admission harvest only. No bounded recurring-window authorization was issued and no scheduled run executed through R-CLOSE; the trigger remains deferred. | none |
+| Postgres / pgvector / multi-host seam | unchanged | v0.38 · 2026-08-04 — The release-parent full gate and R-CLOSE introduced no Postgres, pgvector, or multi-host seam; the unchanged trigger did not fire. | none |
+| A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.38 · 2026-08-04 — No third-party shell or replacement-shell HC1 claim appeared through R-CLOSE; the trigger did not fire. | none |
+| L2 forced-command wrapper | an operator server session | v0.38 · 2026-08-04 — No operator server session occurred through R-CLOSE; the trigger did not fire. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.38 · 2026-08-04 — The release-parent registered scan and all planted mutations pass **15/15 rules / 84 controls**; no outside vocabulary spelling was found. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.38 · 2026-08-04 — Hosted run 30852480662 and the release-parent full gate most recently passed the pinned Rust 1.86 lane; workflow/evidence topology remained scope-forbidden, so the combined trigger did not fire. | none |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.38 · 2026-08-04 — R-CLOSE changed no verifier pin or accepted bundle/workflow contract; the trigger did not fire. | none |
+| Third configured publisher | a completed compliance review, then a separate admission decision | v0.38 · 2026-08-04 — W1 admitted only the already-configured second publisher; no third-publisher review or admission occurred through R-CLOSE. | none |
+| `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.38 · 2026-08-04 — Step 3's final remote readback and R-CLOSE show no historical-tag movement; both names remained outside Grant A and no authorization was issued. | none |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.38 · 2026-08-04 — Both historical tags remain unpublished and the hosted flag remains unchanged through R-CLOSE; the combined trigger did not fire. | none |
+| Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.38 · 2026-08-04 — R-CLOSE measures **200,440 / 1,048,576 bytes** after admission; the latest timed pair remains W1's two complete verifications of **3 artifacts / 339 pinned files** at **0.09 s / 0.09 s real**. The release-parent gate re-matched every byte, so neither trigger clause fires. | none |
+| Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.38 · 2026-08-04 — The broad trigger fired and Step 4 moved all five executable release authorities coherently to 0.17.5; `version-check` passes. | **Step 4 completed 2026-08-04** |
+| Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.38 · 2026-08-04 — R15 executably reports zero public-domain movement; R-CLOSE adjudicated the remaining heterogeneous criteria and selected patch v0.17.5 while naming the SEC harvest-enablement behavior movement. No broader operator decision displaced that boundary. | **Step 4 completed 2026-08-04** |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.38 · 2026-08-04 — R-CLOSE measures the assembled State at **129,970 / 453,741 bytes** and exact release-parent export at **2,781,281 / 3,000,000 bytes**; neither boundary trigger fired. | none |
+| Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.38 · 2026-08-04 — The closing active cycle remains in the `v0.<n>` family; the trigger did not fire. | none |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.38 · 2026-08-04 — Publication of v0.17.4 reset the count to **0**. v0.38 is the first subsequent closed cycle with a measured runtime-behavior difference, so the count becomes **1**; R15 reports zero public-domain differences, so neither the three-cycle nor public-surface trigger fires. | **Step 4 completed 2026-08-04** |
+| MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.38 · 2026-08-04 — R-CLOSE `version-check` derives **3** executable offline pins at 1.78, **22** offline-floor current restatements, and **3** release-version restatements at 0.17.5; all **585** tracked files remain classified. | none |
+| Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.38 · 2026-08-04 — Exact release-parent `export-check` derived and retained only v0.37–v0.38; no omitted or non-derived retained set appeared. | none |
+| Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.38 · 2026-08-04 — R-CLOSE binds the **2,781,281-byte** release-parent governed field and reserves the required immediate audit child. The closing-tree measurement and audit field are evaluated there, the first point at which the tagged closing tree exists; no post-handoff omission is permitted. | **Step 4 audit child** |
 | License enum semantics | a second publisher requires an inexpressible license value | v0.38 · 2026-08-04 — The admitted live archive stores all **200/200** rows as existing `PublisherPermitted`; finance-only public-shell isolation is unchanged and no inexpressible value appeared, so the trigger has not fired. | none |
 | Terms-level automated-access gate | a candidate's terms restrict beyond robots.txt | v0.38 · 2026-08-04 — The fresh terms page preserves the pinned determination's user-agent/contact, rate, responsibility, and public-information reuse conditions; DR12 passed without re-determination and no uncovered restriction appeared. | none |
 | Feed shape observation | an uncovered publisher feed shape | v0.38 · 2026-08-04 — Fresh RSS differs in current filing contents but retains the covered 200-item field shape; production parsed and stored **200/200** rows, so no uncovered shape appeared. | none |
-| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.38 · 2026-08-04 — The shared `assign_dedup_identity` seam remains completed under R14; ACTIVATE added no dependency module or manifest edge. | none |
-| ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.38 · 2026-08-04 — ACTIVATE leaves both tag-mechanics restatements unchanged; no divergence is observed. | none |
-| Review-export capacity | the export crosses the declared ceiling | v0.38 · 2026-08-04 — Exact pre-commit Step 2A worktree export **2,766,436 bytes / 163 files / 2 retained cycles** leaves **233,564 bytes / 7.79% / 1.63 cycles** at +143,456 bytes/cycle; both exact pinned SEC RSS bodies and the structural archives remain excluded, and the ceiling trigger has not fired. | none |
+| Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.38 · 2026-08-04 — The shared `assign_dedup_identity` seam remains completed under R14; R-CLOSE added no dependency module or manifest edge. | none |
+| ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.38 · 2026-08-04 — The release-parent full gate passes with both tag-mechanics restatements unchanged and no observed divergence. | none |
+| Review-export capacity | the export crosses the declared ceiling | v0.38 · 2026-08-04 — Exact release parent `37f552c0c326098bdcf8f19de7eac19670d74680` exports at **2,781,281 bytes / 163 files / 2 retained cycles**, leaving **218,719 bytes / 7.29% / 2.04 cycles** at +107,226 bytes/cycle. Both exact pinned SEC RSS bodies and all structural archives remain excluded; the ceiling trigger did not fire. | none |
 
 ## Deferred completions
 
@@ -599,7 +699,7 @@ milestone is completed by its observation, never by a workaround.
 - [x] REHEARSAL-COMPLETE
 - [x] WIRE-ADMISSION
 - [x] RE-MEASURE
-- [ ] R-CLOSE
+- [x] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.38.md` entry ids exactly.*
 
@@ -607,12 +707,44 @@ milestone is completed by its observation, never by a workaround.
 
 ## Handoff
 
-Each DR and grant outcome (executed, or not-granted with its observation);
-the C12 checklist with its wire-residue statement; the DR12 comparison per
-artifact if W1 ran; every stop or an explicit none; headroom; the v0.39
-findings list — findings, not criteria. Then whichever operator questions
-remain open: v0.17.4 or v0.17.5 publication, and the admission grant if it
-was not issued this cycle.
+**Decision report.** Grant A published exact v0.17.4 once, non-force, moving
+only `main` to `a7d6c80e…` and creating its exact annotated tag; hosted run
+30841505130 passed 9/9. Grant B captured exactly one robots, terms, and RSS
+response, admitted the compatible evidence and fresh 200-document archive,
+and ran one bounded manual SEC harvest. DR12 found no incompatible policy or
+feed-shape drift. DR13 selected patch v0.17.5 because the admission adds the
+named operational behavior and finance corpus without moving the 6/31/112
+public response domain. DR14 kept v0.17.5 local and unpublished; no authority
+from Grant A was reused.
+
+**Codex-owned determinations.** C12 derived the complete admission checklist
+from the lifecycle, compliance, and architectural authorities; fixtures closed
+every state-machine clause and left only current wire/path facts. C13 recorded
+fresh evidence in the v0.25-compatible dated form before the independent live
+harvest consumed the configured URL. C14 corrected two author-side assumptions
+exposed by the valid third artifact: the historical deferred audit now selects
+its named inputs, and export inspection now derives every exact raw-RSS
+exclusion from Repomix configuration.
+
+**Stops and headroom.** No retained stop condition fired. One incorrect guessed
+full SHA was rejected before creating any evidence ref; the subsequent fresh
+absence check and correct non-force creation are recorded. The exact release
+parent exports at **2,781,281 / 3,000,000 bytes**, leaving **218,719 bytes /
+7.29% / 2.04 cycles** at +107,226 bytes/cycle. The manifest is **200,440 /
+1,048,576 bytes**, leaving **848,136 bytes**. State remains below its
+**129,970 / 453,741 bytes**. Golden remains byte-identical at **11/11**.
+
+**v0.39 findings.** (1) Review-export headroom is now only 2.04 measured
+cycles at the latest positive adjacent-cycle denominator; the fixed ceiling
+has not fired. (2) The first evidence-ref push command used an incorrect
+guessed full SHA and was correctly rejected without creating a ref; future
+commands should resolve the full candidate before construction. Both
+author-contract assumptions exposed by the third admission are fixed and
+tested in v0.38, so they are evidence, not open findings.
+
+**Standing operator question.** Whether to publish exact local v0.17.5 after
+reviewing this close. SEC admission is complete; any recurring scheduled SEC
+window still requires its separate explicit authorization.
 
 ---
 
