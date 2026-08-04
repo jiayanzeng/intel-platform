@@ -373,17 +373,17 @@ Every figure below is a hypothesis produced by reading a source export. No
 repository command produced any of them. Confirm or refute against real bytes;
 a refuted hypothesis is a finding, not an error to route around.
 
-| # | Hypothesis | How to settle |
+| # | Dated verdict | Measurement |
 |---|---|---|
-| H1 | Object graph: release parent `37f552c0…` → closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54` (immediate child) ← local annotated tag object `946bdc01…`; audit child `dd605acc…` is the closing commit's immediate child and current HEAD | `rev-parse`, `cat-file`, first-parent walk |
-| H2 | Remote `main` is `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0` and is an ancestor of the audit child; `v0.17.2`, `v0.17.3`, `v0.17.4` present remotely; `v0.17.5` absent both locally-published and remotely | `ls-remote`, `merge-base --is-ancestor` — these are also Grant C preconditions and are recorded twice: here, and immediately before any push |
-| H3 | `STATE.md` is 130,818 bytes against its 453,741 boundary; the protected manifest is 200,440 against 1,048,576; three post-push records and four unpublished-local observations exist, of which v0.17.5's is current | `wc -c`, `verify-artifacts`, anchored grep counts |
-| H4 | Registry is 15 rules / 84 planted controls; exemptions 9; retractions 3; the closing checklist reads 302 / 3 / 293 / 293 / 9 | run the tools; do not copy any figure from a checker's own output where the construction can produce it independently |
-| H5 | The delivered export is 2,799,094 bytes across 163 file entries, of which three are untracked amendment inputs totalling 43,124 bytes; `export-check` passes on that export today | export at the entering tree; compare the entry set against `git ls-files` |
-| H6 | Whether any exported path outside `crates`, `apps`, `tools`, and `shell` is untracked is **unmeasured beyond those three files** — the full partition is the deliverable, not this row | enumerate every export entry against the tracked set |
-| H7 | Four observation files are raw publisher wire bodies marked `binary` by their directory `.gitattributes`; two of the four are absent from the export and two are present | read each `.gitattributes`; intersect with the export entry set |
-| H8 | Retention currently excludes through v0.36; advancing drops the v0.37 pair at 75,857 bytes, and the derived recovery available without any grant totals 211,791 bytes | measure at the activation tree, not from this table |
-| H9 | The checker-derived margin denominator is the latest positive adjacent-cycle governed pair, currently +107,226 | read the derivation and run it |
+| H1 | **confirmed — 2026-08-04** | `37f552c0c326098bdcf8f19de7eac19670d74680` is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels there; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is its immediate child and was the exact pre-activation entering ref. Current HEAD is now the expected activation-audit descendant. |
+| H2 | **confirmed — 2026-08-04** | Fresh `ls-remote` resolves `main` to `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`, resolves v0.17.2–v0.17.4 to their recorded objects/targets, and returns no v0.17.5 entry. The ancestor check exits 0. These facts are remeasured immediately before Grant C's push. |
+| H3 | **partly confirmed, byte hypothesis refuted — 2026-08-04** | State is **132,770 / 453,741 bytes**, not 130,818; the manifest is exact **200,440 / 1,048,576** at **3 artifacts / 339 pins**. Anchored counts find **3** complete post-push records and **4** unpublished-local observations; v0.17.5 is current before Step 2. |
+| H4 | **partly confirmed, checklist hypothesis refuted — 2026-08-04** | Direct registry/config counts are **15 rules / 84 controls / 9 exemptions / 3 retractions**. The live tool reports **303 checked / 3 retracted / 294 matched / 294 resolved / 9 exemptions**, not 302/3/293/293/9, because ACTIVATE is already one checked/resolved v0.39 task. |
+| H5 | **refuted — 2026-08-04** | The delivered project-root export passes at **2,778,858 bytes / 163 entries / 2 retained cycles**, not 2,799,094. Exactly three existing untracked amendment inputs are present at **43,127 raw bytes**, not 43,124. |
+| H6 | **measured in full — 2026-08-04** | Set partition against the complete `git ls-files -z` population is **160 tracked + 3 existing untracked + 0 synthetic = 163**. The three untracked members are exactly `AMENDMENT-r4-STEP5A-NET-FLOOR-TOOLCHAIN.md` (**16,834**), `AMENDMENT-v0.36-A1r2-AUTONOMY-LIFECYCLE.md` (**18,906**), and `AMENDMENT-v0.36-A2-STEP7-AUDIT-ORDER.md` (**7,387**); there is no fourth exceptional entry. |
+| H7 | **confirmed — 2026-08-04** | The two `.gitattributes` files classify four exact raw bodies. Both RSS bodies are configured exclusions and absent; v0.38's `sec-edgar-privacy-information.html` and `sec-edgar-robots.txt` are present. |
+| H8 | **refuted by exact source bytes — 2026-08-04** | Activation retains v0.38–v0.39 and drops v0.37, but the dropped task/progress pair is **75,859 bytes**, not 75,857. Adding the two present raw bodies and three amendment inputs gives **211,800 raw recoverable bytes**, not 211,791; Step 3 owns the separately measured export-framing delta. |
+| H9 | **confirmed — 2026-08-04** | Direct lifecycle output selects the latest positive adjacent governed pair, v0.37 **2,674,055** → v0.38 **2,781,281**, for **+107,226 bytes/cycle**; it explicitly reports representativeness unbounded and structural epoch unobserved. |
 
 Plus the standing entering measurements: `git status --porcelain` with its
 expected untracked set stated exactly, full `./run ci-local`,
@@ -689,7 +689,7 @@ any acceptance point is a defect, not an oversight.
 ## Cycle checklist
 
 - [x] ACTIVATE
-- [ ] E0
+- [x] E0
 - [ ] PUBLISH-V17-5
 - [ ] EXPORT-TRUTH
 - [ ] CEILING-TRIGGER

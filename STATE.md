@@ -1,6 +1,55 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is closed locally and unpublished; v0.38's closing-export audit is complete. v0.17.4 remains published exactly, and no v0.17.5 publication is authorized.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child records the measured closing-tree export. Local annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Remote `main` remains exact published v0.17.4 audit child `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities there. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed cycle carrying the measured SEC harvest-enablement behavior difference, so the consecutive count is **1**, with no public-surface movement.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is closed locally and unpublished; v0.38's closing-export audit is complete. v0.17.4 remains published exactly, and Grant C now authorizes only v0.17.5's exact publication in v0.39 Step 2.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child records the measured closing-tree export. Local annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Remote `main` remains exact published v0.17.4 audit child `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities there. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed cycle carrying the measured SEC harvest-enablement behavior difference, so the consecutive count is **1**, with no public-surface movement.
+
+**v0.39 E0 — entering state reconstructed (measured 2026-08-04).** Every
+H1–H9 source-export statement was treated as a hypothesis. H1, H2, H3, H7,
+and H9 are confirmed; H4 is confirmed for registry/exemption/retraction counts
+and refuted for its checklist total; H5 and H8 are numerically refuted; H6's
+previously unmeasured whole partition is now measured.
+
+The v0.17.5 graph is exact: release parent `37f552c0…` is the immediate parent
+of closing commit `55045ae4…`; annotated object `946bdc01…` peels to that
+closing commit; audit child `dd605acc…` is its immediate child and was the
+pre-activation entering ref. Fresh remote readback keeps `main` exact at
+`a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`, with v0.17.2–v0.17.4 exact
+and v0.17.5, v0.8.0, and v0.10.2 absent. The branch is an ancestor of current
+HEAD. Grant C's identities therefore remain eligible for their separate
+immediate pre-push remeasurement; E0 itself moved no ref.
+
+State is **132,770 / 453,741 bytes** and the manifest is **200,440 /
+1,048,576 bytes** at **3 artifacts / 339 pins**. State contains **3** complete
+post-push records and **4** historical unpublished-local observations, with
+v0.17.5 current before publication. Direct data counts give **15 rules / 84
+controls / 9 exemptions / 3 retractions**. The live checklist is **303 checked
+/ 3 retracted / 294 matched / 294 resolved / 9 exemptions**, one higher than
+H4 because ACTIVATE is already checked and resolved.
+
+The project-root delivered worktree export passes at **2,778,858 bytes / 163
+entries / 2 retained cycles**, not H5's 2,799,094. Its complete set partition
+is **160 Git-tracked + 3 existing untracked + 0 synthetic = 163**. The three
+exceptions are exactly the amendment inputs at **16,834 + 18,906 + 7,387 =
+43,127 raw bytes**; no other exported entry is outside Git. The four
+`.gitattributes`-classified raw publisher bodies partition as two excluded RSS
+bodies and two present v0.38 bodies: the **90,192-byte HTML** page and
+**2,622-byte robots** file. H7 is therefore confirmed.
+
+Retention advances through v0.37 and retains exactly v0.38–v0.39, but H8's
+source-byte arithmetic is off by nine: the v0.37 task/progress pair is
+**75,859 bytes**, and the current raw recoverable population is **211,800
+bytes** when combined with the two present raw bodies and three amendment
+inputs. Export framing means Step 3 still owns the actual artifact delta. The
+checker independently selects the latest positive adjacent governed pair
+v0.37→v0.38 at **+107,226 bytes/cycle**, confirming H9.
+
+The permission-complete `ci-local` passes all **22/22** jobs: **15/15 rules /
+84 controls**, Python 3.11 **373/373**, both Rust floor pairs, all warning/lint/
+format gates, protected artifacts, and embedded golden **11/11**. A separate
+Python 3.12 lane passes the identical **373/373** population; both supported
+versions retain the one non-fatal accepted warning. No dependency, production
+source, protected byte, fixture, observation, publisher wire,
+entitlement/licensing outcome, golden input, or unauthorized ref moved. No E0
+stop condition fired.
 
 **v0.39 ACTIVATE — truthful-export cycle declared (measured 2026-08-04).**
 The declaration, runbook, progress skeleton, and derived retention boundary land
