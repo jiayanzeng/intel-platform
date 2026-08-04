@@ -392,6 +392,42 @@ and real refs; a refuted hypothesis is a finding, not an error to route around.
 | H7 | Grant E's lever measures near 84,896 bytes at the v0.38 boundary, and `STATE.md` is 194,411 of 453,741 | measure `STATE.md` directly; the measured figure governs over any projection in this document |
 | H8 | Registry 16 rules / 115 controls; exemptions 9; retractions 3; the v0.41 closing checklist reconciles at 325 items | run the tools; derive rather than copy any figure a checker prints |
 
+### Step 1 measured verdicts — 2026-08-05
+
+| # | Verdict | Executed result |
+|---|---|---|
+| H1 | **confirmed** | `rev-parse`, `cat-file`, and the first-parent walk prove release parent `5bd805214cb72ed694c83e9eec1ce6d17396a69e` → closing commit `993813c755e9f759a4ee165954c7a1df984f6b10` → audit child `827192d2b3ed56fbe04ac0df0cc6536ef037e066`, each as an immediate child. Annotated object `4a477722df218059097ff648a07379ec5683dd08` peels to the closing commit. At the entering measurement, the audit child was exact HEAD. |
+| H2 | **confirmed at entry** | Direct `ls-remote` reads `main=993813c755e9f759a4ee165954c7a1df984f6b10`; v0.17.7 is annotated object `2287b41558e69bb86490df71b6907a2f0eb73310` peeling to `cd4fd58b39c855cc769d3696a6b389f735066022`; v0.17.8 is annotated object `4a477722df218059097ff648a07379ec5683dd08` peeling to exact main; v0.17.6 is absent. `merge-base` proves entering HEAD was main's one-commit descendant. ACTIVATE has since added its required implementation and audit commits locally; no remote ref moved. |
+| H3 | **refuted by one byte** | The exact audit-child `STATE.md` append is **1,520 bytes**, not 1,519. Its post-push section is exactly **1,396 bytes**, and the same audit child adds v0.41's `cycle-ending review-export audit` field to `PROGRESS-v0.41.md`. |
+| H4 | **confirmed** | `rg` finds **zero** `ls-remote` occurrences in `run` and `tools/*.py`. The executed-witness enumeration immediately below shows that all recorded remote assertions remain transcriptions even where an offline control verifies related local objects. |
+| H5 | **confirmed** | A detached checkout of exact published main contains no v0.41 cycle-ending audit field; the entering audit child does. The trigger is therefore true for the published view and false locally. |
+| H6 | **confirmed** | The detached entering-tree export passes at **2,675,890 bytes / 157 tracked entries / 2 retained cycles**, **106,502 bytes above** the **2,569,388-byte** attention boundary, with **324,110 bytes / 10.80% / 1.51 high-water cycles** below the ceiling at the **215,306-byte** high-water denominator. |
+| H7 | **partly confirmed, partly refuted** | The exact v0.38-to-permanent-tail lever is **84,896 bytes**. Entering `STATE.md` is **194,412 / 453,741 bytes**, not 194,411. |
+| H8 | **confirmed** | The registered self-test derives **16/16 rules / 115 controls**; the closing checklist derives **325 checked / 3 retracted / 316 matched / 316 resolved / 9 exemptions**. |
+
+H4's required recorded-assertion enumeration is:
+
+| Recorded assertion class | Executing witness before Step 2 | Result |
+|---|---|---|
+| Local annotated-object type, peel, closing parent/tree, release-parent ancestry, and State/header identity | `cycle-check` plus Git object reads | **witnessed locally**; these controls do not read the remote |
+| Post-push record shape, local object/target freshness, closing-commit identity, and nonzero hosted-run field | `cycle-check` | **witnessed locally**; remote ref presence and the hosted run's actual conclusion are not refreshed |
+| Remote `main` identity and ancestry position | none | **unwitnessed transcription** |
+| Remote release-tag direct object, peeled target, presence, or absence, including the permanently withheld and historical tags | none | **unwitnessed transcription**; the unpublished-local path explicitly admits that offline Git cannot refresh absence |
+| Remote evidence-ref absence before creation, exact identity after push, and immutability on later reads | none | **unwitnessed transcription**; non-force push protects only the mutation attempt itself |
+| Remote publication topology claimed by pre-push, post-push, progress, and deferral records | none | **unwitnessed transcription** |
+| Published-tip presence or absence of the cycle-ending export-audit field | none | **unwitnessed until the operator performs a detached remote checkout**, as Step 1 did manually |
+| Hosted run conclusion and its correspondence to the remote ref named by a record | hosted CI measures the checked-out commit; local tooling verifies only record syntax and downloaded evidence | **partly witnessed**, but no executed local control binds the recorded remote ref reading to that run |
+
+The entering `git status --porcelain` population was exactly the three retained
+untracked amendment inputs plus this then-untracked v0.42 runbook. After
+ACTIVATE committed the runbook, the worktree returned to exactly the same three
+untracked amendment inputs. Full `./run ci-local` passes **22/22** jobs;
+Python 3.11.4 and 3.12.13 each pass the complete **396/396** population with
+the same named `on_site` identity and no skip; the registered invariant suite
+passes **16/16 rules / 115 controls**; golden passes **11/11** with delta zero.
+The clean rebuilt environments each resolve the exact pinned **21-package**
+set. No E0 decision gate or stop condition fired.
+
 Plus the standing entering measurements: `git status --porcelain` with its
 expected untracked set stated exactly, full `./run ci-local`,
 `invariant-scan --self-test`, both complete Python populations, and golden —
@@ -671,7 +707,7 @@ acceptance point is a defect, not an oversight.
 ## Cycle checklist
 
 - [x] ACTIVATE
-- [ ] E0
+- [x] E0
 - [ ] REMOTE-WITNESS
 - [ ] ARCHIVE
 - [ ] REPAIR-TIP

@@ -2,6 +2,56 @@
 
 **As of:** 2026-08-05 · **Version:** v0.17.8 (core-shell) · **Status:** **v0.17.7 and v0.17.8 are published; v0.17.6 remains permanently withheld and local-only, and v0.17.5 remains published exactly.** Untagged release commit `5bd805214cb72ed694c83e9eec1ce6d17396a69e` carries the v0.17.8 authorities and is the immediate parent of closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`; published annotated object `4a477722df218059097ff648a07379ec5683dd08` peels to that closing tree, which is exact remote `main`. Historical v0.17.7 parent `b8fe1c2c1c2c842868a70581dee390939ef68595` precedes closing commit `cd4fd58b39c855cc769d3696a6b389f735066022`; published annotated object `2287b41558e69bb86490df71b6907a2f0eb73310` peels to that tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is preserved in published history. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30927918916`, attempt **1**, concluded `success` on exact published closing commit `993813c755e9f759a4ee165954c7a1df984f6b10` and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. Final exact v0.41 evidence candidate `5bd805214cb72ed694c83e9eec1ce6d17396a69e` passed hosted run `30925977431`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 and v0.41 change lifecycle/review tooling, executable controls, and governing records; neither changes production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The exact v0.17.8 release-parent gate passes **22/22** local identities. The current registered suite passes **16/16 rules / 115 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.8, and golden passes **11/11**. Exact release-parent Python 3.11 and 3.12 populations each pass **396/396** with one named `on_site` identity; their repository-computed hosted comparisons each derive **396** equivalent tests from local **396/396** and hosted **395 passed + 1** named, reasoned, `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.8 resets the published-release-divergence count to **0** at closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`; v0.40 and v0.41 carry no measured runtime-behavior difference or public-surface movement.
 
+**v0.42 E0 — entering state reconstructed (measured 2026-08-05).** All
+eight source-export hypotheses were executed rather than copied forward. H1,
+H2, H4, H5, H6, and H8 are confirmed. H3 is refuted by one byte: the exact
+audit-child State append is **1,520 bytes**, not 1,519; its post-push section
+is exactly **1,396 bytes**, and the same commit contains v0.41's cycle-ending
+export-audit field. H7 is partly confirmed and partly refuted: the v0.38-to-
+permanent-tail lever is exactly **84,896 bytes**, while entering State is
+**194,412 / 453,741 bytes**, not 194,411.
+
+The local graph is exact: release parent `5bd805214cb72ed694c83e9eec1ce6d17396a69e`
+is the immediate parent of closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`,
+whose immediate child is entering audit commit
+`827192d2b3ed56fbe04ac0df0cc6536ef037e066`; annotated object
+`4a477722df218059097ff648a07379ec5683dd08` peels to the closing commit.
+Fresh direct remote readback returns main at that closing commit, exact v0.17.7
+and v0.17.8 annotated and peeled refs, and no v0.17.6 ref. At entry, HEAD was
+main's exact one-commit descendant. ACTIVATE has since added its required local
+implementation and audit commits; no remote ref moved.
+
+A detached checkout of exact published main proves that it lacks v0.41's
+cycle-ending export-audit field while the entering audit child contains it.
+The entering-tree export passes at **2,675,890 bytes / 157 tracked entries / 2
+retained cycles**, **106,502 bytes above** the **2,569,388-byte** attention
+boundary, leaving **324,110 bytes / 10.80% / 1.51 high-water cycles** below the
+ceiling at the **215,306-byte** denominator.
+
+H4's exhaustive partition found no executed remote witness. `run` and every
+`tools/*.py` file contain zero `ls-remote` occurrences. Existing controls
+execute local annotated-object type, peel, parent/tree, ancestry, header,
+post-push-record shape, local object/target freshness, and nonzero hosted-run
+fields. They do not refresh remote main identity, release-tag presence or
+absence, direct or peeled tag identity, evidence-ref absence or identity,
+publication topology, the published tip's export-audit content, or the binding
+between a recorded remote ref and a hosted conclusion. A non-force push guards
+only its mutation attempt; an unpublished-local record explicitly admits that
+offline Git cannot refresh remote absence. Step 1's manual remote read and
+detached checkout measured those facts but do not turn them into a standing
+control.
+
+The entering status population was exactly the three retained untracked
+amendment inputs plus the then-untracked v0.42 runbook. After ACTIVATE committed
+the runbook, status again contains exactly those three amendment inputs. Fresh
+clean environments resolve **21 pinned packages** byte-identically on Python
+3.11.4 and 3.12.13. Full `ci-local` passes **22/22**; both complete Python
+populations pass **396/396** with the same named `on_site` identity and no
+skip; registered invariants pass **16/16 rules / 115 controls**; the v0.41
+closing checklist derives **325 checked / 3 retracted / 316 matched / 316
+resolved / 9 exemptions**; golden passes **11/11** with delta zero. No E0 gate,
+architectural invariant, protected-byte constraint, or stop condition fired.
+
 **v0.42 ACTIVATE — published-state control cycle declared (measured
 2026-08-05).** The activation worktree moves the declaration to v0.42,
 creates the append-only progress record, and advances the single derived
