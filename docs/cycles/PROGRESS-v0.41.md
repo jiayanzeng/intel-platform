@@ -366,3 +366,98 @@ Entries are append-only; corrections are new dated entries.
   tag movement.
 - golden-E2E delta: **0**. Hosted and post-record standalone local golden each
   passed **11/11**.
+
+### 2026-08-04 · R-CLOSE — v0.17.8 authorized tagged close
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: 5bd805214cb72ed694c83e9eec1ce6d17396a69e
+- result: PASS at the assembled pre-tag worktree. DR32 selects patch
+  **v0.17.8** because review-source selection, archival-trigger reachability,
+  and substantive governed dispositions change assurance behavior but no
+  production runtime behavior, dependency, publisher configuration, protected
+  byte, entitlement/licensing outcome, route, response field/type, or
+  serialized `/v1/*` value-domain value.
+- domain acceptance: PASS. Dependency-free R15 derivation and installed
+  FastAPI comparison report **0 differences across 6 routes / 31 status-media
+  variants / 112 field occurrences**. Neither minor-version clause fires.
+- version acceptance: PASS. `version-check` derives **0.17.8** from all five
+  executable authorities, with **3** offline-MSRV pins, **22** current
+  offline-floor restatements, and **3** current release restatements across
+  **591** tracked files. Cargo changes only cored's lockfile package value.
+- final-control correction: PASS. The assembled full self-test exposed that
+  R12/53 still hard-coded v0.40's governed export value, so its artifact-
+  boundary fixture no longer mutated the live row. Release parent `5bd80521…`
+  derives exactly one current prose value and marker from the governed row;
+  the focused and full suites execute the repaired planted failure. Initial
+  candidate `44058820…` and run `30917725112` remain immutable but are
+  superseded as final release evidence.
+- evidence-anchor acceptance: PASS. Fresh absence precheck for
+  `refs/heads/codex/v0.41-evidence-5bd8052` returned exit **2** with no output.
+  One non-force push created that ref at exact release parent
+  `5bd805214cb72ed694c83e9eec1ce6d17396a69e`; hosted run `30925977431`,
+  attempt 1, passed **9/9** blocking identities and persisted **9 receipts / 9
+  Sigstore bundles** accepted **9**, rejected **0** by the release-grade
+  verifier under GitHub CLI **2.96.0** and the exact repository, workflow,
+  source digest, and source ref. Both hosted
+  Python comparisons derive equivalent **396**-test populations from one
+  named, reasoned, `on_site` skip, and hosted golden passes **11/11**.
+- governed review-export measurement: tree=`5bd805214cb72ed694c83e9eec1ce6d17396a69e`; bytes=`2657685`
+- governed-export acceptance: PASS. The exact release parent produced **157
+  required / 157 tracked / 157 exported / 2,657,685 bytes / 2 retained
+  cycles**, retaining v0.40–v0.41 and excluding all **4** derived raw-wire
+  bodies, both structural archives, the one mixed-use manifest source, and the
+  bounded historical untracked-input family. At the +215,306-byte high-water
+  denominator, **342,315 bytes / 11.41% / 1.59 cycles** remain below the
+  unchanged 3,000,000-byte ceiling. This misses the 2.5-cycle target by
+  **195,950 bytes** and stands **88,297 bytes above** attention. The
+  trigger-fired disposition records measured change from **2,803,926** to
+  **2,657,685** bytes.
+- recovery attribution: PASS. REVIEW-SOURCE supplies the exact **146,241-byte**
+  entering-to-release-parent reduction. Grant E was not issued, contributes
+  **0 bytes**, and leaves the separate **84,896-byte** lever unspent.
+- artifact-boundary acceptance: PASS. Assembled State is **192,892 / 453,741
+  bytes**. The manifest remains **200,440 / 1,048,576 bytes**; the latest timed
+  pair matched **3/3 artifacts / 339 pins** in **0.15 s / 0.10 s real**, and
+  the release-parent gate matched all protected bytes. Neither artifact
+  boundary nor timing trigger fires.
+- pre-tag control acceptance: PASS at the final assembled worktree. Direct
+  local resolution found no v0.17.8 tag; `cycle-check` reported
+  `local-tag-reconciliation=pre-tag`,
+  `tag-independent-assertions=verified`, and exact parent
+  `5bd805214cb72ed694c83e9eec1ce6d17396a69e` before any tag existed.
+- post-tag control at the assembled worktree: not applicable. Local v0.17.8
+  resolution was absent at this pre-tag measurement, so no post-tag PASS is
+  claimed and no tag-object value is recorded in the closing tree.
+- deferral acceptance: PASS. All **31/31** active rows carry their latest dated
+  v0.41 close observations. The repaired archival trigger names the executable
+  attention predicate and its truthful `kind=unheld-lever` disposition; the
+  capacity row carries its substantive measured-change disposition.
+- invariant acceptance: PASS. The permission-capable exact release-parent gate
+  passes **22/22** jobs, Python 3.11 and 3.12 each pass **396/396**, and the
+  registered suite passes **16/16 rules / 115 controls** with **0** hand-typed
+  absolute finding-line fields. Both Rust floor pairs behave as specified and
+  all protected bytes match.
+- divergence acceptance: PASS. Published v0.17.5's pre-publication epoch
+  remains at **0**; permanently withheld v0.17.6 never resets it. v0.17.7 and
+  v0.41 carry no measured runtime-behavior difference or public-surface
+  movement, so neither trigger fires before authorized publication.
+- publication acceptance: PASS at the pre-tag boundary. Fresh direct local and
+  remote readback found no v0.17.8 tag, no remote v0.17.6/v0.17.7/v0.17.8 tag,
+  and remote `main` exact at
+  `dd605acc037da405fa6b2b5366b09349c330c194`. All three immutable evidence
+  refs remained exact. No publication, tag movement, deletion, force operation, or
+  additional push occurred before the pre-tag gate.
+- checklist acceptance: PASS at the assembled closing worktree: **325 checked
+  / 3 retracted / 316 matched / 316 commits resolved / 9 exemptions**; v0.41
+  is nonempty at **8 checked / 8 matched / 8 resolved**.
+- scope acceptance: PASS. Only declared release authorities, the final
+  `tools/invariant_scan.py` anti-vacuity correction, and active
+  State/runbook/progress/Architecture records move. No dependency graph,
+  protected byte, fixture, observation, closed-cycle document, publisher
+  request, workflow, or unauthorized remote ref moves.
+- stop conditions: none. R15 is exact, the release parent is under the hard
+  export ceiling and both artifact boundaries, the pre-tag gate is clean, and
+  no publication ref moved.
+- golden-E2E delta: **0**. The release-parent full gate and standalone run, and
+  the assembled closing-worktree standalone run, each pass **11/11**.
