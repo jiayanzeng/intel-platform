@@ -203,3 +203,35 @@ Entries are append-only; corrections are new dated entries.
   measurement and no boundary or architectural invariant moved.
 - golden-E2E delta: **0**. Embedded and post-record standalone runs each passed
   **11/11**.
+
+### 2026-08-05 · REPAIR-TIP — Grant F not granted
+
+- owner: Codex
+- runbook: `TASKS-v0.42-EXECUTION.md`
+- commit: 73a69e3ef68be0780bdd061b7eb4d2eab2883ee0
+- grant acceptance: PASS. Neither the initiating request nor any operator
+  message through Step 4 contains Grant F's exact one-ref fast-forward
+  authorization. The dated not-granted branch executed; no push was attempted.
+- remote acceptance: PASS. The executed witness measures all **27** expected
+  and absent refs in agreement and exact remote
+  `main=993813c755e9f759a4ee165954c7a1df984f6b10`. Every direct and peeled tag
+  identity is unchanged; v0.17.8 remains exact and v0.17.6 remains absent.
+- topology acceptance: PASS. Exact audit child
+  `827192d2b3ed56fbe04ac0df0cc6536ef037e066` has remote main as its immediate
+  parent and changes only `STATE.md` and `docs/cycles/PROGRESS-v0.41.md`.
+- published-gap acceptance: PASS. The published v0.41 progress blob contains
+  zero cycle-ending export-audit fields while the audit child contains one.
+  Published State lacks the five-field post-push records for both v0.17.7 and
+  v0.17.8 while the child contains both. Those three record elements are
+  exactly what the published reader still cannot see.
+- lifecycle acceptance: PASS. `cycle-check` reports the remote witness
+  `measured`, local tag reconciliation verified, State at **209,991 / 453,741
+  bytes**, both artifact boundaries bound or disposed as recorded, and the
+  active cycle open and consistent.
+- protected-input acceptance: PASS. No tag, branch, evidence ref, or other
+  remote ref moved. The three retained amendment inputs remain untouched and
+  untracked; no dependency, production source, protected byte, publisher wire,
+  entitlement/licensing outcome, or public surface moved.
+- stop conditions: none. The observed state is the expected one-commit
+  published lag and does not contradict the complete local record.
+- golden-E2E delta: **0**. The required standalone run passed **11/11**.
