@@ -251,3 +251,71 @@ Entries are append-only; corrections are new dated entries.
   the hard ceiling did not fire.
 - golden-E2E delta: **0**. Embedded and required standalone
   permission-capable runs each pass **11/11**.
+
+### 2026-08-04 · RE-MEASURE — exact candidate passed 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.40-EXECUTION.md`
+- commit: cd230ccf3e99ea9f7014f032c2798b1166fc4fdc
+- condition/result: PASS. Lifecycle checker and governing-contract files
+  moved, so the conditional hosted step ran against exact audited candidate
+  `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09`.
+- preflight acceptance: PASS. The immutable historical attestation set passes
+  **7/7** under every strict flag with required/observed GitHub CLI **2.96.0**;
+  the deliberately wrong signer is rejected.
+- candidate/ref acceptance: PASS. Immediately before ref creation, the full
+  remote snapshot kept `main` at
+  `dd605acc037da405fa6b2b5366b09349c330c194` and every annotated/peeled tag
+  through v0.17.5 at its recorded identity. `git ls-remote --exit-code`
+  returned **2** with no output for fresh
+  `refs/heads/codex/v0.40-evidence-52a5c44`. One non-force push created exactly
+  that ref at the candidate; no ref was reused, retried, forced, or moved.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30896642221**, attempt
+  **1**, targeted the exact SHA/ref and concluded `success`. All **9/9**
+  workflow-derived blocking identities passed; dependency drift was the sole
+  report-only skip. The workflow was dispatched once and was not retried.
+- authenticated-evidence acceptance: PASS. The run persisted **9** artifacts,
+  each containing one receipt JSON and one Sigstore bundle. The repository's
+  release-grade verifier accepted **9**, rejected **0**, verified all **9**
+  bundles against the exact repository, workflow, source digest, and source
+  ref, and derived a complete single-run nine-identity matrix.
+- population acceptance: PASS after one disclosed non-result. The first local
+  comparison clone carried the protected corpora but lacked its own built
+  `cored`, so it skipped the `on_site` test and both comparisons correctly
+  failed at local **390** versus hosted **390 + 1**. After building `cored`
+  from the exact candidate in that clean clone, Python 3.11 and 3.12 each
+  passed **391/391** locally. Each hosted lane collected **391**, passed
+  **390**, and skipped only named
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  with its declared protected-corpora/built-core reason and `on_site` marker.
+  Both direct `tools/test_population.py` comparisons derive
+  `equivalent=true`, `equivalent_passed=391`, and one allowed hosted skip.
+- machine acceptance: PASS. The exact candidate's prior permission-complete
+  local gate passed **22/22** identities with Python 3.11 and 3.12
+  **391/391**, scan **16/16 rules / 108 controls**, both Rust floor pairs,
+  all protected artifacts, and golden **11/11**. Hosted golden passed
+  **11/11**, and the explicit 1.86 success and 1.85 refusal jobs passed on
+  their pinned effective toolchains.
+- remote acceptance: PASS. Final `ls-remote` resolves the evidence ref to the
+  exact candidate, keeps `main` at `dd605acc…`, and keeps every tag identity
+  byte-for-byte at the pre-push snapshot; v0.17.6 remains absent. No
+  publication ref moved.
+- exact implementation export: tree=`cd230ccf3e99ea9f7014f032c2798b1166fc4fdc`;
+  bytes=`2782091`; entries=`158`; retained_cycles=`2`;
+  attention_boundary=`2569388`; attention_gap=`-212703`;
+  attention_state=`trigger-fired-disposed`.
+- post-record local acceptance: PASS. Active-cycle and artifact-boundary
+  checks pass with State **167,713 / 453,741 bytes** and manifest **200,440 /
+  1,048,576 bytes**. The exact implementation export is **217,909 bytes /
+  1.01 high-water cycles** below the unchanged hard ceiling. The standalone
+  permission-complete golden run passes **11/11**.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No workflow, dependency, production
+  source, protected byte, observation, fixture, publisher wire,
+  entitlement/licensing outcome, serialized response domain, local tag, or
+  publication ref moved.
+- stop conditions: none. The evidence ref was fresh, the hosted run passed,
+  the attestation matrix was complete, and final remote readback shows no main
+  or tag movement.
+- golden-E2E delta: **0**. Hosted and exact-implementation standalone local
+  golden each passed **11/11**.
