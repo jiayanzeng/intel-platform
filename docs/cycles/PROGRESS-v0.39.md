@@ -95,3 +95,47 @@ It authorizes no other ref movement or later release publication.
   golden input, or unauthorized ref moved.
 - stop conditions: none.
 - golden-E2E delta: **0** at **11/11**.
+
+### 2026-08-04 · PUBLISH-V17-5 — Grant C spent exactly
+
+- owner: Codex
+- runbook: `TASKS-v0.39-EXECUTION.md`
+- commit: 56e9141bda468c6eec4161cb8965840fb531bfb6
+- grant acceptance: PASS. The initiating request's verbatim named Grant C is
+  recorded above before the action; it supplied authority only for the two
+  runbook-defined non-force ref movements and is now spent.
+- precondition acceptance: PASS immediately before push. Remote `main` was
+  exact `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; both direct and peeled
+  v0.17.5 refs were absent; that remote head was an ancestor of exact audit
+  child `dd605acc037da405fa6b2b5366b09349c330c194`; and local annotated object
+  `946bdc015446182727d8f705697e378f8fe8f7eb` peeled to exact closing commit
+  `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`.
+- publication acceptance: PASS. One non-force branch push advanced only
+  `origin/main` to the audit child; one non-force tag push created only
+  v0.17.5. Fresh readback matched the branch, annotated object, and peeled
+  target exactly. No ref was forced, deleted, or moved beyond Grant C.
+- hosted acceptance: PASS. Push-triggered run **30868419182**, attempt **1**,
+  concluded `success` on exact head `dd605acc…`. All **9/9** blocking job
+  identities passed: core, clippy+fmt, live-fetch 1.85 refusal, golden E2E,
+  live-fetch 1.86 success, offline 1.78, live-fetch path, Python 3.11, and
+  Python 3.12. Dependency drift was the sole report-only skip.
+- lifecycle acceptance: PASS. The current header states that v0.17.5 is
+  published and Grant C is spent; the exact five-field post-push record is at
+  column zero; the historical unpublished-local observation remains untouched.
+  Direct `cycle-check` passes on the published path and reconciles the local
+  annotated tag exactly.
+- planted-control acceptance: PASS unmodified at **15/15 rules / 84
+  controls**, including the missing-record refusal for a published descendant.
+  R15 remains exact at **6 routes / 112 field occurrences** with no public
+  response-domain difference.
+- divergence acceptance: PASS. Exact v0.17.5 publication resets the
+  publication epoch to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`;
+  the v0.38 runtime difference is included in that published commit, and this
+  step adds no runtime or public-surface change.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain byte-untouched and untracked. No dependency, production source,
+  protected byte, observation, fixture, publisher wire, entitlement/licensing
+  outcome, or golden input moved.
+- stop conditions: none. Every Grant C precondition and the post-push hosted
+  gate passed.
+- golden-E2E delta: **0** at **11/11**.
