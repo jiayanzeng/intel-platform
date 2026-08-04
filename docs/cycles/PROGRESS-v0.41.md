@@ -56,3 +56,40 @@ Entries are append-only; corrections are new dated entries.
   committed run passes.
 - golden-E2E delta: **0**. The sandbox-denied bind was a non-result; the
   permission-capable identical command passed **11/11**.
+
+### 2026-08-04 · E0 — entering-state reconstruction
+
+- owner: Codex
+- commit: 6d9d131870f84ac04249e6bc545711f46d402dc3
+- hypothesis acceptance: PASS. All H1–H9 carry dated confirmed or refuted
+  verdicts in the runbook. The exact object graph, remote/local topology,
+  detached real-tag lifecycle pass, entering export, registry, exemption,
+  retraction, and closing-checklist counts were derived from their entry
+  points; none was accepted because it appeared in the draft.
+- refutation acceptance: PASS. Entering State leaves **281,081**, not 281,082
+  bytes; the manifest is **200,440**, not 200,439; and all three draft suffix
+  figures are one byte low. The keyed pin field is 194,191 bytes while the
+  array payload alone is 194,173, and the actually movable v0.38 region is
+  **84,896** bytes rather than the permanent-tail-inclusive suffix.
+- real-tag acceptance: PASS. A fresh detached v0.17.7 tag checkout runs the
+  actual `cycle-check` and reports `local-tag-reconciliation=verified`.
+- predicate acceptance: PASS. Exhaustive authority search finds no named
+  “export ceiling trigger,” and a direct construction at
+  `export_attention_errors` returns `[]` for a fired boundary plus the dated
+  disposition `aware`, confirming the substance defect.
+- entering-status acceptance: PASS. Before activation, the expected untracked
+  set was exactly the three protected amendment inputs and the new v0.41
+  runbook. After activation it is exactly the same three amendment inputs;
+  their bytes remain untouched.
+- local-matrix acceptance: PASS. `./run ci-local` passes **22/22** jobs.
+  Standalone invariant self-test passes **16/16 rules / 108 controls**. Fresh
+  Python 3.11 and independently rebuilt Python 3.12 environments each pass
+  **391/391** with the same named on-site identity and constrained 21-package
+  resolution. Standalone golden passes **11/11**.
+- remote acceptance: PASS. Fresh read-only remote inspection keeps
+  `main=dd605acc…`, exact v0.17.2–v0.17.5 tags, and no v0.17.6/v0.17.7 refs.
+- cycle acceptance: PASS. `cycle-check` reports the open v0.41 worktree bound,
+  with local tag reconciliation verified and no lifecycle defect.
+- stop conditions: none. No gate tripped; no dependency, production source,
+  protected byte, evidence input, local tag, or remote ref changed.
+- golden-E2E delta: **0** (**11/11**).
