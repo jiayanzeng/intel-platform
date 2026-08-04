@@ -252,3 +252,42 @@ Entries are append-only; corrections are new dated entries.
   every omitted pin names bytes absent from review; C25 did not invent a
   threshold-selected class.
 - golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
+
+### 2026-08-04 · ARCHIVE — record dormant Grant E branch
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: 6b5bfc4c26cd58ca9851f5393b9877fe7ff74924
+- grant acceptance: PASS. The initiating publication authorization and every
+  later operator message through this step were compared with Grant E's exact
+  required content. Grant E was not issued; the step records the dated
+  `not-granted` branch without treating publication authority as archival
+  authority.
+- dormant-path acceptance: PASS. No path was created under
+  `docs/state-archive/`; the exact v0.38-to-permanent-marker region remains an
+  unexecuted and unrecovered **84,896-byte** lever. The deferral row keeps the
+  substantive `kind=unheld-lever`, `lever=Grant E`,
+  `recoverable_bytes=84896` disposition and claims neither an archive nor a
+  pin.
+- State acceptance: PASS. After the complete dated record, `STATE.md` measures
+  **185054 / 453,741 bytes** and `cycle-check` reports its artifact boundary
+  below threshold while the repaired review-attention trigger remains fired
+  and disposed.
+- manifest acceptance: PASS. `config/protected-artifacts.json` remains
+  byte-identical at **200,440 bytes / 339 pins**, SHA-256
+  `f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`.
+  Its diff is empty; the not-granted branch added zero pins.
+- executable acceptance: PASS. A first transitional CI invocation correctly
+  stopped when ARCHIVE was checked before its progress record could exist; the
+  box was restored to unchecked and that incomplete run was not used as
+  evidence. The unchanged implementation worktree then passed the complete
+  permission-required `./run ci-local` matrix **22/22**, including **16/16
+  rules / 115 controls**, Python 3.11 **396/396**, all Rust warning/lint/floor
+  lanes, protected artifacts, and embedded golden **11/11**.
+- protected/scope acceptance: PASS. No dependency, production source,
+  protected byte, observation, fixture input, publisher wire, public response
+  domain, entitlement/licensing outcome, accepted boundary, tag, or remote ref
+  moved. The three protected amendment inputs remain untouched and untracked.
+- stop conditions: none. The absence of Grant E selected the runbook's required
+  dormant completion; it did not trip a gate for the remaining cycle.
+- golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
