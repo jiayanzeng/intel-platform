@@ -1,26 +1,45 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.39 R-CLOSE is preparing the DR20-selected patch release locally; v0.17.5 remains published exactly, Grant C is spent, and v0.17.6 publication is unauthorized.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally at v0.39 and remains unpublished; v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged v0.17.6 release commit `acfa801102197ce2d94adaa5a14a3ad102893549` is the closing record's immediate parent; the local annotated tag targets that closing commit only after it exists, and its required append-only audit child follows immediately. Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
-**v0.39 R-CLOSE release-parent preparation (measured 2026-08-04).** DR20
-selects patch **v0.17.6**. The release-baselined R15 derivation and installed
-FastAPI runtime comparison report no public response-domain difference across
-**6 routes / 31 status-media response variants / 112 recursive field
+**v0.39 R-CLOSE — v0.17.6 release parent measured (2026-08-04).** DR20 selects
+patch **v0.17.6**. The release-baselined R15 derivation and installed FastAPI
+runtime comparison report no public response-domain difference across **6
+routes / 31 status-media response variants / 112 recursive field
 occurrences**. Review-export truth, attention, and bounded-egress controls add
 no production runtime behavior, dependency, publisher configuration,
-entitlement/licensing outcome, or protected-evidence movement. Neither minor
-clause fires.
+entitlement/licensing outcome, protected-evidence movement, or serialized
+field-domain value. Neither minor clause fires.
 
-The untagged release parent moves all five executable authorities to
-**0.17.6**: `apps/cored/Cargo.toml`, `shell/intel_shell/__init__.py`,
-`shell/intel_shell/app.py`, this State header, and `CHANGELOG.md`. README's
-three current restatements move with them, and Cargo changes only cored's
-lockfile package value. Its immediate child will carry the checked closing
-record; only that child becomes the local annotated-tag target, followed
-immediately by the required closing-export audit child. Direct local and remote
-checks found no v0.17.6 tag before preparation. Remote `main` remains exact
-published v0.17.5 audit child
-`dd605acc037da405fa6b2b5366b09349c330c194`; DR21 authorizes no publication.
+Exact untagged release parent
+`acfa801102197ce2d94adaa5a14a3ad102893549` moves all five executable
+authorities to 0.17.6. `version-check` reports **3** offline pins, **22**
+current offline-floor restatements, **3** current release restatements, and all
+**587** tracked files classified. Its permission-complete full gate passes
+**22/22** jobs; Python 3.11 and 3.12 each pass **381/381**, the registered scan
+passes **16/16 rules / 100 controls**, both Rust floor pairs behave as
+specified, protected artifacts match, and embedded plus standalone golden pass
+**11/11** with delta zero.
+
+The exact release parent exports **2,729,600 bytes / 158 tracked entries / 2
+retained cycles**. It leaves **270,400 bytes / 9.01% / 2.52 measured cycles**
+below the fixed ceiling, clearing the 2.5-cycle target by **2,335 bytes** and
+remaining **55,948 bytes** below the executable attention boundary. The
+assembled closing tree exports **2,740,695 bytes**, leaving **259,305 bytes /
+8.64% / 2.42 cycles** and missing the 2.5-cycle target by exactly **8,760
+bytes**, while remaining **44,853 bytes** below attention. These fixed-width
+fields are replaced from the final assembled-tree measurement before commit.
+The
+protected manifest remains **200,440 / 1,048,576 bytes** and two complete
+artifact checks each took **0.09 s real**. Release-parent State is **149,239 /
+453,741 bytes**. Neither governed artifact, attention, or timing trigger fires.
+
+Fresh pre-close local/remote readback found no v0.17.6 tag and kept remote
+`main` exact at published v0.17.5 audit child
+`dd605acc037da405fa6b2b5366b09349c330c194`. DR21 therefore closes v0.17.6
+locally: no push, remote main move, or new release publication is authorized.
+Every active deferral row carries a latest dated v0.39 observation, and the
+mandatory immediate audit child owns the later closing-tree export disclosure.
 
 **v0.39 RE-MEASURE — exact hosted candidate passed (measured 2026-08-04).**
 The checker and governing-contract work made hosted execution mandatory. Exact

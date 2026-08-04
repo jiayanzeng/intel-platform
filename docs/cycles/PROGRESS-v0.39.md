@@ -352,3 +352,85 @@ It authorizes no other ref movement or later release publication.
   and final remote readback shows no main or tag movement.
 - golden-E2E delta: **0**. Hosted and final standalone local golden each passed
   **11/11**.
+
+### 2026-08-04 · R-CLOSE — v0.17.6 tagged local close
+
+- owner: Codex
+- runbook: `TASKS-v0.39-EXECUTION.md`
+- commit: acfa801102197ce2d94adaa5a14a3ad102893549
+- result: PASS. DR20 selects patch **v0.17.6** because review-export truth,
+  pre-failure attention, and bounded-egress controls change review and
+  assurance behavior but no production runtime behavior, dependency,
+  publisher configuration, protected byte, entitlement/licensing outcome, or
+  serialized public response contract. The untagged release parent is the
+  closing record's immediate parent; the annotated tag is created locally only
+  after the closing tree exists.
+- domain acceptance: PASS. Both the dependency-free derivation and installed
+  FastAPI comparison report **0 differences** from the v0.17.4 baseline across
+  **6 routes / 31 status-media response variants / 112 recursive field
+  occurrences**. DR20's public-value-domain minor clause does not fire.
+- version acceptance: PASS. `version-check` derives **0.17.6** from all five
+  executable authorities, with **3** offline-MSRV pins at raw 1.78.0, **22**
+  current offline-MSRV restatements at 1.78, and **3** current release
+  restatements at 0.17.6. All **587** tracked files are classified and Cargo
+  changes only cored's lockfile package value.
+- evidence-anchor acceptance: PASS. Exact candidate
+  `fa846095b7387bcf9e832d558dc8a70a6d29813b`, run `30875346351` attempt 1,
+  passed **9/9** blocking identities and persisted **9 receipts / 9 Sigstore
+  bundles** accepted by the release-grade verifier. Both local release-parent
+  populations pass **381/381**; both hosted comparisons derive equivalent
+  **381**-test populations with one named, reasoned, `on_site` skip; hosted and
+  local golden pass **11/11**.
+- governed review-export measurement: tree=`acfa801102197ce2d94adaa5a14a3ad102893549`; bytes=`2729600`
+- governed-export acceptance: PASS. The exact release parent produced **158
+  required / 158 tracked / 158 exported / 2,729,600 bytes**, retained exactly
+  v0.38–v0.39, and excluded the exact four manifest-derived raw publisher
+  response bodies, both structural archives, and the bounded historical
+  untracked-input family. At the latest +107,226-byte adjacent-cycle
+  denominator, **270,400 bytes / 9.01% / 2.52 cycles** remain below the fixed
+  ceiling. This clears the 2.5-cycle target by **2,335 bytes** and remains
+  **55,948 bytes** below the attention boundary. The final assembled closing
+  tree exports **2,740,695 bytes**, leaving **259,305 bytes / 8.64% / 2.42
+  cycles** and missing the 2.5-cycle target by exactly **8,760 bytes**, while
+  remaining **44,853 bytes** below attention. The immediate audit child binds
+  this later closing-tree measurement without superseding the governed field.
+- artifact-boundary acceptance: PASS. Release-parent State is **149,239 /
+  453,741 bytes**. The manifest remains **200,440 / 1,048,576 bytes** and two
+  complete verifications each took **0.09 s real**. Neither governed artifact,
+  timing, nor review-export attention trigger fires.
+- deferral acceptance: PASS. Every active row carries its latest dated v0.39
+  close observation. The version-literal trigger is discharged under declared
+  release-authority precedence; DR20 discharges classification; the immediate
+  audit child discharges the required closing-tree disclosure.
+- invariant acceptance: PASS. The release-parent full gate passes **16/16
+  rules / 100 controls** with **0** hand-typed absolute finding-line fields.
+  The Step 1A publication-lifecycle controls remain unmodified and are
+  re-executed on the mixed published/unpublished-local state after tagging.
+- divergence acceptance: PASS. Published v0.17.5 reset the epoch count to
+  **0**. v0.39 has no measured runtime-behavior difference or public-surface
+  movement, so the count remains **0** and neither trigger fires. The local
+  unpublished close does not reset the epoch.
+- publication acceptance: PASS at DR21's boundary. Fresh direct pre-close
+  readback found no local or remote v0.17.6 tag and kept remote `main` exact at
+  `dd605acc037da405fa6b2b5366b09349c330c194`. Grant C is spent. No push,
+  `main` movement, or v0.17.6 publication occurred. The local annotated tag
+  targets only the closing commit after it exists; the immediate audit child
+  owns the exact closing-tree export field before handoff.
+- checklist acceptance: PASS at the assembled closing worktree: **310 checked
+  / 3 retracted / 301 matched / 301 commits resolved / 9 exemptions**; v0.39
+  is nonempty at **8 checked / 8 matched / 8 resolved**.
+- full local acceptance: PASS **22/22** jobs at the exact release parent.
+  Python 3.11 and 3.12 each pass **381/381** with the accepted warning, Rust
+  1.78 and net 1.86 pass, net 1.85 produces the required locked-ICU refusal,
+  all protected bytes match, and embedded golden passes **11/11**. The final
+  audit child re-executes the full gate over the delivered head.
+- golden-E2E delta: **0**. The release-parent embedded and standalone pipeline
+  pass **11/11**; the assembled closing-worktree standalone run and final
+  audit-child embedded run are reported at their executable points.
+- scope acceptance: PASS. Only declared release authorities and active
+  State/runbook/progress/Architecture records move. No dependency graph,
+  protected byte, fixture, historical observation, closed-cycle document,
+  publisher request, workflow, `main`, or remote release ref moves.
+- stop conditions: none. The exact release parent clears the stated headroom
+  target, no decision gate fired, and no publication beyond spent Grant C was
+  attempted.
