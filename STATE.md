@@ -2,6 +2,44 @@
 
 **As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally and unpublished; v0.39's mandatory closing-export audit is complete, but the tagged closing tree retains the disclosed publication-assertion freshness defect described below. v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged release commit `acfa801102197ce2d94adaa5a14a3ad102893549` carries the v0.17.6 authorities and is the immediate parent of closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; this immediate audit child records the measured closing-tree export. Local annotated tag object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that closing commit. Historical v0.17.5 release parent `37f552c0c326098bdcf8f19de7eac19670d74680` is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that v0.17.5 closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
+**v0.40 E0 — entering state reconstructed (measured 2026-08-04).** The
+pre-activation object graph is exact: v0.17.6 release parent
+`acfa801102197ce2d94adaa5a14a3ad102893549` is the immediate parent of closing
+commit `7c9305f01219412048ec75236f2bf1e61112c178`, local annotated tag object
+`66ee2cbbe374b99722bec49b8176571777aaa899` peels to that closing commit, and
+audit child `5885529a5f33e9c773f81d8d9434e47d77161d34` is its immediate child. Fresh
+remote readback keeps `main` exact at
+`dd605acc037da405fa6b2b5366b09349c330c194`, confirms remote v0.17.2 through
+v0.17.5, and returns no v0.17.6 tag while the local tag remains present.
+
+A detached checkout of the real v0.17.6 tag reproduces the single disclosed
+publication-assertion freshness defect: the header spends the strict phrase on
+historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680`
+while the checker derives expected v0.17.6 parent `acfa801…`. The same immutable
+header also names `acfa801…` outside that assertion and the closing record names
+it correctly, so the tagged tree is self-contradictory rather than simply
+missing the correct identity. Source tracing and a disposable no-tag clone show
+that both freshness inputs already exist before tag creation, but tag-resolution
+failure returns before the strict assertion loop. Deleting only the disposable
+clone's v0.17.6 tag makes full verification fail on both local-tag resolution
+and publication-verification unavailability; the real tag was not moved.
+
+The full local gate passes **22/22** jobs. Python 3.11 and a separately rebuilt
+Python 3.12 environment each pass **381/381** tests with the same one accepted
+warning. The registered suite passes **16/16 rules / 100 controls**; direct
+checklist derivation is **311 checked / 3 retracted / 302 matched / 302 resolved
+/ 9 exemptions**, refuting the draft's stale 303 / 3 / 294 / 294 / 9 figures.
+Golden passes **11/11** with delta zero. The entering commit export passes at
+**2,743,797 bytes / 158 tracked entries / 2 retained cycles**, exactly **41,751
+bytes** below the old **2,785,548-byte** attention boundary. Entering State is
+**152,810 / 453,741 bytes**, refuting the draft by one byte; the protected
+manifest remains **200,440 / 1,048,576 bytes**. The measured governed series
+still makes v0.37 **2,674,055** to v0.38 **2,781,281**, or **+107,226**, the
+latest positive adjacent delta; both worked-example branches recompute exactly.
+At the E0 recording point, `git status --porcelain` contains only this task's
+runbook edit plus the exact three pre-existing untracked historical amendment
+inputs; those inputs remain untouched.
+
 **v0.40 ACTIVATE — corrective cycle declared (measured 2026-08-04).** The
 activation worktree advances the declaration and derived review retention to
 v0.40 and exactly v0.39–v0.40. All **31/31** deferral subjects carry dated
