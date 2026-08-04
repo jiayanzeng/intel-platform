@@ -857,7 +857,7 @@
         },
         {
           "file": "tools/export_check.py",
-          "find": "    if export_bytes >= boundary_bytes:\n",
+          "find": "    if export_attention_fires(export_bytes, boundary_bytes):\n",
           "replace_with": [
             "    if False:\n"
           ],
@@ -1021,13 +1021,33 @@
         },
         {
           "file": "tools/cycle_check.py",
-          "find": "        if measured_bytes >= boundary_bytes:\n",
+          "find": "        artifact_boundary_fired = measured_bytes >= boundary_bytes\n",
           "replace_with": [
-            "        if False:\n"
+            "        artifact_boundary_fired = False\n"
           ],
           "expected_fail": "artifact-byte-boundary planted controls were not detected: crossed-boundary-without-disposition",
           "expected_file": "tools/cycle_check.py",
           "expected_anchor": "        # Invariant R12 control site: governed artifact byte boundary."
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "        for predicate_id in spec.predicate_ids:\n",
+          "replace_with": [
+            "        for predicate_id in ():\n"
+          ],
+          "expected_fail": "artifact-trigger-predicate-registry planted controls were not detected: undefined-governed-trigger-predicate",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "    # Invariant R12 control site: governed artifact trigger predicate registry."
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "        if artifact_boundary_fired or attention_fired:\n",
+          "replace_with": [
+            "        if artifact_boundary_fired:\n"
+          ],
+          "expected_fail": "artifact-trigger-predicate-evaluation planted controls were not detected: attention-fired-row-reads-unfired",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "        # Invariant R12 control site: governed artifact trigger predicate evaluation."
         },
         {
           "file": "tools/cycle_check.py",

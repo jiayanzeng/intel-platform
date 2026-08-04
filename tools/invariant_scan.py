@@ -1877,6 +1877,14 @@ PUBLICATION_CONTROL_MARKERS = {
     "artifact-byte-boundary": (
         "Invariant R12 control site: governed artifact byte boundary."
     ),
+    "artifact-trigger-predicate-registry": (
+        "Invariant R12 control site: governed artifact trigger predicate "
+        "registry."
+    ),
+    "artifact-trigger-predicate-evaluation": (
+        "Invariant R12 control site: governed artifact trigger predicate "
+        "evaluation."
+    ),
     "cycle-ending-export-audit": (
         "Invariant R12 control site: cycle-ending review-export audit ordering."
     ),
@@ -3663,19 +3671,18 @@ def r12_findings(root: Path) -> list[str]:
             "## Deferred means deferred\n\n"
             "| Deferred item | Unchanged trigger | measured observation |\n"
             "|---|---|---|\n"
-            "| Second `STATE.md` archival | the export ceiling trigger fires, "
+            "| Second `STATE.md` archival | the review-export attention "
+            "predicate fires, "
             "or `STATE.md` reaches its governed artifact byte boundary | "
             f"{boundary_cycle} · 2026-08-01 — measured |\n"
         )
-        boundary_architecture = (
-            "# Architecture\n\n"
-            "### Dated operational-residual dispositions\n\n"
-            "| subject | disposition | trigger | measured observation |\n"
-            "|---|---|---|---|\n"
-            "| protected evidence-manifest growth | accepted | the manifest "
-            "reaches its governed artifact byte boundary, or two consecutive "
-            "clean `./run verify-artifacts` runs each take ≥1.00 s real | "
-            f"{boundary_cycle} · 2026-08-01 — measured |\n"
+        live_architecture = (root / "ARCHITECTURE.md").read_text()
+        boundary_architecture = live_architecture.replace(
+            "export of **2,789,050 bytes**",
+            "export of **1 bytes**",
+        ).replace(
+            "Governed review-export bytes: `2789050`",
+            "Governed review-export bytes: `1`",
         )
         boundary_fixture = fixture / "artifact-byte-boundary"
         (boundary_fixture / "config").mkdir(parents=True)
@@ -3705,6 +3712,58 @@ def r12_findings(root: Path) -> list[str]:
             missed.setdefault("artifact-byte-boundary", []).append(
                 "crossed-boundary-without-disposition"
             )
+
+        original_state_spec = cycle_check.GOVERNED_ARTIFACT_ROW_SPECS[
+            "STATE.md"
+        ]
+        cycle_check.GOVERNED_ARTIFACT_ROW_SPECS["STATE.md"] = (
+            original_state_spec._replace(
+                predicate_ids=(
+                    *original_state_spec.predicate_ids,
+                    "planted-undefined-predicate",
+                )
+            )
+        )
+        errors = []
+        try:
+            cycle_check.check_governed_artifact_trigger_predicates(errors)
+        finally:
+            cycle_check.GOVERNED_ARTIFACT_ROW_SPECS[
+                "STATE.md"
+            ] = original_state_spec
+        if not any(
+            "names undefined trigger predicate 'planted-undefined-predicate'"
+            in error
+            for error in errors
+        ):
+            missed.setdefault(
+                "artifact-trigger-predicate-registry", []
+            ).append("undefined-governed-trigger-predicate")
+
+        attention_only_runbook = boundary_runbook.replace(
+            "path=`STATE.md`; bytes=`1`",
+            "path=`STATE.md`; bytes=`1000000`",
+        ).replace(
+            "path=`config/protected-artifacts.json`; bytes=`1`",
+            "path=`config/protected-artifacts.json`; bytes=`1000000`",
+        )
+        (boundary_fixture / "ARCHITECTURE.md").write_text(live_architecture)
+        errors = []
+        cycle_check.check_governed_artifact_byte_boundaries(
+            boundary_active,
+            attention_only_runbook,
+            boundary_fixture,
+            errors,
+            checked_tree="planted-attention-tree",
+        )
+        if not any(
+            "review_export_attention=True" in error
+            and "requires a dated 'trigger-fired disposition:'" in error
+            for error in errors
+        ):
+            missed.setdefault(
+                "artifact-trigger-predicate-evaluation", []
+            ).append("attention-fired-row-reads-unfired")
 
         trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
@@ -3971,6 +4030,12 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "governed-export-ceiling planted controls"
         elif group == "artifact-byte-boundary":
             finding_kind = "artifact-byte-boundary planted controls"
+        elif group == "artifact-trigger-predicate-registry":
+            finding_kind = "artifact-trigger-predicate-registry planted controls"
+        elif group == "artifact-trigger-predicate-evaluation":
+            finding_kind = (
+                "artifact-trigger-predicate-evaluation planted controls"
+            )
         elif group == "cycle-ending-export-audit":
             finding_kind = "cycle-ending-export-audit planted controls"
         else:

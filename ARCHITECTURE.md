@@ -436,6 +436,17 @@ governed margin deliberately shares this denominator because both fields
 express remaining capacity in governed-growth cycles; retaining the lower
 latest delta for the margin would understate the same observed risk.
 
+Governed artifact trigger clauses are rendered from a named predicate registry;
+a pinned row may not name a predicate absent from that registry. The second
+`STATE.md` archival's export clause is exactly the review-export attention
+predicate above and consumes its single executable `>= boundary` decision.
+`cycle-check` evaluates that clause from the governed export value and the
+derived attention boundary, so a firing attention state cannot be recorded as
+an unfired archival row. This repair adds no export-only firing state: below,
+at, and above the attention boundary the archival export clause and the review
+export predicate return the same false/true/true sequence. The independent
+State artifact-byte-boundary clause remains unchanged.
+
 `STATE.md` archival eligibility is structural rather than a line or byte
 constant. The status paragraph supplies the immutable header boundary;
 `STATE_ARCHIVE_PERMANENT_TAIL:START` supplies the permanent-tail boundary; the

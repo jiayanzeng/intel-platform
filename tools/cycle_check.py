@@ -32,6 +32,7 @@ from tools.export_check import (
     ExportCheckError,
     export_attention_boundary,
     export_attention_errors,
+    export_attention_fires,
     expected_retained_cycle_paths,
     governed_export_measured_cell,
 )
@@ -1916,22 +1917,74 @@ STATE_SECTION_REFERENCE_RE = re.compile(
     r"\bSTATE(?:\.md)?\s+§(?P<section>[1-9][0-9]*[a-z]?)\b",
     re.IGNORECASE,
 )
+class GovernedArtifactRowSpec(NamedTuple):
+    heading: str
+    subject_header: str
+    subject_prefix: str
+    predicate_ids: tuple[str, ...]
+
+
+GOVERNED_TRIGGER_PREDICATES = {
+    "review-export-attention": "the review-export attention predicate fires",
+    "state-artifact-byte-boundary": (
+        "STATE.md reaches its governed artifact byte boundary"
+    ),
+    "manifest-artifact-byte-boundary": (
+        "the manifest reaches its governed artifact byte boundary"
+    ),
+    "manifest-verification-latency": (
+        "two consecutive clean ./run verify-artifacts runs each take ≥1.00 s real"
+    ),
+}
 GOVERNED_ARTIFACT_ROW_SPECS = {
-    "STATE.md": (
+    "STATE.md": GovernedArtifactRowSpec(
         DEFERRED_HEADING,
         "Deferred item",
         "Second STATE.md archival",
-        "the export ceiling trigger fires, or STATE.md reaches its governed "
-        "artifact byte boundary",
+        (
+            "review-export-attention",
+            "state-artifact-byte-boundary",
+        ),
     ),
-    "config/protected-artifacts.json": (
+    "config/protected-artifacts.json": GovernedArtifactRowSpec(
         DATED_DISPOSITIONS_HEADING,
         "subject",
         "protected evidence-manifest growth",
-        "the manifest reaches its governed artifact byte boundary, or two "
-        "consecutive clean ./run verify-artifacts runs each take ≥1.00 s real",
+        (
+            "manifest-artifact-byte-boundary",
+            "manifest-verification-latency",
+        ),
     ),
 }
+
+
+def governed_artifact_trigger_text(spec: GovernedArtifactRowSpec) -> str | None:
+    clauses = [
+        GOVERNED_TRIGGER_PREDICATES.get(predicate_id)
+        for predicate_id in spec.predicate_ids
+    ]
+    if not clauses or any(clause is None for clause in clauses):
+        return None
+    return ", or ".join(clause for clause in clauses if clause is not None)
+
+
+def check_governed_artifact_trigger_predicates(errors: list[str]) -> None:
+    # Invariant R12 control site: governed artifact trigger predicate registry.
+    for relative, spec in GOVERNED_ARTIFACT_ROW_SPECS.items():
+        if not spec.predicate_ids:
+            errors.append(
+                f"governed artifact row {relative!r} defines no trigger predicate"
+            )
+        if len(spec.predicate_ids) != len(set(spec.predicate_ids)):
+            errors.append(
+                f"governed artifact row {relative!r} repeats a trigger predicate"
+            )
+        for predicate_id in spec.predicate_ids:
+            if predicate_id not in GOVERNED_TRIGGER_PREDICATES:
+                errors.append(
+                    f"governed artifact row {relative!r} names undefined "
+                    f"trigger predicate {predicate_id!r}"
+                )
 
 
 def module_forward_boundaries() -> dict[str, tuple[int, ...]]:
@@ -2279,6 +2332,7 @@ def check_governed_artifact_byte_boundaries(
     *,
     checked_tree: str | None = None,
 ) -> tuple[str, list[str]]:
+    check_governed_artifact_trigger_predicates(errors)
     matches = list(GOVERNED_ARTIFACT_BOUNDARY_RE.finditer(active_text))
     prefix_count = active_text.count(GOVERNED_ARTIFACT_BOUNDARY_PREFIX)
     if prefix_count != len(matches):
@@ -2322,17 +2376,24 @@ def check_governed_artifact_byte_boundaries(
     states: list[str] = []
     reports: list[str] = []
     for relative, boundary_bytes in boundaries.items():
-        heading, subject_header, subject_prefix, expected_trigger = (
-            GOVERNED_ARTIFACT_ROW_SPECS[relative]
+        spec = GOVERNED_ARTIFACT_ROW_SPECS[relative]
+        expected_trigger = governed_artifact_trigger_text(spec)
+        row_path = (
+            active_path
+            if spec.heading == DEFERRED_HEADING
+            else architecture_path
         )
-        row_path = active_path if heading == DEFERRED_HEADING else architecture_path
-        row_text = active_text if heading == DEFERRED_HEADING else architecture_text
+        row_text = (
+            active_text
+            if spec.heading == DEFERRED_HEADING
+            else architecture_text
+        )
         row = governed_trigger_row(
             row_path,
             row_text,
-            heading,
-            subject_header,
-            subject_prefix,
+            spec.heading,
+            spec.subject_header,
+            spec.subject_prefix,
             root,
             errors,
         )
@@ -2340,11 +2401,14 @@ def check_governed_artifact_byte_boundaries(
             states.append("invalid-row")
             continue
         trigger, measured = row
-        if trigger.casefold() != expected_trigger.casefold():
+        if (
+            expected_trigger is None
+            or trigger.casefold() != expected_trigger.casefold()
+        ):
             errors.append(
                 f"{shown(row_path, root)}: governed trigger row "
-                f"{subject_prefix!r} must reference its single machine "
-                "artifact byte-boundary authority instead of restating it"
+                f"{spec.subject_prefix!r} must equal the text derived from "
+                "its registered trigger predicates"
             )
 
         artifact = root / relative
@@ -2357,7 +2421,29 @@ def check_governed_artifact_byte_boundaries(
         measured_bytes = artifact.stat().st_size
         state = "bound"
         # Invariant R12 control site: governed artifact byte boundary.
-        if measured_bytes >= boundary_bytes:
+        artifact_boundary_fired = measured_bytes >= boundary_bytes
+        attention_fired = False
+        if "review-export-attention" in spec.predicate_ids:
+            row_value = governed_export_row_value(
+                architecture_path,
+                architecture_text,
+                root,
+                errors,
+            )
+            try:
+                attention = export_attention_boundary(root)
+            except ExportCheckError as error:
+                errors.append(f"{shown(architecture_path, root)}: {error}")
+            else:
+                attention_fired = (
+                    row_value is not None
+                    and export_attention_fires(
+                        row_value,
+                        attention.boundary_bytes,
+                    )
+                )
+        # Invariant R12 control site: governed artifact trigger predicate evaluation.
+        if artifact_boundary_fired or attention_fired:
             valid_dates = [
                 raw
                 for raw in ISO_DATE_TOKEN_RE.findall(measured)
@@ -2369,8 +2455,11 @@ def check_governed_artifact_byte_boundaries(
             ):
                 errors.append(
                     f"{shown(artifact, root)}: measured {measured_bytes} bytes "
-                    f"at checked_tree={tree}, meeting or exceeding governed "
-                    f"boundary {boundary_bytes}; row {subject_prefix!r} "
+                    f"at checked_tree={tree} against governed boundary "
+                    f"{boundary_bytes}; registered trigger fired "
+                    f"(artifact_boundary={artifact_boundary_fired}, "
+                    f"review_export_attention={attention_fired}); row "
+                    f"{spec.subject_prefix!r} "
                     "requires a dated 'trigger-fired disposition:'"
                 )
                 state = "trigger-fired-undisposed"

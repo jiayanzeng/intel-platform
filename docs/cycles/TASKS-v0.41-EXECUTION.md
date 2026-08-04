@@ -666,7 +666,7 @@ acceptance point is a defect, not an oversight.
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.41 · 2026-08-04 — The manifest is **200,440 / 1,048,576 bytes**; two complete checks matched 3 artifacts / 339 pins in **0.10 s / 0.10 s real**. Neither clause fired. | Step 4 |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.41 · 2026-08-04 — Shell production source is absent from `allow`; release-authority precedence has not moved the literals during activation. | Step 7 |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.41 · 2026-08-04 — R15 reports **0 differences / 6 routes / 112 field occurrences**; patch remains the expected disposition and no operator decision displaced the R-CLOSE boundary. | Step 7 |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.41 · 2026-08-04 — State is **172,660 / 453,741 bytes**. The entering-commit export attention predicate fires while the fixed ceiling and State boundary do not; the actual v0.38-through-v0.40 movable region before the permanent tail is **84,896 bytes**. Step 2 repairs the clause and Grant E was not issued. | Step 2 and Step 5 |
+| Second `STATE.md` archival | the review-export attention predicate fires, or `STATE.md` reaches its governed artifact byte boundary | v0.41 · 2026-08-04 — State is **178,178 / 453,741 bytes**. Governed review-export **2,789,050** meets the **2,569,388-byte** attention boundary while the State boundary does not, so the repaired attention clause fires. trigger-fired disposition: Grant E is not held and the measured **84,896-byte** v0.38 archival lever remains unexecuted; Step 2 makes the reachable predicate exact without changing either threshold. | Step 2 and Step 5 |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.41 · 2026-08-04 — Active cycle v0.41 remains in the `v0.<n>` family, so the trigger did not fire. | none |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.41 · 2026-08-04 — The v0.17.5 publication epoch remains at **0** because v0.17.6 is withheld and v0.17.7 carries no runtime difference; R15 reports zero public-surface differences. Neither clause fired. | Step 7 |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.41 · 2026-08-04 — `version-check` derives **3** offline pins, **22** current floor restatements, and **3** release restatements across **589** tracked files; no unregistered current restatement appeared. | none |
@@ -714,7 +714,7 @@ acceptance point is a defect, not an oversight.
 
 - [x] ACTIVATE
 - [x] E0
-- [ ] TRIGGER-REACH
+- [x] TRIGGER-REACH
 - [ ] DISPOSITION-SUBSTANCE
 - [ ] REVIEW-SOURCE
 - [ ] ARCHIVE

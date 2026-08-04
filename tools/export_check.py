@@ -124,7 +124,7 @@ def export_attention_errors(
 ) -> list[str]:
     errors: list[str] = []
     # Invariant R12 control site: review-export pre-failure attention boundary.
-    if export_bytes >= boundary_bytes:
+    if export_attention_fires(export_bytes, boundary_bytes):
         has_valid_date = any(
             valid_iso_date(raw) for raw in ISO_DATE_RE.findall(measured)
         )
@@ -138,6 +138,11 @@ def export_attention_errors(
                 "'trigger-fired disposition:'"
             )
     return errors
+
+
+def export_attention_fires(export_bytes: int, boundary_bytes: int) -> bool:
+    """Return the single executable review-export attention predicate."""
+    return export_bytes >= boundary_bytes
 
 
 def tracked_repository_paths(root: Path) -> set[str]:

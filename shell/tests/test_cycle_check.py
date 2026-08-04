@@ -128,7 +128,8 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| Baseline item | none | no measurement required | none |\n"
         "| Trigger baseline | active condition | "
         "v1.2.3 · 2026-07-30 — measured | none |\n"
-        "| Second `STATE.md` archival | the export ceiling trigger fires, or "
+        "| Second `STATE.md` archival | the review-export attention predicate "
+        "fires, or "
         "`STATE.md` reaches its governed artifact byte boundary | "
         "v1.2.3 · 2026-07-30 — measured | none |\n\n"
         "## Step 1 · CHECK\n\n"
@@ -303,7 +304,8 @@ def test_cycle_check_rejects_missing_governed_artifact_row(
     runbook = _runbook(root)
     runbook.write_text(
         runbook.read_text().replace(
-            "| Second `STATE.md` archival | the export ceiling trigger fires, "
+            "| Second `STATE.md` archival | the review-export attention "
+            "predicate fires, "
             "or `STATE.md` reaches its governed artifact byte boundary | "
             "v1.2.3 · 2026-07-30 — measured | none |\n",
             "",
@@ -2590,8 +2592,8 @@ def test_cycle_check_rejects_zero_trigger_populations(
                 "| Trigger baseline | active condition |",
                 "| Trigger baseline | none |",
             ).replace(
-                "| Second `STATE.md` archival | the export ceiling trigger "
-                "fires, or `STATE.md` reaches its governed artifact byte "
+                "| Second `STATE.md` archival | the review-export attention "
+                "predicate fires, or `STATE.md` reaches its governed artifact byte "
                 "boundary |",
                 "| Second `STATE.md` archival | none |",
             )
