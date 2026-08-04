@@ -106,3 +106,54 @@ Entries are append-only; corrections are new dated entries.
 - checker result: `checklist-audit` now resolves E0 through exactly one valid
   runbook-qualified entry.
 - golden-E2E delta: **0** (**11/11**), unchanged from the corrected record.
+
+### 2026-08-04 · TRIGGER-REACH — bind archival relief to attention
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: a8ec40a58b57e4f328392ecd91587e180e31f7be
+- row/spec acceptance: PASS. The pinned State-archival spec and active row
+  derive the same normalized text: “the review-export attention predicate
+  fires, or `STATE.md` reaches its governed artifact byte boundary.” The
+  nonexistent export-ceiling-trigger name is gone from every live source and
+  fixture while remaining in dated rationale only.
+- general-predicate acceptance: PASS. Every governed artifact-row spec carries
+  named predicate ids resolved through one registry. R12 control **49** plants
+  an undefined id in the general spec population and fails at its registered
+  predicate-registry control site; its fail-before mutation executes and is
+  detected.
+- fired-state acceptance: PASS. `cycle-check` consumes the governed export
+  value and the same executable attention boundary decision as `export-check`.
+  R12 control **50** keeps State below its byte boundary while attention fires
+  and proves that a row without a disposition fails at the registered
+  predicate-evaluation site; its fail-before mutation executes and is detected.
+- non-widening acceptance: PASS. Direct boundary−1/boundary/boundary+1
+  evaluation at **2,569,387 / 2,569,388 / 2,569,389** gives **false / true /
+  true** for both the review predicate and archival export clause. The
+  independent State byte-boundary clause and both accepted ceilings did not
+  move.
+- satisfiable live-state acceptance: PASS. Governed export **2,789,050** fires
+  attention while State remains below **453,741** bytes. The row truthfully
+  records Grant E as unheld and names the **84,896-byte** lever without claiming
+  execution or recovery.
+- mutation acceptance: PASS. The registered suite and every fail-before
+  construction pass at **16/16 rules / 110 controls**. The first mutation run
+  revealed that the pre-existing artifact-byte witness also fired attention;
+  separating the two inputs restored independent non-vacuous witnesses rather
+  than weakening either guard.
+- local-matrix acceptance: PASS. The first CI attempt exposed E0's missing
+  runbook qualifier and stopped at the checklist gate; append-only correction
+  commit `e5d3871…` fixed that audit record. The second attempt exposed **17**
+  shared-fixture uses of the retired trigger text; the single source plus two
+  negative exact-string constructions were updated, focused lifecycle tests
+  passed **96/96**, and the final full matrix passed **22/22** with Python 3.11
+  at **391/391**.
+- protected/scope acceptance: PASS. No dependency, production source,
+  protected byte, observation, fixture input, publisher wire, entitlement or
+  licensing outcome, accepted boundary, tag, or remote ref moved. The three
+  protected amendment inputs remain untouched and untracked.
+- cycle acceptance: PASS. `cycle-check` reports the State row
+  `trigger-fired-disposed`, the manifest row bound, and v0.41 open with verified
+  local-tag reconciliation.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
