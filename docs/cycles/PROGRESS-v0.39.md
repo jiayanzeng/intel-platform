@@ -291,3 +291,64 @@ It authorizes no other ref movement or later release publication.
   boundary.
 - golden-E2E delta: **0** at **11/11**, confirmed both inside `ci-local` and by
   the required final standalone `./run golden` entry point.
+
+### 2026-08-04 · RE-MEASURE — exact candidate passed 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.39-EXECUTION.md`
+- commit: 89d2753c8a5e035e20d867484c66c88fe69bfd79
+- condition/result: PASS. Checker and governing-contract files moved, so the
+  conditional hosted step ran against exact audited candidate
+  `fa846095b7387bcf9e832d558dc8a70a6d29813b`.
+- candidate/ref acceptance: PASS. Immediately before ref creation, the full
+  remote snapshot kept `main` at
+  `dd605acc037da405fa6b2b5366b09349c330c194` and every annotated/peeled tag
+  through v0.17.5 at its recorded identity. `git ls-remote --exit-code`
+  returned **2** with no output for fresh
+  `refs/heads/codex/v0.39-evidence-fa84609`. One non-force push created exactly
+  that ref at the candidate; no ref was reused, retried, forced, or moved.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30875346351**, attempt
+  **1**, targeted the exact SHA/ref and concluded `success`. All **9/9**
+  workflow-derived blocking identities passed; dependency drift was the sole
+  report-only skip. The workflow was dispatched once and was not retried.
+- authenticated-evidence acceptance: PASS. The run persisted **9** artifacts,
+  each containing one receipt JSON and one Sigstore bundle. The repository's
+  release-grade verifier accepted **9**, rejected **0**, verified all **9**
+  bundles against the exact repository, workflow, source digest, and source
+  ref, and derived a complete nine-identity matrix.
+- population acceptance: PASS. Each hosted shell lane collected **381**,
+  passed **380**, and skipped only named
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  with its declared protected-corpora/built-core reason and `on_site` marker.
+  Both direct `tools/test_population.py` comparisons derive
+  `equivalent=true`, `equivalent_passed=381`, and one allowed hosted skip.
+- machine acceptance: PASS. The exact candidate's prior permission-complete
+  local gate passed **22/22** identities with Python 3.11 **381/381**, scan
+  **16/16 rules / 100 controls**, both Rust floor pairs, all protected
+  artifacts, and golden **11/11**; its separate local Python 3.12 lane passed
+  the identical **381/381** population. Hosted golden passed **11/11**, and
+  both explicit net-floor jobs passed on their pinned effective toolchains.
+- remote acceptance: PASS. Final `ls-remote` resolves the evidence ref to the
+  exact candidate, keeps `main` at `dd605acc…`, and keeps every tag identity
+  byte-for-byte at the pre-push snapshot. No publication ref moved; Grant C
+  remains spent.
+- exact implementation export: tree=`89d2753c8a5e035e20d867484c66c88fe69bfd79`;
+  bytes=`2722638`; entries=`158`; retained_cycles=`2`;
+  attention_boundary=`2785548`; attention_gap=`62910`;
+  attention_state=`clear`.
+- post-record local acceptance: PASS. Active-cycle and artifact-boundary
+  checks pass with State **148,195 / 453,741 bytes** and manifest **200,440 /
+  1,048,576 bytes**. The complete planted scan passes **16/16 rules / 100
+  controls**, whitespace is clean, and the standalone permission-complete
+  golden run passes **11/11**. Initial sandboxed export and golden attempts
+  were non-measurements because npm DNS and loopback bind were denied; the
+  required permission-capable reruns passed.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untracked and byte-untouched at exact **43,127** total bytes and their
+  prior hashes. No workflow, dependency, production source, protected byte,
+  observation, fixture, publisher wire, entitlement/licensing outcome,
+  serialized response domain, or golden input moved.
+- stop conditions: none. The hosted run passed, the evidence ref was fresh,
+  and final remote readback shows no main or tag movement.
+- golden-E2E delta: **0**. Hosted and final standalone local golden each passed
+  **11/11**.
