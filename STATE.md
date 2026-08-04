@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally at v0.39 and remains unpublished; v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged v0.17.6 release commit `acfa801102197ce2d94adaa5a14a3ad102893549` is the closing record's immediate parent; the local annotated tag targets that closing commit only after it exists, and its required append-only audit child follows immediately. Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally and unpublished; v0.39's mandatory closing-export audit is complete, but the tagged closing tree retains the disclosed publication-assertion freshness defect described below. v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged release commit `acfa801102197ce2d94adaa5a14a3ad102893549` carries the v0.17.6 authorities and is the immediate parent of closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; this immediate audit child records the measured closing-tree export. Local annotated tag object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that closing commit. Historical v0.17.5 release parent `37f552c0c326098bdcf8f19de7eac19670d74680` is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that v0.17.5 closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
 **v0.39 R-CLOSE — v0.17.6 release parent measured (2026-08-04).** DR20 selects
 patch **v0.17.6**. The release-baselined R15 derivation and installed FastAPI
@@ -40,6 +40,39 @@ Fresh pre-close local/remote readback found no v0.17.6 tag and kept remote
 locally: no push, remote main move, or new release publication is authorized.
 Every active deferral row carries a latest dated v0.39 observation, and the
 mandatory immediate audit child owns the later closing-tree export disclosure.
+
+Post-close remote readback again kept `main` exact at
+`dd605acc037da405fa6b2b5366b09349c330c194` and returned no annotated or
+peeled v0.17.6 tag ref. This is the dated unpublished-local observation for the
+audit-child descendant; it is not a publication receipt and does not authorize
+any ref movement.
+
+- **Publication observation date:** 2026-08-04
+- **Publication observation release:** `v0.17.6`
+- **Publication observation status:** `unpublished-local-close`
+- **Publication observation remote:** `origin`
+- **Publication observation tag ref:** `absent`
+
+**v0.39 closing-export audit and tagged-tree finding (measured 2026-08-04).**
+Local annotated tag object `66ee2cbbe374b99722bec49b8176571777aaa899`
+peels to closing commit `7c9305f01219412048ec75236f2bf1e61112c178`,
+whose immediate parent is exact release commit
+`acfa801102197ce2d94adaa5a14a3ad102893549`. The project-root export of that
+closing commit passed at **2,740,695 bytes / 158 tracked files / 2 retained
+cycles**, a truthful **+11,095-byte** difference from the 2,729,600-byte
+governed release-parent field. This append-only child is the immediate next
+commit after the tag target and does not predict its own content-addressed id
+or move any remote ref.
+
+The first post-tag `cycle-check` verified the annotated-tag topology but failed
+publication-assertion freshness: the tagged State header's exact generic phrase
+`Untagged release commit` still named historical v0.17.5 parent `37f552c…`, so
+the checker compared that stale assertion with current v0.17.6 release parent
+`acfa801…`. The live header above is forward-corrected to reserve that exact
+phrase for v0.17.6 and names the older object as a historical release parent.
+The local tag is not moved or deleted: the standing prohibition makes the
+tagged closing-tree defect immutable, and this record does not claim that a
+checkout of the tag itself passes `cycle-check`. v0.17.6 must not be published.
 
 **v0.39 RE-MEASURE — exact hosted candidate passed (measured 2026-08-04).**
 The checker and governing-contract work made hosted execution mandatory. Exact

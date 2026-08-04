@@ -434,3 +434,16 @@ It authorizes no other ref movement or later release publication.
 - stop conditions: none. The exact release parent clears the stated headroom
   target, no decision gate fired, and no publication beyond spent Grant C was
   attempted.
+- post-tag control finding: FAIL at the tagged closing tree. `cycle-check`
+  verified the v0.17.6 annotated-tag topology but parsed the historical v0.17.5
+  parent from the tagged State header's exact generic `Untagged release commit`
+  phrase, producing a publication-assertion freshness mismatch against release
+  parent `acfa801102197ce2d94adaa5a14a3ad102893549`. The immediate audit child
+  forward-corrects the live header and permanently records the finding. The
+  local tag is neither moved nor deleted, no remote ref moves, and this record
+  does not claim the tag checkout itself passes.
+- corrected cycle disposition: the append-only audit requirement is discharged,
+  but R-CLOSE is not a clean strict success because the immutable local tagged
+  closing tree retains that State-header defect. v0.17.6 remains unpublished
+  and must not be published.
+- cycle-ending review-export audit: closing_tree=`7c9305f01219412048ec75236f2bf1e61112c178`; bytes=`2740695`; audit_delta=`+11095`
