@@ -93,3 +93,16 @@ Entries are append-only; corrections are new dated entries.
 - stop conditions: none. No gate tripped; no dependency, production source,
   protected byte, evidence input, local tag, or remote ref changed.
 - golden-E2E delta: **0** (**11/11**).
+
+### 2026-08-04 · E0 — append-only runbook-qualification correction
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: 6d9d131870f84ac04249e6bc545711f46d402dc3
+- correction: the preceding E0 record omitted the mandatory `runbook` field.
+  That committed append-only entry is not rewritten; this qualified record
+  binds the same task id to the same real implementation commit and preserves
+  all preceding measured evidence.
+- checker result: `checklist-audit` now resolves E0 through exactly one valid
+  runbook-qualified entry.
+- golden-E2E delta: **0** (**11/11**), unchanged from the corrected record.
