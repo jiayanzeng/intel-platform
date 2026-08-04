@@ -139,3 +139,55 @@ It authorizes no other ref movement or later release publication.
 - stop conditions: none. Every Grant C precondition and the post-push hosted
   gate passed.
 - golden-E2E delta: **0** at **11/11**.
+
+### 2026-08-04 · EXPORT-TRUTH — review export images the checked tree
+
+- owner: Codex
+- runbook: `TASKS-v0.39-EXECUTION.md`
+- commit: cdb281c2500ce0044e2ca26cd38e7333e6dfeeb1
+- C15 acceptance: PASS. One bounded Repomix family exclusion,
+  `docs/cycles/AMENDMENT-{r4,v0.36}-*.md`, excludes the three shared historical
+  amendment families without a per-file list, leaves Git status visible, and
+  does not cover future amendment families. The three files remain untracked,
+  byte-untouched, and unstaged at **43,127 bytes** total.
+- C16 acceptance: PASS against the real pin population. The existing Git
+  `binary` byte-preservation attribute intersected with manifest-pinned
+  observations derives exactly **4** raw-wire bodies. Configured exact
+  observation exclusions equal that nonempty set in both directions; the
+  v0.25 RSS and v0.38 privacy, robots, and RSS bodies are absent, while the
+  small unmarked v0.25 robots policy remains a review source.
+- tracked-tree acceptance: PASS. The checker contains no hand-maintained
+  required-path, excluded-filename, excluded-prefix, source-root, or
+  cycle-specific literal list. All **158/158** derived required paths are
+  present; every one of the **158** exported entries is Git-tracked; no
+  untracked defect, derived raw-wire body, or either manifest-derived
+  structural archive is present.
+- exact implementation export: tree=`cdb281c2500ce0044e2ca26cd38e7333e6dfeeb1`;
+  bytes=`2675532`; entries=`158`; retained_cycles=`2`; remaining=`324468`.
+- declared-scope acceptance: PASS. Every active clean pattern matched at least
+  one of **587 tracked + 3 untracked** repository candidates. The exact
+  annotated vacuous predecessor is rejected at the registered syntax control
+  site and the corrected `docs/cycles/**` pattern passes.
+- planted-control acceptance: PASS. R12 passes **47/47** reconstructible
+  mutations, including untracked export entry, empty raw class, missing class
+  exclusion, configured nonmember, and vacuous annotated pattern. The complete
+  registered population passes **15/15 rules / 89 controls**; the focused
+  export/cycle regression population passes **98/98**.
+- full-gate acceptance: PASS. Permission-complete `ci-local` passes all
+  **22/22** jobs, including Python 3.11 **377/377**, both Rust floor pairs,
+  warning/lint/format gates, protected artifacts, and golden **11/11**. The
+  separate Python 3.12 lane passes the identical **377/377** population with
+  the same one accepted non-fatal Starlette warning.
+- governing-record acceptance: PASS. `AGENTS.md`, `ARCHITECTURE.md`, and
+  `STATE.md` state the derived tracked-tree/raw-wire/structural-archive
+  contract; direct `cycle-check`, response-domain derivation, manifest
+  validation, version restatement, and whitespace checks pass. The unchanged
+  governed activation figure remains progress-backed while the open-cycle
+  implementation measurement is reported separately.
+- protected-input acceptance: PASS. No dependency, production source,
+  protected byte, observation, fixture, publisher wire, entitlement/licensing
+  outcome, golden input, or remote ref moved.
+- stop conditions: none. The export remains below the unchanged 3,000,000-byte
+  ceiling; Step 4 owns the separately declared pre-failure boundary correction.
+- golden-E2E delta: **0** at **11/11**, confirmed both inside `ci-local` and by
+  the required standalone `./run golden` entry point.
