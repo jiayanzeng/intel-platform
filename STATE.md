@@ -2,6 +2,42 @@
 
 **As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally and unpublished; v0.39's mandatory closing-export audit is complete, but the tagged closing tree retains the disclosed publication-assertion freshness defect described below. v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged release commit `acfa801102197ce2d94adaa5a14a3ad102893549` carries the v0.17.6 authorities and is the immediate parent of closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; this immediate audit child records the measured closing-tree export. Local annotated tag object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that closing commit. Historical v0.17.5 release parent `37f552c0c326098bdcf8f19de7eac19670d74680` is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that v0.17.5 closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
+**v0.40 ACTIVATE — corrective cycle declared (measured 2026-08-04).** The
+activation worktree advances the declaration and derived review retention to
+v0.40 and exactly v0.39–v0.40. All **31/31** deferral subjects carry dated
+v0.40 observations measured before the activation commit; the four
+trigger-bearing Architecture rows name the same active cycle. The supplied
+draft repeated v0.39's already-measured semantic-heading defect by using the
+literal `## Cycle closing record` for an unassembled template. Before semantic
+acceptance it was renamed `## Closing-record assembly template`, preserving
+the Step 6 instructions without causing an open cycle to masquerade as closed.
+
+The staged project-root export passes at **2,710,665 bytes / 158 tracked files
+/ 2 retained cycles**, with all **158/158** derived required paths present,
+exactly **4/4** derived raw-wire exclusions, and both structural archives
+absent. At the entering **107,226-byte** denominator it leaves **289,335 bytes
+/ 9.64% / 2.70 cycles** below the unchanged 3,000,000-byte ceiling and is
+**74,883 bytes** below the entering 2,785,548-byte attention boundary. The
+pre-activation worktree result at **2,788,376 bytes** was correctly rejected
+for its untracked v0.40 runbook, unexpected cycle document, and crossing of the
+old boundary; it is a measured non-acceptance, not evidence for the activated
+tree.
+
+Manifest schema v2 remains **3 artifacts / 339 pins** at **200,440 /
+1,048,576 bytes**. Two complete artifact checks pass in **0.11 s / 0.09 s
+real**. Pre-record State is **152,810 / 453,741 bytes**. Fresh R15 derivation
+reports **0 differences across 6 routes / 112 field occurrences**;
+`version-check` derives **3** offline pins, **22** current floor restatements,
+and **3** release restatements over all **587** entering tracked files. The
+registered suite passes **16/16 rules / 100 controls**. The first sandboxed
+golden attempt was a loopback-bind permission non-result; the identical
+permission-capable run passes **11/11** with delta zero. No dependency,
+production source, protected byte, observation, fixture, publisher wire,
+entitlement/licensing outcome, or remote ref moved. Before the activation
+commit exists, `cycle-check` reports only the two expected inability-to-resolve
+the uncommitted runbook/activation-anchor facts; all semantic, trigger,
+retention, artifact, and publication checks are otherwise clean.
+
 **v0.39 R-CLOSE — v0.17.6 release parent measured (2026-08-04).** DR20 selects
 patch **v0.17.6**. The release-baselined R15 derivation and installed FastAPI
 runtime comparison report no public response-domain difference across **6
