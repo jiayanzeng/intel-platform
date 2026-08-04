@@ -22,7 +22,7 @@
       "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-robots.txt",
       "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-usgaap.rss.xml",
       "docs/state-archive/**",
-      "docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-9]}{.md,.*.md,-*.md}",
+      "docs/cycles/{TASKS,PROGRESS}-v0.{[0-9],1[0-9],2[0-9],3[0-9],40}{.md,.*.md,-*.md}",
       "docs/cycles/AMENDMENT-{r4,v0.36}-*.md",
       "repomix-output-*.xml"
     ]
