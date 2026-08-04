@@ -107,3 +107,59 @@ Entries are append-only; corrections are new dated entries.
   failures.
 - golden-E2E delta: **0**. Integrated and post-record standalone runs each
   passed **11/11**.
+
+### 2026-08-05 · REMOTE-WITNESS — executed publication state
+
+- owner: Codex
+- runbook: `TASKS-v0.42-EXECUTION.md`
+- commit: 393c8478f7421d64e6eeb61ff07f0fd34c72a417
+- C28 acceptance: PASS. `cycle-check` parses one structured current-State
+  authority, executes a bounded non-interactive `git ls-remote`, compares
+  expected and absent refs, checks expected remote-main ancestry against local
+  HEAD, and reads a named published progress blob for audit-content claims.
+  Complete post-push records derive their direct and peeled tag expectations;
+  permanently withheld and operative unpublished-local records derive tag
+  absences. The decision falsifier—an inexpressible current assertion or a
+  failing permission-capable offline full gate—was not observed.
+- verdict acceptance: PASS. Normal transport reports
+  `verdict=measured remote=origin refs=27 audits=1`
+  with exact `main=993813c755e9f759a4ee165954c7a1df984f6b10`.
+  Deliberately disabled transport reports the visible non-failing
+  `verdict=unavailable remote=origin exit-128`. R17/1 proves a completed
+  disagreeing reading is a fatal result rather than either of those states.
+- offline satisfiability acceptance: PASS. The proof was executed before the
+  control's implementation commit. `GIT_SSH_COMMAND=/usr/bin/false ./run
+  ci-local` passes all **22/22** jobs with the unavailable verdict; normal
+  `./run ci-local` passes the same **22/22** with the measured verdict.
+- C29 acceptance: PASS. AGENTS R-CLOSE owns the v0.42-forward order while
+  `ARCHITECTURE.md` §8 retains its existing pointer to those mechanics. A
+  cycle's own published main object must contain its own export audit;
+  historical pre-v0.42 cross-cycle shapes remain admitted. The decision
+  falsifier—retroactive rejection of the historical shape—was refuted by its
+  passing control.
+- planted-control acceptance: PASS. Registered R17/1–R17/4 respectively
+  execute mismatch rejection, offline unavailability, v0.42 audit-outside-tip
+  rejection, and historical cross-cycle admission. Every fail-before mutation
+  failed at its registered production control site and the assembled suite
+  passes **17/17 rules / 119 controls**.
+- integration acceptance: PASS. R17/1 first exposed and corrected a synthetic
+  fixture-isolation defect. The first full offline gate then truthfully failed
+  **17** legacy fixture cases that lacked the new v0.42-forward State block;
+  the fixture contract and audit-before-post-push topology were corrected.
+  Focused cycle-check tests pass **96/96**, and each complete Python 3.11
+  population passes **397/397** with the named `on_site` identity and no skip.
+- protected-input acceptance: PASS. A nonessential `run` help edit was caught
+  by protected deferred-evidence re-derivation and reverted before adoption.
+  `run` remains SHA-256
+  `e436d59b05f060a8ce78dd3fb23282ad99fbc8bd263abd73224978c74afeeadb`
+  at **50,378 bytes**; the manifest remains unchanged and all protected checks
+  pass. The three retained amendment inputs remain untouched and untracked.
+- scope acceptance: PASS. Only declared Step 2 files and the standing State and
+  runbook records moved. No dependency, production source, protected byte,
+  observation, fixture, publisher wire, entitlement/licensing outcome, public
+  route, response field/type, serialized value domain, local tag, or remote ref
+  moved.
+- stop conditions: none. The published v0.41 audit lag is measured as the
+  expected `absent` audit content at exact remote main, not a contradiction.
+- golden-E2E delta: **0**. Both integrated full gates and the post-record
+  standalone run passed **11/11**.
