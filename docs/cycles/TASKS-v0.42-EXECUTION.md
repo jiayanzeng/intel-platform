@@ -709,7 +709,7 @@ acceptance point is a defect, not an oversight.
 - [x] ACTIVATE
 - [x] E0
 - [x] REMOTE-WITNESS
-- [ ] ARCHIVE
+- [x] ARCHIVE
 - [ ] REPAIR-TIP
 - [ ] RE-MEASURE
 - [ ] R-CLOSE

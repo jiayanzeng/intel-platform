@@ -21,6 +21,33 @@
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
 
+**v0.42 ARCHIVE — Grant E not granted; second archival remains dormant
+(measured 2026-08-05).** The initiating request and every operator message
+through this step were checked against Grant E's exact required content. No
+such authorization was issued. This is the runbook's dated not-granted branch,
+not an inferred refusal and not partial authority.
+
+C30 therefore does not move a byte. A direct byte measurement from the first
+v0.38 record through the byte before the permanent-tail marker returns exactly
+**84,896 unrecovered bytes**. `docs/state-archive/` still contains only the four
+previously admitted archives through v0.13, v0.21, v0.28, and v0.35; no v0.38
+archive exists. `config/protected-artifacts.json` remains exact at **200,440
+bytes / 339 pins**, SHA-256
+`f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`,
+and complete artifact verification matches all **3/3** protected artifacts.
+State measured **206,895 / 453,741 bytes** before this observation and its
+structural regions and current-restatement contract pass. The active deferral
+remains `kind=unheld-lever`, `lever=Grant E`,
+`recoverable_bytes=84896`; it claims neither recovery nor a new structural pin.
+The first full `ci-local` attempt stopped at checklist audit before substantive
+tests because ARCHIVE had been checked before its implementation commit and
+progress entry existed. The box was restored to unchecked and the contract
+sequence corrected. The resulting exact worktree passes the full gate
+**22/22**, including **17/17 rules / 119 controls**, Python 3.11 at
+**397/397**, and embedded golden **11/11**. State is **208,626 / 453,741
+bytes** with its structural and semantic contracts bound. No Step 3 stop
+condition fired.
+
 **v0.42 REMOTE-WITNESS — published state is now executed (measured
 2026-08-05).** C28 places the control at `cycle-check`, the lifecycle entry
 point that already owns local publication reconciliation. Its structured
