@@ -591,7 +591,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 
 | Deferred item | Unchanged trigger | Measured observation (cycle-identified) | v0.40 action |
 |---|---|---|---|
-| `v0.17.6` publication, tag movement, or deletion | any proposal to publish, move, re-point, or delete the `v0.17.6` tag, its object, or its target | v0.40 · 2026-08-04 — Local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` still peels to `7c9305f01219412048ec75236f2bf1e61112c178`; fresh remote readback contains no direct or peeled v0.17.6 ref. No proposal arose; DR22 permanently withholds it. | Step 3 |
+| `v0.17.6` publication, tag movement, or deletion | any proposal to publish, move, re-point, or delete the `v0.17.6` tag, its object, or its target | v0.40 · 2026-08-04 — Local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` still peels to `7c9305f01219412048ec75236f2bf1e61112c178`; fresh remote readback contains no direct or peeled v0.17.6 ref. The exact reasoned `permanently-withheld` / `local-only-never-remote` State record settles the decision and DR22 forbids publication or movement. | Step 3 |
 | T7 robots single-flight | a second concurrent harvester | v0.40 · 2026-08-04 — No harvester ran and no second concurrent harvester appeared; the trigger did not fire. | none |
 | NEGATIVE-CACHE Decision B | a live transient robots outage for an admitted publisher while a usable last-known-good policy exists, plus operator authorization | v0.40 · 2026-08-04 — No wire was touched, no transient outage was observed, and no Decision B authorization was issued; the combined trigger did not fire. | none |
 | Conditional GET (`ETag` / `If-Modified-Since`) | an operator-authorized cycle whose scope permits the `net` request path plus a live 304 observation | v0.40 · 2026-08-04 — The declared scope forbids `crates/**` and live wire; no live 304 was observed. | none |
@@ -601,12 +601,12 @@ template surviving into any acceptance point is a defect, not an oversight.
 | Postgres / pgvector / multi-host seam | unchanged | v0.40 · 2026-08-04 — No Postgres, pgvector, second-writer, or multi-host seam was introduced. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.40 · 2026-08-04 — No third-party shell appeared and no stronger shell-replacement claim was made; A4 remains open. | none |
 | L2 forced-command wrapper | an operator server session | v0.40 · 2026-08-04 — No operator server session occurred; L2 remains scheduled. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.40 · 2026-08-04 — PRE-TAG-GATE's registered scan passes R3 and R4 within their declared vocabularies at **16/16 rules / 102 controls**; no outside spelling was found. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.40 · 2026-08-04 — WITHHELD-STATE's registered scan passes R3 and R4 within their declared vocabularies at **16/16 rules / 108 controls**; no outside spelling was found. | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.40 · 2026-08-04 — Workflow and evidence topology remain forbidden; the latest pinned lane remains hosted run `30875346351`, where the explicit Rust 1.86 success and 1.85 refusal identities passed. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.40 · 2026-08-04 — No verifier pin, bundle shape, workflow, or accepted contract changed. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.40 · 2026-08-04 — No third-publisher compliance review or admission occurred. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.40 · 2026-08-04 — Fresh remote readback contains neither historical tag; no publication authorization was issued. Local v0.8.0 remains an annotated object and local v0.10.2 remains available for E0's exact identity check. | none |
-| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.40 · 2026-08-04 — The historical remote-tag premise is still false; E0 and Step 3 will measure the additional withheld-release obstacle and its removal. | Step 3 |
+| `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.40 · 2026-08-04 — The historical v0.8.0/v0.10.2 remote-tag premise remains false. WITHHELD-STATE removes only v0.17.6's separately labelled obstacle: a hosted-shaped full verifier now reconciles its exact withheld record without the skip, while ordinary unpublished releases still require their tags. | Step 3 |
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.40 · 2026-08-04 — The manifest is **200,440 / 1,048,576 bytes**; two complete checks matched **3/3 artifacts / 339 pins** in **0.11 s / 0.09 s real**. Neither trigger clause fired. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.40 · 2026-08-04 — Production shell source is absent from `allow`; no literal moved at activation. Release-authority precedence is reserved for Step 6. | Step 6 |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.40 · 2026-08-04 — R15 reports **0 differences across 6 routes / 112 field occurrences**; DR26 provisionally selects patch, and no broader operator decision displaced the prose boundary. | Step 6 |
@@ -655,7 +655,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 - [x] ACTIVATE
 - [x] E0
 - [x] PRE-TAG-GATE
-- [ ] WITHHELD-STATE
+- [x] WITHHELD-STATE
 - [ ] ATTENTION-BASIS
 - [ ] RE-MEASURE
 - [ ] R-CLOSE

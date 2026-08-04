@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 import re
 import subprocess
 import sys
@@ -187,6 +188,27 @@ UNPUBLISHED_LOCAL_CLOSE_RE = re.compile(
 )
 UNPUBLISHED_LOCAL_CLOSE_HEADER_RE = re.compile(
     r"\bclosed locally and unpublished\b",
+    re.IGNORECASE,
+)
+WITHHELD_RELEASE_CANDIDATE_RE = re.compile(
+    r"^- \*\*Withheld release decision date:\*\* "
+    r"([0-9]{4}-[0-9]{2}-[0-9]{2})\n"
+    r"- \*\*Withheld release:\*\* (`?)([^`\n]+)\2\n"
+    r"- \*\*Withheld release status:\*\* `permanently-withheld`$",
+    re.MULTILINE,
+)
+WITHHELD_RELEASE_RE = re.compile(
+    r"^- \*\*Withheld release decision date:\*\* "
+    r"([0-9]{4}-[0-9]{2}-[0-9]{2})\n"
+    r"- \*\*Withheld release:\*\* (`?)([^`\n]+)\2\n"
+    r"- \*\*Withheld release status:\*\* `permanently-withheld`\n"
+    r"- \*\*Withheld release reason:\*\* ([^\n]*\S[^\n]*)\n"
+    r"- \*\*Withheld release tag expectation:\*\* "
+    r"`local-only-never-remote`$",
+    re.MULTILINE,
+)
+WITHHELD_RELEASE_HEADER_RE = re.compile(
+    r"\bpermanently withheld\b",
     re.IGNORECASE,
 )
 
@@ -399,6 +421,8 @@ def check_release_record(
     verify_local_tag_refs: bool = True,
     require_dated_disposition: bool = False,
     require_tagged_closing_commit: bool = False,
+    withheld_releases: frozenset[str] = frozenset(),
+    hosted_ref_topology: bool = False,
 ) -> None:
     date_match = exactly_one(
         DATE_RE, section, path, root, "cycle-close date", errors
@@ -508,6 +532,9 @@ def check_release_record(
                     )
                 return
             if resolved_tag is None:
+                # Invariant R12 control site: hosted withheld-tag admission.
+                if release in withheld_releases and hosted_ref_topology:
+                    return
                 # Invariant R12 control site: tagged-closing pre-tag record admission.
                 if (
                     len(tag_matches) == 0
@@ -566,6 +593,8 @@ def check_closed_execution(
     verify_local_tag_refs: bool = True,
     require_dated_disposition: bool = False,
     require_tagged_closing_commit: bool = False,
+    withheld_releases: frozenset[str] = frozenset(),
+    hosted_ref_topology: bool = False,
 ) -> None:
     checked = len(CHECKED_RE.findall(text))
     unchecked = len(UNCHECKED_RE.findall(text))
@@ -590,6 +619,8 @@ def check_closed_execution(
         verify_local_tag_refs,
         require_dated_disposition,
         require_tagged_closing_commit,
+        withheld_releases,
+        hosted_ref_topology,
     )
 
 
@@ -600,9 +631,9 @@ def cycle_version(path: Path) -> tuple[int, ...] | None:
     return tuple(int(part) for part in match.group(1).split("."))
 
 
-def newest_closed_release(
+def closed_releases(
     execution_files: list[Path],
-) -> ClosedRelease | None:
+) -> list[tuple[tuple[int, ...], ClosedRelease]]:
     releases: list[tuple[tuple[int, ...], ClosedRelease]] = []
     for path in execution_files:
         text = path.read_text()
@@ -638,9 +669,72 @@ def newest_closed_release(
                 ),
             )
         )
+    return releases
+
+
+def newest_closed_release(
+    execution_files: list[Path],
+) -> ClosedRelease | None:
+    releases = closed_releases(execution_files)
     if not releases:
         return None
     return max(releases, key=lambda item: item[0])[1]
+
+
+def check_withheld_release_records(
+    state_path: Path,
+    state_text: str,
+    execution_files: list[Path],
+    root: Path,
+    errors: list[str],
+) -> frozenset[str]:
+    """Validate consequential permanent-withholding records in State."""
+    candidates = list(WITHHELD_RELEASE_CANDIDATE_RE.finditer(state_text))
+    complete = list(WITHHELD_RELEASE_RE.finditer(state_text))
+    # Invariant R12 control site: withheld-release record admission.
+    if len(complete) != len(candidates):
+        errors.append(
+            f"{shown(state_path, root)}: every permanently withheld release "
+            "record must carry a nonempty reason and the exact "
+            "`local-only-never-remote` tag expectation; found "
+            f"{len(candidates)} candidate record(s) and {len(complete)} "
+            "complete record(s)"
+        )
+
+    known_releases = {
+        release.tag: release
+        for _version, release in (closed_releases(execution_files) or [])
+    }
+    withheld: set[str] = set()
+    for record in complete:
+        date = record.group(1)
+        tag = record.group(3)
+        if not valid_iso_date(date):
+            errors.append(
+                f"{shown(state_path, root)}: invalid withheld-release "
+                f"decision date {date!r} for {tag}"
+            )
+        if tag in withheld:
+            errors.append(
+                f"{shown(state_path, root)}: permanently withheld release "
+                f"{tag} must have exactly one complete record"
+            )
+            continue
+        release = known_releases.get(tag)
+        if release is None:
+            errors.append(
+                f"{shown(state_path, root)}: permanently withheld release "
+                f"{tag} does not name a closed release"
+            )
+            continue
+        if not release.uses_tagged_closing_commit:
+            errors.append(
+                f"{shown(state_path, root)}: permanently withheld release "
+                f"{tag} is not a tagged-closing release"
+            )
+            continue
+        withheld.add(tag)
+    return frozenset(withheld)
 
 
 def check_publication_status(
@@ -648,6 +742,8 @@ def check_publication_status(
     execution_files: list[Path],
     errors: list[str],
     verify_local_tag_refs: bool = True,
+    withheld_releases: frozenset[str] = frozenset(),
+    hosted_ref_topology: bool = False,
 ) -> str | None:
     """Reconcile the status header with the newest reachable closed release."""
     release = newest_closed_release(execution_files)
@@ -661,6 +757,7 @@ def check_publication_status(
     tag = release.tag
     release_commit = release.release_commit
     recorded_object = release.recorded_tag_object
+    is_withheld = tag in withheld_releases
     state_path = root / "STATE.md"
     # Invariant R12 control site: publication-family admission gate.
     if not state_path.is_file():
@@ -723,6 +820,18 @@ def check_publication_status(
             {"release commit": release_commit},
             errors,
         )
+    if is_withheld:
+        if WITHHELD_RELEASE_HEADER_RE.search(header) is None:
+            errors.append(
+                f"{shown(state_path, root)}: permanently withheld release "
+                f"{tag} requires the status header to present it as settled"
+            )
+        # Invariant R12 control site: withheld-pending contradiction.
+        if PENDING_PUBLICATION_RE.search(header) is not None:
+            errors.append(
+                f"{shown(state_path, root)}: permanently withheld release "
+                f"{tag} must not be presented as a pending publication"
+            )
     tag_independent_verdict = (
         "verified"
         if len(errors) == tag_independent_error_count
@@ -746,6 +855,15 @@ def check_publication_status(
     measured_object = git_output(root, "rev-parse", tag)
     # Invariant R12 control site: unavailable annotated-tag ref.
     if measured_object is None:
+        # Invariant R12 control site: hosted withheld publication admission.
+        if is_withheld and hosted_ref_topology:
+            return (
+                "publication-status: local-tag-reconciliation=withheld-hosted "
+                f"tag-independent-assertions={tag_independent_verdict} "
+                f"protocol=tagged-closing release={tag} "
+                "publication=permanently-withheld "
+                "tag-expectation=local-only-never-remote"
+            )
         if release.uses_tagged_closing_commit:
             head = git_output(root, "rev-parse", "HEAD")
             # Invariant R12 control site: tagged-closing pre-tag publication gate.
@@ -836,12 +954,20 @@ def check_publication_status(
     # Rule 1: a reachable annotated release cannot coexist with a header that
     # still calls its publication pending or outstanding.
     # Invariant R12 control site: pending-publication prohibition.
-    if PENDING_PUBLICATION_RE.search(header) is not None:
+    if not is_withheld and PENDING_PUBLICATION_RE.search(header) is not None:
         errors.append(
             f"{shown(state_path, root)}: publication disposition agreement: "
             f"newest closed release {tag} in {shown(runbook, root)} is an "
             "annotated tag reachable from HEAD, but the status header asserts "
             "publication is pending or outstanding"
+        )
+
+    if is_withheld:
+        return (
+            "publication-status: local-tag-reconciliation=verified "
+            f"protocol=tagged-closing release={tag} "
+            "publication=permanently-withheld "
+            "tag-expectation=local-only-never-remote"
         )
 
     # Rule 2: a legacy release header retains both immutable tag hashes. Its
@@ -3222,8 +3348,11 @@ def run(
     root: Path = ROOT,
     *,
     verify_local_tag_refs: bool = True,
+    hosted_ref_topology: bool | None = None,
 ) -> int:
     root = root.resolve()
+    if hosted_ref_topology is None:
+        hosted_ref_topology = os.environ.get("GITHUB_ACTIONS") == "true"
     errors: list[str] = []
     try:
         identity = resolve_cycle(root)
@@ -3242,6 +3371,14 @@ def run(
             )
 
     execution_files = execution_runbooks(root)
+    state_path = root / "STATE.md"
+    withheld_releases = check_withheld_release_records(
+        state_path,
+        state_path.read_text() if state_path.is_file() else "",
+        execution_files,
+        root,
+        errors,
+    )
     active_state = "missing"
     governed_export_state = "not-applicable"
     artifact_boundary_state = "not-applicable"
@@ -3323,9 +3460,11 @@ def run(
                 active_text,
                 root,
                 errors,
-                verify_local_tag_refs,
+                verify_local_tag_refs=verify_local_tag_refs,
                 require_dated_disposition=True,
                 require_tagged_closing_commit=True,
+                withheld_releases=withheld_releases,
+                hosted_ref_topology=hosted_ref_topology,
             )
         elif unchecked < 1:
             errors.append(
@@ -3354,7 +3493,6 @@ def run(
             declared_scope_cycle_version(identity.name)
             >= STATE_REGION_CONTRACT_FORWARD_BOUNDARY
         ):
-            state_path = root / "STATE.md"
             state_region_report = check_state_archival_region_contract(
                 state_path,
                 state_path.read_text() if state_path.is_file() else "",
@@ -3401,7 +3539,9 @@ def run(
             text,
             root,
             errors,
-            verify_local_tag_refs,
+            verify_local_tag_refs=verify_local_tag_refs,
+            withheld_releases=withheld_releases,
+            hosted_ref_topology=hosted_ref_topology,
         )
         check_authority(path, text, root, errors)
 
@@ -3410,6 +3550,8 @@ def run(
         execution_files,
         errors,
         verify_local_tag_refs,
+        withheld_releases,
+        hosted_ref_topology,
     )
 
     plain_task_files = [
@@ -3469,6 +3611,7 @@ def run(
         f"cycle-check: PASS (active={identity.name}, "
         f"state={active_state}, "
         f"local_tag_refs={'verified' if verify_local_tag_refs else 'not-requested'}, "
+        f"ref_topology={'hosted' if hosted_ref_topology else 'local'}, "
         f"runbook={shown(identity.runbook, root)}, "
         f"progress={shown(identity.progress, root)}, "
         f"artifact_boundaries={artifact_boundary_state}, "

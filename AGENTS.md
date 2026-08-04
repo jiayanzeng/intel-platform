@@ -519,6 +519,25 @@ record for that release and checks the recorded tag object and closing commit
 against Git. The post-push run confirms the published head; it is forward
 evidence and is not what closes the cycle.
 
+A release whose immutable tagged closing tree must never be published is
+settled by one exact, contiguous forward record:
+
+```
+- **Withheld release decision date:** YYYY-MM-DD
+- **Withheld release:** `vX.Y.Z`
+- **Withheld release status:** `permanently-withheld`
+- **Withheld release reason:** nonempty reason
+- **Withheld release tag expectation:** `local-only-never-remote`
+```
+
+This is a consequential state, never a default or a synonym for an
+`unpublished-local-close` observation. The live State header must call that
+release permanently withheld and must not present its publication as pending or
+outstanding. Local full verification still requires and validates the immutable
+local tag. A hosted ref topology, identified by `GITHUB_ACTIONS=true`, may lack
+only that exact withheld tag and reports the bounded `withheld-hosted`
+reconciliation; an ordinary unpublished release receives no such exemption.
+
 ## 6. Golden end-to-end (run after every task; it must not drift silently)
 
 The v0.10 golden pipeline is the regression anchor. **`./run golden` is the

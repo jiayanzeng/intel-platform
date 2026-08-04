@@ -519,29 +519,40 @@ therefore live in dated body records. `cycle-check` requires the applicable
 immutable assertions to exist and agree with the newest closed release record;
 zero matches are a defect, not a conditional skip. After the pre-tag state, the
 tag must also be reachable from `HEAD`; missing tag, target, or ancestry inputs
-fail closed. The older rule that rejects a reachable release while the live
-header calls publication pending is unchanged. Registered R12 executes the
-actual publication-status and closing-record entry points over planted stale
-and normal pre-tag cases. It independently disables selection of the newest
-actual release, each of the three family-admission outcomes, and every rule
-within the admitted family. `cycle-check` itself now distinguishes an
-absent State file, an absent `**As of:**` status header, and a leading as-of
-header whose shape does not match `STATE_HEADER_RE`; no later no-release cycle
-can hide the newest earlier release from reconciliation. The separate
+fail closed except for one explicit topology case. A permanently withheld
+tagged-closing release has one dated, reasoned State record whose status is
+`permanently-withheld` and whose tag expectation is
+`local-only-never-remote`. It is a settled refusal, not the default and not an
+`unpublished-local-close` synonym. Local verification continues to require the
+tag. Hosted ref topology (`GITHUB_ACTIONS=true`) may reconcile the exact
+withheld record without that tag and emits a distinct `withheld-hosted` bound;
+an ordinary unpublished release still fails when its tag is absent. The live
+header must say the release is permanently withheld and may not also call its
+publication pending or outstanding. Registered R12 executes the actual
+publication-status and closing-record entry points over planted stale, normal
+pre-tag, withheld-hosted, and ordinary-hosted cases. It independently disables
+selection of the newest actual release, each of the three family-admission
+outcomes, and every rule within the admitted family. `cycle-check` itself now
+distinguishes an absent State file, an absent `**As of:**` status header, and a
+leading as-of header whose shape does not match `STATE_HEADER_RE`; no later
+no-release cycle can hide the newest earlier release from reconciliation. The separate
 `version_check.state_version()` regex binds a version for a different reason
 and is not this family's admission floor. Thus neither an empty selector nor a
 rule that examines nothing can report clean merely because its pattern found
 nothing.
 
-Hosted lifecycle checks deliberately use `--skip-local-tag-verification`; they
+Current hosted lifecycle checks deliberately use
+`--skip-local-tag-verification`; they
 can validate cycle structure without possessing every historical tag, but they
 cannot prove remote historical release identity. v0.22 established that local
 `v0.8.0` and `v0.10.2` resolve to valid annotated tag objects and existing
 commit targets while complete remote enumeration contains neither name nor
 object. The records are therefore correct and the remote is incomplete.
-Remove the hosted skip only after both exact objects are published and a
-full-history hosted `cycle-check` passes without it, or after contrary evidence
-causes the identities and affected claims to be forward-corrected.
+Remove the hosted skip only after both exact historical objects are published
+and a full-history hosted `cycle-check` passes without it, or after contrary
+evidence causes those identities and affected claims to be forward-corrected.
+Permanent withholding resolves only the separately labelled v0.17.6 obstacle;
+it does not pretend the two missing historical objects exist remotely.
 The checker makes each intentional non-reconciliation branch visible: no
 reachable closed release reports a `not-applicable` bound, portable hosted mode
 reports `not-requested` after enforcing admission and tag-independent

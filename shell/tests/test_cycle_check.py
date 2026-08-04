@@ -493,6 +493,46 @@ def _tagged_closing_pre_tag_root(tmp_path: Path) -> tuple[Path, str]:
     return root, release_commit
 
 
+def _mark_fixture_release_withheld(
+    root: Path,
+    *,
+    reason: str | None = "tagged tree fails the strict freshness gate",
+    pending: bool = False,
+) -> None:
+    state = root / "STATE.md"
+    state_text = state.read_text()
+    status = (
+        "publication is pending; v1.2.3 is permanently withheld."
+        if pending
+        else "v1.2.3 is permanently withheld."
+    )
+    state_text = cycle_check.STATE_HEADER_RE.sub(
+        f"**As of:** {status} Release commit is `{{commit}}`.",
+        state_text,
+        count=1,
+    )
+    release_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD^"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    state_text = state_text.replace("{commit}", release_commit)
+    record = (
+        "\n\n- **Withheld release decision date:** 2026-08-04\n"
+        "- **Withheld release:** `v1.2.3`\n"
+        "- **Withheld release status:** `permanently-withheld`\n"
+    )
+    if reason is not None:
+        record += f"- **Withheld release reason:** {reason}\n"
+    record += (
+        "- **Withheld release tag expectation:** "
+        "`local-only-never-remote`\n"
+    )
+    state.write_text(state_text + record)
+
+
 def _publication_errors(root: Path) -> list[str]:
     errors: list[str] = []
     cycle_check.check_publication_status(
@@ -830,6 +870,86 @@ def test_cycle_check_rejects_missing_tag_after_closing_commit(
     assert "cannot be resolved for the tagged-closing protocol" in captured.err
     assert "publication verification unavailable" in captured.err
     assert "local-tag-reconciliation=pre-tag" not in captured.out
+
+
+def test_withheld_release_reconciles_local_tag_and_hosted_absence(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+    _mark_fixture_release_withheld(root)
+
+    assert cycle_check.run(root) == 0
+    local_output = capsys.readouterr().out
+    assert "local-tag-reconciliation=verified" in local_output
+    assert "publication=permanently-withheld" in local_output
+    assert "tag-expectation=local-only-never-remote" in local_output
+
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    assert cycle_check.run(root) == 0
+    hosted_output = capsys.readouterr().out
+    assert "local-tag-reconciliation=withheld-hosted" in hosted_output
+    assert "ref_topology=hosted" in hosted_output
+
+
+def test_withheld_release_requires_nonempty_reason(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+    _mark_fixture_release_withheld(root, reason=None)
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "must carry a nonempty reason" in error
+
+
+def test_withheld_release_cannot_be_a_pending_publication(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+    _mark_fixture_release_withheld(root, pending=True)
+
+    assert cycle_check.run(root) == 1
+    assert (
+        "must not be presented as a pending publication"
+        in capsys.readouterr().err
+    )
+
+
+def test_ordinary_unpublished_release_still_requires_its_tag_in_hosted_shape(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+
+    assert cycle_check.run(root) == 1
+    error = capsys.readouterr().err
+    assert "cannot be resolved for the tagged-closing protocol" in error
+    assert "publication verification unavailable" in error
+
+
+def test_withheld_release_still_requires_its_local_tag(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+    _mark_fixture_release_withheld(root)
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+
+    assert cycle_check.run(root, hosted_ref_topology=False) == 1
+    error = capsys.readouterr().err
+    assert "cannot be resolved for the tagged-closing protocol" in error
+    assert "publication verification unavailable" in error
 
 
 def test_governed_export_binding_covers_release_close_and_post_push(

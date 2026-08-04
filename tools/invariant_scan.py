@@ -1776,6 +1776,18 @@ PUBLICATION_CONTROL_MARKERS = {
     "pre-tag-publication": (
         "Invariant R12 control site: tagged-closing pre-tag publication gate."
     ),
+    "withheld-record": (
+        "Invariant R12 control site: withheld-release record admission."
+    ),
+    "withheld-pending": (
+        "Invariant R12 control site: withheld-pending contradiction."
+    ),
+    "withheld-hosted-record": (
+        "Invariant R12 control site: hosted withheld-tag admission."
+    ),
+    "withheld-hosted-publication": (
+        "Invariant R12 control site: hosted withheld publication admission."
+    ),
     "origin-main": "Invariant R12 control site: origin-main prohibition.",
     "tag-ref-unavailable": (
         "Invariant R12 control site: unavailable annotated-tag ref."
@@ -2928,6 +2940,169 @@ def r12_findings(root: Path) -> list[str]:
         if errors:
             missed.setdefault("pre-tag-record", []).append(
                 "pre-tag-record-admission"
+            )
+
+        valid_withheld_record = (
+            "- **Withheld release decision date:** 2026-08-04\n"
+            f"- **Withheld release:** `{tag}`\n"
+            "- **Withheld release status:** `permanently-withheld`\n"
+            "- **Withheld release reason:** strict tagged-tree defect\n"
+            "- **Withheld release tag expectation:** "
+            "`local-only-never-remote`\n"
+        )
+        missing_reason_record = valid_withheld_record.replace(
+            "- **Withheld release reason:** strict tagged-tree defect\n",
+            "",
+        )
+        cycle_check.closed_releases = lambda _files: [
+            (
+                (1, 2, 3),
+                cycle_check.ClosedRelease(
+                    runbook=runbook,
+                    tag=tag,
+                    release_commit=release_commit,
+                    recorded_tag_object=None,
+                ),
+            )
+        ]
+        errors = []
+        cycle_check.check_withheld_release_records(
+            state_path,
+            missing_reason_record,
+            [runbook],
+            fixture,
+            errors,
+        )
+        if not any("must carry a nonempty reason" in error for error in errors):
+            missed.setdefault("withheld-record", []).append(
+                "withheld-missing-reason"
+            )
+        errors = []
+        withheld = cycle_check.check_withheld_release_records(
+            state_path,
+            valid_withheld_record,
+            [runbook],
+            fixture,
+            errors,
+        )
+        if errors or withheld != frozenset({tag}):
+            missed.setdefault("withheld-record", []).append(
+                "withheld-valid-record"
+            )
+
+        state_path.write_text(
+            "# State\n\n"
+            "**As of:** permanently withheld; publication is pending. "
+            f"Release commit is `{release_commit}`.\n\n"
+            f"{valid_withheld_record}"
+        )
+
+        def measured_hosted_missing_ref(
+            _root: Path,
+            *args: str,
+        ) -> str | None:
+            if args == ("cat-file", "-t", release_commit):
+                return "commit"
+            if args == ("rev-parse", tag):
+                return None
+            if args == ("rev-parse", f"{tag}^{{}}"):
+                return None
+            if args == ("rev-parse", "HEAD"):
+                return tag_target
+            raise AssertionError(f"unexpected planted git query: {args}")
+
+        cycle_check.git_output = measured_hosted_missing_ref
+        errors = []
+        cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+            withheld_releases=withheld,
+            hosted_ref_topology=True,
+        )
+        if not any(
+            "must not be presented as a pending publication" in error
+            for error in errors
+        ):
+            missed.setdefault("withheld-pending", []).append(
+                "withheld-pending"
+            )
+
+        state_path.write_text(
+            "# State\n\n"
+            f"**As of:** permanently withheld. Release commit is "
+            f"`{release_commit}`.\n\n{valid_withheld_record}"
+        )
+        errors = []
+        withheld_status = cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+            withheld_releases=withheld,
+            hosted_ref_topology=True,
+        )
+        if (
+            errors
+            or withheld_status is None
+            or "local-tag-reconciliation=withheld-hosted"
+            not in withheld_status
+        ):
+            missed.setdefault("withheld-hosted-publication", []).append(
+                "withheld-hosted"
+            )
+
+        errors = []
+        ordinary_status = cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+            withheld_releases=frozenset(),
+            hosted_ref_topology=True,
+        )
+        if (
+            not errors
+            or ordinary_status is not None
+            and "withheld-hosted" in ordinary_status
+        ):
+            missed.setdefault("withheld-hosted-publication", []).append(
+                "ordinary-unpublished-hosted"
+            )
+
+        cycle_check.git_output = measured_hosted_missing_ref
+        errors = []
+        cycle_check.check_release_record(
+            runbook,
+            tagged_section,
+            fixture,
+            1,
+            errors,
+            verify_local_tag_refs=True,
+            require_dated_disposition=True,
+            require_tagged_closing_commit=True,
+            withheld_releases=withheld,
+            hosted_ref_topology=True,
+        )
+        if errors:
+            missed.setdefault("withheld-hosted-record", []).append(
+                "withheld-hosted-record"
+            )
+
+        errors = []
+        cycle_check.check_release_record(
+            runbook,
+            tagged_section,
+            fixture,
+            1,
+            errors,
+            verify_local_tag_refs=True,
+            require_dated_disposition=True,
+            require_tagged_closing_commit=True,
+            withheld_releases=frozenset(),
+            hosted_ref_topology=True,
+        )
+        if not errors:
+            missed.setdefault("withheld-hosted-record", []).append(
+                "ordinary-hosted-record"
             )
 
         state_path.write_text(
