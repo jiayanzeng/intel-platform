@@ -195,3 +195,59 @@ Entries are append-only; corrections are new dated entries.
   implementation commit checked it as the contract requires.
 - golden-E2E delta: **0**. Embedded and required standalone
   permission-capable runs each pass **11/11**.
+
+### 2026-08-04 · ATTENTION-BASIS — nondecreasing export reserve
+
+- owner: Codex
+- runbook: `TASKS-v0.40-EXECUTION.md`
+- commit: 77503c029865bd0613a7e4c8ab184ce176d3bdac
+- gate-scope acceptance: PASS. The task gate covers estimator choice and
+  falsifier, same-tree reserve comparison, unchanged ceiling, explicit margin
+  denominator choice, an executed quiet-cycle before/after control, and the
+  dated deferral predicate and firing result; no criterion lay outside it.
+- estimator acceptance: PASS. The checker derives all adjacent governed pairs
+  through the evaluation cycle and selects the maximum positive delta. The
+  current high-water is v0.34 **2,527,180 →** v0.35 **2,742,486**, or
+  **+215,306 bytes**. Appending a quiet, negative, or smaller positive cycle
+  cannot reduce that maximum. A later positive adjacent delta above 215,306
+  falsifies and replaces the numeric basis; structural-epoch partitioning
+  remains unavailable without an independent machine-readable authority.
+- reserve/ceiling acceptance: PASS. The two-cycle reserve is **430,612 bytes**,
+  compared with the prior **214,452-byte** reserve at the same activation tree:
+  **+216,160 bytes**. The corrected boundary is **2,569,388 bytes**. The hard
+  ceiling remains exactly **3,000,000 bytes** and no ceiling authority moved.
+- trigger acceptance: PASS. Activation's **2,712,884-byte** governed figure is
+  **143,496 bytes above** the corrected boundary, so the trigger fired. The
+  dated Architecture disposition retains the ceiling and two-cycle retention,
+  adopts the nondecreasing high-water basis, and requires final release-tree
+  remeasurement. The active deferral row names the same corrected predicate and
+  fired result.
+- margin-choice acceptance: PASS. The governed margin deliberately shares the
+  215,306-byte denominator because both fields express remaining capacity to
+  the same ceiling in governed-growth cycles; inheriting the quieter latest
+  delta would understate the same recorded risk.
+- before/after planted-control acceptance: PASS. A recorded fixture has an
+  older **+20** high-water followed by a quieter **+10** increase. The exact
+  pre-step checker from audit parent `0bd6b84…` rejects the high-water
+  declaration; the implemented checker accepts it, keeps the lower boundary,
+  and the focused population passes **96/96**. R12 control **45** now plants
+  the real lower latest-positive pair through `cycle-check` and fails if the
+  maximum-pair selection guard is disabled.
+- executable-gate acceptance: PASS. `./run ci-local` passes all **22/22**
+  jobs; Python 3.11 and 3.12 each pass the complete **391/391** population with
+  the same one accepted warning. The registered suite passes **16/16 rules /
+  108 controls**. R15 is exact at **0 differences / 6 routes / 112 field
+  occurrences**.
+- export acceptance: PASS. The exact implementation commit exports
+  **2,775,767 bytes / 158 tracked files / 2 retained cycles**, with all
+  required paths and exclusions exact. It is **206,379 bytes above** attention
+  and **224,233 bytes / 1.04 high-water cycles** below failure;
+  `attention_state=trigger-fired-disposed`.
+- protected-boundary acceptance: PASS. No dependency, production runtime byte,
+  protected byte, observation, fixture, publisher wire, entitlement/licensing
+  outcome, public response domain, local tag, or remote ref moved. The three
+  historical amendment inputs remain untouched and untracked.
+- stop conditions: none. Attention fired and received its required disposition;
+  the hard ceiling did not fire.
+- golden-E2E delta: **0**. Embedded and required standalone
+  permission-capable runs each pass **11/11**.
