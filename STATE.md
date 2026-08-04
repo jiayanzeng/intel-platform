@@ -2,6 +2,35 @@
 
 **As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is closed locally and unpublished; v0.38's closing-export audit is complete. v0.17.4 remains published exactly, and no v0.17.5 publication is authorized.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child records the measured closing-tree export. Local annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Remote `main` remains exact published v0.17.4 audit child `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities there. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed cycle carrying the measured SEC harvest-enablement behavior difference, so the consecutive count is **1**, with no public-surface movement.
 
+**v0.39 ACTIVATE — truthful-export cycle declared (measured 2026-08-04).**
+The declaration, runbook, progress skeleton, and derived retention boundary land
+in exact activation commit `752b2d56ac0e937f91035497225b352a55d3a472`.
+All **30/30** carried deferral subjects have dated v0.39 observations before
+semantic acceptance, and the four trigger-bearing Architecture rows are
+refreshed to the same cycle. Direct post-activation `cycle-check` passes with
+`active=v0.39`, `state=open`, both artifact boundaries bound, State regions
+bound, and all prior cycles closed.
+
+The draft's literal `## Cycle closing record` template was an author-side
+lifecycle defect: the real entry point correctly rejected an open runbook that
+mixed seven unchecked boxes with that heading. Before accepting activation, the
+unpublished local activation commit was replaced so its non-semantic template
+heading cannot be mistaken for an assembled close. The corrected first
+post-activation run passed; no checker or lifecycle predicate was weakened.
+
+The staged project-root export passed at **2,774,259 bytes / 163 files / 2
+retained cycles**, exactly v0.38–v0.39, while the exact activation commit in a
+detached worktree passed at **2,730,852 bytes / 160 files / 2 retained cycles**.
+The **43,407-byte / 3-file** difference is the three untouched untracked
+amendment inputs and their export framing; E0 owns the exhaustive partition and
+Step 3 owns the mechanism. Exact activation leaves **269,148 bytes / 8.97% /
+2.51 cycles** under the unchanged 3,000,000-byte ceiling at the checker-derived
++107,226-byte denominator. Two complete artifact checks match **3 artifacts /
+339 pins** at **0.10 s / 0.11 s real**. The permission-complete golden pipeline
+passes **11/11** with zero delta after the sandbox-denied bind was classified as
+a non-result. No dependency, production source, protected byte, observation,
+fixture, live wire, or remote ref moved during activation.
+
 **v0.38 PUBLISH-V17-4 — Grant A spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the runbook-defined Grant A before
 execution. Immediately before the ref movement, `git ls-remote` reported only
