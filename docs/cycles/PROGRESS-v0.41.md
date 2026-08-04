@@ -291,3 +291,78 @@ Entries are append-only; corrections are new dated entries.
 - stop conditions: none. The absence of Grant E selected the runbook's required
   dormant completion; it did not trip a gate for the remaining cycle.
 - golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
+
+### 2026-08-04 · RE-MEASURE — exact candidate passed 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: 2f1b8c82cf062532d305f56d956e81c82735c50f
+- condition/result: PASS. Checker changes qualify as operational code, so the
+  conditional hosted step ran against exact audited candidate
+  `44058820d25834d2b89d54cda48ed723a3dfa77f`.
+- preflight acceptance: PASS. The immutable historical attestation population
+  passes **7/7** under every strict flag with required/observed GitHub CLI
+  **2.96.0**; the deliberately wrong signer is rejected.
+- candidate/ref acceptance: PASS. The complete pre-push snapshot kept remote
+  `main=dd605acc037da405fa6b2b5366b09349c330c194` and every recorded
+  annotated/peeled release tag exact. `git ls-remote --exit-code` returned
+  **2** with no output for fresh
+  `refs/heads/codex/v0.41-evidence-4405882`. One non-force push created exactly
+  that ref at the candidate; no ref was reused, retried, forced, or moved.
+- hosted-job acceptance: PASS. Workflow-dispatch run **30917725112**, attempt
+  **1**, targeted the exact SHA/ref and concluded `success`. All **9/9**
+  workflow-derived blocking identities passed: core, golden, lint, offline
+  MSRV, net MSRV 1.85 refusal, net MSRV 1.86 success, net, shell Python 3.11,
+  and shell Python 3.12. Dependency drift was the sole report-only skip. The
+  workflow was dispatched once and was not retried.
+- authenticated-evidence acceptance: PASS after one disclosed setup
+  non-result. The run persisted **9** artifacts, each carrying one receipt and
+  one Sigstore bundle. The first verifier call in the clean candidate worktree
+  stopped before receipt acceptance because that worktree lacked the ignored
+  protected databases. After copying the exact three protected corpora into
+  the clean worktree, its Git state remained clean and the release-grade
+  verifier accepted **9**, rejected **0**, authenticated the exact repository,
+  workflow, source digest, and source ref, and derived a complete single-run
+  nine-identity matrix.
+- population acceptance: PASS after disclosed sandbox non-measurements. The
+  first local Python 3.11 and 3.12 attempts each failed **8** tests solely on
+  denied loopback socket binds and denied `ps` process inspection. Those runs
+  are not repository evidence. Permission-capable Python 3.11 and 3.12 each
+  then collected and passed **396/396**, including the named `on_site` test.
+  Each hosted lane collected **396**, passed **395**, and skipped only
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  with its named protected-corpora/built-core reason and `on_site` marker. Both
+  direct `tools/test_population.py` comparisons derive `equivalent=true`,
+  `equivalent_passed=396`, and exactly one allowed hosted skip.
+- remote acceptance: PASS. Final readback resolves exactly one v0.41 evidence
+  ref at the candidate, keeps `main` and every release tag byte-for-byte at the
+  pre-push snapshot, and keeps v0.17.6/v0.17.7 absent. No publication ref moved.
+- candidate-export acceptance: PASS. Candidate `44058820…` exports
+  **2,645,906 bytes / 157 tracked entries / 2 retained cycles**, **76,518
+  bytes above** attention and **354,094 bytes / 11.80% / 1.64 high-water
+  cycles** below failure.
+- exact implementation export: tree=`2f1b8c82cf062532d305f56d956e81c82735c50f`;
+  bytes=`2649414`; entries=`157`; retained_cycles=`2`;
+  attention_boundary=`2569388`; attention_gap=`-80026`;
+  attention_state=`trigger-fired-disposed`.
+- post-record local acceptance: PASS. `cycle-check` reports the open cycle,
+  verified local-tag reconciliation, State **188,277 / 453,741 bytes**, and
+  manifest **200,440 / 1,048,576 bytes**. The registered self-test passes
+  **16/16 rules / 115 controls** with zero hand-typed absolute finding-line
+  fields. Standalone permission-capable golden passes **11/11**. The exact
+  implementation export is **350,586 bytes / 11.69% / 1.63 high-water
+  cycles** below the unchanged ceiling and **80,026 bytes above** attention.
+- recovery attribution: PASS. Against entering **2,803,926 bytes**, the exact
+  implementation record recovers **154,512 bytes**, all from the Step 4
+  review-source lever after later hosted and audit-record growth. Grant E was
+  not issued and contributes **0 bytes**; its **84,896-byte** lever remains
+  unrecovered.
+- protected-input acceptance: PASS. The three amendment inputs remain untouched
+  and untracked. No workflow, dependency, production source, protected byte,
+  observation, fixture, publisher wire, entitlement/licensing outcome,
+  serialized response domain, local tag, `main`, or release tag moved.
+- stop conditions: none. The evidence ref was fresh, the hosted run passed, the
+  attestation matrix was complete, and final remote readback shows no main or
+  tag movement.
+- golden-E2E delta: **0**. Hosted and post-record standalone local golden each
+  passed **11/11**.
