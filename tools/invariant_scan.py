@@ -4014,6 +4014,224 @@ def r15_findings(root: Path) -> list[str]:
     return findings
 
 
+RUN_HARNESS = Path("run")
+R16_PREFLIGHT = (
+    '  step "artifact-integrity preflight — verify protected evidence bytes"\n'
+    "  cmd_verify_artifacts\n"
+)
+
+
+def _shell_function(source: str, name: str, following: str) -> tuple[str, int]:
+    declaration = f"{name}() {{"
+    matches = list(re.finditer(rf"(?m)^{re.escape(declaration)}$", source))
+    if len(matches) != 1:
+        raise ConfigError(
+            f"{RUN_HARNESS}: expected exactly one {declaration!r}"
+        )
+    start = matches[0].start()
+    end = source.index(f"\n}}\n\n{following}", start) + 2
+    return source[start:end], start
+
+
+def r16_findings(root: Path) -> list[str]:
+    """Bind the bounded SEC wire command to its executable safety contract."""
+    path = root / RUN_HARNESS
+    source = path.read_text()
+    function, function_start = _shell_function(
+        source,
+        "cmd_harvest_sec",
+        "# Print resolved, non-secret configuration",
+    )
+    protected, protected_start = _shell_function(
+        source,
+        "refuse_protected_harvest",
+        "need_cargo() {",
+    )
+    harvest_path, harvest_path_start = _shell_function(
+        source,
+        "harvest_db_path",
+        "refuse_protected_harvest() {",
+    )
+    fresh_path, fresh_path_start = _shell_function(
+        source,
+        "fresh_harvest_db_path",
+        "harvest_db_path() {",
+    )
+
+    function_line = source.count("\n", 0, function_start) + 1
+    protected_line = source.count("\n", 0, protected_start) + 1
+    harvest_path_line = source.count("\n", 0, harvest_path_start) + 1
+    fresh_path_line = source.count("\n", 0, fresh_path_start) + 1
+    findings: list[str] = []
+
+    def function_finding(message: str) -> None:
+        findings.append(f"{RUN_HARNESS}:{function_line}: {message}")
+
+    preflight_position = function.find(R16_PREFLIGHT)
+    later_work = (
+        "need_cargo; ensure_venv",
+        "cargo build -p cored --features net --locked",
+        'CORE_DB="$HARVEST_DB" _start_cored "config/core.json"',
+        "curl -sS",
+    )
+    later_positions = [function.find(fragment) for fragment in later_work]
+    verifier = (
+        "cmd_verify_artifacts() {\n"
+        '  python3 tools/evidence_artifacts.py "$@" verify\n'
+        "}"
+    )
+    if (
+        function.count(R16_PREFLIGHT) != 1
+        or preflight_position < 0
+        or any(position < 0 for position in later_positions)
+        or any(preflight_position > position for position in later_positions)
+        or source.count(verifier) != 1
+    ):
+        function_finding(
+            "harvest-sec must run the artifact verifier before any "
+            "environment setup or network-capable work"
+        )
+
+    protected_call = (
+        'if ! refuse_protected_harvest "$HARVEST_DB" "harvest-sec"; then'
+    )
+    protected_call_position = function.find(protected_call)
+    bind_position = function.find(
+        'CORE_DB="$HARVEST_DB" _start_cored "config/core.json"'
+    )
+    if (
+        function.count(protected_call) != 1
+        or protected_call_position < 0
+        or bind_position < 0
+        or protected_call_position > bind_position
+    ):
+        function_finding(
+            "harvest-sec must refuse a protected database before core bind"
+        )
+    if (
+        protected.count(
+            'tools/evidence_artifacts.py \\\n'
+            '      --manifest "$EVIDENCE_MANIFEST" --root . protected "$target"'
+        )
+        != 1
+        or protected.count('red "REFUSED: live harvest target') != 1
+        or protected.count("    return 1\n") != 1
+    ):
+        findings.append(
+            f"{RUN_HARNESS}:{protected_line}: protected-target helper must "
+            "return failure for a manifest-protected harvest destination"
+        )
+
+    contact_guard = 'if [ -z "${INTEL_CRAWLER_CONTACT:-}" ]; then'
+    contact_position = function.find(contact_guard)
+    contact_return_position = function.find("    return 2", contact_position)
+    if (
+        function.count(contact_guard) != 1
+        or contact_position < 0
+        or bind_position < 0
+        or contact_position > bind_position
+        or "INTEL_CRAWLER_CONTACT is required" not in function
+        or contact_return_position < contact_position
+        or contact_return_position > bind_position
+    ):
+        function_finding(
+            "harvest-sec must require declared crawler contact before core bind"
+        )
+
+    request = (
+        "-d "
+        "'{\"sectors\":[\"finance\"],"
+        "\"sources\":[\"sec-edgar-usgaap\"]}'"
+    )
+    if (
+        function.count(request) != 1
+        or function.count("if len(rows) != 1:") != 1
+        or function.count('"source_id": "sec-edgar-usgaap"') != 1
+        or function.count('CORE_DB="$HARVEST_DB" _start_cored "config/core.json"')
+        != 1
+    ):
+        function_finding(
+            "harvest-sec must request and validate exactly the configured "
+            "sec-edgar-usgaap source"
+        )
+
+    fresh_default = (
+        'if [ "$CORE_DB_EXPLICIT" = "1" ]; then\n'
+        '    printf \'%s\\n\' "$CORE_DB"\n'
+        "  else\n"
+        "    fresh_harvest_db_path\n"
+        "  fi"
+    )
+    if harvest_path.count(fresh_default) != 1:
+        findings.append(
+            f"{RUN_HARNESS}:{harvest_path_line}: default harvest database "
+            "selection must use fresh_harvest_db_path"
+        )
+    fresh_fragments = (
+        'candidate="${base}.db"',
+        'while [ -e "$candidate" ]; do',
+        "suffix=$((suffix + 1))",
+        'candidate="${base}-${suffix}.db"',
+        "done",
+        "printf '%s\\n' \"$candidate\"",
+    )
+    fresh_positions = [
+        fresh_path.find(fragment) for fragment in fresh_fragments
+    ]
+    if (
+        any(position < 0 for position in fresh_positions)
+        or fresh_positions != sorted(fresh_positions)
+    ):
+        findings.append(
+            f"{RUN_HARNESS}:{fresh_path_line}: fresh_harvest_db_path must "
+            "advance past every existing candidate"
+        )
+    if (
+        function.count('"coverage": "first_window"') != 1
+        or function.count("fetched <= 0 or new != fetched") != 1
+        or function.count(
+            'facts["documents"] <= 0 or facts["documents"] '
+            '!= facts["sec_documents"]'
+        )
+        != 1
+    ):
+        function_finding(
+            "a successful harvest-sec run must prove first-window, all-new, "
+            "SEC-only archive results"
+        )
+
+    if "observations/" in function or "fixtures/" in function:
+        function_finding(
+            "harvest-sec must not consume an observation or fixture as its "
+            "publisher-response input"
+        )
+    if source.count("harvest-sec)   cmd_harvest_sec") != 1:
+        function_finding(
+            "the harvest-sec dispatcher must enter cmd_harvest_sec exactly once"
+        )
+
+    config_path = Path("config/core.json")
+    try:
+        core_config = json.loads((root / config_path).read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        raise ConfigError(f"{config_path}: {error}") from error
+    configured = [
+        (sector.get("id"), item)
+        for sector in core_config.get("sectors", [])
+        for item in sector.get("sources", [])
+        if item.get("id") == "sec-edgar-usgaap"
+    ]
+    if len(configured) != 1 or configured[0][0] != "finance":
+        config_source = (root / config_path).read_text()
+        marker = '"sectors"'
+        line = config_source.count("\n", 0, config_source.find(marker)) + 1
+        findings.append(
+            f"{config_path}:{line}: sec-edgar-usgaap must be configured "
+            "exactly once in finance"
+        )
+    return findings
+
+
 CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R1": r1_findings,
     "R2": r2_findings,
@@ -4030,6 +4248,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R13": r13_findings,
     "R14": r14_findings,
     "R15": r15_findings,
+    "R16": r16_findings,
 }
 
 

@@ -244,6 +244,34 @@ coexistence measurement. It does not exercise concurrent-harvester
 single-flight (T7), a successful live arXiv cursor checkpoint, or the
 600-second schedule.
 
+**Bounded SEC wire-command contract (R16) — selected 2026-08-04.** The
+architectural guarantee belongs here because it is the boundary a later
+publisher-surface widening must preserve; `AGENTS.md` restates it at the
+operator entry point. `./run harvest-sec` dispatches exactly once to
+`cmd_harvest_sec`, and registered R16 follows that executable and its helpers:
+
+- Control 1 requires `cmd_verify_artifacts` before environment setup, build,
+  bind, or request; the helper executes the manifest-backed artifact verifier.
+- Controls 2 and 3 require `refuse_protected_harvest` before core bind and
+  require its manifest-protected match to return failure.
+- Control 4 requires nonempty `INTEL_CRAWLER_CONTACT` before core bind.
+- Controls 5 and 10 bind the request and response validation to exactly one
+  configured `sec-edgar-usgaap` source in `config/core.json`'s finance sector.
+- Controls 6, 8, and 9 require the no-override default to select
+  `fresh_harvest_db_path`, require that helper to advance past existing
+  candidates, and require a successful response to report `first_window`, every
+  fetched document new, and an archive containing only that SEC source.
+- Control 7 rejects an observation or fixture path used as publisher-response
+  input by `cmd_harvest_sec`. The artifact verifier's integrity read of pinned
+  evidence is preflight, not a substitute response body.
+
+The fresh-path guarantee is intentionally no broader: an explicit unprotected
+`CORE_DB` override is accepted before the wire request and is not proved absent
+or empty at bind time. The later response/archive checks can reject a non-fresh
+result, but they cannot retroactively make that request fresh. Strict
+fresh-path-only admission for explicit overrides is therefore a v0.39 handoff
+finding, not an architectural claim.
+
 **Terms-policy boundary — operator disposition 2026-07-30.** The executable
 two-gate model does not claim to decide publisher terms compliance. Publisher
 terms are reviewed as a dated, publisher-specific operator responsibility

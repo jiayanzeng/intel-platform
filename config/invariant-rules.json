@@ -1162,6 +1162,131 @@
         }
       ],
       "fail_before_note": "invariant-scan: R15 FAIL: the derived public response-domain manifest differs from the v0.17.4 release baseline"
+    },
+    {
+      "id": "R16",
+      "claim": "The ./run harvest-sec dispatcher enters one bounded SEC live command that verifies protected evidence before network-capable work, refuses manifest-protected database targets and missing crawler contact before core bind, requests and validates only the configured sec-edgar-usgaap source, defaults to a fresh non-existing database path, requires a successful result to be first-window, all-new, and SEC-only, and never uses an observation or fixture as publisher-response input.",
+      "source": "ARCHITECTURE.md §4; operational restatement in AGENTS.md §7",
+      "scope": "The actual run shell entry point: its harvest-sec dispatch arm, cmd_harvest_sec, cmd_verify_artifacts, refuse_protected_harvest, harvest_db_path, and fresh_harvest_db_path, plus the exact sec-edgar-usgaap membership in config/core.json's finance sector. The protected-target control follows the helper to tools/evidence_artifacts.py's manifest-backed protected query and its failure return. The fresh-path claim is deliberately limited to the no-override default; an explicit unprotected CORE_DB override is admitted by the current executable and is not claimed fresh. Successful-result freshness is separately bound to first_window, new equal to fetched, and an SEC-only archive. No-observation coverage rejects explicit observations/ or fixtures/ response-input paths inside cmd_harvest_sec; the artifact-integrity preflight still reads protected evidence for verification and is not publisher-response input. Planted controls remove preflight, bypass the protected-target call and helper failure, bypass the contact guard, widen the requested source list, replace the fresh default, add an observation input, weaken all-new result validation, disable existing-path avoidance, and remove the exact configured SEC identity.",
+      "fail_before": [
+        {
+          "file": "run",
+          "find": "cmd_harvest_sec() {\n  step \"artifact-integrity preflight — verify protected evidence bytes\"\n  cmd_verify_artifacts\n",
+          "replace_with": [
+            "cmd_harvest_sec() {\n",
+            "  step \"artifact-integrity preflight removed by R16 control\"\n"
+          ],
+          "expected_fail": "harvest-sec must run the artifact verifier before any environment setup or network-capable work",
+          "expected_file": "run",
+          "expected_anchor": "# mistaken for the harvest itself.\ncmd_harvest_sec() {",
+          "expected_anchor_line_offset": 1
+        },
+        {
+          "file": "run",
+          "find": "  if ! refuse_protected_harvest \"$HARVEST_DB\" \"harvest-sec\"; then\n",
+          "replace_with": [
+            "  if false; then\n"
+          ],
+          "expected_fail": "harvest-sec must refuse a protected database before core bind",
+          "expected_file": "run",
+          "expected_anchor": "# mistaken for the harvest itself.\ncmd_harvest_sec() {",
+          "expected_anchor_line_offset": 1
+        },
+        {
+          "file": "run",
+          "find": "    red \"  CORE_DB=$suggestion ./run $command_name\"\n    return 1\n",
+          "replace_with": [
+            "    red \"  CORE_DB=$suggestion ./run $command_name\"\n",
+            "    return 0\n"
+          ],
+          "expected_fail": "protected-target helper must return failure for a manifest-protected harvest destination",
+          "expected_file": "run",
+          "expected_anchor": "}\n\nrefuse_protected_harvest() {",
+          "expected_anchor_line_offset": 2
+        },
+        {
+          "file": "run",
+          "find": "  if [ -z \"${INTEL_CRAWLER_CONTACT:-}\" ]; then\n",
+          "replace_with": [
+            "  if false; then\n"
+          ],
+          "expected_fail": "harvest-sec must require declared crawler contact before core bind",
+          "expected_file": "run",
+          "expected_anchor": "# mistaken for the harvest itself.\ncmd_harvest_sec() {",
+          "expected_anchor_line_offset": 1
+        },
+        {
+          "file": "run",
+          "find": "      -d '{\"sectors\":[\"finance\"],\"sources\":[\"sec-edgar-usgaap\"]}'); then\n",
+          "replace_with": [
+            "      -d '{\"sectors\":[\"finance\"],\"sources\":[\"sec-edgar-usgaap\",\"arxiv-cs\"]}'); then\n"
+          ],
+          "expected_fail": "harvest-sec must request and validate exactly the configured sec-edgar-usgaap source",
+          "expected_file": "run",
+          "expected_anchor": "# mistaken for the harvest itself.\ncmd_harvest_sec() {",
+          "expected_anchor_line_offset": 1
+        },
+        {
+          "file": "run",
+          "find": "  else\n    fresh_harvest_db_path\n  fi\n}\n\nrefuse_protected_harvest() {",
+          "replace_with": [
+            "  else\n",
+            "    printf '%s\\n' \"$CORE_DB\"\n",
+            "  fi\n",
+            "}\n",
+            "\n",
+            "refuse_protected_harvest() {"
+          ],
+          "expected_fail": "default harvest database selection must use fresh_harvest_db_path",
+          "expected_file": "run",
+          "expected_anchor": "  printf '%s\\n' \"$candidate\"\n}\n\nharvest_db_path() {",
+          "expected_anchor_line_offset": 3
+        },
+        {
+          "file": "run",
+          "find": "cmd_harvest_sec() {\n",
+          "replace_with": [
+            "cmd_harvest_sec() {\n",
+            "  source observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml\n"
+          ],
+          "expected_fail": "harvest-sec must not consume an observation or fixture as its publisher-response input",
+          "expected_file": "run",
+          "expected_anchor": "# mistaken for the harvest itself.\ncmd_harvest_sec() {",
+          "expected_anchor_line_offset": 1
+        },
+        {
+          "file": "run",
+          "find": "if fetched <= 0 or new != fetched or int(r.get(\"documents\", -1)) != fetched:\n",
+          "replace_with": [
+            "if fetched <= 0 or new < fetched or int(r.get(\"documents\", -1)) != fetched:\n"
+          ],
+          "expected_fail": "a successful harvest-sec run must prove first-window, all-new, SEC-only archive results",
+          "expected_file": "run",
+          "expected_anchor": "# mistaken for the harvest itself.\ncmd_harvest_sec() {",
+          "expected_anchor_line_offset": 1
+        },
+        {
+          "file": "run",
+          "find": "  while [ -e \"$candidate\" ]; do\n",
+          "replace_with": [
+            "  while false; do\n"
+          ],
+          "expected_fail": "fresh_harvest_db_path must advance past every existing candidate",
+          "expected_file": "run",
+          "expected_anchor": "fresh_harvest_db_path() {"
+        },
+        {
+          "file": "config/core.json",
+          "find": "          \"id\": \"sec-edgar-usgaap\",\n",
+          "replace_with": [
+            "          \"id\": \"sec-edgar-usgaap-r16-control\",\n"
+          ],
+          "expected_fail": "sec-edgar-usgaap must be configured exactly once in finance",
+          "expected_file": "config/core.json",
+          "expected_anchor": "  \"sectors\": ["
+        }
+      ],
+      "fail_before_note": "invariant-scan: R16 FAIL: the bounded SEC live command no longer keeps a registered preflight, target, contact, source, fresh-result, or response-input boundary"
     }
   ]
 }

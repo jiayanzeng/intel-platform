@@ -546,6 +546,20 @@ Before any live harvest, run `./run verify-artifacts`. A bare
 live-harvest targets. Protected artifacts are immutable evidence. Do not bypass
 that refusal—choose the fresh path it prints.
 
+`./run harvest-sec` has the narrower registered R16 wire contract. Its actual
+`cmd_harvest_sec` entry point runs the artifact verifier first (R16 control 1),
+refuses a manifest-protected target before bind through
+`refuse_protected_harvest` (controls 2–3), requires nonempty
+`INTEL_CRAWLER_CONTACT` before bind (control 4), and requests and validates only
+the configured `sec-edgar-usgaap` source (controls 5 and 10). With no explicit
+`CORE_DB`, `harvest_db_path` chooses the non-existing timestamped path from
+`fresh_harvest_db_path`; success additionally requires `first_window`, every
+fetched document new, and an SEC-only archive (controls 6, 8, and 9). The command
+must not use an observation or fixture as its publisher-response input (control
+7); the initial integrity verification of pinned evidence is not response
+input. An explicit unprotected `CORE_DB` override is not currently proved fresh
+before bind, so do not claim strict fresh-path-only admission for that case.
+
 Manifest schema v2 has two disjoint containers:
 
 - **`artifacts[]`** is for protected SQLite archives. Each entry requires the

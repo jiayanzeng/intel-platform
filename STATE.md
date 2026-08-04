@@ -1,6 +1,51 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 90 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **380/380**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **381/381**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+
+**v0.39 WIRE-CONTRACT — bounded SEC egress registered (measured
+2026-08-04).** C18 places the invariant claim in `ARCHITECTURE.md` and its
+operator-facing restatement in `AGENTS.md`: architecture owns the safety
+boundary a later publisher widening must preserve, while the operating
+contract names the command an agent may execute. A new R16 is the honest home
+rather than an R8 or R12 extension because it owns one coherent shell entry
+point and helper call chain, not crawler-identity construction or release
+lifecycle.
+
+R16 follows the actual `./run harvest-sec` dispatcher into
+`cmd_harvest_sec`, `cmd_verify_artifacts`, `refuse_protected_harvest`,
+`harvest_db_path`, `fresh_harvest_db_path`, and the exact finance-source
+membership in `config/core.json`. Ten reconstructible controls
+prove: artifact verification precedes environment setup and network-capable
+work; the protected-target call precedes bind and its manifest match returns
+failure; nonempty crawler contact precedes bind; one exact configured SEC
+source is requested and validated; the no-override default selects a
+non-existing timestamped path and skips existing candidates; success requires
+`first_window`, every fetched document new, and an SEC-only archive; and no
+observation or fixture is used as
+publisher-response input. The verifier's integrity read of pinned evidence is
+explicitly preflight rather than a response-body substitute.
+
+One belief outran the executable and is a handoff finding: an explicit
+unprotected `CORE_DB` override is admitted before the wire request without an
+absence-or-empty check. Later response/archive validation can reject a
+non-fresh result but cannot make the preceding request fresh. The documents
+therefore claim fresh pathname selection only for the no-override default and
+do not claim strict fresh-path-only admission for explicit overrides. Step 5
+does not change `run` to manufacture the proposed claim.
+
+The unmodified registry and all ten R16 mutations pass at **16/16 rules /
+100 controls** with expected finding lines derived from unchanged mutant text,
+not hand-typed absolute line fields. Focused harvest/config tests pass **4/4**.
+After correcting an initially overlapping expected anchor caught by the
+existing anti-vacuity test, the complete local gate passes **22/22** jobs;
+Python 3.11 and Python 3.12 each pass the identical **381/381** population with
+the accepted warning nonfatal, and the required standalone golden run passes
+**11/11**. The final pre-box project-root export passes at **2,716,614 bytes / 158
+tracked entries / 2 retained cycles**, leaving **68,934 bytes** before the
+2,785,548-byte attention boundary; its attention state is `clear`. No live
+wire, publisher config, production source, protected byte, observation,
+fixture, dependency, entitlement/licensing outcome, golden input, or remote ref
+moved.
 
 **v0.39 CEILING-TRIGGER — attention before failure (measured 2026-08-04).**
 C17 selects a reserve of two governed-growth cycles at the checker-derived
