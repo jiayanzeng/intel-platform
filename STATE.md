@@ -21,6 +21,29 @@
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
 
+**v0.42 REPAIR-TIP — Grant F not granted; the published v0.41 record remains
+one commit short (measured 2026-08-05).** The initiating request and every
+operator message through this step were checked against Grant F's exact
+fast-forward authorization. No such authorization was issued. The dormant push
+branch therefore did not execute; this is a dated not-granted observation, not
+an inferred refusal.
+
+The executed witness freshly measures all **27** expected and absent refs in
+agreement and keeps remote `main` at exact v0.41 closing commit
+`993813c755e9f759a4ee165954c7a1df984f6b10`. Exact audit child
+`827192d2b3ed56fbe04ac0df0cc6536ef037e066` has that closing commit as its
+immediate parent and changes only `STATE.md` and
+`docs/cycles/PROGRESS-v0.41.md`. The published progress blob contains no
+`cycle-ending review-export audit`; the child contains exactly one. The
+published State blob lacks the five-field post-push records for both v0.17.7
+and v0.17.8; the child contains both. Those are exactly the complete-record
+bytes a reader of published history still cannot see.
+
+No branch, tag, direct or peeled tag identity, evidence ref, or other remote ref
+moved. In particular, v0.17.8 remains exact and v0.17.6 remains absent. The
+measured state is the expected published lag and does not contradict the local
+record, so no Step 4 stop condition fired.
+
 **v0.42 ARCHIVE — Grant E not granted; second archival remains dormant
 (measured 2026-08-05).** The initiating request and every operator message
 through this step were checked against Grant E's exact required content. No

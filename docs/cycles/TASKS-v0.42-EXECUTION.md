@@ -710,7 +710,7 @@ acceptance point is a defect, not an oversight.
 - [x] E0
 - [x] REMOTE-WITNESS
 - [x] ARCHIVE
-- [ ] REPAIR-TIP
+- [x] REPAIR-TIP
 - [ ] RE-MEASURE
 - [ ] R-CLOSE
 
