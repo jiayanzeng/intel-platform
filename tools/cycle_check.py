@@ -2797,7 +2797,7 @@ def check_governed_export_margin_kind(
     root: Path,
     errors: list[str],
 ) -> str | None:
-    """Bind an evaluated margin to the latest positive same-kind basis."""
+    """Bind an evaluated margin to the positive governed high-water basis."""
     matches = list(GOVERNED_EXPORT_MARGIN_SERIES_RE.finditer(architecture_text))
     if len(matches) != 1:
         errors.append(
@@ -2945,29 +2945,40 @@ def check_governed_export_margin_kind(
                 relative,
                 int(measurements[-1].group(2)),
             )
-    positive_pairs: list[tuple[tuple[int, ...], Path, Path]] = []
+    positive_pairs: list[tuple[int, tuple[int, ...], Path, Path]] = []
     for version, (relative, value) in governed_series.items():
         if version[-1] == 0:
             continue
         previous_version = (*version[:-1], version[-1] - 1)
         previous = governed_series.get(previous_version)
         if previous is not None and value > previous[1]:
-            positive_pairs.append((version, previous[0], relative))
+            positive_pairs.append(
+                (value - previous[1], version, previous[0], relative)
+            )
     if not positive_pairs:
         errors.append(
             f"{shown(architecture_path, root)}: governed export margin has "
             "no positive adjacent-cycle governed denominator basis"
         )
         return None
-    _latest_version, latest_prior, latest_current = max(positive_pairs)
+    (
+        high_water_delta,
+        _high_water_version,
+        high_water_prior,
+        high_water_current,
+    ) = max(positive_pairs)
     # Invariant R12 control site: governed review-export margin basis selection.
-    if (prior_relative, current_relative) != (latest_prior, latest_current):
+    if (prior_relative, current_relative) != (
+        high_water_prior,
+        high_water_current,
+    ):
         errors.append(
             f"{shown(architecture_path, root)}: governed export margin must "
-            "use the latest positive adjacent-cycle governed pair; "
+            "use the maximum positive adjacent-cycle governed pair; "
             f"declared={prior_relative.as_posix()}→"
-            f"{current_relative.as_posix()}, latest={latest_prior.as_posix()}→"
-            f"{latest_current.as_posix()}"
+            f"{current_relative.as_posix()}, high_water="
+            f"{high_water_prior.as_posix()}→{high_water_current.as_posix()} "
+            f"delta={high_water_delta}"
         )
         return None
 
@@ -2997,7 +3008,7 @@ def check_governed_export_margin_kind(
         errors.append(
             f"{shown(architecture_path, root)}: review-export attention "
             f"denominator {attention.denominator_bytes_per_cycle} disagrees "
-            f"with latest positive adjacent governed delta "
+            f"with maximum positive adjacent governed delta "
             f"{expected_denominator}"
         )
         return None
@@ -3032,10 +3043,11 @@ def check_governed_export_margin_kind(
         return None
     return (
         "governed-export-margin-basis: "
-        "selected=latest-positive-adjacent-governed-pair "
+        "selected=maximum-positive-adjacent-governed-pair "
+        f"high_water_delta={high_water_delta} "
         f"attention_boundary={attention.boundary_bytes} "
-        "representativeness=unbounded(single adjacent pair carries no "
-        "representativeness guarantee) "
+        "representativeness=bounded(empirical high-water is conservative "
+        "over the recorded governed series, not beyond it) "
         "structural_epoch=unobserved(checker cannot detect a basis "
         "predating a structural change)"
     )

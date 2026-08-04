@@ -621,7 +621,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 | Feed shape observation | an uncovered publisher feed shape | v0.40 · 2026-08-04 — No feed was fetched and no uncovered shape appeared. | none |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.40 · 2026-08-04 — No dependency or manifest edge moved; the existing shared `intel-extract` seam remains in place. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.40 · 2026-08-04 — Entering review finds both documents still agree on the two-commit tagged close; Step 2 must preserve that agreement while moving the pre-tag evaluation point. | none |
-| Review-export capacity | the export meets or exceeds the executable two-governed-growth-cycle attention boundary | v0.40 · 2026-08-04 — The pre-activation worktree measured **2,788,376 bytes** against the old **2,785,548-byte** boundary and therefore fired, while also failing its untracked/out-of-retention checks. ACTIVATE records the tracked v0.39–v0.40 result; Step 4 must widen the current **214,452-byte** reserve and record the corrected predicate. | Step 4 |
+| Review-export capacity | the export meets or exceeds the executable two-governed-growth-cycle attention boundary | v0.40 · 2026-08-04 — ATTENTION-BASIS selects the maximum positive adjacent governed delta, **+215,306 bytes** at v0.34→v0.35. The corrected reserve is **430,612 bytes**, up from **214,452**, and the boundary is **2,569,388** under the unchanged 3,000,000-byte ceiling. Activation's **2,712,884-byte** governed measurement and the pre-record task worktree's **2,775,132-byte** operator-local export both exceed it, so the predicate fired; the dated Architecture disposition retains the ceiling and two-cycle retention, adopts the nondecreasing high-water basis, and requires final release-tree remeasurement. | Step 4 |
 
 ---
 
@@ -656,7 +656,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 - [x] E0
 - [x] PRE-TAG-GATE
 - [x] WITHHELD-STATE
-- [ ] ATTENTION-BASIS
+- [x] ATTENTION-BASIS
 - [ ] RE-MEASURE
 - [ ] R-CLOSE
 

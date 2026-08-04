@@ -1499,10 +1499,11 @@ def test_governed_export_margin_kind_accepts_recorded_governed_series(
     assert errors == []
     assert report == (
         "governed-export-margin-basis: "
-        "selected=latest-positive-adjacent-governed-pair "
+        "selected=maximum-positive-adjacent-governed-pair "
+        "high_water_delta=10 "
         f"attention_boundary={cycle_check.MAX_EXPORT_BYTES - 20} "
-        "representativeness=unbounded(single adjacent pair carries no "
-        "representativeness guarantee) "
+        "representativeness=bounded(empirical high-water is conservative "
+        "over the recorded governed series, not beyond it) "
         "structural_epoch=unobserved(checker cannot detect a basis "
         "predating a structural change)"
     )
@@ -1578,7 +1579,7 @@ def test_governed_export_margin_kind_accepts_post_archive_evaluation(
     assert errors == []
 
 
-def test_governed_export_margin_kind_rejects_stale_positive_basis(
+def test_governed_export_margin_kind_rejects_non_high_water_positive_basis(
     tmp_path: Path,
 ) -> None:
     root = _cycle_root(tmp_path)
@@ -1618,13 +1619,64 @@ def test_governed_export_margin_kind_rejects_stale_positive_basis(
     )
 
     assert errors == [
-        "ARCHITECTURE.md: governed export margin must use the latest positive "
+        "ARCHITECTURE.md: governed export margin must use the maximum positive "
         "adjacent-cycle governed pair; "
         "declared=docs/cycles/PROGRESS-v1.2.0.md→"
         "docs/cycles/PROGRESS-v1.2.1.md, "
-        "latest=docs/cycles/PROGRESS-v1.2.1.md→"
-        "docs/cycles/PROGRESS-v1.2.2.md"
+        "high_water=docs/cycles/PROGRESS-v1.2.1.md→"
+        "docs/cycles/PROGRESS-v1.2.2.md delta=10"
     ]
+
+
+def test_governed_export_margin_quiet_cycle_cannot_shrink_reserve(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    high_water_prior = cycle_documents_dir(root) / "PROGRESS-v1.2.0.md"
+    high_water_prior.write_text(
+        "# High-water governed margin fixture\n\n"
+        "- governed review-export measurement: "
+        f"tree=`{'7' * 40}`; bytes=`5`\n"
+    )
+    architecture = root / "ARCHITECTURE.md"
+    text = architecture.read_text()
+    numerator = cycle_check.MAX_EXPORT_BYTES - 35
+    old_latest_boundary = cycle_check.MAX_EXPORT_BYTES - (2 * 10)
+    high_water_boundary = cycle_check.MAX_EXPORT_BYTES - (2 * 20)
+    text = text.replace(
+        "prior_progress=`docs/cycles/PROGRESS-v1.2.1.md`; prior_bytes=`25`",
+        "prior_progress=`docs/cycles/PROGRESS-v1.2.0.md`; prior_bytes=`5`",
+    )
+    text = text.replace(
+        "current_progress=`docs/cycles/PROGRESS-v1.2.2.md`; current_bytes=`35`",
+        "current_progress=`docs/cycles/PROGRESS-v1.2.1.md`; current_bytes=`25`",
+    )
+    text = text.replace(
+        "denominator_bytes_per_cycle=`10`",
+        "denominator_bytes_per_cycle=`20`",
+    )
+    text = text.replace(
+        f"cycles=`{numerator / 10:.2f}`",
+        f"cycles=`{numerator / 20:.2f}`",
+    )
+    text = text.replace(
+        f"boundary_bytes=`{old_latest_boundary}`",
+        f"boundary_bytes=`{high_water_boundary}`",
+    )
+    architecture.write_text(text)
+    errors: list[str] = []
+
+    report = cycle_check.check_governed_export_margin_kind(
+        architecture,
+        architecture.read_text(),
+        root,
+        errors,
+    )
+
+    assert errors == []
+    assert report is not None
+    assert "high_water_delta=20" in report
+    assert high_water_boundary < old_latest_boundary
 
 
 def test_state_region_contract_derives_external_reference_inventory(

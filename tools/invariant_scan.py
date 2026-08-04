@@ -2060,7 +2060,7 @@ def _governed_margin_basis_entry_output(
     root: Path,
     cycle_check,
 ) -> tuple[int, str]:
-    """Plant an older positive pair and exercise it through cycle_check.run."""
+    """Plant the lower latest-positive pair through cycle_check.run."""
     cycle_source = (root / "tools" / "cycle_check.py").read_text()
     marker = (
         "    # Invariant R12 control site: governed review-export margin "
@@ -2131,9 +2131,10 @@ def _governed_margin_basis_entry_output(
             "ARCHITECTURE.md: margin-basis control needs two positive "
             "adjacent governed pairs"
         )
-    _version, prior_path, prior_value, current_path, current_value = sorted(
-        positive_pairs
-    )[-2]
+    _version, prior_path, prior_value, current_path, current_value = max(
+        positive_pairs,
+        key=lambda pair: pair[0],
+    )
     denominator = current_value - prior_value
     numerator = int(margin.group(9))
     cycles = numerator / denominator
@@ -2629,11 +2630,11 @@ def r12_findings(root: Path) -> list[str]:
     )
     if (
         basis_status == 0
-        or "governed export margin must use the latest positive "
+        or "governed export margin must use the maximum positive "
         "adjacent-cycle governed pair" not in basis_output
     ):
         missed.setdefault("governed-export-margin-basis", []).append(
-            "stale-positive-margin-pair"
+            "quiet-cycle-lower-latest-margin-pair"
         )
 
     region_status, region_output = _state_region_entry_output(

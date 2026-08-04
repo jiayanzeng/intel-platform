@@ -421,14 +421,20 @@ the repository has no common closing/delivered progress authority comparable to
 the governed fields. R12 plants a mixed-kind row through the real lifecycle
 entry point and disables this comparison.
 
-The review-export attention boundary reserves two cycles at that same
-executable latest-positive-adjacent governed-growth denominator:
+The review-export attention boundary reserves two cycles at the maximum
+positive adjacent governed-growth delta recorded through the evaluation cycle:
 `MAX_EXPORT_BYTES - (2 × denominator)`. `export-check` measures the generated
 bytes against the result, while `cycle-check` binds the denominator to the
 governed progress series and the written boundary to the formula. Meeting or
 exceeding the boundary requires a dated `trigger-fired disposition:` in this
 document's governed review-export row. The accepted 3,000,000-byte ceiling
-remains the failure limit and is unchanged.
+remains the failure limit and is unchanged. The maximum is a monotone
+high-water estimator: appending a quiet or smaller-growth cycle cannot shrink
+the reserve or raise the boundary. A larger later positive adjacent delta
+falsifies the current numeric basis and becomes the new high-water. The
+governed margin deliberately shares this denominator because both fields
+express remaining capacity in governed-growth cycles; retaining the lower
+latest delta for the margin would understate the same observed risk.
 
 `STATE.md` archival eligibility is structural rather than a line or byte
 constant. The status paragraph supplies the immutable header boundary;
@@ -477,17 +483,17 @@ cycle may impose a stronger runbook-specific requirement. The latest
 append-only audit record's own byte contribution is necessarily undisclosed;
 another field would recreate the self-measurement fixed point.
 
-The governed export margin's executable denominator is the latest positive
-adjacent same-kind governed pair. That selection and its arithmetic are bound,
-but its representativeness and structural epoch are not: one adjacent pair
-cannot establish a representative rate, and the checker has no independent
-machine-readable event that identifies an archival or other structural change.
-The entry point therefore emits both limits beside every successful basis
-selection. A numeric floor would be an unsupported inference from only two
-positive pairs; a trailing window would mix the measured v0.33 one-time archive
-reclaim into steady growth; and an epoch rule would merely trust prose until an
-independent epoch authority exists. This is an explicit bound, not a claim that
-the selected pair predicts future growth.
+The governed export margin's executable denominator is the maximum positive
+adjacent same-kind governed delta through its evaluation cycle. That high-water
+selection and its arithmetic are bound, but its extrapolation and structural
+epoch are not: it is conservative over the recorded governed series, not proof
+of future growth, and the checker has no independent machine-readable event
+that identifies an archival or other structural change. The entry point emits
+both limits beside every successful basis selection. A later larger positive
+adjacent governed delta falsifies and replaces the current numeric basis. A
+trailing window could mix a one-time archive reclaim into growth, while an epoch
+rule would merely trust prose until an independent epoch authority exists. This
+is an explicit empirical high-water, not a prediction.
 
 Published-release divergence is counted within a publication epoch. A
 successful authorized publication resets the consecutive closed-cycle count to
@@ -565,7 +571,7 @@ explicit bounds, not silent successes.
 | subject | disposition | trigger | dated measured observation and reason |
 |---|---|---|---|
 | review-export operator-local status (v0.22 G3) | **REFUTED as a missing-contract claim — 2026-07-29** | none | 2026-07-29 — The contributor-facing paragraph above and `AGENTS.md` already state that `./run export-check` is operator-local, why it is absent from local/hosted CI, and what it verifies. No duplicate rule or hosted workaround is added. |
-| review-export size and retention bound (v0.28) | **Accepted at a 3,000,000-byte ceiling and two-cycle retention depth — operator selected 2026-08-02** | the project-root review export meets or exceeds the executable two-governed-growth-cycle attention boundary, its cycle-document set differs from the active cycle plus the immediately prior execution cycle, any exported path is not Git-tracked, the exact configured observation exclusions differ from the nonempty derived raw-wire class, any derived raw-wire body reappears, or any manifest-derived structural-archive byte reappears | v0.40 · 2026-08-04 — The staged activation tree measured **2,710,665 bytes** across **158 Git-tracked files / 2 retained cycles**, exactly v0.39–v0.40. The exhaustive partition is **158 tracked / 0 untracked defects**; all **158/158** derived required paths are present; the **4** pinned-observation `binary` raw-wire paths equal the **4** exact configured observation exclusions in both directions and are absent; both manifest-derived structural archives are absent. The three untouched untracked amendment inputs remain excluded by one bounded historical-family Repomix pattern and visible in Git status. Review-export attention boundary: headroom_cycles=`2`; denominator_bytes_per_cycle=`107226`; boundary_bytes=`2785548`. Activation is **74,883 bytes** below that boundary, so the entering attention predicate did not fire. The 3,000,000-byte ceiling is unchanged. The entering estimator still selects the latest positive adjacent governed pair **2,674,055 → 2,781,281 (+107,226)** across v0.37→v0.38; Step 4 owns its correction. The last closed governed figure remains v0.39's export of **2,729,600 bytes**. Review-export margin: kind=`governed→governed`; prior_progress=`docs/cycles/PROGRESS-v0.37.md`; prior_bytes=`2674055`; current_progress=`docs/cycles/PROGRESS-v0.38.md`; current_bytes=`2781281`; evaluated_progress=`docs/cycles/PROGRESS-v0.39.md`; evaluated_bytes=`2729600`; denominator_bytes_per_cycle=`107226`; numerator_bytes=`270400`; cycles=`2.52`. The activation measurement separately leaves **289,335 bytes / 9.64% / 2.70 cycles** below the ceiling. Neither attention, retention, tracked-entry, raw-wire, nor structural-archive trigger fired. Governed review-export bytes: `2729600`. |
+| review-export size and retention bound (v0.28) | **Accepted at a 3,000,000-byte ceiling and two-cycle retention depth — operator selected 2026-08-02** | the project-root review export meets or exceeds the executable two-governed-growth-cycle attention boundary, its cycle-document set differs from the active cycle plus the immediately prior execution cycle, any exported path is not Git-tracked, the exact configured observation exclusions differ from the nonempty derived raw-wire class, any derived raw-wire body reappears, or any manifest-derived structural-archive byte reappears | v0.40 · 2026-08-04 — ATTENTION-BASIS derives every adjacent governed pair through the activation measurement and selects the maximum positive delta, v0.34 **2,527,180 →** v0.35 **2,742,486 (+215,306)**. Review-export attention boundary: headroom_cycles=`2`; denominator_bytes_per_cycle=`215306`; boundary_bytes=`2569388`. The reserve is **430,612 bytes**, greater than the prior **214,452-byte** reserve by **216,160 bytes** at the same activation tree; the accepted **3,000,000-byte ceiling is unchanged**. Exact activation commit `6896f6e3168bee0cb999ab2cfeca68cc715a681d` produced an export of **2,712,884 bytes / 158 Git-tracked files / 2 retained cycles**, **143,496 bytes above** the corrected boundary, so the predicate fired. trigger-fired disposition: retain the fixed ceiling and two-cycle retention, adopt the nondecreasing governed high-water reserve, and remeasure the final release tree before close. The exhaustive activation partition remains **158 tracked / 0 untracked defects / 158 required paths present / 4 derived raw-wire exclusions absent / 2 structural archives absent**; the three historical amendment inputs remain untouched and excluded. The margin explicitly shares the high-water denominator because it expresses the same remaining ceiling capacity: Review-export margin: kind=`governed→governed`; prior_progress=`docs/cycles/PROGRESS-v0.34.md`; prior_bytes=`2527180`; current_progress=`docs/cycles/PROGRESS-v0.35.md`; current_bytes=`2742486`; evaluated_progress=`docs/cycles/PROGRESS-v0.40.md`; evaluated_bytes=`2712884`; denominator_bytes_per_cycle=`215306`; numerator_bytes=`287116`; cycles=`1.33`. A later adjacent governed increase above **215,306** falsifies and replaces this numeric basis; a quiet or smaller increase cannot shrink the reserve. Governed review-export bytes: `2712884`. |
 | protected evidence-manifest growth (v0.22 G4) | **Accepted with bounds — 2026-07-30** | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take **≥1.00 s real** | v0.40 · 2026-08-04 — ACTIVATE validates schema v2 at **3 artifacts / 339 pinned files** and measures the manifest at **200,440 bytes**, leaving **848,136 bytes** to its governed boundary. Two complete checks matched both structural archives, all other pins, and all three protected databases in **0.11 s / 0.09 s real**, leaving **0.89 s / 0.91 s** to the timing trigger. Neither boundary nor timing trigger fired. |
 | shell `StarletteDeprecationWarning` (v0.22 G5) | **Accepted until trigger — 2026-07-30** | the warning becomes an error/failure, or the next authorized constraints refresh changes FastAPI, Starlette, `httpx`, or `httpx2` | v0.40 · 2026-08-04 — ACTIVATE changes no dependency declaration, constraint, FastAPI, Starlette, `httpx`, or `httpx2` value. The latest complete Python 3.11 and Python 3.12 populations remain the measured v0.39 **381/381** passes with the warning non-fatal. Neither warning trigger fired. |
 | published-release divergence | **Accepted under the operator-selected bound; publication-epoch reset defined — 2026-08-01** | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.40 · 2026-08-04 — Exact authorized publication of v0.17.5 keeps the publication epoch at **0**; permanently withheld v0.17.6 never resets it. ACTIVATE adds no measured runtime behavior or public surface, and fresh R15 derivation reports **0 public response-domain differences** across **6 routes / 112 field occurrences**. The count remains **0** and neither trigger clause fired. |

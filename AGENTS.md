@@ -275,8 +275,9 @@ warnings; clippy is an independent blocking gate.)
   derived raw-wire body or structural-archive content in the export is a
   failure. Repository bytes and protected pins remain untouched by these
   review-scope exclusions. It also derives a pre-failure attention boundary by
-  reserving two cycles at the latest positive adjacent governed-growth
-  denominator. A measurement at or above that boundary requires a dated
+  reserving two cycles at the maximum positive adjacent governed-growth delta
+  recorded through the evaluation cycle. This high-water reserve cannot shrink
+  when a quiet or smaller-growth cycle is appended. A measurement at or above that boundary requires a dated
   `trigger-fired disposition:` in the governed Architecture row; this does not
   move or weaken the 3,000,000-byte ceiling.
 
