@@ -1,6 +1,32 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is closed locally and unpublished; v0.38's closing-export audit is complete. v0.17.4 remains published exactly, and Grant C now authorizes only v0.17.5's exact publication in v0.39 Step 2.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child records the measured closing-tree export. Local annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Remote `main` remains exact published v0.17.4 audit child `a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0`; push-triggered hosted run `30841505130`, attempt **1**, passed all **9/9** blocking identities there. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.4 reset the published-release-divergence count to **0** at its closing commit; v0.38 is the first subsequent closed cycle carrying the measured SEC harvest-enablement behavior difference, so the consecutive count is **1**, with no public-surface movement.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+
+**v0.39 PUBLISH-V17-5 — Grant C spent exactly (measured 2026-08-04).**
+The operator's initiating request issued the named runbook Grant C, whose
+verbatim text was recorded in the progress log before any ref movement.
+Immediately before the push, `git ls-remote` reported only `main` at
+`a7d6c80e7e5ccd963e8ebb46ee054b30af88abb0` and no v0.17.5 tag. That remote
+head was proven an ancestor of exact audit child
+`dd605acc037da405fa6b2b5366b09349c330c194`; local annotated object
+`946bdc015446182727d8f705697e378f8fe8f7eb` peeled to exact closing commit
+`55045ae481ce8d1ef285522b3c0a57c91fe5cb54`. No precondition was refuted.
+
+One non-force branch push advanced only `origin/main` to the audit child; one
+non-force tag push created only `v0.17.5`. Fresh readback resolves the branch,
+annotated object, and peeled target to those three exact values. Push-triggered
+run **30868419182**, attempt **1**, concluded `success` on exact head
+`dd605acc037da405fa6b2b5366b09349c330c194`: all **9/9** blocking identities
+passed, and dependency drift was the sole report-only skip. No ref was forced,
+deleted, or moved beyond Grant C. The historical unpublished-local observation
+remains untouched as a true dated pre-publication measurement. Grant C is
+spent and supplies no authority for v0.17.6 or any other ref.
+
+- **Post-push verification date:** 2026-08-04
+- **Post-push release:** `v0.17.5`
+- **Post-push annotated tag object:** `946bdc015446182727d8f705697e378f8fe8f7eb`
+- **Post-push closing commit:** `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`
+- **Post-push hosted run:** `30868419182`
 
 **v0.39 E0 — entering state reconstructed (measured 2026-08-04).** Every
 H1–H9 source-export statement was treated as a hypothesis. H1, H2, H3, H7,

@@ -650,7 +650,7 @@ any acceptance point is a defect, not an oversight.
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.39 · 2026-08-04 — Fresh R15 derivation reports **0** public response-domain differences across **6 routes / 112 field occurrences**; R-CLOSE remains pending and no broader operator decision displaced the boundary. | Step 7 |
 | Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.39 · 2026-08-04 — State is **130,819 / 453,741 bytes** and the staged activation export is **2,774,259 / 3,000,000 bytes**; neither existing trigger fired. DR19 forbids archival this cycle. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.39 · 2026-08-04 — The active cycle remains in the `v0.<n>` family, so the trigger did not fire. | none |
-| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.39 · 2026-08-04 — The entering epoch count is **1** and fresh R15 derivation reports **0** public response-domain differences; neither trigger has fired before Grant C executes. | Step 7 |
+| Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.39 · 2026-08-04 — Exact authorized publication of v0.17.5 resets the epoch count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.38's measured runtime difference is included in that published commit, PUBLISH-V17-5 adds no runtime or public-surface change, and fresh R15 derivation reports **0** public response-domain differences. Neither trigger fired. | Step 7 |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.39 · 2026-08-04 — Fresh `version-check` derives **3** executable offline pins at 1.78, **22** offline-floor restatements, and **3** release restatements; all **585** currently tracked files are classified. | none |
 | Retention arithmetic fallback | the retention formatter again permits an omitted retained set, or any live production or fixture caller supplies a set not derived by `expected_retained_cycle_paths` for that root | v0.39 · 2026-08-04 — The configured boundary is advanced for the derived v0.38–v0.39 retained pair; no omitted or non-derived retained set has appeared. | none |
 | Optional cycle-ending audit disclosure | a closed cycle whose delivered export differs from its governed figure and which records no cycle-ending audit field | v0.39 · 2026-08-04 — The v0.39 audit field is required and reserved for the immediate Step 7 audit child, the first point at which the closing tree exists. | Step 7 audit child |
@@ -690,7 +690,7 @@ any acceptance point is a defect, not an oversight.
 
 - [x] ACTIVATE
 - [x] E0
-- [ ] PUBLISH-V17-5
+- [x] PUBLISH-V17-5
 - [ ] EXPORT-TRUTH
 - [ ] CEILING-TRIGGER
 - [ ] WIRE-CONTRACT
