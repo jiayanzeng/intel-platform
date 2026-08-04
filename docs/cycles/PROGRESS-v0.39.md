@@ -54,3 +54,44 @@ It authorizes no other ref movement or later release publication.
   ACTIVATE before semantic acceptance and did not trip a retained gate.
 - golden-E2E delta: **0**. The sandbox-denied bind was a non-result; the
   permission-complete identical command passed **11/11**.
+
+### 2026-08-04 · E0 — entering-state reconstruction
+
+- owner: Codex
+- runbook: `TASKS-v0.39-EXECUTION.md`
+- commit: 45228b88371d5fecba8206863c5f75e85f53336e
+- hypothesis acceptance: PASS. Every H1–H9 row carries a dated confirmed,
+  partly-confirmed, or refuted verdict from its named entry point. H1/H2's
+  object and remote graph, H3's record population, H7's raw-body partition,
+  and H9's denominator are confirmed; H4's checklist, H5's delivered export,
+  and H8's source-byte figures are corrected rather than copied.
+- full-partition acceptance: PASS by complete set arithmetic, not sampling.
+  The **163** export entries partition as **160 Git-tracked + 3 existing
+  untracked + 0 synthetic**. The three non-Git entries are named individually
+  in the runbook and total **43,127 raw bytes**; the partition sum is exact.
+- review-export acceptance: PASS. The delivered worktree export is **2,778,858
+  bytes / 163 entries / 2 retained cycles** and retains exactly v0.38–v0.39.
+  The four `.gitattributes`-classified raw bodies partition into two absent
+  configured RSS exclusions and two present v0.38 bodies. The dropped v0.37
+  pair is **75,859 bytes** and the raw recoverable population is **211,800
+  bytes**; Step 3 owns the separately measured framing delta.
+- graph/publication acceptance: PASS. The local v0.17.5 release/closing/tag/
+  audit objects match exactly; remote `main` remains exact v0.17.4 and an
+  ancestor; v0.17.2–v0.17.4 are exact remotely; v0.17.5 is absent. Grant C's
+  preconditions are deliberately remeasured again immediately before push.
+- boundary acceptance: PASS. State is **132,770 / 453,741 bytes** and the
+  manifest is **200,440 / 1,048,576 bytes** at **3 artifacts / 339 pins**.
+  The checker-derived denominator is confirmed at **+107,226 bytes/cycle**.
+- checklist/control acceptance: PASS. Direct populations are **15 rules / 84
+  controls / 9 exemptions / 3 retractions**; the live checklist is **303
+  checked / 3 retracted / 294 matched / 294 resolved / 9 exemptions**.
+- full-gate acceptance: PASS. Permission-complete `ci-local` passes all
+  **22/22** jobs, including Python 3.11 **373/373**, both Rust floor pairs,
+  warning/lint/format gates, artifact verification, and golden **11/11**. A
+  separate Python 3.12 run passes the identical **373/373** population.
+- protected-input acceptance: PASS. The three amendment inputs remain
+  byte-untouched and untracked. No dependency, production source, protected
+  byte, fixture, observation, publisher wire, entitlement/licensing outcome,
+  golden input, or unauthorized ref moved.
+- stop conditions: none.
+- golden-E2E delta: **0** at **11/11**.
