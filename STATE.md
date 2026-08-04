@@ -2,6 +2,45 @@
 
 **As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; no publication authority exists. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 108 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and both complete local Python populations pass **391/391** with one named `on_site` identity each. Direct Python 3.11 and 3.12 population comparisons each derive **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
+**v0.40 cycle-ending audit — v0.17.7 tagged tree passes (measured
+2026-08-04).** Local annotated object
+`2287b41558e69bb86490df71b6907a2f0eb73310` peels to closing commit
+`cd4fd58b39c855cc769d3696a6b389f735066022`, whose immediate parent is exact
+0.17.7 authority commit `b8fe1c2c1c2c842868a70581dee390939ef68595`.
+A fresh detached checkout of tag v0.17.7 passes `cycle-check` with
+`local-tag-reconciliation=verified`, passes checklist audit at **317 checked /
+3 retracted / 308 matched / 308 resolved / 9 exemptions** with v0.40 at
+**7/7/7**, and passes `version-check` as the exact 0.17.7 HEAD tag. This is the
+measured post-tag verdict; unlike v0.17.6, the tag checkout itself is clean.
+
+The immutable closing tree's project-root export passes at **2,801,474 bytes /
+158 tracked entries / 2 retained cycles**, exactly **+12,424 bytes** from the
+governed release-parent figure. It leaves **198,526 bytes / 6.62% / 0.92
+high-water cycles** below the unchanged ceiling and stands **232,086 bytes
+above** attention. The append-only progress audit field binds that closing
+tree without superseding the governed parent measurement.
+
+Post-close remote readback keeps `main` exact at
+`dd605acc037da405fa6b2b5366b09349c330c194`, keeps the sole authorized v0.40
+evidence ref at `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09`, and returns no
+direct or peeled v0.17.6/v0.17.7 tag. No publication, main movement, force
+operation, tag movement, deletion, or additional push occurred.
+
+- **Publication observation date:** 2026-08-04
+- **Publication observation release:** `v0.17.7`
+- **Publication observation status:** `unpublished-local-close`
+- **Publication observation remote:** `origin`
+- **Publication observation tag ref:** `absent`
+
+The v0.41 findings are three bounded facts: governed export headroom is only
+**0.98** high-water cycles and the closing tree is at **0.92**; a post-tag
+verdict cannot be content-addressed into the tag target that must exist before
+the verdict, so the immediate audit child remains its truthful evidence point;
+and publishing v0.17.7 would place the superseded v0.17.6 closing tree in
+published branch ancestry without publishing its release tag, which requires
+an explicit operator adjudication. No additional runtime, public-surface,
+dependency, evidence-integrity, or wire finding emerged.
+
 **v0.40 R-CLOSE — v0.17.7 assembled close (measured 2026-08-04).** DR26
 selects patch **v0.17.7**. R15 derives **0 differences across 6 routes / 31
 status-media response variants / 112 recursive field occurrences**, so neither
