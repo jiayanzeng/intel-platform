@@ -146,3 +146,52 @@ Entries are append-only; corrections are new dated entries.
   then passed.
 - golden-E2E delta: **0**. Embedded and required standalone permission-capable
   runs each pass **11/11**.
+
+### 2026-08-04 · WITHHELD-STATE — permanent refusal is explicit
+
+- owner: Codex
+- runbook: `TASKS-v0.40-EXECUTION.md`
+- commit: 1dd59140d9ae8da421720c6c00813d1fe280f0c9
+- gate-scope acceptance: PASS. The task gate covers the labelled record,
+  reason and tag expectation, settled handoff state, local and hosted
+  reconciliation, ordinary-release non-exemption, planted controls, and the
+  full local matrix; no acceptance criterion lay outside it.
+- labelled-state acceptance: PASS. v0.17.6 carries exactly one dated
+  `permanently-withheld` record with a nonempty disclosure of the immutable
+  tagged-tree freshness defect and exact `local-only-never-remote`
+  expectation. The live header calls the decision settled and contains no
+  pending or outstanding publication question. The earlier dated
+  `unpublished-local-close` observation remains historical measurement, not
+  the current decision state.
+- topology acceptance: PASS. Local full verification still resolves and
+  validates annotated tag object `66ee2c…`. A no-skip hosted-shaped execution
+  may omit only an exactly recorded withheld tag and emits the bounded
+  `withheld-hosted` verdict. An ordinary unpublished release with the same
+  absent-tag topology fails, and a local withheld release with an absent tag
+  also fails.
+- planted-control acceptance: PASS. Five direct lifecycle tests cover local
+  tag validation plus hosted absence, missing reason, withheld/pending
+  contradiction, ordinary hosted absence, and local withheld absence. R12
+  adds six independently executable mutations for record admission,
+  closing-record and publication hosted admission, and both ordinary-release
+  non-exemptions. The selector-bypass double was made total so an earlier
+  planted mutation produces a finding instead of crashing downstream setup.
+- executable-gate acceptance: PASS. `./run ci-local` passes all **22/22**
+  jobs; its Python 3.11 lane passes **390/390**. A clean Python 3.12 rebuild
+  resolves the exact **21** constrained packages and passes the identical
+  **390/390** population. Both carry the same one accepted warning. The
+  registered suite passes **16/16 rules / 108 controls**, including all
+  **56/56** R12 mutations.
+- public/protected-boundary acceptance: PASS. R15 remains exact at **0
+  differences / 6 routes / 112 field occurrences**. No dependency, production
+  runtime byte, protected byte, observation, fixture, publisher wire,
+  entitlement/licensing outcome, serialized response domain, local tag, or
+  remote ref moved. The three historical amendment inputs remain untouched
+  and untracked.
+- stop conditions: none. The first full-matrix attempt stopped at the
+  checklist audit because the in-progress box had been checked before this
+  append-only entry existed; restoring the box to in-progress before the
+  acceptance run produced the clean 22/22 measurement, after which the task
+  implementation commit checked it as the contract requires.
+- golden-E2E delta: **0**. Embedded and required standalone
+  permission-capable runs each pass **11/11**.
