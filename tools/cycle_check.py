@@ -213,6 +213,28 @@ WITHHELD_RELEASE_HEADER_RE = re.compile(
     r"\bpermanently withheld\b",
     re.IGNORECASE,
 )
+REMOTE_WITNESS_HEADING = "## Remote witness expectations"
+REMOTE_WITNESS_REMOTE_RE = re.compile(
+    r"^- \*\*Remote witness remote:\*\* `([^`\n]+)`$", re.MULTILINE
+)
+REMOTE_WITNESS_REF_RE = re.compile(
+    r"^- \*\*Remote witness expected ref:\*\* `([^`\n]+)` = "
+    r"`([0-9a-f]{40})`$",
+    re.MULTILINE,
+)
+REMOTE_WITNESS_ABSENT_RE = re.compile(
+    r"^- \*\*Remote witness absent ref:\*\* `([^`\n]+)`$", re.MULTILINE
+)
+REMOTE_WITNESS_RELATION_RE = re.compile(
+    r"^- \*\*Remote witness main relation:\*\* "
+    r"`(ancestor-of-head)`$",
+    re.MULTILINE,
+)
+REMOTE_WITNESS_AUDIT_RE = re.compile(
+    r"^- \*\*Remote witness published audit:\*\* "
+    r"`(v[0-9]+\.[0-9]+(?:\.[0-9]+)?)` = `(present|absent)`$",
+    re.MULTILINE,
+)
 
 
 class ClosedRelease(NamedTuple):
@@ -224,6 +246,20 @@ class ClosedRelease(NamedTuple):
     @property
     def uses_tagged_closing_commit(self) -> bool:
         return self.recorded_tag_object is None
+
+
+class RemoteWitnessSpec(NamedTuple):
+    remote: str
+    expected_refs: dict[str, str]
+    absent_refs: frozenset[str]
+    main_relation: str
+    published_audits: dict[str, str]
+
+
+class RemoteWitnessResult(NamedTuple):
+    verdict: str
+    detail: str
+    errors: tuple[str, ...]
 
 
 def shown(path: Path, root: Path) -> str:
@@ -301,6 +337,296 @@ def valid_iso_date(raw: str) -> bool:
         return dt.date.fromisoformat(raw).isoformat() == raw
     except ValueError:
         return False
+
+
+def parse_remote_witness_spec(
+    state_path: Path,
+    state_text: str,
+    root: Path,
+    errors: list[str],
+) -> RemoteWitnessSpec | None:
+    """Derive the remote assertions that current State commits to."""
+    error_count_before = len(errors)
+    heading_count = state_text.count(REMOTE_WITNESS_HEADING)
+    if heading_count != 1:
+        errors.append(
+            f"{shown(state_path, root)}: expected exactly one "
+            f"{REMOTE_WITNESS_HEADING!r}; found {heading_count}"
+        )
+        return None
+    section_start = state_text.index(REMOTE_WITNESS_HEADING)
+    section = state_text[section_start + len(REMOTE_WITNESS_HEADING) :]
+    next_heading = re.search(r"^## ", section, re.MULTILINE)
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+
+    remote_matches = REMOTE_WITNESS_REMOTE_RE.findall(section)
+    relation_matches = REMOTE_WITNESS_RELATION_RE.findall(section)
+    if len(remote_matches) != 1:
+        errors.append(
+            f"{shown(state_path, root)}: remote witness block must name exactly "
+            f"one remote; found {len(remote_matches)}"
+        )
+    if len(relation_matches) != 1:
+        errors.append(
+            f"{shown(state_path, root)}: remote witness block must name exactly "
+            f"one main relation; found {len(relation_matches)}"
+        )
+
+    expected_refs: dict[str, str] = {}
+    absent_refs: set[str] = set()
+    published_audits: dict[str, str] = {}
+
+    def add_expected(ref: str, value: str, source: str) -> None:
+        if re.fullmatch(r"refs/[A-Za-z0-9._/{}^-]+", ref) is None:
+            errors.append(
+                f"{shown(state_path, root)}: invalid remote witness ref "
+                f"{ref!r} from {source}"
+            )
+            return
+        prior = expected_refs.get(ref)
+        if prior is not None and prior != value:
+            errors.append(
+                f"{shown(state_path, root)}: conflicting remote witness values "
+                f"for {ref}: {prior} and {value}"
+            )
+        expected_refs[ref] = value
+
+    for ref, value in REMOTE_WITNESS_REF_RE.findall(section):
+        add_expected(ref, value, "explicit expectation")
+    for ref in REMOTE_WITNESS_ABSENT_RE.findall(section):
+        if re.fullmatch(r"refs/[A-Za-z0-9._/{}^-]+", ref) is None:
+            errors.append(
+                f"{shown(state_path, root)}: invalid absent remote witness ref "
+                f"{ref!r}"
+            )
+        absent_refs.add(ref)
+    for cycle, status in REMOTE_WITNESS_AUDIT_RE.findall(section):
+        if cycle in published_audits:
+            errors.append(
+                f"{shown(state_path, root)}: duplicate remote witness audit "
+                f"expectation for {cycle}"
+            )
+        published_audits[cycle] = status
+
+    post_push_releases: set[str] = set()
+    for record in POST_PUSH_RECORD_RE.finditer(state_text):
+        release = record.group(3)
+        post_push_releases.add(release)
+        add_expected(
+            f"refs/tags/{release}",
+            record.group(4),
+            f"post-push record for {release}",
+        )
+        add_expected(
+            f"refs/tags/{release}^{{}}",
+            record.group(5),
+            f"post-push record for {release}",
+        )
+    for record in WITHHELD_RELEASE_RE.finditer(state_text):
+        release = record.group(3)
+        absent_refs.update(
+            {f"refs/tags/{release}", f"refs/tags/{release}^{{}}"}
+        )
+    for record in UNPUBLISHED_LOCAL_CLOSE_RE.finditer(state_text):
+        release = record.group(3)
+        if release not in post_push_releases:
+            absent_refs.update(
+                {f"refs/tags/{release}", f"refs/tags/{release}^{{}}"}
+            )
+
+    for ref in sorted(set(expected_refs).intersection(absent_refs)):
+        errors.append(
+            f"{shown(state_path, root)}: remote witness ref {ref} is both "
+            "expected and absent"
+        )
+    if "refs/heads/main" not in expected_refs:
+        errors.append(
+            f"{shown(state_path, root)}: remote witness block must bind "
+            "refs/heads/main"
+        )
+    if (
+        len(errors) != error_count_before
+        or len(remote_matches) != 1
+        or len(relation_matches) != 1
+    ):
+        return None
+    return RemoteWitnessSpec(
+        remote_matches[0],
+        expected_refs,
+        frozenset(absent_refs),
+        relation_matches[0],
+        published_audits,
+    )
+
+
+def query_remote_witness_refs(
+    root: Path,
+    spec: RemoteWitnessSpec,
+) -> tuple[dict[str, str] | None, str]:
+    refs = sorted(set(spec.expected_refs).union(spec.absent_refs))
+    environment = os.environ.copy()
+    environment["GIT_TERMINAL_PROMPT"] = "0"
+    try:
+        result = subprocess.run(
+            ["git", "ls-remote", spec.remote, *refs],
+            cwd=root,
+            check=False,
+            text=True,
+            capture_output=True,
+            timeout=10,
+            env=environment,
+        )
+    except subprocess.TimeoutExpired:
+        return None, "timeout"
+    except OSError:
+        return None, "process-unavailable"
+    if result.returncode != 0:
+        return None, f"exit-{result.returncode}"
+    measured: dict[str, str] = {}
+    for line in result.stdout.splitlines():
+        fields = line.split("\t")
+        if len(fields) != 2 or re.fullmatch(r"[0-9a-f]{40}", fields[0]) is None:
+            return None, "malformed-output"
+        measured[fields[1]] = fields[0]
+    return measured, "queried"
+
+
+def evaluate_remote_witness(
+    root: Path,
+    spec: RemoteWitnessSpec,
+    actual_refs: dict[str, str] | None,
+    unavailable_detail: str,
+) -> RemoteWitnessResult:
+    # Invariant R17 control site: offline remote-witness satisfiability.
+    if actual_refs is None:
+        return RemoteWitnessResult("unavailable", unavailable_detail, ())
+
+    disagreements: list[str] = []
+    for ref, expected in sorted(spec.expected_refs.items()):
+        measured = actual_refs.get(ref)
+        # Invariant R17 control site: remote disagreement is fatal.
+        if measured != expected:
+            disagreements.append(
+                f"{ref} expected {expected}, measured "
+                f"{measured if measured is not None else 'absent'}"
+            )
+    for ref in sorted(spec.absent_refs):
+        if ref in actual_refs:
+            disagreements.append(
+                f"{ref} expected absent, measured {actual_refs[ref]}"
+            )
+    if disagreements:
+        return RemoteWitnessResult(
+            "disagreeing",
+            f"refs={len(spec.expected_refs) + len(spec.absent_refs)}",
+            tuple(disagreements),
+        )
+
+    main_commit = actual_refs["refs/heads/main"]
+    if spec.main_relation == "ancestor-of-head":
+        relation_status, _ = git_status(
+            root, "merge-base", "--is-ancestor", main_commit, "HEAD"
+        )
+        if relation_status != 0:
+            return RemoteWitnessResult(
+                "disagreeing",
+                "main-relation",
+                (f"remote main {main_commit} is not an ancestor of local HEAD",),
+            )
+
+    for cycle, expected_status in sorted(spec.published_audits.items()):
+        progress_path = f"docs/cycles/PROGRESS-{cycle}.md"
+        published_progress = git_output(root, "show", f"{main_commit}:{progress_path}")
+        if published_progress is None:
+            return RemoteWitnessResult(
+                "unavailable",
+                f"local-object-missing:{main_commit}:{progress_path}",
+                (),
+            )
+        measured_status = (
+            "present"
+            if CYCLE_ENDING_EXPORT_AUDIT_RE.search(published_progress) is not None
+            else "absent"
+        )
+        if measured_status != expected_status:
+            return RemoteWitnessResult(
+                "disagreeing",
+                "published-audit",
+                (
+                    f"{cycle} published audit expected {expected_status}, "
+                    f"measured {measured_status} at {main_commit}",
+                ),
+            )
+    return RemoteWitnessResult(
+        "measured",
+        f"refs={len(spec.expected_refs) + len(spec.absent_refs)} "
+        f"audits={len(spec.published_audits)} main={main_commit}",
+        (),
+    )
+
+
+def check_published_cycle_audit_contract(
+    cycle: str,
+    audit_status: str | None,
+    published_progress: str | None,
+    errors: list[str],
+) -> None:
+    # Invariant R17 control site: historical cross-cycle admission boundary.
+    if declared_scope_cycle_version(cycle) < REMOTE_WITNESS_FORWARD_BOUNDARY:
+        return
+    # Invariant R17 control site: same-cycle publication audit ordering.
+    if (
+        audit_status != "present"
+        or published_progress is None
+        or CYCLE_ENDING_EXPORT_AUDIT_RE.search(published_progress) is None
+    ):
+        errors.append(
+            f"{cycle}: a published v0.42-forward cycle must place its own "
+            "cycle-ending review-export audit in the expected remote main commit"
+        )
+
+
+def check_same_cycle_publication_audits(
+    root: Path,
+    execution_files: list[Path],
+    state_text: str,
+    spec: RemoteWitnessSpec,
+    errors: list[str],
+) -> None:
+    post_push_releases = {
+        match.group(3) for match in POST_PUSH_RECORD_RE.finditer(state_text)
+    }
+    main_commit = spec.expected_refs.get("refs/heads/main")
+    for runbook in execution_files:
+        match = EXECUTION_CYCLE_RE.fullmatch(runbook.name)
+        if match is None:
+            continue
+        cycle = f"v{match.group(1)}"
+        if declared_scope_cycle_version(cycle) < REMOTE_WITNESS_FORWARD_BOUNDARY:
+            continue
+        text = runbook.read_text()
+        disposition = DATED_DISPOSITION_RE.search(text)
+        release = RELEASE_RE.search(text)
+        if (
+            disposition is None
+            or disposition.group(1) != "release"
+            or release is None
+            or release.group(2) not in post_push_releases
+        ):
+            continue
+        progress_path = f"docs/cycles/PROGRESS-{cycle}.md"
+        published_progress = (
+            git_output(root, "show", f"{main_commit}:{progress_path}")
+            if main_commit is not None
+            else None
+        )
+        check_published_cycle_audit_contract(
+            cycle,
+            spec.published_audits.get(cycle),
+            published_progress,
+            errors,
+        )
 
 
 def exactly_one(
@@ -1831,6 +2157,7 @@ TRIGGER_FLOOR_FORWARD_BOUNDARY = (0, 28)
 GOVERNED_EXPORT_FORWARD_BOUNDARY = (0, 30)
 ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY = (0, 32)
 STATE_REGION_CONTRACT_FORWARD_BOUNDARY = (0, 33)
+REMOTE_WITNESS_FORWARD_BOUNDARY = (0, 42)
 FORWARD_BOUNDARY_RELATIONSHIPS = {
     "ARTIFACT_BYTE_BOUNDARY_FORWARD_BOUNDARY": (
         ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
@@ -1841,6 +2168,11 @@ FORWARD_BOUNDARY_RELATIONSHIPS = {
         ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
         "The governed export value is a content constraint on the "
         "cycle-identified architecture trigger row.",
+    ),
+    "REMOTE_WITNESS_FORWARD_BOUNDARY": (
+        ("SCOPE_FORWARD_BOUNDARY",),
+        "Remote expectations and prospective same-cycle publication ordering "
+        "are admitted only after declared-scope activation.",
     ),
     "SCOPE_FORWARD_BOUNDARY": (
         (),
@@ -3448,6 +3780,7 @@ def run(
     *,
     verify_local_tag_refs: bool = True,
     hosted_ref_topology: bool | None = None,
+    verify_remote_refs: bool = False,
 ) -> int:
     root = root.resolve()
     if hosted_ref_topology is None:
@@ -3471,13 +3804,47 @@ def run(
 
     execution_files = execution_runbooks(root)
     state_path = root / "STATE.md"
+    state_text = state_path.read_text() if state_path.is_file() else ""
     withheld_releases = check_withheld_release_records(
         state_path,
-        state_path.read_text() if state_path.is_file() else "",
+        state_text,
         execution_files,
         root,
         errors,
     )
+    remote_witness_report: str | None = None
+    if declared_scope_cycle_version(identity.name) >= REMOTE_WITNESS_FORWARD_BOUNDARY:
+        remote_spec = parse_remote_witness_spec(
+            state_path,
+            state_text,
+            root,
+            errors,
+        )
+        if remote_spec is not None:
+            check_same_cycle_publication_audits(
+                root,
+                execution_files,
+                state_text,
+                remote_spec,
+                errors,
+            )
+            if verify_remote_refs:
+                actual_refs, query_detail = query_remote_witness_refs(root, remote_spec)
+                remote_result = evaluate_remote_witness(
+                    root,
+                    remote_spec,
+                    actual_refs,
+                    query_detail,
+                )
+                remote_witness_report = (
+                    f"remote-witness: verdict={remote_result.verdict} "
+                    f"remote={remote_spec.remote} {remote_result.detail}"
+                )
+                for disagreement in remote_result.errors:
+                    errors.append(
+                        f"{shown(state_path, root)}: remote witness "
+                        f"disagreement: {disagreement}"
+                    )
     active_state = "missing"
     governed_export_state = "not-applicable"
     artifact_boundary_state = "not-applicable"
@@ -3696,6 +4063,8 @@ def run(
         print(f"cycle-check: {governed_export_basis_report}")
     if publication_status_report is not None:
         print(f"cycle-check: {publication_status_report}")
+    if remote_witness_report is not None:
+        print(f"cycle-check: {remote_witness_report}")
 
     if errors:
         for error in errors:
@@ -3738,6 +4107,7 @@ def main() -> int:
     args = parser.parse_args()
     return run(
         verify_local_tag_refs=not args.skip_local_tag_verification,
+        verify_remote_refs=True,
     )
 
 

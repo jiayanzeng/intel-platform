@@ -708,7 +708,7 @@ acceptance point is a defect, not an oversight.
 
 - [x] ACTIVATE
 - [x] E0
-- [ ] REMOTE-WITNESS
+- [x] REMOTE-WITNESS
 - [ ] ARCHIVE
 - [ ] REPAIR-TIP
 - [ ] RE-MEASURE

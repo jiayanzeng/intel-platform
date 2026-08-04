@@ -27,6 +27,11 @@ def _state_with_regions(status: str) -> str:
     return (
         "# State\n\n"
         f"**As of:** {status}\n\n"
+        f"{cycle_check.REMOTE_WITNESS_HEADING}\n\n"
+        "- **Remote witness remote:** `origin`\n"
+        "- **Remote witness expected ref:** `refs/heads/main` = `"
+        f"{'0' * 40}`\n"
+        "- **Remote witness main relation:** `ancestor-of-head`\n\n"
         "Fixture dated append.\n\n"
         f"{cycle_check.STATE_PERMANENT_TAIL_MARKER}\n"
         "## 1. Fixture permanent tail\n"
@@ -999,17 +1004,33 @@ def test_governed_export_binding_covers_release_close_and_post_push(
             cycle_ending_bytes - fixture_export_bytes,
         )
     )
+    _commit_all(root, "cycle-ending audit")
+    audit_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
     state = root / "STATE.md"
     hosted_run = str(len("post-push hosted run fixture"))
     state.write_text(
         state.read_text()
+        .replace("0" * 40, audit_commit, 1)
+        .replace(
+            "- **Remote witness main relation:** `ancestor-of-head`\n",
+            "- **Remote witness main relation:** `ancestor-of-head`\n"
+            "- **Remote witness published audit:** "
+            "`v1.2.3` = `present`\n",
+            1,
+        )
         + "\n- **Post-push verification date:** 2026-07-29\n"
         "- **Post-push release:** `v1.2.3`\n"
         f"- **Post-push annotated tag object:** `{tag_object}`\n"
         f"- **Post-push closing commit:** `{closing_commit}`\n"
         f"- **Post-push hosted run:** `{hosted_run}`\n"
     )
-    _commit_all(root, "post-push audit")
+    _commit_all(root, "post-push verification")
 
     assert cycle_check.run(root) == 0
     assert (

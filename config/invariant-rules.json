@@ -1439,6 +1439,57 @@
         }
       ],
       "fail_before_note": "invariant-scan: R16 FAIL: the bounded SEC live command no longer keeps a registered preflight, target, contact, source, fresh-result, or response-input boundary"
+    },
+    {
+      "id": "R17",
+      "claim": "The v0.42-forward remote witness compares structured current remote assertions with an executed ls-remote reading when reachable, reports a visible non-failing unavailable verdict when offline, rejects disagreement, and requires every v0.42-forward published cycle's expected main commit to contain that cycle's own review-export audit without retroactively rejecting historical cross-cycle publication shapes.",
+      "source": "AGENTS.md R-CLOSE; docs/cycles/TASKS-v0.42-EXECUTION.md Step 2 and C28-C29",
+      "scope": "The actual tools/cycle_check.py parse_remote_witness_spec, query_remote_witness_refs, evaluate_remote_witness, check_published_cycle_audit_contract, and check_same_cycle_publication_audits entry points. Structured State expectations bind current main and evidence refs, historical absent tags, every complete post-push tag object and peel, every still-operative unpublished or permanently-withheld absence, main ancestry, and published cycle-audit presence. Network, authentication, timeout, process, malformed-output, or missing-local-object inability is visible as unavailable and does not fail; a completed remote reading that differs fails. The same-cycle audit property is prospective from v0.42, while prior immutable cross-cycle shapes remain admitted. Planted controls cover a mismatching remote ref, offline unavailability, a v0.42 audit outside the expected published tip, and a historical v0.41 cross-cycle shape.",
+      "fail_before": [
+        {
+          "file": "tools/cycle_check.py",
+          "find": "        if measured != expected:\n",
+          "replace_with": [
+            "        if False:\n"
+          ],
+          "expected_fail": "remote-witness planted controls were not detected: remote-mismatch",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "        # Invariant R17 control site: remote disagreement is fatal."
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if actual_refs is None:\n        return RemoteWitnessResult(\"unavailable\", unavailable_detail, ())\n",
+          "replace_with": [
+            "    if actual_refs is None:\n",
+            "        return RemoteWitnessResult(\"disagreeing\", unavailable_detail, (\"offline failure\",))\n"
+          ],
+          "expected_fail": "remote-witness planted controls were not detected: offline-unavailable",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "    # Invariant R17 control site: offline remote-witness satisfiability."
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if (\n        audit_status != \"present\"\n        or published_progress is None\n        or CYCLE_ENDING_EXPORT_AUDIT_RE.search(published_progress) is None\n    ):\n",
+          "replace_with": [
+            "    if False:\n"
+          ],
+          "expected_fail": "remote-witness planted controls were not detected: same-cycle-audit-outside-tip",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "    # Invariant R17 control site: same-cycle publication audit ordering."
+        },
+        {
+          "file": "tools/cycle_check.py",
+          "find": "    if declared_scope_cycle_version(cycle) < REMOTE_WITNESS_FORWARD_BOUNDARY:\n        return\n",
+          "replace_with": [
+            "    if False:\n",
+            "        return\n"
+          ],
+          "expected_fail": "remote-witness planted controls were not detected: historical-cross-cycle",
+          "expected_file": "tools/cycle_check.py",
+          "expected_anchor": "    # Invariant R17 control site: historical cross-cycle admission boundary."
+        }
+      ],
+      "fail_before_note": "invariant-scan: R17 FAIL: a remote mismatch, offline-unavailable, same-cycle audit-order, or historical cross-cycle planted control was not enforced"
     }
   ]
 }

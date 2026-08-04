@@ -4155,6 +4155,99 @@ def r12_findings(root: Path) -> list[str]:
     return findings
 
 
+def r17_findings(root: Path) -> list[str]:
+    """Exercise remote measurement and publication-order controls."""
+    cycle_check = _load_cycle_check_for_control(root)
+    boundary = cycle_check.REMOTE_WITNESS_FORWARD_BOUNDARY
+    forward_cycle = "v" + ".".join(str(part) for part in boundary)
+    historical_parts = (*boundary[:-1], boundary[-1] - 1)
+    historical_cycle = "v" + ".".join(str(part) for part in historical_parts)
+    expected = "a" * 40
+    measured = "b" * 40
+    spec = cycle_check.RemoteWitnessSpec(
+        "origin",
+        {"refs/heads/main": expected},
+        frozenset(),
+        "test-no-relation",
+        {},
+    )
+    missed: list[tuple[str, str]] = []
+
+    mismatch = cycle_check.evaluate_remote_witness(
+        root,
+        spec,
+        {"refs/heads/main": measured},
+        "queried",
+    )
+    if mismatch.verdict != "disagreeing" or not mismatch.errors:
+        missed.append(
+            (
+                "remote disagreement is fatal.",
+                "remote-mismatch",
+            )
+        )
+
+    offline = cycle_check.evaluate_remote_witness(
+        root,
+        spec,
+        None,
+        "offline-control",
+    )
+    if offline.verdict != "unavailable" or offline.errors:
+        missed.append(
+            (
+                "offline remote-witness satisfiability.",
+                "offline-unavailable",
+            )
+        )
+
+    same_cycle_errors: list[str] = []
+    cycle_check.check_published_cycle_audit_contract(
+        forward_cycle,
+        "absent",
+        "no audit in the published progress blob",
+        same_cycle_errors,
+    )
+    if not same_cycle_errors:
+        missed.append(
+            (
+                "same-cycle publication audit ordering.",
+                "same-cycle-audit-outside-tip",
+            )
+        )
+
+    historical_errors: list[str] = []
+    cycle_check.check_published_cycle_audit_contract(
+        historical_cycle,
+        "absent",
+        "historical cross-cycle shape",
+        historical_errors,
+    )
+    if historical_errors:
+        missed.append(
+            (
+                "historical cross-cycle admission boundary.",
+                "historical-cross-cycle",
+            )
+        )
+
+    source_path = root / "tools/cycle_check.py"
+    source = source_path.read_text()
+    findings: list[str] = []
+    for marker_suffix, name in missed:
+        marker = f"# Invariant R17 control site: {marker_suffix}"
+        if source.count(marker) != 1:
+            raise ConfigError(
+                f"tools/cycle_check.py: R17 marker {marker!r} must occur once"
+            )
+        line = source.count("\n", 0, source.index(marker)) + 1
+        findings.append(
+            f"tools/cycle_check.py:{line}: remote-witness planted controls "
+            f"were not detected: {name}"
+        )
+    return findings
+
+
 CHECKLIST_CONTROL_MARKERS = {
     "all-unbolded": (
         "Invariant R13 control site: bold and plain checked task boxes."
@@ -4721,6 +4814,7 @@ CHECKS: dict[str, Callable[[Path], list[str]]] = {
     "R14": r14_findings,
     "R15": r15_findings,
     "R16": r16_findings,
+    "R17": r17_findings,
 }
 
 

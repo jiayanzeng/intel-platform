@@ -499,11 +499,23 @@ movement, `cycle-check` verifies that `R` is `C`'s immediate parent and that
 `C`'s tree contains the closed runbook with the same release name and
 release-commit hash and no tag-object field. `STATE.md`'s live header in `C`
 asserts the knowable release commit `R`; neither the tag-object hash nor `C`'s
-own hash may be required in that tree. `C` and its annotated tag are pushed
-atomically when publication is authorized.
+own hash may be required in that tree.
 
-The first commit after `C` records the post-push result in a dated `STATE.md`
-body append with these exact contiguous fields:
+Beginning with execution cycle v0.42, a cycle that publishes its own release
+must put that cycle's export audit in the commit published as `main`. After
+`C` and its annotated tag exist, create immediate child `A` carrying the
+cycle-ending review-export audit and no post-push claim; atomically push `main`
+to `A` and the annotated tag to `C`. Only after direct remote readback may a
+later child record the post-push result. A later cycle publishing an already
+closed release follows the same property rather than the same chronology: its
+authorized `main` target must already contain the released cycle's export
+audit. Historical pre-v0.42 cross-cycle publications retain their recorded
+shape. The executable remote witness binds the expected `main` identity to the
+remote when reachable, reports `unavailable` without failing an offline run,
+and rejects disagreement.
+
+The first commit after the published audit child records the post-push result
+in a dated `STATE.md` body append with these exact contiguous fields:
 
 ```
 - **Post-push verification date:** YYYY-MM-DD
