@@ -319,3 +319,82 @@ Entries are append-only; corrections are new dated entries.
   or tag movement.
 - golden-E2E delta: **0**. Hosted and exact-implementation standalone local
   golden each passed **11/11**.
+
+### 2026-08-04 · R-CLOSE — v0.17.7 corrective tagged close
+
+- owner: Codex
+- runbook: `TASKS-v0.40-EXECUTION.md`
+- commit: b8fe1c2c1c2c842868a70581dee390939ef68595
+- result: PASS at the assembled pre-tag worktree. DR26 selects patch
+  **v0.17.7** because lifecycle checking, explicit permanent withholding, and
+  the nondecreasing review-export reserve change assurance behavior but no
+  production runtime behavior, dependency, publisher configuration, protected
+  byte, entitlement/licensing outcome, route, response field/type, or
+  serialized `/v1/*` value-domain value.
+- domain acceptance: PASS. Dependency-free R15 derivation and installed
+  FastAPI comparison each report **0 differences across 6 routes / 31
+  status-media variants / 112 field occurrences**. Neither minor-version
+  clause fires.
+- version acceptance: PASS. `version-check` derives **0.17.7** from all five
+  executable authorities, with **3** offline-MSRV pins, **22** current
+  offline-floor restatements, and **3** current release restatements across all
+  **589** tracked files. Cargo changes only cored's lockfile package value.
+- evidence-anchor acceptance: PASS. Exact candidate
+  `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09`, hosted run `30896642221`
+  attempt 1, passed **9/9** blocking identities and persisted **9 receipts / 9
+  Sigstore bundles** accepted by the release-grade verifier. Both hosted
+  Python comparisons derive equivalent **391**-test populations from one
+  named, reasoned, `on_site` skip, and hosted golden passes **11/11**.
+- governed review-export measurement: tree=`b8fe1c2c1c2c842868a70581dee390939ef68595`; bytes=`2789050`
+- governed-export acceptance: PASS. The exact release parent produced **158
+  required / 158 tracked / 158 exported / 2,789,050 bytes / 2 retained
+  cycles**, retaining v0.39–v0.40 and excluding all **4** derived raw-wire
+  bodies, both structural archives, and the bounded historical untracked-input
+  family. At the +215,306-byte high-water denominator, **210,950 bytes / 7.03%
+  / 0.98 cycles** remain below the unchanged 3,000,000-byte ceiling. This
+  misses the 2.5-cycle target by **327,315 bytes** and is **219,662 bytes
+  above** attention; the trigger-fired disposition retains the ceiling,
+  retention depth, and nondecreasing basis.
+- artifact-boundary acceptance: PASS. Release-parent State is **168,728 /
+  453,741 bytes**. The manifest remains **200,440 / 1,048,576 bytes**; the
+  latest timed pair matched **3/3 artifacts / 339 pins** in **0.11 s / 0.09 s
+  real**, and the release-parent gate matched all protected bytes again.
+  Neither artifact boundary nor timing trigger fires.
+- pre-tag control acceptance: PASS at the final assembled worktree. Direct
+  local resolution found no v0.17.7 tag; `cycle-check` reported
+  `local-tag-reconciliation=pre-tag`,
+  `tag-independent-assertions=verified`, and exact parent
+  `b8fe1c2c1c2c842868a70581dee390939ef68595` before any tag existed.
+- post-tag control at the assembled worktree: not applicable. Local v0.17.7
+  resolution was absent at this pre-tag measurement, so no post-tag PASS is
+  claimed and no tag-object value is recorded in the closing tree.
+- deferral acceptance: PASS. All **31/31** active rows carry their latest dated
+  v0.40 close observations, with triggers unchanged except the recorded
+  ATTENTION-BASIS predicate correction. Release authority discharges the
+  version literal; DR26 discharges classification.
+- invariant acceptance: PASS. The permission-capable release-parent gate
+  passes **22/22** jobs, Python 3.11 passes **391/391**, and the registered
+  suite passes **16/16 rules / 108 controls** with **0** hand-typed absolute
+  finding-line fields. Both Rust floor pairs behave as specified and all
+  protected bytes match.
+- divergence acceptance: PASS. Published v0.17.5's epoch remains at **0**;
+  permanently withheld v0.17.6 never resets it. v0.40 carries no measured
+  runtime-behavior difference or public-surface movement, so neither trigger
+  fires.
+- publication acceptance: PASS at DR27's boundary. Fresh direct local/remote
+  readback found no v0.17.7 tag, no remote v0.17.6 tag, and remote `main` exact
+  at `dd605acc037da405fa6b2b5366b09349c330c194`. The authorized evidence ref
+  is the only v0.40 remote mutation. No publication, tag movement, deletion,
+  force operation, or additional push occurred.
+- checklist acceptance: PASS at the assembled closing worktree: **317 checked
+  / 3 retracted / 308 matched / 308 commits resolved / 9 exemptions**; v0.40
+  is nonempty at **7 checked / 7 matched / 7 resolved**.
+- scope acceptance: PASS. Only declared release authorities and active
+  State/runbook/progress/Architecture records move. No dependency graph,
+  protected byte, fixture, observation, closed-cycle document, publisher
+  request, workflow, or unauthorized remote ref moves.
+- stop conditions: none. R15 is exact, the release parent is under the hard
+  export ceiling and both artifact boundaries, the pre-tag gate is clean, and
+  no publication ref moved.
+- golden-E2E delta: **0**. The release-parent full gate and standalone run, and
+  the assembled closing-worktree standalone run, each pass **11/11**.
