@@ -93,3 +93,56 @@ Entries are append-only; corrections are new dated entries.
   do not invalidate the measured gate.
 - golden-E2E delta: **0**; the required standalone permission-capable run
   passes **11/11**.
+
+### 2026-08-04 · PRE-TAG-GATE — release identity before tag creation
+
+- owner: Codex
+- runbook: `TASKS-v0.40-EXECUTION.md`
+- commit: c8d808f42dc1dd62ad2dd1925d01eb1fa33de0bb
+- gate-scope acceptance: PASS. The task gate covers assertion partitioning,
+  both stale and normal tagless controls, a distinct pre-tag verdict, retained
+  strictness, registered control sites, lifecycle documentation, and the full
+  local matrix; no criterion lay outside it.
+- derived-partition acceptance: PASS. State/header admission, mutable-ref
+  prohibition, and tagged release-parent freshness use no tag input and now
+  run before portable-mode and tag-resolution returns. Legacy object/target
+  assertions, tag type, closing parent/tree, ancestry, reachable-tag pending
+  status, and descendant disposition remain after their Git inputs exist.
+- narrow-admission acceptance: PASS. A tagless closing worktree is admitted
+  only with no recorded tag object and `HEAD` equal to its recorded release
+  parent. It emits `local-tag-reconciliation=pre-tag` plus an independently
+  computed `tag-independent-assertions=verified` verdict. After the closing
+  commit exists, an absent tag fails again.
+- before/after planted-control acceptance: PASS. Exact pre-change checker
+  `8c93c00…` reports `freshness=false / unavailable=true / pre_tag=false` for
+  both stale and correct tagless headers. The implementation reports
+  `freshness=true / unavailable=false / pre_tag=true` for the stale case and
+  fails overall; the correct case has no errors and the verified pre-tag
+  verdict. Portable mode also rejects stale release-parent text.
+- registered-control acceptance: PASS. R12 controls **9** and **10**
+  independently remove the pre-tag closing-record and publication branches;
+  control **14** rejects missing/stale post-tag plus stale local and portable
+  pre-tag release-parent assertions. The R12 test double remains executable
+  after earlier guards are mutated away.
+- lifecycle strictness acceptance: PASS. Four direct tests cover correct
+  pre-tag admission, stale local refusal, stale portable refusal, and missing
+  tag refusal after the closing commit. Existing annotated-tag parent/tree,
+  type, ancestry, post-push, and immutable-header tests remain green. Current
+  local v0.17.6 reconciliation passes from the descendant; the immutable
+  v0.17.6 tagged-tree defect remains disclosed and its tag is untouched.
+- executable-gate acceptance: PASS. `./run ci-local` passes all **22/22** jobs;
+  Python 3.11 and 3.12 each pass **385/385** with the same one accepted warning.
+  The registered suite passes **16/16 rules / 102 controls**, including all
+  **50/50** R12 mutations, with zero hand-typed absolute finding-line fields.
+- public/protected-boundary acceptance: PASS. R15 remains exact at **0
+  differences / 6 routes / 112 field occurrences**. No dependency, production
+  runtime byte, protected byte, observation, fixture, publisher wire,
+  entitlement/licensing outcome, serialized response domain, or remote ref
+  moved. The three historical amendment inputs remain untouched and untracked.
+- stop conditions: none. Initial Python 3.12 bind failures were sandbox
+  non-results; the permission-complete lane passed. The first expanded R12
+  double crashed only when a planted mutation bypassed its expected branch;
+  widening the double exposed downstream checks and the full mutation suite
+  then passed.
+- golden-E2E delta: **0**. Embedded and required standalone permission-capable
+  runs each pass **11/11**.
