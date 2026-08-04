@@ -117,6 +117,28 @@ controls**. The permission-complete local matrix passes **22/22**, with Python
 3.11 at **396/396**; standalone golden passes **11/11** with zero delta. No C25
 falsifier or Step 4 stop condition fired.
 
+**v0.41 Step 5 — Grant E not granted; archival remains dormant (measured
+2026-08-04).** The initiating authorization and every subsequent operator
+message through this step were checked against Grant E's exact required
+content. The operator authorized publication, but did not issue the separate
+irreversible archival grant. This is the runbook's dated **not-granted** branch,
+not an inferred refusal and not partial authority.
+
+The C26 move therefore did not execute. No byte was created under
+`docs/state-archive/`, and `config/protected-artifacts.json` remains exact at
+**200,440 bytes / 339 pins**, SHA-256
+`f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`.
+The eligible v0.38-to-permanent-marker region remains **84,896 unrecovered
+bytes**. State measures **185054 / 453,741 bytes** after this observation. The
+review-export attention predicate remains fired after REVIEW-SOURCE, so the
+archival deferral truthfully retains `kind=unheld-lever`, `lever=Grant E`, and
+`recoverable_bytes=84896`; it claims neither an archive nor a pin.
+
+The permission-complete local matrix passed **22/22** jobs, including **16/16
+rules / 115 controls**, Python 3.11 at **396/396**, and embedded golden
+**11/11**. The separately required golden run also passed **11/11** with zero
+delta. No Step 5 stop condition fired.
+
 **v0.41 ACTIVATE — capacity-relief cycle declared (measured 2026-08-04).**
 The declaration, runbook, progress skeleton, and review-retention pattern now
 select v0.41 and exactly the v0.40–v0.41 task/progress pairs. All **31/31**
