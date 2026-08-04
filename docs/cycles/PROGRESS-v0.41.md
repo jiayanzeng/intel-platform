@@ -200,3 +200,55 @@ Entries are append-only; corrections are new dated entries.
   untouched and untracked.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
+
+### 2026-08-04 · REVIEW-SOURCE — project only review-visible manifest pins
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: 4ca0ab733375c2d3c10146ace86296741579b85c
+- C25 determination: PASS. The existing tracked and unpinned
+  `docs/intel-platform-OPERATIONS.md` is the projection host, so no new artifact
+  or new authority was introduced. Its source path is carried by the tracked
+  marker rather than enumerated in checker code. The projection retains every
+  non-pin manifest field and only pins whose referenced paths survive the prior
+  Git-derived review partition. A pinned host, a projection that could not be
+  derived exactly, or a population without both visible and non-visible pins
+  would have falsified this choice.
+- derivation acceptance: PASS. Real repository bytes derive **1 mixed-use
+  manifest / 339 total pins / 9 retained review-visible pins / 330 omitted
+  pins**. The required review set is **157/157 Git-tracked paths** across exactly
+  the v0.40–v0.41 cycle pairs; all four raw-wire bodies, both structural
+  archives, and the one projected manifest are absent.
+- exclusion acceptance: PASS. Exact configured pinned-manifest exclusions equal
+  the derived class in both directions. R12 controls **32–34** respectively
+  plant an empty population, an unexcluded derived member, and a configured
+  nonmember; every registered fail-before mutation is detected.
+- staleness acceptance: PASS. R12 control **35** changes the source head without
+  changing the projection and fails at the registered exact-staleness site. A
+  newly review-visible pinned path likewise changes the deterministic
+  projection expectation rather than silently leaving its pin behind.
+- manifest acceptance: PASS. `config/protected-artifacts.json` is byte-identical
+  at **200,440 bytes**, SHA-256
+  `f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`,
+  with all **339** pins unchanged. No Grant E structural pin landed.
+- export acceptance: PASS. The completed implementation worktree exports
+  **2,638,599 bytes / 157 files / 2 retained cycles**, **69,211 bytes above**
+  the unchanged **2,569,388-byte** attention boundary and **361,401 bytes /
+  12.05% / 1.68 high-water cycles** below the 3,000,000-byte ceiling. Against
+  the exact entering **2,803,926-byte** export, the task recovers **165,327
+  bytes** after including its checker, tests, projection, and dated records.
+  The attention state remains `trigger-fired-disposed` through the substantive
+  measured-change form; Grant E contributed zero bytes.
+- executable acceptance: PASS. Focused export tests pass **20/20**. Standalone
+  and CI-context invariant self-tests pass **16/16 rules / 115 controls**. The
+  permission-complete `./run ci-local` matrix passes **22/22**, with Python 3.11
+  at **396/396**, and every Rust floor, warning, lint, protected-artifact, and
+  embedded golden lane clean.
+- protected/scope acceptance: PASS. No dependency, production source, protected
+  byte, observation, fixture input, publisher wire, public response domain,
+  entitlement/licensing outcome, accepted boundary, tag, or remote ref moved.
+  The three protected amendment inputs remain untouched and untracked.
+- stop conditions: none. Every review-visible pin remains in the projection and
+  every omitted pin names bytes absent from review; C25 did not invent a
+  threshold-selected class.
+- golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
