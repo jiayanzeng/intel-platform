@@ -3752,12 +3752,30 @@ def r12_findings(root: Path) -> list[str]:
             f"{boundary_cycle} · 2026-08-01 — measured |\n"
         )
         live_architecture = (root / "ARCHITECTURE.md").read_text()
+        live_prose_values = cycle_check.GOVERNED_EXPORT_ROW_PROSE_RE.findall(
+            live_architecture
+        )
+        live_marker_values = cycle_check.GOVERNED_EXPORT_ROW_MARKER_RE.findall(
+            live_architecture
+        )
+        if len(live_prose_values) != 1 or len(live_marker_values) != 1:
+            raise ConfigError(
+                "artifact-byte-boundary control requires exactly one live "
+                "governed export prose value and machine marker"
+            )
+        live_prose = f"export of **{live_prose_values[0]} bytes**"
+        live_marker = (
+            "Governed review-export bytes: "
+            f"`{live_marker_values[0]}`"
+        )
         boundary_architecture = live_architecture.replace(
-            "export of **2,789,050 bytes**",
+            live_prose,
             "export of **1 bytes**",
+            1,
         ).replace(
-            "Governed review-export bytes: `2789050`",
+            live_marker,
             "Governed review-export bytes: `1`",
+            1,
         )
         boundary_fixture = fixture / "artifact-byte-boundary"
         (boundary_fixture / "config").mkdir(parents=True)
