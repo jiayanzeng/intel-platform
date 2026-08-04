@@ -4,6 +4,31 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.8 — 2026-08-04
+
+### Fixed
+
+- Review exports now replace the full protected-artifact pin index with a
+  deterministic projection containing only pins for paths a reviewer can
+  actually inspect. The protected manifest and all integrity pins remain
+  byte-identical.
+- The dormant State-archival trigger now names the executable review-export
+  attention predicate rather than a nonexistent ceiling trigger. Registered
+  controls prove the repair does not widen the predicate.
+- Fired governed dispositions now require either a measured byte change or a
+  named unheld lever with a positive recoverable quantity; awareness-only text
+  no longer satisfies the control.
+
+### Compatibility
+
+- This is a patch release. The changes affect review selection, lifecycle
+  tooling, executable controls, and governing records. They do not change
+  production runtime behavior, dependencies, publisher configuration,
+  protected evidence, entitlements, licensing outcomes, or any public route,
+  response field, field type, or serialized `/v1/*` value-domain value. The
+  v0.17.4-baselined domain manifest remains exact at 6 routes, 31 status/media
+  variants, and 112 field occurrences.
+
 ## v0.17.7 — 2026-08-04
 
 ### Fixed
