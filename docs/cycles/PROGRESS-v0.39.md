@@ -239,3 +239,55 @@ It authorizes no other ref movement or later release publication.
   below the attention boundary, so no disposition or archival decision fired.
 - golden-E2E delta: **0** at **11/11**, confirmed both inside `ci-local` and by
   the required standalone `./run golden` entry point.
+
+### 2026-08-04 · WIRE-CONTRACT — bounded SEC egress registered
+
+- owner: Codex
+- runbook: `TASKS-v0.39-EXECUTION.md`
+- commit: 06b2dd48f9bd3e3ae466392ca9c3309d4184d862
+- C18 acceptance: PASS. `ARCHITECTURE.md` owns the invariant boundary a later
+  publisher widening must preserve and `AGENTS.md` restates it at the operator
+  entry point. New R16 is the honest registry home because the subject is one
+  shell command/helper call chain rather than R8 crawler-identity construction
+  or R12 release lifecycle.
+- executable-guarantee acceptance: PASS. Ten reconstructible controls follow
+  `./run harvest-sec` into `cmd_harvest_sec`, the artifact verifier, protected
+  target helper, default/fresh path helpers, and exact finance-source config.
+  They prove preflight before network-capable work, manifest-protected target
+  refusal before bind and its failure return, required contact before bind,
+  exactly one configured SEC request/result, fresh non-existing default path,
+  `first_window` with all fetched documents new and an SEC-only archive, and no
+  observation/fixture publisher-response input.
+- handoff finding: strict fresh-path-only admission outran the executable for
+  one case. An explicit unprotected `CORE_DB` override is admitted before the
+  request without an absence-or-empty check. The governing claim is therefore
+  limited to the no-override fresh default plus success-result freshness; Step
+  5 did not change `run` to manufacture the broader claim.
+- planted-control acceptance: PASS. R16 passes **10/10** mutations and the
+  complete registered population passes **16/16 rules / 100 controls**. All
+  expected finding lines are derived from unchanged text in each constructed
+  mutant; there are **0** hand-typed absolute finding-line fields. Focused
+  anti-vacuity, harvest-harness, and config tests pass **5/5**.
+- exact implementation export: tree=`06b2dd48f9bd3e3ae466392ca9c3309d4184d862`;
+  bytes=`2716611`; entries=`158`; retained_cycles=`2`;
+  attention_boundary=`2785548`; attention_gap=`68937`;
+  attention_state=`clear`.
+- full-gate acceptance: PASS. Permission-complete `ci-local` passes all
+  **22/22** jobs, including Python 3.11 **381/381**, both Rust floor pairs,
+  lint/format/warning gates, protected artifacts, and embedded golden
+  **11/11**. The separate Python 3.12 lane passes the identical **381/381**
+  population with the same accepted non-fatal Starlette warning.
+- governing-record acceptance: PASS. The claims name the actual executables
+  and control numbers, the explicit-override limit is a finding rather than an
+  invariant, affected deferral observations are fresh, and direct cycle,
+  whitespace, review-export, and registered checks pass.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untracked at their exact **43,127** bytes and prior hashes. No
+  dependency, production or operational source, protected byte, observation,
+  fixture, publisher wire, entitlement/licensing outcome, golden input, or
+  remote ref moved.
+- stop conditions: none. The exact implementation export remains **68,937
+  bytes** below the attention boundary, and State remains below its artifact
+  boundary.
+- golden-E2E delta: **0** at **11/11**, confirmed both inside `ci-local` and by
+  the required final standalone `./run golden` entry point.
