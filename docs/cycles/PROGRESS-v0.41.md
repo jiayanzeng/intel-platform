@@ -461,3 +461,4 @@ Entries are append-only; corrections are new dated entries.
   no publication ref moved.
 - golden-E2E delta: **0**. The release-parent full gate and standalone run, and
   the assembled closing-worktree standalone run, each pass **11/11**.
+- cycle-ending review-export audit: closing_tree=`993813c755e9f759a4ee165954c7a1df984f6b10`; bytes=`2674239`; audit_delta=`+16554`
