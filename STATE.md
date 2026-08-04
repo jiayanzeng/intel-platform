@@ -1,6 +1,37 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 108 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and both complete local Python populations pass **391/391** with one named `on_site` identity each. Direct Python 3.11 and 3.12 population comparisons each derive **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The v0.41 E0 gate passes **22/22** local identities. The current registered suite passes **16/16 rules / 108 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and both freshly rebuilt complete local Python populations pass **391/391** with one named `on_site` identity each. Direct Python 3.11 and 3.12 population comparisons each derive **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+
+**v0.41 E0 — entering state reconstructed (measured 2026-08-04).** Every
+runbook hypothesis now has a dated verdict from repository commands. The exact
+entering object graph and remote/local tag topology are confirmed, and a fresh
+detached v0.17.7 tag checkout passes lifecycle reconciliation. Remote `main`
+remains `dd605acc…`; v0.17.2–v0.17.5 remain present and v0.17.6/v0.17.7 absent.
+The expected entering untracked set was exactly the three protected amendment
+inputs plus the then-uncommitted v0.41 runbook; after activation, only the same
+three untouched amendment inputs remain untracked.
+
+Exact entering export is confirmed at **2,803,926 bytes / 158 tracked entries**,
+with **234,538 bytes** above attention and **196,074 bytes / 0.91 high-water
+cycles** below failure. The manifest is **200,440**, not 200,439 bytes; its pin
+array payload is 194,173 bytes, while the keyed pin field is the hypothesized
+**194,191** bytes, and exactly **9/339** pins intersect the export. Initial
+State was **172,660 / 453,741 bytes**, leaving **281,081**, not 281,082 bytes.
+The v0.38/v0.37/v0.36 suffix hypotheses are each one byte low at **128,860 /
+105,647 / 81,842**; their actually movable regions ending before the permanent
+tail are **84,896 / 61,683 / 37,878** bytes.
+
+The named “export ceiling trigger” does not exist. The live predicate is the
+attention boundary, and a direct call at its real entry point returned no error
+for the dated disposition `aware`, proving the substance gap rather than merely
+reading it. Direct derivation confirms **16/16 rules / 108 controls**, **9**
+exemptions, **3** retractions, and the v0.40 closing checklist at **317 / 3 /
+308 / 308 / 9**, with v0.40 at **7/7/7**. Full `./run ci-local` passes **22/22**;
+fresh Python 3.11 and separately rebuilt Python 3.12 environments each pass
+**391/391** with the same named on-site identity; standalone invariant self-test
+passes **16/16 / 108**, and standalone golden passes **11/11** with delta zero.
+No E0 decision gate or stop condition fired, and no repository state other than
+the required governing records moved.
 
 **v0.41 ACTIVATE — capacity-relief cycle declared (measured 2026-08-04).**
 The declaration, runbook, progress skeleton, and review-retention pattern now

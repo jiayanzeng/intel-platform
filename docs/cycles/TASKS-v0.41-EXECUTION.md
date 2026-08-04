@@ -395,6 +395,20 @@ refuted hypothesis is a finding, not an error to route around.
 | H8 | Archivable regions: from the first v0.38 record to end of file 128,859 bytes; from v0.37 105,646; from v0.36 81,841 | measure `STATE.md` directly |
 | H9 | Registry 16 rules / 108 controls; exemptions 9; retractions 3; the v0.40 closing checklist reads 317 / 3 / 308 / 308 / 9 with v0.40 at 7/7/7 | run the tools; derive rather than copy any figure a checker prints |
 
+### E0 dated verdicts — 2026-08-04
+
+| # | Verdict | Measured result |
+|---|---|---|
+| H1 | confirmed | `rev-parse`, `cat-file`, and the first-parent edges derive release parent `b8fe1c2c…` → closing commit `cd4fd58b…` → audit child `2c457feb…`; annotated object `2287b415…` peels to the closing commit. The current E0 HEAD is its two task/audit descendants. |
+| H2 | confirmed | Fresh `ls-remote` reads `main=dd605acc…`, exact remote tags v0.17.2–v0.17.5, and no remote v0.17.6/v0.17.7. Both later tags exist locally; State carries the exact permanent-withholding record for v0.17.6. |
+| H3 | confirmed | A fresh detached checkout of the real v0.17.7 tag passed `cycle-check` with `local-tag-reconciliation=verified`; no prior-cycle assertion was used as its witness. |
+| H4 | refuted in quantity; finding confirmed | Exhaustive `MAX_EXPORT_BYTES` search finds the hard `>` ceiling plus the separately named attention boundary, but no “export ceiling trigger.” Entering State was 172,660 / 453,741 bytes, leaving **281,081**, not 281,082 bytes. |
+| H5 | confirmed | Direct construction at the actual `export_attention_errors` entry point with `v0.41 · 2026-08-04 — trigger-fired disposition: aware` returned `[]` while the boundary fired. Any dated non-`none` sentence is presently sufficient. |
+| H6 | refuted in two quantities; intersection confirmed | The manifest is **200,440**, not 200,439 bytes. Its JSON array payload is 194,173 bytes; the pin field including key and separator is **194,191** bytes. Exactly **9/339** pins name exported paths: two `.gitattributes`, five evidence/observation records, `run`, and `tools/model_profiles.py`. |
+| H7 | confirmed | Exact entering tree export passed at **2,803,926 bytes / 158 tracked entries / two retained cycles**, **234,538** above the 2,569,388 attention boundary and **196,074 / 0.91** high-water cycles below the ceiling. The initial untracked draft worktree separately failed at 2,851,841 / 159, as it must. |
+| H8 | refuted | Initial suffixes beginning at v0.38/v0.37/v0.36 were **128,860 / 105,647 / 81,842** bytes, each one above the hypotheses. The regions from those starts to the permanent marker were **84,896 / 61,683 / 37,878** bytes; only those are potentially movable under Grant E. |
+| H9 | confirmed | Direct tools derive **16 rules / 108 controls**, **9** exemptions, and **3** retractions. The real v0.17.7 tagged tree derives closing checklist **317 / 3 / 308 / 308 / 9**, with v0.40 at **7/7/7**. The active-cycle ACTIVATE audit then raises the live checked total to 318 without changing the other four figures. |
+
 Plus the standing entering measurements: `git status --porcelain` with its
 expected untracked set stated exactly, full `./run ci-local`,
 `invariant-scan --self-test`, both complete Python populations, and golden —
@@ -699,7 +713,7 @@ acceptance point is a defect, not an oversight.
 ## Cycle checklist
 
 - [x] ACTIVATE
-- [ ] E0
+- [x] E0
 - [ ] TRIGGER-REACH
 - [ ] DISPOSITION-SUBSTANCE
 - [ ] REVIEW-SOURCE
