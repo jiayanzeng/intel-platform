@@ -1,6 +1,55 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; no publication authority exists. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 108 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and both complete local Python populations pass **391/391** with one named `on_site` identity each. Direct Python 3.11 and 3.12 population comparisons each derive **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 108 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and both complete local Python populations pass **391/391** with one named `on_site` identity each. Direct Python 3.11 and 3.12 population comparisons each derive **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+
+**v0.41 ACTIVATE — capacity-relief cycle declared (measured 2026-08-04).**
+The declaration, runbook, progress skeleton, and review-retention pattern now
+select v0.41 and exactly the v0.40–v0.41 task/progress pairs. All **31/31**
+deferral subjects carry dated v0.41 observations measured before activation;
+the four trigger-bearing Architecture rows name the same cycle. The delivered
+closing-record template used the semantic closed-cycle heading, so it was
+renamed before activation without weakening a lifecycle predicate. No
+observation template survives.
+
+The initiating operator statement is recorded verbatim in the runbook:
+“I authorize you to publish before you begin the current task.” It authorizes
+publication of v0.17.7 and the v0.41 release under R-CLOSE, while the permanent
+v0.17.6 withholding remains exact. It does not issue Grant E; the archival step
+therefore remains dormant unless that grant's exact content later appears.
+
+Exact entering commit `2c457feb870d62b16a5f9d9ca06aefcb3dc4cf8b`
+passes its project-root export at **2,803,926 bytes / 158 tracked entries / 2
+retained cycles**, **234,538 bytes above** attention and **196,074 bytes / 6.54%
+/ 0.91 high-water cycles** below failure. The untracked draft worktree instead
+measured **2,851,841 bytes / 159 entries** and correctly failed on its untracked,
+out-of-retention v0.41 runbook. After staging the derived v0.40–v0.41 retention
+set, the pre-record activation candidate passes at **2,768,569 bytes / 158
+tracked entries / 2 retained cycles** with the attention predicate still
+firing. This is a measured transition, not an assertion copied from the draft.
+
+Fresh remote readback keeps `main` at `dd605acc…`, v0.17.2 through v0.17.5
+exact, and v0.17.6/v0.17.7 absent. Local v0.17.7 remains annotated object
+`2287b415…` peeling to closing commit `cd4fd58…`; a detached checkout of that
+real tag passes `cycle-check` with `local-tag-reconciliation=verified`.
+Manifest schema v2 remains **3 artifacts / 339 pins** at **200,440 / 1,048,576
+bytes**; two complete checks took **0.10 s / 0.10 s real**. State before this
+record was **172,701 / 453,741 bytes**. R15 remains exact at **0 differences /
+6 routes / 112 field occurrences**, `version-check` derives **3** offline pins,
+**22** current floor restatements, and **3** release restatements over **589**
+tracked files, and the registered suite passes **16/16 rules / 108 controls**.
+The first golden attempt was a sandbox-denied loopback-bind non-result; the
+permission-capable identical run passes **11/11** with delta zero.
+
+Three delivered numeric hypotheses are already refuted rather than normalized:
+State was **172,660**, not 172,659 bytes before the status edit; the manifest is
+**200,440**, not 200,439 bytes; and the v0.38/v0.37/v0.36 suffixes are each one
+byte larger than stated. The movable closed-record region beginning at v0.38
+and ending before the permanent tail is **84,896 bytes**. Before the activation commit exists,
+`cycle-check` reports only the two predicted inability-to-resolve the first
+committed runbook and activation anchor facts. No dependency, production
+source, protected byte, observation, fixture, publisher wire, entitlement or
+licensing outcome, local tag, or remote ref moved; no activation stop condition
+fired.
 
 **v0.40 cycle-ending audit — v0.17.7 tagged tree passes (measured
 2026-08-04).** Local annotated object
