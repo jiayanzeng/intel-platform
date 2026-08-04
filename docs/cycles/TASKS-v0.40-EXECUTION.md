@@ -657,7 +657,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 - [x] PRE-TAG-GATE
 - [x] WITHHELD-STATE
 - [x] ATTENTION-BASIS
-- [ ] RE-MEASURE
+- [x] RE-MEASURE
 - [ ] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.40.md` entry ids exactly; the box-coverage rule
