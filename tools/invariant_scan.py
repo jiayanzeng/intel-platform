@@ -1818,6 +1818,10 @@ PUBLICATION_CONTROL_MARKERS = {
         "Invariant R12 control site: every exact observation exclusion is raw "
         "wire."
     ),
+    "review-export-attention-boundary": (
+        "Invariant R12 control site: review-export pre-failure attention "
+        "boundary."
+    ),
     "declared-scope-population": (
         "Invariant R12 control site: declared scope pattern population."
     ),
@@ -2665,6 +2669,24 @@ def r12_findings(root: Path) -> list[str]:
     ):
         missed.setdefault("raw-wire-extra-exclusion", []).append(
             "configured-nonmember"
+        )
+
+    attention_boundary = 100
+    attention_cycle = "v" + ".".join(("0", "39"))
+    undisposed_attention = export_check.export_attention_errors(
+        attention_boundary,
+        attention_boundary,
+        f"{attention_cycle} · 2026-08-04 — measured without disposition",
+    )
+    disposed_attention = export_check.export_attention_errors(
+        attention_boundary,
+        attention_boundary,
+        f"{attention_cycle} · 2026-08-04 — trigger-fired disposition: "
+        "archive decision",
+    )
+    if not undisposed_attention or disposed_attention:
+        missed.setdefault("review-export-attention-boundary", []).append(
+            "crossed-boundary-disposition"
         )
 
     vacuous_declaration = cycle_check.ScopeDeclaration(
@@ -3591,6 +3613,7 @@ def r12_findings(root: Path) -> list[str]:
             "raw-wire-population",
             "raw-wire-missing-exclusion",
             "raw-wire-extra-exclusion",
+            "review-export-attention-boundary",
         }:
             source_relative = "tools/export_check.py"
         elif group in {
@@ -3623,6 +3646,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "raw-wire-missing-exclusion planted controls"
         elif group == "raw-wire-extra-exclusion":
             finding_kind = "raw-wire-extra-exclusion planted controls"
+        elif group == "review-export-attention-boundary":
+            finding_kind = "review-export-attention-boundary planted controls"
         elif group == "declared-scope-population":
             finding_kind = "declared-scope-population planted controls"
         elif group == "trigger-boundary-order":

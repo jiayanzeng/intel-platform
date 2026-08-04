@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
+from typing import NamedTuple
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -30,11 +32,112 @@ EXECUTION_RUNBOOK_PATH_RE = re.compile(
 )
 MAX_EXPORT_BYTES = 3_000_000
 CYCLE_RETENTION_DEPTH = 2
+EXPORT_ATTENTION_HEADROOM_CYCLES = 2
 GLOB_META = frozenset("*?[]{}")
+EXPORT_ATTENTION_BOUNDARY_RE = re.compile(
+    r"Review-export attention boundary: headroom_cycles=`([0-9]+)`; "
+    r"denominator_bytes_per_cycle=`([0-9]+)`; boundary_bytes=`([0-9]+)`\."
+)
+TRIGGER_FIRED_DISPOSITION_RE = re.compile(
+    r"\btrigger-fired disposition:\s*(?!none(?:\b|$))[^.;|]+",
+    re.IGNORECASE,
+)
+ISO_DATE_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
 
 
 class ExportCheckError(RuntimeError):
     """The export or its repository source set could not be inspected."""
+
+
+class ExportAttentionBoundary(NamedTuple):
+    headroom_cycles: int
+    denominator_bytes_per_cycle: int
+    boundary_bytes: int
+
+
+def valid_iso_date(raw: str) -> bool:
+    try:
+        return dt.date.fromisoformat(raw).isoformat() == raw
+    except ValueError:
+        return False
+
+
+def governed_export_measured_cell(root: Path) -> str:
+    architecture_path = root / "ARCHITECTURE.md"
+    try:
+        lines = architecture_path.read_text().splitlines()
+    except OSError as error:
+        raise ExportCheckError(
+            f"cannot read review-export boundary from {architecture_path}: {error}"
+        ) from error
+    rows = [
+        line
+        for line in lines
+        if line.startswith("| review-export size and retention bound")
+    ]
+    if len(rows) != 1:
+        raise ExportCheckError(
+            "Architecture must contain exactly one governed review-export row"
+        )
+    cells = [cell.strip() for cell in rows[0].strip().strip("|").split("|")]
+    if len(cells) != 4:
+        raise ExportCheckError("governed review-export row must have four cells")
+    return cells[3]
+
+
+def export_attention_boundary(root: Path) -> ExportAttentionBoundary:
+    measured = governed_export_measured_cell(root)
+    matches = list(EXPORT_ATTENTION_BOUNDARY_RE.finditer(measured))
+    if len(matches) != 1:
+        raise ExportCheckError(
+            "governed review-export row requires exactly one executable "
+            "attention boundary"
+        )
+    headroom_cycles, denominator, boundary = (
+        int(value) for value in matches[0].groups()
+    )
+    if headroom_cycles != EXPORT_ATTENTION_HEADROOM_CYCLES:
+        raise ExportCheckError(
+            f"review-export attention reserve must be "
+            f"{EXPORT_ATTENTION_HEADROOM_CYCLES} governed growth cycles; "
+            f"found {headroom_cycles}"
+        )
+    expected = MAX_EXPORT_BYTES - (headroom_cycles * denominator)
+    if denominator <= 0 or not 0 < expected < MAX_EXPORT_BYTES:
+        raise ExportCheckError(
+            "review-export attention boundary derivation must use a positive "
+            "denominator and land strictly inside the ceiling"
+        )
+    if boundary != expected:
+        raise ExportCheckError(
+            f"review-export attention boundary {boundary} disagrees with "
+            f"{MAX_EXPORT_BYTES} - ({headroom_cycles} * {denominator}) = "
+            f"{expected}"
+        )
+    return ExportAttentionBoundary(headroom_cycles, denominator, boundary)
+
+
+def export_attention_errors(
+    export_bytes: int,
+    boundary_bytes: int,
+    measured: str,
+) -> list[str]:
+    errors: list[str] = []
+    # Invariant R12 control site: review-export pre-failure attention boundary.
+    if export_bytes >= boundary_bytes:
+        has_valid_date = any(
+            valid_iso_date(raw) for raw in ISO_DATE_RE.findall(measured)
+        )
+        if (
+            not has_valid_date
+            or TRIGGER_FIRED_DISPOSITION_RE.search(measured) is None
+        ):
+            errors.append(
+                f"export size {export_bytes} meets or exceeds attention "
+                f"boundary {boundary_bytes}; governed row requires a dated "
+                "'trigger-fired disposition:'"
+            )
+    return errors
 
 
 def tracked_repository_paths(root: Path) -> set[str]:
@@ -356,6 +459,11 @@ def check_export(
     ]
     errors.extend(untracked_export_errors(tracked, actual))
     export_bytes = export_path.stat().st_size
+    attention = export_attention_boundary(root)
+    measured = governed_export_measured_cell(root)
+    errors.extend(
+        export_attention_errors(export_bytes, attention.boundary_bytes, measured)
+    )
     if export_bytes > MAX_EXPORT_BYTES:
         errors.append(
             f"export size {export_bytes} exceeds ceiling {MAX_EXPORT_BYTES}"
@@ -386,6 +494,7 @@ def check_export(
 def run(root: Path, export_path: Path) -> int:
     try:
         sources, actual, errors = check_export(root, export_path)
+        attention = export_attention_boundary(root)
     except ExportCheckError as error:
         print(f"export-check: ERROR: {error}", file=sys.stderr)
         print("export-check: FAIL (inspection unavailable)", file=sys.stderr)
@@ -399,11 +508,18 @@ def run(root: Path, export_path: Path) -> int:
             file=sys.stderr,
         )
         return 1
+    attention_state = (
+        "trigger-fired-disposed"
+        if export_path.stat().st_size >= attention.boundary_bytes
+        else "clear"
+    )
     print(
         "export-check: PASS "
         f"(derived_required={len(sources)}, "
         f"exported={len(actual)}, bytes={export_path.stat().st_size}, "
-        f"retained_cycles={CYCLE_RETENTION_DEPTH})"
+        f"retained_cycles={CYCLE_RETENTION_DEPTH}, "
+        f"attention_boundary={attention.boundary_bytes}, "
+        f"attention_state={attention_state})"
     )
     return 0
 

@@ -39,6 +39,7 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
     fixture_prior_export_bytes = fixture_export_bytes - 10
     fixture_margin_numerator = cycle_check.MAX_EXPORT_BYTES - fixture_export_bytes
     fixture_margin_cycles = fixture_margin_numerator / 10
+    fixture_attention_boundary = cycle_check.MAX_EXPORT_BYTES - (2 * 10)
     fixture_state_boundary = 2_048
     fixture_manifest_boundary = 2_048
     root = tmp_path / "cycle"
@@ -95,7 +96,10 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         f"evaluated_bytes=`{fixture_export_bytes}`; "
         "denominator_bytes_per_cycle=`10`; "
         f"numerator_bytes=`{fixture_margin_numerator}`; "
-        f"cycles=`{fixture_margin_cycles:.2f}`. |\n"
+        f"cycles=`{fixture_margin_cycles:.2f}`. Review-export attention "
+        "boundary: headroom_cycles=`2`; "
+        "denominator_bytes_per_cycle=`10`; "
+        f"boundary_bytes=`{fixture_attention_boundary}`. |\n"
     )
     _runbook(root).write_text(
         "# Open cycle\n\n"
@@ -1280,6 +1284,7 @@ def test_governed_export_margin_kind_accepts_recorded_governed_series(
     assert report == (
         "governed-export-margin-basis: "
         "selected=latest-positive-adjacent-governed-pair "
+        f"attention_boundary={cycle_check.MAX_EXPORT_BYTES - 20} "
         "representativeness=unbounded(single adjacent pair carries no "
         "representativeness guarantee) "
         "structural_epoch=unobserved(checker cannot detect a basis "

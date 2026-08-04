@@ -274,7 +274,11 @@ warnings; clippy is an independent blocking gate.)
   derives structural-archive exclusions from the protected manifest. Any
   derived raw-wire body or structural-archive content in the export is a
   failure. Repository bytes and protected pins remain untouched by these
-  review-scope exclusions.
+  review-scope exclusions. It also derives a pre-failure attention boundary by
+  reserving two cycles at the latest positive adjacent governed-growth
+  denominator. A measurement at or above that boundary requires a dated
+  `trigger-fired disposition:` in the governed Architecture row; this does not
+  move or weaken the 3,000,000-byte ceiling.
 
 These are review-export operating rules, not additions to the HC series.
 

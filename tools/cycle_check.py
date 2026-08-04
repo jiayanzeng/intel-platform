@@ -29,7 +29,10 @@ from tools.export_check import (
     CYCLE_RETENTION_DEPTH,
     MAX_EXPORT_BYTES,
     ExportCheckError,
+    export_attention_boundary,
+    export_attention_errors,
     expected_retained_cycle_paths,
+    governed_export_measured_cell,
 )
 from tools.progress_check import default_progress_path
 from tools import version_check
@@ -2804,6 +2807,31 @@ def check_governed_export_margin_kind(
             f"{expected_denominator}"
         )
         return None
+    try:
+        attention = export_attention_boundary(root)
+        attention_measured = governed_export_measured_cell(root)
+    except ExportCheckError as error:
+        errors.append(f"{shown(architecture_path, root)}: {error}")
+        return None
+    if attention.denominator_bytes_per_cycle != expected_denominator:
+        errors.append(
+            f"{shown(architecture_path, root)}: review-export attention "
+            f"denominator {attention.denominator_bytes_per_cycle} disagrees "
+            f"with latest positive adjacent governed delta "
+            f"{expected_denominator}"
+        )
+        return None
+    attention_errors = export_attention_errors(
+        evaluated_value,
+        attention.boundary_bytes,
+        attention_measured,
+    )
+    if attention_errors:
+        errors.extend(
+            f"{shown(architecture_path, root)}: recorded governed {error}"
+            for error in attention_errors
+        )
+        return None
     expected_numerator = MAX_EXPORT_BYTES - evaluated_value
     if numerator != expected_numerator:
         errors.append(
@@ -2825,6 +2853,7 @@ def check_governed_export_margin_kind(
     return (
         "governed-export-margin-basis: "
         "selected=latest-positive-adjacent-governed-pair "
+        f"attention_boundary={attention.boundary_bytes} "
         "representativeness=unbounded(single adjacent pair carries no "
         "representativeness guarantee) "
         "structural_epoch=unobserved(checker cannot detect a basis "

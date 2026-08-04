@@ -639,7 +639,7 @@ any acceptance point is a defect, not an oversight.
 | Postgres / pgvector / multi-host seam | unchanged | v0.39 · 2026-08-04 — No Postgres, pgvector, or multi-host seam was introduced. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.39 · 2026-08-04 — No third-party shell or replacement-shell HC1 claim appeared, so the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.39 · 2026-08-04 — No operator server session occurred, so the trigger did not fire. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.39 · 2026-08-04 — The fresh registered scan passes **15/15 rules / 89 controls** and found no outside registered-vocabulary spelling. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.39 · 2026-08-04 — The fresh registered scan passes **15/15 rules / 90 controls** and found no outside registered-vocabulary spelling. | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.39 · 2026-08-04 — Hosted run **30852480662** and the v0.17.5 release-parent local gate remain the most recent passing pinned Rust 1.86 lanes; workflow and evidence topology are scope-forbidden here. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.39 · 2026-08-04 — The repository pin remains **2.96.0** and no accepted bundle/workflow contract changed, so the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.39 · 2026-08-04 — No third-publisher compliance review or admission occurred. | none |
@@ -648,7 +648,7 @@ any acceptance point is a defect, not an oversight.
 | Manifest retention/indexing | the manifest reaches its governed artifact byte boundary, or two consecutive clean `./run verify-artifacts` runs each take ≥1.00 s real | v0.39 · 2026-08-04 — The manifest is **200,440 / 1,048,576 bytes**; the latest complete checks match **3 artifacts / 339 pins** at **0.10 s / 0.11 s real**. Neither trigger clause fired. | none |
 | Version literal in `app.py` | a cycle whose declared scope permits shell source changes | v0.39 · 2026-08-04 — Shell production source is absent from `allow`; release-authority precedence has not yet moved any literal in the open cycle. | Step 7 |
 | Release-classification criteria with no executed control | an operator decision that prose adjudication is insufficient | v0.39 · 2026-08-04 — Fresh R15 derivation reports **0** public response-domain differences across **6 routes / 112 field occurrences**; R-CLOSE remains pending and no broader operator decision displaced the boundary. | Step 7 |
-| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.39 · 2026-08-04 — The latest measured worktree puts State at **140,691 / 453,741 bytes** and the final EXPORT-TRUTH worktree export at **2,675,532 / 3,000,000 bytes**; neither existing trigger fired. DR19 forbids archival this cycle. | none |
+| Second `STATE.md` archival | the export ceiling trigger fires, or `STATE.md` reaches its governed artifact byte boundary | v0.39 · 2026-08-04 — The latest measured worktree puts State at **142,730 / 453,741 bytes** and the final CEILING-TRIGGER worktree export at **2,692,723 / 3,000,000 bytes**; neither the sharpened export trigger nor the State boundary fired. DR19 forbids archival this cycle. | none |
 | Retention derivation across a version-family boundary | an active cycle whose name is not of the form `v0.<n>` — raising at `v1.0`–`v1.2`, silently under-excluding from `v1.3` onward | v0.39 · 2026-08-04 — The active cycle remains in the `v0.<n>` family, so the trigger did not fire. | none |
 | Published-release divergence | the unpublished distance contains a measured runtime behaviour difference persisting across three consecutive closed cycles within the current publication epoch, or acquires any public-surface change | v0.39 · 2026-08-04 — Exact authorized publication of v0.17.5 resets the epoch count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.38's measured runtime difference is included in that published commit, PUBLISH-V17-5 adds no runtime or public-surface change, and fresh R15 derivation reports **0** public response-domain differences. Neither trigger fired. | Step 7 |
 | MSRV current-restatement membership | a current restatement of either Rust floor lands outside the registry without failing a check | v0.39 · 2026-08-04 — Fresh `version-check` derives **3** executable offline pins at 1.78, **22** offline-floor restatements, and **3** release restatements; all **587** currently tracked files are classified. | none |
@@ -659,7 +659,7 @@ any acceptance point is a defect, not an oversight.
 | Feed shape observation | an uncovered publisher feed shape | v0.39 · 2026-08-04 — No feed was fetched and no uncovered publisher feed shape appeared. | none |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.39 · 2026-08-04 — The completed shared `intel-extract` seam remains unchanged and no new dependency module or manifest edge appeared. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.39 · 2026-08-04 — The two in-scope tag-mechanics restatements still agree before any v0.39 edit, so the trigger has not fired. | none |
-| Review-export capacity | the export crosses the declared ceiling | v0.39 · 2026-08-04 — The final EXPORT-TRUTH worktree export is **2,675,532 / 3,000,000 bytes**, leaving **324,468 bytes / 10.82% / 3.03 cycles** at the checker-derived +107,226-byte denominator. The existing ceiling trigger did not fire; Step 4 owns the corrected pre-failure boundary predicate. | Step 3 and Step 4 |
+| Review-export capacity | the export meets or exceeds the executable two-governed-growth-cycle attention boundary | v0.39 · 2026-08-04 — Criterion correction: the prior ceiling-only trigger announced the condition only after the accepted 3,000,000-byte property had already failed. The new executable predicate reserves **2 × 107,226 bytes** and derives an attention boundary of **2,785,548 bytes**. The final CEILING-TRIGGER worktree export is **2,692,723 bytes**, **92,825 bytes** below the boundary, so the new predicate did not fire. The 3,000,000-byte ceiling is unchanged. | Step 3 and Step 4 |
 
 ---
 
@@ -692,7 +692,7 @@ any acceptance point is a defect, not an oversight.
 - [x] E0
 - [x] PUBLISH-V17-5
 - [x] EXPORT-TRUTH
-- [ ] CEILING-TRIGGER
+- [x] CEILING-TRIGGER
 - [ ] WIRE-CONTRACT
 - [ ] RE-MEASURE
 - [ ] R-CLOSE

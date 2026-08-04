@@ -28,6 +28,7 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
         *cycle_paths,
         ".github/workflows/ci.yml",
         "AGENTS.md",
+        "ARCHITECTURE.md",
         "Cargo.lock",
         "Cargo.toml",
         "apps/cored/src/main.rs",
@@ -45,6 +46,22 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
         path.write_text(f"{raw_path}\n")
     (root / "AGENTS.md").write_text(
         f"**Active cycle:** {retained_cycles[-1]}\n"
+    )
+    attention_denominator = 1_000_000
+    attention_boundary = (
+        export_check.MAX_EXPORT_BYTES
+        - export_check.EXPORT_ATTENTION_HEADROOM_CYCLES * attention_denominator
+    )
+    (root / "ARCHITECTURE.md").write_text(
+        "# Architecture\n\n"
+        "| subject | disposition | trigger | dated measured observation |\n"
+        "|---|---|---|---|\n"
+        "| review-export size and retention bound (fixture) | accepted | "
+        "the export meets its attention boundary | v1.2.8 · 2026-08-04 — "
+        "measured below boundary. Review-export attention boundary: "
+        f"headroom_cycles=`{export_check.EXPORT_ATTENTION_HEADROOM_CYCLES}`; "
+        f"denominator_bytes_per_cycle=`{attention_denominator}`; "
+        f"boundary_bytes=`{attention_boundary}`. |\n"
     )
     older_cycle = (
         f"v1.2.{active_patch - export_check.CYCLE_RETENTION_DEPTH}"
@@ -173,6 +190,61 @@ def test_export_over_ceiling_is_a_named_failure(
         and f"exceeds ceiling {export_check.MAX_EXPORT_BYTES}" in error
         for error in errors
     )
+
+
+def test_export_at_attention_boundary_requires_dated_disposition(
+    tmp_path: Path,
+) -> None:
+    root, paths = _repository(tmp_path)
+    export = tmp_path / "review.xml"
+    boundary = export_check.export_attention_boundary(root).boundary_bytes
+    _write_export(export, paths, padding=boundary)
+
+    _, _, errors = export_check.check_export(root, export)
+
+    assert any(
+        f"meets or exceeds attention boundary {boundary}" in error
+        and "requires a dated 'trigger-fired disposition:'" in error
+        for error in errors
+    )
+
+
+def test_export_at_attention_boundary_accepts_dated_disposition(
+    tmp_path: Path,
+) -> None:
+    root, paths = _repository(tmp_path)
+    architecture = root / "ARCHITECTURE.md"
+    architecture.write_text(
+        architecture.read_text().replace(
+            "measured below boundary.",
+            "trigger-fired disposition: archive decision recorded.",
+        )
+    )
+    export = tmp_path / "review.xml"
+    boundary = export_check.export_attention_boundary(root).boundary_bytes
+    _write_export(export, paths, padding=boundary)
+
+    _, _, errors = export_check.check_export(root, export)
+
+    assert not any("attention boundary" in error for error in errors)
+
+
+def test_attention_boundary_rejects_uncomputed_value(tmp_path: Path) -> None:
+    root, _ = _repository(tmp_path)
+    architecture = root / "ARCHITECTURE.md"
+    architecture.write_text(
+        architecture.read_text().replace(
+            "boundary_bytes=`1000000`",
+            "boundary_bytes=`1000001`",
+        )
+    )
+
+    try:
+        export_check.export_attention_boundary(root)
+    except export_check.ExportCheckError as error:
+        assert "disagrees with 3000000 - (2 * 1000000) = 1000000" in str(error)
+    else:
+        raise AssertionError("uncomputed review-export boundary was accepted")
 
 
 def test_missing_retained_cycle_document_is_a_named_failure(
