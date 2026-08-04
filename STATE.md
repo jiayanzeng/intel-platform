@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally and unpublished; v0.39's mandatory closing-export audit is complete, but the tagged closing tree retains the disclosed publication-assertion freshness defect described below. v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged release commit `acfa801102197ce2d94adaa5a14a3ad102893549` carries the v0.17.6 authorities and is the immediate parent of closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; this immediate audit child records the measured closing-tree export. Local annotated tag object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that closing commit. Historical v0.17.5 release parent `37f552c0c326098bdcf8f19de7eac19670d74680` is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that v0.17.5 closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.6 (core-shell) · **Status:** **v0.17.6 is closed locally and unpublished; v0.39's mandatory closing-export audit is complete, but the tagged closing tree retains the disclosed publication-assertion freshness defect described below. v0.17.5 remains published exactly, Grant C is spent, and no v0.17.6 publication is authorized.** Untagged release commit `acfa801102197ce2d94adaa5a14a3ad102893549` carries the v0.17.6 authorities and is the immediate parent of closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; this immediate audit child records the measured closing-tree export. Local annotated tag object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that closing commit. Historical v0.17.5 release parent `37f552c0c326098bdcf8f19de7eac19670d74680` is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that v0.17.5 closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.39 changes review tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current registered suite passes **16/16 rules / 102 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.6, golden passes **11/11**, and both complete local Python populations pass **385/385** with one named `on_site` identity each. The latest authenticated hosted candidate remains v0.39's 381-test population and does not cover the four new lifecycle tests; Step 5 owns fresh equivalence. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.39 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+
+**v0.40 PRE-TAG-GATE — stale closing identity is preventable (measured
+2026-08-04).** The publication assertion partition is now derived from its
+actual inputs. State/header admission, the mutable-branch-ref prohibition, and
+tagged-closing release-parent freshness require no tag and execute before both
+portable-mode and tag-resolution returns. Legacy object/target assertions,
+annotated type, closing-parent/tree identity, ancestry, reachable-tag pending
+status, and descendant disposition remain tag-dependent. An assembled closing
+worktree receives the distinct
+`local-tag-reconciliation=pre-tag tag-independent-assertions=verified` verdict
+only while the tag is absent, the closing record has no tag-object field, and
+`HEAD` equals its recorded release parent. A missing tag fails again after the
+closing commit exists.
+
+An in-memory execution of the exact pre-change `8c93c00…` checker reports
+`freshness=false / unavailable=true / pre_tag=false` for both stale and correct
+tagless headers. The implemented checker reports `freshness=true /
+unavailable=false / pre_tag=true` for the stale case and fails overall, while
+the correct case reports no error and the verified pre-tag verdict. Portable
+mode also rejects the stale identity. Four direct lifecycle tests cover correct
+pre-tag admission, stale local refusal, stale portable refusal, and refusal of
+a missing tag once the closing commit exists.
+
+R12 now carries **50** independently executable mutations and the registered
+suite passes **16/16 rules / 102 controls**. The two new mutations independently
+remove closing-record pre-tag admission and the normal pre-tag publication
+branch; the existing release-commit mutation now also proves stale local and
+portable tagless identities are caught. Its test double can answer downstream
+object, target, parent, tree, and `HEAD` queries when an earlier guard is
+mutated away, so no planted control depends on a double that crashes before the
+guard under test can speak.
+
+The permission-complete local matrix passes **22/22** jobs. Python 3.11 and
+3.12 each pass the expanded **385/385** population with the same one accepted
+warning; all Rust floor, warning, lint, protected-artifact, and fingerprint
+checks pass. Golden passes **11/11** with delta zero. No dependency, production
+runtime byte, protected byte, observation, fixture, publisher wire,
+entitlement/licensing outcome, public response domain, or remote ref moved.
 
 **v0.40 E0 — entering state reconstructed (measured 2026-08-04).** The
 pre-activation object graph is exact: v0.17.6 release parent

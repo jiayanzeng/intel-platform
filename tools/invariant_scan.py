@@ -1770,6 +1770,12 @@ PUBLICATION_CONTROL_MARKERS = {
     "tagged-closing-tree": (
         "Invariant R12 control site: tagged-closing tree agreement."
     ),
+    "pre-tag-record": (
+        "Invariant R12 control site: tagged-closing pre-tag record admission."
+    ),
+    "pre-tag-publication": (
+        "Invariant R12 control site: tagged-closing pre-tag publication gate."
+    ),
     "origin-main": "Invariant R12 control site: origin-main prohibition.",
     "tag-ref-unavailable": (
         "Invariant R12 control site: unavailable annotated-tag ref."
@@ -2806,6 +2812,123 @@ def r12_findings(root: Path) -> list[str]:
             )
             if not any(expected in error for error in errors):
                 missed.setdefault(group, []).append(name)
+
+        def measured_pre_tag_ref(
+            _root: Path,
+            *args: str,
+        ) -> str | None:
+            if args == ("rev-parse", tag):
+                return None
+            if args == ("rev-parse", f"{tag}^{{}}"):
+                return tag_target
+            if args == ("cat-file", "-t", None):
+                return "tag"
+            if args == ("rev-parse", f"{tag_target}^"):
+                return release_commit
+            if args == ("show", f"{tag_target}:{runbook.name}"):
+                return tagged_runbook_text
+            if args == ("rev-parse", "HEAD"):
+                return release_commit
+            raise AssertionError(f"unexpected planted git query: {args}")
+
+        cycle_check.git_output = measured_pre_tag_ref
+        cycle_check.git_status = lambda _root, *_args: (0, "")
+        state_path.write_text(
+            "# State\n\n"
+            + valid_tagged_header.replace(release_commit, stale_target)
+        )
+        errors = []
+        stale_pre_tag_status = cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+        )
+        if (
+            not any(
+                "publication assertion freshness: release commit asserts"
+                in error
+                for error in errors
+            )
+            or stale_pre_tag_status is None
+            or "tag-independent-assertions=failed" not in stale_pre_tag_status
+        ):
+            missed.setdefault("release-commit-assertion", []).append(
+                "pre-tag-stale-identity"
+            )
+
+        errors = []
+        portable_pre_tag_status = cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+            verify_local_tag_refs=False,
+        )
+        if (
+            not any(
+                "publication assertion freshness: release commit asserts"
+                in error
+                for error in errors
+            )
+            or portable_pre_tag_status is None
+            or "tag-independent-assertions=failed"
+            not in portable_pre_tag_status
+        ):
+            missed.setdefault("release-commit-assertion", []).append(
+                "pre-tag-portable-stale"
+            )
+
+        state_path.write_text(f"# State\n\n{valid_tagged_header}")
+        errors = []
+        pre_tag_status = cycle_check.check_publication_status(
+            fixture,
+            [runbook],
+            errors,
+        )
+        if (
+            errors
+            or pre_tag_status is None
+            or "local-tag-reconciliation=pre-tag" not in pre_tag_status
+            or "tag-independent-assertions=verified" not in pre_tag_status
+        ):
+            missed.setdefault("pre-tag-publication", []).append(
+                "pre-tag-normal"
+            )
+
+        tagged_section = tagged_runbook_text.split(
+            "## Cycle closing record",
+            1,
+        )[1]
+
+        def measured_pre_tag_record(
+            _root: Path,
+            *args: str,
+        ) -> str | None:
+            if args == ("cat-file", "-t", release_commit):
+                return "commit"
+            if args == ("rev-parse", tag):
+                return None
+            if args == ("rev-parse", f"{tag}^{{}}"):
+                return None
+            if args == ("rev-parse", "HEAD"):
+                return release_commit
+            raise AssertionError(f"unexpected planted git query: {args}")
+
+        cycle_check.git_output = measured_pre_tag_record
+        errors = []
+        cycle_check.check_release_record(
+            runbook,
+            tagged_section,
+            fixture,
+            1,
+            errors,
+            verify_local_tag_refs=True,
+            require_dated_disposition=True,
+            require_tagged_closing_commit=True,
+        )
+        if errors:
+            missed.setdefault("pre-tag-record", []).append(
+                "pre-tag-record-admission"
+            )
 
         state_path.write_text(
             "# State\n\n"

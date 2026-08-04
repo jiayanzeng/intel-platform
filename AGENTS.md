@@ -484,12 +484,22 @@ R`; it must not contain an `Annotated tag object` field. The closing record
 cites already-authenticated candidate hosted evidence, because evidence from
 publishing `C` cannot exist in `C`.
 
-The annotated release tag targets `C`, not `R`. Before any ref movement,
-`cycle-check` verifies that `R` is `C`'s immediate parent and that `C`'s tree
-contains the closed runbook with the same release name and release-commit hash
-and no tag-object field. `STATE.md`'s live header in `C` asserts the knowable
-release commit `R`; neither the tag-object hash nor `C`'s own hash may be
-required in that tree. `C` and its annotated tag are pushed atomically.
+The annotated release tag targets `C`, not `R`. Before `C` is committed or any
+tag is created, run `cycle-check` on the assembled closing worktree while
+`HEAD` is still `R`. Its explicit pre-tag verdict must say that the local tag
+is absent and the tag-independent assertions are verified. This gate compares
+`STATE.md`'s strict release-commit assertion with the closing record's `R`; a
+missing or stale assertion fails even though no tag exists. The pre-tag
+admission is limited to this exact state: the closing record contains no tag
+object and `HEAD` equals its recorded `R`.
+
+After `C` is committed and the local annotated tag exists, but before any ref
+movement, `cycle-check` verifies that `R` is `C`'s immediate parent and that
+`C`'s tree contains the closed runbook with the same release name and
+release-commit hash and no tag-object field. `STATE.md`'s live header in `C`
+asserts the knowable release commit `R`; neither the tag-object hash nor `C`'s
+own hash may be required in that tree. `C` and its annotated tag are pushed
+atomically when publication is authorized.
 
 The first commit after `C` records the post-push result in a dated `STATE.md`
 body append with these exact contiguous fields:

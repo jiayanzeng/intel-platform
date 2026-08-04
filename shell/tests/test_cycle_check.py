@@ -460,6 +460,39 @@ def _tagged_closing_root(
     return root, release_commit, closing_commit, tag_object
 
 
+def _tagged_closing_pre_tag_root(tmp_path: Path) -> tuple[Path, str]:
+    root = _cycle_root(tmp_path)
+    _commit_cycle_root(root)
+    release_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    runbook = _runbook(root)
+    runbook.write_text(
+        runbook.read_text().replace(
+            "- [ ] unfinished task",
+            "- [x] finished task",
+        )
+        + "\n## Runbook amendments\n\n"
+        "Step 1 — Record the closing checklist — 2026-07-29\n\n"
+        "## Cycle closing record\n\n"
+        "- **Cycle closed:** 2026-07-29\n"
+        "- **Release disposition:** release (as of 2026-07-29)\n"
+        "- **Release:** `v1.2.3`\n"
+        f"- **Release commit:** `{release_commit}`\n"
+    )
+    (root / "STATE.md").write_text(
+        _state_with_regions(
+            "v1.2.3 closing worktree assembled. "
+            f"Release commit is `{release_commit}`."
+        )
+    )
+    return root, release_commit
+
+
 def _publication_errors(root: Path) -> list[str]:
     errors: list[str] = []
     cycle_check.check_publication_status(
@@ -734,6 +767,69 @@ def test_cycle_check_accepts_tagged_closing_commit_protocol(
     root, _, _, _ = _tagged_closing_root(tmp_path)
 
     assert cycle_check.run(root) == 0
+
+
+def test_cycle_check_accepts_explicit_tagged_closing_pre_tag_gate(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, release_commit = _tagged_closing_pre_tag_root(tmp_path)
+
+    assert cycle_check.run(root) == 0
+    output = capsys.readouterr().out
+    assert "local-tag-reconciliation=pre-tag" in output
+    assert "tag-independent-assertions=verified" in output
+    assert f"release-parent={release_commit}" in output
+
+
+def test_cycle_check_rejects_stale_release_parent_before_tag_exists(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, release_commit = _tagged_closing_pre_tag_root(tmp_path)
+    stale_commit = "f" * 40
+    state = root / "STATE.md"
+    state.write_text(state.read_text().replace(release_commit, stale_commit))
+
+    assert cycle_check.run(root) == 1
+    captured = capsys.readouterr()
+    assert (
+        "publication assertion freshness: release commit asserts "
+        f"{stale_commit}, but the measured ref is {release_commit}"
+        in captured.err
+    )
+    assert "publication verification unavailable" not in captured.err
+    assert "tag-independent-assertions=failed" in captured.out
+
+
+def test_cycle_check_portable_mode_still_rejects_stale_release_parent(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, release_commit = _tagged_closing_pre_tag_root(tmp_path)
+    stale_commit = "f" * 40
+    state = root / "STATE.md"
+    state.write_text(state.read_text().replace(release_commit, stale_commit))
+
+    assert cycle_check.run(root, verify_local_tag_refs=False) == 1
+    captured = capsys.readouterr()
+    assert "publication assertion freshness: release commit asserts" in captured.err
+    assert "local-tag-reconciliation=not-requested" in captured.out
+    assert "tag-independent-assertions=failed" in captured.out
+
+
+def test_cycle_check_rejects_missing_tag_after_closing_commit(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root, _, _, _ = _tagged_closing_root(tmp_path)
+    subprocess.run(["git", "tag", "-d", "v1.2.3"], cwd=root, check=True)
+
+    assert cycle_check.run(root) == 1
+    captured = capsys.readouterr()
+    assert "cannot be resolved for the tagged-closing protocol" in captured.err
+    assert "publication verification unavailable" in captured.err
+    assert "local-tag-reconciliation=pre-tag" not in captured.out
 
 
 def test_governed_export_binding_covers_release_close_and_post_push(
@@ -2554,8 +2650,11 @@ def test_cycle_check_portable_mode_retains_commit_checks_without_local_tag(
     output = capsys.readouterr().out
     assert (
         "publication-status: local-tag-reconciliation=not-requested "
+        "tag-independent-assertions=verified "
         "bound=portable hosted mode lacks historical local tag objects; "
-        "State/header admission and closed-runbook structure remain enforced"
+        "State/header admission, mutable-ref prohibition, applicable tagged "
+        "release-parent freshness, and closed-runbook structure remain "
+        "enforced"
         in output
     )
 

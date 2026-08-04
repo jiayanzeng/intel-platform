@@ -209,6 +209,36 @@ def shown(path: Path, root: Path) -> str:
         return str(path)
 
 
+def check_required_state_ref_assertions(
+    state_path: Path,
+    root: Path,
+    header: str,
+    assertions_to_check: tuple[tuple[str, re.Pattern[str]], ...],
+    expected: dict[str, str],
+    errors: list[str],
+) -> None:
+    """Require each admitted immutable header assertion to be current."""
+    # Invariant R12 control site: required and fresh immutable assertions.
+    for label, pattern in assertions_to_check:
+        measured = expected[label]
+        assertions = list(pattern.finditer(header))
+        if not assertions:
+            errors.append(
+                f"{shown(state_path, root)}: publication assertion required: "
+                f"status header must assert the {label} in the required "
+                "unambiguous phrasing"
+            )
+            continue
+        for assertion in assertions:
+            asserted = assertion.group(1)
+            if asserted != measured:
+                errors.append(
+                    f"{shown(state_path, root)}: publication assertion "
+                    f"freshness: {label} asserts {asserted}, but the measured "
+                    f"ref is {measured}"
+                )
+
+
 def strip_corrections(text: str) -> str:
     return re.sub(
         r"~~.*?~~",
@@ -478,6 +508,15 @@ def check_release_record(
                     )
                 return
             if resolved_tag is None:
+                # Invariant R12 control site: tagged-closing pre-tag record admission.
+                if (
+                    len(tag_matches) == 0
+                    and git_output(root, "rev-parse", "HEAD") == commit
+                ):
+                    # The assembled tagged-closing worktree is intentionally
+                    # one commit ahead of the release parent it records. The
+                    # tag cannot exist until that closing commit exists.
+                    return
                 errors.append(
                     f"{shown(path, root)}: annotated tag {release!r} cannot "
                     "be resolved for the tagged-closing protocol"
@@ -652,24 +691,13 @@ def check_publication_status(
             )
         return
     header = header_match.group(0)
+    tag_independent_error_count = len(errors)
 
     # This lifecycle gate intentionally does not delegate to
     # version_check.state_version(). That tool independently parses the same
     # header to bind the release version; this function parses publication
     # status. Either hand-written regex can reject text the other accepts, so
     # cycle-check must fail closed at its own family boundary.
-
-    # Portable hosted verification lacks historical local tag objects. It may
-    # skip ref reconciliation only after the family admission gate has proved
-    # the State file and header shape exist; closed-runbook structure remains
-    # checked by check_closed_execution().
-    if not verify_local_tag_refs:
-        return (
-            "publication-status: local-tag-reconciliation=not-requested "
-            "bound=portable hosted mode lacks historical local tag objects; "
-            "State/header admission and closed-runbook structure remain "
-            "enforced"
-        )
 
     # A mutable ref cannot be truthfully pinned in the immutable commit whose
     # publication moves that same ref. Mutable-ref measurements belong in
@@ -683,9 +711,51 @@ def check_publication_status(
             "dated body append"
         )
 
+    # Tagged-closing release-parent identity is derivable entirely from the
+    # admitted State header and closed runbook. Evaluate it before either the
+    # portable hosted branch or local tag resolution; a tag is not an input.
+    if release.uses_tagged_closing_commit:
+        check_required_state_ref_assertions(
+            state_path,
+            root,
+            header,
+            TAGGED_CLOSING_STATE_REF_ASSERTIONS,
+            {"release commit": release_commit},
+            errors,
+        )
+    tag_independent_verdict = (
+        "verified"
+        if len(errors) == tag_independent_error_count
+        else "failed"
+    )
+
+    # Portable hosted verification lacks historical local tag objects. It may
+    # skip ref reconciliation only after family admission and every
+    # tag-independent assertion have been evaluated; closed-runbook structure
+    # remains checked by check_closed_execution().
+    if not verify_local_tag_refs:
+        return (
+            "publication-status: local-tag-reconciliation=not-requested "
+            f"tag-independent-assertions={tag_independent_verdict} "
+            "bound=portable hosted mode lacks historical local tag objects; "
+            "State/header admission, mutable-ref prohibition, applicable "
+            "tagged release-parent freshness, and closed-runbook structure "
+            "remain enforced"
+        )
+
     measured_object = git_output(root, "rev-parse", tag)
     # Invariant R12 control site: unavailable annotated-tag ref.
     if measured_object is None:
+        if release.uses_tagged_closing_commit:
+            head = git_output(root, "rev-parse", "HEAD")
+            # Invariant R12 control site: tagged-closing pre-tag publication gate.
+            if head == release_commit:
+                return (
+                    "publication-status: local-tag-reconciliation=pre-tag "
+                    f"tag-independent-assertions={tag_independent_verdict} "
+                    f"protocol=tagged-closing release={tag} tag=absent "
+                    f"release-parent={release_commit}"
+                )
         errors.append(
             f"{shown(state_path, root)}: publication verification unavailable: "
             f"annotated tag ref {tag!r} cannot be resolved"
@@ -774,38 +844,22 @@ def check_publication_status(
             "publication is pending or outstanding"
         )
 
-    # Rule 2: a legacy release header retains both immutable tag hashes. A
-    # tagged-closing release instead asserts the already-known release commit;
-    # its tag object and closing target cannot exist until after that tree is
-    # committed and therefore belong to the dated post-push record below.
-    if release.uses_tagged_closing_commit:
-        assertions_to_check = TAGGED_CLOSING_STATE_REF_ASSERTIONS
-        expected = {"release commit": release_commit}
-    else:
-        assertions_to_check = LEGACY_STATE_REF_ASSERTIONS
-        expected = {
-            "annotated tag object": measured_object,
-            "tag target": measured_target,
-        }
-    # Invariant R12 control site: required and fresh immutable assertions.
-    for label, pattern in assertions_to_check:
-        measured = expected[label]
-        assertions = list(pattern.finditer(header))
-        if not assertions:
-            errors.append(
-                f"{shown(state_path, root)}: publication assertion required: "
-                f"status header must assert the {label} in the required "
-                "unambiguous phrasing"
-            )
-            continue
-        for assertion in assertions:
-            asserted = assertion.group(1)
-            if asserted != measured:
-                errors.append(
-                    f"{shown(state_path, root)}: publication assertion "
-                    f"freshness: {label} asserts {asserted}, but the measured "
-                    f"ref is {measured}"
-                )
+    # Rule 2: a legacy release header retains both immutable tag hashes. Its
+    # assertions remain tag-dependent and therefore run only after successful
+    # object and target resolution. Tagged-closing release-parent identity was
+    # already checked above because neither local tag value is an input.
+    if not release.uses_tagged_closing_commit:
+        check_required_state_ref_assertions(
+            state_path,
+            root,
+            header,
+            LEGACY_STATE_REF_ASSERTIONS,
+            {
+                "annotated tag object": measured_object,
+                "tag target": measured_target,
+            },
+            errors,
+        )
 
     if not release.uses_tagged_closing_commit:
         return (

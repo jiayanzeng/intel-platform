@@ -504,19 +504,27 @@ do not pretend otherwise.
 
 Publication reconciliation is likewise a lifecycle control, not a new HC
 invariant. Legacy release headers through v0.15.5 carry immutable annotated-tag
-object and peeled-target facts; a tagged-closing header carries the already
-known release-commit parent and leaves the later tag object and closing target
-to its dated forward record. Neither form predicts a mutable branch ref whose
-value publishing the same commit creates. Exact branch measurements therefore
-live in dated body records. `cycle-check` requires the applicable immutable
-assertions to exist and agree with the newest closed release record; zero
-matches are a defect, not a conditional skip. The tag must also be reachable
-from `HEAD`; missing tag, target, or ancestry inputs fail closed. The older rule
-that rejects a reachable release while the live header calls publication
-pending is unchanged. Registered R12 executes the actual publication-status
-entry point over planted cases. It independently disables selection of the
-newest actual release, each of the three family-admission outcomes, and every
-rule within the admitted family. `cycle-check` itself now distinguishes an
+object and peeled-target facts; both assertions depend on resolved tag values.
+A tagged-closing header carries the already known release-commit parent, whose
+only inputs are the admitted State header and closed runbook, and leaves the
+later tag object and closing target to its dated forward record. The checker
+therefore evaluates tagged release-parent freshness before portable-mode or
+missing-tag returns. An assembled closing worktree is admitted pre-tag only
+when its recorded tag object is absent and `HEAD` equals the recorded release
+parent; its distinct verdict reports the absent tag and whether the
+tag-independent assertions verified. A committed closing descendant without
+the tag still fails closed. Neither release family predicts a mutable branch
+ref whose value publishing the same commit creates. Exact branch measurements
+therefore live in dated body records. `cycle-check` requires the applicable
+immutable assertions to exist and agree with the newest closed release record;
+zero matches are a defect, not a conditional skip. After the pre-tag state, the
+tag must also be reachable from `HEAD`; missing tag, target, or ancestry inputs
+fail closed. The older rule that rejects a reachable release while the live
+header calls publication pending is unchanged. Registered R12 executes the
+actual publication-status and closing-record entry points over planted stale
+and normal pre-tag cases. It independently disables selection of the newest
+actual release, each of the three family-admission outcomes, and every rule
+within the admitted family. `cycle-check` itself now distinguishes an
 absent State file, an absent `**As of:**` status header, and a leading as-of
 header whose shape does not match `STATE_HEADER_RE`; no later no-release cycle
 can hide the newest earlier release from reconciliation. The separate
@@ -536,9 +544,10 @@ full-history hosted `cycle-check` passes without it, or after contrary evidence
 causes the identities and affected claims to be forward-corrected.
 The checker makes each intentional non-reconciliation branch visible: no
 reachable closed release reports a `not-applicable` bound, portable hosted mode
-reports `not-requested` and names the admission and structure checks it retains,
-and a verified legacy release reports that R-CLOSE post-push records do not
-apply. These are explicit bounds, not silent successes.
+reports `not-requested` after enforcing admission and tag-independent
+assertions, the assembled closing worktree reports `pre-tag`, and a verified
+legacy release reports that R-CLOSE post-push records do not apply. These are
+explicit bounds, not silent successes.
 
 ### Dated operational-residual dispositions
 

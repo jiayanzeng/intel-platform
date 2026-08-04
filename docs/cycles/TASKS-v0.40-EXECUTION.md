@@ -393,6 +393,30 @@ output; the strictness of the existing assertion is unchanged, proved by a
 control reproducing the v0.39 header shape and failing under the new form;
 `./run ci-local` is clean.
 
+**Measured partition (2026-08-04).** State-file/header admission uses only the
+filesystem and header text; the mutable-branch-ref prohibition uses only that
+header; and tagged-closing release-parent freshness uses only the admitted
+header plus the newest closed runbook's release-parent field. Those assertions
+therefore run before portable-mode and tag-resolution returns. Legacy
+tag-object and peeled-target assertions require resolved Git objects.
+Annotated type, closing-parent/tree identity, ancestry, reachable-tag pending
+disposition, and descendant post-push or unpublished-state reconciliation also
+require the tag or its target and remain after resolution. The one pre-tag
+admission itself needs the negative tag-resolution result, `HEAD` equal to the
+recorded release parent, and a closing record with no tag-object field; after
+the closing commit exists, that equality is false and an absent tag fails
+again.
+
+The historical implementation produced `freshness=false,
+unavailable=true, pre_tag=false` for both stale and correct tagless planted
+headers. The implemented entry point produces `freshness=true,
+unavailable=false, pre_tag=true` for the stale case (overall failure) and
+`freshness=false, unavailable=false, pre_tag=true` for the correct case (clean
+pass). Portable mode also evaluates the stale assertion. Registered R12
+control 14 covers stale local and portable identities; controls 9 and 10
+independently remove closing-record pre-tag admission and the normal pre-tag
+publication branch.
+
 **Done when** a closing tree that would produce a defective tag fails while it
 is still amendable.
 
@@ -577,7 +601,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 | Postgres / pgvector / multi-host seam | unchanged | v0.40 · 2026-08-04 — No Postgres, pgvector, second-writer, or multi-host seam was introduced. | none |
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.40 · 2026-08-04 — No third-party shell appeared and no stronger shell-replacement claim was made; A4 remains open. | none |
 | L2 forced-command wrapper | an operator server session | v0.40 · 2026-08-04 — No operator server session occurred; L2 remains scheduled. | none |
-| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.40 · 2026-08-04 — The registered scan passed R3 and R4 within their declared vocabularies at **16/16 rules / 100 controls**; no outside spelling was found. | none |
+| R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.40 · 2026-08-04 — PRE-TAG-GATE's registered scan passes R3 and R4 within their declared vocabularies at **16/16 rules / 102 controls**; no outside spelling was found. | none |
 | `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.40 · 2026-08-04 — Workflow and evidence topology remain forbidden; the latest pinned lane remains hosted run `30875346351`, where the explicit Rust 1.86 success and 1.85 refusal identities passed. | none |
 | GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.40 · 2026-08-04 — No verifier pin, bundle shape, workflow, or accepted contract changed. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.40 · 2026-08-04 — No third-publisher compliance review or admission occurred. | none |
@@ -630,7 +654,7 @@ template surviving into any acceptance point is a defect, not an oversight.
 
 - [x] ACTIVATE
 - [x] E0
-- [ ] PRE-TAG-GATE
+- [x] PRE-TAG-GATE
 - [ ] WITHHELD-STATE
 - [ ] ATTENTION-BASIS
 - [ ] RE-MEASURE
