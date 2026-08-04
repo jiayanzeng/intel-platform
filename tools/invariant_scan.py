@@ -1836,6 +1836,20 @@ PUBLICATION_CONTROL_MARKERS = {
         "Invariant R12 control site: every exact observation exclusion is raw "
         "wire."
     ),
+    "review-manifest-population": (
+        "Invariant R12 control site: derived review-manifest exclusion "
+        "population."
+    ),
+    "review-manifest-missing-exclusion": (
+        "Invariant R12 control site: every derived review manifest is excluded."
+    ),
+    "review-manifest-extra-exclusion": (
+        "Invariant R12 control site: every exact review-manifest exclusion is "
+        "derived."
+    ),
+    "review-projection-staleness": (
+        "Invariant R12 control site: review-source projection staleness."
+    ),
     "review-export-attention-boundary": (
         "Invariant R12 control site: review-export pre-failure attention "
         "boundary."
@@ -2699,6 +2713,46 @@ def r12_findings(root: Path) -> list[str]:
     ):
         missed.setdefault("raw-wire-extra-exclusion", []).append(
             "configured-nonmember"
+        )
+
+    review_manifest = "config/control-protected-artifacts.json"
+    other_manifest = "config/control-other-artifacts.json"
+    empty_manifest_errors = export_check.review_manifest_exclusion_errors(
+        set(), set()
+    )
+    if (
+        "derived review-manifest exclusion class is empty"
+        not in empty_manifest_errors
+    ):
+        missed.setdefault("review-manifest-population", []).append(
+            "empty-derived-class"
+        )
+    missing_manifest_errors = export_check.review_manifest_exclusion_errors(
+        {review_manifest}, set()
+    )
+    if (
+        "derived review manifest lacks an exact Repomix exclusion: "
+        f"{review_manifest}" not in missing_manifest_errors
+    ):
+        missed.setdefault("review-manifest-missing-exclusion", []).append(
+            "unexcluded-derived-member"
+        )
+    extra_manifest_errors = export_check.review_manifest_exclusion_errors(
+        {review_manifest}, {review_manifest, other_manifest}
+    )
+    if (
+        "exact Repomix review-manifest exclusion is not derived: "
+        f"{other_manifest}" not in extra_manifest_errors
+    ):
+        missed.setdefault("review-manifest-extra-exclusion", []).append(
+            "configured-nonmember"
+        )
+    if (
+        not export_check.review_projection_staleness_errors("fresh", "stale")
+        or export_check.review_projection_staleness_errors("fresh", "fresh")
+    ):
+        missed.setdefault("review-projection-staleness", []).append(
+            "stale-projection"
         )
 
     attention_boundary = 100
@@ -3992,6 +4046,10 @@ def r12_findings(root: Path) -> list[str]:
             "raw-wire-population",
             "raw-wire-missing-exclusion",
             "raw-wire-extra-exclusion",
+            "review-manifest-population",
+            "review-manifest-missing-exclusion",
+            "review-manifest-extra-exclusion",
+            "review-projection-staleness",
             "review-export-attention-boundary",
             "trigger-disposition-substance",
         }:
@@ -4026,6 +4084,14 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "raw-wire-missing-exclusion planted controls"
         elif group == "raw-wire-extra-exclusion":
             finding_kind = "raw-wire-extra-exclusion planted controls"
+        elif group == "review-manifest-population":
+            finding_kind = "review-manifest-population planted controls"
+        elif group == "review-manifest-missing-exclusion":
+            finding_kind = "review-manifest-missing-exclusion planted controls"
+        elif group == "review-manifest-extra-exclusion":
+            finding_kind = "review-manifest-extra-exclusion planted controls"
+        elif group == "review-projection-staleness":
+            finding_kind = "review-projection-staleness planted controls"
         elif group == "review-export-attention-boundary":
             finding_kind = "review-export-attention-boundary planted controls"
         elif group == "trigger-disposition-substance":

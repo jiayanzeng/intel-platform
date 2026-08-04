@@ -15,6 +15,7 @@
       ".venv/**",
       "**/__pycache__/**",
       "**/*.pyc",
+      "config/protected-artifacts.json",
       "evidence/**",
       "observations/v0.25/feed-shape/sec-edgar-usgaap.rss.xml",
       "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-privacy-information.html",

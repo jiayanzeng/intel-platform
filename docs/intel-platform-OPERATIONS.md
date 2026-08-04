@@ -398,6 +398,242 @@ ssh -p 2222 jia@127.0.0.1 "curl -fsS http://127.0.0.1:8081/health"
 
 ---
 
++## Review-source projection of the protected manifest
+
+The integrity authority remains `config/protected-artifacts.json`; the project-root
+review export excludes that mixed-use manifest and carries this exact projection
+instead. The projection retains every non-pin field and only those pin records
+whose referenced bytes are themselves present in the review source set.
+`./run export-check` derives both populations from tracked repository bytes and
+fails if this block is stale, if its source remains exported, or if a configured
+review-manifest exclusion has no matching projection.
+
+<!-- REVIEW_SOURCE_PROJECTION:START source="config/protected-artifacts.json" -->
+```json
+{
+  "schema_version": 2,
+  "lifecycle": {
+    "policy": "immutable_evidence",
+    "live_harvest": "fresh_path_only",
+    "admission": "append_only_chained_records_with_wire_evidence_and_operator_approval"
+  },
+  "artifacts": [
+    {
+      "path": "data/core.db",
+      "sha256": "db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0",
+      "bytes": 6729728,
+      "purpose": "Protected live arXiv archive used for corpus migration and HC1 attestation evidence.",
+      "provenance": "Live arXiv OAI-PMH archive with 1,764 documents; a later zero-document operator harvest advanced only the recorded cursor timestamp before these immutable bytes were admitted.",
+      "admission": {
+        "records": [
+          {
+            "task_id": "v0.10/A2",
+            "date": "2026-07-25",
+            "sha256": "db2f186e291c64192e567c9dfb979dd9877eb32b13c2ce2724a4acf1761a37a0",
+            "prior_sha256": null,
+            "wire_evidence": [
+              {
+                "command": "./run harvest-arxiv",
+                "output_ref": "git:6005a19878d72518e2f982b5859d68520a4a9503:PROGRESS-v0.8.md#2026-07-20-T2-partial"
+              },
+              {
+                "command": "shasum -a 256 data/core.db",
+                "output_ref": "git:e616957680a280a13aa275f0759f4cabd82dfa58:PROGRESS-v0.8.md#2026-07-24-B0.1"
+              }
+            ],
+            "operator_approval": {
+              "approved_by": "repository operator",
+              "approval_ref": "operator instruction to execute TASKS-v0.10-EXECUTION.md, including retroactive A2 records, on 2026-07-25"
+            },
+            "retroactive": true
+          }
+        ]
+      },
+      "expected": {
+        "documents": 1764,
+        "integrity_check": "ok",
+        "null_simhash": 0,
+        "null_canonical_id": 0,
+        "cursors": [
+          {
+            "source_id": "arxiv-cs",
+            "cursor": null,
+            "high_water": "2026-07-20",
+            "pending_high_water": null,
+            "updated_at": "2026-07-23 12:08:13"
+          }
+        ]
+      }
+    },
+    {
+      "path": "data/live-smoke.db",
+      "sha256": "94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a",
+      "bytes": 9490432,
+      "purpose": "Protected two-page live arXiv interruption-resume wire evidence.",
+      "provenance": "Two capped live OAI-PMH runs fetched 1,300 documents each; the second run resumed from the first run's token and durably advanced to the recorded continuation state.",
+      "admission": {
+        "records": [
+          {
+            "task_id": "v0.10/A2",
+            "date": "2026-07-25",
+            "sha256": "94f03e9e8662dddfa5c80b63a9845d9926a1fa10060b83638ee094e0a0462c4a",
+            "prior_sha256": null,
+            "wire_evidence": [
+              {
+                "command": "HARVEST_MAX_PAGES=1 CORE_DB=data/live-smoke.db ./run harvest-arxiv",
+                "output_ref": "git:059738677e375c24cc312d59b7d45e7bf6327e6c:PROGRESS-v0.8.md#2026-07-23-T2"
+              },
+              {
+                "command": "shasum -a 256 data/live-smoke.db",
+                "output_ref": "git:e616957680a280a13aa275f0759f4cabd82dfa58:PROGRESS-v0.8.md#2026-07-24-B0.1"
+              }
+            ],
+            "operator_approval": {
+              "approved_by": "repository operator",
+              "approval_ref": "operator instruction to execute TASKS-v0.10-EXECUTION.md, including retroactive A2 records, on 2026-07-25"
+            },
+            "retroactive": true
+          }
+        ]
+      },
+      "expected": {
+        "documents": 2600,
+        "integrity_check": "ok",
+        "null_simhash": 0,
+        "null_canonical_id": 0,
+        "cursors": [
+          {
+            "source_id": "arxiv-cs",
+            "cursor": "verb%3DListRecords%26metadataPrefix%3Doai_dc%26from%3D2026-07-22%26until%3D2026-07-22%26set%3Dcs%26skip%3D88",
+            "high_water": null,
+            "pending_high_water": "2026-07-22",
+            "updated_at": "2026-07-22 23:45:38"
+          }
+        ]
+      }
+    },
+    {
+      "path": "data/live-20260803T195324Z-37051.db",
+      "sha256": "fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044",
+      "bytes": 253952,
+      "purpose": "Protected first-window SEC EDGAR US GAAP RSS admission archive.",
+      "provenance": "Grant-B-authorized fresh-path production harvest on 2026-08-04 local time fetched and stored 200 current finance documents after the live SEC robots policy allowed the configured RSS path; the one-shot harness shut down cleanly and the archive was admitted only after DR12 compatibility and subscription-isolation measurements passed.",
+      "admission": {
+        "records": [
+          {
+            "task_id": "v0.38/WIRE-ADMISSION",
+            "date": "2026-08-04",
+            "sha256": "fb1046b79e7501d51e2dde3fd89fb7dfe0094defa6205b12afb39a21dff06044",
+            "prior_sha256": null,
+            "wire_evidence": [
+              {
+                "command": "Grant B evidence capture: one no-redirect/no-retry GET each for SEC robots, published access terms, and configured US GAAP RSS feed",
+                "output_ref": "sha256:c8e1cba80252d1fa209ed07cf842696adfe21b514fa45c5982e8caec42c42d54"
+              },
+              {
+                "command": "./run harvest-sec",
+                "output_ref": "sha256:c000a22aab26ce21b5fb100028e79d4be94c50d5395ea141938117a76b961818"
+              },
+              {
+                "command": "shasum -a 256 data/live-20260803T195324Z-37051.db",
+                "output_ref": "sha256:c000a22aab26ce21b5fb100028e79d4be94c50d5395ea141938117a76b961818"
+              }
+            ],
+            "operator_approval": {
+              "approved_by": "repository operator",
+              "approval_ref": "Initiating request recorded verbatim before execution in docs/cycles/PROGRESS-v0.38.md on 2026-08-04: Before the task begins, I will first authorize you to \"publish v0.17.4\" and \"SEC EDGAR wire and admission.\""
+            },
+            "retroactive": false
+          }
+        ]
+      },
+      "expected": {
+        "documents": 200,
+        "integrity_check": "ok",
+        "null_simhash": 0,
+        "null_canonical_id": 0,
+        "cursors": []
+      }
+    }
+  ],
+  "pinned_files": [
+    {
+      "path": "run",
+      "grade": "authorization",
+      "sha256": "e436d59b05f060a8ce78dd3fb23282ad99fbc8bd263abd73224978c74afeeadb",
+      "bytes": 50378,
+      "purpose": "Hash-pinned entry point for operator-authorized operational command surfaces.",
+      "provenance": "Operator selected L1 on 2026-07-27 and approved the Steps 7-8 atomic admission boundary. Operator-directed v0.17 HARVEST-PREFLIGHT on 2026-07-28 replaced v0.16's forward run hash f62a5d4f0b8f07d48c194e2d8e3959b5bfe82a3e61a45413452a284ab4dd348d (41862 bytes) after adding the protected-artifact verification call only at cmd_harvest_arxiv before environment setup and reachability. v0.18 WIRE-FINDINGS on 2026-07-28 replaced v0.17's hash 7351f2ffb7eb6def34c99c812a61a10690b6f690e9e1e44cee88790ca6dcc455 (41959 bytes) after making cmd_harvest_arxiv stop its managed core before returning and correcting its lifecycle output. Operator-directed v0.20 EXPORT-CHECK on 2026-07-29 replaced v0.18's hash caae4e8007fc885241bf1ac7c844e397a149970048e036be285e356449030678 (42056 bytes) after adding only the operator-local derived export check, its help text, and its dispatch. v0.24 POPULATION-EXPLICIT replaced v0.20's forward hash 0fc7f0be0ea2d8c68ff63be55dd0b73cc1385ce966b8307506a5387543f18779 (43044 bytes) after adding one comment that identifies shell/pytest.ini as the common local/hosted population-summary authority; the command, dispatch, model-profile functions, tools/model_profiles.py, authorization policy, and every historical manifest remain unchanged. v0.35 NET-FLOOR replaced v0.24's hash 44314ddfc182de68d4aaa444f2c6bd074fe08858d8d46f98aafa461dd6672397 (43125 bytes) after adding only the paired local live-fetch floor success and declared-MSRV refutation lanes; the command dispatch, model-profile functions, tools/model_profiles.py, and authorization policy remain unchanged. v0.35 Step 5A replaced NET-FLOOR's hash a05562dd1612678aa7c78f1aa8efe09e4c2e4392175c2363b25778577f36b818 (43907 bytes) after adding effective cargo/rustc release proof to exactly the four existing local floor entries; the command dispatch, model-profile functions, tools/model_profiles.py, and authorization policy remain unchanged. v0.35 attestation preflight replaced Step 5A's hash 1f87371243698cb60fb24c07b21caf8ce7a86f927a46443b0b89f71de978ad7b (44795 bytes) after adding only the standing v0.34 7/7 positive verifier preflight, its wrong-signer negative control, help text, and dispatch; model-profile functions, tools/model_profiles.py, and authorization policy remain unchanged. v0.38 REHEARSAL-COMPLETE replaces the v0.35 hash 5ff56fc76a5a33f17b2fbd4b0dfddeb8e6dbef0ad8b63e5f652a5b06b9ad4c55 (45409 bytes) after adding only the `harvest-sec` operational entry point and command help/dispatch, generalizing the protected-target suggestion to name the invoking harvest, and leaving the arXiv, model-profile, attestation, export, and every other command behavior unchanged. The SEC entry point verifies protected artifacts before selecting and protecting a fresh archive, requires the monitored-contact environment, starts the committed source configuration, filters ingestion to `sec-edgar-usgaap`, requires a nonempty first-window result, derives license/integrity/fingerprint facts, consumes no observation file, and owns its process cleanup. Its source-structure test plants missing-preflight and wrong-source mutations; no publisher request was made during rehearsal."
+    },
+    {
+      "path": "tools/model_profiles.py",
+      "grade": "authorization",
+      "sha256": "1920761c97ffa6fc7b5242c16384fb6f1b0727937f9e1cfd7e00826c913554df",
+      "bytes": 28297,
+      "purpose": "Hash-pinned controller for the operator-authorized model-profile lifecycle.",
+      "provenance": "OPS-FAILCLOSED deliberately replaced the admitted 2026-07-27 L1 hash b7b84261a6bc45706f93f338682108a31c3b88ad00ad4c91061a90f77ed74292 with pure, offline-tested refusal decisions; the pin makes later controller edits visible to manifest validation."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/.gitattributes",
+      "grade": "observation",
+      "sha256": "01be878b7d5393273981278a686f5940127adb400d121b1e8d91c7710a933c42",
+      "bytes": 213,
+      "purpose": "Byte-treatment declaration for the v0.25 SEC EDGAR wire observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/sec-edgar-feed-shape.md",
+      "grade": "observation",
+      "sha256": "87677a7c4721f3262f646f5b138406b5c296edc32dd06ad64a5439bafb27e936",
+      "bytes": 4654,
+      "purpose": "Wire-command, response-header, hash, and feed-shape record for the v0.25 SEC EDGAR observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/feed-shape/sec-edgar-robots.txt",
+      "grade": "observation",
+      "sha256": "72d6196b3f20737396e566ddeb769fb4174b44f334985a1267a59ae0f08c2f2f",
+      "bytes": 2622,
+      "purpose": "Publisher robots response body captured for the v0.25 SEC EDGAR wire observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.25/terms-gate/sec-edgar-terms-determination.md",
+      "grade": "observation",
+      "sha256": "103d29edd3a9ab005981a8ccd22eb8118040d992474e6a33491a51bde9ddbb2c",
+      "bytes": 3549,
+      "purpose": "Terms-gate determination that authorized the bounded v0.25 SEC EDGAR observation.",
+      "provenance": "Captured as part of the operator-authorized bounded v0.25 SEC observation on 2026-07-30; this pin detects change but does not independently establish what the publisher served."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/.gitattributes",
+      "grade": "observation",
+      "sha256": "7af8b91da22ea95a727a1b9f0cad9e4879037612869541554144152935fc37c9",
+      "bytes": 248,
+      "purpose": "Binary treatment for the three raw v0.38 SEC publisher responses.",
+      "provenance": "Grant B authorized the dated observation capture on 2026-08-04; this local attribute file prevents Git normalization from changing publisher response bytes."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-evidence-comparison.md",
+      "grade": "observation",
+      "sha256": "c8e1cba80252d1fa209ed07cf842696adfe21b514fa45c5982e8caec42c42d54",
+      "bytes": 4463,
+      "purpose": "Dated per-artifact DR12 compatibility comparison for SEC robots, terms, and RSS feed evidence.",
+      "provenance": "One Grant-B-authorized request per publisher URL completed without redirect or retry on 2026-08-04 local time; the report records exact response facts and the offline file-to-file material-compatibility decision before harvest."
+    },
+    {
+      "path": "observations/v0.38/sec-edgar-wire-2026-08-04/sec-edgar-admission-report.md",
+      "grade": "observation",
+      "sha256": "c000a22aab26ce21b5fb100028e79d4be94c50d5395ea141938117a76b961818",
+      "bytes": 5560,
+      "purpose": "Dated Grant B production-harvest, fresh-archive, entitlement, licensing, and admission measurement.",
+      "provenance": "The bounded one-shot production path consumed the live configured SEC feed into a fresh database on 2026-08-04 local time; the report records exact stdout, archive, public-shell isolation, scope limits, and the compatible admission disposition without exposing the monitored contact."
+    }
+  ]
+}
+```
+<!-- REVIEW_SOURCE_PROJECTION:END -->
+
 ## 5. Standing authorization for Codex (adopted 2026-07-27)
 
 The following policy is mirrored in `AGENTS.md`. It grants autonomy for exactly

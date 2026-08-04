@@ -23,6 +23,12 @@ from tools.cycle_identity import (
 )
 
 FILE_PATH_RE = re.compile(r'^<file path="([^"]+)">\r?$', re.MULTILINE)
+REVIEW_SOURCE_PROJECTION_RE = re.compile(
+    r'^<!-- REVIEW_SOURCE_PROJECTION:START source="([^"]+)" -->\r?\n'
+    r'```json\r?\n(.*?)\r?\n```\r?\n'
+    r'<!-- REVIEW_SOURCE_PROJECTION:END -->$',
+    re.MULTILINE | re.DOTALL,
+)
 CYCLE_DOCUMENT_RE = re.compile(
     r"^docs/cycles/(?:TASKS|PROGRESS)-"
     r"v[0-9]+(?:\.[0-9]+)*(?:-EXECUTION)?\.md$"
@@ -64,6 +70,19 @@ class ExportAttentionBoundary(NamedTuple):
     headroom_cycles: int
     denominator_bytes_per_cycle: int
     boundary_bytes: int
+
+
+class ReviewProjectionRecord(NamedTuple):
+    host_path: str
+    source_path: str
+    projection_text: str
+
+
+class ReviewProjectionPopulation(NamedTuple):
+    manifests: int
+    total_pins: int
+    retained_pins: int
+    omitted_pins: int
 
 
 def valid_iso_date(raw: str) -> bool:
@@ -199,8 +218,8 @@ def tracked_repository_paths(root: Path) -> set[str]:
     }
 
 
-def derived_required_paths(root: Path) -> set[str]:
-    """Derive review-critical paths without a hand-maintained path list."""
+def required_paths_before_review_projection(root: Path) -> set[str]:
+    """Derive the source set before mixed-use manifest projection."""
     tracked = tracked_repository_paths(root)
     retained_cycles = expected_retained_cycle_paths(root)
     excluded_cycles = tracked_cycle_paths(root) - retained_cycles
@@ -215,6 +234,12 @@ def derived_required_paths(root: Path) -> set[str]:
         if any(path.startswith(prefix) for prefix in excluded_prefixes)
     }
     return tracked - excluded_cycles - excluded_raw_wire - excluded_by_prefix
+
+
+def derived_required_paths(root: Path) -> set[str]:
+    """Derive review-critical paths without a hand-maintained path list."""
+    sources = required_paths_before_review_projection(root)
+    return sources - derived_review_manifest_paths(root)
 
 
 def tracked_cycle_paths(root: Path) -> set[str]:
@@ -340,6 +365,202 @@ def pinned_file_records(root: Path) -> tuple[dict[str, object], ...]:
     return tuple(records)
 
 
+def review_projection_staleness_errors(
+    expected_text: str,
+    actual_text: str,
+) -> list[str]:
+    # Invariant R12 control site: review-source projection staleness.
+    if actual_text != expected_text:
+        return ["review-source projection is stale against its manifest"]
+    return []
+
+
+def _projection_object(
+    root: Path,
+    source_path: str,
+    visible_paths: set[str],
+) -> tuple[dict[str, object], int, int]:
+    source = root / source_path
+    try:
+        raw = json.loads(source.read_text())
+        pins = raw["pinned_files"]
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as error:
+        raise ExportCheckError(
+            f"cannot derive review projection from {source_path}: {error}"
+        ) from error
+    if not isinstance(raw, dict) or not isinstance(pins, list) or not pins:
+        raise ExportCheckError(
+            f"review projection source {source_path} requires a nonempty "
+            "pinned_files object list"
+        )
+    pin_paths: list[str] = []
+    for record in pins:
+        if not isinstance(record, dict) or not isinstance(
+            record.get("path"), str
+        ):
+            raise ExportCheckError(
+                f"review projection source {source_path} has a pin without a path"
+            )
+        pin_paths.append(record["path"])
+    retained = [
+        record
+        for record, path in zip(pins, pin_paths, strict=True)
+        if path in visible_paths and path != source_path
+    ]
+    if not retained or len(retained) == len(pins):
+        raise ExportCheckError(
+            f"review projection source {source_path} must have both visible "
+            "and non-visible pinned paths"
+        )
+    projection = dict(raw)
+    projection["pinned_files"] = retained
+    return projection, len(pins), len(retained)
+
+
+def render_review_projection(
+    root: Path,
+    source_path: str,
+) -> str:
+    visible = required_paths_before_review_projection(root.resolve())
+    projection, _, _ = _projection_object(root.resolve(), source_path, visible)
+    encoded = json.dumps(projection, ensure_ascii=False, indent=2)
+    return (
+        f'<!-- REVIEW_SOURCE_PROJECTION:START source="{source_path}" -->\n'
+        "```json\n"
+        f"{encoded}\n"
+        "```\n"
+        "<!-- REVIEW_SOURCE_PROJECTION:END -->"
+    )
+
+
+def review_projection_records(root: Path) -> tuple[ReviewProjectionRecord, ...]:
+    root = root.resolve()
+    records: list[ReviewProjectionRecord] = []
+    for host_path in sorted(tracked_repository_paths(root)):
+        if not host_path.endswith(".md"):
+            continue
+        try:
+            text = (root / host_path).read_text()
+        except OSError as error:
+            raise ExportCheckError(
+                f"cannot inspect review projection host {host_path}: {error}"
+            ) from error
+        starts = text.count("<!-- REVIEW_SOURCE_PROJECTION:START")
+        ends = text.count("<!-- REVIEW_SOURCE_PROJECTION:END -->")
+        matches = list(REVIEW_SOURCE_PROJECTION_RE.finditer(text))
+        if starts != len(matches) or ends != len(matches):
+            raise ExportCheckError(
+                f"review projection markers are malformed in {host_path}"
+            )
+        records.extend(
+            ReviewProjectionRecord(host_path, match.group(1), match.group(2))
+            for match in matches
+        )
+    return tuple(records)
+
+
+def derived_review_manifest_paths(root: Path) -> set[str]:
+    """Derive mixed-use manifest exclusions from tracked exact projections."""
+    root = root.resolve()
+    tracked = tracked_repository_paths(root)
+    visible = required_paths_before_review_projection(root)
+    derived: set[str] = set()
+    for record in review_projection_records(root):
+        if record.host_path not in visible:
+            raise ExportCheckError(
+                f"review projection host is not review-visible: {record.host_path}"
+            )
+        if record.source_path not in tracked or record.source_path in derived:
+            raise ExportCheckError(
+                f"review projection source must be unique and tracked: "
+                f"{record.source_path}"
+            )
+        expected, _, _ = _projection_object(
+            root, record.source_path, visible
+        )
+        expected_text = json.dumps(expected, ensure_ascii=False, indent=2)
+        staleness = review_projection_staleness_errors(
+            expected_text, record.projection_text
+        )
+        if staleness:
+            raise ExportCheckError(
+                f"{record.host_path}: {staleness[0]} {record.source_path}"
+            )
+        derived.add(record.source_path)
+    return derived
+
+
+def _is_pinned_manifest(path: Path) -> bool:
+    try:
+        raw = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    return (
+        isinstance(raw, dict)
+        and isinstance(raw.get("pinned_files"), list)
+        and bool(raw["pinned_files"])
+    )
+
+
+def configured_review_manifest_exclusions(root: Path) -> set[str]:
+    root = root.resolve()
+    configured: set[str] = set()
+    for raw_path in repomix_custom_patterns(root):
+        if any(character in raw_path for character in GLOB_META):
+            continue
+        path = root / raw_path
+        if path.is_file() and _is_pinned_manifest(path):
+            configured.add(raw_path)
+    return configured
+
+
+def review_manifest_exclusion_errors(
+    derived: set[str],
+    configured: set[str],
+) -> list[str]:
+    errors: list[str] = []
+    # Invariant R12 control site: derived review-manifest exclusion population.
+    if len(derived) == 0:
+        errors.append("derived review-manifest exclusion class is empty")
+    # Invariant R12 control site: every derived review manifest is excluded.
+    errors.extend(
+        f"derived review manifest lacks an exact Repomix exclusion: {path}"
+        for path in sorted(derived.difference(configured))
+    )
+    # Invariant R12 control site: every exact review-manifest exclusion is derived.
+    errors.extend(
+        f"exact Repomix review-manifest exclusion is not derived: {path}"
+        for path in sorted(configured.difference(derived))
+    )
+    return errors
+
+
+def excluded_review_manifest_paths(root: Path) -> set[str]:
+    derived = derived_review_manifest_paths(root)
+    configured = configured_review_manifest_exclusions(root)
+    errors = review_manifest_exclusion_errors(derived, configured)
+    if errors:
+        raise ExportCheckError("; ".join(errors))
+    return derived
+
+
+def review_projection_population(root: Path) -> ReviewProjectionPopulation:
+    root = root.resolve()
+    visible = required_paths_before_review_projection(root)
+    records = review_projection_records(root)
+    total = 0
+    retained = 0
+    for record in records:
+        _, source_total, source_retained = _projection_object(
+            root, record.source_path, visible
+        )
+        total += source_total
+        retained += source_retained
+    return ReviewProjectionPopulation(
+        len(records), total, retained, total - retained
+    )
+
+
 def derived_raw_wire_paths(root: Path) -> set[str]:
     """Derive pinned raw publisher bodies from their byte-preservation marks."""
     root = root.resolve()
@@ -425,7 +646,7 @@ def excluded_export_paths(root: Path) -> set[str]:
     errors = raw_wire_exclusion_errors(derived, configured)
     if errors:
         raise ExportCheckError("; ".join(errors))
-    return derived
+    return derived | excluded_review_manifest_paths(root)
 
 
 def derived_structural_archive_prefixes(root: Path) -> set[str]:
@@ -534,6 +755,7 @@ def run(root: Path, export_path: Path) -> int:
     try:
         sources, actual, errors = check_export(root, export_path)
         attention = export_attention_boundary(root)
+        projection = review_projection_population(root)
     except ExportCheckError as error:
         print(f"export-check: ERROR: {error}", file=sys.stderr)
         print("export-check: FAIL (inspection unavailable)", file=sys.stderr)
@@ -557,6 +779,8 @@ def run(root: Path, export_path: Path) -> int:
         f"(derived_required={len(sources)}, "
         f"exported={len(actual)}, bytes={export_path.stat().st_size}, "
         f"retained_cycles={CYCLE_RETENTION_DEPTH}, "
+        f"review_manifests={projection.manifests}, "
+        f"review_pins={projection.retained_pins}/{projection.total_pins}, "
         f"attention_boundary={attention.boundary_bytes}, "
         f"attention_state={attention_state})"
     )

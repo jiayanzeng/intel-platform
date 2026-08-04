@@ -677,7 +677,7 @@ acceptance point is a defect, not an oversight.
 | Feed shape observation | an uncovered publisher feed shape | v0.41 · 2026-08-04 — No feed was fetched and no uncovered shape appeared. | none |
 | Threshold-authority limitation | a common dependency module or manifest edge appears between store and view | v0.41 · 2026-08-04 — The already-recorded shared `intel-extract` seam remains; no new dependency module or manifest edge appeared. | none |
 | ARCHITECTURE.md §8 / AGENTS.md R-CLOSE tag-mechanics duplication | the restatements diverge | v0.41 · 2026-08-04 — The two in-scope restatements still agree after activation; no divergence appeared. | none |
-| Review-export capacity | the export meets or exceeds the executable two-governed-growth-cycle attention boundary | v0.41 · 2026-08-04 — Exact entering commit `2c457feb870d62b16a5f9d9ca06aefcb3dc4cf8b` exports **2,803,926 bytes**, **234,538 bytes above** the 2,569,388-byte attention boundary and **196,074 bytes / 6.54% / 0.91 high-water cycles** below failure. No relief lever has yet moved; the predicate fires and Step 3 must make its disposition measurable. | Step 4 |
+| Review-export capacity | the export meets or exceeds the executable two-governed-growth-cycle attention boundary | v0.41 · 2026-08-04 — REVIEW-SOURCE derives **1 mixed-use manifest / 339 total pins / 9 review-visible pins / 330 omitted pins** from repository bytes. The resulting exact export is **2638599 bytes / 157 tracked entries / 2 retained cycles**, **69,211 bytes above** the 2,569,388-byte attention boundary and **361401 bytes / 12.05% / 1.68 high-water cycles** below failure. trigger-fired disposition: kind=`measured-change`; subject=`review-source export`; baseline_bytes=`2803926`; current_bytes=`2638599`. The predicate remains fired after the measured recovery; Grant E remains unheld and did not contribute to this change. | Step 4 |
 
 ---
 
@@ -716,7 +716,7 @@ acceptance point is a defect, not an oversight.
 - [x] E0
 - [x] TRIGGER-REACH
 - [x] DISPOSITION-SUBSTANCE
-- [ ] REVIEW-SOURCE
+- [x] REVIEW-SOURCE
 - [ ] ARCHIVE
 - [ ] RE-MEASURE
 - [ ] R-CLOSE

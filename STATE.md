@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The latest v0.41 task gate passes **22/22** local identities. The current registered suite passes **16/16 rules / 111 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and both freshly rebuilt complete local Python populations pass **391/391** with one named `on_site` identity each. Direct Python 3.11 and 3.12 population comparisons each derive **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The latest v0.41 task gate passes **22/22** local identities. The current registered suite passes **16/16 rules / 115 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and the latest Python 3.11 population passes **396/396** with one named `on_site` identity. E0's separately rebuilt Python 3.11 and 3.12 populations each passed **391/391**; their direct comparisons each derived **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
 **v0.41 E0 — entering state reconstructed (measured 2026-08-04).** Every
 runbook hypothesis now has a dated verdict from repository commands. The exact
@@ -85,6 +85,37 @@ local matrix passes **22/22** with Python 3.11 at **391/391**, and standalone
 golden passes **11/11** with zero delta. No dependency, production source,
 protected byte, response domain, accepted threshold, tag, or remote ref moved;
 no Step 3 stop condition fired.
+
+**v0.41 Step 4 — review source carries only usable manifest pins (measured
+2026-08-04).** C25 retains the review-relevant manifest head without adding a
+new artifact: the existing tracked and unpinned operations document carries a
+deterministic projection sourced by its own marker from
+`config/protected-artifacts.json`. The projection copies every non-pin field
+and retains exactly those pin records whose referenced paths survive the prior
+Git-derived review partition. The real derivation yields **1 manifest / 339
+total pins / 9 retained / 330 omitted**. Both a visible and a non-visible pin
+are required for membership, so this is a semantic mixed-use class rather than
+a threshold selected to reach the capacity target.
+
+The exact configured manifest exclusions must equal that derived class in both
+directions. R12 plants an empty class, an unexcluded derived member, a
+configured nonmember, and a stale projection; all four fail-before mutations
+are detected at their registered control sites. The focused export population
+passes **20/20**. The protected manifest remains byte-identical at **200,440
+bytes**, SHA-256 `f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`, with all **339** pins intact.
+No protected byte or integrity authority moved.
+
+The resulting project-root export passes at **2638599 bytes / 157 tracked
+entries / 2 retained cycles**, **69,211 bytes above** the **2,569,388-byte**
+attention boundary and **361401 bytes / 12.05% / 1.68 high-water cycles** below
+the fixed ceiling. Against the exact entering export, review-source selection
+recovers **165327 bytes** despite the checker, test, projection, and dated-record
+growth added by the task. The attention predicate therefore remains fired;
+this measured change answers the disposition without claiming the unissued
+Grant E lever ran. The complete registered suite is **16/16 rules / 115
+controls**. The permission-complete local matrix passes **22/22**, with Python
+3.11 at **396/396**; standalone golden passes **11/11** with zero delta. No C25
+falsifier or Step 4 stop condition fired.
 
 **v0.41 ACTIVATE — capacity-relief cycle declared (measured 2026-08-04).**
 The declaration, runbook, progress skeleton, and review-retention pattern now

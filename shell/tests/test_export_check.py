@@ -36,6 +36,7 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
         "crates/core/src/lib.rs",
         "repomix.config.json",
         "run",
+        "docs/intel-platform-OPERATIONS.md",
         "rust-toolchain.toml",
         "shell/intel_shell/app.py",
         "tools/check.py",
@@ -78,7 +79,10 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
     manifest_records = [
         {"path": raw_path, "grade": "observation"}
         for raw_path in excluded_paths
-    ] + [{"path": structural_archive, "grade": "structural"}]
+    ] + [
+        {"path": structural_archive, "grade": "structural"},
+        {"path": "run", "grade": "authorization"},
+    ]
     (root / "config/protected-artifacts.json").write_text(
         json.dumps({"pinned_files": manifest_records})
     )
@@ -87,6 +91,7 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
             {
                 "ignore": {
                     "customPatterns": [
+                        "config/protected-artifacts.json",
                         *excluded_paths,
                         "docs/state-archive/**",
                     ]
@@ -111,7 +116,18 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
     archive.write_text("structural archive\n")
     subprocess.run(["git", "init", "-q"], cwd=root, check=True)
     subprocess.run(["git", "add", "."], cwd=root, check=True)
-    return root, paths
+    (root / "docs/intel-platform-OPERATIONS.md").write_text(
+        export_check.render_review_projection(
+            root, "config/protected-artifacts.json"
+        )
+        + "\n"
+    )
+    subprocess.run(
+        ["git", "add", "docs/intel-platform-OPERATIONS.md"],
+        cwd=root,
+        check=True,
+    )
+    return root, paths - {"config/protected-artifacts.json"}
 
 
 def _write_export(
@@ -287,7 +303,7 @@ def test_excluded_wire_capture_present_is_a_named_failure(
 ) -> None:
     root, paths = _repository(tmp_path)
     export = tmp_path / "review.xml"
-    excluded = next(iter(export_check.excluded_export_paths(root)))
+    excluded = next(iter(export_check.derived_raw_wire_paths(root)))
     _write_export(export, paths | {excluded})
 
     _, _, errors = export_check.check_export(root, export)
@@ -314,7 +330,7 @@ def test_every_exact_excluded_wire_capture_is_required(
     tmp_path: Path,
 ) -> None:
     root, _ = _repository(tmp_path)
-    configured = sorted(export_check.excluded_export_paths(root))
+    configured = sorted(export_check.derived_raw_wire_paths(root))
     missing = root / configured[-1]
     missing.unlink()
 
@@ -362,6 +378,97 @@ def test_derived_raw_wire_population_is_nonempty_and_exact(
     assert len(derived) == 2
     assert configured == derived
     assert export_check.raw_wire_exclusion_errors(derived, configured) == []
+
+
+def test_derived_review_manifest_missing_exclusion_fails(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+    config_path = root / "repomix.config.json"
+    config = json.loads(config_path.read_text())
+    config["ignore"]["customPatterns"].remove(
+        "config/protected-artifacts.json"
+    )
+    config_path.write_text(json.dumps(config))
+
+    try:
+        export_check.excluded_review_manifest_paths(root)
+    except export_check.ExportCheckError as error:
+        assert str(error) == (
+            "derived review manifest lacks an exact Repomix exclusion: "
+            "config/protected-artifacts.json"
+        )
+    else:
+        raise AssertionError("unexcluded derived review manifest was accepted")
+
+
+def test_configured_review_manifest_outside_derived_class_fails(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+    extra_path = root / "config/other-protected-artifacts.json"
+    extra_path.write_text(json.dumps({"pinned_files": [{"path": "run"}]}))
+    subprocess.run(["git", "add", str(extra_path)], cwd=root, check=True)
+    config_path = root / "repomix.config.json"
+    config = json.loads(config_path.read_text())
+    config["ignore"]["customPatterns"].append(
+        extra_path.relative_to(root).as_posix()
+    )
+    config_path.write_text(json.dumps(config))
+
+    try:
+        export_check.excluded_review_manifest_paths(root)
+    except export_check.ExportCheckError as error:
+        assert str(error) == (
+            "exact Repomix review-manifest exclusion is not derived: "
+            "config/other-protected-artifacts.json"
+        )
+    else:
+        raise AssertionError("non-derived review-manifest exclusion was accepted")
+
+
+def test_review_manifest_projection_staleness_fails(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+    manifest = root / "config/protected-artifacts.json"
+    manifest.write_text(
+        manifest.read_text().replace(
+            '"pinned_files"', '"new_head": true, "pinned_files"'
+        )
+    )
+
+    try:
+        export_check.derived_review_manifest_paths(root)
+    except export_check.ExportCheckError as error:
+        assert "review-source projection is stale against its manifest" in str(
+            error
+        )
+    else:
+        raise AssertionError("stale review projection was accepted")
+
+
+def test_review_projection_population_is_real_and_partitioned(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+
+    population = export_check.review_projection_population(root)
+
+    assert population == export_check.ReviewProjectionPopulation(1, 4, 1, 3)
+
+
+def test_excluded_review_manifest_present_is_a_named_failure(
+    tmp_path: Path,
+) -> None:
+    root, paths = _repository(tmp_path)
+    export = tmp_path / "review.xml"
+    excluded = next(iter(export_check.derived_review_manifest_paths(root)))
+    _write_export(export, paths | {excluded})
+
+    _, _, errors = export_check.check_export(root, export)
+
+    assert f"excluded export path is present: {excluded}" in errors
 
 
 def test_excluded_state_archive_present_is_a_named_failure(
