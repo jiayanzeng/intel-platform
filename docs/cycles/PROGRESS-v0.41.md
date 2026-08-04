@@ -157,3 +157,46 @@ Entries are append-only; corrections are new dated entries.
   local-tag reconciliation.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
+
+### 2026-08-04 · DISPOSITION-SUBSTANCE — make fired answers testable
+
+- owner: Codex
+- runbook: `TASKS-v0.41-EXECUTION.md`
+- commit: 6cf7c5c4f39f8517bedaee59d6763eb267d9f5ff
+- pre-adoption satisfiability acceptance: PASS. Before either live governed row
+  adopted the proposed grammar, direct evaluation rejected awareness-only,
+  accepted `kind=unheld-lever` with `lever=Grant E` and
+  `recoverable_bytes=84896`, and accepted `kind=measured-change` only with
+  distinct baseline/current values. The current no-grant state can therefore
+  close truthfully without inventing execution or recovery.
+- weak-answer acceptance: PASS. `trigger-fired disposition: aware.` fails when
+  attention fires. R12 control **33** anchors that planted case at the shared
+  governed-disposition parser; its registered fail-before mutation makes the
+  weak answer pass, which the invariant self-test detects.
+- unheld-lever acceptance: PASS. The exact unheld form above passes the same
+  entry point with a positive measured quantity. This is the hard C24
+  satisfiability half, not an exemption from substance.
+- generality acceptance: PASS. Export attention and every governed artifact
+  trigger crossing the lifecycle checker can evaluate call the same parser.
+  Exactly one prefix and one form are required, so a weak sentence cannot hide
+  beside a valid suffix. The scope is not narrowed to review export.
+- answerability acceptance: PASS. `measured-change` names a subject plus
+  distinct baseline/current bytes; `unheld-lever` names the unavailable lever
+  plus positive recoverable bytes. A later measurement can compare the first or
+  determine whether the second landed and replace it with measured change.
+- live-row acceptance: PASS. Architecture attention and State archival now use
+  the truthful Grant E / **84,896-byte** unheld form. `cycle-check` reports the
+  firing State trigger disposed while its artifact boundary remains below
+  **453,741** bytes.
+- invariant acceptance: PASS. Standalone and CI-context self-tests pass
+  **16/16 rules / 111 controls**; focused export/lifecycle tests pass
+  **111/111**.
+- local-matrix acceptance: PASS. `./run ci-local` passes **22/22** jobs with
+  Python 3.11 at **391/391**, every Rust floor/lint lane, protected artifacts,
+  embedded golden, and append-only audit checks clean.
+- protected/scope acceptance: PASS. No dependency, production source,
+  protected byte, response domain, accepted boundary, entitlement/licensing
+  outcome, tag, or remote ref moved. The three amendment inputs remain
+  untouched and untracked.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs pass **11/11**.
