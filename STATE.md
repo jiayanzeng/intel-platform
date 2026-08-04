@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 changes lifecycle tooling, executable controls, and governing records; it changes no production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The latest v0.41 task gate passes **22/22** local identities. The current registered suite passes **16/16 rules / 115 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, golden passes **11/11**, and the latest Python 3.11 population passes **396/396** with one named `on_site` identity. E0's separately rebuilt Python 3.11 and 3.12 populations each passed **391/391**; their direct comparisons each derived **391** equivalent tests from local **391/391** and hosted **390 passed + 1** named `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 carries no measured runtime-behavior difference or public-surface movement, so the count remains zero.
+**As of:** 2026-08-04 · **Version:** v0.17.7 (core-shell) · **Status:** **v0.17.7 is closed locally and unpublished; the operator has authorized publication of v0.17.7 and the v0.41 release. v0.17.6 remains permanently withheld, and v0.17.5 remains published exactly.** Untagged release commit `b8fe1c2c1c2c842868a70581dee390939ef68595` carries the v0.17.7 authorities and is the immediate parent of its closing tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is exact remote `main`. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact published audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. Exact v0.41 evidence candidate `44058820d25834d2b89d54cda48ed723a3dfa77f` passed hosted run `30917725112`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 and v0.41 change lifecycle/review tooling, executable controls, and governing records; neither changes production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The latest completed v0.41 full task gate passes **22/22** local identities. The current registered suite passes **16/16 rules / 115 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.7, and golden passes **11/11**. Fresh local Python 3.11 and 3.12 populations each pass **396/396** with one named `on_site` identity; their repository-computed hosted comparisons each derive **396** equivalent tests from local **396/396** and hosted **395 passed + 1** named, reasoned, `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.5 reset the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; v0.40 and v0.41 carry no measured runtime-behavior difference or public-surface movement, so the count remains zero.
 
 **v0.41 E0 — entering state reconstructed (measured 2026-08-04).** Every
 runbook hypothesis now has a dated verdict from repository commands. The exact
@@ -138,6 +138,52 @@ The permission-complete local matrix passed **22/22** jobs, including **16/16
 rules / 115 controls**, Python 3.11 at **396/396**, and embedded golden
 **11/11**. The separately required golden run also passed **11/11** with zero
 delta. No Step 5 stop condition fired.
+
+**v0.41 Step 6 — exact hosted candidate passed (measured 2026-08-04).**
+Checker changes made RE-MEASURE mandatory. Historical attestation preflight
+passed **7/7** bundles under every strict flag with required and observed
+GitHub CLI **2.96.0**, and the deliberately wrong signer was rejected. The
+full pre-push snapshot kept remote `main` and every recorded annotated/peeled
+release tag exact. The required absence pre-check for
+`refs/heads/codex/v0.41-evidence-4405882` returned exit **2** with no output.
+One non-force push then created exactly that one v0.41 ref at audited candidate
+`44058820d25834d2b89d54cda48ed723a3dfa77f`; it was not retried, reused,
+forced, or moved.
+
+Workflow-dispatch run **30917725112**, attempt **1**, targeted that exact SHA
+and ref and concluded `success`. All **9/9** workflow-derived blocking
+identities passed: core, golden, lint, offline MSRV, net MSRV 1.85 refusal, net
+MSRV 1.86 success, net, shell Python 3.11, and shell Python 3.12. Dependency
+drift was the sole report-only skip. The run persisted **9** receipts and **9**
+Sigstore bundles. After the clean candidate worktree received the ignored
+protected corpora required by the verifier, strict release-grade verification
+accepted **9**, rejected **0**, authenticated the exact repository, workflow,
+source digest, and source ref, and derived one complete nine-identity matrix.
+The earlier clean-worktree attempt without those ignored databases stopped
+before receipt acceptance and is a setup non-result, not evidence.
+
+Fresh permission-capable local Python 3.11 and 3.12 runs each collected and
+passed **396/396**, including the named `on_site` protected-corpus test. Each
+hosted lane collected **396**, passed **395**, and skipped only
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+with its declared protected-corpora/built-core reason and `on_site` marker.
+Both direct `tools/test_population.py` comparisons derive
+`equivalent=true`, `equivalent_passed=396`, and exactly one allowed hosted
+skip. Initial sandboxed local attempts failed **8** tests solely because socket
+binds and `ps` inspection were denied; they are disclosed non-measurements and
+were replaced by the clean permission-capable runs.
+
+Final remote readback resolves the evidence ref to the exact candidate, keeps
+`main=dd605acc037da405fa6b2b5366b09349c330c194`, and keeps every release tag
+byte-for-byte at the pre-push snapshot; v0.17.6 and v0.17.7 remain absent. The
+exact candidate project-root export passes at **2645906 bytes / 157 tracked
+entries / 2 retained cycles**, **76,518 bytes above** the **2,569,388-byte**
+attention boundary and **354094 bytes / 11.80% / 1.64 high-water cycles** below
+the unchanged ceiling. State measures **188277 / 453,741 bytes** after this
+record. No production source, dependency, protected byte, observation,
+fixture, publisher wire, public response domain, entitlement/licensing
+outcome, local tag, `main`, or release tag moved; no Step 6 stop condition
+fired.
 
 **v0.41 ACTIVATE — capacity-relief cycle declared (measured 2026-08-04).**
 The declaration, runbook, progress skeleton, and review-retention pattern now
