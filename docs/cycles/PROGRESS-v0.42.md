@@ -163,3 +163,43 @@ Entries are append-only; corrections are new dated entries.
   expected `absent` audit content at exact remote main, not a contradiction.
 - golden-E2E delta: **0**. Both integrated full gates and the post-record
   standalone run passed **11/11**.
+
+### 2026-08-05 · ARCHIVE — Grant E not granted
+
+- owner: Codex
+- runbook: `TASKS-v0.42-EXECUTION.md`
+- commit: 1396420164538c9a1a9e27dc58e15fffa8c7a88d
+- grant acceptance: PASS. Neither the initiating request nor any operator
+  message through Step 3 contains Grant E's exact required authorization. The
+  dated not-granted branch executed; no partial or inferred authority was used.
+- unrecovered-quantity acceptance: PASS. Direct extraction from the first
+  v0.38 record through the byte before the permanent-tail marker measures
+  exactly **84,896 bytes**. The active disposition remains
+  `kind=unheld-lever`, `lever=Grant E`, `recoverable_bytes=84896` and claims
+  zero recovered bytes.
+- archive acceptance: PASS. `docs/state-archive/` still contains only the four
+  prior archives through v0.13, v0.21, v0.28, and v0.35; no v0.38 archive was
+  created and no existing archived byte moved.
+- manifest acceptance: PASS. `config/protected-artifacts.json` is unchanged at
+  **200,440 bytes / 339 pins**, SHA-256
+  `f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`.
+  The pin delta is exactly zero and complete verification matches all **3/3**
+  protected artifacts.
+- State acceptance: PASS. The exact implementation commit carries State at
+  **208,626 / 453,741 bytes**; `cycle-check` reports both artifact boundaries
+  and the State structural/current-restatement contract bound and measures the
+  remote witness agreeing.
+- executable acceptance: PASS. Full `ci-local` passes **22/22**, including
+  **17/17 rules / 119 controls**, Python 3.11 at **397/397**, and embedded
+  golden **11/11**. The first attempt stopped before substantive tests because
+  ARCHIVE was checked before a resolvable implementation/progress pair; the box
+  was restored, acceptance was rerun in contract order, and the corrected full
+  run passed.
+- protected-input acceptance: PASS. The three retained amendment inputs remain
+  untouched and untracked. No dependency, production source, protected byte,
+  observation, fixture, publisher wire, entitlement/licensing outcome, public
+  surface, local tag, or remote ref moved.
+- stop conditions: none. The not-granted quantity agrees with the activation
+  measurement and no boundary or architectural invariant moved.
+- golden-E2E delta: **0**. Embedded and post-record standalone runs each passed
+  **11/11**.
