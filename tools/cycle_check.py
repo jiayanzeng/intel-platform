@@ -33,6 +33,7 @@ from tools.export_check import (
     export_attention_boundary,
     export_attention_errors,
     export_attention_fires,
+    has_substantive_trigger_fired_disposition,
     expected_retained_cycle_paths,
     governed_export_measured_cell,
 )
@@ -1904,10 +1905,6 @@ GOVERNED_ARTIFACT_BOUNDARY_RE = re.compile(
     r"path=`([^`\n]+)`; bytes=`([0-9]+)`$",
     re.MULTILINE,
 )
-TRIGGER_FIRED_DISPOSITION_RE = re.compile(
-    r"\btrigger-fired disposition:\s*(?!none(?:\b|$))[^.;|]+",
-    re.IGNORECASE,
-)
 STATE_PERMANENT_TAIL_MARKER = "<!-- STATE_ARCHIVE_PERMANENT_TAIL:START -->"
 STATE_NUMBERED_HEADING_RE = re.compile(
     r"^(?P<level>##|###) (?P<section>[1-9][0-9]*[a-z]?)\.",
@@ -2451,7 +2448,7 @@ def check_governed_artifact_byte_boundaries(
             ]
             if (
                 not valid_dates
-                or TRIGGER_FIRED_DISPOSITION_RE.search(measured) is None
+                or not has_substantive_trigger_fired_disposition(measured)
             ):
                 errors.append(
                     f"{shown(artifact, root)}: measured {measured_bytes} bytes "
@@ -2460,7 +2457,8 @@ def check_governed_artifact_byte_boundaries(
                     f"(artifact_boundary={artifact_boundary_fired}, "
                     f"review_export_attention={attention_fired}); row "
                     f"{spec.subject_prefix!r} "
-                    "requires a dated 'trigger-fired disposition:'"
+                    "requires a dated 'trigger-fired disposition:' in "
+                    "measured-change or unheld-lever form"
                 )
                 state = "trigger-fired-undisposed"
             else:

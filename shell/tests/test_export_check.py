@@ -217,7 +217,8 @@ def test_export_at_attention_boundary_accepts_dated_disposition(
     architecture.write_text(
         architecture.read_text().replace(
             "measured below boundary.",
-            "trigger-fired disposition: archive decision recorded.",
+            "trigger-fired disposition: kind=`unheld-lever`; "
+            "lever=`Grant E`; recoverable_bytes=`84896`.",
         )
     )
     export = tmp_path / "review.xml"

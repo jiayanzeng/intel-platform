@@ -38,8 +38,19 @@ EXPORT_ATTENTION_BOUNDARY_RE = re.compile(
     r"Review-export attention boundary: headroom_cycles=`([0-9]+)`; "
     r"denominator_bytes_per_cycle=`([0-9]+)`; boundary_bytes=`([0-9]+)`\."
 )
-TRIGGER_FIRED_DISPOSITION_RE = re.compile(
-    r"\btrigger-fired disposition:\s*(?!none(?:\b|$))[^.;|]+",
+TRIGGER_FIRED_DISPOSITION_PREFIX_RE = re.compile(
+    r"\btrigger-fired disposition:",
+    re.IGNORECASE,
+)
+TRIGGER_MEASURED_CHANGE_DISPOSITION_RE = re.compile(
+    r"\btrigger-fired disposition:\s*kind=`?measured-change`?;\s*"
+    r"subject=`?([^`;\n]+)`?;\s*baseline_bytes=`?([0-9]+)`?;\s*"
+    r"current_bytes=`?([0-9]+)`?\.",
+    re.IGNORECASE,
+)
+TRIGGER_UNHELD_LEVER_DISPOSITION_RE = re.compile(
+    r"\btrigger-fired disposition:\s*kind=`?unheld-lever`?;\s*"
+    r"lever=`?([^`;\n]+)`?;\s*recoverable_bytes=`?([1-9][0-9]*)`?\.",
     re.IGNORECASE,
 )
 ISO_DATE_RE = re.compile(r"\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b")
@@ -130,14 +141,37 @@ def export_attention_errors(
         )
         if (
             not has_valid_date
-            or TRIGGER_FIRED_DISPOSITION_RE.search(measured) is None
+            or not has_substantive_trigger_fired_disposition(measured)
         ):
             errors.append(
                 f"export size {export_bytes} meets or exceeds attention "
                 f"boundary {boundary_bytes}; governed row requires a dated "
-                "'trigger-fired disposition:'"
+                "'trigger-fired disposition:' in measured-change or "
+                "unheld-lever form"
             )
     return errors
+
+
+def has_substantive_trigger_fired_disposition(measured: str) -> bool:
+    """Require one later-testable measured-change or unheld-lever answer."""
+    prefixes = TRIGGER_FIRED_DISPOSITION_PREFIX_RE.findall(measured)
+    forms: list[tuple[str, re.Match[str]]] = [
+        ("measured-change", match)
+        for match in TRIGGER_MEASURED_CHANGE_DISPOSITION_RE.finditer(measured)
+    ]
+    forms.extend(
+        ("unheld-lever", match)
+        for match in TRIGGER_UNHELD_LEVER_DISPOSITION_RE.finditer(measured)
+    )
+    # Invariant R12 control site: governed trigger disposition substance.
+    if len(prefixes) != 1 or len(forms) != 1:
+        return False
+    kind, match = forms[0]
+    if kind == "measured-change":
+        baseline = int(match.group(2))
+        current = int(match.group(3))
+        return baseline != current
+    return True
 
 
 def export_attention_fires(export_bytes: int, boundary_bytes: int) -> bool:

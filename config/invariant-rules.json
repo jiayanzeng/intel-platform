@@ -866,6 +866,18 @@
           "expected_anchor": "    # Invariant R12 control site: review-export pre-failure attention boundary."
         },
         {
+          "file": "tools/export_check.py",
+          "find": "    if len(prefixes) != 1 or len(forms) != 1:\n        return False\n    kind, match = forms[0]\n",
+          "replace_with": [
+            "    if len(prefixes) != 1 or len(forms) != 1:\n",
+            "        return True\n",
+            "    kind, match = forms[0]\n"
+          ],
+          "expected_fail": "trigger-disposition-substance planted controls were not detected: awareness-only-or-unheld-lever-unsatisfiable",
+          "expected_file": "tools/export_check.py",
+          "expected_anchor": "    # Invariant R12 control site: governed trigger disposition substance."
+        },
+        {
           "file": "tools/cycle_check.py",
           "find": "    for scope_class, patterns in (\n        (\"allow\", declaration.allow),\n        (\"release_authority\", declaration.release_authorities),\n        (\"forbid\", declaration.forbid),\n    ):\n",
           "replace_with": [

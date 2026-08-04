@@ -1840,6 +1840,9 @@ PUBLICATION_CONTROL_MARKERS = {
         "Invariant R12 control site: review-export pre-failure attention "
         "boundary."
     ),
+    "trigger-disposition-substance": (
+        "Invariant R12 control site: governed trigger disposition substance."
+    ),
     "declared-scope-population": (
         "Invariant R12 control site: declared scope pattern population."
     ),
@@ -2709,11 +2712,29 @@ def r12_findings(root: Path) -> list[str]:
         attention_boundary,
         attention_boundary,
         f"{attention_cycle} · 2026-08-04 — trigger-fired disposition: "
-        "archive decision",
+        "kind=`measured-change`; subject=`review-export`; "
+        "baseline_bytes=`101`; current_bytes=`100`.",
     )
     if not undisposed_attention or disposed_attention:
         missed.setdefault("review-export-attention-boundary", []).append(
             "crossed-boundary-disposition"
+        )
+
+    awareness_only = export_check.export_attention_errors(
+        attention_boundary,
+        attention_boundary,
+        f"{attention_cycle} · 2026-08-04 — trigger-fired disposition: aware.",
+    )
+    truthful_unheld_lever = export_check.export_attention_errors(
+        attention_boundary,
+        attention_boundary,
+        f"{attention_cycle} · 2026-08-04 — trigger-fired disposition: "
+        "kind=`unheld-lever`; lever=`Grant E`; "
+        "recoverable_bytes=`84896`.",
+    )
+    if not awareness_only or truthful_unheld_lever:
+        missed.setdefault("trigger-disposition-substance", []).append(
+            "awareness-only-or-unheld-lever-unsatisfiable"
         )
 
     vacuous_declaration = cycle_check.ScopeDeclaration(
@@ -3972,6 +3993,7 @@ def r12_findings(root: Path) -> list[str]:
             "raw-wire-missing-exclusion",
             "raw-wire-extra-exclusion",
             "review-export-attention-boundary",
+            "trigger-disposition-substance",
         }:
             source_relative = "tools/export_check.py"
         elif group in {
@@ -4006,6 +4028,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "raw-wire-extra-exclusion planted controls"
         elif group == "review-export-attention-boundary":
             finding_kind = "review-export-attention-boundary planted controls"
+        elif group == "trigger-disposition-substance":
+            finding_kind = "trigger-disposition-substance planted controls"
         elif group == "declared-scope-population":
             finding_kind = "declared-scope-population planted controls"
         elif group == "trigger-boundary-order":

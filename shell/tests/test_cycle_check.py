@@ -232,8 +232,9 @@ def _cross_fixture_artifact_boundaries(
             "`STATE.md` reaches its governed artifact byte boundary | "
             "v1.2.3 · 2026-07-30 — measured | none |",
             "`STATE.md` reaches its governed artifact byte boundary | "
-            "v1.2.3 · 2026-07-30 — trigger-fired disposition: archive "
-            "decision recorded | none |",
+            "v1.2.3 · 2026-07-30 — trigger-fired disposition: "
+            "kind=`unheld-lever`; lever=`Grant E`; "
+            "recoverable_bytes=`84896`. | none |",
         )
         architecture = root / "ARCHITECTURE.md"
         architecture.write_text(
@@ -242,7 +243,8 @@ def _cross_fixture_artifact_boundaries(
                 "≥1.00 s real | v1.2.3 · 2026-07-30 — measured |",
                 "consecutive clean ./run verify-artifacts runs each take "
                 "≥1.00 s real | v1.2.3 · 2026-07-30 — trigger-fired "
-                "disposition: retention decision recorded |",
+                "disposition: kind=`measured-change`; subject=`manifest`; "
+                "baseline_bytes=`2`; current_bytes=`3`. |",
             )
         )
     runbook.write_text(runbook_text)
