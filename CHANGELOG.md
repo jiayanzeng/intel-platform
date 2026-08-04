@@ -4,6 +4,36 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.6 — 2026-08-04
+
+### Fixed
+
+- Review exports now prove both sides of the tree-image relation: every
+  exported path is Git-tracked, every required tracked path is present, and a
+  nonempty derived class of pinned raw publisher-response bodies is excluded
+  exactly. Historical untracked amendment inputs remain untouched and visible
+  in Git status while one bounded family exclusion keeps them out of the
+  delivered artifact.
+- Review-export capacity now has an executable pre-failure attention boundary
+  reserving two measured adjacent growth cycles below the unchanged
+  3,000,000-byte ceiling. Both the generated artifact and its recorded
+  governed figure require a dated disposition if that boundary is crossed.
+- The bounded `./run harvest-sec` safety contract is now stated in the
+  architecture and registered as invariant R16 with ten reconstructible
+  planted failures. The control follows the real shell dispatcher and helper
+  chain; it does not claim fresh-path enforcement for an explicit unprotected
+  `CORE_DB` override that the executable does not currently reject.
+
+### Compatibility
+
+- This is a patch release. The changes affect review tooling, executable
+  controls, and governing records; they do not change production runtime
+  behavior, dependencies, publisher configuration, protected evidence,
+  entitlements, licensing outcomes, or any public route, response field, field
+  type, or serialized `/v1/*` value-domain value. The v0.17.4-baselined domain
+  manifest remains exact at 6 routes, 31 status/media variants, and 112 field
+  occurrences.
+
 ## v0.17.5 — 2026-08-04
 
 ### Added
