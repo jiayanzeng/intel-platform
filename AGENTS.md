@@ -256,8 +256,10 @@ warnings; clippy is an independent blocking gate.)
 - **Write every Repomix review export from the project root.** A measured
   non-root invocation did not load `repomix.config.json` and silently dropped
   `Cargo.lock`, recreating the lockfile-review gap this project has already paid
-  for. Use `./run export-check`; it generates from the root and derives the
-  expected source set from `git ls-files`.
+  for. Use `./run export-check`; it generates from the root, derives the
+  required review set from the Git-tracked tree and the registered exclusion
+  classes, and rejects every exported path that is not Git-tracked. An
+  untracked worktree byte is never review-export evidence.
 - **Keep Repomix `enableSecurityCheck` set to `false`.** The measured security
   pass reported **340 files collected, 339 included** and silently omitted
   `crates/ingest/src/lib.rs`. Registered, self-testing invariant R4 is this
@@ -266,8 +268,12 @@ warnings; clippy is an independent blocking gate.)
 - **Keep the review export within its executable bound.** `export-check`
   rejects an export above 3,000,000 bytes, derives exactly two retained
   execution cycles (the active cycle plus one prior) from the cycle declaration,
-  and rejects the pinned SEC RSS body or any `docs/state-archive/**` content in
-  the export. Repository bytes and protected pins remain untouched by these
+  derives the raw-wire exclusion class from pinned observation files carrying
+  Git's `binary` byte-preservation attribute, requires the exact configured
+  observation exclusions to equal that nonempty class in both directions, and
+  derives structural-archive exclusions from the protected manifest. Any
+  derived raw-wire body or structural-archive content in the export is a
+  failure. Repository bytes and protected pins remain untouched by these
   review-scope exclusions.
 
 These are review-export operating rules, not additions to the HC series.

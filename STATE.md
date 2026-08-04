@@ -1,6 +1,53 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 84 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **373/373**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **15/15 rules / 89 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **377/377**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+
+**v0.39 EXPORT-TRUTH — export images the checked tree (measured
+2026-08-04).** C15 selects one Repomix family exclusion,
+`docs/cycles/AMENDMENT-{r4,v0.36}-*.md`, for the three historical amendment
+inputs. It is one declarative class rather than three per-file literals, leaves
+Git status visible, does not touch or admit the scope-forbidden historical
+files, and does not hide a future amendment family. The selection would have
+changed if the inputs did not share those two bounded historical families or
+if their review value required tracked admission under an authorized scope; in
+that case a broader exclusion would have hidden unrelated future evidence.
+Their bytes remain exact **16,834 + 18,906 + 7,387 = 43,127**, their three
+SHA-256 values remain `02c254c1…`, `fb45efb0…`, and `dd8122cd…`, and all three
+remain untracked and byte-untouched.
+
+C16 selects the existing Git `binary` byte-preservation attribute as the class
+seam, intersected with manifest-pinned `observation` files. The real pin
+population derives exactly **4** raw-wire bodies: the v0.25 RSS body and the
+v0.38 privacy, robots, and RSS bodies. Repomix now carries exactly those four
+exact observation exclusions: derived-minus-configured **0** and
+configured-minus-derived **0**. The small unmarked v0.25 robots policy remains
+a review source rather than being swept into the class. Manifest-derived
+structural-archive prefixes remain exactly `docs/state-archive/`. The seam
+would be rejected if a binary-marked pinned observation were a review source,
+if a raw no-review body lacked the mark, or if either set difference became
+nonzero; the bidirectional registered controls make those states failures.
+
+The generated project-root export passes at **2,675,532 bytes / 158 entries /
+2 retained cycles**. Its partition is exhaustive by construction: all **158**
+entries are Git-tracked, **0** are untracked defects, all **158/158** derived
+required paths are present, all **4/4** derived raw bodies are absent, and both
+structural archives are absent. The three untracked amendment inputs are absent
+without being edited. Every active declared-scope pattern was also evaluated
+over **587 tracked + 3 untracked** repository candidates: every clean pattern
+matched at least one path, while the exact annotated vacuous predecessor fails
+the new syntax guard and the corrected `docs/cycles/**` form passes.
+
+R12 adds five reconstructible mutations for an untracked export entry, an
+empty raw-wire population, a missing raw-wire exclusion, an extra non-wire
+observation exclusion, and the vacuous annotated scope row. All **47/47** R12
+controls and **15/15 rules / 89 controls** overall pass. The complete Python
+3.11 and Python 3.12 populations each pass **377/377** with the same one
+accepted non-fatal Starlette warning, and the complete local gate passes all
+**22/22** jobs. The edited export tool
+contains no hand-maintained required-path list, excluded filename list,
+excluded prefix list, or cycle-specific literal. No dependency, production
+source, protected byte, observation, fixture, publisher wire, entitlement or
+licensing outcome, golden input, or remote ref moved.
 
 **v0.39 PUBLISH-V17-5 — Grant C spent exactly (measured 2026-08-04).**
 The operator's initiating request issued the named runbook Grant C, whose

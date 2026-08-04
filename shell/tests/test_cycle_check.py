@@ -1824,6 +1824,29 @@ def test_declared_scope_uses_repository_relative_globs() -> None:
     )
 
 
+def test_declared_scope_rejects_vacuous_annotated_pattern() -> None:
+    vacuous = cycle_check.ScopeDeclaration(
+        version=1,
+        disposition_intent="no-release",
+        allow=("`docs/cycles/**` (except active pair)",),
+        release_authorities=(),
+        forbid=(),
+    )
+    corrected = vacuous._replace(allow=("docs/cycles/**",))
+    candidates = {"docs/cycles/TASKS-v0.39-EXECUTION.md"}
+
+    errors = cycle_check.scope_pattern_population_errors(vacuous, candidates)
+
+    assert errors == [
+        "declared-scope allow pattern is not a literal repository glob: "
+        "'`docs/cycles/**` (except active pair)'"
+    ]
+    assert cycle_check.scope_pattern_population_errors(
+        corrected,
+        candidates,
+    ) == []
+
+
 def test_v022_scope_fixture_rejects_both_release_paths(
     tmp_path: Path,
 ) -> None:

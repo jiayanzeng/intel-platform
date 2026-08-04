@@ -1804,6 +1804,23 @@ PUBLICATION_CONTROL_MARKERS = {
     "review-export-retention": (
         "Invariant R12 control site: review-export retention configuration."
     ),
+    "export-tracked": (
+        "Invariant R12 control site: review export contains only Git-tracked "
+        "bytes."
+    ),
+    "raw-wire-population": (
+        "Invariant R12 control site: derived raw-wire exclusion population."
+    ),
+    "raw-wire-missing-exclusion": (
+        "Invariant R12 control site: every derived raw-wire body is excluded."
+    ),
+    "raw-wire-extra-exclusion": (
+        "Invariant R12 control site: every exact observation exclusion is raw "
+        "wire."
+    ),
+    "declared-scope-population": (
+        "Invariant R12 control site: declared scope pattern population."
+    ),
     "trigger-boundary-order": (
         "Invariant R12 control site: trigger boundary relationship."
     ),
@@ -2246,6 +2263,24 @@ def _load_version_check_for_control(root: Path):
     return module
 
 
+def _load_export_check_for_control(root: Path):
+    path = root / "tools" / "export_check.py"
+    spec = importlib.util.spec_from_file_location(
+        "_invariant_scan_export_check",
+        path,
+    )
+    if spec is None or spec.loader is None:
+        raise ConfigError(f"{path.relative_to(root)}: cannot load export checker")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except (OSError, SyntaxError) as error:
+        raise ConfigError(
+            f"{path.relative_to(root)}: cannot execute export checker: {error}"
+        ) from error
+    return module
+
+
 def _load_checklist_audit_for_control(root: Path):
     path = root / "tools" / "checklist_audit.py"
     spec = importlib.util.spec_from_file_location(
@@ -2270,6 +2305,7 @@ def _load_checklist_audit_for_control(root: Path):
 def r12_findings(root: Path) -> list[str]:
     """Exercise lifecycle, population, and coverage rules against planted failures."""
     cycle_check = _load_cycle_check_for_control(root)
+    export_check = _load_export_check_for_control(root)
     test_population = _load_test_population_for_control(root)
     version_check = _load_version_check_for_control(root)
     tag = "publication-control-tag"
@@ -2590,6 +2626,65 @@ def r12_findings(root: Path) -> list[str]:
     ):
         missed.setdefault("state-region-contract", []).append(
             "missing-full-permanent-tail"
+        )
+
+    untracked_errors = export_check.untracked_export_errors(
+        {"tracked.md"},
+        {"tracked.md", "untracked.md"},
+    )
+    if untracked_errors != ["export contains untracked path: untracked.md"]:
+        missed.setdefault("export-tracked", []).append(
+            "untracked-export-entry"
+        )
+
+    raw_body = "observations/control/raw-body.bin"
+    review_report = "observations/control/review-report.md"
+    empty_raw_errors = export_check.raw_wire_exclusion_errors(set(), set())
+    if "derived raw-wire exclusion class is empty" not in empty_raw_errors:
+        missed.setdefault("raw-wire-population", []).append(
+            "empty-derived-class"
+        )
+    missing_raw_errors = export_check.raw_wire_exclusion_errors(
+        {raw_body},
+        set(),
+    )
+    if (
+        f"derived raw-wire body lacks an exact Repomix exclusion: {raw_body}"
+        not in missing_raw_errors
+    ):
+        missed.setdefault("raw-wire-missing-exclusion", []).append(
+            "unexcluded-derived-member"
+        )
+    extra_raw_errors = export_check.raw_wire_exclusion_errors(
+        {raw_body},
+        {raw_body, review_report},
+    )
+    if (
+        "exact Repomix observation exclusion is not derived raw wire: "
+        f"{review_report}" not in extra_raw_errors
+    ):
+        missed.setdefault("raw-wire-extra-exclusion", []).append(
+            "configured-nonmember"
+        )
+
+    vacuous_declaration = cycle_check.ScopeDeclaration(
+        version=1,
+        disposition_intent="no-release",
+        allow=("`docs/cycles/**` (except active pair)",),
+        release_authorities=(),
+        forbid=(),
+    )
+    vacuous_errors = cycle_check.scope_pattern_population_errors(
+        vacuous_declaration,
+        {"docs/cycles/TASKS-control-EXECUTION.md"},
+    )
+    corrected_errors = cycle_check.scope_pattern_population_errors(
+        vacuous_declaration._replace(allow=("docs/cycles/**",)),
+        {"docs/cycles/TASKS-control-EXECUTION.md"},
+    )
+    if not vacuous_errors or corrected_errors:
+        missed.setdefault("declared-scope-population", []).append(
+            "vacuous-annotated-pattern"
         )
 
     with tempfile.TemporaryDirectory(prefix="invariant-scan-R12-status-") as raw:
@@ -3492,6 +3587,13 @@ def r12_findings(root: Path) -> list[str]:
         elif group == "coverage-detection":
             source_relative = "apps/cored/src/main.rs"
         elif group in {
+            "export-tracked",
+            "raw-wire-population",
+            "raw-wire-missing-exclusion",
+            "raw-wire-extra-exclusion",
+        }:
+            source_relative = "tools/export_check.py"
+        elif group in {
             "rust-floor-restatement",
             "rust-floor-partition",
             "rust-floor-context",
@@ -3513,6 +3615,16 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "coverage-detection planted controls"
         elif group == "review-export-retention":
             finding_kind = "review-export-retention planted controls"
+        elif group == "export-tracked":
+            finding_kind = "tracked-export planted controls"
+        elif group == "raw-wire-population":
+            finding_kind = "raw-wire-population planted controls"
+        elif group == "raw-wire-missing-exclusion":
+            finding_kind = "raw-wire-missing-exclusion planted controls"
+        elif group == "raw-wire-extra-exclusion":
+            finding_kind = "raw-wire-extra-exclusion planted controls"
+        elif group == "declared-scope-population":
+            finding_kind = "declared-scope-population planted controls"
         elif group == "trigger-boundary-order":
             finding_kind = "trigger-boundary-order planted controls"
         elif group == "rust-floor-restatement":

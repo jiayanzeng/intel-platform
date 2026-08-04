@@ -1310,6 +1310,27 @@ def scope_pattern_matches(pattern: str, candidate: str) -> bool:
     return scope_pattern_regex(pattern).fullmatch(candidate) is not None
 
 
+def scope_pattern_population_errors(
+    declaration: ScopeDeclaration,
+    _candidates: set[str],
+) -> list[str]:
+    errors: list[str] = []
+    # Invariant R12 control site: declared scope pattern population.
+    for scope_class, patterns in (
+        ("allow", declaration.allow),
+        ("release_authority", declaration.release_authorities),
+        ("forbid", declaration.forbid),
+    ):
+        for pattern in patterns:
+            if "`" in pattern or re.search(r"\s", pattern) is not None:
+                errors.append(
+                    f"declared-scope {scope_class} pattern is not a literal "
+                    f"repository glob: {pattern!r}"
+                )
+                continue
+    return errors
+
+
 def parse_declared_scope(
     path: Path,
     text: str,
@@ -1569,6 +1590,10 @@ def check_declared_scope(
     declaration = parse_declared_scope(path, text, root, errors)
     if declaration is None:
         return
+    errors.extend(
+        f"{shown(path, root)}: {error}"
+        for error in scope_pattern_population_errors(declaration, set())
+    )
     recorded_release = any(
         match.group(1) == "release"
         for match in DATED_DISPOSITION_RE.finditer(text)

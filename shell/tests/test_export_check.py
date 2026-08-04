@@ -25,10 +25,17 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
         )
     }
     paths = {
-        *export_check.REQUIRED_PATHS,
         *cycle_paths,
+        ".github/workflows/ci.yml",
+        "AGENTS.md",
+        "Cargo.lock",
+        "Cargo.toml",
         "apps/cored/src/main.rs",
+        "config/protected-artifacts.json",
         "crates/core/src/lib.rs",
+        "repomix.config.json",
+        "run",
+        "rust-toolchain.toml",
         "shell/intel_shell/app.py",
         "tools/check.py",
     }
@@ -50,13 +57,41 @@ def _repository(tmp_path: Path) -> tuple[Path, set[str]]:
         "observations/capture-a/sec-edgar-usgaap.rss.xml",
         "observations/capture-b/sec-edgar-usgaap.rss.xml",
     )
+    structural_archive = "docs/state-archive/archive.md"
+    manifest_records = [
+        {"path": raw_path, "grade": "observation"}
+        for raw_path in excluded_paths
+    ] + [{"path": structural_archive, "grade": "structural"}]
+    (root / "config/protected-artifacts.json").write_text(
+        json.dumps({"pinned_files": manifest_records})
+    )
     (root / "repomix.config.json").write_text(
-        json.dumps({"ignore": {"customPatterns": list(excluded_paths)}})
+        json.dumps(
+            {
+                "ignore": {
+                    "customPatterns": [
+                        *excluded_paths,
+                        "docs/state-archive/**",
+                    ]
+                }
+            }
+        )
     )
     for raw_path in excluded_paths:
         excluded_capture = root / raw_path
         excluded_capture.parent.mkdir(parents=True, exist_ok=True)
         excluded_capture.write_text("excluded wire body\n")
+        (excluded_capture.parent / ".gitattributes").write_text(
+            f"{excluded_capture.name} binary\n"
+        )
+        paths.add(
+            (excluded_capture.parent / ".gitattributes")
+            .relative_to(root)
+            .as_posix()
+        )
+    archive = root / structural_archive
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    archive.write_text("structural archive\n")
     subprocess.run(["git", "init", "-q"], cwd=root, check=True)
     subprocess.run(["git", "add", "."], cwd=root, check=True)
     return root, paths
@@ -87,12 +122,7 @@ def test_complete_export_uses_the_git_derived_source_set(
 
     sources, actual, errors = export_check.check_export(root, export)
 
-    assert sources == {
-        "apps/cored/src/main.rs",
-        "crates/core/src/lib.rs",
-        "shell/intel_shell/app.py",
-        "tools/check.py",
-    }
+    assert sources == export_check.derived_required_paths(root)
     assert actual == paths
     assert errors == []
 
@@ -109,7 +139,7 @@ def test_new_tracked_source_is_required_without_changing_a_count(
 
     _, _, errors = export_check.check_export(root, export)
 
-    assert errors == ["missing derived source path: tools/new_check.py"]
+    assert errors == ["missing derived required path: tools/new_check.py"]
 
 
 def test_missing_cargo_lock_is_a_named_failure(
@@ -122,7 +152,10 @@ def test_missing_cargo_lock_is_a_named_failure(
 
     assert export_check.run(root, export) == 1
     error = capsys.readouterr().err
-    assert "export-check: ERROR: missing required path: Cargo.lock" in error
+    assert (
+        "export-check: ERROR: missing derived required path: Cargo.lock"
+        in error
+    )
     assert "export-check: FAIL" in error
 
 
@@ -189,6 +222,21 @@ def test_excluded_wire_capture_present_is_a_named_failure(
     assert f"excluded export path is present: {excluded}" in errors
 
 
+def test_untracked_export_entry_is_a_named_failure(
+    tmp_path: Path,
+) -> None:
+    root, paths = _repository(tmp_path)
+    export = tmp_path / "review.xml"
+    untracked = "docs/untracked-review-input.md"
+    (root / untracked).parent.mkdir(parents=True, exist_ok=True)
+    (root / untracked).write_text("not in Git\n")
+    _write_export(export, paths | {untracked})
+
+    _, _, errors = export_check.check_export(root, export)
+
+    assert f"export contains untracked path: {untracked}" in errors
+
+
 def test_every_exact_excluded_wire_capture_is_required(
     tmp_path: Path,
 ) -> None:
@@ -207,17 +255,54 @@ def test_every_exact_excluded_wire_capture_is_required(
         raise AssertionError("missing exact exclusion was accepted")
 
 
+def test_exact_observation_exclusion_outside_derived_class_fails(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+    report = root / "observations/capture-a/review-report.md"
+    report.write_text("review source\n")
+    config_path = root / "repomix.config.json"
+    config = json.loads(config_path.read_text())
+    config["ignore"]["customPatterns"].append(
+        report.relative_to(root).as_posix()
+    )
+    config_path.write_text(json.dumps(config))
+
+    try:
+        export_check.excluded_export_paths(root)
+    except export_check.ExportCheckError as error:
+        assert "exact Repomix observation exclusion is not derived raw wire" in str(
+            error
+        )
+    else:
+        raise AssertionError("non-wire exact observation exclusion was accepted")
+
+
+def test_derived_raw_wire_population_is_nonempty_and_exact(
+    tmp_path: Path,
+) -> None:
+    root, _ = _repository(tmp_path)
+
+    derived = export_check.derived_raw_wire_paths(root)
+    configured = export_check.configured_raw_wire_exclusions(root)
+
+    assert len(derived) == 2
+    assert configured == derived
+    assert export_check.raw_wire_exclusion_errors(derived, configured) == []
+
+
 def test_excluded_state_archive_present_is_a_named_failure(
     tmp_path: Path,
 ) -> None:
     root, paths = _repository(tmp_path)
     export = tmp_path / "review.xml"
-    excluded = f"{export_check.EXCLUDED_EXPORT_PREFIXES[0]}archived.md"
+    prefix = next(iter(export_check.derived_structural_archive_prefixes(root)))
+    excluded = f"{prefix}additional.md"
     _write_export(export, paths | {excluded})
 
     _, _, errors = export_check.check_export(root, export)
 
     assert (
         "excluded export prefix is present: "
-        f"{export_check.EXCLUDED_EXPORT_PREFIXES[0]}"
+        f"{prefix}"
     ) in errors
