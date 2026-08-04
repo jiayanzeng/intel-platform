@@ -1,4 +1,4 @@
-# intel-platform (v0.17.6 — core-shell)
+# intel-platform (v0.17.7 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,16 +7,22 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.17.6` is the selected release identity. v0.39 has hosted evidence at the
-exact audited candidate. Under the tagged-closing protocol, the untagged
-release commit carries the release edits, its immediate child carries the
-closed cycle record, and the annotated `v0.17.6` tag targets that closing commit
-rather than its release-commit parent.
+`v0.17.7` is the selected release identity. It is the corrective release for
+the tagged-tree lifecycle defect, and v0.40 has hosted evidence at the exact
+audited candidate. Under the tagged-closing protocol, the untagged release
+commit carries the release edits, its immediate child carries the closed cycle
+record, and the annotated `v0.17.7` tag targets that closing commit rather than
+its release-commit parent.
+
+`v0.17.6` is permanently withheld: its local tag is immutable, remains absent
+from the remote, and is never moved or published. v0.17.7 forward-corrects the
+tagged-tree lifecycle assertion while preserving production behavior and the
+public response contract.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The declared pair is
-[`TASKS-v0.39-EXECUTION.md`](docs/cycles/TASKS-v0.39-EXECUTION.md) and
-[`PROGRESS-v0.39.md`](docs/cycles/PROGRESS-v0.39.md).
+[`TASKS-v0.40-EXECUTION.md`](docs/cycles/TASKS-v0.40-EXECUTION.md) and
+[`PROGRESS-v0.40.md`](docs/cycles/PROGRESS-v0.40.md).
 
 **Current source scope is two configured publisher origins.** `arxiv-cs` and
 `sec-edgar-usgaap` are configured network sources; the other three sources are

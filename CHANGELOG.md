@@ -4,6 +4,32 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.7 — 2026-08-04
+
+### Fixed
+
+- Tagged-closing release-parent freshness is now evaluated while a prospective
+  closing tree is still amendable. A correct tagless release parent passes the
+  explicit pre-tag gate, while the stale State-header construction preserved
+  by withheld v0.17.6 fails before a tag can be created.
+- Permanently withheld releases now carry a reasoned, settled lifecycle state
+  distinct from an unpublished release awaiting authorization. Hosted-shaped
+  verification accepts only that exact recorded state without requiring its
+  intentionally local-only tag.
+- Review-export attention now reserves two cycles at the maximum positive
+  adjacent governed-growth delta. A quiet cycle cannot shrink the reserve or
+  move the alarm closer to the unchanged 3,000,000-byte ceiling.
+
+### Compatibility
+
+- This is a patch release. The changes affect lifecycle tooling, executable
+  controls, and governing records; they do not change production runtime
+  behavior, dependencies, publisher configuration, protected evidence,
+  entitlements, licensing outcomes, or any public route, response field, field
+  type, or serialized `/v1/*` value-domain value. The v0.17.4-baselined domain
+  manifest remains exact at 6 routes, 31 status/media variants, and 112 field
+  occurrences.
+
 ## v0.17.6 — 2026-08-04
 
 ### Fixed
