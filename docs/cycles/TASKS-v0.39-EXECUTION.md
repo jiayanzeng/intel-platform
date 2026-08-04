@@ -640,8 +640,8 @@ any acceptance point is a defect, not an oversight.
 | A4 untrusted-shell boundary | a third-party/untrusted shell, or any claim HC1 is invariant under shell replacement | v0.39 · 2026-08-04 — No third-party shell or replacement-shell HC1 claim appeared, so the trigger did not fire. | none |
 | L2 forced-command wrapper | an operator server session | v0.39 · 2026-08-04 — No operator server session occurred, so the trigger did not fire. | none |
 | R3/R4 open-bottom coverage | a spelling outside registered vocabulary | v0.39 · 2026-08-04 — The fresh registered scan passes **16/16 rules / 100 controls** and found no outside registered-vocabulary spelling. | none |
-| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.39 · 2026-08-04 — Hosted run **30852480662** and the v0.17.5 release-parent local gate remain the most recent passing pinned Rust 1.86 lanes; workflow and evidence topology are scope-forbidden here. | none |
-| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.39 · 2026-08-04 — The repository pin remains **2.96.0** and no accepted bundle/workflow contract changed, so the trigger did not fire. | none |
+| `--features net` Rust 1.86 execution | a scoped cycle authorized to change evidence topology and an executable local or hosted lane that actually pins and runs the net path on Rust 1.86 | v0.39 · 2026-08-04 — Exact-candidate hosted run **30875346351** passed the pinned Rust 1.86 net lane and the explicit 1.85 refusal lane; workflow/evidence topology did not change, so the combined trigger did not fire. | none |
+| GitHub attestation verifier version admission | the installed or proposed `gh attestation verify` version differs from the exact repository pin, or its accepted bundle/workflow contract changes | v0.39 · 2026-08-04 — The installed and repository-pinned verifier remain exact **gh 2.96.0**; it accepted all **9/9** exact-candidate bundles under the unchanged workflow contract, so the trigger did not fire. | none |
 | Third configured publisher | a completed compliance review, then a separate admission decision | v0.39 · 2026-08-04 — R16 now supplies the executable boundary a later widening must preserve, but no third-publisher compliance review or admission occurred. | none |
 | `v0.8.0` / `v0.10.2` publication | operator-authorized push of both exact annotated objects | v0.39 · 2026-08-04 — Fresh remote readback finds both historical tag names absent and no authorization to publish them was issued. | none |
 | `--skip-local-tag-verification` removal | both historical tags published plus a passing hosted full-history `cycle-check` without the flag | v0.39 · 2026-08-04 — Both historical tags remain unpublished and the hosted flag is unchanged, so the combined trigger did not fire. | none |
@@ -694,7 +694,7 @@ any acceptance point is a defect, not an oversight.
 - [x] EXPORT-TRUTH
 - [x] CEILING-TRIGGER
 - [x] WIRE-CONTRACT
-- [ ] RE-MEASURE
+- [x] RE-MEASURE
 - [ ] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.39.md` entry ids exactly; the box-coverage rule

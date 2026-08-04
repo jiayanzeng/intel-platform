@@ -1,6 +1,44 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` passed hosted run `30852480662`, attempt **1**, at **9/9** blocking identities. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, the complete Python 3.11 and 3.12 populations each pass **381/381**, no constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+**As of:** 2026-08-04 · **Version:** v0.17.5 (core-shell) · **Status:** **v0.17.5 is published exactly; Grant C is spent, and v0.39 continues locally without any further publication authority.** Untagged release commit `37f552c0c326098bdcf8f19de7eac19670d74680` carries the v0.17.5 release authorities and is the immediate parent of closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; its immediate audit child `dd605acc037da405fa6b2b5366b09349c330c194` records the measured closing-tree export and is now exact remote `main`. Published annotated tag object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing commit. Push-triggered hosted run `30868419182`, attempt **1**, concluded `success` on the exact audit child and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.39 evidence candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` passed hosted run `30875346351`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted; exact v0.38 evidence candidate `816a0648c0dd9f4be1caad01ed3395997671cf25` remains its prior-cycle predecessor. The admitted SEC archive adds the intended **200** finance documents for `quant-desk` while `acme-research` remains at **0**; it adds no public route, response field, field type, serialized `/v1/*` value-domain value, subscription change, or license-enum value. The current local registered suite passes **16/16 rules / 100 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest is release-baselined at v0.17.4 and remains exact for v0.17.5, golden passes **11/11**, and direct population comparison derives both hosted Python lanes equivalent to the complete local **381/381** population with one named `on_site` skip each. No constraints changed, and the accepted warning trigger did not fire. The retraction count remains **3**. Publication of v0.17.5 resets the published-release-divergence count to **0** at closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; the v0.38 runtime-behavior difference is included in that published commit, Step 2 adds no runtime or public-surface movement, and the new publication epoch therefore starts at zero.
+
+**v0.39 RE-MEASURE — exact hosted candidate passed (measured 2026-08-04).**
+The checker and governing-contract work made hosted execution mandatory. Exact
+candidate `fa846095b7387bcf9e832d558dc8a70a6d29813b` had already passed the
+permission-complete local matrix at **22/22** identities, including Python
+3.11 **381/381**, both Rust floor pairs, scan **16/16 rules / 100 controls**,
+protected artifacts, lint/format, and golden **11/11**; the separate local
+Python 3.12 lane passed the identical **381/381** population.
+
+Immediately before ref creation, the remote readback kept `main` at
+`dd605acc037da405fa6b2b5366b09349c330c194` and every annotated and peeled tag
+through v0.17.5 at its recorded identity. `git ls-remote --exit-code` returned
+**2** with no output for fresh
+`refs/heads/codex/v0.39-evidence-fa84609`. One non-force push created exactly
+that ref at the candidate; no ref was reused, retried, forced, or moved.
+
+Workflow-dispatch run **30875346351**, attempt **1**, targeted the exact
+candidate/ref and concluded `success`. All **9/9** workflow-derived blocking
+identities passed; dependency drift was the sole report-only skip. The run
+persisted **9 receipt artifacts**, each containing one JSON receipt and one
+Sigstore bundle. The repository's release-grade verifier accepted **9**,
+rejected **0**, verified all **9** attestations against the exact repository,
+workflow, source digest, and source ref, and found a complete identity matrix.
+
+Each hosted shell lane collected **381**, passed **380**, and skipped only
+`tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+with its declared protected-corpora/built-core reason and `on_site` marker.
+Direct `tools/test_population.py` comparisons for Python 3.11 and 3.12 each
+derive `equivalent=true` and `equivalent_passed=381`. Hosted golden passed
+**11/11**, and the explicit 1.86 success and 1.85 refusal jobs passed with their
+pinned effective toolchains.
+
+Final remote readback resolves the evidence ref to the exact candidate, keeps
+`main` at `dd605acc037da405fa6b2b5366b09349c330c194`, and keeps every tag
+identity byte-for-byte at the pre-push snapshot. Grant C remains spent; no
+publication ref, tag, workflow byte, dependency, protected byte, publisher
+wire, entitlement/licensing outcome, serialized response domain, or golden
+input moved.
 
 **v0.39 WIRE-CONTRACT — bounded SEC egress registered (measured
 2026-08-04).** C18 places the invariant claim in `ARCHITECTURE.md` and its
