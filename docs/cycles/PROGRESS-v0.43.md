@@ -275,3 +275,43 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **not re-claimed for DOC-BOUNDARY completion**. The latest
   completed-task standalone run remains Step 2's passing **11/11**; the present
   matrix stopped before its embedded golden lane.
+
+### 2026-08-05 · LEDGER — Amendment A2 reopened-task correspondence
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 8c7ee461e37ce6008c77d7dc841732a7dcd580c4
+- amendment acceptance: PASS. The runbook adds exactly the one A2 scope
+  authority, `tools/checklist_audit.py`, records the required single-line Step
+  2 disclosure, adds Step 2d and C37, and leaves every grant and other scope row
+  unchanged.
+- correspondence acceptance: PASS. The checker derives reopening only from a
+  Step that is both disclosed and contract-changed against the first committed
+  runbook, maps that Step to its existing task box, and chooses the last valid
+  qualified entry in recoverable append order. Before this audit entry existed,
+  the live v0.43 command retained `90f8ef9f…` as superseded history and attested
+  `67e75f65856a04a912273c9ed4e7c2459cc8bd04`, not the earlier commit.
+- planted-control acceptance: PASS. R13 rejects unamended duplicate entries,
+  rejects a false disclosure whose Step contract did not change, rejects zero
+  valid reopened entries, rejects entries without a recoverable order, and
+  proves that a valid reopening selects the later entry. The complete registry
+  passes **17/17 rules / 128 controls**.
+- history acceptance: PASS. No prior progress byte was edited; no exemption or
+  retraction was added. This append-only entry now becomes the last valid
+  qualified LEDGER record and therefore the authoritative correspondence for
+  implementation commit `8c7ee461e37ce6008c77d7dc841732a7dcd580c4`.
+- ledger acceptance: PASS. The canonical ledger carries **34 subjects**. Its
+  added declared-scope-sufficiency row records the two v0.43 trigger firings at
+  `tools/version_check.py` and `tools/checklist_audit.py`; action remains
+  `none`.
+- executable acceptance: PASS. The permission-capable `./run ci-local` passed
+  **22/22**, Python 3.11 and the clean Python 3.12.13 rebuild passed **403/403**
+  each with the exact **21-package** constraints, and the registered self-test
+  passed all **128/128** controls. The initial sandboxed loopback-bind denial
+  was not accepted as a product result; the identical permitted wire test
+  passed. Embedded and standalone golden each passed **11/11**.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
