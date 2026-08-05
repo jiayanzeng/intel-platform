@@ -297,3 +297,86 @@ Entries are append-only; corrections are new dated entries.
   agreed with the exact candidate and ref.
 - golden-E2E delta: **0**. Hosted golden and the post-record standalone local
   run each passed **11/11**.
+
+### 2026-08-05 · R-CLOSE — v0.17.9 unpublished-local tagged close
+
+- owner: Codex
+- runbook: `TASKS-v0.42-EXECUTION.md`
+- commit: 5452355945d2717cbd84ea2224148dbd0f4c1ac7
+- result: PASS at the assembled release-parent boundary. DR38 selects patch
+  **v0.17.9** because the cycle changes assurance controls, lifecycle ordering,
+  and governing records but no production runtime behavior, dependency,
+  publisher configuration, protected byte, entitlement/licensing outcome,
+  route, response field/type, or serialized `/v1/*` value-domain value.
+- domain acceptance: PASS. Dependency-free R15 derivation and installed
+  FastAPI comparison report **0 differences across 6 routes / 31 status-media
+  variants / 112 field occurrences**. Neither minor-version clause fires.
+- version acceptance: PASS after two disclosed command-shape corrections. The
+  initial README restatement wrapped the required tag-target sentence and the
+  initial runtime-manifest command omitted `--release`; neither produced an
+  accepted result. Corrected `version-check` derives **0.17.9** from all five
+  executable authorities, with **3** offline pins, **22** current floor
+  restatements, and **3** current release restatements across **593** tracked
+  files; corrected runtime comparison is exact.
+- evidence acceptance: PASS. Exact pre-version evidence candidate
+  `1076316a47271c16cd4260dfdfe231bca1dcb5cd` and hosted run **30966236435**,
+  attempt 1, passed **9/9** blocking identities and persisted **9 receipts / 9
+  Sigstore bundles**, accepted **9 / rejected 0** by the release-grade verifier.
+  Exact version-only release parent
+  `5452355945d2717cbd84ea2224148dbd0f4c1ac7` passed the full local gate
+  **22/22**; Python 3.11 and 3.12 each passed **397/397** with the accepted
+  warning nonfatal. Both hosted comparisons derive equivalent **397**-test
+  populations from hosted **396 passed + 1** named, reasoned, `on_site` skip.
+- governed review-export measurement: tree=`5452355945d2717cbd84ea2224148dbd0f4c1ac7`; bytes=`2710728`
+- governed-export acceptance: PASS after one disclosed sandbox non-result. The
+  first exact-parent export attempt failed before measurement on sandbox DNS.
+  The permission-capable project-root entry point produced **157 derived / 157
+  exported / 2,710,728 bytes / 2 retained cycles**, retaining v0.41–v0.42. It
+  stands **141,340 bytes above** attention and leaves **289,272 bytes / 9.64% /
+  1.34 high-water cycles** below the unchanged ceiling, missing the 2.5-cycle
+  target by **248,993 bytes**. Relative to v0.41's governed value, the exact
+  change is **+53,043 bytes**.
+- recovery attribution: PASS. Grant E was not issued, contributes **0 bytes**,
+  and leaves **84,896 bytes** unrecovered; spending it alone would leave a
+  **56,444-byte** attention shortfall. No other capacity lever executed.
+- artifact-boundary acceptance: PASS. Assembled State is **220484 / 453,741
+  bytes**. The manifest remains **200,440 / 1,048,576 bytes**; the latest timed
+  pair matched **3/3 artifacts / 339 pins** in **0.11 s / 0.10 s real**. Neither
+  artifact boundary nor timing trigger fires.
+- pre-tag control acceptance: PASS at the assembled worktree. Direct local
+  v0.17.9 resolution returned absent; `cycle-check` reported
+  `local-tag-reconciliation=pre-tag`,
+  `tag-independent-assertions=verified`, and exact release parent
+  `5452355945d2717cbd84ea2224148dbd0f4c1ac7` before any tag existed.
+- post-tag control at the assembled worktree: not applicable. Local v0.17.9
+  resolution is absent at this pre-tag boundary, so no post-tag PASS or tag
+  object is claimed in the closing tree.
+- deferral acceptance: PASS. All **31/31** active rows carry their latest dated
+  v0.42 close observations. The archival and capacity rows name structured
+  dispositions, each lever's contribution, and the exact remaining shortfall.
+- invariant acceptance: PASS. The permission-capable exact release-parent gate
+  passes **22/22**, the registered suite passes **17/17 rules / 119 controls**
+  with **0** hand-typed absolute finding-line fields, both Rust floor pairs
+  behave as specified, and all protected bytes match.
+- divergence acceptance: PASS. Published v0.17.8 reset the epoch at exact
+  remote main. The 14-commit distance to the release parent carries no measured
+  runtime-behavior or public-surface difference, so no count starts and neither
+  trigger fires.
+- publication acceptance: PASS at the pre-tag boundary. Executed remote
+  readback keeps `main=993813c755e9f759a4ee165954c7a1df984f6b10`, the v0.42
+  evidence ref exact, published tags exact, and v0.17.6 plus both historical
+  tags absent. Fresh direct local and remote v0.17.9 lookup returned absent. No
+  publication, main movement, tag movement, deletion, or force operation
+  occurred.
+- checklist acceptance: PASS at the assembled closing worktree: **332 checked /
+  3 retracted / 323 matched / 323 commits resolved / 9 exemptions**; v0.42 is
+  nonempty at **7 checked / 7 matched / 7 resolved**.
+- scope acceptance: PASS. Only declared release authorities and active
+  State/runbook/progress/Architecture records move at R-CLOSE. No dependency
+  graph, protected byte, fixture, observation, closed-cycle document, publisher
+  request, workflow, or unauthorized remote ref moves.
+- stop conditions: none. Disclosed sandbox failures were non-measurements whose
+  permission-capable reruns passed; R15 is exact and no immutable record,
+  accepted boundary, or publication ref was contradicted.
+- golden-E2E delta: **0**. The release-parent full gate and standalone run, and
+  the assembled closing-worktree standalone run, pass **11/11**.

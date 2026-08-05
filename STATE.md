@@ -1,6 +1,6 @@
 # STATE.md — intel-platform handoff
 
-**As of:** 2026-08-05 · **Version:** v0.17.9 (core-shell) · **Status:** **v0.17.9 is selected for an unpublished-local close; v0.17.7 and v0.17.8 are published, v0.17.6 remains permanently withheld and local-only, and v0.17.5 remains published exactly.** Untagged release commit `5bd805214cb72ed694c83e9eec1ce6d17396a69e` carries the v0.17.8 authorities and is the immediate parent of closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`; published annotated object `4a477722df218059097ff648a07379ec5683dd08` peels to that closing tree, which is exact remote `main`. Historical v0.17.7 parent `b8fe1c2c1c2c842868a70581dee390939ef68595` precedes closing commit `cd4fd58b39c855cc769d3696a6b389f735066022`; published annotated object `2287b41558e69bb86490df71b6907a2f0eb73310` peels to that tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is preserved in published history. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30927918916`, attempt **1**, concluded `success` on exact published closing commit `993813c755e9f759a4ee165954c7a1df984f6b10` and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. Final exact v0.41 evidence candidate `5bd805214cb72ed694c83e9eec1ce6d17396a69e` passed hosted run `30925977431`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 and v0.41 change lifecycle/review tooling, executable controls, and governing records; neither changes production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. The current v0.42 worktree passes the full local gate **22/22** both with transport unavailable and with the remote witness measured. Exact v0.42 evidence candidate `1076316a47271c16cd4260dfdfe231bca1dcb5cd` passed hosted run `30966236435`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. Its local Python 3.11 and 3.12 populations each pass **397/397**; both repository-computed hosted comparisons derive **397** equivalent tests from local **397/397** and hosted **396 passed + 1** named, reasoned, `on_site` skip. The current registered suite passes **17/17 rules / 119 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.9, and golden passes **11/11**. The exact v0.17.8 release-parent gate passed **22/22** local identities; exact release-parent Python 3.11 and 3.12 populations each passed **396/396** with one named `on_site` identity, and their repository-computed hosted comparisons each derived **396** equivalent tests from local **396/396** and hosted **395 passed + 1** named, reasoned, `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.8 resets the published-release-divergence count to **0** at closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`; v0.40, v0.41, and v0.42 carry no measured runtime-behavior difference or public-surface movement.
+**As of:** 2026-08-05 · **Version:** v0.17.9 (core-shell) · **Status:** **v0.17.9 is closed locally and unpublished; v0.17.7 and v0.17.8 are published, v0.17.6 remains permanently withheld and local-only, and v0.17.5 remains published exactly.** Untagged release commit `5452355945d2717cbd84ea2224148dbd0f4c1ac7` carries the v0.17.9 authorities and is the immediate parent of the assembled closing tree. Historical v0.17.8 parent `5bd805214cb72ed694c83e9eec1ce6d17396a69e` precedes closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`; published annotated object `4a477722df218059097ff648a07379ec5683dd08` peels to that closing tree, which is exact remote `main`. Historical v0.17.7 parent `b8fe1c2c1c2c842868a70581dee390939ef68595` precedes closing commit `cd4fd58b39c855cc769d3696a6b389f735066022`; published annotated object `2287b41558e69bb86490df71b6907a2f0eb73310` peels to that tree. Withheld v0.17.6 parent `acfa801102197ce2d94adaa5a14a3ad102893549` precedes closing commit `7c9305f01219412048ec75236f2bf1e61112c178`; local annotated object `66ee2cbbe374b99722bec49b8176571777aaa899` peels to that tree and remains local-only. Historical v0.17.5 parent `37f552c0c326098bdcf8f19de7eac19670d74680` precedes closing commit `55045ae481ce8d1ef285522b3c0a57c91fe5cb54`; audit child `dd605acc037da405fa6b2b5366b09349c330c194` is preserved in published history. Published v0.17.5 annotated object `946bdc015446182727d8f705697e378f8fe8f7eb` peels to that closing tree. Push-triggered hosted run `30927918916`, attempt **1**, concluded `success` on exact published closing commit `993813c755e9f759a4ee165954c7a1df984f6b10` and passed all **9/9** blocking identities; dependency drift was the sole report-only skip. Exact v0.40 evidence candidate `52a5c44b060a795894aa120fb8cd0b1ab0d5cf09` passed hosted run `30896642221`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. Final exact v0.41 evidence candidate `5bd805214cb72ed694c83e9eec1ce6d17396a69e` passed hosted run `30925977431`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. v0.40 and v0.41 change lifecycle/review tooling, executable controls, and governing records; neither changes production runtime behavior, dependency, publisher configuration, protected byte, entitlement/licensing outcome, route, response field/type, or serialized `/v1/*` value-domain value. Exact v0.42 evidence candidate `1076316a47271c16cd4260dfdfe231bca1dcb5cd` passed hosted run `30966236435`, attempt **1**, at **9/9** blocking identities with **9/9** release-grade attestations accepted. The exact v0.17.9 release-parent worktree passed the full local gate **22/22**; its Python 3.11 and 3.12 populations each pass **397/397**. Both repository-computed hosted comparisons derive **397** equivalent tests from local **397/397** and hosted **396 passed + 1** named, reasoned, `on_site` skip. The current registered suite passes **17/17 rules / 119 controls** with **0** hand-typed absolute finding-line fields; the response-domain manifest remains release-baselined at v0.17.4 and exact at v0.17.9, and golden passes **11/11**. The exact v0.17.8 release-parent gate passed **22/22** local identities; exact release-parent Python 3.11 and 3.12 populations each passed **396/396** with one named `on_site` identity, and their repository-computed hosted comparisons each derived **396** equivalent tests from local **396/396** and hosted **395 passed + 1** named, reasoned, `on_site` skip. The accepted warning trigger did not fire and the retraction count remains **3**. Publication of v0.17.8 resets the published-release-divergence count to **0** at closing commit `993813c755e9f759a4ee165954c7a1df984f6b10`; v0.40, v0.41, and v0.42 carry no measured runtime-behavior difference or public-surface movement.
 
 ## Remote witness expectations
 
@@ -21,6 +21,88 @@
 - **Remote witness absent ref:** `refs/tags/v0.10.2^{}`
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
+
+**v0.42 R-CLOSE — v0.17.9 assembled close (measured 2026-08-05).** DR34
+separates the cycle-ending export audit from the later post-push record, and
+DR35's same-cycle publication order now lives only in AGENTS R-CLOSE while
+ARCHITECTURE §8 delegates to it. DR36's author-side lifecycle gap and 52%
+archival projection error remain recorded. DR37 leaves the operator-selected
+3,000,000-byte ceiling and two-cycle retention depth unchanged. DR38 selects
+patch **v0.17.9** from dependency-free and installed R15 results of **0
+differences across 6 routes / 31 status-media variants / 112 recursive field
+occurrences**. DR39 keeps this close unpublished-local because neither dormant
+grant authorizes v0.42 publication.
+
+Exact release parent `5452355945d2717cbd84ea2224148dbd0f4c1ac7`
+carries all five executable authorities at 0.17.9. `version-check` reports
+**3** executable offline pins, **22** current floor restatements, **3** release
+restatements, and **593** tracked files. Its permission-capable full local gate
+passes **22/22**; Python 3.11 and 3.12 each pass **397/397**, invariant self-test
+passes **17/17 rules / 119 controls** with **0** hand-typed absolute finding-line
+fields, both Rust floor pairs behave as specified, all protected bytes match,
+and embedded plus standalone golden pass **11/11** with delta zero. Exact
+pre-version candidate `1076316a47271c16cd4260dfdfe231bca1dcb5cd` and hosted
+run **30966236435**, attempt **1**, pass **9/9** blocking identities; its nine
+receipt/bundle pairs are accepted **9 / rejected 0** under the pinned GitHub
+CLI **2.96.0** and exact repository, workflow, source digest, and source ref.
+The assembled pre-tag `cycle-check` passes with local v0.17.9 absent,
+`local-tag-reconciliation=pre-tag`, `tag-independent-assertions=verified`, and
+the exact release parent above; this closing tree contains no tag-object field.
+
+The exact release-parent project-root export passes at **2,710,728 bytes / 157
+tracked entries / 2 retained cycles**. It is **141,340 bytes above** the
+2,569,388-byte attention boundary and leaves **289,272 bytes / 9.64% / 1.34
+high-water cycles** below the unchanged ceiling, missing the 2.5-cycle target by
+**248,993 bytes**. The exact governed change from v0.41 is **+53,043 bytes**.
+Grant E was not issued, contributes **0 bytes**, and leaves its **84,896-byte**
+lever unspent; applied alone it would leave a **56,444-byte** attention
+shortfall. Assembled State is **220484 / 453,741 bytes**. The protected manifest
+is **200,440 / 1,048,576 bytes**, and the latest complete verification pair
+matches **3/3 artifacts / 339 pins** in **0.11 s / 0.10 s real**.
+
+C28 placed the remote witness at `cycle-check`: it reads the structured current
+expectations when transport is available, fails on disagreement, and reports a
+visible non-failing `unavailable` verdict without transport. It now executes
+current assertions for remote main, every declared evidence ref, published tag
+objects and peels, absent v0.17.6 and historical tags, v0.41's missing published
+audit, and main's relationship to HEAD. Historical statements about intermediate
+ref states and past push mechanics cannot be reconstructed from today's ref
+advertisement and remain dated command evidence; no current declared ref identity
+is unwitnessed when transport is available. C29 chose AGENTS as the single
+mechanics authority, with planted same-cycle-fail and historical-cross-cycle-pass
+controls. C30 measured the authorized boundary at **84,896 bytes** but remained
+dormant because Grant E was not issued. C31 admitted the remote/lifecycle
+controls E0 surfaced. None of their stated falsifiers appeared.
+
+Grant F was also not issued. Executed readback therefore keeps remote
+`main=993813c755e9f759a4ee165954c7a1df984f6b10`, one commit short of v0.41's
+complete local record, and keeps the v0.42 evidence ref exact without moving a
+publication ref. A published reader still cannot see v0.41's cycle-ending export
+audit or its two post-push records; the new witness makes that lag executable and
+visible. The independently approved evidence-ref action created only the one
+immutable candidate ref. All **31/31** deferral rows carry their latest v0.42
+close observations, the publication-epoch count remains **0**, and no stop
+condition fired. The initial sandbox DNS/export failure and sandbox-only Python
+failures are disclosed non-measurements; their permission-capable reruns passed.
+
+The v0.43 findings are bounded. Attention now fires for four consecutive closed
+cycles. Grant E alone still misses by **56,444 bytes**. The v0.41 published-record
+gap remains, though it is now an executed disagreement between published and
+local completeness rather than an invisible transcription. The first
+`audit-deferred` wrapper invocation produced no report before the direct verifier
+and second wrapper invocation passed, which is a tool-path behavior worth
+reproducing. No runtime, public-surface, dependency, evidence-integrity,
+publisher-wire, or immutable-record contradiction emerged.
+
+The overdue operator capacity question is numeric: this exact export is
+**141,340 bytes above** attention with **1.34 high-water cycles** to the ceiling.
+Ceiling movement alone must add at least **141,341 bytes**, to **3,141,341**;
+after the unissued Grant E it must add at least **56,445 bytes**, to
+**3,056,445**. The other ask-first levers are reducing retention to one cycle,
+structurally archiving an as-yet-unmeasured eligible subset of the **83,771-byte**
+`CHANGELOG.md`, or redefining review source. The retained v0.41 task/progress
+pair is **89,621 raw bytes**, not an asserted export recovery. The open decision
+for v0.43 is which bounded combination, if any, the operator authorizes.
 
 **v0.42 R-CLOSE release-parent preparation (measured 2026-08-05).** DR38
 selects patch **v0.17.9**. Dependency-free R15 derivation and the installed
