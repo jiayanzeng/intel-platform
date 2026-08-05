@@ -463,3 +463,38 @@ Entries are append-only; corrections are new dated entries.
   byte, public value domain, publisher wire, tag, branch, or remote ref moved.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
+
+### 2026-08-05 · PUBLISH — Grant G not granted
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: ac8ee83d812cfe7d37153d9663dc271132a8499d
+- grant disposition: not granted. Every operator message through this step was
+  checked against Grant G's exact required text; none issued it. No push was
+  attempted and no partial authority was inferred.
+- remote acceptance: PASS. Permission-capable direct readback and R17 return
+  exact remote `main=993813c755e9f759a4ee165954c7a1df984f6b10`
+  and no direct or peeled `v0.17.9` or `v0.17.6` tag. No remote ref moved.
+- distance acceptance: PASS. Pre-disposition HEAD
+  `876cd9a561d81965b48449ed2b4f07bed438ed47` is the published main's **41
+  first-parent-commit descendant**. Published readers cannot see v0.41's audit
+  child `827192d…`, v0.42 through audit child
+  `6f07edf84c3ce40f1ef4c9e97e5d101242490243`, any v0.43 commit, or the local
+  annotated v0.17.9 release.
+- local-tag acceptance: PASS. Local annotated object
+  `a7852c55deba9b509c0235dfba38e2a0426c2501` remains untouched and peels to
+  closing commit `0382622bbfaeaf7092830460d6432a2eb777b031`.
+- divergence acceptance: PASS. R15 remains exact at **0 public response-domain
+  differences / 6 routes / 31 status-media variants / 112 field occurrences**.
+  The distance carries no measured runtime-behavior difference or public
+  surface movement, so the publication-epoch count remains **0**. The complete
+  registered suite passes **17/17 rules / 128 controls**.
+- audit-containment acceptance: PASS. The local v0.42 progress record contains
+  its ordered closing-tree export-audit field; R17 confirms published `main`
+  still cannot see it.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, local tag, branch, or remote ref
+  moved.
+- stop conditions: none.
+- golden-E2E delta: **0**. Standalone golden passed **11/11**.
