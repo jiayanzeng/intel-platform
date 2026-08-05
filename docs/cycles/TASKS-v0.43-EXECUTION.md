@@ -18,6 +18,10 @@ operator question is routed mid-cycle.
 F1 gives. Amendment entries are appended below this line in the form
 `Step N — <what changed> — YYYY-MM-DD`.
 
+Step 3 — halted after the committed diff exposed an undeclared
+`tools/version_check.py` change; checkbox reopened and scope left unchanged —
+2026-08-05
+
 ---
 
 ## 0. Why this cycle exists
@@ -693,7 +697,7 @@ Carry-forward now compares that document with its own activation-parent state.
 - [x] ACTIVATE
 - [x] E0
 - [x] LEDGER
-- [x] DOC-BOUNDARY
+- [ ] DOC-BOUNDARY
 - [ ] ARCHIVE
 - [ ] PUBLISH
 - [ ] RE-MEASURE
