@@ -235,3 +235,65 @@ Entries are append-only; corrections are new dated entries.
 - stop conditions: none. The observed state is the expected one-commit
   published lag and does not contradict the complete local record.
 - golden-E2E delta: **0**. The required standalone run passed **11/11**.
+
+### 2026-08-05 · RE-MEASURE — exact candidate passed 9/9
+
+- owner: Codex
+- runbook: `TASKS-v0.42-EXECUTION.md`
+- commit: ab01368b9ca797c7e9968b9a0fa9f85027d9f59c
+- condition/result: PASS. Operational checker and lifecycle changes fired the
+  conditional hosted step against exact audited candidate
+  `1076316a47271c16cd4260dfdfe231bca1dcb5cd`.
+- preflight acceptance: PASS. The immutable historical attestation population
+  passes **7/7** under every strict flag with required and observed GitHub CLI
+  **2.96.0**; the deliberately wrong signer is rejected.
+- candidate/ref acceptance: PASS. A temporary structured absent-ref
+  expectation made Step 2's command-entry control read origin before the push:
+  it returned `verdict=measured`, **28** refs, one audit ref, exact
+  `main=993813c755e9f759a4ee165954c7a1df984f6b10`, and no
+  `refs/heads/codex/v0.42-evidence-1076316`. The first proposed push was blocked
+  locally before network execution pending explicit external-egress approval.
+  After approval, one non-force remote push created exactly that ref at the
+  candidate; no ref was reused, forced, or remotely retried.
+- hosted-job acceptance: PASS. GitHub-hosted Ubuntu workflow-dispatch run
+  **30966236435**, attempt **1**, targeted the exact SHA/ref and concluded
+  `success`. All **9/9** workflow-derived blocking identities passed: core,
+  golden, lint, offline MSRV, net MSRV 1.85 refusal, net MSRV 1.86 success, net,
+  shell Python 3.11, and shell Python 3.12. Dependency drift was the sole
+  report-only skip; the workflow was dispatched once and not retried.
+- authenticated-evidence acceptance: PASS after one disclosed non-result. The
+  run persisted **9** artifacts, each carrying one receipt and one Sigstore
+  bundle. In a clean detached candidate worktree carrying the exact three
+  ignored protected corpora, the first wrapper invocation produced no report
+  and therefore established no result. The direct verifier entry point and a
+  second complete `./run audit-deferred` wrapper invocation each accepted
+  **9**, rejected **0**, verified every attestation, authenticated the exact
+  repository, workflow, source digest, and source ref, and derived a complete
+  single-run nine-identity matrix. Protected artifacts matched **3/3** before
+  and after the passing wrapper run.
+- population acceptance: PASS after one disclosed sandbox non-measurement. The
+  first local Python 3.11 attempt failed **8** tests solely on denied loopback
+  socket binds and denied `ps` process inspection and is not repository
+  evidence. Permission-capable local Python 3.11.4 and 3.12.13 each collected
+  and passed **397/397**, including the named `on_site` test. Each GitHub-hosted
+  lane collected **397**, passed **396**, and skipped only
+  `tests/test_deferred_audit.py::test_on_site_production_measurements_match_committed_receipt`
+  with its named protected-corpora/built-core reason and `on_site` marker. Both
+  direct `tools/test_population.py` comparisons derive `equivalent=true`,
+  `equivalent_passed=397`, and exactly one allowed hosted skip.
+- remote acceptance: PASS. Final direct origin readback resolves exactly one
+  v0.42 evidence ref at the candidate, keeps
+  `main=993813c755e9f759a4ee165954c7a1df984f6b10`, and leaves every direct and
+  peeled release tag identical to Step 4. The resulting `cycle-check` executes
+  the structured expected ref and reports `verdict=measured`, **28** refs, one
+  audit ref, exact main, and PASS. No publication ref moved.
+- protected/scope acceptance: PASS. Only standing State and runbook records
+  moved in the implementation commit. No dependency, production source,
+  protected byte, observation, fixture, publisher wire, public response domain,
+  entitlement/licensing outcome, accepted boundary, tag, `main`, or audit ref
+  moved. The three retained amendment inputs remain untouched and untracked.
+- stop conditions: none. The pre-existing evidence ref falsifier was not
+  observed, the hosted matrix was complete, and every authenticated receipt
+  agreed with the exact candidate and ref.
+- golden-E2E delta: **0**. Hosted golden and the post-record standalone local
+  run each passed **11/11**.
