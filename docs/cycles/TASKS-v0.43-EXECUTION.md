@@ -875,7 +875,7 @@ Carry-forward now compares that document with its own activation-parent state.
 - [x] E0
 - [x] LEDGER
 - [x] DOC-BOUNDARY
-- [ ] ARCHIVE
+- [x] ARCHIVE
 - [ ] PUBLISH
 - [ ] RE-MEASURE
 - [ ] R-CLOSE
