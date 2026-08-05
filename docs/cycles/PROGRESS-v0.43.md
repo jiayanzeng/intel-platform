@@ -315,3 +315,40 @@ Entries are append-only; corrections are new dated entries.
   byte, public value domain, publisher wire, tag, branch, or remote ref moved.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
+
+### 2026-08-05 · DOC-BOUNDARY — BLOCKED on its own reopened records
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: ca6cc544ffbdbc797ff314ec8a8c5816d4a66932
+- resumed implementation acceptance: PASS. Amendment A2 closed LEDGER and the
+  permission-capable full local matrix passed **22/22**. The complete registry
+  passed **17/17 rules / 128 controls**, Python 3.11 and the clean Python
+  3.12.13 rebuild passed **403/403** each, and embedded plus standalone golden
+  passed **11/11**.
+- boundary acceptance: PASS. At the blocker-record candidate, the retained set
+  measured **159,872 raw bytes / 4 paths** against the executable
+  **197,953-byte** boundary, leaving **38,081 bytes**. The crossing trigger did
+  not fire; its registered equality mutation and shared substantive-disposition
+  predicate remain live.
+- post-checkbox acceptance: FAIL. With DOC-BOUNDARY selected as checked,
+  `checklist-audit` rejected its two valid runbook-qualified records at progress
+  lines **154** and **245**, naming distinct commits
+  `80e08ac598525efbb184c39ab5727b2f2048cc03` and
+  `7fb7ec90a0b72d2e01068131cf0009e84fd57c9e`.
+- C37 disposition: not applicable to Step 3. The existing Step 3 disclosure has
+  no corresponding contract-field change against the first committed runbook,
+  and A2 changes no Step contract other than Step 2. Admitting disclosure alone
+  would make A2's false-disclosure planted control fail.
+- decision-gate disposition: STOP. The box was restored to unchecked. No dated
+  progress byte was edited or unqualified; no task id, exemption, or retraction
+  was added; and no unauthorized Step 3 contract change or checker weakening
+  was introduced. Steps 4–7 remain unexecuted.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: checked-task evidence gate fired after the box was selected;
+  no permitted truthful reconciliation exists in A1 or A2.
+- golden-E2E delta: **0 measured**, with embedded and standalone **11/11**, but
+  no DOC-BOUNDARY completion is claimed because post-checkbox correspondence
+  failed.
