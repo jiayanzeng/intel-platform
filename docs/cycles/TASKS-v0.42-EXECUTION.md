@@ -711,7 +711,7 @@ acceptance point is a defect, not an oversight.
 - [x] REMOTE-WITNESS
 - [x] ARCHIVE
 - [x] REPAIR-TIP
-- [ ] RE-MEASURE
+- [x] RE-MEASURE
 - [ ] R-CLOSE
 
 *Box ids match the `PROGRESS-v0.42.md` entry ids exactly; the box-coverage rule
