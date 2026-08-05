@@ -104,6 +104,30 @@ structurally archiving an as-yet-unmeasured eligible subset of the **83,771-byte
 pair is **89,621 raw bytes**, not an asserted export recovery. The open decision
 for v0.43 is which bounded combination, if any, the operator authorizes.
 
+**v0.42 closing-export audit and unpublished-local observation (measured
+2026-08-05).** Local annotated v0.17.9 object
+`a7852c55deba9b509c0235dfba38e2a0426c2501` peels to closing commit
+`0382622bbfaeaf7092830460d6432a2eb777b031`, whose immediate parent is exact
+v0.17.9 release parent `5452355945d2717cbd84ea2224148dbd0f4c1ac7`.
+The project-root export of that exact closing commit passes at **2,730,969
+bytes / 157 exported files / 2 retained cycles**, a truthful **+20,241-byte**
+difference from the release parent's 2,710,728-byte governed field. This
+immediate audit child records the measured closing-tree delta and does not
+predict its own content-addressed identity.
+
+After the local tag was created, direct origin lookup for the direct and peeled
+v0.17.9 refs exited successfully with empty output. Executed remote witnessing
+also kept `main=993813c755e9f759a4ee165954c7a1df984f6b10`, every published tag and
+evidence ref exact, and the v0.41 published-audit absence visible. No release
+tag or main push was authorized or attempted, and no post-push result is
+claimed.
+
+- **Publication observation date:** 2026-08-05
+- **Publication observation release:** `v0.17.9`
+- **Publication observation status:** `unpublished-local-close`
+- **Publication observation remote:** `origin`
+- **Publication observation tag ref:** `absent`
+
 **v0.42 R-CLOSE release-parent preparation (measured 2026-08-05).** DR38
 selects patch **v0.17.9**. Dependency-free R15 derivation and the installed
 FastAPI runtime comparison report **0 differences across 6 routes / 31

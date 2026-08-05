@@ -380,3 +380,4 @@ Entries are append-only; corrections are new dated entries.
   accepted boundary, or publication ref was contradicted.
 - golden-E2E delta: **0**. The release-parent full gate and standalone run, and
   the assembled closing-worktree standalone run, pass **11/11**.
+- cycle-ending review-export audit: closing_tree=`0382622bbfaeaf7092830460d6432a2eb777b031`; bytes=`2730969`; audit_delta=`+20241`
