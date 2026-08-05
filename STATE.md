@@ -22,6 +22,44 @@
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
 
+**v0.43 ACTIVATE — canonical-ledger and document-boundary cycle declared
+(measured 2026-08-05).** The activation worktree moves the declaration to
+v0.43, creates its append-only progress record, and advances the one derived
+depth-two review-retention pattern from v0.41–v0.42 to v0.42–v0.43. All
+**31/31** carried deferral rows were populated with dated v0.43 measurements
+before the declaration moved; the four trigger-bearing Architecture rows now
+name the same cycle. The delivered semantic closing-record heading was renamed
+to the established non-semantic assembly template before first commit so the
+open cycle cannot masquerade as closed.
+
+Permission-capable R17 readback measured remote
+`main=993813c755e9f759a4ee165954c7a1df984f6b10` with every structured expected
+and absent ref in agreement. Entering HEAD
+`6f07edf84c3ce40f1ef4c9e97e5d101242490243` is its **16-commit** descendant;
+no ref moved. Dependency-free R15 remains exact at **0 differences / 6 routes /
+112 field occurrences**. `version-check` derives **3** offline pins, **22**
+current floor restatements, **3** release restatements, and **593** tracked
+files. The registered scan passes **17/17 rules / 119 controls**. Permission-
+capable Python 3.11 and Python 3.12 populations each pass **397/397** with the
+accepted warning non-fatal. The initial sandboxed populations are disclosed
+non-measurements because denied loopback binds and process inspection produced
+their failures.
+
+Before this record, State measures **221,818 / 453,741 bytes**. The protected
+manifest remains **200,440 / 1,048,576 bytes** at **3 artifacts / 339 pins**;
+two complete verifications took **0.10 s / 0.10 s real**. Neither artifact
+trigger fired. The permission-capable project-root export check passes at
+**2,691,054 bytes / 157 tracked files / 2 retained cycles**, retaining exactly
+v0.42–v0.43 with all required paths present and all derived exclusions absent.
+It stands **121,666 bytes above** the 2,569,388-byte attention boundary and
+leaves **308,946 bytes / 10.30% / 1.43 high-water cycles** below the unchanged
+ceiling, a **19,674-byte decrease** from v0.42's governed figure. Grants E, G, and H were
+not issued; no dormant branch executes. The entering untracked population is
+exactly the three protected amendment inputs plus the v0.43 runbook; none was
+edited except the runbook being activated. No dependency, production source,
+protected byte, observation, fixture, publisher wire, entitlement/licensing
+outcome, tag, branch, or remote ref moved, and no stop condition fired.
+
 **v0.42 R-CLOSE — v0.17.9 assembled close (measured 2026-08-05).** DR34
 separates the cycle-ending export audit from the later post-push record, and
 DR35's same-cycle publication order now lives only in AGENTS R-CLOSE while
