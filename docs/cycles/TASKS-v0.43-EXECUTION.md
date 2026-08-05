@@ -560,6 +560,25 @@ code.
 
 ---
 
+**Re-execution gate — 2026-08-05.** After Amendment A1 closed Step 2, the
+unchanged DOC-BOUNDARY implementation passed its focused suite **115/115**, the
+complete registered scan **17/17 rules / 123 controls**, `cycle-check`, and
+`version-check`. The retained set measured **149,990 raw bytes / 4 paths**
+against the derived **197,953-byte** boundary, leaving **47,963 bytes**; the
+crossing trigger did not fire.
+
+The required full `./run ci-local` then stopped at checked-task evidence. Both
+the original LEDGER progress entry and Amendment A1's required post-completion
+entry are valid and runbook-qualified, so `checklist-audit` rejects them as
+`multiple valid runbook-qualified entries` at progress lines **110** and
+**203**. Release/version and active-cycle checks passed before that failure.
+The progress log is append-only, the active task workflow required the second
+entry after the reopened task completed, `tools/checklist_audit.py` is outside
+declared scope, and adding an exemption would reduce an existing control's
+reach to make its finding disappear. No permitted truthful change can satisfy
+this gate. DOC-BOUNDARY remains open; Steps 4–7 do not execute against the
+failed matrix.
+
 ## Step 4 · ARCHIVE — dormant, Grant E
 
 **Objective.** Execute Grant E exactly, or record its absence truthfully.
