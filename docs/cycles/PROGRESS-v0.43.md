@@ -352,3 +352,45 @@ Entries are append-only; corrections are new dated entries.
 - golden-E2E delta: **0 measured**, with embedded and standalone **11/11**, but
   no DOC-BOUNDARY completion is claimed because post-checkbox correspondence
   failed.
+
+### 2026-08-05 · LEDGER — Amendment A3 unconditional append-order supersession
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 3d47bf5ede1083a62a43052ad37b9f7169794fa1
+- amendment acceptance: PASS. A3 replaces C37's contract-change gate, adds
+  Step 2e and its single unwrapped disclosure, reopens and completes only Step
+  2, adds no scope row, and leaves A1 plus the remainder of A2 standing.
+- correspondence acceptance: PASS. Every checked box with multiple valid
+  runbook-qualified entries now attests the last entry by file position without
+  consulting disclosure, contract fields, or entry dates. Before this audit
+  entry existed, the live checked LEDGER case resolved **3** qualified records
+  to `8c7ee461e37ce6008c77d7dc841732a7dcd580c4`, with **2** superseded. This
+  fourth qualified entry now makes implementation commit
+  `3d47bf5ede1083a62a43052ad37b9f7169794fa1` authoritative.
+- planted-control acceptance: PASS. R13's **9** controls preserve zero-valid
+  rejection, report an invalid entry even when a later entry is valid, reject
+  unrecoverable order, prove unconditional duplicate resolution, and use a
+  same-date fixture whose append order opposes commit sorting. The complete
+  self-test passes **17/17 rules / 128/128 controls**.
+- history acceptance: PASS. No dated progress byte was edited or unqualified;
+  no exemption or retraction was added. Earlier records remain readable as
+  superseded append-only history.
+- ledger acceptance: PASS. The canonical ledger carries **35 subjects**. A3's
+  added row records the unchecked risk that outcome prose is not structurally
+  classified; its action is `none`. The A2 declared-scope-sufficiency row still
+  records both v0.43 trigger firings.
+- executable acceptance: PASS. The permission-capable checked-state
+  `./run ci-local` passed **22/22**. Python 3.11.4 and 3.12.13 passed **403/403**
+  each against the exact **21-package** constraints with the same one known
+  Starlette deprecation warning, while Rust remained warning-clean. Embedded
+  and standalone golden each passed **11/11**.
+- boundary acceptance: PASS. At the implementation candidate, `cycle-check`
+  measured **164,286 raw retained cycle-document bytes / 4 paths** against the
+  executable **197,953-byte** boundary, leaving **33,667 bytes**; the crossing
+  trigger did not fire.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
