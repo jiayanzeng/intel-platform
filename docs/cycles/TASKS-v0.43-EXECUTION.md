@@ -671,6 +671,24 @@ most important planted control. Editing or unqualifying dated records, changing
 the task id, adding a vacuous exemption, or inventing a Step 3 contract change
 is not authorized. The box remains unchecked and Steps 4–7 do not execute.
 
+**A3 completion gate — 2026-08-05.** A3 removes C37's unsatisfiable
+contract-change gate. With DOC-BOUNDARY checked and before its fourth completion
+record exists, `checklist-audit` resolves its **3** qualified records to the
+third, `ca6cc544ffbdbc797ff314ec8a8c5816d4a66932`, with the first **2** retained
+as superseded history. Aggregate correspondence passes at **336 checked / 3
+retracted / 327 matched / 327 resolved / 9 exemptions**.
+
+The existing boundary implementation remains unchanged and its full
+permission-capable checked-state matrix passes **22/22**, including the complete
+**17/17-rule / 128-control** self-test, Python 3.11.4 at **403/403**, and
+embedded golden at **11/11**. The immediately preceding same-source Python
+3.12.13 population passes **403/403** against all **21** constraints, and the
+required standalone golden rerun passes **11/11**. The retained set measures
+**166,963 raw bytes / 4 paths** against the executable **197,953-byte**
+boundary, leaving **30,990 bytes**. The crossing trigger did not fire. The Step
+is complete without editing a dated record or adding an exemption or
+retraction.
+
 ## Step 4 · ARCHIVE — dormant, Grant E
 
 **Objective.** Execute Grant E exactly, or record its absence truthfully.
@@ -856,7 +874,7 @@ Carry-forward now compares that document with its own activation-parent state.
 - [x] ACTIVATE
 - [x] E0
 - [x] LEDGER
-- [ ] DOC-BOUNDARY
+- [x] DOC-BOUNDARY
 - [ ] ARCHIVE
 - [ ] PUBLISH
 - [ ] RE-MEASURE
