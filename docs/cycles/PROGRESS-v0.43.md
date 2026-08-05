@@ -394,3 +394,39 @@ Entries are append-only; corrections are new dated entries.
   byte, public value domain, publisher wire, tag, branch, or remote ref moved.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
+
+### 2026-08-05 · DOC-BOUNDARY — completed under A3 correspondence
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 8af9b34ba305444e507b003e09cd99b9b549f89e
+- implementation acceptance: PASS. The existing executable boundary,
+  predicate registration, and equality planted control remain unchanged. A3
+  changes no Step 3 contract and adds no DOC-BOUNDARY implementation shortcut.
+- correspondence acceptance: PASS. With the box checked before this record
+  existed, the three qualified DOC-BOUNDARY records resolved by file position
+  to `ca6cc544ffbdbc797ff314ec8a8c5816d4a66932`, retaining the first two as
+  superseded history. This fourth qualified entry now makes completion commit
+  `8af9b34ba305444e507b003e09cd99b9b549f89e` authoritative without editing any
+  earlier record.
+- boundary acceptance: PASS. The permission-capable checked-state matrix
+  measured **166,963 raw retained cycle-document bytes / 4 paths** against the
+  executable **197,953-byte** boundary, leaving **30,990 bytes**. At the
+  recorded implementation candidate after its dated State/runbook update,
+  `cycle-check` measured **168,093 / 197,953 bytes**, leaving **29,860 bytes**.
+  The crossing trigger did not fire at either state.
+- executable acceptance: PASS. The full checked-state `./run ci-local` passed
+  **22/22**, including **17/17 rules / 128 controls**, Python 3.11.4 at
+  **403/403**, and embedded golden at **11/11**. The immediately preceding
+  same-source Python 3.12.13 population passed **403/403** against the exact
+  **21-package** constraints; standalone golden passed **11/11**. The only
+  Python warning remains the known Starlette deprecation, and Rust is
+  warning-clean.
+- history acceptance: PASS. No dated progress byte was edited or unqualified;
+  no exemption or retraction was added. Earlier blocker records remain visible
+  as superseded append-only history.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
