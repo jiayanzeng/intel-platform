@@ -622,6 +622,24 @@ reach to make its finding disappear. No permitted truthful change can satisfy
 this gate. DOC-BOUNDARY remains open; Steps 4–7 do not execute against the
 failed matrix.
 
+**Post-A2 re-execution gate — 2026-08-05.** Amendment A2 resolved the LEDGER
+collision and the permission-capable full matrix passed **22/22**, including
+the full **17/17-rule / 128-control** registered scan. The pre-record retained
+set measured **158,710 raw bytes / 4 paths** against the executable
+**197,953-byte** boundary, leaving **39,243 bytes**; its trigger remains
+unfired. Both Python populations pass **403/403**, and embedded plus standalone
+golden pass **11/11**.
+
+Selecting DOC-BOUNDARY's box then exposes its own correspondence collision.
+The records at progress lines **154** and **245** are both valid and
+runbook-qualified, at distinct commits `80e08ac…` and `7fb7ec90…`.
+C37 deliberately does not apply because Step 3 has no contract-field change
+against the first committed runbook; A2 changes no Step contract other than
+Step 2. Admitting a disclosure without that change would fail A2's third and
+most important planted control. Editing or unqualifying dated records, changing
+the task id, adding a vacuous exemption, or inventing a Step 3 contract change
+is not authorized. The box remains unchecked and Steps 4–7 do not execute.
+
 ## Step 4 · ARCHIVE — dormant, Grant E
 
 **Objective.** Execute Grant E exactly, or record its absence truthfully.

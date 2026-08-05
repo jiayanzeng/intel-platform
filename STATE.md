@@ -21,7 +21,27 @@
 - **Remote witness absent ref:** `refs/tags/v0.10.2^{}`
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
-The later v0.43 Amendment A2 measurement supersedes the earlier DOC-BOUNDARY collision clause in this paragraph: LEDGER 2d passes the full local gate **22/22**, the registered scan at **17/17 rules / 128 controls**, Python 3.11 and 3.12 at **403/403**, and golden at **11/11**. DOC-BOUNDARY remains reopened only pending its required post-LEDGER re-execution; the progress-correspondence blocker is resolved.
+The later v0.43 Amendment A2 measurement supersedes the earlier LEDGER collision clause in this paragraph: LEDGER 2d passes the full local gate **22/22**, the registered scan at **17/17 rules / 128 controls**, Python 3.11 and 3.12 at **403/403**, and golden at **11/11**. DOC-BOUNDARY remains reopened because its own two valid qualified records collide after its box is checked; C37 correctly does not admit them because Step 3 has no validated contract change. Steps 4–7 remain unexecuted.
+
+**v0.43 DOC-BOUNDARY post-A2 re-execution — own-record correspondence
+blocker (measured 2026-08-05).** Amendment A2 resolved LEDGER and the exact
+permission-capable full matrix passed **22/22**, including R13 at **9/9**
+controls and the full registry at **17/17 rules / 128 controls**. The pre-record
+retained cycle-document set measured **158,710 raw bytes / 4 paths** against
+the executable **197,953-byte** boundary, leaving **39,243 bytes**; the crossing
+trigger remains unfired. Python 3.11 and the clean Python 3.12.13 rebuild each
+pass **403/403**, and embedded plus standalone golden each pass **11/11**.
+
+The required post-checkbox check then rejected DOC-BOUNDARY itself. Its records
+at progress lines **154** and **245** are both valid and runbook-qualified, at
+commits `80e08ac598525efbb184c39ab5727b2f2048cc03` and
+`7fb7ec90a0b72d2e01068131cf0009e84fd57c9e`. C37 does not apply: Step 3 has a
+disclosure but no contract-field change against the first committed runbook,
+and A2 explicitly changes no Step contract except Step 2. Treating disclosure
+alone as reopening would fail A2's planted false-disclosure control. Editing or
+unqualifying either dated record, changing the task id, adding a vacuous
+exemption, or inventing a Step 3 contract change is outside the supplied
+authority. The box was restored to unchecked, and Steps 4–7 did not execute.
 
 **v0.43 Amendment A2 / LEDGER 2d — reopened-task correspondence completed
 (measured 2026-08-05).** The checklist now shares cycle-check's amendment
