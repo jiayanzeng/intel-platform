@@ -21,6 +21,7 @@ F1 gives. Amendment entries are appended below this line in the form
 Step 3 — halted after the committed diff exposed an undeclared tools/version_check.py change; checkbox reopened and scope left unchanged — 2026-08-05
 Step 2 — LEDGER gains sub-part 2c, the ledger floor-literal classification, under the amended scope — 2026-08-05
 Step 2 — LEDGER gains sub-part 2d, reopened-task progress correspondence, under a second scope authority — 2026-08-05
+Step 2 — LEDGER gains sub-part 2e, unconditional append-order supersession replacing A2's contract-change gate — 2026-08-05
 
 ---
 
@@ -280,19 +281,18 @@ so it is rejected. A choice that required editing the dated observation after a
 future floor move would also falsify this decision; removing its numerals now
 prevents that demand.
 
-### C37 — reopened tasks derive progress supersession from validated amendments
+### C37 — checked tasks derive progress supersession from append order
 
-**Decision — 2026-08-05.** A checked task with multiple valid qualified
-progress entries is reopened only when its Step has a disclosed amendment whose
-contract fields actually differ from the first committed runbook. The existing
-step-to-box mapping supplies the task alias; append order then makes the last
-valid qualified entry authoritative and every earlier qualified entry
-superseded. No progress field is added or edited. A disclosure without a real
-contract change cannot activate supersession, an unamended ambiguity remains a
-failure, zero valid entries fail, and entries that cannot be ordered fail rather
-than being guessed. This uses the cycle checker's shared validated-amendment
-authority, so `tools/checklist_audit.py` carries no second Runbook-amendments
-heading literal.
+**Decision — 2026-08-05.** For every checked task with multiple valid
+runbook-qualified progress entries, the last entry in append order is
+authoritative and every earlier entry is superseded. No disclosure, contract
+change, declaration, or field is required or consulted. Ordering is the entry's
+file position in the append-only progress log, never its date; the active log
+already contains nine entries sharing one date. Zero valid qualified entries
+still fail, an unresolvable entry is still reported even when followed by a
+valid entry, and entries that cannot be ordered fail rather than being guessed.
+This resolves correspondence to exactly one commit without editing or hiding
+any earlier dated record.
 
 ---
 
@@ -493,10 +493,16 @@ and trigger to the derived net floor while leaving the dated observation free of
 floor numerals. Re-run every tracked-file classifier only after the ledger and
 its registry are both committed.
 
-**2d — resolve reopened-task progress correspondence.** Per C37, derive
-reopening from the Step's validated amendment and make the last valid qualified
-entry in recoverable append order authoritative. Preserve every dated progress
-entry and add no exemption or retraction.
+**2d — resolve reopened-task progress correspondence.** A2 derived reopening
+from the Step's validated amendment and made its last valid qualified entry in
+recoverable append order authoritative. Preserve that dated implementation
+record; 2e replaces its contract-change gate rather than editing its history.
+
+**2e — make append-order supersession unconditional.** Per the replaced C37,
+apply supersession to every checked box with multiple valid runbook-qualified
+entries, without consulting disclosure or contract change. Select the last
+entry by file position, preserve failures from every unresolvable entry, and
+preserve every dated progress entry without an exemption or retraction.
 
 **Planted controls.** A ledger missing a subject that the prior state carried
 fails. A ledger whose trigger text differs from the prior state's fails. And a
@@ -519,6 +525,10 @@ reopened task's correspondence resolved to exactly one authoritative commit,
 chosen by a rule derived from recorded state rather than declared per instance,
 and proved by planted controls in both directions. No dated progress entry is
 edited, and no exemption or retraction is added.
+The supersession rule applies to every checked box with multiple valid
+runbook-qualified entries, without consulting disclosure or contract change,
+selecting the last entry in append order. Proved by planted controls, including
+one that fails if selection is derived from the entry date.
 
 **Done when** the ledger exists once and no cycle document restates it.
 
@@ -577,6 +587,27 @@ clean Python 3.12.13 rebuild each pass **403/403**, and embedded golden passes
 loopback wire-test bind was denied; the identical permission-capable rerun
 passed that wire test. The canonical ledger now carries **34 subjects**, adding
 the dated twice-fired declared-scope-sufficiency observation required by A2.
+
+2e is `completed`. Correspondence no longer imports, derives, or consults
+runbook amendment state. Every checked box with multiple valid qualified
+entries selects the last by its file position; every earlier entry remains
+superseded history, while an unresolvable entry remains a finding even when a
+later valid entry exists. Before this completion's required audit entry exists,
+the checked live case resolves **3** qualified LEDGER records to
+`8c7ee461e37ce6008c77d7dc841732a7dcd580c4`, with **2** superseded, at
+**335 checked / 3 retracted / 326 matched / 326 resolved / 9 exemptions**.
+
+R13's **9** controls include zero valid entries, invalid-then-valid reporting,
+unrecoverable order, unconditional duplicate resolution, and a same-date
+fixture whose append order opposes commit sorting. The full registry passes
+**17/17 rules / 128 controls**. The permission-capable checked-state matrix
+passes **22/22**; Python 3.11.4 and 3.12.13 pass **403/403** each against the
+exact **21-package** constraints with the same single known Starlette
+deprecation warning. Embedded and standalone golden pass **11/11**. The
+canonical ledger carries **35 subjects**, including A3's unchecked
+blocked-authority risk, and the retained cycle-document set measures **162,875
+raw bytes / 4 paths** against the executable **197,953-byte** boundary. No dated
+progress entry was edited and no exemption or retraction was added.
 
 ## Step 3 · DOC-BOUNDARY — govern the reviewer's own output
 

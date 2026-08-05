@@ -16,7 +16,6 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.cycle_identity import execution_runbooks, progress_for_runbook
-from tools.cycle_check import RunbookAmendmentState, runbook_amendment_state
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,7 +58,6 @@ class Box:
 
 @dataclass(frozen=True)
 class Step:
-    number: str
     task_id: str
     aliases: frozenset[str]
     line: int
@@ -69,6 +67,7 @@ class Step:
 @dataclass(frozen=True)
 class Entry:
     task_id: str
+    date: str
     line: int
     lines: list[str]
     runbook: str | None
@@ -151,7 +150,6 @@ def derived_steps(path: Path) -> list[Step]:
         )
         steps.append(
             Step(
-                number=match.group("number"),
                 task_id=full_task_id,
                 aliases=frozenset(aliases),
                 line=number,
@@ -217,6 +215,7 @@ def progress_entries(path: Path) -> list[Entry]:
         entries.append(
             Entry(
                 task_id=normalize_task_id(match.group(2)),
+                date=match.group(1),
                 line=index + 1,
                 lines=section,
                 runbook=runbooks[0] if len(runbooks) == 1 else None,
@@ -423,7 +422,6 @@ def matching_commit(
     entries: list[Entry],
     box: Box,
     qualification_required: bool,
-    reopened: bool = False,
 ) -> tuple[str | None, list[str]]:
     same_id = [entry for entry in entries if entry.task_id == box.task_id]
     qualified = [
@@ -453,42 +451,34 @@ def matching_commit(
             failures.append(failure)
         else:
             valid.append((entry, commit))
-    # Invariant R13 control site: reopened zero-valid rejection.
-    if reopened and not valid:
+    # Invariant R13 control site: zero-valid rejection.
+    if not valid:
         return None, [
-            f"{runbook.name}:{box.line}: reopened checked box "
-            f"{box.task_id!r} resolves to zero valid runbook-qualified "
-            f"entries in {progress.name}"
+            f"{runbook.name}:{box.line}: checked box {box.task_id!r} "
+            f"resolves to zero valid candidate entries in {progress.name}",
+            *failures,
         ]
-    if reopened:
+    # Invariant R13 control site: invalid entries remain findings.
+    if failures:
+        return None, failures
+    if qualified and len(valid) > 1:
         lines = [entry.line for entry, _ in valid]
-        # Invariant R13 control site: reopened append-order authority.
+        # Invariant R13 control site: append-order supersession authority.
         if len(set(lines)) != len(lines) or lines != sorted(lines):
             return None, [
-                f"{runbook.name}:{box.line}: reopened checked box "
+                f"{runbook.name}:{box.line}: checked box "
                 f"{box.task_id!r} has valid qualified entries that cannot "
                 "be ordered by append position"
             ]
         authoritative = valid[-1][1]
         print(
-            "checklist-audit: reopened-task correspondence "
+            "checklist-audit: append-order supersession "
             f"runbook={runbook.name} task={box.task_id} "
             f"qualified={len(valid)} superseded={len(valid) - 1} "
             f"authoritative={authoritative}"
         )
         return authoritative, []
-    # Invariant R13 control site: unamended progress ambiguity.
-    if qualified and len(valid) > 1:
-        locations = ", ".join(
-            f"{progress.name}:{entry.line}" for entry, _ in valid
-        )
-        return None, [
-            f"{runbook.name}:{box.line}: checked box {box.task_id!r} has "
-            f"multiple valid runbook-qualified entries: {locations}"
-        ]
-    if valid:
-        return valid[0][1], []
-    return None, failures
+    return valid[0][1], []
 
 
 def run(root: Path = ROOT) -> int:
@@ -591,24 +581,6 @@ def run(root: Path = ROOT) -> int:
         exempted = 0
         retracted = 0
         seen_ids: set[str] = set()
-        qualified_counts: dict[str, int] = {}
-        for entry in entries:
-            if entry.runbook == runbook.name:
-                qualified_counts[entry.task_id] = (
-                    qualified_counts.get(entry.task_id, 0) + 1
-                )
-        amendment_state = RunbookAmendmentState(
-            frozenset(), frozenset(), frozenset()
-        )
-        if any(
-            qualified_counts.get(box.task_id, 0) > 1 for box in boxes
-        ):
-            amendment_state = runbook_amendment_state(
-                runbook,
-                runbook.read_text(),
-                root,
-                errors,
-            )
         for box in boxes:
             if box.task_id in seen_ids:
                 errors.append(
@@ -618,17 +590,6 @@ def run(root: Path = ROOT) -> int:
                 continue
             seen_ids.add(box.task_id)
             key = (runbook.name, box.task_id)
-            step = derived_map.get(box.line)
-            disclosed_reopening = (
-                step is not None
-                # Invariant R13 control site: disclosed reopening authority.
-                and step.number in amendment_state.disclosed
-            )
-            changed_reopening = (
-                step is not None
-                # Invariant R13 control site: changed-contract reopening authority.
-                and step.number in amendment_state.changed
-            )
             commit, failures = matching_commit(
                 root,
                 runbook,
@@ -637,7 +598,6 @@ def run(root: Path = ROOT) -> int:
                 box,
                 qualification_epoch is not None
                 and runbook_version(runbook) >= qualification_epoch,
-                reopened=disclosed_reopening and changed_reopening,
             )
             exemption = exemption_map.get(key)
             retraction = retraction_map.get(key)

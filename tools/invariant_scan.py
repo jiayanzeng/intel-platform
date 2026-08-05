@@ -4414,20 +4414,20 @@ CHECKLIST_CONTROL_MARKERS = {
     "unmatched-progress": (
         "Invariant R13 control site: progress-entry correspondence."
     ),
-    "unamended-reopening": (
-        "Invariant R13 control site: disclosed reopening authority."
+    "zero-valid": (
+        "Invariant R13 control site: zero-valid rejection."
     ),
-    "unchanged-reopening": (
-        "Invariant R13 control site: changed-contract reopening authority."
+    "invalid-not-silenced": (
+        "Invariant R13 control site: invalid entries remain findings."
     ),
-    "reopened-zero-valid": (
-        "Invariant R13 control site: reopened zero-valid rejection."
+    "unordered": (
+        "Invariant R13 control site: append-order supersession authority."
     ),
-    "reopened-unordered": (
-        "Invariant R13 control site: reopened append-order authority."
+    "unconditional-supersession": (
+        "Invariant R13 control site: append-order supersession authority."
     ),
-    "reopened-latest": (
-        "Invariant R13 control site: reopened append-order authority."
+    "append-order-not-date": (
+        "Invariant R13 control site: append-order supersession authority."
     ),
     "missing-step-box": (
         "Invariant R13 control site: derived step-to-box coverage."
@@ -4442,7 +4442,6 @@ def _r13_fixture_result(
     checklist_audit,
     runbook_text: str,
     progress_text: str,
-    original_runbook_text: str | None = None,
 ) -> tuple[int, str]:
     with tempfile.TemporaryDirectory(prefix="invariant-scan-R13-") as raw:
         fixture = Path(raw) / "tree"
@@ -4453,8 +4452,7 @@ def _r13_fixture_result(
         fixture_cycle = "v" + "1.0"
         fixture_runbook = f"TASKS-{fixture_cycle}-EXECUTION.md"
         fixture_progress = f"PROGRESS-{fixture_cycle}.md"
-        runbook_path = cycles / fixture_runbook
-        runbook_path.write_text(original_runbook_text or runbook_text)
+        (cycles / fixture_runbook).write_text(runbook_text)
         (cycles / fixture_progress).write_text(progress_text)
         empty_exemptions = {
             "schema_version": 1,
@@ -4474,29 +4472,6 @@ def _r13_fixture_result(
         (config / "checklist-retractions.json").write_text(
             json.dumps(empty_retractions)
         )
-        if original_runbook_text is not None:
-            subprocess.run(["git", "init", "-q"], cwd=fixture, check=True)
-            subprocess.run(
-                ["git", "add", fixture_runbook],
-                cwd=cycles,
-                check=True,
-            )
-            subprocess.run(
-                [
-                    "git",
-                    "-c",
-                    "user.name=R13 Control",
-                    "-c",
-                    "user.email=r13@example.invalid",
-                    "commit",
-                    "-q",
-                    "-m",
-                    "original runbook",
-                ],
-                cwd=fixture,
-                check=True,
-            )
-            runbook_path.write_text(runbook_text)
         prior_commit_exists = checklist_audit.commit_exists
         checklist_audit.commit_exists = lambda _root, _commit: True
         output = io.StringIO()
@@ -4553,40 +4528,27 @@ def r13_findings(root: Path) -> list[str]:
         "### 2026-08-03 · PLAIN — fixture\n\n"
         "- commit: ddddddd\n"
     )
-    reopened_original = (
+    duplicate_runbook = (
         "# fixture\n\n"
-        "## Step 1 · REOPEN\n\n"
-        "**Objective.** Original contract.\n\n"
-        "**Acceptance criteria.** Original criterion.\n\n"
-        "**Done when.** Original completion.\n\n"
+        "## Step 1 · REPEAT\n\n"
         "## Cycle checklist\n\n"
-        "- [x] REOPEN — reopened task box\n\n"
-        "## Runbook amendments\n"
+        "- [x] REPEAT — repeated task box\n"
     )
-    reopened_changed = reopened_original.replace(
-        "**Objective.** Original contract.",
-        "**Objective.** Amended contract.",
-    )
-    reopened_disclosed = (
-        reopened_changed
-        + "\nStep 1 — objective changed — 2026-08-05\n"
-    )
-    reopened_false_disclosure = (
-        reopened_original
-        + "\nStep 1 — claimed change only — 2026-08-05\n"
-    )
-    reopened_progress = (
+    append_order_progress = (
         "# progress\n\n"
-        "### 2026-08-04 · REOPEN — original completion\n\n"
+        "### 2026-08-05 · REPEAT — lexically later commit first\n\n"
         f"- runbook: `TASKS-{'v' + '1.0'}-EXECUTION.md`\n"
-        "- commit: aaaaaaa\n\n"
-        "### 2026-08-05 · REOPEN — amended completion\n\n"
+        "- commit: fffffff\n\n"
+        "### 2026-08-05 · REPEAT — lexically earlier commit last\n\n"
         f"- runbook: `TASKS-{'v' + '1.0'}-EXECUTION.md`\n"
-        "- commit: bbbbbbb\n"
+        "- commit: aaaaaaa\n"
     )
-    reopened_invalid_progress = reopened_progress.replace(
-        "- commit: aaaaaaa", "- commit: invalid-a"
-    ).replace("- commit: bbbbbbb", "- commit: invalid-b")
+    zero_valid_progress = append_order_progress.replace(
+        "- commit: fffffff", "- commit: invalid-a"
+    ).replace("- commit: aaaaaaa", "- commit: invalid-b")
+    invalid_then_valid_progress = append_order_progress.replace(
+        "- commit: fffffff", "- commit: invalid-a"
+    )
 
     missed: list[str] = []
     status, _ = _r13_fixture_result(
@@ -4623,40 +4585,31 @@ def r13_findings(root: Path) -> list[str]:
 
     status, output = _r13_fixture_result(
         checklist_audit,
-        reopened_changed,
-        reopened_progress,
-        reopened_original,
+        duplicate_runbook,
+        zero_valid_progress,
     )
-    if status != 1 or "multiple valid runbook-qualified entries" not in output:
-        missed.append("unamended-reopening")
+    if status != 1 or "resolves to zero valid candidate entries" not in output:
+        missed.append("zero-valid")
 
     status, output = _r13_fixture_result(
         checklist_audit,
-        reopened_false_disclosure,
-        reopened_progress,
-        reopened_original,
+        duplicate_runbook,
+        invalid_then_valid_progress,
     )
-    if status != 1 or "multiple valid runbook-qualified entries" not in output:
-        missed.append("unchanged-reopening")
-
-    status, output = _r13_fixture_result(
-        checklist_audit,
-        reopened_disclosed,
-        reopened_invalid_progress,
-        reopened_original,
-    )
-    if status != 1 or "resolves to zero valid" not in output:
-        missed.append("reopened-zero-valid")
+    if status != 1 or "non-hash commit value 'invalid-a'" not in output:
+        missed.append("invalid-not-silenced")
 
     reversed_entries = [
         checklist_audit.Entry(
             "REOPEN",
+            "2026-08-05",
             20,
             ["- commit: aaaaaaa"],
             f"TASKS-{'v' + '1.0'}-EXECUTION.md",
         ),
         checklist_audit.Entry(
             "REOPEN",
+            "2026-08-05",
             10,
             ["- commit: bbbbbbb"],
             f"TASKS-{'v' + '1.0'}-EXECUTION.md",
@@ -4672,7 +4625,6 @@ def r13_findings(root: Path) -> list[str]:
             reversed_entries,
             checklist_audit.Box("REOPEN", 1, True, False),
             True,
-            reopened=True,
         )
     finally:
         checklist_audit.commit_exists = prior_commit_exists
@@ -4680,16 +4632,23 @@ def r13_findings(root: Path) -> list[str]:
         "cannot be ordered by append position" in item
         for item in order_failures
     ):
-        missed.append("reopened-unordered")
+        missed.append("unordered")
 
     status, output = _r13_fixture_result(
         checklist_audit,
-        reopened_disclosed,
-        reopened_progress,
-        reopened_original,
+        duplicate_runbook,
+        append_order_progress,
     )
-    if status != 0 or "authoritative=bbbbbbb" not in output:
-        missed.append("reopened-latest")
+    if status != 0 or "authoritative=aaaaaaa" not in output:
+        missed.append("unconditional-supersession")
+
+    status, output = _r13_fixture_result(
+        checklist_audit,
+        duplicate_runbook,
+        append_order_progress,
+    )
+    if status != 0 or "authoritative=aaaaaaa" not in output:
+        missed.append("append-order-not-date")
 
     source_relative = Path("tools/checklist_audit.py")
     source_text = (root / source_relative).read_text()
