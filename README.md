@@ -1,4 +1,4 @@
-# intel-platform (v0.17.8 — core-shell)
+# intel-platform (v0.17.9 — core-shell)
 
 A multi-sector intelligence gathering and analysis platform, split into a
 **Rust core** (the engine) and a **Python shell** (the product), joined by a
@@ -7,21 +7,23 @@ minimal internal JSON API. Sources are legal, non-gatekeeper channels only
 uploads). Clients subscribe to sectors; the shell decides entitlements, the
 core enforces them.
 
-`v0.17.8` is the selected release identity. It narrows the review export to
-review-usable manifest material and makes export-capacity dispositions
-measurable; v0.41 has hosted evidence at the exact audited candidate. Under the
-tagged-closing protocol, the untagged release commit carries the release edits,
-its immediate child carries the closed cycle record, and the annotated `v0.17.8` tag targets that closing commit rather than its release-commit parent.
+`v0.17.9` is the selected release identity. It makes recorded remote state an
+executed lifecycle measurement and specifies the same-cycle publication order
+that keeps a cycle's export audit in its published tip; v0.42 has hosted
+evidence at the exact audited candidate. Under the tagged-closing protocol, the
+untagged release commit carries the release edits, its immediate child carries
+the closed cycle record, and the annotated `v0.17.9` tag targets that closing commit
+rather than its release-commit parent.
 
 `v0.17.6` is permanently withheld: its local tag is immutable, remains absent
 from the remote, and is never moved or published. v0.17.7 forward-corrects its
-tagged-tree lifecycle assertion and is authorized for publication alongside
-v0.17.8; both preserve production behavior and the public response contract.
+tagged-tree lifecycle assertion; v0.17.7 and v0.17.8 are published and preserve
+production behavior and the public response contract.
 
 Current and historical execution runbooks and their append-only progress logs
 live under [`docs/cycles/`](docs/cycles/). The declared pair is
-[`TASKS-v0.41-EXECUTION.md`](docs/cycles/TASKS-v0.41-EXECUTION.md) and
-[`PROGRESS-v0.41.md`](docs/cycles/PROGRESS-v0.41.md).
+[`TASKS-v0.42-EXECUTION.md`](docs/cycles/TASKS-v0.42-EXECUTION.md) and
+[`PROGRESS-v0.42.md`](docs/cycles/PROGRESS-v0.42.md).
 
 **Current source scope is two configured publisher origins.** `arxiv-cs` and
 `sec-edgar-usgaap` are configured network sources; the other three sources are

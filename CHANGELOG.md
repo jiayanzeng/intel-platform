@@ -4,6 +4,30 @@ All notable changes to intel-platform releases are recorded here.
 
 ## Unreleased
 
+## v0.17.9 — 2026-08-05
+
+### Fixed
+
+- Publication-state assertions now execute one bounded remote read at the
+  lifecycle entry point. Agreeing reads are measured, unavailable transport is
+  visible and non-failing, and contradictory completed reads fail.
+- The tagged-close protocol now requires a cycle's own export audit to be in
+  the commit that cycle publishes. Registered controls reject the prospective
+  audit-outside-tip shape while retaining historical pre-v0.42 closes.
+- Remote `main`, release-tag, evidence-ref, and published-audit expectations
+  now come from one structured State authority instead of dated prose
+  transcriptions.
+
+### Compatibility
+
+- This is a patch release. The changes affect lifecycle tooling, executable
+  controls, review records, and release ordering. They do not change production
+  runtime behavior, dependencies, publisher configuration, protected evidence,
+  entitlements, licensing outcomes, or any public route, response field, field
+  type, or serialized `/v1/*` value-domain value. The v0.17.4-baselined domain
+  manifest remains exact at 6 routes, 31 status/media variants, and 112 field
+  occurrences.
+
 ## v0.17.8 — 2026-08-04
 
 ### Fixed
