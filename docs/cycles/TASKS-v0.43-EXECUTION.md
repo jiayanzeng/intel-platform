@@ -20,6 +20,7 @@ F1 gives. Amendment entries are appended below this line in the form
 
 Step 3 — halted after the committed diff exposed an undeclared tools/version_check.py change; checkbox reopened and scope left unchanged — 2026-08-05
 Step 2 — LEDGER gains sub-part 2c, the ledger floor-literal classification, under the amended scope — 2026-08-05
+Step 2 — LEDGER gains sub-part 2d, reopened-task progress correspondence, under a second scope authority — 2026-08-05
 
 ---
 
@@ -279,6 +280,20 @@ so it is rejected. A choice that required editing the dated observation after a
 future floor move would also falsify this decision; removing its numerals now
 prevents that demand.
 
+### C37 — reopened tasks derive progress supersession from validated amendments
+
+**Decision — 2026-08-05.** A checked task with multiple valid qualified
+progress entries is reopened only when its Step has a disclosed amendment whose
+contract fields actually differ from the first committed runbook. The existing
+step-to-box mapping supplies the task alias; append order then makes the last
+valid qualified entry authoritative and every earlier qualified entry
+superseded. No progress field is added or edited. A disclosure without a real
+contract change cannot activate supersession, an unamended ambiguity remains a
+failure, zero valid entries fail, and entries that cannot be ordered fail rather
+than being guessed. This uses the cycle checker's shared validated-amendment
+authority, so `tools/checklist_audit.py` carries no second Runbook-amendments
+heading literal.
+
 ---
 
 ## 6. The arithmetic, so the choice can be made once
@@ -341,6 +356,7 @@ R-CLOSE. Every pattern is a literal repository glob.
 | `allow` | `docs/*.md` |
 | `allow` | `tools/cycle_check.py` |
 | `allow` | `tools/version_check.py` |
+| `allow` | `tools/checklist_audit.py` |
 | `allow` | `tools/export_check.py` |
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `tools/progress_check.py` |
@@ -477,6 +493,11 @@ and trigger to the derived net floor while leaving the dated observation free of
 floor numerals. Re-run every tracked-file classifier only after the ledger and
 its registry are both committed.
 
+**2d — resolve reopened-task progress correspondence.** Per C37, derive
+reopening from the Step's validated amendment and make the last valid qualified
+entry in recoverable append order authoritative. Preserve every dated progress
+entry and add no exemption or retraction.
+
 **Planted controls.** A ledger missing a subject that the prior state carried
 fails. A ledger whose trigger text differs from the prior state's fails. And a
 cycle that simply omits its ledger update fails rather than silently inheriting —
@@ -493,7 +514,11 @@ chosen for it fails when the derived net floor moves — proved by a planted
 control that mutates the derived floor and observes the check fire on the
 ledger. The classification is recorded with the reasoning that selected it and
 the measurement that would have selected differently. No dated historical
-measurement is edited to reach the pass.
+measurement is edited to reach the pass. `checklist-audit` passes with the
+reopened task's correspondence resolved to exactly one authoritative commit,
+chosen by a rule derived from recorded state rather than declared per instance,
+and proved by planted controls in both directions. No dated progress entry is
+edited, and no exemption or retraction is added.
 
 **Done when** the ledger exists once and no cycle document restates it.
 
@@ -534,6 +559,24 @@ complete registered scan **17/17 rules / 123 controls**, full `./run ci-local`
 `cycle-check` reports the canonical ledger at **33 subjects**, depth **2**, and
 `retention_change=not-granted`; the two amendment-required enumeration subjects
 carry dated v0.43 observations and action `none`.
+
+2d is `completed`. The checklist consumes the cycle checker's shared amendment
+derivation and maps the validated Step to its derived task box. Before this
+completion's required audit entry exists, the live v0.43 check resolves the two
+qualified LEDGER records in append order, keeps `90f8ef9f…` as superseded
+history, and attests `67e75f65856a04a912273c9ed4e7c2459cc8bd04` as the sole
+authority. R13's five new planted controls prove the opposite directions:
+unamended ambiguity and a disclosure without a contract change both fail; zero
+valid entries and unrecoverable order fail; and a legitimate reopening selects
+the later entry. The complete registry passes **17/17 rules / 128 controls**.
+
+No dated progress entry was edited and no exemption or retraction was added.
+The permission-capable full local gate passes **22/22**, Python 3.11 and the
+clean Python 3.12.13 rebuild each pass **403/403**, and embedded golden passes
+**11/11**. The initial sandboxed full-gate attempt was not accepted because its
+loopback wire-test bind was denied; the identical permission-capable rerun
+passed that wire test. The canonical ledger now carries **34 subjects**, adding
+the dated twice-fired declared-scope-sufficiency observation required by A2.
 
 ## Step 3 · DOC-BOUNDARY — govern the reviewer's own output
 

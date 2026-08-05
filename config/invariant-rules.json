@@ -1229,9 +1229,9 @@
     },
     {
       "id": "R13",
-      "claim": "Every execution-runbook Step heading derives exactly one task box without a per-cycle task list, both bold and plain checked forms enter the audit, every checked task box corresponds to progress and a real commit or an explicit declaration, and the first plain-task-box epoch requires a runbook-qualified progress entry so cross-runbook task-id collisions cannot select by file order.",
-      "source": "docs/cycles/TASKS-v0.36-EXECUTION.md Step 2 and C2-C3",
-      "scope": "The actual tools/checklist_audit.py run entry point over every Git-tracked execution runbook and its resolved progress record. Step headings derive the coverage population; a sole box inside its Step section wins, otherwise the heading-derived full id or label alias resolves the centralized cycle checklist, with the structurally named draft-runbook alias derived from its heading. Checked task boxes also include progress/declaration-backed extras such as activation and measured corrective tasks. The first runbook containing a derived plain task box establishes the forward-only qualifier epoch without a cycle list or minimum version. Earlier immutable runbooks retain their original contract. Planted fixtures cover an all-unbolded valid runbook, a checked id absent from progress, a derived Step with no box at all, and an unqualified task after the derived epoch.",
+      "claim": "Every execution-runbook Step heading derives exactly one task box without a per-cycle task list, both bold and plain checked forms enter the audit, every checked task box corresponds to progress and a real commit or an explicit declaration, and the first plain-task-box epoch requires a runbook-qualified progress entry so cross-runbook task-id collisions cannot select by file order. A Step whose disclosed amendment is validated by a real contract-field change is reopened: its last valid qualified progress entry in append order is authoritative and earlier valid entries are superseded; no other duplicate correspondence is admitted.",
+      "source": "docs/cycles/TASKS-v0.36-EXECUTION.md Step 2 and C2-C3; docs/cycles/TASKS-v0.43-EXECUTION.md Step 2 and C37",
+      "scope": "The actual tools/checklist_audit.py run entry point over every Git-tracked execution runbook and its resolved progress record. Step headings derive the coverage population; a sole box inside its Step section wins, otherwise the heading-derived full id or label alias resolves the centralized cycle checklist, with the structurally named draft-runbook alias derived from its heading. Checked task boxes also include progress/declaration-backed extras such as activation and measured corrective tasks. The first runbook containing a derived plain task box establishes the forward-only qualifier epoch without a cycle list or minimum version. Earlier immutable runbooks retain their original contract. Reopened correspondence consumes the shared cycle-check amendment authority, maps a changed and disclosed Step to its derived box, requires at least one valid qualified entry and an unambiguous append order, and selects only the last valid entry. Planted fixtures cover an all-unbolded valid runbook, a checked id absent from progress, a derived Step with no box at all, an unqualified task after the derived epoch, duplicate entries without disclosure, disclosure without a contract change, zero valid reopened entries, unordered reopened entries, and latest-entry authority.",
       "fail_before": [
         {
           "file": "tools/checklist_audit.py",
@@ -1273,9 +1273,60 @@
           "expected_fail": "checklist planted controls were not detected: unmatched-progress",
           "expected_file": "tools/checklist_audit.py",
           "expected_anchor": "    # Invariant R13 control site: progress-entry correspondence."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "                and step.number in amendment_state.disclosed\n",
+          "replace_with": [
+            "                and True\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: unamended-reopening",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "                # Invariant R13 control site: disclosed reopening authority."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "                and step.number in amendment_state.changed\n",
+          "replace_with": [
+            "                and True\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: unchanged-reopening",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "                # Invariant R13 control site: changed-contract reopening authority."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "    if reopened and not valid:\n        return None, [\n            f\"{runbook.name}:{box.line}: reopened checked box \"\n            f\"{box.task_id!r} resolves to zero valid runbook-qualified \"\n            f\"entries in {progress.name}\"\n        ]\n",
+          "replace_with": [
+            "    if reopened and not valid:\n",
+            "        reopened = False\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: reopened-zero-valid",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "    # Invariant R13 control site: reopened zero-valid rejection."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "        if len(set(lines)) != len(lines) or lines != sorted(lines):\n",
+          "replace_with": [
+            "        if False:\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: reopened-unordered",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "        # Invariant R13 control site: reopened append-order authority."
+        },
+        {
+          "file": "tools/checklist_audit.py",
+          "find": "        authoritative = valid[-1][1]\n",
+          "replace_with": [
+            "        authoritative = valid[0][1]\n"
+          ],
+          "expected_fail": "checklist planted controls were not detected: reopened-latest",
+          "expected_file": "tools/checklist_audit.py",
+          "expected_anchor": "        # Invariant R13 control site: reopened append-order authority."
         }
       ],
-      "fail_before_note": "invariant-scan: R13 FAIL: a checklist box-population, structural-coverage, progress-correspondence, or qualification planted failure was not detected"
+      "fail_before_note": "invariant-scan: R13 FAIL: a checklist box-population, structural-coverage, progress-correspondence, qualification, or validated-reopening planted failure was not detected"
     },
     {
       "id": "R14",

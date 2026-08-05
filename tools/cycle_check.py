@@ -1604,6 +1604,41 @@ def disclosed_amendment_steps(
     return disclosed
 
 
+class RunbookAmendmentState(NamedTuple):
+    disclosed: frozenset[str]
+    changed: frozenset[str]
+    validated: frozenset[str]
+
+
+def runbook_amendment_state(
+    path: Path,
+    text: str,
+    root: Path,
+    errors: list[str],
+) -> RunbookAmendmentState:
+    disclosed = disclosed_amendment_steps(text, path, root, errors)
+    original = first_committed_runbook_text(root, path)
+    if original is None:
+        return RunbookAmendmentState(
+            frozenset(disclosed),
+            frozenset(),
+            frozenset(),
+        )
+    original_fields = runbook_contract_fields(original)
+    current_fields = runbook_contract_fields(text)
+    changed = {
+        step
+        for step, label in set(original_fields) | set(current_fields)
+        if original_fields.get((step, label))
+        != current_fields.get((step, label))
+    }
+    return RunbookAmendmentState(
+        frozenset(disclosed),
+        frozenset(changed),
+        frozenset(disclosed & changed),
+    )
+
+
 def check_runbook_amendments(
     path: Path,
     text: str,
@@ -1625,12 +1660,12 @@ def check_runbook_amendments(
         for field in set(original_fields) | set(current_fields)
         if original_fields.get(field) != current_fields.get(field)
     }
-    disclosed = disclosed_amendment_steps(text, path, root, errors)
+    state = runbook_amendment_state(path, text, root, errors)
     for step, label in sorted(
         changed,
         key=lambda item: (*step_sort_key(item[0]), item[1]),
     ):
-        if step not in disclosed:
+        if step not in state.disclosed:
             errors.append(
                 f"{shown(path, root)}: undisclosed runbook amendment: "
                 f"Step {step} {label} differs from its first committed text"

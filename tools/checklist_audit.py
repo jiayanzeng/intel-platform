@@ -16,6 +16,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.cycle_identity import execution_runbooks, progress_for_runbook
+from tools.cycle_check import RunbookAmendmentState, runbook_amendment_state
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,6 +59,7 @@ class Box:
 
 @dataclass(frozen=True)
 class Step:
+    number: str
     task_id: str
     aliases: frozenset[str]
     line: int
@@ -149,6 +151,7 @@ def derived_steps(path: Path) -> list[Step]:
         )
         steps.append(
             Step(
+                number=match.group("number"),
                 task_id=full_task_id,
                 aliases=frozenset(aliases),
                 line=number,
@@ -164,7 +167,16 @@ def derived_task_box_lines(
     steps: list[Step],
     errors: list[str],
 ) -> set[int]:
-    selected: set[int] = set()
+    return set(derived_step_box_map(path, boxes, steps, errors))
+
+
+def derived_step_box_map(
+    path: Path,
+    boxes: list[Box],
+    steps: list[Step],
+    errors: list[str],
+) -> dict[int, Step]:
+    selected: dict[int, Step] = {}
     for step in steps:
         section = [
             box
@@ -182,7 +194,7 @@ def derived_task_box_lines(
                 f"has {detail} task box; expected exactly one"
             )
             continue
-        selected.add(candidates[0].line)
+        selected[candidates[0].line] = step
     return selected
 
 
@@ -411,6 +423,7 @@ def matching_commit(
     entries: list[Entry],
     box: Box,
     qualification_required: bool,
+    reopened: bool = False,
 ) -> tuple[str | None, list[str]]:
     same_id = [entry for entry in entries if entry.task_id == box.task_id]
     qualified = [
@@ -440,6 +453,31 @@ def matching_commit(
             failures.append(failure)
         else:
             valid.append((entry, commit))
+    # Invariant R13 control site: reopened zero-valid rejection.
+    if reopened and not valid:
+        return None, [
+            f"{runbook.name}:{box.line}: reopened checked box "
+            f"{box.task_id!r} resolves to zero valid runbook-qualified "
+            f"entries in {progress.name}"
+        ]
+    if reopened:
+        lines = [entry.line for entry, _ in valid]
+        # Invariant R13 control site: reopened append-order authority.
+        if len(set(lines)) != len(lines) or lines != sorted(lines):
+            return None, [
+                f"{runbook.name}:{box.line}: reopened checked box "
+                f"{box.task_id!r} has valid qualified entries that cannot "
+                "be ordered by append position"
+            ]
+        authoritative = valid[-1][1]
+        print(
+            "checklist-audit: reopened-task correspondence "
+            f"runbook={runbook.name} task={box.task_id} "
+            f"qualified={len(valid)} superseded={len(valid) - 1} "
+            f"authoritative={authoritative}"
+        )
+        return authoritative, []
+    # Invariant R13 control site: unamended progress ambiguity.
     if qualified and len(valid) > 1:
         locations = ", ".join(
             f"{progress.name}:{entry.line}" for entry, _ in valid
@@ -478,7 +516,16 @@ def run(root: Path = ROOT) -> int:
     total_retracted = 0
 
     runbooks = execution_runbooks(root)
-    parsed: dict[Path, tuple[Path | None, list[Entry], list[Box], list[Step]]] = {}
+    parsed: dict[
+        Path,
+        tuple[
+            Path | None,
+            list[Entry],
+            list[Box],
+            list[Step],
+            dict[int, Step],
+        ],
+    ] = {}
     plain_task_box_runbooks: list[Path] = []
     for runbook in runbooks:
         progress = progress_for_runbook(root, runbook)
@@ -486,12 +533,13 @@ def run(root: Path = ROOT) -> int:
         boxes = task_boxes(runbook)
         steps = derived_steps(runbook)
         coverage_errors: list[str] = []
-        derived_lines = derived_task_box_lines(
+        derived_map = derived_step_box_map(
             runbook,
             boxes,
             steps,
             coverage_errors,
         )
+        derived_lines = set(derived_map)
         errors.extend(coverage_errors)
         declared_ids = {
             task_id
@@ -508,7 +556,7 @@ def run(root: Path = ROOT) -> int:
         ]
         if any(not box.bold for box in selected):
             plain_task_box_runbooks.append(runbook)
-        parsed[runbook] = (progress, entries, selected, steps)
+        parsed[runbook] = (progress, entries, selected, steps, derived_map)
 
     # The first execution runbook that uses a plain task-box form establishes a
     # forward-only qualification epoch. The boundary is derived from the corpus,
@@ -522,7 +570,9 @@ def run(root: Path = ROOT) -> int:
     )
 
     for runbook in runbooks:
-        progress, entries, all_selected_boxes, steps = parsed[runbook]
+        progress, entries, all_selected_boxes, steps, derived_map = parsed[
+            runbook
+        ]
         boxes = [box for box in all_selected_boxes if box.checked]
         total_checked += len(boxes)
         if progress is None:
@@ -541,6 +591,24 @@ def run(root: Path = ROOT) -> int:
         exempted = 0
         retracted = 0
         seen_ids: set[str] = set()
+        qualified_counts: dict[str, int] = {}
+        for entry in entries:
+            if entry.runbook == runbook.name:
+                qualified_counts[entry.task_id] = (
+                    qualified_counts.get(entry.task_id, 0) + 1
+                )
+        amendment_state = RunbookAmendmentState(
+            frozenset(), frozenset(), frozenset()
+        )
+        if any(
+            qualified_counts.get(box.task_id, 0) > 1 for box in boxes
+        ):
+            amendment_state = runbook_amendment_state(
+                runbook,
+                runbook.read_text(),
+                root,
+                errors,
+            )
         for box in boxes:
             if box.task_id in seen_ids:
                 errors.append(
@@ -550,6 +618,17 @@ def run(root: Path = ROOT) -> int:
                 continue
             seen_ids.add(box.task_id)
             key = (runbook.name, box.task_id)
+            step = derived_map.get(box.line)
+            disclosed_reopening = (
+                step is not None
+                # Invariant R13 control site: disclosed reopening authority.
+                and step.number in amendment_state.disclosed
+            )
+            changed_reopening = (
+                step is not None
+                # Invariant R13 control site: changed-contract reopening authority.
+                and step.number in amendment_state.changed
+            )
             commit, failures = matching_commit(
                 root,
                 runbook,
@@ -558,6 +637,7 @@ def run(root: Path = ROOT) -> int:
                 box,
                 qualification_epoch is not None
                 and runbook_version(runbook) >= qualification_epoch,
+                reopened=disclosed_reopening and changed_reopening,
             )
             exemption = exemption_map.get(key)
             retraction = retraction_map.get(key)

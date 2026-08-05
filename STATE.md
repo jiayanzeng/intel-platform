@@ -21,6 +21,37 @@
 - **Remote witness absent ref:** `refs/tags/v0.10.2^{}`
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
+The later v0.43 Amendment A2 measurement supersedes the earlier DOC-BOUNDARY collision clause in this paragraph: LEDGER 2d passes the full local gate **22/22**, the registered scan at **17/17 rules / 128 controls**, Python 3.11 and 3.12 at **403/403**, and golden at **11/11**. DOC-BOUNDARY remains reopened only pending its required post-LEDGER re-execution; the progress-correspondence blocker is resolved.
+
+**v0.43 Amendment A2 / LEDGER 2d — reopened-task correspondence completed
+(measured 2026-08-05).** The checklist now shares cycle-check's amendment
+derivation: a Step is reopened only when it is both disclosed and its contract
+fields differ from the first committed runbook. For such a Step, the last valid
+runbook-qualified entry in recoverable append order is authoritative; earlier
+valid entries are retained as superseded history. With LEDGER checked before a
+new audit entry existed, the live command selected
+`67e75f65856a04a912273c9ed4e7c2459cc8bd04` as authoritative over
+`90f8ef9f…` and passed at **335 checked / 3 retracted / 326 matched / 326
+resolved / 9 exemptions**.
+
+R13 executes five new reopening controls in addition to its four existing
+controls: two qualified entries without disclosure still fail; disclosure
+without a real contract change still fails; a reopened task with zero valid
+entries fails; entries without a recoverable append order fail; and a valid
+reopening chooses the later commit. The complete registered self-test passes
+**17/17 rules / 128/128 controls**. No dated progress entry was edited, and no
+exemption or retraction was added. The canonical ledger now carries **34
+subjects**, including the dated observation that declared-scope sufficiency
+failed twice in v0.43.
+
+The first sandboxed `ci-local` attempt reached the net wire test and was denied
+permission to bind its loopback server; it was not treated as a product result.
+The identical permission-capable rerun passes all **22/22** jobs, including the
+wire test, 1.86 success, 1.85 refusal, clippy, format, Python 3.11 **403/403**,
+and embedded golden **11/11**. A clean Python 3.12.13 rebuild resolved the exact
+**21** constrained packages and passed **403/403** with the same one known
+Starlette deprecation warning as Python 3.11. No protected artifact, dependency
+authority, production source, public surface, remote ref, or tag moved.
 
 **v0.43 DOC-BOUNDARY re-execution — append-only checklist collision (measured
 2026-08-05).** With Amendment A1's LEDGER completion audited, the unchanged
