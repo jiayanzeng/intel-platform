@@ -314,6 +314,7 @@ NET_MSRV_LITERAL_SOURCE = RustVersionSpec(
 # by rust_floor_partition_report; leaving one unmatched is harmless, while a
 # tracked literal-bearing file outside every class is an error.
 OFFLINE_MSRV_HISTORICAL_EXCLUSIONS = (
+    "docs/DEFERRED.md",
     "docs/cycles/**",
     "docs/state-archive/**",
     "CHANGELOG.md",

@@ -1902,6 +1902,9 @@ PUBLICATION_CONTROL_MARKERS = {
         "Invariant R12 control site: governed artifact trigger predicate "
         "evaluation."
     ),
+    "cycle-document-boundary": (
+        "Invariant R12 control site: retained cycle-document byte boundary."
+    ),
     "cycle-ending-export-audit": (
         "Invariant R12 control site: cycle-ending review-export audit ordering."
     ),
@@ -3864,6 +3867,32 @@ def r12_findings(root: Path) -> list[str]:
                 "artifact-trigger-predicate-evaluation", []
             ).append("attention-fired-row-reads-unfired")
 
+        cycle_document_errors = cycle_check.cycle_document_crossing_errors(
+            1,
+            1,
+            f"{boundary_cycle} · 2026-08-01 — measured without disposition",
+        )
+        if not any(
+            "retained cycle-document set measures 1 raw bytes" in error
+            for error in cycle_document_errors
+        ):
+            missed.setdefault("cycle-document-boundary", []).append(
+                "crossing-without-disposition"
+            )
+        disposed_cycle_document_errors = (
+            cycle_check.cycle_document_crossing_errors(
+                1,
+                1,
+                f"{boundary_cycle} · 2026-08-01 — trigger-fired "
+                "disposition: kind=`unheld-lever`; lever=`Grant H`; "
+                "recoverable_bytes=`1`.",
+            )
+        )
+        if disposed_cycle_document_errors:
+            missed.setdefault("cycle-document-boundary", []).append(
+                "valid-disposition-rejected"
+            )
+
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
             str(part) for part in trigger_cycle_parts
@@ -4208,6 +4237,8 @@ def r12_findings(root: Path) -> list[str]:
             )
         elif group == "cycle-ending-export-audit":
             finding_kind = "cycle-ending-export-audit planted controls"
+        elif group == "cycle-document-boundary":
+            finding_kind = "cycle-document-boundary planted controls"
         elif group in {
             "deferred-ledger-cycle",
             "trigger-carry-forward",

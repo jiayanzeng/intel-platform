@@ -105,6 +105,14 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "boundary: headroom_cycles=`2`; "
         "denominator_bytes_per_cycle=`10`; "
         f"boundary_bytes=`{fixture_attention_boundary}`. |\n"
+        "| retained cycle-document set (fixture) | accepted | the retained "
+        "cycle-document raw-byte set reaches its governed boundary | "
+        "v1.2.3 · 2026-07-30 — measured. Cycle-document boundary: "
+        "set=`retained`; baseline_tree=`__CYCLE_DOCUMENT_BASELINE__`; "
+        "baseline_export_bytes=`1000`; "
+        "baseline_cycle_content_bytes=`100`; "
+        "baseline_non_cycle_bytes=`900`; reserve_bytes=`10`; "
+        f"boundary_bytes=`{cycle_check.MAX_EXPORT_BYTES - 910}`. |\n"
     )
     _runbook(root).write_text(
         "# Open cycle\n\n"
@@ -181,6 +189,48 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
 
 def _commit_cycle_root(root: Path) -> None:
     subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if head.returncode != 0:
+        active_runbook = _runbook(root)
+        active_runbook_text = active_runbook.read_text()
+        active_runbook.unlink()
+        subprocess.run(["git", "add", "."], cwd=root, check=True)
+        subprocess.run(
+            [
+                "git",
+                "-c",
+                "user.name=Cycle Check",
+                "-c",
+                "user.email=cycle-check@example.invalid",
+                "commit",
+                "--allow-empty",
+                "-qm",
+                "cycle-check seed",
+            ],
+            cwd=root,
+            check=True,
+        )
+        active_runbook.write_text(active_runbook_text)
+    baseline = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    architecture = root / "ARCHITECTURE.md"
+    architecture.write_text(
+        architecture.read_text().replace(
+            "__CYCLE_DOCUMENT_BASELINE__",
+            baseline,
+        )
+    )
     subprocess.run(["git", "add", "."], cwd=root, check=True)
     subprocess.run(
         [
@@ -364,6 +414,25 @@ def test_cycle_check_accepts_crossed_artifact_boundaries_with_disposition(
     output = capsys.readouterr().out
     assert output.count("state=trigger-fired-disposed") == 2
     assert "artifact_boundaries=trigger-fired-disposed,trigger-fired-disposed" in output
+
+
+def test_cycle_document_boundary_requires_and_accepts_dated_disposition() -> None:
+    missing = cycle_check.cycle_document_crossing_errors(
+        197_953,
+        197_953,
+        "v0.43 · 2026-08-05 — measured without disposition",
+    )
+    assert len(missing) == 1
+    assert "at or above governed boundary 197953" in missing[0]
+
+    disposed = cycle_check.cycle_document_crossing_errors(
+        197_953,
+        197_953,
+        "v0.43 · 2026-08-05 — trigger-fired disposition: "
+        "kind=`measured-change`; subject=`retained cycle documents`; "
+        "baseline_bytes=`139368`; current_bytes=`197953`.",
+    )
+    assert disposed == []
 
 
 def _publication_root(tmp_path: Path) -> tuple[Path, str, str]:
@@ -2526,6 +2595,11 @@ def test_trigger_identity_cannot_precede_freshness(monkeypatch) -> None:
         "DEFERRED_LEDGER_FORWARD_BOUNDARY",
         (1, 2, 4),
     )
+    monkeypatch.setattr(
+        cycle_check,
+        "CYCLE_DOCUMENT_BOUNDARY_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
     errors: list[str] = []
     cycle_check.check_trigger_boundary_relationship(errors)
     assert errors == [
@@ -2628,6 +2702,11 @@ def test_cycle_check_rejects_zero_trigger_populations(
             "accepted | export ceiling |",
             "| review-export size and retention bound (fixture) | "
             "accepted | none |",
+        ).replace(
+            "| retained cycle-document set (fixture) | accepted | the "
+            "retained cycle-document raw-byte set reaches its governed "
+            "boundary |",
+            "| retained cycle-document set (fixture) | accepted | none |",
         )
     )
     ledger = root / cycle_check.DEFERRED_LEDGER_PATH
@@ -2678,6 +2757,8 @@ def test_deferred_carry_forward_rejects_silent_drop(
         active.read_text(),
         root,
         errors,
+        prior_path=prior,
+        prior_text=prior.read_text(),
     )
 
     assert any(

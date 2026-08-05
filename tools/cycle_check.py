@@ -88,6 +88,7 @@ STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+[A-Z]?)\b[^\n]*$", re.MULTILINE)
 DEFERRED_HEADING = "## Deferred means deferred"
 DEFERRED_LEDGER_PATH = Path("docs/DEFERRED.md")
 DEFERRED_LEDGER_FORWARD_BOUNDARY = (0, 43)
+CYCLE_DOCUMENT_BOUNDARY_FORWARD_BOUNDARY = (0, 43)
 DEFERRED_LEDGER_CYCLE_RE = re.compile(
     r"^- \*\*Ledger observation cycle:\*\* `"
     r"(v[0-9]+\.[0-9]+(?:\.[0-9]+)?)`$",
@@ -2177,6 +2178,15 @@ FORWARD_BOUNDARY_RELATIONSHIPS = {
         "trigger-table contract while moving its authority out of cycle "
         "documents.",
     ),
+    "CYCLE_DOCUMENT_BOUNDARY_FORWARD_BOUNDARY": (
+        (
+            "DEFERRED_LEDGER_FORWARD_BOUNDARY",
+            "TRIGGER_IDENTITY_FORWARD_BOUNDARY",
+        ),
+        "The retained cycle-document boundary is introduced only after the "
+        "ledger removes the active table duplication and consumes a "
+        "cycle-identified Architecture disposition.",
+    ),
     "GOVERNED_EXPORT_FORWARD_BOUNDARY": (
         ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
         "The governed export value is a content constraint on the "
@@ -2250,6 +2260,14 @@ GOVERNED_ARTIFACT_BOUNDARY_RE = re.compile(
     r"path=`([^`\n]+)`; bytes=`([0-9]+)`$",
     re.MULTILINE,
 )
+CYCLE_DOCUMENT_BOUNDARY_RE = re.compile(
+    r"Cycle-document boundary: set=`retained`; "
+    r"baseline_tree=`([0-9a-f]{40})`; "
+    r"baseline_export_bytes=`([0-9]+)`; "
+    r"baseline_cycle_content_bytes=`([0-9]+)`; "
+    r"baseline_non_cycle_bytes=`([0-9]+)`; "
+    r"reserve_bytes=`([0-9]+)`; boundary_bytes=`([0-9]+)`"
+)
 STATE_PERMANENT_TAIL_MARKER = "<!-- STATE_ARCHIVE_PERMANENT_TAIL:START -->"
 STATE_NUMBERED_HEADING_RE = re.compile(
     r"^(?P<level>##|###) (?P<section>[1-9][0-9]*[a-z]?)\.",
@@ -2267,6 +2285,10 @@ class GovernedArtifactRowSpec(NamedTuple):
 
 
 GOVERNED_TRIGGER_PREDICATES = {
+    "cycle-document-byte-boundary": (
+        "the retained cycle-document raw-byte set reaches its governed "
+        "boundary"
+    ),
     "review-export-attention": "the review-export attention predicate fires",
     "state-artifact-byte-boundary": (
         "STATE.md reaches its governed artifact byte boundary"
@@ -2298,6 +2320,12 @@ GOVERNED_ARTIFACT_ROW_SPECS = {
         ),
     ),
 }
+CYCLE_DOCUMENT_ROW_SPEC = GovernedArtifactRowSpec(
+    DATED_DISPOSITIONS_HEADING,
+    "subject",
+    "retained cycle-document set",
+    ("cycle-document-byte-boundary",),
+)
 
 
 def governed_artifact_trigger_text(spec: GovernedArtifactRowSpec) -> str | None:
@@ -2312,7 +2340,11 @@ def governed_artifact_trigger_text(spec: GovernedArtifactRowSpec) -> str | None:
 
 def check_governed_artifact_trigger_predicates(errors: list[str]) -> None:
     # Invariant R12 control site: governed artifact trigger predicate registry.
-    for relative, spec in GOVERNED_ARTIFACT_ROW_SPECS.items():
+    governed_specs = {
+        **GOVERNED_ARTIFACT_ROW_SPECS,
+        "retained cycle documents": CYCLE_DOCUMENT_ROW_SPEC,
+    }
+    for relative, spec in governed_specs.items():
         if not spec.predicate_ids:
             errors.append(
                 f"governed artifact row {relative!r} defines no trigger predicate"
@@ -2871,6 +2903,152 @@ def check_governed_artifact_byte_boundaries(
         else ",".join(states)
     )
     return overall, reports
+
+
+def cycle_document_crossing_errors(
+    current_bytes: int,
+    boundary_bytes: int,
+    measured: str,
+) -> list[str]:
+    errors: list[str] = []
+    # Invariant R12 control site: retained cycle-document byte boundary.
+    if current_bytes >= boundary_bytes:
+        valid_dates = [
+            raw
+            for raw in ISO_DATE_TOKEN_RE.findall(measured)
+            if valid_iso_date(raw)
+        ]
+        if (
+            not valid_dates
+            or not has_substantive_trigger_fired_disposition(measured)
+        ):
+            errors.append(
+                f"retained cycle-document set measures {current_bytes} raw "
+                f"bytes at or above governed boundary {boundary_bytes}; "
+                "governed row requires a dated 'trigger-fired disposition:' "
+                "in measured-change or unheld-lever form"
+            )
+    return errors
+
+
+def check_cycle_document_boundary(
+    root: Path,
+    errors: list[str],
+) -> str | None:
+    architecture_path = root / "ARCHITECTURE.md"
+    architecture_text = (
+        architecture_path.read_text() if architecture_path.is_file() else ""
+    )
+    row = governed_trigger_row(
+        architecture_path,
+        architecture_text,
+        CYCLE_DOCUMENT_ROW_SPEC.heading,
+        CYCLE_DOCUMENT_ROW_SPEC.subject_header,
+        CYCLE_DOCUMENT_ROW_SPEC.subject_prefix,
+        root,
+        errors,
+    )
+    if row is None:
+        return None
+    trigger, measured = row
+    expected_trigger = governed_artifact_trigger_text(CYCLE_DOCUMENT_ROW_SPEC)
+    if (
+        expected_trigger is None
+        or trigger.casefold() != expected_trigger.casefold()
+    ):
+        errors.append(
+            f"{shown(architecture_path, root)}: governed trigger row "
+            f"{CYCLE_DOCUMENT_ROW_SPEC.subject_prefix!r} must equal the text "
+            "derived from its registered trigger predicate"
+        )
+
+    markers = list(CYCLE_DOCUMENT_BOUNDARY_RE.finditer(architecture_text))
+    if len(markers) != 1:
+        errors.append(
+            f"{shown(architecture_path, root)}: retained cycle-document row "
+            "requires exactly one executable Cycle-document boundary marker"
+        )
+        return None
+    (
+        baseline_tree,
+        raw_export,
+        raw_cycle_content,
+        raw_non_cycle,
+        raw_reserve,
+        raw_boundary,
+    ) = markers[0].groups()
+    baseline_export_bytes = int(raw_export)
+    baseline_cycle_content_bytes = int(raw_cycle_content)
+    baseline_non_cycle_bytes = int(raw_non_cycle)
+    reserve_bytes = int(raw_reserve)
+    boundary_bytes = int(raw_boundary)
+    if git_output(root, "cat-file", "-t", baseline_tree) != "commit":
+        errors.append(
+            f"{shown(architecture_path, root)}: cycle-document baseline tree "
+            f"{baseline_tree} is not a commit"
+        )
+    if (
+        baseline_export_bytes - baseline_cycle_content_bytes
+        != baseline_non_cycle_bytes
+    ):
+        errors.append(
+            f"{shown(architecture_path, root)}: cycle-document baseline "
+            f"requires {baseline_export_bytes} - "
+            f"{baseline_cycle_content_bytes} = {baseline_non_cycle_bytes}"
+        )
+    try:
+        attention = export_attention_boundary(root)
+        retained_paths = sorted(expected_retained_cycle_paths(root))
+    except ExportCheckError as error:
+        errors.append(f"{shown(architecture_path, root)}: {error}")
+        return None
+    expected_reserve = attention.denominator_bytes_per_cycle
+    expected_boundary = (
+        MAX_EXPORT_BYTES - baseline_non_cycle_bytes - expected_reserve
+    )
+    if reserve_bytes != expected_reserve or boundary_bytes != expected_boundary:
+        errors.append(
+            f"{shown(architecture_path, root)}: cycle-document boundary must "
+            f"equal {MAX_EXPORT_BYTES} - {baseline_non_cycle_bytes} - "
+            f"{expected_reserve} = {expected_boundary}; recorded "
+            f"reserve={reserve_bytes} boundary={boundary_bytes}"
+        )
+    if not 0 < boundary_bytes < MAX_EXPORT_BYTES:
+        errors.append(
+            f"{shown(architecture_path, root)}: cycle-document boundary must "
+            "land strictly inside the review-export ceiling"
+        )
+    current_bytes = 0
+    for relative in retained_paths:
+        path = root / relative
+        if not path.is_file():
+            errors.append(
+                f"{shown(path, root)}: retained cycle-document member is not "
+                "a file"
+            )
+            continue
+        current_bytes += path.stat().st_size
+    crossing = cycle_document_crossing_errors(
+        current_bytes,
+        boundary_bytes,
+        measured,
+    )
+    errors.extend(
+        f"{shown(architecture_path, root)}: {error}" for error in crossing
+    )
+    if current_bytes < boundary_bytes:
+        state = "bound"
+    elif crossing:
+        state = "trigger-fired-undisposed"
+    else:
+        state = "trigger-fired-disposed"
+    return (
+        "cycle-document-boundary: set=retained "
+        f"raw_bytes={current_bytes} paths={len(retained_paths)} "
+        f"boundary={boundary_bytes} reserve={reserve_bytes} "
+        f"headroom={boundary_bytes - current_bytes} state={state} "
+        f"baseline_tree={baseline_tree}"
+    )
 
 
 def state_region_tracked_paths(root: Path) -> list[Path]:
@@ -4051,6 +4229,7 @@ def run(
     state_region_report: str | None = None
     governed_export_basis_report: str | None = None
     deferred_ledger_report: str | None = None
+    cycle_document_boundary_report: str | None = None
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
         deferred_path, deferred_text = deferred_authority(
@@ -4189,6 +4368,14 @@ def run(
             )
         if (
             declared_scope_cycle_version(identity.name)
+            >= CYCLE_DOCUMENT_BOUNDARY_FORWARD_BOUNDARY
+        ):
+            cycle_document_boundary_report = check_cycle_document_boundary(
+                root,
+                errors,
+            )
+        if (
+            declared_scope_cycle_version(identity.name)
             >= STATE_REGION_CONTRACT_FORWARD_BOUNDARY
         ):
             state_region_report = check_state_archival_region_contract(
@@ -4293,6 +4480,8 @@ def run(
         print(f"cycle-check: {state_region_report}")
     if governed_export_basis_report is not None:
         print(f"cycle-check: {governed_export_basis_report}")
+    if cycle_document_boundary_report is not None:
+        print(f"cycle-check: {cycle_document_boundary_report}")
     if deferred_ledger_report is not None:
         print(f"cycle-check: {deferred_ledger_report}")
     if publication_status_report is not None:

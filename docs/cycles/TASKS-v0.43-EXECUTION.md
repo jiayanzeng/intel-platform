@@ -227,6 +227,26 @@ tracked cycle documents — and record why. Rule: the boundary is strictly insid
 whatever failure it guards, crossing requires a dated disposition, and the
 predicate registry v0.41 built is where its identifier belongs.
 
+**Decision — 2026-08-05.** Govern the exact retained cycle-document set, not
+all tracked historical cycle documents, because only the active-plus-prior
+runbook/progress set enters the bounded review export. At clean baseline tree
+`f8407acaf3fdc3aa4b330950217489f2c117cb62`, the export measured **2,726,105
+bytes**. Its four retained documents held **139,368 raw repository bytes** and
+**139,364 Repomix content bytes**, so the measured non-cycle payload was
+**2,586,741 bytes**. Preserve one maximum-positive-adjacent-governed-growth
+cycle, **215,306 bytes**, between the document boundary and the unchanged
+**3,000,000-byte** failure ceiling: `3,000,000 - 2,586,741 - 215,306 =
+197,953`. The boundary is therefore **197,953 raw bytes**; raw bytes are the
+conservative set measure because they include the four final newlines Repomix
+removes. At the baseline it left **58,585 bytes / 29.60%**. A larger later
+high-water delta must lower the boundary; quiet or smaller growth cannot shrink
+the reserve. Non-cycle growth remains governed independently by the whole-export
+attention predicate. A derived boundary not strictly inside the export ceiling,
+an incorrect baseline subtraction or reserve, an unregistered predicate, or a
+crossing without the standard dated substantive disposition is the falsifier.
+The executable checker re-derives each quantity it can obtain from repository
+authorities and measures the current Git-derived retained set.
+
 ### C34 — the archival boundary, if Grant E is issued
 
 Grant E names v0.38. Measure the region against real bytes first; the previously
@@ -673,7 +693,7 @@ Carry-forward now compares that document with its own activation-parent state.
 - [x] ACTIVATE
 - [x] E0
 - [x] LEDGER
-- [ ] DOC-BOUNDARY
+- [x] DOC-BOUNDARY
 - [ ] ARCHIVE
 - [ ] PUBLISH
 - [ ] RE-MEASURE
