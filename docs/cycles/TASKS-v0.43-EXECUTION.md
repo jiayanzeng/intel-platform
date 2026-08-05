@@ -516,6 +516,25 @@ The derived retention depth and v0.42–v0.43 configured set therefore remain
 `not-applicable` value remains a distinct accepted machine value for the case
 where 2a does not complete.
 
+2c is `completed` after tracked candidate
+`4a5c0e27229a3616708a8e4671cb811967024bf1` existed. At that exact committed
+state, `version-check` derives **2** agreeing net-floor authorities at **1.86**,
+extracts **2** ledger current restatements at the same value, and classifies the
+ledger as `registered current restatement` over **596** tracked files. The
+ledger observation contains neither floor numeral and no closed dated
+measurement was edited. Moving both derived authorities together to **1.87**
+without changing the ledger fails specifically at `docs/DEFERRED.md`; disabling
+that comparison is independently rejected by R12's registered fail-before
+mutation. Historical-family classification was measured as the alternative
+that would not fire and was rejected per C36.
+
+The exact tracked candidate passes the focused version suite **16/16**, the
+complete registered scan **17/17 rules / 123 controls**, full `./run ci-local`
+**22/22**, Python 3.11 and 3.12 **403/403** each, and embedded golden **11/11**.
+`cycle-check` reports the canonical ledger at **33 subjects**, depth **2**, and
+`retention_change=not-granted`; the two amendment-required enumeration subjects
+carry dated v0.43 observations and action `none`.
+
 ## Step 3 · DOC-BOUNDARY — govern the reviewer's own output
 
 Per F1, DR41, DR42, and C33. Three growing quantities in this repository carry a
@@ -725,7 +744,7 @@ Carry-forward now compares that document with its own activation-parent state.
 
 - [x] ACTIVATE
 - [x] E0
-- [ ] LEDGER
+- [x] LEDGER
 - [ ] DOC-BOUNDARY
 - [ ] ARCHIVE
 - [ ] PUBLISH
