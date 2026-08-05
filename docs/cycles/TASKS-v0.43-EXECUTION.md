@@ -379,6 +379,19 @@ them. A refuted hypothesis is a finding, not an error to route around.
 | H7 | Grant E's lever is near 84,896 and `STATE.md` is 221,817 of 453,741 | measure directly; the measured figure governs over §6 |
 | H8 | Registry 17 rules / 119 controls; exemptions 9; retractions 3; the v0.42 closing checklist reconciles | run the tools; derive rather than copy |
 
+### E0 measured verdicts — 2026-08-05
+
+| # | Verdict | Executed measurement |
+|---|---|---|
+| H1 | **confirmed** | Local object reads identify `a7852c55deba9b509c0235dfba38e2a0426c2501` as an annotated tag peeling to closing commit `0382622bbfaeaf7092830460d6432a2eb777b031`; its immediate parent is release parent `5452355945d2717cbd84ea2224148dbd0f4c1ac7`. Entering audit child `6f07edf84c3ce40f1ef4c9e97e5d101242490243` has the closing commit as its immediate parent and was exact entering HEAD. |
+| H2 | **confirmed** | Permission-capable direct `ls-remote` returns `main=993813c755e9f759a4ee165954c7a1df984f6b10`, exact direct/peeled v0.17.7 and v0.17.8 refs, and empty output for v0.17.6, v0.17.9, v0.8.0, and v0.10.2. The first-parent walk from main to entering HEAD contains **16 commits**, beginning with v0.41's audit child and ending with v0.42's audit child. R17 independently reports `verdict=measured`, **30 refs / 1 audit**, and the same main. |
+| H3 | **confirmed** | A temporary detached worktree at annotated `v0.17.9` resolved to closing commit `0382622…`; its real `./run cycle-check` passed with `active=v0.42`, `state=closed`, `local_tag_refs=verified`, `governed_export=bound`, and **40 closed execution cycles / 3 historical records**. The temporary worktree was then removed. |
+| H4 | **confirmed** | Exact entering export contains **178,284 cycle-document content bytes / 6.52%**: v0.42 runbook **63,834**, v0.42 progress **24,831**, v0.41 runbook **59,795**, v0.41 progress **29,824**. Comparing the exact **2,675,890-byte** prior delivered export with the **2,732,434-byte** entering export makes the new v0.42 runbook the largest positive item at **+63,834**, ahead of State **+27,406**, v0.42 progress **+24,831**, and `cycle_check.py` **+13,157**. |
+| H5 | **confirmed** | Both runbooks carry **31** subjects. The bytes after `## Deferred means deferred` through the next heading are exactly **11,124** in v0.42 and **11,294** in v0.41. Source tracing shows `check_deferred_carry_forward` chooses and reads the immediately prior runbook from `execution_runbooks(root)` in the worktree; `export_check.py` separately derives retained cycle paths from Git and never supplies review-export bytes to that comparison. No second semantic consumer requiring prior-runbook export membership appeared. |
+| H6 | **confirmed** | The exact entering commit passes project-root `export-check` at **2,732,434 bytes / 157 derived and exported Git-tracked entries / 2 retained cycles**. It is **163,046 bytes above** the **2,569,388-byte** attention boundary and leaves **267,566 bytes / 8.92% / 1.24 high-water cycles** below the ceiling at the **215,306-byte** denominator. |
+| H7 | **partly confirmed, partly refuted by one byte** | The directly delimited first-v0.38-record-to-permanent-tail region is exactly **84,896 bytes**, confirming the lever. The actual entering `STATE.md` is **221,818 / 453,741 bytes**, not 221,817; **221,817** is its Repomix content payload after the file's terminal newline is outside the `<file>` body. Raw repository bytes govern the artifact boundary. |
+| H8 | **confirmed** | Direct JSON derivation gives **17 rules / 119 fail-before controls / 9 exemptions / 3 retractions**. `checklist-audit` passes and reconciles v0.42 at **7 checked / 7 matched / 7 commits resolved**; after ACTIVATE the aggregate is **333 checked / 3 retracted / 324 matched / 324 resolved / 9 exemptions**. |
+
 Plus the standing entering measurements: `git status --porcelain` with its
 expected untracked set stated exactly, full `./run ci-local`,
 `invariant-scan --self-test`, both complete Python populations, and golden —
@@ -663,7 +676,7 @@ semantic acceptance and again at Step 7.
 ## Cycle checklist
 
 - [x] ACTIVATE
-- [ ] E0
+- [x] E0
 - [ ] LEDGER
 - [ ] DOC-BOUNDARY
 - [ ] ARCHIVE

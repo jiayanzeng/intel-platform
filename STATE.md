@@ -22,6 +22,51 @@
 - **Remote witness main relation:** `ancestor-of-head`
 - **Remote witness published audit:** `v0.41` = `absent`
 
+**v0.43 E0 — entering state reconstructed (measured 2026-08-05).** H1–H6
+and H8 are confirmed by repository commands. H7 is partly confirmed and partly
+refuted by one byte: the v0.38-to-permanent-tail lever is exactly **84,896
+bytes**, while actual entering `STATE.md` is **221,818 / 453,741 bytes**, not
+221,817. The lower number is the Repomix content payload after the terminal
+newline; the repository file byte count governs the artifact boundary.
+
+The local graph is exact: annotated object
+`a7852c55deba9b509c0235dfba38e2a0426c2501` peels to closing commit
+`0382622bbfaeaf7092830460d6432a2eb777b031`, whose immediate parent is release
+parent `5452355945d2717cbd84ea2224148dbd0f4c1ac7`; entering audit child
+`6f07edf84c3ce40f1ef4c9e97e5d101242490243` immediately follows the closing
+commit. Permission-capable direct remote readback returns exact
+`main=993813c755e9f759a4ee165954c7a1df984f6b10`, exact v0.17.7/v0.17.8 direct
+and peeled tags, and no v0.17.6, v0.17.9, v0.8.0, or v0.10.2 tag. The exact
+entering distance is **16 first-parent commits**, spanning v0.41's audit child
+through v0.42's. A detached annotated-v0.17.9 checkout passes the real
+`cycle-check` as a closed v0.42 tree with its governed export bound.
+
+The exact entering export passes at **2,732,434 bytes / 157 tracked entries /
+2 retained cycles**, **163,046 bytes above** attention with **267,566 bytes /
+8.92% / 1.24 high-water cycles** to the ceiling. Its retained cycle documents
+total **178,284 bytes / 6.52%**. Exact comparison with the prior delivered
+**2,675,890-byte** export places the new v0.42 runbook first at **+63,834
+bytes**, followed by State **+27,406**, v0.42 progress **+24,831**, and the
+cycle checker **+13,157**. Both carried deferral sections have **31** subjects
+and measure exactly **11,124** and **11,294 bytes**. Source tracing confirms the
+prior-runbook carry-forward comparison reads worktree files; export retention
+does not supply those bytes to the checker.
+
+The permission-capable full local matrix passes **22/22**. It includes
+`cycle-check` with R17's measured **30-ref / 1-audit** witness, the registered
+self-test at **17/17 rules / 119 controls**, default and net Rust tests with
+zero warnings, Rust 1.78 success, net Rust 1.86 success and 1.85 refusal,
+clippy, formatting, artifact integrity, Python 3.11 at **397/397**, and embedded
+golden **11/11**. The separately rebuilt Python 3.12 population passes
+**397/397** with the same accepted non-fatal warning. Checklist audit passes at
+**333 checked / 3 retracted / 324 matched / 324 resolved / 9 exemptions**,
+including v0.42 at **7/7/7**. The entering status was exactly the three retained
+untracked amendment inputs plus the then-untracked v0.43 runbook; current status
+has only those same three untouched amendments. No dependency, production
+source, protected byte, observation, fixture, publisher wire, entitlement or
+licensing outcome, tag, branch, or remote ref moved, and no E0 gate or stop
+condition fired.
+
 **v0.43 ACTIVATE — canonical-ledger and document-boundary cycle declared
 (measured 2026-08-05).** The activation worktree moves the declaration to
 v0.43, creates its append-only progress record, and advances the one derived
