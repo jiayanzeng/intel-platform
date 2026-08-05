@@ -94,6 +94,76 @@ def test_offline_msrv_rejects_a_stale_current_restatement() -> None:
         )
 
 
+def test_net_msrv_binds_authorities_and_ledger_restatements() -> None:
+    report = version_check.net_msrv_report(ROOT)
+
+    assert {pin.raw for pin in report.pins} == {"1.86", "1.86.0"}
+    assert {pin.normalized for pin in report.pins} == {report.derived}
+    assert report.derived == "1.86"
+    assert len(report.pins) == len(version_check.NET_MSRV_AUTHORITIES)
+    assert len(report.restatements) == len(
+        version_check.NET_MSRV_RESTATEMENTS
+    )
+    assert {
+        restatement.normalized for restatement in report.restatements
+    } == {report.derived}
+
+
+def test_net_msrv_rejects_ledger_when_derived_floor_moves() -> None:
+    run_authority, toolchain_authority = version_check.NET_MSRV_AUTHORITIES
+    run_text = (ROOT / run_authority.path).read_text()
+    run_match = run_authority.pattern.search(run_text)
+    assert run_match is not None
+    moved_block = run_match.group(0).replace(
+        run_match.group("version"),
+        "1.87.0",
+    )
+    assert moved_block.count("1.87.0") == 2
+    moved_run = (
+        run_text[: run_match.start()]
+        + moved_block
+        + run_text[run_match.end() :]
+    )
+
+    toolchain_text = (ROOT / toolchain_authority.path).read_text()
+    moved_toolchain = _replace_extracted_version(
+        toolchain_authority,
+        toolchain_text,
+        "1.87",
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            r"docs/DEFERRED\.md: ledger net-floor subject states "
+            r"1\.86->1\.86, but executable net MSRV pins derive 1\.87"
+        ),
+    ):
+        version_check.net_msrv_report(
+            ROOT,
+            text_overrides={
+                run_authority.path: moved_run,
+                toolchain_authority.path: moved_toolchain,
+            },
+        )
+
+
+def test_ledger_floor_literals_are_current_restatements_only() -> None:
+    report = version_check.rust_floor_partition_report(ROOT)
+    ledger = next(item for item in report.files if item.path == "docs/DEFERRED.md")
+    ledger_row = next(
+        line
+        for line in (ROOT / ledger.path).read_text().splitlines()
+        if line.startswith("| `--features net` Rust ")
+    )
+    cells = [cell.strip() for cell in ledger_row.split("|")[1:-1]]
+
+    assert ledger.memberships == ("registered current restatement",)
+    assert ledger.selected == "registered current restatement"
+    assert cells[2].count("1.86") == 0
+    assert cells[2].count("1.85") == 0
+
+
 def test_rust_floor_partition_classifies_every_tracked_literal_file() -> None:
     report = version_check.rust_floor_partition_report(ROOT)
 

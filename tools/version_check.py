@@ -55,6 +55,12 @@ class OfflineMsrvReport(NamedTuple):
     restatements: tuple[ExtractedRustVersion, ...]
 
 
+class NetMsrvReport(NamedTuple):
+    derived: str
+    pins: tuple[ExtractedRustVersion, ...]
+    restatements: tuple[ExtractedRustVersion, ...]
+
+
 class RustFloorFileClassification(NamedTuple):
     path: str
     occurrences: int
@@ -301,12 +307,50 @@ OFFLINE_MSRV_RESTATEMENTS = (
 
 NET_MSRV_LITERAL_SOURCE = RustVersionSpec(
     "rust-toolchain.toml",
-    "unexecuted net-floor declaration",
+    "net-floor toolchain declaration",
     re.compile(
         rf"(?m)^#\s+--features net\s+: needs >= "
         rf"(?P<version>{RUST_VERSION})\s*$"
     ),
-    "declared Rust floor literal sources",
+    "net-floor pins",
+)
+
+NET_MSRV_AUTHORITIES = (
+    RustVersionSpec(
+        "run",
+        "net-floor executable toolchain selection",
+        re.compile(
+            rf"(?ms)^ci_net_msrv_check\(\) \{{\n"
+            rf"\s*assert_rust_toolchain (?P<version>{RUST_VERSION}) "
+            rf"(?P=version)\s*$"
+        ),
+        "net-floor pins",
+    ),
+    NET_MSRV_LITERAL_SOURCE,
+)
+
+# The ledger subject and trigger are live carry-forward identities. Their dated
+# observation deliberately contains no floor numeral, so a future net-floor
+# move can update these current restatements without rewriting history.
+NET_MSRV_RESTATEMENTS = (
+    RustVersionSpec(
+        "docs/DEFERRED.md",
+        "ledger net-floor subject",
+        re.compile(
+            rf"(?m)^\| `--features net` Rust "
+            rf"(?P<version>{RUST_VERSION}) execution \|"
+        ),
+        "current restatements",
+    ),
+    RustVersionSpec(
+        "docs/DEFERRED.md",
+        "ledger net-floor trigger",
+        re.compile(
+            rf"pins and runs the net path on Rust "
+            rf"(?P<version>{RUST_VERSION}) \|"
+        ),
+        "current restatements",
+    ),
 )
 
 # These patterns are a hand-maintained semantic obligation because identical
@@ -457,6 +501,44 @@ def offline_msrv_report(
     return OfflineMsrvReport(derived, pins, restatements)
 
 
+def net_msrv_report(
+    root: Path = ROOT,
+    *,
+    text_overrides: dict[str, str] | None = None,
+) -> NetMsrvReport:
+    overrides = {} if text_overrides is None else text_overrides
+    pins = tuple(
+        version
+        for spec in NET_MSRV_AUTHORITIES
+        for version in _extract_rust_versions(root, spec, overrides)
+    )
+    normalized_pins = {pin.normalized for pin in pins}
+    if len(normalized_pins) != 1:
+        detail = ", ".join(
+            f"{pin.path} {pin.raw}->{pin.normalized}" for pin in pins
+        )
+        raise ValueError(
+            "net MSRV pins disagree after normalization: "
+            f"{detail}"
+        )
+    derived = next(iter(normalized_pins))
+
+    restatements = tuple(
+        version
+        for spec in NET_MSRV_RESTATEMENTS
+        for version in _extract_rust_versions(root, spec, overrides)
+    )
+    # Invariant R12 control site: net MSRV ledger restatement binding.
+    for net_restatement in restatements:
+        if net_restatement.normalized != derived:
+            raise ValueError(
+                f"{net_restatement.path}: {net_restatement.label} states "
+                f"{net_restatement.raw}->{net_restatement.normalized}, but "
+                f"executable net MSRV pins derive {derived}"
+            )
+    return NetMsrvReport(derived, pins, restatements)
+
+
 def _tracked_paths(root: Path) -> tuple[str, ...]:
     result = subprocess.run(
         ["git", "-C", str(root), "ls-files", "-z"],
@@ -512,16 +594,16 @@ def rust_floor_partition_report(
     """Partition tracked Rust-floor literal files at file granularity only."""
     overrides = {} if text_overrides is None else text_overrides
     msrv = offline_msrv_report(root, text_overrides=overrides)
-    net_sources = _extract_rust_versions(
-        root,
-        NET_MSRV_LITERAL_SOURCE,
-        overrides,
-    )
-    literal_versions = {msrv.derived}
-    literal_versions.update(source.normalized for source in net_sources)
+    net_msrv = net_msrv_report(root, text_overrides=overrides)
+    literal_versions = {msrv.derived, net_msrv.derived}
     literal_pattern = _rust_floor_literal_pattern(literal_versions)
-    authority_paths = {spec.path for spec in OFFLINE_MSRV_AUTHORITIES}
-    restatement_paths = {spec.path for spec in OFFLINE_MSRV_RESTATEMENTS}
+    authority_paths = {
+        spec.path for spec in (*OFFLINE_MSRV_AUTHORITIES, *NET_MSRV_AUTHORITIES)
+    }
+    restatement_paths = {
+        spec.path
+        for spec in (*OFFLINE_MSRV_RESTATEMENTS, *NET_MSRV_RESTATEMENTS)
+    }
     tracked_paths = _tracked_paths(root)
     classified: list[RustFloorFileClassification] = []
     context_versions: set[str] = set()
@@ -809,6 +891,7 @@ def nearest_tag() -> tuple[str, bool] | None:
 def main() -> int:
     try:
         msrv = offline_msrv_report()
+        net_msrv = net_msrv_report()
         rust_floor_partition = rust_floor_partition_report()
         cargo_data = tomllib.loads(CARGO_TOML.read_text())
         versions = {
@@ -839,6 +922,18 @@ def main() -> int:
         "offline MSRV current restatements: "
         f"{len(msrv.restatements)} all derive {msrv.derived}; "
         "registry=OFFLINE_MSRV_RESTATEMENTS"
+    )
+    net_raw_pin_forms = ", ".join(
+        sorted({pin.raw for pin in net_msrv.pins})
+    )
+    print(
+        f"net MSRV authorities: pins={len(net_msrv.pins)}, "
+        f"raw=[{net_raw_pin_forms}], normalized={net_msrv.derived}"
+    )
+    print(
+        "net MSRV current restatements: "
+        f"{len(net_msrv.restatements)} all derive {net_msrv.derived}; "
+        "registry=NET_MSRV_RESTATEMENTS"
     )
     print(
         "release-version current restatements: "

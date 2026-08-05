@@ -1866,6 +1866,9 @@ PUBLICATION_CONTROL_MARKERS = {
     "rust-floor-restatement": (
         "Invariant R12 control site: offline MSRV restatement binding."
     ),
+    "net-floor-restatement": (
+        "Invariant R12 control site: net MSRV ledger restatement binding."
+    ),
     "rust-floor-partition": (
         "Invariant R12 control site: Rust-floor tracked-file partition."
     ),
@@ -3557,6 +3560,60 @@ def r12_findings(root: Path) -> list[str]:
                 "stale-offline-restatement"
             )
 
+        run_net_authority, toolchain_net_authority = (
+            version_check.NET_MSRV_AUTHORITIES
+        )
+        run_net_text = (root / run_net_authority.path).read_text()
+        run_net_match = run_net_authority.pattern.search(run_net_text)
+        if run_net_match is None:
+            raise ConfigError(
+                "run: cannot plant net MSRV authority control"
+            )
+        moved_run_net_block = run_net_match.group(0).replace(
+            run_net_match.group("version"),
+            "1.87.0",
+        )
+        moved_run_net = (
+            run_net_text[: run_net_match.start()]
+            + moved_run_net_block
+            + run_net_text[run_net_match.end() :]
+        )
+        toolchain_net_text = (
+            root / toolchain_net_authority.path
+        ).read_text()
+        toolchain_net_match = toolchain_net_authority.pattern.search(
+            toolchain_net_text
+        )
+        if toolchain_net_match is None:
+            raise ConfigError(
+                "rust-toolchain.toml: cannot plant net MSRV authority control"
+            )
+        moved_toolchain_net = (
+            toolchain_net_text[: toolchain_net_match.start("version")]
+            + "1.87"
+            + toolchain_net_text[toolchain_net_match.end("version") :]
+        )
+        try:
+            version_check.net_msrv_report(
+                root,
+                text_overrides={
+                    run_net_authority.path: moved_run_net,
+                    toolchain_net_authority.path: moved_toolchain_net,
+                },
+            )
+        except ValueError as error:
+            stale_ledger_net_restatement_detected = (
+                "docs/DEFERRED.md: ledger net-floor subject states "
+                "1.86->1.86, but executable net MSRV pins derive 1.87"
+                in str(error)
+            )
+        else:
+            stale_ledger_net_restatement_detected = False
+        if not stale_ledger_net_restatement_detected:
+            missed.setdefault("net-floor-restatement", []).append(
+                "stale-ledger-net-restatement"
+            )
+
         unclassified_path = "tools/export_check.py"
         unclassified_text = (root / unclassified_path).read_text()
         derived_floor = version_check.offline_msrv_report(root).derived
@@ -4165,6 +4222,7 @@ def r12_findings(root: Path) -> list[str]:
             source_relative = "tools/export_check.py"
         elif group in {
             "rust-floor-restatement",
+            "net-floor-restatement",
             "rust-floor-partition",
             "rust-floor-context",
             "release-version-restatement",
@@ -4211,6 +4269,8 @@ def r12_findings(root: Path) -> list[str]:
             finding_kind = "trigger-boundary-order planted controls"
         elif group == "rust-floor-restatement":
             finding_kind = "rust-floor-restatement planted controls"
+        elif group == "net-floor-restatement":
+            finding_kind = "net-floor-restatement planted controls"
         elif group == "rust-floor-partition":
             finding_kind = "rust-floor-partition planted controls"
         elif group == "rust-floor-context":

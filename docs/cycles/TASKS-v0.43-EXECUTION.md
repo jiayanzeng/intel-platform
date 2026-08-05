@@ -18,9 +18,8 @@ operator question is routed mid-cycle.
 F1 gives. Amendment entries are appended below this line in the form
 `Step N — <what changed> — YYYY-MM-DD`.
 
-Step 3 — halted after the committed diff exposed an undeclared
-`tools/version_check.py` change; checkbox reopened and scope left unchanged —
-2026-08-05
+Step 3 — halted after the committed diff exposed an undeclared tools/version_check.py change; checkbox reopened and scope left unchanged — 2026-08-05
+Step 2 — LEDGER gains sub-part 2c, the ledger floor-literal classification, under the amended scope — 2026-08-05
 
 ---
 
@@ -264,6 +263,22 @@ grant's wording, stop and report rather than choosing a different boundary.
 Standing latitude to add rules and planted controls; none to add acceptance
 criteria that nothing executes.
 
+### C36 — the ledger is a registered current net-floor restatement
+
+**Decision — 2026-08-05.** Classify the ledger's live subject and trigger as
+registered current restatements of the executable net floor, not as historical
+family prose. The dated observation is not a carry-forward identity and is
+rewritten without the `1.86` and `1.85` numerals, leaving every floor literal on
+that line in the live subject or trigger. A dedicated net-floor registry derives
+its authority from the executed `run` selection and the tracked toolchain
+declaration, and registers both live ledger occurrences. The falsifier is a
+derived net floor different from the ledger value: the planted control moves
+both authorities together and must fail specifically on `docs/DEFERRED.md`.
+Historical-family membership would instead permit that live claim to go stale,
+so it is rejected. A choice that required editing the dated observation after a
+future floor move would also falsify this decision; removing its numerals now
+prevents that demand.
+
 ---
 
 ## 6. The arithmetic, so the choice can be made once
@@ -325,6 +340,7 @@ R-CLOSE. Every pattern is a literal repository glob.
 | `allow` | `ARCHITECTURE.md` |
 | `allow` | `docs/*.md` |
 | `allow` | `tools/cycle_check.py` |
+| `allow` | `tools/version_check.py` |
 | `allow` | `tools/export_check.py` |
 | `allow` | `tools/invariant_scan.py` |
 | `allow` | `tools/progress_check.py` |
@@ -456,6 +472,11 @@ depth to one cycle and re-derive the retention pattern. If Grant H is absent,
 record not-granted; if 2a did not complete, record not-applicable, and keep those
 two verdicts distinct.
 
+**2c — classify the ledger's floor literals.** Per C36, bind the live subject
+and trigger to the derived net floor while leaving the dated observation free of
+floor numerals. Re-run every tracked-file classifier only after the ledger and
+its registry are both committed.
+
 **Planted controls.** A ledger missing a subject that the prior state carried
 fails. A ledger whose trigger text differs from the prior state's fails. And a
 cycle that simply omits its ledger update fails rather than silently inheriting —
@@ -467,7 +488,12 @@ each anchored at a registered control site; migration is proved byte-faithful
 subject by subject and trigger by trigger rather than by count; the checkers'
 reads of `docs/cycles/` are unchanged so nothing depends on export membership;
 2b's two negative verdicts are distinguishable in the output; `./run ci-local` is
-clean.
+clean. `version-check` passes with the ledger tracked, and the classification
+chosen for it fails when the derived net floor moves — proved by a planted
+control that mutates the derived floor and observes the check fire on the
+ledger. The classification is recorded with the reasoning that selected it and
+the measurement that would have selected differently. No dated historical
+measurement is edited to reach the pass.
 
 **Done when** the ledger exists once and no cycle document restates it.
 
@@ -685,6 +711,9 @@ Carry-forward now compares that document with its own activation-parent state.
   self-testing rule with an executable `fail_before` can exist.
 - No hardcoded scope list where the scope can be derived.
 - No acceptance discharged by an executable whose witness set is empty.
+- No step that newly tracks a file is accepted until every gate that classifies
+  tracked files has been run at the tracked state. A gate run over an untracked
+  file measures a state that will not exist.
 - No change that reduces the reach of an existing control, or widens a trigger, to
   make a failure disappear.
 - No retraction added without quoting the bar and obtaining an operator decision.
@@ -696,7 +725,7 @@ Carry-forward now compares that document with its own activation-parent state.
 
 - [x] ACTIVATE
 - [x] E0
-- [x] LEDGER
+- [ ] LEDGER
 - [ ] DOC-BOUNDARY
 - [ ] ARCHIVE
 - [ ] PUBLISH
