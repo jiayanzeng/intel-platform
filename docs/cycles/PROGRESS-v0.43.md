@@ -150,3 +150,52 @@ Entries are append-only; corrections are new dated entries.
   amendment inputs remain untouched and untracked.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
+
+### 2026-08-05 · DOC-BOUNDARY — BLOCKED at declared-scope gate
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 80e08ac598525efbb184c39ab5727b2f2048cc03
+- rejected implementation: `5816bc69a84d6fa652f7d88bbebcb6008b70cd8f`
+  derived and enforced a **197,953-byte** retained-set boundary, but also
+  changed undeclared `tools/version_check.py` to classify the new stable
+  ledger.
+- measured construction: C33 selects the exact Git-derived retained
+  active-plus-prior runbook/progress set. Baseline tree `f8407ac…` measured
+  **2,726,105 export bytes**, **139,364 retained content bytes**, and
+  **2,586,741 non-cycle bytes**. The one-high-water-cycle principle derives
+  `3,000,000 - 2,586,741 - 215,306 = 197,953 bytes`. The rejected worktree
+  measured **140,818 raw bytes / 4 paths**, leaving **57,135 bytes / 28.86%**.
+- control measurement: the common predicate registry and crossing mutation
+  worked. Direct construction rejected equality without a dated substantive
+  disposition and accepted equality with the existing `unheld-lever` form;
+  focused tests passed **112/112** and the rejected tree's complete mutation
+  scan passed **17/17 rules / 122 controls**, including **66** R12 controls.
+- declared-scope acceptance: **FAIL**. Required post-commit `cycle-check`
+  reported `declared scope diff rejects tools/version_check.py`. v0.43 neither
+  allows that path nor names it as a release authority. The scope was not
+  widened and the failure was not routed around.
+- prior-claim correction: LEDGER's pre-commit matrix ran while new
+  `docs/DEFERRED.md` was still absent from `git ls-files`; it therefore did not
+  examine the file's carried Rust 1.86/1.85 text. Once tracked,
+  `version-check` rejects it as an unclassified floor-literal file. The rejected
+  DOC-BOUNDARY tree proved a classification would pass over **596 tracked files
+  / 101 literal files / 1,047 literal occurrences**, but the required checker
+  edit is outside scope and cannot be adopted.
+- corrective disposition: commit `80e08ac…` removes the out-of-scope change,
+  leaves declared scope unchanged, appends the dated State finding, and reopens
+  the DOC-BOUNDARY box. The stable ledger is not reworded to evade the check.
+- executable acceptance: **NOT SATISFIED**. The rejected tree's
+  permission-capable matrix passed **22/22**, both Python populations passed
+  **400/400**, and embedded plus standalone golden passed **11/11**, but the
+  corrective tree truthfully fails `version-check`; those earlier results do
+  not close the task.
+- protected-input acceptance: PASS. No dependency, production runtime source,
+  public value domain, protected byte, publisher wire, tag, branch, or remote
+  ref moved. The three historical amendment inputs remain untouched and
+  untracked.
+- stop conditions: declared-scope gate fired; DOC-BOUNDARY halted. Subsequent
+  steps that require a clean full gate cannot be accepted without new scope
+  authority.
+- golden-E2E delta: **0** on the rejected implementation tree; no final-task
+  golden claim is made for a completed DOC-BOUNDARY task.
