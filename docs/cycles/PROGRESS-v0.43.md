@@ -430,3 +430,36 @@ Entries are append-only; corrections are new dated entries.
   byte, public value domain, publisher wire, tag, branch, or remote ref moved.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
+
+### 2026-08-05 · ARCHIVE — Grant E not granted
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: ca11c0acb99ad7651991729a6efcbd6763b8ec4b
+- grant disposition: not granted. Every operator message through this step was
+  checked against Grant E's exact required text; none issued it. No partial
+  authority was inferred and no archival move executed.
+- quantity acceptance: PASS. The directly delimited
+  v0.38-to-permanent-marker region remains **84,896 unrecovered bytes**. The
+  pre-disposition State measured **245,192 / 453,741 bytes**.
+- protected-artifact acceptance: PASS. No file was added under
+  `docs/state-archive/`; the existing four archives remain the complete
+  population. `config/protected-artifacts.json` remains **200,440 bytes / 339
+  pins** at SHA-256
+  `f59d4520cfaa0190954442856b6bb1ab5576049f16d5b8b816f00f64495fefae`.
+- attention acceptance: PASS. The pre-disposition project-root export passed at
+  **2,805,106 bytes / 158 tracked entries / 2 retained cycles**, **235,718
+  bytes above** the **2,569,388-byte** attention boundary and **194,894 bytes /
+  6.50% / 0.91 high-water cycles** below failure. The dated ledger observation
+  records `kind=unheld-lever`, `lever=Grant E`, and
+  `recoverable_bytes=84896` without claiming the lever ran.
+- executable acceptance: PASS. The permission-capable `./run ci-local` passed
+  **22/22**, including **17/17 rules / 128 controls**, Python 3.11.4 at
+  **403/403**, and embedded golden at **11/11**. The only Python warning remains
+  the known Starlette deprecation; Rust is warning-clean. Standalone golden
+  passed **11/11**.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
