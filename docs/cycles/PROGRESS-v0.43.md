@@ -94,3 +94,15 @@ Entries are append-only; corrections are new dated entries.
 - stop conditions: none.
 - golden-E2E delta: **0**. The standalone post-record run and full matrix each
   passed **11/11**.
+
+### 2026-08-05 · E0 — runbook-qualification correction
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 1c4c99b4576224ea38b23d93c059c92316bea8c5
+- correction: the original E0 audit entry omitted the v0.36-forward explicit
+  runbook qualifier. This append-only correction supplies that qualifier; it
+  does not replace or change any earlier measurement.
+- acceptance: PASS. E0's implementation commit remains the same real commit,
+  and all measurements and acceptance results remain in the preceding entry.
+- golden-E2E delta: **0**; this correction changes only audit prose.
