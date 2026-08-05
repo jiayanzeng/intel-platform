@@ -199,3 +199,45 @@ Entries are append-only; corrections are new dated entries.
   authority.
 - golden-E2E delta: **0** on the rejected implementation tree; no final-task
   golden claim is made for a completed DOC-BOUNDARY task.
+
+### 2026-08-05 · LEDGER — Amendment A1 tracked-state completion
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 67e75f65856a04a912273c9ed4e7c2459cc8bd04
+- amendment acceptance: PASS. The runbook adds exactly one scope authority,
+  `tools/version_check.py`, records both required single-line disclosures, adds
+  Step 2c and the newly-tracked-file standing prohibition, and leaves every
+  other scope row and grant unchanged.
+- tracked-state acceptance: PASS. Candidate
+  `4a5c0e27229a3616708a8e4671cb811967024bf1` existed before the decisive
+  classifier run. At that exact committed state, `version-check` examined
+  **596** tracked files, derived **2** agreeing net authorities at **1.86**, and
+  bound the ledger's **2** live claims as `registered current restatement`.
+  The ledger was not admitted to the historical family.
+- falsifier acceptance: PASS. A planted simultaneous move of both derived net
+  authorities to **1.87** fails specifically because `docs/DEFERRED.md` still
+  states **1.86**. R12's reconstructible mutation disables that binding and is
+  independently rejected as control **45/67**. The complete registry passes
+  **17/17 rules / 123 controls**.
+- history acceptance: PASS. The current v0.43 observation was rewritten without
+  either floor numeral before registration, so a future floor change cannot
+  demand an edit to closed dated history. No closed historical measurement was
+  changed to obtain the pass.
+- ledger acceptance: PASS. The canonical ledger now measures **33 subjects /
+  11,383 bytes**. The two amendment-required hardcoded-enumeration subjects
+  carry dated v0.43 observations and action `none`; depth remains **2** with
+  `retention_change=not-granted`.
+- executable acceptance: PASS. The exact tracked candidate passed focused
+  version tests **16/16**, full `./run ci-local` **22/22**, Python 3.11 and 3.12
+  **403/403** each, zero-warning Rust and lint gates, and embedded golden
+  **11/11**. Exact completion commit cycle/version checks and the standalone
+  golden run also pass.
+- prior-claim correction: the earlier blocker remains preserved as its truthful
+  at-the-time record. This later authorized and measured entry closes LEDGER;
+  DOC-BOUNDARY remains separately reopened until its own gate is re-executed.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
