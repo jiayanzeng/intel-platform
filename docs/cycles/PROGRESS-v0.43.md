@@ -241,3 +241,37 @@ Entries are append-only; corrections are new dated entries.
   byte, public value domain, publisher wire, tag, branch, or remote ref moved.
 - stop conditions: none.
 - golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
+
+### 2026-08-05 · DOC-BOUNDARY — BLOCKED at checklist correspondence
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 7fb7ec90a0b72d2e01068131cf0009e84fd57c9e
+- resumed implementation acceptance: PASS. After Amendment A1 completed
+  LEDGER, the unchanged boundary implementation passed the focused
+  cycle/version suite **115/115**, the complete registry **17/17 rules / 123
+  controls**, `cycle-check`, and `version-check`.
+- boundary acceptance: PASS. The exact pre-record retained set measured
+  **149,990 raw bytes / 4 paths** against the executable **197,953-byte**
+  boundary, leaving **47,963 bytes**. The crossing trigger did not fire; its
+  registered equality mutation and shared substantive-disposition predicate
+  remain live.
+- full-matrix acceptance: **FAIL**. `./run ci-local` passed release/version and
+  active-cycle consistency, then stopped at checked-task evidence. The original
+  LEDGER entry at line 110 and the Amendment A1 completion entry at line 203
+  are both valid and runbook-qualified; `checklist-audit` rejects them as
+  `multiple valid runbook-qualified entries`.
+- decision-gate disposition: STOP. The progress log is append-only and the
+  standing task workflow required the second record after the reopened task
+  completed. `tools/checklist_audit.py` is outside declared scope. No exemption,
+  retraction, task-id rewrite, or control weakening is introduced to make the
+  finding disappear. DOC-BOUNDARY remains unchecked and Steps 4–7 remain
+  unexecuted.
+- protected-input acceptance: PASS. The three historical amendment inputs
+  remain untouched and untracked. No dependency, production source, protected
+  byte, public value domain, publisher wire, tag, branch, or remote ref moved.
+- stop conditions: checked-task evidence gate fired; no permitted truthful
+  reconciliation exists in the declared contract.
+- golden-E2E delta: **not re-claimed for DOC-BOUNDARY completion**. The latest
+  completed-task standalone run remains Step 2's passing **11/11**; the present
+  matrix stopped before its embedded golden lane.
