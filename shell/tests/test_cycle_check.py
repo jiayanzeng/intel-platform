@@ -126,6 +126,15 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "- governed artifact byte boundary: "
         "path=`config/protected-artifacts.json`; bytes=`"
         f"{fixture_manifest_boundary}`\n\n"
+        "## Step 1 · CHECK\n\n"
+        "**Objective.** Preserve the contract.\n\n"
+        "**Acceptance criteria.** Original criterion.\n\n"
+        "**Done when** the original criterion passes.\n\n"
+        "- [ ] unfinished task\n"
+    )
+    (root / cycle_check.DEFERRED_LEDGER_PATH).write_text(
+        "# Deferred ledger\n\n"
+        "- **Ledger observation cycle:** `v1.2.3`\n\n"
         "## Deferred means deferred\n\n"
         "| Deferred item | Unchanged trigger | Measured 2026-07-29 | "
         "v1.2.3 action |\n"
@@ -136,12 +145,7 @@ def _cycle_root(tmp_path: Path, contract_tail: str = "") -> Path:
         "| Second `STATE.md` archival | the review-export attention predicate "
         "fires, or "
         "`STATE.md` reaches its governed artifact byte boundary | "
-        "v1.2.3 · 2026-07-30 — measured | none |\n\n"
-        "## Step 1 · CHECK\n\n"
-        "**Objective.** Preserve the contract.\n\n"
-        "**Acceptance criteria.** Original criterion.\n\n"
-        "**Done when** the original criterion passes.\n\n"
-        "- [ ] unfinished task\n"
+        "v1.2.3 · 2026-07-30 — measured | none |\n"
     )
     _progress(root).write_text(
         "# Progress\n\n"
@@ -233,13 +237,16 @@ def _cross_fixture_artifact_boundaries(
         runbook.read_text(),
     )
     if disposed:
-        runbook_text = runbook_text.replace(
-            "`STATE.md` reaches its governed artifact byte boundary | "
-            "v1.2.3 · 2026-07-30 — measured | none |",
-            "`STATE.md` reaches its governed artifact byte boundary | "
-            "v1.2.3 · 2026-07-30 — trigger-fired disposition: "
-            "kind=`unheld-lever`; lever=`Grant E`; "
-            "recoverable_bytes=`84896`. | none |",
+        ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+        ledger.write_text(
+            ledger.read_text().replace(
+                "`STATE.md` reaches its governed artifact byte boundary | "
+                "v1.2.3 · 2026-07-30 — measured | none |",
+                "`STATE.md` reaches its governed artifact byte boundary | "
+                "v1.2.3 · 2026-07-30 — trigger-fired disposition: "
+                "kind=`unheld-lever`; lever=`Grant E`; "
+                "recoverable_bytes=`84896`. | none |",
+            )
         )
         architecture = root / "ARCHITECTURE.md"
         architecture.write_text(
@@ -308,9 +315,9 @@ def test_cycle_check_rejects_missing_governed_artifact_row(
     capsys,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Second `STATE.md` archival | the review-export attention "
             "predicate fires, "
             "or `STATE.md` reaches its governed artifact byte boundary | "
@@ -2086,12 +2093,16 @@ def test_cycle_check_accepts_suffixed_deferred_step_reference(
 ) -> None:
     root = _cycle_root(tmp_path)
     runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| Baseline item | trigger | "
             "v1.2.3 · 2026-07-30 — measured | Step 1A |",
         )
+    )
+    runbook.write_text(
+        runbook.read_text()
         + "\n## Step 1A · FOLLOW-UP\n\n"
         "**Objective.** Discharge the deferred action.\n\n"
         "**Acceptance criteria.** The action is discharged.\n\n"
@@ -2304,9 +2315,9 @@ def test_cycle_check_rejects_unassigned_active_deferral_row(
     capsys,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| Runner evidence | release changes | no release yet | "
             "re-measure at the new release commit |",
@@ -2325,13 +2336,17 @@ def test_cycle_check_accepts_assigned_active_deferral_row(
 ) -> None:
     root = _cycle_root(tmp_path)
     runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| Runner evidence | release changes | "
             "v1.2.3 · 2026-07-30 — no release yet | "
             "re-measure — discharged by Step 2 |",
         )
+    )
+    runbook.write_text(
+        runbook.read_text()
         + "\n## Step 2 · RE-MEASURE\n\n"
         "**Objective.** Re-measure the release commit.\n\n"
         "**Acceptance criteria.** Hosted counts captured.\n\n"
@@ -2347,9 +2362,9 @@ def test_cycle_check_accepts_dated_negative_trigger_observation(
     tmp_path: Path,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| L2 wrapper | an operator server session | "
             "v1.2.3 · 2026-07-30 — no operator server session has occurred | "
@@ -2365,9 +2380,9 @@ def test_cycle_check_rejects_trigger_observation_without_valid_date(
     capsys,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| L2 wrapper | an operator server session | "
             "v1.2.3 — no operator server session has occurred | none |",
@@ -2506,6 +2521,11 @@ def test_trigger_identity_cannot_precede_freshness(monkeypatch) -> None:
         "STATE_REGION_CONTRACT_FORWARD_BOUNDARY",
         (1, 2, 4),
     )
+    monkeypatch.setattr(
+        cycle_check,
+        "DEFERRED_LEDGER_FORWARD_BOUNDARY",
+        (1, 2, 4),
+    )
     errors: list[str] = []
     cycle_check.check_trigger_boundary_relationship(errors)
     assert errors == [
@@ -2519,9 +2539,9 @@ def test_cycle_check_rejects_prior_cycle_trigger_observation(
     capsys,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "| Baseline item | none | no measurement required | none |",
             "| L2 wrapper | an operator server session | "
             "v0.27 · 2026-07-30 — no operator server session occurred | "
@@ -2541,9 +2561,9 @@ def test_cycle_check_ignores_rows_without_a_trigger(
     tmp_path: Path,
 ) -> None:
     root = _cycle_root(tmp_path)
-    runbook = _runbook(root)
-    runbook.write_text(
-        runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
             "Measured 2026-07-29",
             "Measured observation",
         )
@@ -2555,11 +2575,12 @@ def test_cycle_check_ignores_rows_without_a_trigger(
 def test_current_trigger_freshness_tables_are_complete() -> None:
     root = Path(__file__).resolve().parents[2]
     identity = resolve_cycle(root)
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
     errors: list[str] = []
 
     counts = cycle_check.check_trigger_freshness(
-        identity.runbook,
-        identity.runbook.read_text(),
+        ledger,
+        ledger.read_text(),
         root,
         errors,
     )
@@ -2573,7 +2594,7 @@ def test_current_trigger_freshness_tables_are_complete() -> None:
         ),
         len(
             cycle_check.governed_trigger_subjects(
-                identity.runbook.read_text(),
+                ledger.read_text(),
                 cycle_check.DEFERRED_HEADING,
                 "Deferred item",
             )
@@ -2609,9 +2630,9 @@ def test_cycle_check_rejects_zero_trigger_populations(
             "accepted | none |",
         )
     )
-    runbook = _runbook(root)
-    runbook.write_text(
-            runbook.read_text().replace(
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+            ledger.read_text().replace(
                 "| Trigger baseline | active condition |",
                 "| Trigger baseline | none |",
             ).replace(
@@ -2666,6 +2687,55 @@ def test_deferred_carry_forward_rejects_silent_drop(
     )
 
 
+def test_cycle_check_rejects_stale_deferred_ledger_cycle(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = _cycle_root(tmp_path)
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    ledger.write_text(
+        ledger.read_text().replace(
+            "**Ledger observation cycle:** `v1.2.3`",
+            "**Ledger observation cycle:** `v1.2.2`",
+        )
+    )
+
+    assert cycle_check.run(root) == 1
+    assert (
+        "canonical deferred ledger must name active cycle 'v1.2.3' exactly "
+        "once"
+        in capsys.readouterr().err
+    )
+
+
+def test_deferred_carry_forward_rejects_trigger_rewording(
+    tmp_path: Path,
+) -> None:
+    root = _cycle_root(tmp_path)
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
+    prior_text = ledger.read_text()
+    active_text = prior_text.replace(
+        "| Trigger baseline | active condition |",
+        "| Trigger baseline | reworded condition |",
+    )
+    errors: list[str] = []
+
+    cycle_check.check_deferred_carry_forward(
+        ledger,
+        active_text,
+        root,
+        errors,
+        prior_path=ledger,
+        prior_text=prior_text,
+    )
+
+    assert any(
+        "deferred subject 'Trigger baseline' changes its trigger" in error
+        and "expected 'active condition', found 'reworded condition'" in error
+        for error in errors
+    )
+
+
 def test_deferred_carry_forward_accepts_dated_completions(
     tmp_path: Path,
 ) -> None:
@@ -2707,13 +2777,15 @@ def test_deferred_carry_forward_accepts_dated_completions(
 def test_current_deferred_carry_forward_is_complete() -> None:
     root = Path(__file__).resolve().parents[2]
     identity = resolve_cycle(root)
+    ledger = root / cycle_check.DEFERRED_LEDGER_PATH
     errors: list[str] = []
 
     cycle_check.check_deferred_carry_forward(
-        identity.runbook,
-        identity.runbook.read_text(),
+        ledger,
+        ledger.read_text(),
         root,
         errors,
+        completion_text=identity.runbook.read_text(),
     )
 
     assert errors == []

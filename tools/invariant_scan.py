@@ -1908,8 +1908,14 @@ PUBLICATION_CONTROL_MARKERS = {
     "trigger-freshness": (
         "Invariant R12 control site: trigger freshness."
     ),
+    "deferred-ledger-cycle": (
+        "Invariant R12 control site: deferred ledger active-cycle advancement."
+    ),
     "trigger-carry-forward": (
         "Invariant R12 control site: deferred trigger carry-forward."
+    ),
+    "trigger-byte-fidelity": (
+        "Invariant R12 control site: deferred trigger byte fidelity."
     ),
     "test-population": (
         "Invariant R12 control site: test-population equivalence."
@@ -3858,7 +3864,6 @@ def r12_findings(root: Path) -> list[str]:
                 "artifact-trigger-predicate-evaluation", []
             ).append("attention-fired-row-reads-unfired")
 
-        trigger_path = fixture / "trigger-control.md"
         trigger_cycle_parts = cycle_check.TRIGGER_IDENTITY_FORWARD_BOUNDARY
         active_trigger_cycle = "v" + ".".join(
             str(part) for part in trigger_cycle_parts
@@ -3866,6 +3871,44 @@ def r12_findings(root: Path) -> list[str]:
         prior_trigger_cycle = (
             f"v{trigger_cycle_parts[0]}.{trigger_cycle_parts[1] - 1}"
         )
+        ledger_cycle_parts = cycle_check.DEFERRED_LEDGER_FORWARD_BOUNDARY
+        active_ledger_cycle = "v" + ".".join(
+            str(part) for part in ledger_cycle_parts
+        )
+        prior_ledger_cycle = (
+            f"v{ledger_cycle_parts[0]}.{ledger_cycle_parts[1] - 1}"
+        )
+        ledger_fixture = fixture / "deferred-ledger-control"
+        ledger_path = ledger_fixture / cycle_check.DEFERRED_LEDGER_PATH
+        ledger_path.parent.mkdir(parents=True)
+        ledger_text = (
+            "# Deferred ledger control\n\n"
+            f"- **Ledger observation cycle:** `{prior_ledger_cycle}`\n\n"
+            "## Deferred means deferred\n\n"
+            "| Deferred item | Unchanged trigger | measured observation |\n"
+            "|---|---|---|\n"
+            "| active baseline | still active | "
+            f"{prior_ledger_cycle} · 2026-07-30 — measured |\n"
+        )
+        ledger_path.write_text(ledger_text)
+        ledger_errors = []
+        cycle_check.deferred_authority(
+            ledger_fixture / "docs/cycles/TASKS.md",
+            "# Active control\n",
+            ledger_fixture / "docs/cycles/PROGRESS.md",
+            active_ledger_cycle,
+            ledger_fixture,
+            ledger_errors,
+        )
+        if not any(
+            "canonical deferred ledger must name active cycle" in error
+            for error in ledger_errors
+        ):
+            missed.setdefault("deferred-ledger-cycle", []).append(
+                "stale-active-cycle"
+            )
+
+        trigger_path = fixture / "trigger-control.md"
         legacy_trigger_text = (
             "# Trigger control\n\n"
             "### Dated operational-residual dispositions\n\n"
@@ -3978,6 +4021,8 @@ def r12_findings(root: Path) -> list[str]:
             active_text,
             fixture,
             errors,
+            prior_path=prior_runbook,
+            prior_text=prior_runbook.read_text(),
         )
         expected_carry_failure = (
             "deferred subject 'planted carry-forward' from immediately prior "
@@ -3987,6 +4032,23 @@ def r12_findings(root: Path) -> list[str]:
         ):
             missed.setdefault("trigger-carry-forward", []).append(
                 "silently-dropped-trigger-subject"
+            )
+
+        reworded_text = prior_runbook.read_text().replace(
+            "still active", "reworded trigger"
+        )
+        errors = []
+        cycle_check.check_deferred_carry_forward(
+            active_runbook,
+            reworded_text,
+            fixture,
+            errors,
+            prior_path=prior_runbook,
+            prior_text=prior_runbook.read_text(),
+        )
+        if not any("changes its trigger" in error for error in errors):
+            missed.setdefault("trigger-byte-fidelity", []).append(
+                "reworded-trigger"
             )
 
     population_node = "tests/test_population.py::test_on_site"
@@ -4146,6 +4208,12 @@ def r12_findings(root: Path) -> list[str]:
             )
         elif group == "cycle-ending-export-audit":
             finding_kind = "cycle-ending-export-audit planted controls"
+        elif group in {
+            "deferred-ledger-cycle",
+            "trigger-carry-forward",
+            "trigger-byte-fidelity",
+        }:
+            finding_kind = "deferred-ledger planted controls"
         else:
             finding_kind = "publication planted controls"
         findings.append(

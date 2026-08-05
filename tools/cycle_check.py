@@ -86,6 +86,13 @@ CYCLE_LITERAL_RE = re.compile(
 )
 STEP_HEADING_RE = re.compile(r"^## Step ([0-9]+[A-Z]?)\b[^\n]*$", re.MULTILINE)
 DEFERRED_HEADING = "## Deferred means deferred"
+DEFERRED_LEDGER_PATH = Path("docs/DEFERRED.md")
+DEFERRED_LEDGER_FORWARD_BOUNDARY = (0, 43)
+DEFERRED_LEDGER_CYCLE_RE = re.compile(
+    r"^- \*\*Ledger observation cycle:\*\* `"
+    r"(v[0-9]+\.[0-9]+(?:\.[0-9]+)?)`$",
+    re.MULTILINE,
+)
 MARKDOWN_TABLE_SEPARATOR_RE = re.compile(r"^:?-{3,}:?$")
 STEP_REFERENCE_RE = re.compile(r"\bStep ([0-9]+[A-Z]?)\b", re.IGNORECASE)
 MEASURED_VALUE_TERM_RE = re.compile(
@@ -2164,6 +2171,12 @@ FORWARD_BOUNDARY_RELATIONSHIPS = {
         "Artifact byte crossings consume cycle-identified governed trigger "
         "rows and their dated dispositions.",
     ),
+    "DEFERRED_LEDGER_FORWARD_BOUNDARY": (
+        ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
+        "The canonical ledger preserves the existing cycle-identified "
+        "trigger-table contract while moving its authority out of cycle "
+        "documents.",
+    ),
     "GOVERNED_EXPORT_FORWARD_BOUNDARY": (
         ("TRIGGER_IDENTITY_FORWARD_BOUNDARY",),
         "The governed export value is a content constraint on the "
@@ -2499,7 +2512,7 @@ def check_trigger_table(
 
 def check_trigger_freshness(
     path: Path,
-    active_text: str,
+    deferred_text: str,
     root: Path,
     errors: list[str],
 ) -> tuple[int, int]:
@@ -2527,7 +2540,7 @@ def check_trigger_freshness(
     )
     deferral_rows = check_trigger_table(
         path,
-        active_text,
+        deferred_text,
         DEFERRED_HEADING,
         "Deferred item",
         root,
@@ -2535,6 +2548,52 @@ def check_trigger_freshness(
         required_cycle_name,
     )
     return architecture_rows, deferral_rows
+
+
+def deferred_authority(
+    active_path: Path,
+    active_text: str,
+    progress_path: Path,
+    active_cycle: str,
+    root: Path,
+    errors: list[str],
+) -> tuple[Path, str]:
+    """Resolve the live deferral table without depending on export retention."""
+    if (
+        declared_scope_cycle_version(active_cycle)
+        < DEFERRED_LEDGER_FORWARD_BOUNDARY
+    ):
+        return active_path, active_text
+
+    ledger_path = root / DEFERRED_LEDGER_PATH
+    ledger_text = ledger_path.read_text() if ledger_path.is_file() else ""
+    ledger_cycles = DEFERRED_LEDGER_CYCLE_RE.findall(ledger_text)
+    # Invariant R12 control site: deferred ledger active-cycle advancement.
+    if ledger_cycles != [active_cycle]:
+        errors.append(
+            f"{shown(ledger_path, root)}: canonical deferred ledger must "
+            f"name active cycle {active_cycle!r} exactly once; found "
+            f"{ledger_cycles!r}"
+        )
+
+    for cycle_path, cycle_text in (
+        (active_path, active_text),
+        (
+            progress_path,
+            progress_path.read_text() if progress_path.is_file() else "",
+        ),
+    ):
+        if re.search(
+            rf"^{re.escape(DEFERRED_HEADING)}$",
+            cycle_text,
+            re.MULTILINE,
+        ):
+            errors.append(
+                f"{shown(cycle_path, root)}: active cycle document restates "
+                f"canonical {DEFERRED_HEADING!r} from "
+                f"{shown(ledger_path, root)}"
+            )
+    return ledger_path, ledger_text
 
 
 def governed_trigger_row(
@@ -2707,16 +2766,16 @@ def check_governed_artifact_byte_boundaries(
     for relative, boundary_bytes in boundaries.items():
         spec = GOVERNED_ARTIFACT_ROW_SPECS[relative]
         expected_trigger = governed_artifact_trigger_text(spec)
-        row_path = (
-            active_path
-            if spec.heading == DEFERRED_HEADING
-            else architecture_path
-        )
-        row_text = (
-            active_text
-            if spec.heading == DEFERRED_HEADING
-            else architecture_text
-        )
+        ledger_path = root / DEFERRED_LEDGER_PATH
+        if spec.heading == DEFERRED_HEADING and ledger_path.is_file():
+            row_path = ledger_path
+            row_text = ledger_path.read_text()
+        elif spec.heading == DEFERRED_HEADING:
+            row_path = active_path
+            row_text = active_text
+        else:
+            row_path = architecture_path
+            row_text = architecture_text
         row = governed_trigger_row(
             row_path,
             row_text,
@@ -3541,6 +3600,73 @@ def governed_trigger_subjects(
     return subjects
 
 
+def exact_governed_trigger_rows(
+    text: str,
+    heading: str,
+    subject_header: str,
+) -> dict[str, tuple[str, str]]:
+    """Return normalized keys with byte-faithful subject and trigger cells."""
+    heading_matches = list(
+        re.finditer(rf"^{re.escape(heading)}$", text, re.MULTILINE)
+    )
+    if len(heading_matches) != 1:
+        return {}
+    heading_level = len(heading) - len(heading.lstrip("#"))
+    section = text[heading_matches[0].end():]
+    next_heading = re.search(
+        rf"^#{{1,{heading_level}}} ", section, re.MULTILINE
+    )
+    if next_heading is not None:
+        section = section[: next_heading.start()]
+    lines = section.splitlines()
+    header_index: int | None = None
+    subject_index: int | None = None
+    trigger_index: int | None = None
+    expected_subject = subject_header.casefold()
+    for index, line in enumerate(lines):
+        cells = markdown_table_cells(line)
+        normalized = [normalized_table_cell(cell).casefold() for cell in cells]
+        if expected_subject not in normalized:
+            continue
+        header_index = index
+        subject_index = normalized.index(expected_subject)
+        trigger_index = next(
+            (
+                cell_index
+                for cell_index, cell in enumerate(normalized)
+                if "trigger" in cell
+            ),
+            None,
+        )
+        break
+    if header_index is None or subject_index is None or trigger_index is None:
+        return {}
+
+    rows: dict[str, tuple[str, str]] = {}
+    for line in lines[header_index + 1:]:
+        cells = markdown_table_cells(line)
+        if not cells:
+            if rows:
+                break
+            continue
+        normalized = [normalized_table_cell(cell) for cell in cells]
+        if normalized and all(
+            MARKDOWN_TABLE_SEPARATOR_RE.fullmatch(cell) for cell in normalized
+        ):
+            continue
+        if max(subject_index, trigger_index) >= len(cells):
+            continue
+        trigger = normalized[trigger_index].casefold()
+        if trigger in {"", "none", "n/a", "not applicable"}:
+            continue
+        subject = cells[subject_index]
+        rows[normalized[subject_index].casefold()] = (
+            subject,
+            cells[trigger_index],
+        )
+    return rows
+
+
 def dated_deferred_completions(text: str) -> dict[str, str]:
     heading_matches = list(
         re.finditer(
@@ -3612,40 +3738,109 @@ def check_deferred_carry_forward(
     active_text: str,
     root: Path,
     errors: list[str],
+    *,
+    completion_text: str | None = None,
+    prior_path: Path | None = None,
+    prior_text: str | None = None,
 ) -> None:
-    active_version = cycle_version(active_path)
-    if active_version is None:
-        return
-    prior_candidates = [
-        (version, path)
-        for path in execution_runbooks(root)
-        if (
-            (version := cycle_version(path)) is not None
-            and version < active_version
+    if prior_text is None:
+        active_runbook = resolve_cycle(root).runbook
+        active_version = cycle_version(active_runbook)
+        additions = git_output(
+            root,
+            "log",
+            "--diff-filter=A",
+            "--format=%H",
+            "--",
+            shown(active_runbook, root),
         )
-    ]
-    if not prior_candidates:
+        activation_commit = additions.splitlines()[-1] if additions else None
+        activation_parent = (
+            git_output(root, "rev-parse", f"{activation_commit}^")
+            if activation_commit is not None
+            else None
+        )
+        if active_path == root / DEFERRED_LEDGER_PATH and activation_parent:
+            prior_text = git_output(
+                root,
+                "show",
+                f"{activation_parent}:{DEFERRED_LEDGER_PATH}",
+            )
+            if prior_text is not None:
+                prior_path = root / DEFERRED_LEDGER_PATH
+            elif active_version != DEFERRED_LEDGER_FORWARD_BOUNDARY:
+                errors.append(
+                    f"{shown(active_path, root)}: canonical deferred ledger "
+                    f"has no prior state at activation parent "
+                    f"{activation_parent}"
+                )
+                return
+        migration_fallback = (
+            active_path == root / DEFERRED_LEDGER_PATH
+            and active_version == DEFERRED_LEDGER_FORWARD_BOUNDARY
+        )
+        legacy_fallback = active_path != root / DEFERRED_LEDGER_PATH
+        if (
+            prior_text is None
+            and active_version is not None
+            and (migration_fallback or legacy_fallback)
+        ):
+            prior_candidates = [
+                (version, path)
+                for path in execution_runbooks(root)
+                if (
+                    (version := cycle_version(path)) is not None
+                    and version < active_version
+                )
+            ]
+            if prior_candidates:
+                _, candidate = max(
+                    prior_candidates, key=lambda item: item[0]
+                )
+                prior_path = candidate
+                if activation_parent:
+                    prior_text = git_output(
+                        root,
+                        "show",
+                        f"{activation_parent}:{shown(candidate, root)}",
+                    )
+                if prior_text is None and candidate.is_file():
+                    prior_text = candidate.read_text()
+    if prior_path is None or prior_text is None:
         return
-    _, prior_path = max(prior_candidates, key=lambda candidate: candidate[0])
-    prior_subjects = governed_trigger_subjects(
-        prior_path.read_text(),
+
+    prior_rows = exact_governed_trigger_rows(
+        prior_text,
         DEFERRED_HEADING,
         "Deferred item",
     )
-    active_subjects = governed_trigger_subjects(
+    active_rows = exact_governed_trigger_rows(
         active_text,
         DEFERRED_HEADING,
         "Deferred item",
     )
-    completed_subjects = dated_deferred_completions(active_text)
-    for key, subject in sorted(prior_subjects.items()):
+    completed_subjects = dated_deferred_completions(
+        active_text if completion_text is None else completion_text
+    )
+    for key, (subject, prior_trigger) in sorted(prior_rows.items()):
         # Invariant R12 control site: deferred trigger carry-forward.
-        if key not in active_subjects and key not in completed_subjects:
+        if key not in active_rows and key not in completed_subjects:
             errors.append(
                 f"{shown(active_path, root)}: deferred subject {subject!r} "
                 f"from immediately prior {shown(prior_path, root)} is absent "
                 "without a valid dated completion"
             )
+            continue
+        if key in active_rows:
+            _, active_trigger = active_rows[key]
+            # Invariant R12 control site: deferred trigger byte fidelity.
+            if active_trigger != prior_trigger:
+                errors.append(
+                    f"{shown(active_path, root)}: deferred subject {subject!r} "
+                    "changes its trigger from immediately prior "
+                    f"{shown(prior_path, root)}; expected "
+                    f"{prior_trigger!r}, found {active_trigger!r}"
+                )
 
 
 def check_active_deferral_assignments(
@@ -3653,6 +3848,8 @@ def check_active_deferral_assignments(
     text: str,
     root: Path,
     errors: list[str],
+    *,
+    step_text: str | None = None,
 ) -> None:
     heading_matches = list(
         re.finditer(rf"^{re.escape(DEFERRED_HEADING)}$", text, re.MULTILINE)
@@ -3697,7 +3894,9 @@ def check_active_deferral_assignments(
         )
         return
 
-    steps = set(STEP_HEADING_RE.findall(text))
+    steps = set(
+        STEP_HEADING_RE.findall(text if step_text is None else step_text)
+    )
     for offset, line in enumerate(lines[header_index + 1 :], header_index + 1):
         cells = markdown_table_cells(line)
         if not cells or action_index >= len(cells):
@@ -3851,8 +4050,39 @@ def run(
     artifact_boundary_reports: list[str] = []
     state_region_report: str | None = None
     governed_export_basis_report: str | None = None
+    deferred_ledger_report: str | None = None
     if identity.runbook.is_file():
         active_text = identity.runbook.read_text()
+        deferred_path, deferred_text = deferred_authority(
+            identity.runbook,
+            active_text,
+            identity.progress,
+            identity.name,
+            root,
+            errors,
+        )
+        if deferred_path == root / DEFERRED_LEDGER_PATH:
+            dispositions = re.findall(
+                r"^- \*\*Retention-depth disposition:\*\* "
+                r"`(not-granted|not-applicable|applied)`$",
+                active_text,
+                re.MULTILINE,
+            )
+            disposition = (
+                dispositions[0] if len(dispositions) == 1 else "unrecorded"
+            )
+            deferred_subjects = exact_governed_trigger_rows(
+                deferred_text,
+                DEFERRED_HEADING,
+                "Deferred item",
+            )
+            deferred_ledger_report = (
+                f"deferred-ledger: path={shown(deferred_path, root)} "
+                f"cycle={identity.name} "
+                f"subjects={len(deferred_subjects)} "
+                f"retention_depth={CYCLE_RETENTION_DEPTH} "
+                f"retention_change={disposition}"
+            )
         architecture_trigger_rows = 0
         deferral_trigger_rows = 0
         check_trigger_boundary_relationship(errors)
@@ -3863,10 +4093,11 @@ def run(
             errors,
         )
         check_active_deferral_assignments(
-            identity.runbook,
-            active_text,
+            deferred_path,
+            deferred_text,
             root,
             errors,
+            step_text=active_text,
         )
         check_active_step_value_criteria(
             identity.runbook,
@@ -3888,8 +4119,8 @@ def run(
         ):
             architecture_trigger_rows, deferral_trigger_rows = (
                 check_trigger_freshness(
-                    identity.runbook,
-                    active_text,
+                    deferred_path,
+                    deferred_text,
                     root,
                     errors,
                 )
@@ -3906,14 +4137,15 @@ def run(
                 )
             if deferral_trigger_rows == 0:
                 errors.append(
-                    f"{shown(identity.runbook, root)}: {DEFERRED_HEADING!r} "
+                    f"{shown(deferred_path, root)}: {DEFERRED_HEADING!r} "
                     "must contain at least one trigger-bearing row"
                 )
             check_deferred_carry_forward(
-                identity.runbook,
-                active_text,
+                deferred_path,
+                deferred_text,
                 root,
                 errors,
+                completion_text=active_text,
             )
         unchecked = len(UNCHECKED_RE.findall(active_text))
         closing = active_text.count(CLOSING_HEADING)
@@ -4061,6 +4293,8 @@ def run(
         print(f"cycle-check: {state_region_report}")
     if governed_export_basis_report is not None:
         print(f"cycle-check: {governed_export_basis_report}")
+    if deferred_ledger_report is not None:
+        print(f"cycle-check: {deferred_ledger_report}")
     if publication_status_report is not None:
         print(f"cycle-check: {publication_status_report}")
     if remote_witness_report is not None:
