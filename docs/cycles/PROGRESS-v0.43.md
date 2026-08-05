@@ -106,3 +106,47 @@ Entries are append-only; corrections are new dated entries.
 - acceptance: PASS. E0's implementation commit remains the same real commit,
   and all measurements and acceptance results remain in the preceding entry.
 - golden-E2E delta: **0**; this correction changes only audit prose.
+
+### 2026-08-05 · LEDGER — canonical deferred authority
+
+- owner: Codex
+- runbook: `TASKS-v0.43-EXECUTION.md`
+- commit: 90f8ef9fab10914aa3bec4d0b7042b11a50ffeaa
+- canonical-ledger acceptance: PASS. `docs/DEFERRED.md` is the sole active
+  `## Deferred means deferred` table, names v0.43 exactly once, and measures
+  **10,367 bytes** outside `docs/cycles/`. The active runbook and progress
+  record reference it without restating it.
+- migration acceptance: PASS. The v0.43 migration reads v0.42 from activation
+  parent `6f07edf84c3ce40f1ef4c9e97e5d101242490243`; exact subject/trigger-cell
+  comparison derives **31 subjects / 0 subject differences / 0 trigger
+  differences**. Later cycles require the ledger at their own activation
+  parent and have no prior-runbook fallback.
+- planted-control acceptance: PASS. Registered R12 controls independently
+  reject a stale or omitted active-cycle advance, a dropped carried subject,
+  and a byte-different trigger. The stale-cycle control was written first; all
+  three fail-before mutations execute and pass in the complete **17/17-rule /
+  121-control** self-test, with **65** controls under R12.
+- checker-boundary acceptance: PASS. Cycle identity and historical
+  `docs/cycles/` reads remain worktree/Git reads; carry-forward now reads the
+  ledger's activation-parent state directly, and no Repomix export or retained
+  membership participates. Focused cycle-check tests pass **98/98**.
+- retention acceptance: PASS. Grant H was absent after 2a completed, so 2b is
+  `not-granted`, not `not-applicable`. The derived depth stays **2**, the
+  configured set stays v0.42–v0.43, and executable output reports
+  `retention_depth=2 retention_change=not-granted` using distinct accepted
+  negative values.
+- executable acceptance: PASS. The corrected permission-capable
+  `./run ci-local` passed **22/22** jobs; Python 3.11 and 3.12 each passed
+  **399/399** with the accepted warning, and direct R17 readback measured
+  **30 refs / 1 audit** in agreement.
+- audit correction: the first matrix stopped at checked-task evidence because
+  the earlier E0 entry omitted its mandatory runbook qualifier and LEDGER had
+  no implementation commit yet. The E0 defect was corrected append-only in
+  audit commit `027534f…`; LEDGER's box remained open for the successful
+  matrix. No failing result was treated as acceptance evidence.
+- protected-input acceptance: PASS. No dependency, production source,
+  protected byte, observation, fixture, publisher wire, entitlement/licensing
+  outcome, local tag, branch, or remote ref moved. The three historical
+  amendment inputs remain untouched and untracked.
+- stop conditions: none.
+- golden-E2E delta: **0**. Embedded and standalone runs passed **11/11**.
